@@ -39,7 +39,7 @@ public class MergeOwlTest extends TestCase
 
         assertNotNull(merger.tgtModel);
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Name"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
     }
 
     public void testMergeByEquivalenceClass() throws Exception {
@@ -55,11 +55,11 @@ public class MergeOwlTest extends TestCase
         assertNull(merger.tgtModel.getOntClass(src1Namespace + "LtdCompany"));
         assertNull(merger.tgtModel.getOntClass(tgtNamespace + "LtdCompany"));
 
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Name"));
-        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "CompName"));
-        assertNull(merger.tgtModel.getOntProperty(tgtNamespace + "CompName"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
+        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "compName"));
+        assertNull(merger.tgtModel.getOntProperty(tgtNamespace + "compName"));
 
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "VatNumber"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber"));
 
 
         // merge second source
@@ -67,7 +67,7 @@ public class MergeOwlTest extends TestCase
         src2.read(new StringReader(getSrc2()), null, "N3");
 
         merger.mergeByEquivalence(src2, src2Namespace);
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "CorpNumber"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "corpNumber"));
 
     }
 
@@ -124,9 +124,9 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-            + ":Name a rdf:Property ;" + ENDL
+            + ":name a rdf:Property ;" + ENDL
             + "      rdfs:domain :Company ;" + ENDL
-            + "      owl:equivalentProperty src1:CompanyName ." + ENDL;
+            + "      owl:equivalentProperty src1:companyName ." + ENDL;
 
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
@@ -137,9 +137,9 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
             + ":Address a owl:Class ." + ENDL
-            + ":CompanyName a rdf:Property ;" + ENDL
+            + ":companyName a rdf:Property ;" + ENDL
             + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":VatNumber a rdf:Property ;" + ENDL
+            + ":vatNumber a rdf:Property ;" + ENDL
             + "           rdfs:domain :LtdCompany ." + ENDL;
 
 
@@ -149,19 +149,19 @@ public class MergeOwlTest extends TestCase
 
         merger.mergeByEquivalence(src1, src1Namespace);
 
-        // properties: CompanyName -> Name, VatNumber -> VatNumber, check owl:equivalentProperty
+        // properties: companyName -> Name, vatNumber -> vatNumber, check owl:equivalentProperty
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Name"));
-        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "Name"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "VatNumber"));
-        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "VatNumber"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
+        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "name"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber"));
+        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "vatNumber"));
 
-        OntProperty tgtName = merger.tgtModel.getOntProperty(tgtNamespace + "Name");
-        OntProperty srcCompanyName = src1.getOntProperty(src1Namespace + "CompanyName");
-        OntProperty tgtVatNumber = merger.tgtModel.getOntProperty(tgtNamespace + "VatNumber");
-        OntProperty srcVatNumber = src1.getOntProperty(src1Namespace + "VatNumber");
+        OntProperty tgtName = merger.tgtModel.getOntProperty(tgtNamespace + "name");
+        OntProperty srcCompanyName = src1.getOntProperty(src1Namespace + "companyName");
+        OntProperty tgtvatNumber = merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber");
+        OntProperty srcvatNumber = src1.getOntProperty(src1Namespace + "vatNumber");
         assertTrue(hasStatement(merger.tgtModel, tgtName, "equivalentProperty", srcCompanyName));
-        assertTrue(hasStatement(merger.tgtModel, tgtVatNumber, "equivalentProperty", srcVatNumber));
+        assertTrue(hasStatement(merger.tgtModel, tgtvatNumber, "equivalentProperty", srcvatNumber));
     }
 
 
@@ -176,9 +176,9 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-            + ":Name a rdf:Property ;" + ENDL
+            + ":name a rdf:Property ;" + ENDL
             + "      rdfs:domain :Company ;" + ENDL
-            + "      owl:equivalentProperty src1:CompanyName ." + ENDL;
+            + "      owl:equivalentProperty src1:companyName ." + ENDL;
 
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
@@ -189,11 +189,11 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
             + ":Address a owl:Class ." + ENDL
-            + ":CompanyName a rdf:Property ;" + ENDL
+            + ":companyName a rdf:Property ;" + ENDL
             + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":VatNumber a rdf:Property ;" + ENDL
+            + ":vatNumber a rdf:Property ;" + ENDL
             + "           rdfs:domain :LtdCompany ." + ENDL
-            + ":Postcode a rdf:Property ;" + ENDL
+            + ":postcode a rdf:Property ;" + ENDL
             + "          rdfs:domain :Address ." + ENDL;
 
         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
@@ -202,14 +202,14 @@ public class MergeOwlTest extends TestCase
 
         merger.mergeByEquivalence(src1, src1Namespace);
 
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Name"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Postcode"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "name"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "postcode"));
 
-        // Name has domain that has changed (LtdCompany -> Company), Postcode unchanged (Address)
-        OntProperty name = merger.tgtModel.getOntProperty(tgtNamespace + "Name");
+        // Name has domain that has changed (LtdCompany -> Company), postcode unchanged (Address)
+        OntProperty name = merger.tgtModel.getOntProperty(tgtNamespace + "name");
         assertTrue(name.getDomain().equals((OntResource) merger.tgtModel
                                            .getOntClass(tgtNamespace + "Company")));
-        OntProperty postcode = merger.tgtModel.getOntProperty(tgtNamespace + "Postcode");
+        OntProperty postcode = merger.tgtModel.getOntProperty(tgtNamespace + "postcode");
         assertTrue(postcode.getDomain().equals((OntResource) merger.tgtModel
                                            .getOntClass(tgtNamespace + "Address")));
     }
@@ -233,9 +233,9 @@ public class MergeOwlTest extends TestCase
             + ":LtdCompany a owl:Class ;" + ENDL
             + "            rdfs:label \"company label\" ." + ENDL
             + ":Address a owl:Class ." + ENDL
-            + ":CompanyName a rdf:Property ;" + ENDL
+            + ":companyName a rdf:Property ;" + ENDL
             + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":VatNumber a rdf:Property ;" + ENDL
+            + ":vatNumber a rdf:Property ;" + ENDL
             + "           rdfs:domain :LtdCompany ;" + ENDL
             + "           rdfs:label \"vat number label\" ." + ENDL;
 
@@ -249,9 +249,9 @@ public class MergeOwlTest extends TestCase
         assertTrue(ltdCompany.getLabel(null).equals("company label"));
         OntClass address = merger.tgtModel.getOntClass(tgtNamespace + "Address");
         assertFalse(address.listLabels(null).hasNext());
-        OntProperty companyName = merger.tgtModel.getOntProperty(tgtNamespace + "CompanyName");
+        OntProperty companyName = merger.tgtModel.getOntProperty(tgtNamespace + "companyName");
         assertFalse(companyName.listLabels(null).hasNext());
-        OntProperty vatNumber = merger.tgtModel.getOntProperty(tgtNamespace + "VatNumber");
+        OntProperty vatNumber = merger.tgtModel.getOntProperty(tgtNamespace + "vatNumber");
         assertTrue(vatNumber.getLabel(null).equals("vat number label"));
 
     }
@@ -274,9 +274,52 @@ public class MergeOwlTest extends TestCase
     }
 
 
-    public void testWriteTargetModel() throws Exception {
+//     public void testWriteTargetModel() throws Exception {
 
 
+//         String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
+//             + "@prefix src1: <" + src1Namespace + "> ." + ENDL
+//             + ENDL
+//             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
+//             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
+//             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+//             + ENDL
+//             + ":Company a owl:Class ;" + ENDL
+//             + "           owl:equivalentClass src1:LtdCompany ." + ENDL
+//             + ":name a rdf:Property ;" + ENDL
+//             + "      rdfs:domain :Company ;" + ENDL
+//             + "      owl:equivalentProperty src1:companyName ." + ENDL;
+
+
+//         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
+//             + ENDL
+//             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
+//             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
+//             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+//             + ENDL
+//             + ":LtdCompany rdf:type owl:Class ." + ENDL
+//             + ":Address rdf:type owl:Class ." + ENDL
+//             + ":companyName rdf:type rdf:Property ;" + ENDL
+//             + "             rdfs:domain :LtdCompany ." + ENDL
+//             + ":postcode rdf:type rdf:Property ;" + ENDL
+//             + "          rdfs:domain :Address ." + ENDL;
+
+
+
+//         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+//         OntModel src1 = ModelFactory.createOntologyModel();
+//         //src1.read(new StringReader(getSrc1()), null, "N3");
+//         src1.read(new StringReader(src1Str), null, "N3");
+
+//         merger.mergeByEquivalence(src1, src1Namespace);
+//         File out = new File("/home/rns/tgt.owl");
+
+//         OntModel tgtModel = merger.getTargetModel();
+//         tgtModel.write(new BufferedWriter(new FileWriter(out)), "N3");
+//     }
+
+
+    public void testEquivMap() throws Exception {
         String mergeSpec = "@prefix : <" + tgtNamespace + "> ." + ENDL
             + "@prefix src1: <" + src1Namespace + "> ." + ENDL
             + ENDL
@@ -286,9 +329,9 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "           owl:equivalentClass src1:LtdCompany ." + ENDL
-            + ":Name a rdf:Property ;" + ENDL
+            + ":name a rdf:Property ;" + ENDL
             + "      rdfs:domain :Company ;" + ENDL
-            + "      owl:equivalentProperty src1:CompanyName ." + ENDL;
+            + "      owl:equivalentProperty src1:companyName ." + ENDL;
 
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
@@ -299,23 +342,27 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
             + ":Address a owl:Class ." + ENDL
-            + ":CompanyName a rdf:Property ;" + ENDL
+            + ":companyName a rdf:Property ;" + ENDL
             + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":Postcode a rdf:Property ;" + ENDL
-            + "          rdfs:domain :Address ." + ENDL;
-
+            + ":vatNumber a rdf:Property ;" + ENDL
+            + "           rdfs:domain :LtdCompany ." + ENDL;
 
 
         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
         OntModel src1 = ModelFactory.createOntologyModel();
-        //src1.read(new StringReader(getSrc1()), null, "N3");
         src1.read(new StringReader(src1Str), null, "N3");
 
         merger.mergeByEquivalence(src1, src1Namespace);
-        File out = new File("/home/rns/tgt.owl");
 
-        OntModel tgtModel = merger.getTargetModel();
-        tgtModel.write(new BufferedWriter(new FileWriter(out)), "N3");
+        assertNotNull(merger.equiv);
+        assertNotNull(merger.equiv.get(src1Namespace + "LtdCompany"));
+        assertTrue(merger.tgtModel.getOntClass(tgtNamespace + "Company")
+                   .equals((Resource) merger.equiv.get(src1Namespace + "LtdCompany")));
+        assertNotNull(merger.equiv.get(src1Namespace + "companyName"));
+        assertTrue(merger.tgtModel.getOntProperty(tgtNamespace + "name")
+                   .equals((Resource) merger.equiv.get(src1Namespace + "companyName")));
+        assertNull(merger.equiv.get(src1Namespace + "Address"));
+        assertNull(merger.equiv.get(src1Namespace + "vatNumber"));
     }
 
 
@@ -332,10 +379,10 @@ public class MergeOwlTest extends TestCase
             + "           owl:equivalentClass src1:LtdCompany ;" + ENDL
             + "           owl:equivalentClass src2:Corporation ." + ENDL
             + ENDL
-            + ":Name a rdf:Property ;" + ENDL
+            + ":name a rdf:Property ;" + ENDL
             + "        rdfs:domain :Company ;" + ENDL
-            + "        owl:equivalentProperty src1:CompanyName ;" + ENDL
-            + "        owl:equivalentProperty src2:CorpName ." + ENDL;
+            + "        owl:equivalentProperty src1:companyName ;" + ENDL
+            + "        owl:equivalentProperty src2:corpName ." + ENDL;
     }
 
     public String getSrc1() {
@@ -346,9 +393,9 @@ public class MergeOwlTest extends TestCase
             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
-            + ":CompanyName a rdf:Property ;" + ENDL
+            + ":companyName a rdf:Property ;" + ENDL
             + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":VatNumber a rdf:Property ;" + ENDL
+            + ":vatNumber a rdf:Property ;" + ENDL
             + "           rdfs:domain :LtdCompany ." + ENDL
             + ":Address a owl:Class ." + ENDL;
     }
@@ -361,9 +408,9 @@ public class MergeOwlTest extends TestCase
             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
             + ENDL
             + ":Corporation a owl:Class ." + ENDL
-            + ":CorpName a rdf:Property ;" + ENDL
+            + ":corpName a rdf:Property ;" + ENDL
             + "          rdfs:domain :Corporation ." + ENDL
-            + ":CorpNumber a rdf:Property ;" + ENDL
+            + ":corpNumber a rdf:Property ;" + ENDL
             + "            rdfs:domain :Corporation ." + ENDL;
     }
 
