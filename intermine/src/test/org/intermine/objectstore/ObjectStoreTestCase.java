@@ -309,6 +309,10 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("OrderByReference", toList(r));
 
         results.put("FailDistinctOrder", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeB2") } };
+        results.put("LargeBagConstraint", toList(r));
     }
 
     /**

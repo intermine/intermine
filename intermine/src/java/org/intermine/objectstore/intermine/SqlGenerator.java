@@ -726,18 +726,18 @@ public class SqlGenerator
         if (c.getQueryNode() instanceof QueryEvaluable) {
             StringBuffer lhsBuffer = new StringBuffer();
             queryEvaluableToString(lhsBuffer, (QueryEvaluable) c.getQueryNode(), q, state);
-            leftHandSide = lhsBuffer.toString() + " = ";
+            leftHandSide = lhsBuffer.toString() + " IN (";
         } else {
             StringBuffer lhsBuffer = new StringBuffer();
             queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, schema, ID_ONLY, state);
-            leftHandSide = lhsBuffer.toString() + " = ";
+            leftHandSide = lhsBuffer.toString() + " IN (";
         }
         SortedSet filteredBag = new TreeSet();
         Iterator bagIter = c.getBag().iterator();
         while (bagIter.hasNext()) {
             Object bagItem = bagIter.next();
             if (type.isInstance(bagItem)) {
-                StringBuffer constraint = new StringBuffer(leftHandSide);
+                StringBuffer constraint = new StringBuffer();
                 objectToString(constraint, bagItem);
                 filteredBag.add(constraint.toString());
             }
@@ -745,15 +745,21 @@ public class SqlGenerator
         if (filteredBag.isEmpty()) {
             state.addToWhere(c.getOp() == ConstraintOp.IN ? "false" : "true");
         } else {
-            boolean needComma = false;
+            int needComma = 0;
             Iterator orIter = filteredBag.iterator();
             while (orIter.hasNext()) {
-                state.addToWhere(needComma ? " OR " : (c.getOp() == ConstraintOp.IN ? "("
-                            : "( NOT ("));
-                needComma = true;
+                if (needComma == 0) {
+                    state.addToWhere(c.getOp() == ConstraintOp.IN ? "(" + leftHandSide
+                            : "( NOT (" + leftHandSide);
+                } else if (needComma % 9000 == 0) {
+                    state.addToWhere(") OR " + leftHandSide);
+                } else {
+                    state.addToWhere(", ");
+                }
+                needComma++;
                 state.addToWhere((String) orIter.next());
             }
-            state.addToWhere(c.getOp() == ConstraintOp.IN ? ")" : "))");
+            state.addToWhere(c.getOp() == ConstraintOp.IN ? "))" : ")))");
         }
     }
 
