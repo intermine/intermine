@@ -13,6 +13,9 @@ package org.intermine.web.results;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -26,6 +29,8 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.Constants;
@@ -73,8 +78,18 @@ public class ObjectSummaryController extends TilesAction
                 leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
             }
             context.putAttribute("leafClds", leafClds);
+            Map primaryKeyFieldsMap = new LinkedHashMap();
+            Class c = o.getClass();
+            for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, c).iterator();
+                 i.hasNext();) {
+                String fieldName = (String) i.next();
+                primaryKeyFieldsMap.put(fieldName, fieldName);
+            }
+            context.putAttribute("primaryKeyFields", primaryKeyFieldsMap);
+            org.intermine.web.LogMe.log("i", "setting primaryKeyFields " + primaryKeyFieldsMap);
         } else {
             context.putAttribute("leafClds", new ArrayList());
+            context.putAttribute("primaryKeyFields", new HashMap());
         }
 
         return null;
