@@ -23,12 +23,12 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
 
     public void testSelectValidClassName() throws Exception {
         setRequestPathInfo("/queryClassSelect");
-        QueryClassSelectForm form = new QueryClassSelectForm();
-        form.setClassName("org.intermine.model.testmodel.Company");
-        setActionForm(form);
+        addRequestParameter("className", "org.intermine.model.testmodel.Company");
         addRequestParameter("action", "Select");
+
         actionPerform();
 
+        verifyNoActionErrors();
         verifyForward("query");
         //assertEquals("org.intermine.model.testmodel.Company",
         //           getRequest().getAttribute("class"));
