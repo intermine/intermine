@@ -267,7 +267,7 @@
 
 
   <!-- generate repository descriptor for testmodel -->
-  <target name="generate-repository-testmodel" depends="testmodel-repository.check, model-output-prepare"
+  <target name="generate-repository-testmodel" depends="testmodel-repository.check, model-output-prepare, generate-testmodel"
           if="testmodel-repository.outofdate">
     <model-output type="ojb" model="testmodel" destdir="${build.model}/testmodel"/>
 
