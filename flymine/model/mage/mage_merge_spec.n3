@@ -321,7 +321,7 @@ null:FeatureReporterMap__propertySets a owl:ObjectProperty;
     owl:equivalentClass mage:Reporter.
 
 :Reporter__location a owl:ObjectProperty;
-    owl:inversOf :ReporterLocation__reporter.
+    owl:inverseOf :ReporterLocation__reporter.
 
 :Reporter__material a owl:ObjectProperty;
      rdfs:domain :Reporter;
