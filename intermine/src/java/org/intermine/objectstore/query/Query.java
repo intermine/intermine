@@ -2,6 +2,9 @@ package org.flymine.objectstore.query;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
 
 /**
  * This class provides an implementation-independent abstract representation of a query
@@ -18,6 +21,9 @@ public class Query
     private Set select = new HashSet(); // @element-type QueryNode
     private Set orderBy = new HashSet(); // @element-type QueryNode
     private Set groupBy = new HashSet(); // @element-type QueryNode
+    private Map aliases = new HashMap();
+
+    private int alias = 1;
 
     /**
      * Adds a QueryClass to the FROM clause of this Query
@@ -26,6 +32,9 @@ public class Query
      * @return the updated Query
      */    
     public Query addClass(QueryClass cls) {
+        if (cls == null) {
+            throw new NullPointerException("cls must not be null");
+        }
         queryClasses.add(cls);
         return this;
     }
@@ -113,6 +122,7 @@ public class Query
      */    
     public Query addToSelect(QueryNode node) {
         select.add(node);
+        aliases.put(node, "a" + (alias++));
         return this;
     }
 
@@ -124,6 +134,7 @@ public class Query
      */    
     public Query deleteFromSelect(QueryNode node) {
         select.remove(node);
+        aliases.remove(node);
         return this;
     }
 
@@ -162,6 +173,16 @@ public class Query
      */    
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+
+    /**
+     * Returns the map of SELECTed QueryNodes to String aliases
+     *
+     * @return the map
+     */
+    public Map getAliases() {
+        return Collections.unmodifiableMap(aliases);
     }
 
     /**
