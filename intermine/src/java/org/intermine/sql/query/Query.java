@@ -77,17 +77,34 @@ public class Query implements SQLStringable
     public Query(String sql) throws antlr.RecognitionException, antlr.TokenStreamException {
         this();
 
-        InputStream is = new ByteArrayInputStream(sql.getBytes());
-        
-        SqlLexer lexer = new SqlLexer(is);
-        SqlParser parser = new SqlParser(lexer);
-        parser.start_rule();
+        try {
+            InputStream is = new ByteArrayInputStream(sql.getBytes());
+            
+            SqlLexer lexer = new SqlLexer(is);
+            SqlParser parser = new SqlParser(lexer);
+            parser.start_rule();
 
-        AST ast = parser.getAST();
-        if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
-            throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
+            AST ast = parser.getAST();
+            if (ast == null) {
+                throw (new IllegalArgumentException("Invalid SQL string"));
+            }
+            AST oldAst;
+            do {
+                oldAst = ast;
+                SqlTreeParser treeparser = new SqlTreeParser();
+                treeparser.start_rule(ast);
+                ast = treeparser.getAST();
+            } while (!oldAst.equalsList(ast));
+
+            if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
+                throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
+            }
+            processAST(ast.getFirstChild());
+        } catch (antlr.RecognitionException e) {
+            throw (new IllegalArgumentException("Exception: " + e));
+        } catch (antlr.TokenStreamException e) {
+            throw (new IllegalArgumentException("Exception: " + e));
         }
-        processAST(ast.getFirstChild());
     }
 
     /**
