@@ -4,7 +4,6 @@
 
 <!-- export.jsp -->
 <div>
-  <fmt:message key="export.as"/>
   <%-- disabling excel export as whole file must be built in-memory --%>
   <%--div>
     <html:link action="/exportAction?type=excel">
