@@ -27,34 +27,35 @@
     </tr>
   </table>
 
-<%--     
-  <hr/>
-  <div>
-    <html:link action="/classChooser">
-      (Broken) Add a class to the query...
-    </html:link>
-  </div>
---%>
-
-  <hr/>
+  <%--     
+    <hr/>
+    <div>
+      <html:link action="/classChooser">
+        (Broken) Add a class to the query...
+      </html:link>
+    </div>
+    --%>
+  
   <c:if test="${QUERY != null}">
-<%--     
-Need to improved the estimates:
-<c:if test="${RESULTS_TABLE == null}">
-  <tiles:get name="queryStatistics"/>
-</c:if>
---%>
-    <div>
-      <html:link action="/viewChange?method=runQuery">
-        <fmt:message key="view.showresults"/>
-      </html:link>
-    </div>
-    <div>
-      <html:link action="/viewChange?method=export">
-        <fmt:message key="results.export"/>
-      </html:link>
-    </div>
+    <br>
+      <%--     
+        Need to improved the estimates:
+        <c:if test="${RESULTS_TABLE == null}">
+          <tiles:get name="queryStatistics"/>
+        </c:if>
+        --%>
+      <div>
+        <html:link action="/viewChange?method=runQuery">
+          <fmt:message key="view.showresults"/>
+        </html:link>
+      </div>
+      <div>
+        <html:link action="/viewChange?method=export">
+          <fmt:message key="results.export"/>
+        </html:link>
+      </div>
+    </c:if>
+    <tiles:get name="saveQuery"/>
   </c:if>
-  <tiles:get name="saveQuery"/>
 </c:if>
 <!-- /view.jsp -->

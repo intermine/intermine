@@ -17,50 +17,66 @@ package org.intermine.web.results;
  */
 public class Column
 {
-    protected boolean visible = true;
+    protected boolean visible;
     protected String name = "";
+    protected int index;
 
     /**
-     * Is the column visible
+     * Gets the value of visible
      *
-     * @return true if the column is visible
+     * @return the value of visible
      */
-    public boolean isVisible() {
+    public boolean isVisible()  {
         return visible;
     }
 
     /**
-     * Set the visibility of the column
+     * Sets the value of visible
      *
-     * @param visible true if visible, false if not
+     * @param visible value to assign to visible
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
     /**
-     * Get the name of the column
+     * Gets the value of name
      *
-     * @return the name of the column
+     * @return the value of name
      */
-    public String getName() {
+    public String getName()  {
         return name;
     }
 
     /**
-     * Set the name of the column
+     * Sets the value of name
      *
-     * @param name the name for the column
+     * @param name value to assign to name
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * @see Object#equals
+     * Gets the value of index
      *
-     * @param other the object to compare with
-     * @return true if the objects are equal
+     * @return the value of index
+     */
+    public int getIndex()  {
+        return index;
+    }
+
+    /**
+     * Sets the value of index
+     *
+     * @param index value to assign to index
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
+     * @see Object#equals
      */
     public boolean equals(Object other) {
         if (other instanceof Column) {
@@ -71,8 +87,6 @@ public class Column
 
     /**
      * @see Object#hashCode
-     *
-     * @return a hashCode for this column
      */
     public int hashCode() {
         return name.hashCode();
@@ -82,7 +96,6 @@ public class Column
      * @see Object#toString
      */
     public String toString() {
-        return "[Column " + super.toString() + " "
-            + name + " " + (visible ? "visible" : "not visible") + "]";
+        return "[Column " + name + " " + (visible ? "visible" : "not visible") + "]";
     }
 }

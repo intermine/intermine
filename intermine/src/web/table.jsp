@@ -74,7 +74,7 @@
                       </html:multibox>
                     </td>
                     <td>
-                      <c:set var="object" value="${row[status2.index]}" scope="request"/>
+                      <c:set var="object" value="${row[column.index]}" scope="request"/>
                       <tiles:get name="resultsCell.tile" />
                     </td>
                   </c:when>

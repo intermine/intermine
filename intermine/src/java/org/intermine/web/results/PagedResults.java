@@ -13,7 +13,6 @@ package org.intermine.web.results;
 import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
@@ -30,7 +29,6 @@ public class PagedResults implements PagedTable
 {
     private Results results;
 
-    // The columns and their order
     private List columns = new LinkedList();
     private int start = 0;
     private int pageSize = 10;
@@ -53,9 +51,11 @@ public class PagedResults implements PagedTable
     public PagedResults(Results results, List columnNames) {
         this.results = results;
 
-        for (Iterator i = columnNames.iterator(); i.hasNext();) {
+        for (int i = 0; i < columnNames.size(); i++) {
             Column column = new Column();
-            column.setName((String) i.next());
+            column.setName((String) columnNames.get(i));
+            column.setIndex(i);
+            column.setVisible(true);
             columns.add(column);
         }
     }
