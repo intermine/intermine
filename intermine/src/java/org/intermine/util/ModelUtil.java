@@ -107,8 +107,9 @@ public class ModelUtil
      *
      * @param obj the Object to check
      * @return true if primary keys set, false otherwise
+     * @throws IllegalAccessException if one of the fields is inaccessible
      */
-    public static boolean hasValidKey(Object obj) {
+    public static boolean hasValidKey(Object obj) throws IllegalAccessException {
         if (obj == null) {
             throw new NullPointerException("obj must not be null");
         }
