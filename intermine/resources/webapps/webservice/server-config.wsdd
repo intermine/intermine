@@ -23,7 +23,7 @@
  <handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
  <service name="AdminService" provider="java:MSG">
   <parameter name="allowedMethods" value="AdminService"/>
-  <parameter name="enableRemoteAdmin" value="true"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
   <parameter name="className" value="org.apache.axis.utils.Admin"/>
   <namespace>http://xml.apache.org/axis/wsdd/</namespace>
  </service>
