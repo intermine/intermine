@@ -82,7 +82,7 @@ public class MergeOwl
      * @param format the format of sourceOwl, must be: RDF/XML, N-TRIPLE or N3
      * @throws Exception if problem renaming properties
      */
-    protected void addToTargetOwl(Reader sourceOwl, String srcNs, String format) throws Exception {
+    public void addToTargetOwl(Reader sourceOwl, String srcNs, String format) throws Exception {
         if (!(format.equals("RDF/XML") || format.equals("N-TRIPLE") || format.equals("N3"))) {
             throw new IllegalArgumentException(" format must be one of: RDF/XML. N-TRIPLE or N3."
                                                + "(was: " + format + ")");

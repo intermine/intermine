@@ -145,8 +145,57 @@ public class ModelMergerTest extends TestCase
                     .iterator().next();
     }
     
+    public void testMergeReferenceSettingReverseRef() throws Exception {
+        String modelStr =
+                "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+                + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/>"
+                + "</class>";
+
+        // add Department.company
+        String addition = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+            + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"dept\"/>"
+                + "</class>";
+
+        String expXml = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+            + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"dept\"/>"
+            + "</class>";
+        
+        ClassDescriptor cld1 = parseClass(modelStr);
+        ClassDescriptor cld2 = parseClass(addition);
+        ClassDescriptor expected = parseClass(expXml);
+        
+        Set result = ModelMerger.mergeReferences(cld1, cld2);
+
+        assertEquals(expected.getReferenceDescriptors(), result);
+    }
+    
+    public void testMergeCollectionSettingReverseRef() throws Exception {
+        String modelStr =
+                "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+                + "<collection name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/>"
+                + "</class>";
+
+        // add Department.company
+        String addition = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+            + "<collection name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"dept\"/>"
+                + "</class>";
+
+        String expXml = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+            + "<collection name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"dept\"/>"
+            + "</class>";
+        
+        ClassDescriptor cld1 = parseClass(modelStr);
+        ClassDescriptor cld2 = parseClass(addition);
+        ClassDescriptor expected = parseClass(expXml);
+        
+        Set result = ModelMerger.mergeCollections(cld1, cld2);
+
+        assertEquals(expected.getCollectionDescriptors(), result);
+    }
+    
     public void testMergeClassReferencesWithReverseRefs() throws Exception {
-        String modelStr = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
+        String modelStr =
+                "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
                 + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"department\"/>"
                 + "</class>";
 
@@ -173,8 +222,7 @@ public class ModelMergerTest extends TestCase
                 + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"incorrect\"/>"
                 + "</class>";
 
-        cld2 = (ClassDescriptor) parser.generateClassDescriptors(
-                new StringReader(addition)).iterator().next();
+        cld2 = parseClass(addition);
         try {
             ModelMerger.mergeReferences(cld1, cld2);
             fail("Expected ModelMergerException with incorrect reverse-reference name");
@@ -217,7 +265,10 @@ public class ModelMergerTest extends TestCase
         ClassDescriptor expected = parseClass(expXml);
         
         Set result = ModelMerger.mergeCollections(cld1, cld2);
-
+        
+        System.out.println(result.toString());
+        System.out.println(expected.toString());
+        
         assertEquals(expected.getCollectionDescriptors(), result);
 
         // test bad ordering

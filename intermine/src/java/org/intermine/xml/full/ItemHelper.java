@@ -10,7 +10,11 @@ package org.intermine.xml.full;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.RandomAccess;
 
 import org.intermine.util.StringUtil;
 
@@ -21,10 +25,10 @@ import org.intermine.util.StringUtil;
 public class ItemHelper
 {
     /**
-    * Convert an XML item to a data model one
-    * @param item the XML item
-    * @return an equivalent data model item
-    */
+     * Convert an XML item to a data model one
+     * @param item the XML item
+     * @return an equivalent data model item
+     */
     public static org.intermine.model.fulldata.Item convert(Item item) {
         org.intermine.model.fulldata.Item newItem = new org.intermine.model.fulldata.Item();
 
@@ -64,12 +68,32 @@ public class ItemHelper
 
         return newItem;
     }
+    
+    /**
+     * Convert a list of XML items to a list of data model items.
+     * @param items of XML item
+     * @return an equivalent list data model items
+     */
+    public static List convertToFullDataItems(List items) {
+        List results;
+        if (items instanceof RandomAccess) {
+            results = new LinkedList();
+        } else {
+            results = new ArrayList();
+        }
+        Iterator iter = items.iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            results.add(convert(item));
+        }
+        return results;
+    }
 
     /**
-    * Convert a data model item to an XML one
-    * @param item the data model Item
-    * @return an equivalent XML Item
-    */
+     * Convert a data model item to an XML one
+     * @param item the data model Item
+     * @return an equivalent XML Item
+     */
     public static Item convert(org.intermine.model.fulldata.Item item) {
         Item newItem = new Item();
         newItem.setIdentifier(item.getIdentifier());
@@ -105,6 +129,26 @@ public class ItemHelper
         return newItem;
     }
 
+    /**
+     * Convert a list of full data items to a list of XML items.
+     * @param items in data model format
+     * @return an equivalent list of XML items
+     */
+    public static List convertFromFullDataItems(List items) {
+        List results;
+        if (items instanceof RandomAccess) {
+            results = new LinkedList();
+        } else {
+            results = new ArrayList();
+        }
+        Iterator iter = items.iterator();
+        while (iter.hasNext()) {
+            org.intermine.model.fulldata.Item item
+                = (org.intermine.model.fulldata.Item) iter.next();
+            results.add(convert(item));
+        }
+        return results;
+    }
 
     /**
      * org.intermine.model.fulldata.Item is auto-generated code and does not have a sensible

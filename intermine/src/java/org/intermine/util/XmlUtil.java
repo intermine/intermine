@@ -37,7 +37,7 @@ public class XmlUtil
     }
 
     /**
-     * Return the namespace portion of URI string (i.e. everything before a #).
+     * Return the namespace portion of URI string (i.e. everything up to and including a #).
      * @param uri a uri string
      * @return the namespace or original uri if no # present
      */

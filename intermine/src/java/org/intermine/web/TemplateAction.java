@@ -114,7 +114,8 @@ public class TemplateAction extends InterMineAction
         
         if (skipBuilder) {
             RunQueryMonitor monitor = new RunQueryMonitor() {
-                public void queryProgress(Results r) {
+                public boolean queryProgress(HttpServletRequest request, Results r) {
+                    return true;
                 }
             };
             

@@ -34,6 +34,7 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 
 import org.apache.log4j.Logger;
 
@@ -85,7 +86,7 @@ public class XmlConverter extends DataConverter
     * @throws Exception if an error occurs during processing
     */
     public void process(Reader xmlReader) throws Exception {
-        SAXParser.parse(new InputSource(xmlReader), new XmlHandler());
+        SAXParser.parse(new InputSource(xmlReader), new XmlHandler(model));
     }
 
     private String getIdentifier() {
@@ -106,7 +107,15 @@ public class XmlConverter extends DataConverter
         StringBuffer attValue = new StringBuffer();
         Map identifiers = new HashMap();
         boolean isAttribute = false;
+        ItemFactory itemFactory;
 
+        /**
+         * @see DefaultHandler#DefaultHandler
+         * @param model the Model to use when creating items
+         */
+        public XmlHandler(Model model) {
+            itemFactory = new ItemFactory(model);
+        }
 
         /**
          * @see DefaultHandler#startElement
@@ -128,7 +137,7 @@ public class XmlConverter extends DataConverter
                     throw new SAXException("Classname (" + clsName + ") not found in model "
                                            + "for element: " + qName);
                 }
-                items.push(new Item(getIdentifier(), itemName(clsName), ""));
+                items.push(itemFactory.makeItem(getIdentifier(), itemName(clsName), ""));
                 elements.push(qName);
                 pushPaths(qName);
             } else {
@@ -162,14 +171,15 @@ public class XmlConverter extends DataConverter
                         String idField = (String) xmlInfo.getKeyFieldsForPath(path).iterator()
                                                                                             .next();
                         path = xmlInfo.getKeyXPathMatchingPath(path);
-                        Item newItem = new Item(getReferenceIdentifier(path
-                                               + attrs.getValue(idField)), itemName(clsName), "");
+                        String referencedId =
+                            getReferenceIdentifier(path + attrs.getValue(idField));
+                        Item newItem = itemFactory.makeItem(referencedId, itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                         LOG.debug("creating new item with key field and identifier "
                                   + newItem.getIdentifier());
                     } else {
-                        Item newItem = new Item(getIdentifier(), itemName(clsName), "");
+                        Item newItem = itemFactory.makeItem(getIdentifier(), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                         LOG.debug("creating new item " + newItem.getIdentifier());
@@ -195,15 +205,16 @@ public class XmlConverter extends DataConverter
                         String idField = (String) xmlInfo.getKeyFieldsForPath(path).iterator()
                                                                                         .next();
                         path = xmlInfo.getKeyXPathMatchingPath(path);
-                        Item newItem = new Item(getReferenceIdentifier(path
-                                            + attrs.getValue(idField)), itemName(clsName), "");
+                        String referencedId =
+                            getReferenceIdentifier(path + attrs.getValue(idField));
+                        Item newItem = itemFactory.makeItem(referencedId, itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                         LOG.debug("creating new item with key field and identifier "
                                   + newItem.getIdentifier() + " class:" + clsName + " path:" + path
                                   + attrs.getValue(idField));
                     } else {
-                        Item newItem = new Item(getIdentifier(), itemName(clsName), "");
+                        Item newItem = itemFactory.makeItem(getIdentifier(), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                         LOG.debug("creating new item " + newItem.getIdentifier()
@@ -220,7 +231,8 @@ public class XmlConverter extends DataConverter
                                            + cld.getName() + ")");
                 }
             }
-            // create attributes specified within tag
+            // create attributes specified within tag - but don't process attributes of root element
+            // expect these to be namespaces, version, etc and not in InterMine model
             if (attrs.getLength() > 0) {
                 Item item = (Item) items.peek();
                 String path = (String) paths.peek();
@@ -244,13 +256,17 @@ public class XmlConverter extends DataConverter
                                 cld.getReferenceDescriptorByName(attrName, true);
                             String clsName = rfd.getReferencedClassDescriptor().getName();
                             path = xmlInfo.getKeyXPathMatchingPath(path);
-                            Item newItem = new Item(getReferenceIdentifier(path
-                                               + attrs.getValue(attrName)), itemName(clsName), "");
+                            String referencedId =
+                                getReferenceIdentifier(path + attrs.getValue(attrName));
+                            Item newItem =
+                                itemFactory.makeItem(referencedId, itemName(clsName), "");
                             String identifier = newItem.getIdentifier();
                             item.addReference(new Reference(attrName, identifier));
                         } else if (!xmlInfo.getReferenceFields(path).contains(attrName)
                             && !xmlInfo.getKeyFieldsForPath(path).contains(attrName)) {
-                            item.addAttribute(new Attribute(attrName, attrs.getValue(i)));
+                            if (cld.getAttributeDescriptorByName(attrName, true) != null) {
+                                item.addAttribute(new Attribute(attrName, attrs.getValue(i)));
+                            }
                         } else {
                            // skip
                         }

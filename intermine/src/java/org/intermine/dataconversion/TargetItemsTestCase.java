@@ -43,6 +43,10 @@ public abstract class TargetItemsTestCase extends TestCase
     protected String oswAlias = "osw.fulldatatest";
     protected ObjectStoreWriter osw;
 
+    public TargetItemsTestCase(String arg) {
+        super(arg);
+    }
+
     /**
      * @see TestCase#SetUp
      */

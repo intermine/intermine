@@ -19,17 +19,19 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.ArrayList;
-
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import java.util.Properties;
+import java.util.Arrays;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.intermine.InterMineException;
-import org.intermine.ontology.OntologyUtil;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.ontology.SubclassRestriction;
+import org.intermine.ontology.SubclassRestrictionComparator;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Attribute;
@@ -37,6 +39,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 
 import org.apache.log4j.Logger;
 
@@ -52,35 +55,182 @@ public class DataTranslator
     private static final Logger LOG = Logger.getLogger(DataTranslator.class);
 
     protected ItemReader srcItemReader;
-    protected Map equivMap;       // lookup equivalent resources - excludes restricted subclass info
-    protected Map templateMap;    // map of src class URI/SubclassRestriction templates possible
-    protected Map restrictionMap; // map of SubclassRestrictions to target restricted subclass URI
-    protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
-    protected Map impMap;         // map class URI -> implementation string
-    protected String tgtNs;
-    protected int newItemId = 1;
+    protected Map equivMap = new HashMap();       // src URI to equivalent tgt URI
+    protected Map templateMap = new HashMap();    // src class URI to SubclassRestriction templates
+    protected Map restrictionMap = new HashMap(); // SubclassRestrictions to target class URI
+    protected String tgtNs = null;
+    protected ItemFactory itemFactory = null;
 
     /**
      * Empty constructor.
      */
-    public DataTranslator() {
+    private DataTranslator() {
     }
 
     /**
      * Construct with a srcItemStore to read from an ontology model.
      * Use model to set up src/tgt maps required during translation.
      * @param srcItemReader the ItemReader from which to retrieve the source Items
-     * @param model the merged ontology model
-     * @param tgtNs the target namespace in model
+     * @param mergeSpec the merge specification
+     * @param srcModel the source model
+     * @param tgtModel the target model
      */
-    public DataTranslator(ItemReader srcItemReader, OntModel model, String tgtNs) {
-        this.tgtNs = tgtNs;
+    public DataTranslator(ItemReader srcItemReader, Properties mergeSpec, Model srcModel,
+                          Model tgtModel) {
+        //note this does not verify that:
+        //  src items conform to the source model (slow? unnecessary?)
+        //  tgt paths in the merge spec are valid
+        //  the equivalences in the merge spec are type-safe
+        //  any new tgt items conform to the tgt model
+        //or handle equivalences for paths longer than:
+        //  srcClass.fieldName = tgtClass.fieldName
+        //which can't be expressed as srcURI === tgtURI, so this will have to be changed once we
+        //want to do more that just represent the old merge_specs in the new format
         this.srcItemReader = srcItemReader;
-        Map subMap = OntologyUtil.getRestrictedSubclassMap(model);
-        this.templateMap = OntologyUtil.getRestrictionSubclassTemplateMap(model, subMap);
-        this.restrictionMap = OntologyUtil.getRestrictionSubclassMap(model, subMap);
-        buildPropertiesMap(model);
-        buildEquivalenceMap(model);  // use local version instead of OntologyUtil
+
+        if (tgtModel != null) {
+            tgtNs = tgtModel.getNameSpace().toString();
+        }
+
+        itemFactory = new ItemFactory(tgtModel, "-1_");
+
+        buildTranslationMaps(buildEquivalences(mergeSpec, srcModel, tgtNs), srcModel);
+    }
+
+    /**
+     * Parse the equivalences properties to Equivalence objects
+     * Each line of the file should either be of the form:
+     * tgtClsName = srcClsName [path=value]*, srcClsName [path=value]* ...
+     * or:
+     * tgtClsName.fieldName = srcClsName.fieldName, srcClsName.fieldName ...
+     * @param mergeSpec the properties
+     * @param srcModel the source model
+     * @param tgtNs the target namespace
+     * @returns a set of Equivalences
+     */
+    private static Set buildEquivalences(Properties mergeSpec, Model srcModel, String tgtNs) {
+        Set equivalences = new HashSet();
+        for (Iterator i = mergeSpec.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            Equivalence equivalence = new Equivalence(tgtNs + ((String) entry.getKey())
+                                                      .replaceAll("[.]", "__"));
+            for (Iterator j = Arrays.asList(((String) entry.getValue())
+                                            .split("\\s*,\\s*")).iterator(); j.hasNext();) {
+                String s = (String) j.next();
+                String path = s.split("\\[")[0].trim();
+                verifyPath(path, srcModel, false);
+                String srcURI = srcModel.getNameSpace() + path.replaceAll("[.]", "__");
+                equivalence.getSrcURIs().put(srcURI, null);
+                Matcher matcher = Pattern.compile("\\[(.*?)\\]").matcher(s);
+                while (matcher.find()) {
+                    String[] restriction = matcher.group(1).split("\\s*=\\s*");
+                    verifyPath(path + "." + restriction[0], srcModel, true);
+                    Map restrictions = (Map) equivalence.getSrcURIs().get(srcURI);
+                    if (restrictions == null) {
+                        restrictions = new HashMap();
+                        equivalence.getSrcURIs().put(srcURI, restrictions);
+                    }
+                    restrictions.put(restriction[0], restriction[1]);
+                }
+            }
+            equivalences.add(equivalence);
+        }
+        return equivalences;
+    }
+
+    /**
+     * Verify that a path of the form clsName.refName.refName.attName is valid for a given model
+     * @param path the path
+     * @param model the model
+     * @param attribute whether the path must point at an attribute field
+     */
+    private static void verifyPath(String path, Model model, boolean attribute) {
+        String[] parts = path.split("[.]");
+        String clsName = parts[0];
+        ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName() + "."
+                                                             + clsName);
+        if (cld == null) {
+            throw new RuntimeException("Unable to resolve path '" + path + "': class '" + clsName
+                                       + "' not found in model '" + model.getName() + "'");
+        }
+        if (parts.length > 1) {
+            for (int i = 1; i < parts.length; i++) {
+                FieldDescriptor fld = cld.getFieldDescriptorByName(parts[i]);
+                if (fld == null) {
+                    throw new RuntimeException("Unable to resolve path '" + path + "': field '"
+                                               + parts[i] + "' of class '" + cld.getName()
+                                               + "' not found in model '" + model.getName() + "'");
+                }
+                if (i < parts.length - 1) {
+                    if (!fld.isReference()) {
+                         throw new RuntimeException("Unable to resolve path '" + path + "': field '"
+                                                    + parts[i] + "' of class '"
+                                                    + cld.getName()
+                                                    + "' is not a reference field in model '"
+                                                    + model.getName() + "'");
+                    }
+                    cld = ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
+                } else {
+                    if (attribute && !fld.isAttribute()) {
+                         throw new RuntimeException("Unable to resolve path '" + path
+                                                    + "': field '" + parts[i] + "' of class '"
+                                                    + cld.getName()
+                                                    + "' is not an attribute field in model '"
+                                                    + model.getName() + "'");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Build the "traditional" data translator maps from our set of Equivalences
+     * @param equivalences the set of Equivalences
+     * @param model the source model
+     */
+    private void buildTranslationMaps(Set equivalences, Model srcModel) {
+        for (Iterator i = equivalences.iterator(); i.hasNext();) {
+            Equivalence equivalence = (Equivalence) i.next();
+            String tgtURI = equivalence.getTgtURI();
+            for (Iterator j = equivalence.getSrcURIs().keySet().iterator(); j.hasNext();) {
+                String srcURI = (String) j.next();
+                Map restrictions = (Map) equivalence.getSrcURIs().get(srcURI);
+                if (restrictions == null) { //property or class
+                    equivMap.put(srcURI, tgtURI);
+                    if (tgtURI.indexOf("__") != -1) { //property
+                        String srcCls = srcURI.split("#")[1].split("__")[0];
+                        String srcFld = srcURI.split("__")[1];
+                        ClassDescriptor srcCld = srcModel
+                            .getClassDescriptorByName(srcModel.getPackageName() + "." + srcCls);
+                        if (srcModel.getAllSubs(srcCld) != null) {
+                            for (Iterator k = srcModel.getAllSubs(srcCld).iterator();
+                                 k.hasNext();) {
+                                ClassDescriptor cld = (ClassDescriptor) k.next();
+                                equivMap.put(srcURI.split("#")[0] + "#" + cld.getUnqualifiedName()
+                                             + "__" + srcFld, tgtURI);
+                            }
+                        }
+                    }
+                } else { //class
+                    SubclassRestriction sr1 = new SubclassRestriction();
+                    SubclassRestriction sr2 = new SubclassRestriction();
+                    for (Iterator k = restrictions.keySet().iterator(); k.hasNext();) {
+                        String path = (String) k.next();
+                        String value = (String) restrictions.get(path);
+                        String srcCls = srcURI.split("#")[1];
+                        sr1.addRestriction(srcCls + "." + path, null);
+                        sr2.addRestriction(srcCls + "." + path, value);
+                    }
+                    Set templates = (Set) templateMap.get(srcURI);
+                    if (templates == null) {
+                        templates = new TreeSet(new SubclassRestrictionComparator());
+                        templateMap.put(srcURI, templates);
+                    }
+                    templates.add(sr1);
+                    restrictionMap.put(sr2, tgtURI);
+                }
+            }
+        }
     }
 
     /**
@@ -152,9 +302,9 @@ public class DataTranslator
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
+        String tgtClsName = null;
 
         // see if there are any SubclassRestriction template for this class
-        String tgtClsName = null;
         Set templates = (Set) templateMap.get(srcItem.getClassName());
         if (templates != null) {
             Iterator i = templates.iterator();
@@ -164,41 +314,27 @@ public class DataTranslator
                 tgtClsName = (String) restrictionMap.get(sr);
             }
         }
+
         if (tgtClsName == null) {
             tgtClsName = (String) equivMap.get(srcItem.getClassName());
-            if (tgtClsName == null) {
-                // should perhaps log error and ignore this item?
-                throw new InterMineException("Could not find a target class name for class: "
-                                           + srcItem.getClassName());
+            if (tgtClsName == null || !XmlUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
+                return null;
             }
         }
 
-        // if class is not in target namespace then don't bother translating it
-        if (!XmlUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
-            return null;
-        }
-
-        Item tgtItem = new Item();
+        Item tgtItem = itemFactory.makeItem(srcItem.getIdentifier());
         tgtItem.setIdentifier(srcItem.getIdentifier());
         tgtItem.setClassName(tgtClsName);
         // no need to set implementations as not dynamic classes
-        //tgtItem.setImplementations((String) impMap.get(tgtClsName));
 
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
             Attribute att = (Attribute) i.next();
             if (!att.getName().equals("nonUniqueId")) {
                 String attSrcURI = srcItem.getClassName() + "__" + att.getName();
-                String attTgtURI = getTargetFieldURI(srcItem.getClassName(), att.getName());
-                if (attTgtURI == null) {
-                    throw new InterMineException("no target attribute found for " + attSrcURI
-                                               + " in class " + tgtClsName);
-                }
-                if (XmlUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
-                    Attribute newAtt = new Attribute();
-                    newAtt.setName(attTgtURI.split("__")[1]);
-                    newAtt.setValue(att.getValue());
-                    tgtItem.addAttribute(newAtt);
+                String attTgtURI = (String) equivMap.get(attSrcURI);
+                if (attTgtURI != null && XmlUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
+                    tgtItem.addAttribute(new Attribute(attTgtURI.split("__")[1], att.getValue()));
                 }
             }
         }
@@ -207,17 +343,9 @@ public class DataTranslator
         for (Iterator i = srcItem.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
             String refSrcURI = srcItem.getClassName() + "__" + ref.getName();
-            //            String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
-            String refTgtURI = getTargetFieldURI(srcItem.getClassName(), ref.getName());
-            if (refTgtURI == null) {
-                throw new InterMineException("no target reference found for " + refSrcURI
-                                           + " in class " + tgtClsName);
-            }
-            if (XmlUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
-                Reference newRef = new Reference();
-                newRef.setName(refTgtURI.split("__")[1]);
-                newRef.setRefId(ref.getRefId());
-                tgtItem.addReference(newRef);
+            String refTgtURI = (String) equivMap.get(refSrcURI);
+            if (refTgtURI != null && XmlUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
+                tgtItem.addReference(new Reference(refTgtURI.split("__")[1], ref.getRefId()));
             }
         }
 
@@ -225,18 +353,109 @@ public class DataTranslator
         for (Iterator i = srcItem.getCollections().iterator(); i.hasNext();) {
             ReferenceList col = (ReferenceList) i.next();
             String colSrcURI = srcItem.getClassName() + "__" + col.getName();
-            //String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
-            String colTgtURI = getTargetFieldURI(srcItem.getClassName(), col.getName());
-            if (colTgtURI == null) {
-                throw new InterMineException("no target collection found for " + colSrcURI
-                                           + " in class " + tgtClsName);
-            }
-            if (XmlUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
-                ReferenceList newCol = new ReferenceList(colTgtURI.split("__")[1], col.getRefIds());
-                tgtItem.addCollection(newCol);
+            String colTgtURI = (String) equivMap.get(colSrcURI);
+            if (colTgtURI != null && XmlUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
+                tgtItem.addCollection(new ReferenceList(colTgtURI.split("__")[1], col.getRefIds()));
             }
         }
+
         return Collections.singleton(tgtItem);
+    }
+
+    /**
+     * Given an item in src format and a template (a list of path expressions) create
+     * a SubclassRestriction object with attribute values filled in if present.
+     * If any attribute has a null value or a reference is not present return null.
+     * @param item an Item in source format
+     * @param template a SubclassRestriction with path expressions bu null values
+     * @return a SubclassRestriction with attribute values filled in or null
+     * @throws ObjectStoreException if error reading an item
+     */
+    protected SubclassRestriction buildSubclassRestriction(Item item, SubclassRestriction template)
+        throws ObjectStoreException {
+        SubclassRestriction sr = new SubclassRestriction();
+        Iterator i = template.getRestrictions().keySet().iterator();
+        while (i.hasNext()) {
+            String path = (String) i.next();
+            StringTokenizer tokenizer = new StringTokenizer(path, ".");
+            String clsName = tokenizer.nextToken();
+            if (item.getClassName().indexOf(clsName) >= 0) {
+                String value = buildRestriction(tokenizer, item);
+                if (value != null) {
+                    sr.addRestriction(path, value);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+        return sr;
+    }
+
+    /**
+     * Given a StringTokenizer over a path expression recurse through references of item
+     * to find described attribute value.  Return null if attribute or reference
+     * not found.  Needs access to source ItemStore.
+     * @param tokenizer tokenizer over a path expression excluding toplevel class name
+     * @param item item to examine
+     * @return the value of the attribute or null if not found
+     * @throws ObjectStoreException if error reading an item
+     */
+    protected String buildRestriction(StringTokenizer tokenizer, Item item)
+        throws ObjectStoreException {
+        if (tokenizer.hasMoreTokens()) {
+            String fieldName = tokenizer.nextToken();
+            if (tokenizer.hasMoreTokens() && item.hasReference(fieldName)) {
+                return buildRestriction(tokenizer, getReference(item, fieldName));
+            } else if (item.hasAttribute(fieldName)) {
+                return item.getAttribute(fieldName).getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Convenience method to create an item in the target namespace
+     * @param className the (un-namespaced) class name
+     * @return the new item
+     */
+    protected Item createItem(String className) {
+        return createItem(tgtNs + className, "");
+    }
+
+    /**
+     * Create a new item and assign it an id.
+     * @param className class name of new item
+     * @param implementations implementations string for new item
+     * @return the new item
+     */
+    protected Item createItem(String className, String implementations) {
+        return itemFactory.makeItem(null, className, implementations);
+    }
+
+    /**
+     * Retrieve a reference of an Item
+     * @param item the Item
+     * @param refName the name of the reference
+     * @return the referenced Item
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected Item getReference(Item item, String refName) throws ObjectStoreException {
+        Reference ref = item.getReference(refName);
+        return (ref == null ? null : ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
+    }
+
+    /**
+     * Retrieve an Iterator over the elements of a collection field of an Item
+     * @param item the Item
+     * @param refListName the name of the collection
+     * @return the Iterator
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected Iterator getCollection(Item item, String refListName) throws ObjectStoreException {
+        ReferenceList refList = item.getCollection(refListName);
+        return (refList == null ? null : new ItemIterator(refList.getRefIds()));
     }
 
     /**
@@ -289,7 +508,8 @@ public class DataTranslator
      * @param oldFieldName name of field in fromItem
      * @param newFieldName desired name of field in target item
      */
-    protected void moveField(Item fromItem, Item toItem, String oldFieldName, String newFieldName) {
+    protected static void moveField(Item fromItem, Item toItem, String oldFieldName,
+                                    String newFieldName) {
         if (fromItem.hasAttribute(oldFieldName)) {
             Attribute att = new Attribute();
             att.setName(newFieldName);
@@ -317,7 +537,7 @@ public class DataTranslator
      * @param revRefName name of field in newItem that points back to tgtItem (may be null)
      * @param revIsMany true if reference from newItem to tgtItem is a collection
      */
-    protected void addReferencedItem(Item tgtItem, Item newItem, String fwdRefName,
+    protected static void addReferencedItem(Item tgtItem, Item newItem, String fwdRefName,
                                      boolean fwdIsMany, String revRefName, boolean revIsMany) {
         if (fwdIsMany) {
             ReferenceList col = tgtItem.getCollection(fwdRefName);
@@ -353,27 +573,20 @@ public class DataTranslator
         }
     }
 
-    /**
-     * Convenience method to create an item in the target namespace
-     * @param className the (un-namespaced) class name
-     * @return the new item
-     */
-    protected Item createItem(String className) {
-        return createItem(tgtNs + className, "");
-    }
 
     /**
-     * Create a new item and assign it an id.
-     * @param className class name of new item
-     * @param implementations implementations string for new item
-     * @return the new item
+     * Add an element to a collection field of an Item
+     * @param item the item
+     * @param refListName the collection name
+     * @param element the element
      */
-    protected Item createItem(String className, String implementations) {
-        Item item = new Item();
-        item.setIdentifier("-1_" + (newItemId++));
-        item.setClassName(className);
-        item.setImplementations(implementations);
-        return item;
+    protected static void addToCollection(Item item, String refListName, Item element) {
+        ReferenceList refList = item.getCollection(refListName);
+        if (refList == null) {
+            refList = new ReferenceList(refListName);
+            item.addCollection(refList);
+        }
+        refList.addRefId(element.getIdentifier());
     }
 
     /**
@@ -381,7 +594,7 @@ public class DataTranslator
      * @param col a ReferenceList
      * @return true if contains exactly one element
      */
-    protected boolean isSingleElementCollection(ReferenceList col) {
+    protected static boolean isSingleElementCollection(ReferenceList col) {
         return (col.getRefIds().size() == 1);
     }
 
@@ -390,267 +603,11 @@ public class DataTranslator
      * @param col a ReferenceList
      * @return first identifier in collection or null if empty
      */
-    protected String getFirstId(ReferenceList col) {
+    protected static String getFirstId(ReferenceList col) {
         if (col.getRefIds().size() > 0) {
             return (String) col.getRefIds().get(0);
         }
         return null;
-    }
-
-
-    /**
-     * Given an item in src format and a template (a list of path expressions) create
-     * a SubclassRestriction object with attribute values filled in if present.
-     * If any attribute has a null value or a reference is not present return null.
-     * @param item an Item in source format
-     * @param template a SubclassRestriction with path expressions bu null values
-     * @return a SubclassRestriction with attribute values filled in or null
-     * @throws ObjectStoreException if error reading an item
-     */
-    protected SubclassRestriction buildSubclassRestriction(Item item, SubclassRestriction template)
-        throws ObjectStoreException {
-        SubclassRestriction sr = new SubclassRestriction();
-        Iterator i = template.getRestrictions().keySet().iterator();
-        while (i.hasNext()) {
-            String path = (String) i.next();
-            StringTokenizer tokenizer = new StringTokenizer(path, ".");
-            String clsName = tokenizer.nextToken();
-            if (item.getClassName().indexOf(clsName) >= 0) {
-                String value = buildRestriction(tokenizer, item);
-                if (value != null) {
-                    sr.addRestriction(path, value);
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        }
-        return sr;
-    }
-
-    /**
-     * Given a StringTokenizer over a path expression recurse through references of item
-     * to find described attribute value.  Return null if attribute or reference
-     * not found.  Needs access to source ItemStore.
-     * @param tokenizer tokenizer over a path expression excluding toplevel class name
-     * @param item item to examine
-     * @return the value of the attribute or null if not found
-     * @throws ObjectStoreException if error reading an item
-     */
-    protected String buildRestriction(StringTokenizer tokenizer, Item item)
-        throws ObjectStoreException {
-        if (tokenizer.hasMoreTokens()) {
-            String fieldName = tokenizer.nextToken();
-            if (tokenizer.hasMoreTokens()  && item.hasReference(fieldName)) {
-                org.intermine.xml.full.Reference ref = item.getReference(fieldName);
-                return buildRestriction(tokenizer,
-                         ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
-            } else if (item.hasAttribute(fieldName)) {
-                return item.getAttribute(fieldName).getValue();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get name of a target property given parent class and source property URI.
-     * First examines class/property then uses equivalence map if no value found.
-     * @param srcClsURI URI of property domain in source model
-     * @param srcPropName Name of property in source model
-     * @return corresponding URI for property in target model
-     */
-    protected String getTargetFieldURI(String srcClsURI, String srcPropName) {
-        String tgtPropURI = null;
-        if (clsPropMap.containsKey(srcClsURI)) {
-            Map propMap = (Map) clsPropMap.get(srcClsURI);
-            if (srcPropName.indexOf("__") > 0) {
-                srcPropName = srcPropName.split("__")[1];
-            }
-            tgtPropURI = (String) propMap.get(srcPropName);
-        }
-        if (tgtPropURI == null) {
-            tgtPropURI = (String) equivMap.get(srcClsURI + "__" + srcPropName);
-        }
-        return tgtPropURI;
-    }
-
-    /**
-     * Classes in target OWL model specifically inherit superclass properties (inherited
-     * properties are subPropertyOf parent property).  Build a map of class/
-     * src_property_localname/tgt_property_localname.
-     * @param model the OntModel
-     */
-    protected void buildPropertiesMap(OntModel model) {
-        clsPropMap = new HashMap();
-        impMap = new HashMap();
-
-        ExtendedIterator clsIter = model.listClasses();
-        while (clsIter.hasNext()) {
-            OntClass cls = (OntClass) clsIter.next();
-            if (!cls.isAnon() && cls.getNameSpace().equals(tgtNs)) {
-                ExtendedIterator propIter = cls.listDeclaredProperties(false);
-                while (propIter.hasNext()) {
-                    OntProperty prop = (OntProperty) propIter.next();
-                    //if (prop.getNameSpace().equals(tgtNs)) {
-                        ExtendedIterator equivIter = prop.listEquivalentProperties();
-                        while (equivIter.hasNext()) {
-                            OntProperty srcProp = (OntProperty) equivIter.next();
-                            OntClass srcCls = getPropertyDomain(srcProp);
-                            addToClsPropMap(srcCls.getURI(), srcProp.getLocalName(), prop.getURI());
-
-                            // now apply this property equivalence to all subclasses of srcCls
-                            // that exist in the src namespace
-                            ExtendedIterator subIter = srcCls.listSubClasses(false); // all
-                            while (subIter.hasNext()) {
-                                OntClass subCls = (OntClass) subIter.next();
-                                if (!subCls.isAnon()
-                                    && subCls.getNameSpace().equals(srcCls.getNameSpace())) {
-                                    addToClsPropMap(subCls.getURI(), srcProp.getLocalName(),
-                                                    prop.getURI());
-                                }
-                            }
-                            subIter.close();
-                        }
-                        equivIter.close();
-                        //}
-                }
-                propIter.close();
-            }
-        }
-        clsIter.close();
-    }
-
-    private OntClass getPropertyDomain(OntProperty prop) {
-        OntClass domain = null;
-        if (prop.getInverseOf() != null) {
-            domain = (OntClass) prop.getInverseOf().getRange().as(OntClass.class);
-        } else {
-            domain = (OntClass) prop.getDomain().as(OntClass.class);
-        }
-        return domain;
-    }
-
-
-    /**
-     * Classes in target OWL model specifically inherit superclass properties (inherited
-     * properties are subPropertyOf parent property).  Build a map of class/
-     * src_property_uri/tgt_property_uri.
-     * @param model the OntModel
-     */
-    protected void buildPropertiesMapOld(OntModel model) {
-        clsPropMap = new HashMap();
-        impMap = new HashMap();
-
-        ExtendedIterator clsIter = model.listClasses();
-        while (clsIter.hasNext()) {
-            OntClass cls = (OntClass) clsIter.next();
-            if (!cls.isAnon() && cls.getNameSpace().equals(tgtNs)) {
-                Set subclasses = new HashSet();
-
-                Map propMap = new HashMap();
-                ExtendedIterator propIter = cls.listDeclaredProperties(false);
-                while (propIter.hasNext()) {
-                    OntProperty prop = (OntProperty) propIter.next();
-                    //if (prop.getNameSpace().equals(tgtNs) && prop.getSuperProperty() != null) {
-                    if (prop.getNameSpace().equals(tgtNs)) {
-                        ExtendedIterator equivIter = prop.listEquivalentProperties();
-                        while (equivIter.hasNext()) {
-                            propMap.put(((OntProperty) equivIter.next()).getURI(), prop.getURI());
-                        }
-                        equivIter.close();
-                    }
-                }
-                propIter.close();
-
-
-                if (!propMap.isEmpty()) {
-                    clsPropMap.put(cls.getURI(), propMap);
-                }
-
-                // build implementations map
-                StringBuffer imps = new StringBuffer();
-                ExtendedIterator superIter = cls.listSuperClasses(true);
-                while (superIter.hasNext()) {
-                    OntClass sup = (OntClass) superIter.next();
-                    if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
-                        imps.append(sup.getURI() + " ");
-                    }
-                }
-                superIter.close();
-                impMap.put(cls.getURI(), imps.toString().trim());
-            }
-        }
-        clsIter.close();
-    }
-
-
-    private void addToClsPropMap(String srcClsName, String srcPropName, String tgtPropName) {
-        Map propMap = (Map) clsPropMap.get(srcClsName);
-        if (propMap == null) {
-            propMap = new HashMap();
-        }
-        propMap.put(srcPropName.split("__")[1], tgtPropName);
-        clsPropMap.put(srcClsName, propMap);
-    }
-
-    /**
-     * Build a map of src/tgt resource URI.  Does not include resources
-     * that are restricted subclasses or restrictions thereof.
-     * @param model the OntModel
-     */
-    protected void buildEquivalenceMap(OntModel model) {
-        // build a set of all restricted subclass URIs and their properties
-        Set subs = new HashSet(restrictionMap.values());
-        Iterator i = clsPropMap.values().iterator();
-        while (i.hasNext()) {
-            subs.addAll(((Map) i.next()).values());
-        }
-
-        // build equiv map excluding restricted subclass data
-        equivMap = new HashMap();
-
-        ExtendedIterator stmtIter = model.listStatements();
-        while (stmtIter.hasNext()) {
-            Statement stmt = (Statement) stmtIter.next();
-            if (stmt.getPredicate().getLocalName().equals("equivalentClass")
-                || stmt.getPredicate().getLocalName().equals("equivalentProperty")
-                || stmt.getPredicate().getLocalName().equals("sameAs")) {
-                Resource res = stmt.getResource();
-                String tgtURI = stmt.getSubject().getURI();
-                // no longer cascade properties to subclasses, if a subproperty is mentioned
-                // specifically in merge spec it will be in clsPropMap and so will be accessed
-                // first, otherwise the superclass property will be found in equivMap
-                //if (!subs.contains(tgtURI)) {
-                equivMap.put(res.getURI(), stmt.getSubject().getURI());
-                //}
-            }
-        }
-        stmtIter.close();
-    }
-
-    /**
-     * Retrieve a reference of an Item
-     * @param item the Item
-     * @param refName the name of the reference
-     * @return the referenced Item
-     * @throws ObjectStoreException if an error occurs
-     */
-    protected Item getReference(Item item, String refName) throws ObjectStoreException {
-        Reference ref = item.getReference(refName);
-        return (ref == null ? null : ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
-    }
-
-    /**
-     * Retrieve an Iterator over the elements of a collection field of an Item
-     * @param item the Item
-     * @param refListName the name of the collection
-     * @return the Iterator
-     * @throws ObjectStoreException if an error occurs
-     */
-    protected Iterator getCollection(Item item, String refListName) throws ObjectStoreException {
-        ReferenceList refList = item.getCollection(refListName);
-        return (refList == null ? null : new ItemIterator(refList.getRefIds()));
     }
 
     private class ItemIterator implements Iterator
@@ -675,17 +632,38 @@ public class DataTranslator
     }
 
     /**
-     * Add an element to a collection field of an Item
-     * @param item the item
-     * @param refListName the collection name
-     * @param element the element
+     * Simple structure to represent the link between a class or property in the target model and 
+     * several classes or properties in the the source model. The values in the srcURIs map will
+     * usually be null, unless this equivalence represents a "restricted subclass" in which case
+     * the value will be map of "restrictions" ie. a map of paths to string values.
      */
-    protected void addToCollection(Item item, String refListName, Item element) {
-        ReferenceList refList = item.getCollection(refListName);
-        if (refList == null) {
-            refList = new ReferenceList("comments");
-            item.addCollection(refList);
+    static class Equivalence
+    {
+        String tgtURI;
+        Map srcURIs = new HashMap();
+
+        /**
+         * Constructor
+         * @param tgtURI the target URI
+         */
+        Equivalence(String tgtURI) {
+            this.tgtURI = tgtURI;
         }
-        refList.addRefId(element.getIdentifier());
+
+        /**
+         * Get the value of tgtURI
+         * @return the target URI
+         */
+        String getTgtURI() {
+            return tgtURI;
+        }
+
+        /**
+         * Get the value of srcURIs
+         * @return the Map of source URIs
+         */
+        Map getSrcURIs() {
+            return srcURIs;
+        }
     }
 }

@@ -299,12 +299,17 @@
   <target name="precompile-main" depends="prepare">
     <mkdir dir="${build.src.java}/org/intermine/sql/query"/>
     <mkdir dir="${build.src.java}/org/intermine/objectstore/query/iql"/>
+    <mkdir dir="${build.src.java}/org/intermine/dataconversion"/>
     <antlr target="${src.java}/org/intermine/sql/query/intermine_sql.g"
            outputdirectory="${build.src.java}/org/intermine/sql/query">
       <classpath refid="project.class.path"/>
     </antlr>
     <antlr target="${src.java}/org/intermine/objectstore/query/iql/intermine_iql.g"
            outputdirectory="${build.src.java}/org/intermine/objectstore/query/iql">
+      <classpath refid="project.class.path"/>
+    </antlr>
+    <antlr target="${src.java}/org/intermine/dataconversion/itempath.g"
+           outputdirectory="${build.src.java}/org/intermine/dataconversion">
       <classpath refid="project.class.path"/>
     </antlr>
     <depend srcdir="${src.java}" destdir="${build.java}" closure="yes" dump="yes"/>

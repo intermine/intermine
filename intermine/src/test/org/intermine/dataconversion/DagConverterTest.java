@@ -32,10 +32,12 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.ItemFactory;
 
 public class DagConverterTest extends TestCase {
     String NAMESPACE = "http://www.flymine.org/model/genomic#";
     MockItemWriter itemWriter;
+    private ItemFactory itemFactory = new ItemFactory();
 
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap());
@@ -52,7 +54,7 @@ public class DagConverterTest extends TestCase {
 
         Set expected = new HashSet();
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setIdentifier("0_0");
         item.setClassName(NAMESPACE + "Ontology");
         item.setImplementations("");
@@ -62,7 +64,7 @@ public class DagConverterTest extends TestCase {
         item.addAttribute(attribute);
         expected.add(item);
 
-        item = new Item();
+        item = itemFactory.makeItem();
         item.setIdentifier("0_1");
         item.setClassName(NAMESPACE + "OntologyTerm");
         item.setImplementations("");
@@ -88,7 +90,7 @@ public class DagConverterTest extends TestCase {
         item.addCollection(refs);
         expected.add(item);
 
-        item = new Item();
+        item = itemFactory.makeItem();
         item.setIdentifier("0_2");
         item.setClassName(NAMESPACE + "OntologyTerm");
         item.setImplementations("");
@@ -113,7 +115,7 @@ public class DagConverterTest extends TestCase {
         item.addCollection(refs);
         expected.add(item);
 
-        item = new Item();
+        item = itemFactory.makeItem();
         item.setIdentifier("0_3");
         item.setClassName(NAMESPACE + "OntologyRelation");
         item.setImplementations("");
@@ -131,7 +133,7 @@ public class DagConverterTest extends TestCase {
         item.addReference(ref);
         expected.add(item);
 
-        item = new Item();
+        item = itemFactory.makeItem();
         item.setIdentifier("0_4");
         item.setClassName(NAMESPACE + "OntologyTerm");
         item.setImplementations("");
@@ -156,7 +158,7 @@ public class DagConverterTest extends TestCase {
         item.addCollection(refs);
         expected.add(item);
 
-        item = new Item();
+        item = itemFactory.makeItem();
         item.setIdentifier("0_5");
         item.setClassName(NAMESPACE + "OntologyRelation");
         item.setImplementations("");

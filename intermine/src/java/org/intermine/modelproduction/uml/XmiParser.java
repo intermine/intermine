@@ -239,7 +239,7 @@ public class XmiParser implements ModelParser
 
 
     private String qualified(MClassifier cls) {
-        if (pkgName != null) {
+        if (pkgName != null && !getPackagePath(cls).startsWith("org.intermine.model")) {
             return stripIllegal(pkgName + "." + cls.getName());
         }
         return stripIllegal(getPackagePath(cls) + "." + cls.getName());

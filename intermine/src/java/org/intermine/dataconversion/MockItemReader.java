@@ -23,7 +23,7 @@ import org.intermine.objectstore.ObjectStoreException;
  * An ItemReader backed by a Map of Items identified by id
  * @author Mark Woodbridge
  */
-public class MockItemReader implements ItemReader
+public class MockItemReader extends AbstractItemReader
 {
     Map storedItems;
 

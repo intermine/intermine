@@ -53,6 +53,6 @@
 </collection>
 </item>
 <item id="0_4" class="http://www.intermine.org/model/xmlschematest#Address_Company">
-<attribute name="addressString" value="Company Street"/>
+<attribute name="address" value="Company Street"/>
 </item>
 </items>

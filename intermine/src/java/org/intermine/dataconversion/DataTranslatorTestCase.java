@@ -14,10 +14,12 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
+import java.io.InputStream;
 
 import org.intermine.xml.full.Item;
-
-import com.hp.hpl.jena.ontology.OntModel;
+import org.intermine.metadata.Model;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
  * TestCase for all DataTranslators
@@ -27,20 +29,42 @@ import com.hp.hpl.jena.ontology.OntModel;
  */
 public abstract class DataTranslatorTestCase extends TargetItemsTestCase
 {
+    protected Model srcModel;
+    protected Properties mapping;
+
+    public DataTranslatorTestCase(String arg) {
+        super(arg);
+    }
+
+    /**
+     * @see TestCase#SetUp
+     */
+    public void setUp() throws Exception {
+        super.setUp();
+        mapping = new Properties();
+        InputStream is = getClass().getClassLoader().getResourceAsStream(getSrcModelName() + "_mappings");
+        if (is != null) {
+            mapping.load(is);
+        }
+        InterMineModelParser parser = new InterMineModelParser();
+        srcModel = Model.getInstanceByName(getSrcModelName());
+
+    }
+
+    public Model getTargetModel(String ns) throws Exception {
+        if (ns.equals("http://www.flymine.org/model/genomic#")) {
+            return Model.getInstanceByName("genomic");
+        } else {
+            throw new RuntimeException("can't find Model for: " + ns);
+        }
+    }
+
     /**
      * Get the Collection of test source Items
      * @return the Collection of Items
      * @throws Exception if an error occurs
      */
     protected abstract Collection getSrcItems() throws Exception;
-
-    /**
-     * Subclasses must provide access to the ontology model.
-     * @return the ontology model
-     */
-    protected abstract OntModel getOwlModel();
-
-
 
     /**
      * Given two sets of Items (a and b) return a set of Items that are present in a
@@ -65,5 +89,6 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
         return diff;
     }
 
+    protected abstract String getSrcModelName();
 
 }

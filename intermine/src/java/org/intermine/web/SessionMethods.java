@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 
 import org.intermine.objectstore.query.Results;
@@ -101,14 +102,26 @@ public class SessionMethods
         final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         final PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final ObjectStoreInterMineImpl ios = (os instanceof ObjectStoreInterMineImpl)
+                                             ? (ObjectStoreInterMineImpl) os : null;
         final MessageResources resources =
             (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-
+        
+        // A reference to this runnable is used as a token for registering
+        // a cancelling the running query
+        
         RunQueryThread runnable = new RunQueryThread() {
             public void run () {
                 try {
                     Query q = MainHelper.makeQuery(query, profile.getSavedBags());
-                    r = TableHelper.makeResults(os, q);
+                    Results rtmp = TableHelper.makeResults(os, q);
+                    // Register request id for query on this thread
+                    // We do this before setting r
+                    if (ios != null) {
+                        LOG.info("Registering request id " + this);
+                        ios.registerRequestId(this);
+                    }
+                    r = rtmp; // set property - allow main request thread to progress
                     TableHelper.initResults(r);
                     pr = new PagedResults(query.getView(), r, os.getModel());
                 } catch (ObjectStoreException e) {
@@ -129,6 +142,18 @@ public class SessionMethods
                     recordError(sw.toString(), session);
                     LOG.error(sw.toString());
                     error = true;
+                } finally {
+                    if (r != null) {
+                        try {
+                            LOG.info("Deregistering request id " + this);
+                            ((ObjectStoreInterMineImpl) os).deregisterRequestId(this);
+                        } catch (ObjectStoreException e1) {
+                            StringWriter sw = new StringWriter();
+                            e1.printStackTrace(new PrintWriter(sw));
+                            LOG.error(sw.toString());
+                            error = true;
+                        }
+                    }
                 }
                 
                 // debug pause
@@ -151,9 +176,14 @@ public class SessionMethods
         Results r = runnable.getResults();
         
         while (thread.isAlive()) {
-            Thread.sleep(100);
+            Thread.sleep(250);
             if (monitor != null) {
-                monitor.queryProgress(r);
+                boolean cancelled = !monitor.queryProgress(request, r);
+                if (cancelled && ios != null) {
+                    LOG.info("Cancelling request " + runnable);
+                    ios.cancelRequest(runnable);
+                    return false;
+                }
             }
         }
 

@@ -45,8 +45,8 @@ public class XmlBindingTest extends XMLTestCase {
 
 
     public void testRoundTrip() throws Exception {
-        XMLUnit.setIgnoreWhitespace(true);
         InputStream original = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+        XMLUnit.setIgnoreWhitespace(true);
         Collection unmarshalled = (Collection) binding.unmarshal(original);
         setIds(unmarshalled);
         binding.marshal(unmarshalled, new BufferedWriter(new FileWriter(tempFile)));
