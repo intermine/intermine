@@ -75,6 +75,7 @@
         <attribute name="stringObjType" type="java.lang.String"/>
     </class>
     <class name="org.flymine.model.testmodel.Bank" is-interface="false">
+        <attribute name="name" type="java.lang.String"/>
         <collection name="debtors" referenced-type="org.flymine.model.testmodel.Broke" ordered="false" reverse-reference="bank"/>
     </class>
 </model>
