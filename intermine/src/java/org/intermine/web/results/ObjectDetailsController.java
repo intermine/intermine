@@ -20,14 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
-import org.intermine.web.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object
