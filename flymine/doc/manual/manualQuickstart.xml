@@ -39,30 +39,32 @@
    
       <itemizedlist>
         <listitem>
-         <para>The FlyMine query builder allows you to construct complex queries across the 
-        multiple integrated data sources in the database</para>
+         <para>The FlyMine query builder allows you to construct
+        complex queries across the multiple integrated data sources in
+        the database.</para>
       </listitem>
 
       <listitem>
         <para>The FlyMine query builder consists of 3 main sections:</para> 
- 
-       <orderedlist> 
-
+     
+      <orderedlist numeration = "upperalpha">
        <listitem>     
-         <para>A. The class chooser</para>
+         <para>The class chooser (A)</para>
        </listitem>
 
        <listitem>
-         <para>B. The main query builder</para>
+         <para>The main query builder (B)</para>
        </listitem>
 
        <listitem>
-         <para>C. The results display</para>
+         <para>The results display (C)</para>
       </listitem>
-
      </orderedlist>
 
-   </listitem>
+  </listitem>
+        
+
+ 
 </itemizedlist>
   
 <itemizedlist>
@@ -275,19 +277,23 @@
 
           <listitem>
             <para>The output fields list</para>
-
+         
             <itemizedlist>
               <listitem>
                 <para>The output fields list is located at the bottom of the
                 query builder (underneath the Model browser). Initially the
                 output fields list will say 'No fields selected for
                 output'.</para>
+               </listitem>
 
+               <listitem>
                 <para>The output fields list shows all fields or classes that
                 you have selected to show in the results output. To select a
                 field to show in the results output you press 'show' next to
                 the field or class.</para>
+               </listitem>
 
+               <listitem>
                 <para>The order of fields and classes in the output fields
                 list can be changed using the &lt; and &gt; arrows. Fields can
                 be deleted from the output fields list using the x.</para>
@@ -299,8 +305,8 @@
                 <imagedata fileref="fieldsSelected1.png" />
               </imageobject>
             </mediaobject>
-
-          </listitem>
+           </listitem>
+         
        </itemizedlist>
      
 </section>
@@ -313,26 +319,38 @@
           <listitem>
             <para>The results page displays the first 10 objects
             returned by your query.</para>
+          </listitem>
 
+           <listitem>
             <para>The number of objects displayed can be changed by
             changing the number in the Page size box and pressing
             Change.</para>
+           </listitem>
 
+           <listitem>
             <para>You can scroll though the objects using Next, or go
             to the last 10 objects using Last.</para>
-
+           </listitem>
+          
+           <listitem>
             <para>The total number of objects returned by your query
             is estimated. An estimate is given because, for large
             queries, only a subset of the total number of objects is
             initially returned by the query. This is to improve query
-            run time for large queries.</para>
+            run time for large queries.  Click on last if you want to
+            know the actual number of rows returned by your
+            query.</para>
+           </listitem>
 
+           <listitem>
             <para>From the results page you can save your data to a
             bag (see <ulink url="manualSavingdata.xml">Saving bags of
             data</ulink>) and export your data in various formats (see
             <ulink url="manualExportingdata.xml">Exporting
             data</ulink>).</para>
+           </listitem>
 
+           <listitem>
             <para>If there are any objects in your results (rather
             than fields) you can click on an object to view it in
             detail.</para>
@@ -344,47 +362,49 @@
             <imagedata fileref="../tutorials/resultsQuery1.png" />
           </imageobject>
         </mediaobject>
-     
-  </section>
-
-
-<section>
-   
-        <title>D. Attribute List vs Browse Mode: 2 modes of result display</title>
-
+ 
         <itemizedlist>
-          <listitem>
+         <listitem>    
+              <para>Attribute List vs Browse Mode: 2 modes of result display</para>
+
+          <itemizedlist>
+            <listitem>
             <para>There are two modes of result display in FlyMine
-            depending on whether you select attributes of classes to
-            show or an entire Class.  This is illustrated in the
-            screenshot below.  It is also possible to show a mix of
-            attributes and objects in the result display.</para>
-          </listitem>
-        </itemizedlist>
-
-
-
+            depending on what you select to show in your results
+            output. If you look at the model browser you will notice
+            that there are 'show' options next to the attributes of
+            classes and next to the actual class names (see screenshot below).</para>
+   
         <mediaobject>
           <imageobject>
             <imagedata fileref="modelBrowser_browsing1.png" />
           </imageobject>
         </mediaobject>
-
-
-
-        <itemizedlist>
-          <listitem>
-            <para>Selecting attributes results in a table-style
-            results output as shown in the results displayed in the
-            screenshot above.  Selecting a class to 'show' in the
-            results output means that each object required from that
-            class will be returned. For each object in the database
-            there is a detailed results view which shows all the
-            attributes of the objects and the classes referenced by
-            that object.  From this detailed results view it is
-            possible to browse the information contained in the
-            referenced classes.</para>
           </listitem>
+   
+          <listitem>
+            <para>Selecting 'show' next to attributes results in a
+            table-style results output as shown in the results
+            displayed in the screenshot above (under C. The Results
+            Page).  Selecting 'show' next to a class name means that
+            each object required from that class will be returned (i.e
+            all it's attributes and the references to other
+            classes). It is also possible to show a mix of attributes
+            and objects in the result display.</para> </listitem>
+
+          <listitem>
+            <para>When objects are selected, the result display will
+            initially show a summary for each object. However, For
+            each object in the database there is also a detailed
+            results view (accessed by a link from the summary view)
+            which shows all the attributes of the objects and the
+            classes referenced by that object.  From this detailed
+            results view it is possible to browse the information
+            contained in the referenced classes (see screenshot below).</para>
+          </listitem>
+          </itemizedlist>
+         </listitem>
+    
         </itemizedlist>
 
 
@@ -446,7 +466,7 @@
 
 
          <listitem>
-           <para>Fill in the boxes with the appropriate values or leave them with the default values shown.</para>
+           <para>Fill in the boxes with the appropriate values or leave them with the default values shown (see screenshot below).</para>
          </listitem>
           <listitem>
            <para>Pressing the 'Submit' button will display the template query in the FlyMine Query Builder page.  Here you can either use the template as a starting point for building a more complex query, edit the query or simply run the query as it is.  Press 'Show results' to run your query.</para>
