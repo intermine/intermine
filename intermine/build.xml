@@ -19,7 +19,6 @@
   <property name="src" location="src"/>
   <property name="src.java" location="${src}/java"/>
   <property name="src.test" location="${src}/test"/>
-  <property name="src.schema" location="${src}/schema" />
   <property name="src.www" location="doc"/>
   <property name="src.www-internal" location="../flymine-private/doc"/>
   <property name="src.webapp" location="webapp"/>
@@ -45,6 +44,9 @@
   <property name="build.www-internal" location="${build}/www/internal"/>
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
+
+  <!-- model directory -->
+  <property name="tutorial" location="${build}/tutorial"/>
 
   <!-- results directories -->
   <property name="results"  location="results"/>
@@ -87,6 +89,7 @@
     <pathelement location="${build.test}"/>
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
+    <pathelement location="${buildlib}/xmlunit1.0.jar"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -136,6 +139,12 @@
     <mkdir dir="${results.checkstyle}"/>
     <mkdir dir="${results.antdoc}"/>
 
+    <mkdir dir="${tutorial}"/>
+    <mkdir dir="${tutorial}/lib"/>
+    <mkdir dir="${tutorial}/model"/>
+    <mkdir dir="${tutorial}/resources"/>
+    <mkdir dir="${tutorial}/src/java/org/flymine"/>
+
     <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
@@ -184,6 +193,7 @@
     <copy todir="${build.src.java}">
       <fileset dir="${src.java}">
         <include name="**/*.java"/>
+        <exclude name="**/tutorial/*"/>
       </fileset>
     </copy>
     <antlr target="${src.java}/org/flymine/sql/query/flymine_sql.g"
@@ -656,6 +666,37 @@
     </ant>    
   </target>
 
+  <target name="build-tutorial" depends="jar">
+    <!-- root -->
+    <copy todir="${tutorial}">
+      <fileset dir="${resources}/tutorial">
+        <include name="build.xml"/>
+        <include name="flymine.properties"/>
+      </fileset>
+      <fileset dir="." includes="build-model.xml"/>
+    </copy>
+    <!-- lib -->
+    <copy todir="${tutorial}/lib">
+      <fileset dir="${lib}"/>
+      <fileset dir="${dist}" includes="flymine.jar"/>
+    </copy>
+    <!-- model -->
+    <copy todir="${tutorial}/model" file="${resources}/tutorial/tutorial_model.xml"/>
+    <!-- resources -->
+    <copy todir="${tutorial}/resources">
+      <fileset dir="${resources}/runtime">
+        <include name="repository.xml"/>
+        <include name="repository_internal.xml"/>
+        <include name="castor_xml_include.xml"/>
+        <include name="ojbcore-schema.xml"/>
+      </fileset>
+      <fileset dir="${resources}/tutorial" includes="tutorial_data.xml"/>
+    </copy>
+    <!-- src -->
+    <copy todir="${tutorial}/src/java/org/flymine">
+      <fileset dir="${src.java}/org/flymine/tutorial"/>
+    </copy>
+  </target>
 
   <!-- Releasing targets -->
 
