@@ -51,10 +51,10 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         removeDataFromStore();
     }
 
-    public void setUp() {
+    public void setUp() throws Exception{
     }
 
-    public void tearDown() {
+    public void tearDown() throws Exception {
     }
 
 
