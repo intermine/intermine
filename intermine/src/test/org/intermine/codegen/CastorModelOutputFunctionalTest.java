@@ -54,7 +54,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
     }
 
     public void testTestData() throws Exception {
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -86,7 +86,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         e1.setFullTime(true);
         e1.setAge(25);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -123,7 +123,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         a1.setAddress("a1");
         e1.setAddress(a1);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -167,7 +167,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         c1.setCEO(ceo1);
         ceo1.setCompany(c1);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -212,7 +212,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         m1.setTitle("Dr.");
         d1.setManager(m1);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -257,7 +257,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         depts.addAll(Arrays.asList(new Object[] {d1, d2, d3}));
         c1.setDepartments(depts);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -322,7 +322,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         t1.setCompanys(cs1);
         t2.setCompanys(cs2);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
@@ -388,7 +388,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         e2.setDepartment(d1);
         e3.setDepartment(d1);
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         Writer writer = new FileWriter(file);
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);

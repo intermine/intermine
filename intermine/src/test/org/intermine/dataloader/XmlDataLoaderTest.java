@@ -70,7 +70,7 @@ public class XmlDataLoaderTest extends TestCase
 
         List list = new ArrayList();
         list.add(c1);
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         marshalList(list, file);
 
         Reader reader = new FileReader(file);
@@ -104,7 +104,7 @@ public class XmlDataLoaderTest extends TestCase
 
         List list = new ArrayList();
         list.add(m1);
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         marshalList(list, file);
 
         Reader reader = new FileReader(file);
@@ -158,8 +158,6 @@ public class XmlDataLoaderTest extends TestCase
         }
 
     }
-
-
 
     private void marshalList(List list, File file) throws Exception {
         Writer writer = new FileWriter(file);

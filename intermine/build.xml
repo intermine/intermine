@@ -41,6 +41,7 @@
   <property name="build.www" location="${build}/www"/>
   <property name="build.www-internal" location="${build}/www/internal"/>
   <property name="build.webapp" location="${build}/webapp"/>
+  <property name="build.tmp" location="${build}/tmp"/>
 
   <!-- results directories -->
   <property name="results"  location="results"/>
@@ -117,6 +118,7 @@
     <mkdir dir="${build.www}"/>
     <mkdir dir="${build.www-internal}"/>
     <mkdir dir="${build.webapp}"/>
+    <mkdir dir="${build.tmp}"/>
 
     <mkdir dir="${results}"/>
     <mkdir dir="${results.junit}"/>

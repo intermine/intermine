@@ -37,7 +37,7 @@ public class XmlWriterCastorImplTest extends XMLTestCase {
 
         xWriter = new XmlWriterCastorImpl("testmodel");
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         setIds(Arrays.asList(new Object[] {d1}));
 
         xWriter.writeXml(d1, file);
@@ -45,7 +45,7 @@ public class XmlWriterCastorImplTest extends XMLTestCase {
         URL controlUrl = XmlWriterCastorImplTest.class.getClassLoader()
             .getResource("test/testMarshalObject.xml");
         Reader control = new FileReader(controlUrl.getFile());
-        Reader test = new FileReader("temp.xml");
+        Reader test = new FileReader(file);
         assertXMLEqual(control, test);
 
     }
@@ -57,7 +57,7 @@ public class XmlWriterCastorImplTest extends XMLTestCase {
 
         xWriter = new XmlWriterCastorImpl("testmodel");
 
-        file = new File("temp.xml");
+        file = new File("./build/tmp", "temp.xml");
         List list = Arrays.asList(new Object[] {d1, d2, d3});
         setIds(list);
 
@@ -66,7 +66,7 @@ public class XmlWriterCastorImplTest extends XMLTestCase {
         URL controlUrl = XmlWriterCastorImplTest.class.getClassLoader()
             .getResource("test/testMarshalCollection.xml");
         Reader control = new FileReader(controlUrl.getFile());
-        Reader test = new FileReader("temp.xml");
+        Reader test = new FileReader(file);
         assertXMLEqual(control, test);
     }
 
