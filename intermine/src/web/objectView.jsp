@@ -20,7 +20,7 @@
           </c:forEach>
         </html:link>
       </nobr>
-      <br/>
+      <br/><br/>
       <c:forEach var="cld" items="${leafClds}">
         <c:set var="cld" value="${cld}" scope="request"/>
         <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
