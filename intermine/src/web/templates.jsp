@@ -5,7 +5,7 @@
 <c:forEach items="${templates}" var="templateQuery">
   <c:out value="${templateQuery.description}"/>
   <html:link action="/template?name=${templateQuery.name}">
-    <img class="arrow" src="images/right-arrow.png" alt="->"/>
+    <img class="arrow" src="images/right-arrow.gif" alt="->"/>
   </html:link>
   <br/>
 </c:forEach>
