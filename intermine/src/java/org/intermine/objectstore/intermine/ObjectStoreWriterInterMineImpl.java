@@ -296,7 +296,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @throws ObjectStoreException sometimes
      */
     protected void storeWithConnection(Connection c,
-            InterMineObject o) throws ObjectStoreException {
+                                       InterMineObject o) throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         boolean doDeletes = true;
         if (!wasInTransaction) {
@@ -339,7 +339,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
             }
             String xml = NotXmlRenderer.render(o);
-            //String xml = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
             Iterator cldIter = classDescriptors.iterator();
@@ -441,8 +440,19 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 while (collectionIter.hasNext()) {
                     CollectionDescriptor collection = (CollectionDescriptor) collectionIter.next();
                     Collection coll = (Collection) TypeUtil.getFieldValue(o, collection.getName());
-                    if (!((coll instanceof Results)
-                                && (((Results) coll).getObjectStore().equals(this)))) {
+                    boolean needToStoreCollection = true;
+
+                    if (coll instanceof Results) {
+                        ObjectStore testOS = ((Results) coll).getObjectStore();
+                        if (testOS instanceof ObjectStoreWriter) {
+                            testOS = ((ObjectStoreWriter) testOS).getObjectStore();
+                        }
+                        if (testOS.equals(getObjectStore())) {
+                            needToStoreCollection = false;
+                        }
+                    }
+
+                    if (needToStoreCollection) {
                         // Collection - if it's many to many, then write indirection table.
                         if (collection.relationType() == FieldDescriptor.M_N_RELATION) {
                             String indirectTableName =
@@ -465,20 +475,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                 InterMineObject inCollection = (InterMineObject)
                                     collIter.next();
                                 batch.addRow(c, indirectTableName, indirColNames[0],
-                                        indirColNames[1],
-                                        (swap ? o.getId() : inCollection.getId()).intValue(),
-                                        (swap ? inCollection.getId() : o.getId()).intValue());
+                                             indirColNames[1],
+                                             (swap ? o.getId() : inCollection.getId()).intValue(),
+                                             (swap ? inCollection.getId() : o.getId()).intValue());
                             }
                         }
                     }
                 }
             }
 
-            //try {
-            //    InterMineObject toCache = LiteParser.parse(xml, this);
-            //    cacheObjectById(toCache.getId(), toCache);
-            //} catch (Exception e) {
-            //}
             invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
