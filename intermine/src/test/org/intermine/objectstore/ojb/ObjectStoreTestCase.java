@@ -30,11 +30,11 @@ public abstract class QueryTestCase extends TestCase
     protected Database db;
     protected ObjectStoreOjbImpl os;
     protected PersistenceBrokerFlyMineImpl pb;
-    protected DescriptorRepository dr;    
+    protected DescriptorRepository dr;
     protected Map data = new LinkedHashMap();
     protected Map queries = new HashMap();
     protected Map results = new LinkedHashMap();
- 
+
     /**
      * Constructor
      */
@@ -92,6 +92,7 @@ public abstract class QueryTestCase extends TestCase
         queries.put("Contains1N", contains1N());
         queries.put("ContainsN1", containsN1());
         queries.put("ContainsMN", containsMN());
+        queries.put("ContainsDuplicatesMN", containsDuplicatesMN());
         queries.put("SimpleGroupBy", simpleGroupBy());
         queries.put("MultiJoin", multiJoin());
         queries.put("SelectComplex", selectComplex());
@@ -130,7 +131,7 @@ public abstract class QueryTestCase extends TestCase
         con.close();
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
-    
+
     public void tearDownData() throws Exception {
          try {
             writer.beginTransaction();
@@ -663,7 +664,7 @@ public abstract class QueryTestCase extends TestCase
       where contractor.companys contains company
       and contractor.name = "ContractorA"
     */
-      public Query containsMN() throws Exception {
+    public Query containsMN() throws Exception {
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "companys");
@@ -681,7 +682,24 @@ public abstract class QueryTestCase extends TestCase
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
         return q1;
-      }
+    }
+
+    // select distinct oldContract/oldCom from company and Contractor
+    public Query containsDuplicatesMN() throws Exception {
+        QueryClass qc1 = new QueryClass(Contractor.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "oldComs");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        cs1.addConstraint(cc1);
+        q1.setConstraint(cs1);
+        return q1;
+    }
 
     /*
       select company, count(*)
@@ -824,8 +842,12 @@ public abstract class QueryTestCase extends TestCase
         Contractor c1 = c1(), c2 = c2();
         p1.setContractors(Arrays.asList(new Object[] { c1, c2 }));
         p2.setContractors(Arrays.asList(new Object[] { c1, c2 }));
+        p1.setOldContracts(Arrays.asList(new Object[] {c1, c1, c2, c2}));
+        p2.setOldContracts(Arrays.asList(new Object[] {c1, c1, c2, c2}));
         c1.setCompanys(Arrays.asList(new Object[] {p1, p2}));
         c2.setCompanys(Arrays.asList(new Object[] {p1, p2}));
+        c1.setOldComs(Arrays.asList(new Object[] {p1, p1, p2, p2}));
+        c2.setOldComs(Arrays.asList(new Object[] {p1, p1, p2, p2}));
         map(flatten(Arrays.asList(new Object[] { p1, p2 })));
     }
 
