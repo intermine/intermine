@@ -36,7 +36,7 @@ public class DataLoaderHelper
 {
     protected static Map modelKeys = new HashMap();
     protected static Map sourceKeys = new HashMap();
-
+ 
     /**
      * Retrieve a map from key name to PrimaryKey object
      *
@@ -44,11 +44,15 @@ public class DataLoaderHelper
      * @return the Map from key names to PrimaryKeys
      */
     protected static Map getPrimaryKeys(ClassDescriptor cld) {
+        Map keyMap = new HashMap();
+        for (Iterator i = cld.getSuperDescriptors().iterator(); i.hasNext();) {
+            ClassDescriptor superCld = (ClassDescriptor) i.next();
+            keyMap.putAll(getPrimaryKeys(superCld));
+        }
         Properties keys = getKeyProperties(cld.getModel());
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
         cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
-        Map keyMap = new HashMap();
         for (Iterator i = cldKeys.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String keyName = (String) entry.getKey();

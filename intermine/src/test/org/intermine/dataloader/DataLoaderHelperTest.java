@@ -36,6 +36,14 @@ public class DataLoaderHelperTest extends TestCase
         assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld));
     }
 
+    public void testGetPrimaryKeysCldInherited() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Manager");
+        Map expected = new HashMap();
+        expected.put("key1", new PrimaryKey("name"));
+        expected.put("seniority", new PrimaryKey("seniority"));
+        assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld));
+    }
+
     public void testGetPrimaryKeysCldSource() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
         Source source = new Source();
