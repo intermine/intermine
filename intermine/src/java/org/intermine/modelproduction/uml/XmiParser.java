@@ -38,10 +38,12 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.Collection;
+import java.io.InputStream;
 import org.xml.sax.InputSource;
 
 import org.apache.log4j.Logger;
 
+import org.flymine.modelproduction.AbstractModelParser;
 import org.flymine.util.StringUtil;
 import org.flymine.metadata.*;
 
@@ -50,7 +52,7 @@ import org.flymine.metadata.*;
  *
  * @author Mark Woodbridge
  */
-public class XmiParser
+public class XmiParser extends AbstractModelParser
 {
     protected static final Logger LOG = Logger.getLogger(XmiParser.class);
 
@@ -58,13 +60,11 @@ public class XmiParser
     private List attributes, references, collections, classes = new ArrayList();
 
     /**
-     * Recurse over the model elements and output to file(s)
-     * @param source the InputSource for the XMI file
-     * @return the Model parsed from the XML file
-     * @throws Exception if the was a problem creating the Model
+     * @see ModelParser#process
+     * @throws Exception
      */
-    public Model process(InputSource source) throws Exception {
-        recurse(new XMIReader().parse(source));
+    public Model process(InputStream is) throws Exception {
+        recurse(new XMIReader().parse(new InputSource(is)));
         return new Model("testmodel", classes);
     }
 
@@ -103,7 +103,7 @@ public class XmiParser
         while (strIter.hasNext()) {
             generateAttribute((MAttribute) strIter.next());
         }
-        
+
         references = new ArrayList();
         collections = new ArrayList();
         Iterator endIter = cls.getAssociationEnds().iterator();
@@ -111,7 +111,7 @@ public class XmiParser
             generateAssociationEnd(((MAssociationEnd) endIter.next()).getOppositeEnd());
         }
 
-        classes.add(new ClassDescriptor(name, extend, implement, isInterface, attributes, 
+        classes.add(new ClassDescriptor(name, extend, implement, isInterface, attributes,
                                         references, collections));
     }
 
@@ -131,9 +131,9 @@ public class XmiParser
                 references.add(new ReferenceDescriptor(name, primaryKey, referencedType,
                                                        reverseReference));
             } else {
-                boolean ordered = ae.getOrdering() != null 
+                boolean ordered = ae.getOrdering() != null
                     && !ae.getOrdering().getName().equals("unordered");
-                collections.add(new CollectionDescriptor(name, primaryKey, referencedType, 
+                collections.add(new CollectionDescriptor(name, primaryKey, referencedType,
                                                          reverseReference, ordered));
             }
         }
@@ -146,7 +146,7 @@ public class XmiParser
         while (ownedElements.hasNext()) {
             MModelElement me = (MModelElement) ownedElements.next();
             if (me instanceof MPackage) {
-             
+
    recurse((MNamespace) me);
             }
             if (me instanceof MClass && isBusinessObject((MClassifier) me)) {
@@ -217,7 +217,7 @@ public class XmiParser
 
         while (depIterator.hasNext()) {
             MDependency dep = (MDependency) depIterator.next();
-            if ((dep instanceof MAbstraction) 
+            if ((dep instanceof MAbstraction)
                 && dep.getStereotype() != null
                 && dep.getStereotype().getName() != null
                 && dep.getStereotype().getName().equals("realize")) {
@@ -290,7 +290,7 @@ public class XmiParser
 
     private boolean isBusinessObject(MClassifier cls) {
         String name = cls.getName();
-        if (name == null || name.length() == 0 
+        if (name == null || name.length() == 0
             || name.equals("void") || name.equals("char") || name.equals("byte")
             || name.equals("short") || name.equals("int") || name.equals("long")
             || name.equals("boolean") || name.equals("float") || name.equals("double")) {
@@ -302,7 +302,7 @@ public class XmiParser
         if (packagePath.endsWith("java.lang") || packagePath.endsWith("java.util")) {
             return false;
         }
-        
+
         return true;
     }
 }
