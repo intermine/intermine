@@ -34,6 +34,7 @@ public class XmlConverterFunctionalTest extends TestCase {
         Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xsd"));
 
         XmlConverter converter = new XmlConverter(model, srcReader, xsdReader, mockIw);
+        System.out.println(converter.xmlInfo.toString());
         converter.process();
 
         Set tgtItems = getTgtItems();

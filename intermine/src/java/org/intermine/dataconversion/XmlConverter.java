@@ -22,14 +22,15 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.*;
+import org.intermine.ontology.OntologyUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
-
 
 /**
  * Convert XML format data conforming to given InterMine model to fulldata
@@ -40,7 +41,6 @@ import org.intermine.xml.full.ItemHelper;
  */
  public class XmlConverter extends DataConverter
 {
-
     protected Model model;
     protected XmlMetaData xmlInfo;
     protected Reader xmlReader;
@@ -118,12 +118,12 @@ import org.intermine.xml.full.ItemHelper;
                     throw new SAXException("Classname (" + clsName + ") not found in model "
                                            + "for element: " + qName);
                 }
-                items.push(new Item(getIdentifier(), clsName, ""));
+                items.push(new Item(getIdentifier(), itemName(clsName), ""));
                 elements.push(qName);
                 pushPaths(qName);
             } else {
                 Item item = (Item) items.peek();
-                ClassDescriptor cld = model.getClassDescriptorByName(item.getClassName());
+                ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
                 if (cld.getAttributeDescriptorByName(qName, true) != null) {
                     attributeName = qName;
                     isAttribute = true;
@@ -144,11 +144,11 @@ import org.intermine.xml.full.ItemHelper;
                     } else if (xmlInfo.isId(path)) {
                         String idField = xmlInfo.getIdField(path);
                         Item newItem = new Item(getReferenceIdentifier(path
-                                                           + attrs.getValue(idField)), clsName, "");
+                                               + attrs.getValue(idField)), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                     } else {
-                        Item newItem = new Item(getIdentifier(), clsName, "");
+                        Item newItem = new Item(getIdentifier(), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                     }
@@ -168,11 +168,11 @@ import org.intermine.xml.full.ItemHelper;
                     } else if (xmlInfo.isId(path)) {
                         String idField = xmlInfo.getIdField(path);
                         Item newItem = new Item(getReferenceIdentifier(path
-                                                         + attrs.getValue(idField)), clsName, "");
+                                            + attrs.getValue(idField)), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                     } else {
-                        Item newItem = new Item(getIdentifier(), clsName, "");
+                        Item newItem = new Item(getIdentifier(), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
                     }
@@ -197,7 +197,10 @@ import org.intermine.xml.full.ItemHelper;
                 }
                 for (int i = 0; i < attrs.getLength(); i++) {
                     if (!attrs.getQName(i).equals(refField)) {
-                        item.addAttribute(new Attribute(attrs.getQName(i), attrs.getValue(i)));
+                        if (!(xmlInfo.isId(path)
+                              && attrs.getQName(i).equals(xmlInfo.getIdField(path)))) {
+                            item.addAttribute(new Attribute(attrs.getQName(i), attrs.getValue(i)));
+                        }
                     }
                 }
             }
@@ -234,7 +237,7 @@ import org.intermine.xml.full.ItemHelper;
                 StringBuffer s = new StringBuffer();
                 s.append(ch, start, length);
                 Item item = (Item) items.peek();
-                ClassDescriptor cld = model.getClassDescriptorByName(item.getClassName());
+                ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
                 String tmpName = null;
                 if (attributeName == null) {
                     // If no attribute name set, will be name og last element
@@ -262,7 +265,7 @@ import org.intermine.xml.full.ItemHelper;
             if (attributeName != null) {
                 // create attributes specified in content of tags
                 Item item = (Item) items.peek();
-                ClassDescriptor cld = model.getClassDescriptorByName(item.getClassName());
+                ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
 
                 if (item.hasAttribute(attributeName)) {
                     throw new SAXException("A value has already been set for attribute ("
@@ -305,6 +308,14 @@ import org.intermine.xml.full.ItemHelper;
             }
             paths.push(path);
             return path;
+        }
+
+        private String itemName(String clsName) {
+            return model.getNameSpace() + TypeUtil.unqualifiedName(clsName);
+        }
+
+        private String clsName(String itemName) {
+            return model.getPackageName() + "." + OntologyUtil.getFragmentFromURI(itemName);
         }
     }
  }

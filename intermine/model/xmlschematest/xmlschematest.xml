@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<model name="xmlschematest" namespace="org:flymine:model:test#">
+<model name="xmlschematest" namespace="http://www.intermine.org/model/xmlschematest#">
   <class name="org.intermine.model.xmlschematest.Employee" extends="org.intermine.model.xmlschematest.Employable" is-interface="true">
     <attribute name="age" type="java.lang.Integer"/>
     <attribute name="fullTime" type="java.lang.Boolean"/>
