@@ -49,7 +49,8 @@ public class TemplateQuery
      * @param query the query itself
      * @param important true if template is important
      */
-    public TemplateQuery(String name, String description, String category, PathQuery query, boolean important) {
+    public TemplateQuery(String name, String description, String category, PathQuery query,
+                         boolean important) {
         if (description != null) {
             this.description = description;
         }

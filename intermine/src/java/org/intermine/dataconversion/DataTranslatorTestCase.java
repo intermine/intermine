@@ -19,6 +19,7 @@ import java.io.InputStream;
 
 import org.intermine.xml.full.Item;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
@@ -32,6 +33,10 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
     protected Model srcModel;
     protected Properties mapping;
 
+    /**
+     * Create a new DataTranslatorTestCase object.
+     * @param arg the argument to pass the to super constructor
+     */
     public DataTranslatorTestCase(String arg) {
         super(arg);
     }
@@ -42,7 +47,8 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
     public void setUp() throws Exception {
         super.setUp();
         mapping = new Properties();
-        InputStream is = getClass().getClassLoader().getResourceAsStream(getSrcModelName() + "_mappings");
+        InputStream is =
+            getClass().getClassLoader().getResourceAsStream(getSrcModelName() + "_mappings");
         if (is != null) {
             mapping.load(is);
         }
@@ -51,7 +57,12 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
 
     }
 
-    public Model getTargetModel(String ns) throws Exception {
+    /**
+     * Get the target Model for this test.
+     * @param ns the namespace for the target model
+     * @return the target Model
+     */
+    public Model getTargetModel(String ns) throws MetaDataException {
         if (ns.equals("http://www.flymine.org/model/genomic#")) {
             return Model.getInstanceByName("genomic");
         } else {
@@ -89,6 +100,9 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
         return diff;
     }
 
+    /**
+     * Get the source Model for this test.
+     * @return the source Model
+     */
     protected abstract String getSrcModelName();
-
 }

@@ -239,10 +239,10 @@ public class ItemPath
     
     private ItemPrefetchDescriptor processASTRevRef(AST revref, ItemPrefetchDescriptor parent) {
         AST expr = revref.getFirstChild();
-        AST type_field_path = expr.getNextSibling();
+        AST typeFieldPath = expr.getNextSibling();
         
         parent = processASTExpression(expr, parent);
-        return processASTTypeFieldPath(type_field_path, parent);
+        return processASTTypeFieldPath(typeFieldPath, parent);
     }
     
     private ItemPrefetchDescriptor processASTTypeFieldPath(AST typeFieldPath,
