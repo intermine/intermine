@@ -60,28 +60,107 @@
   <property name="dist.webapp"  location="${dist}/webapp"/>
   <property name="dist.javadoc"  location="${dist.www}/api"/>
 
+  <!-- set up library filesets -->
+
+  <!-- Libraries that everything needs -->
+  <patternset id="lib.common">
+    <include name="castor*xml*.jar" />
+    <include name="cglib*.jar" />
+    <include name="commons-collections*.jar" />
+    <include name="commons-dbcp*.jar" />
+    <include name="commons-lang*.jar" />
+    <include name="commons-pool*.jar" />
+    <include name="db-ojb*.jar" />
+    <include name="libreadline-java*.jar" />
+    <include name="log4j*.jar" />
+    <include name="torque*.jar" />
+    <include name="velocity*.jar" />
+  </patternset>
+
+  <!-- Ant tasks and unit testing stuff -->
+  <patternset id="lib.build">
+    <include name="AntDoc*.jar" />
+    <include name="catalina-ant*.jar" />
+    <include name="junit*.jar" />
+    <include name="mockobjects*.jar" />
+    <include name="nsuml*.jar" />
+    <include name="postgresql*.jar" />
+    <include name="xmlunit*.jar" />
+  </patternset>
+
+  <!-- Libraries relevant to building from UML models -->
+  <patternset id="lib.uml">
+    <include name="nsuml*.jar" />
+  </patternset>
+
+  <!-- Libraries relevant to building from AceDB models and data -->
+  <patternset id="lib.acedb">
+    <include name="acedb*.jar" />
+    <include name="biojava*.jar" />
+  </patternset>
+
+  <!-- Libraries relevant to testing webapps -->
+  <patternset id="lib.webapptest">
+    <include name="cactus*.jar" />
+    <include name="commons-httpclient*.jar" />
+    <include name="commons-logging*.jar" />
+    <include name="httpunit*.jar" />
+    <include name="struts-test*.jar" />
+  </patternset>
+
+  <!-- Antlr library -->
+  <patternset id="lib.antlr">
+    <include name="antlr*.jar"/>
+  </patternset>
+
+  <!-- Checkstyle library -->
+  <patternset id="lib.checkstyle">
+    <include name="checkstyle*.jar"/>
+  </patternset>
+
+  <!-- Libraries that the webapp uses -->
+  <patternset id="lib.webapp.query">
+    <include name="aspect*.jar" />
+    <include name="commons*.jar" />
+    <include name="jakarta-oro*.jar" />
+    <include name="jstl*.jar" />
+    <include name="servlet*.jar" />
+    <include name="standard*.jar" />
+    <include name="struts*.jar" />
+  </patternset>
+
+  <!-- Libraries that the webservice uses -->
+  <patternset id="lib.webapp.webservice">
+    <include name="axis*.jar" />
+    <include name="saaj*.jar" />
+    <include name="jaxrpc*.jar" />
+  </patternset>
+
+
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
     <pathelement path="${build.java}"/>
     <pathelement path="${build.resources}"/>
-    <pathelement location="${build.model}/acedb"/>
     <fileset dir="${lib}">
-      <include name="**/*.jar"/>
-      <exclude name="antlr.jar"/>
-    </fileset>
-    <fileset dir="${buildlib}">
-      <include name="**/*.jar"/>
-      <exclude name="checkstyle-all-3.0b1.jar"/>
+      <patternset refid="lib.common"/>
+      <patternset refid="lib.build"/>
+      <patternset refid="lib.webapp.query"/>
+      <patternset refid="lib.acedb"/>
+      <patternset refid="lib.uml"/>
     </fileset>
   </path>
 
   <path id="project.class.path">
     <path refid="base.class.path"/>
-    <pathelement location="${lib}/antlr.jar"/>
+    <fileset dir="${lib}">
+      <patternset refid="lib.antlr"/>
+    </fileset>
   </path>
 
   <path id="checkstyle.class.path">
-    <pathelement location="${buildlib}/checkstyle-all-3.0b1.jar"/>
+    <fileset dir="${lib}">
+      <patternset refid="lib.checkstyle"/>
+    </fileset>
   </path>
 
   <path id="test.class.path">
@@ -89,7 +168,6 @@
     <pathelement location="${build.test}"/>
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
-    <pathelement location="${buildlib}/xmlunit1.0.jar"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -104,8 +182,8 @@
 
   <path id="webapptest.class.path">
     <path refid="test.class.path"/>
-    <fileset dir="${weblib}">
-      <include name="**/*.jar"/>
+    <fileset dir="${lib}">
+      <patternset refid="lib.webapptest"/>
     </fileset>
     <pathelement location="${build.webapp}"/>
   </path>
@@ -580,6 +658,22 @@
   </target>
 
 
+  <!-- The FlyMine webservice -->
+
+  <target name="build-webservice" depends="prepare,jar"
+          description="Build the FlyMine webservice application">
+
+    <war destfile="${dist.webapp}/webservice/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
+      <lib dir="${lib}">
+        <patternset refid="lib.common" />
+        <patternset refid="lib.webapp.webservice" />
+      </lib>
+      <lib dir="${dist}">
+        <include name="flymine.jar" />
+      </lib>
+    </war>
+  </target>
+
 
   <!-- Packaging/distribution targets -->
 
@@ -733,7 +827,31 @@
             password="${webapp.password}" path="${webapp.path}"/>
   </target>
   
+  <target name="release-webservice" depends="build-webservice"
+    description="releases the webservice application to the webserver">
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz --delete ${dist.webapp}/webservice/webservice.war ${webservice.serverlocation}/" />
+    </exec>
+    <taskdef name="tomcat-install"
+        classname="org.apache.catalina.ant.InstallTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
 
+    <tomcat-install url="${webservice.managerurl}" username="${webservice.manager}" 
+                  password="${webservice.password}" path="${webservice.path}" 
+                  war="${webservice.warfileurl}"/> 
+  </target>
+
+  <target name="remove-webservice"
+          description="remove (undeploy) the webservice application from the server">
+    <taskdef name="tomcat-remove" 
+        classname="org.apache.catalina.ant.RemoveTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <tomcat-remove url="${webservice.managerurl}" username="${webservice.manager}" 
+            password="${webservice.password}" path="${webservice.path}"/>
+  </target>
+  
   <!-- Cleaning-up targets -->
 
   <target name="clean"
