@@ -5,7 +5,6 @@
       <displayer src="/model/companiesHouse.jsp"/>
     </shortdisplayers>
     <longdisplayers>
-      <displayer src="/objectFields.jsp"/>
       <displayer src="/model/companiesHouse.jsp"/>
     </longdisplayers>
   </class>
