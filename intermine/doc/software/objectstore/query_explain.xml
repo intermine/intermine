@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<article>
+
+  <artheader>
+    <date>2003-03-12</date>
+    <title>Running Explain for Flymine Queries</title>
+    <authorgroup>
+      <author>
+        <firstname>Richard</firstname>
+        <surname>Smith</surname>
+      </author>
+    </authorgroup>
+  </artheader>
+
+  <sect1>
+    <title>Overview</title>
+    <para>This document summarises our discussion about the role of EXPLAIN in running FlyMine queries and how it should be implemented. The purpose of running explain is to obtain estimated information about the time to run a query and the number of rows it will return allowing us to limit what is run in the database.  We also want to make estimated (and/or computed) statistics about aquery available to client applications prior to execution.</para>
+    
+  </sect1>
+  
+  <sect1>
+    <title>Information available from EXPLAIN</title>
+    <para>EXPLAIN displays the execution plan that the planner produces for a given SQL statement.  The plan details how tables will be scanned and what join strategies will be used.  In addition some estimated statistics are produced for the query:</para>
+    <itemizedlist>
+      <listitem>The estimated cost of running a query in terms of disk page fetches, two figures are displayed:
+        <itemizedlist>
+          <listitem>estimated time for the first row to be returned</listitem>
+          <listitem>estimated time for completion of entire query</listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>An estimated number of rows that the query will return.  Based on estimated selectivity of where clauses.</listitem>
+      <listitem>The average width (bytes) of rows produced by the query</listitem>
+    </itemizedlist>
+  </sect1>
+  
+
+  <sect1>
+    <title>When we need to run EXPLAIN</title>
+    <para>Our purpose in running EXPLAIN for all queries is twofold:</para>
+    <itemizedlist>
+      <listitem>to give provide users with an estimated number of rows a given query will produce.</listitem>
+      <listitem>to prevent queries that would take more than a threshold amout of time from being run in the database</listitem>
+    </itemizedlist>
+    <para>Our implementation of paging dictates that these are two distinct operations.  When a query is run the Results object defines a LIMIT and OFFSET to restrict the number of rows returned at one time (e.g the first 1000).  It is when when this limited query is run that we need to restrict the amount of time it can take.  To estimate the total number of rows a query will return we obviously need to EXPLAIN it without a LIMIT.      
+    </para>
+    <para>Thus, we need to run EXPLAIN on the original query and on each 'page' with OFFSET and LIMIT defined.  We need to implement:
+      <itemizedlist>
+        <listitem>A publicly available ObjectStore method that, given a query, will return an estimated number of rows.  This is called as required by the client application and is not necessary for normal query execution.  In future this could be modified to provide an actual computed number of rows.  An EXPLAIN could check whether COUNT(*) for the query would be fast to run, if so run it and return the actual number of rows.</listitem>
+        <listitem>Change <code>os.execute(query, start, limit)</code> so that it runs an explain on the row limited query and decides if it is faster or slower that the given threshold.  If it is too slow an Exception should be thrown, otherwise the query run as normal.  The threshold could be provided by the calling Results object so that users could set their own maximum execution time (such that it is less that out global threshold).</listitem>
+        </itemizedlist>
+</para>
+
+  </sect1>
+
+  <sect1>
+    <title>Caching SQL statements</title>
+<para>Our system of paging means that queries will frequently be run multiple times with different LIMIT and OFFSET parameters.  It is therefore desirable to run code that generates an SQL string from a FlyMine query once and cache the result.  If we are runningan EXPLAIN on every execution without caching in place the SQL generation will be performed twice every time.  To avoid this overhead we should implement caching of SQL statements at the same time as EXPLAINs.</para>
+  </sect1>
+
+  <sect1>
+    <title>Proposed Implementation</title>
+    <para>Diagramatic overview of implementation (see notes below)</para>
+      <inlinegraphic fileref="explain_implementation"/>
+    <highlights>NOTES</highlights>
+    <itemizedlist>
+      <listitem><classname>ExplainResult</classname> is already used in <packagename>org.flymine.sql package</packagename>.  It will need to be adapted so it can be constructed with the <classname>PreparedStatement</classname> available in <classname>JdbcAccessFlymineImpl</classname>.</listitem>
+      <listitem>Caching is done using a <classname>WeakHashMap</classname> in <classname>SqlGeneratorFlymineImpl</classname>, implement clever hashcode generation?</listitem>
+      </itemizedlist>
+
+
+
+  </sect1>
+
+
+</article>
