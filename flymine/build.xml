@@ -122,9 +122,6 @@
 
   <path id="models.class.path">
     <path refid="base.class.path"/>
-    <fileset dir="${dist}">
-      <include name="intermine*.jar" />
-    </fileset>
     <pathelement path="${build.resources.test}"/>
     <pathelement location="${build.model}/acedb"/>
     <pathelement location="${build.model}/mage"/>
