@@ -41,6 +41,8 @@ import org.xml.sax.InputSource;
 
 public class JavaModelOutput extends ModelOutput
 {
+    private static final boolean OJB = true;
+
     public JavaModelOutput(MModel mmodel) {
         super(mmodel);
     }
@@ -119,7 +121,9 @@ public class JavaModelOutput extends ModelOutput
             }
         }
 
-        sb.append(";\n");
+        sb.append(";\n")            
+            .append(generateGetSet(generateNoncapitalName(attr.getName()), generateClassifierRef(type)))
+            .append("\n");
 
         return sb.toString();
     }
@@ -151,11 +155,12 @@ public class JavaModelOutput extends ModelOutput
         String name = "";
         String construct = "";
 
-        sb.append(INDENT).append(generateVisibility(ae.getVisibility()));
+        //sb.append(INDENT + generateVisibility(ae.getVisibility()));
 
         if (MScopeKind.CLASSIFIER.equals(ae.getTargetScope())) {
             sb.append("static ");
         }
+
         MMultiplicity m = ae.getMultiplicity();
         if (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m)) {
             type = generateClassifierRef(ae.getType());
@@ -177,90 +182,69 @@ public class JavaModelOutput extends ModelOutput
 
         if (n != null && n.length() > 0) {
             name = n + name;
-            //      sb.append(generateName(n));
         } else if (ascName != null && ascName.length() > 0) {
             name = ascName + name;
-            //sb.append(generateName(ascName));
         } else {
             name = generateClassifierRef(ae.getType()) + name;
         }
 
-        sb.append("protected ")
+        if (OJB && (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m))) {
+            sb.append(INDENT + "protected int ")
+                .append(generateNoncapitalName(name)+"Id;\n");
+        }
+
+        sb.append(INDENT + "protected ")
             .append(type)
             .append(' ')
             .append(generateNoncapitalName(name))
             .append(construct)
-            .append(";\n");
-            //                 .append(generateSetGet(generateNoncapitalName(name), type))
-//             .append("\n");
+            .append(";\n")
+            .append(generateGetSet(generateNoncapitalName(name), type))
+            .append("\n");
 
-        return (sb.toString());
+        return sb.toString();
     }
 
-    protected String generateFileStart(String path) {
-        return path;
+    protected void generateFileStart(File path) {
     }
 
-    protected String generateFile(MClassifier cls, String path) {
-        String name = cls.getName();
-        if (name == null || name.length() == 0 
-            || name.equals("void") || name.equals("char") || name.equals("byte")
-            || name.equals("short") || name.equals("int") || name.equals("long")
-            || name.equals("boolean") || name.equals("float") || name.equals("double")) {
-            return null;
-        }
-
-        String packagePath = getPackagePath(cls);
-
-        if (packagePath.endsWith("java.lang") || packagePath.endsWith("java.util")) {
-            return null;
-        }
-
-        String filename = name + ".java";
-        if (!path.endsWith (FILE_SEPARATOR)) {
-            path += FILE_SEPARATOR;
-        }
+    protected void generateFile(MClassifier cls, File path) {
+         String filename = cls.getName() + ".java";
         
-        int lastIndex = -1;
-        do {
-            File f = new File (path);
-            if (!f.isDirectory()) {
-                if (!f.mkdir()) {
-                    LOG.debug(" could not make directory " + path);
-                    return null;
-                }
-            }
+         int lastIndex = -1;
+         do {
+             if (!path.isDirectory()) {
+                 if (!path.mkdir()) {
+                     LOG.debug(" could not make directory " + path);
+                     return;
+                 }
+             }
+             
+             String packagePath = getPackagePath(cls);
 
-            if (lastIndex == packagePath.length()) {
-                break;
-            }
+             if (lastIndex == packagePath.length()) {
+                 break;
+             }
 
-            int index = packagePath.indexOf (".", lastIndex + 1);
-            if (index == -1) {
-                index = packagePath.length();
-            }
+             int index = packagePath.indexOf (".", lastIndex + 1);
+             if (index == -1) {
+                 index = packagePath.length();
+             }
 
-            path += packagePath.substring (lastIndex + 1, index) + FILE_SEPARATOR;
-            lastIndex = index;
-        } while (true);
+             path = new File(path, packagePath.substring (lastIndex + 1, index));
+             lastIndex = index;
+         } while (true);
 
-        String pathname = path + filename;
+         path = new File(path, filename);
+         initFile(path);
 
-        //if the file exists, delete it and start again - we are not trying to update
-        File f = new File(pathname);
+         String header = generateHeader(cls);
+         String src = generate(cls);
 
-        initFile(f);
-
-        String header = generateHeader(cls);
-        String src = generate(cls);
-
-        outputToFile(f, header + src);
-
-        return pathname;
+         outputToFile(path, header + src);
     }
 
-    protected String generateFileEnd(String path) {
-        return path;
+    protected void generateFileEnd(File path) {
     }
 
     // ======= everything private from here ============
@@ -276,19 +260,17 @@ public class JavaModelOutput extends ModelOutput
     }
 
     private StringBuffer generateClassifierStart (MClassifier cls) {
-        StringBuffer sb = new StringBuffer (80);
+        StringBuffer sb = new StringBuffer ();
 
         String sClassifierKeyword = null;
         if (cls instanceof MClassImpl) {
             sClassifierKeyword = "class";
-        } else {
-            if (cls instanceof MInterface) {
-                sClassifierKeyword = "interface";
-            }
+        } else if (cls instanceof MInterface) {
+            sClassifierKeyword = "interface";
         }
 
         // Now add visibility
-        sb.append (generateVisibility (cls.getVisibility()));
+        sb.append(generateVisibility(cls.getVisibility()));
 
         // Add other modifiers
         if (cls.isAbstract() && !(cls instanceof MInterface)) {
@@ -302,20 +284,19 @@ public class JavaModelOutput extends ModelOutput
         // add classifier keyword and classifier name
         sb.append (sClassifierKeyword)
             .append(" ")
-            .append (generateName (cls.getName()));
+            .append (generateName(cls.getName()));
 
         // add base class/interface
-        String baseClass = generateGeneralization (cls.getGeneralizations());
-        if (!baseClass.equals ("")) {
+        String baseClass = generateGeneralization(cls.getGeneralizations());
+        if (!baseClass.equals("")) {
             sb.append (" ")
                 .append ("extends ")
                 .append (baseClass);
         }
 
         // add implemented interfaces, if needed
-        // nsuml: realizations!
         if (cls instanceof MClass) {
-            String interfaces = generateSpecification ((MClass) cls);
+            String interfaces = generateSpecification((MClass) cls);
             if (!interfaces.equals ("")) {
                 sb.append (" ")
                     .append ("implements ")
@@ -326,11 +307,20 @@ public class JavaModelOutput extends ModelOutput
         // add opening brace
         sb.append("\n{\n");
 
-        return sb;
+        if (OJB && sClassifierKeyword.equals("class")) {
+            if (baseClass.equals("")) {
+                sb.append(INDENT + "protected int id;\n");
+            }
+            if (!baseClass.equals("") || cls.getSpecializations().size()>0) {
+                sb.append(INDENT + "protected String ojbConcreteClass = \"" + getPackagePath(cls) + "." + cls.getName() + "\";\n");
+            }
+        }
+
+        return sb.append("\n");
     }
 
-    private String generateSetGet (String name, String type) {
-        StringBuffer sb = new StringBuffer(250);
+    private String generateGetSet(String name, String type) {
+        StringBuffer sb = new StringBuffer();
 
         // Get method
         sb.append(INDENT)
@@ -550,15 +540,17 @@ public class JavaModelOutput extends ModelOutput
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.err.println("Usage:  JavaModelOutput <project name> <output dir>");
+        if (args.length != 3) {
+            System.err.println("Usage:  JavaModelOutput <project name> <input dir> <output dir>");
             System.exit(1);
         }
         String projectName = args[0];
-        String outputDir = args[1];
+        String inputDir = args[1];
+        String outputDir = args[2];
         
-        File xmiFile = new File(outputDir, projectName + "_.xmi");
+        File xmiFile = new File(inputDir, projectName + "_.xmi");
         InputSource source = new InputSource(xmiFile.toURL().toString());
-        new JavaModelOutput(new XMIReader().parse(source)).output(outputDir);
+        File path = new File(outputDir);
+        new JavaModelOutput(new XMIReader().parse(source)).output(path);
     }
 }
