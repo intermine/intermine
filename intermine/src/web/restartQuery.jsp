@@ -4,11 +4,9 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- restartQuery.jsp -->
-<c:if test="${query != null}">
-  <html:form action="/restartQuery">
-    <html:submit property="action">
-      <bean:message key="query.abandon"/>
-    </html:submit>
-  </html:form>
-</c:if>
+<html:form action="/restartQuery">
+  <html:submit property="action">
+    <bean:message key="query.reset"/>
+  </html:submit>
+</html:form>
 <!-- /restartQuery.jsp -->
