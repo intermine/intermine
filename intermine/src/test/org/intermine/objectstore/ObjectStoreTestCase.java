@@ -42,7 +42,6 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
         setUpResults();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
     }
 
     /**
@@ -377,7 +376,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     }
 
     public void testCountGroupByDistinct() throws Exception {
-    // distinct doesn't actually do anything to group by reuslt        
+    // distinct doesn't actually do anything to group by reuslt
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(true);
         int count = os.count(q);
@@ -393,7 +392,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         } catch (NullPointerException e) {
         }
     }
-    
+
     public void testGetObjectByExampleNonExistent() throws Exception {
         Address a = new Address();
         a.setAddress("10 Downing Street");
