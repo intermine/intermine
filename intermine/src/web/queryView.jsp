@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <tiles:importAttribute/>
 
+<!-- queryView.jsp -->
 <table border=0>
   <tr>
     <td>
@@ -39,3 +40,4 @@
   </tr>
   <tr><td><c:out value="${query}"/></td></tr>
 </table>
+<!-- /queryView.jsp -->
