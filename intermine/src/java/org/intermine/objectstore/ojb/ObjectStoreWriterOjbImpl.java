@@ -52,8 +52,10 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * @see ObjectStoreWriter#store
      */
     public void store(Object o) throws ObjectStoreException {
-        if (! ModelUtil.hasValidKey(o)) {
-            throw new ObjectStoreException("Cannot store " + o + ": primary key is not set (key = " + ModelUtil.getKey(o.getClass()) + ")");
+        if (!ModelUtil.hasValidKey(o)) {
+            throw new ObjectStoreException("Cannot store " + o
+                                           + ": primary key is not set (key = "
+                                           + ModelUtil.getKey(o.getClass()) + ")");
         }
         try {
             pb.store(o);
