@@ -2,8 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
-<tiles:importAttribute/>
-
 <!-- objectSummary.jsp -->
 <div class="objectSummary">
   <c:choose>
