@@ -11,7 +11,9 @@ package org.flymine.objectstore;
  */
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.xml.sax.InputSource;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.BagConstraint;
@@ -34,10 +37,14 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.XmlBinding;
+
+import org.apache.log4j.Logger;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
+    protected static final Logger LOG = Logger.getLogger(SetupDataTestCase.class);
     protected static ObjectStoreWriter writer;
     protected static Map data = new LinkedHashMap();
 
@@ -46,21 +53,29 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static void oneTimeSetUp() throws Exception {
-        ObjectStoreQueriesTestCase.oneTimeSetUp();
-        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        setUpData();
-        storeData();
-        // These queries are here because they require objects with IDs
-        queries.put("WhereClassObject", whereClassObject());
-        queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
-        queries.put("BagConstraint2", bagConstraint2());
-        queries.put("InterfaceReference", interfaceReference());
-        queries.put("InterfaceCollection", interfaceCollection());
+        try {
+            ObjectStoreQueriesTestCase.oneTimeSetUp();
+            writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            setUpData();
+            storeData();
+            // These queries are here because they require objects with IDs
+            queries.put("WhereClassObject", whereClassObject());
+            queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
+            queries.put("BagConstraint2", bagConstraint2());
+            queries.put("InterfaceReference", interfaceReference());
+            queries.put("InterfaceCollection", interfaceCollection());
+        } catch (Exception e) {
+            if (writer != null) {
+                writer.close();
+            }
+            throw e;
+        }
     }
 
     public static void oneTimeTearDown() throws Exception {
         ObjectStoreQueriesTestCase.oneTimeTearDown();
         removeDataFromStore();
+        writer.close();
     }
 
     /**
@@ -78,7 +93,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
             writer.beginTransaction();
             Iterator iter = data.keySet().iterator();
             while (iter.hasNext()) {
-                writer.store(data.get(iter.next()));
+                writer.store((FlyMineBusinessObject) data.get(iter.next()));
             }
             writer.commitTransaction();
         } catch (Exception e) {
@@ -104,7 +119,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
             writer.beginTransaction();
             Iterator iter = data.keySet().iterator();
             while (iter.hasNext()) {
-                writer.delete(data.get(iter.next()));
+                writer.delete((FlyMineBusinessObject) data.get(iter.next()));
             }
             writer.commitTransaction();
         } catch (Exception e) {
@@ -113,9 +128,194 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         }
     }
 
+    /*
     public static void setUpData() throws Exception {
         XmlBinding binding = new XmlBinding("castor_xml_testmodel.xml");
         map((List) binding.unmarshal(new InputSource(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"))));
+    }
+    */
+
+    public static void setUpData() throws Exception {
+        Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        companyA.setName("CompanyA");
+        companyA.setVatNumber(1234);
+
+        Contractor contractorA = new Contractor();
+        contractorA.setName("ContractorA");
+
+        Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));;
+        companyB.setName("CompanyB");
+        companyB.setVatNumber(5678);
+
+        Contractor contractorB = new Contractor();
+        contractorB.setName("ContractorB");
+
+        Address address1 = new Address();
+        address1.setAddress("Contractor Business Street, BVille");
+
+        Address address2 = new Address();
+        address2.setAddress("Contractor Personal Street, BVille");
+
+        Address address3 = new Address();
+        address3.setAddress("Company Street, BVille");
+
+        Department departmentB1 = new Department();
+        departmentB1.setName("DepartmentB1");
+
+        CEO employeeB1 = new CEO();
+        employeeB1.setName("EmployeeB1");
+        employeeB1.setFullTime(true);
+        employeeB1.setAge(40);
+        employeeB1.setTitle("Mr.");
+        employeeB1.setSalary(45000);
+
+        Address address4 = new Address();
+        address4.setAddress("Employee Street, BVille");
+
+        Employee employeeB2 = new Employee();
+        employeeB2.setName("EmployeeB2");
+        employeeB2.setFullTime(true);
+        employeeB2.setAge(50);
+
+        Department departmentB2 = new Department();
+        departmentB2.setName("DepartmentB2");
+
+        Manager employeeB3 = new Manager();
+        employeeB3.setName("EmployeeB3");
+        employeeB3.setFullTime(true);
+        employeeB3.setAge(60);
+
+        Address address5 = new Address();
+        address5.setAddress("Contractor Business Street, AVille");
+
+        Address address6 = new Address();
+        address6.setAddress("Contractor Personal Street, AVille");
+
+        Address address7 = new Address();
+        address7.setAddress("Company Street, AVille");
+
+        Department departmentA1 = new Department();
+        departmentA1.setName("DepartmentA1");
+
+        Manager employeeA1 = new Manager();
+        employeeA1.setName("EmployeeA1");
+        employeeA1.setFullTime(true);
+        employeeA1.setAge(10);
+
+        Address address8 = new Address();
+        address8.setAddress("Employee Street, AVille");
+
+        Employee employeeA2 = new Employee();
+        employeeA2.setName("EmployeeA2");
+        employeeA2.setFullTime(true);
+        employeeA2.setAge(20);
+
+        Employee employeeA3 = new Employee();
+        employeeA3.setName("EmployeeA3");
+        employeeA3.setFullTime(false);
+        employeeA3.setAge(30);
+
+        Secretary secretary1 = new Secretary();
+        secretary1.setName("Secretary1");
+
+        Secretary secretary2 = new Secretary();
+        secretary2.setName("Secretary2");
+
+        Secretary secretary3 = new Secretary();
+        secretary3.setName("Secretary3");
+
+        Types types1 = new Types();
+        types1.setName("Types1");
+        types1.setIntType(267);
+        types1.setBooleanType(true);
+        types1.setFloatType(0.6F);
+        types1.setDoubleType(0.88D);
+        types1.setIntObjType(new Integer(369));
+        types1.setBooleanObjType(Boolean.TRUE);
+        types1.setFloatObjType(new Float(1.6F));
+        types1.setDoubleObjType(new Double(1.88D));
+        types1.setStringObjType("A test String");
+
+        companyA.setAddress(address7);
+        companyA.setDepartments(Collections.singletonList(departmentA1));
+        companyA.setSecretarys(Arrays.asList(new Secretary[] {secretary1, secretary2, secretary3}));
+        companyA.setContractors(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyA.setOldContracts(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+
+        contractorA.setPersonalAddress(address6);
+        contractorA.setBusinessAddress(address5);
+        contractorA.setCompanys(Arrays.asList(new Company[] {companyA, companyB}));
+        contractorA.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
+
+        companyB.setAddress(address3);
+        companyA.setDepartments(Arrays.asList(new Department[] {departmentB1, departmentB2}));
+        companyA.setSecretarys(Arrays.asList(new Secretary[] {secretary1, secretary2}));
+        companyA.setContractors(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyA.setOldContracts(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+
+        contractorA.setPersonalAddress(address2);
+        contractorA.setBusinessAddress(address1);
+        contractorA.setCompanys(Arrays.asList(new Company[] {companyA, companyB}));
+        contractorA.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
+
+        departmentB1.setCompany(companyB);
+        departmentB1.setManager(employeeB1);
+        departmentB1.setEmployees(Arrays.asList(new Employee[] {employeeB1, employeeB2}));
+
+        employeeB1.setDepartment(departmentB1);
+        employeeB1.setAddress(address4);
+
+        employeeB2.setDepartment(departmentB1);
+        employeeB2.setAddress(address4);
+
+        departmentB2.setCompany(companyB);
+        departmentB2.setManager(employeeB3);
+        departmentB2.setEmployees(Collections.singletonList(employeeB3));
+
+        employeeB3.setDepartment(departmentB2);
+        employeeB3.setAddress(address4);
+
+        departmentA1.setCompany(companyA);
+        departmentA1.setManager(employeeA1);
+        departmentA1.setEmployees(Arrays.asList(new Employee[] {employeeA1, employeeA2, employeeA3}));
+
+        employeeA1.setDepartment(departmentA1);
+        employeeA1.setAddress(address8);
+
+        employeeA2.setDepartment(departmentA1);
+        employeeA2.setAddress(address8);
+
+        employeeA3.setDepartment(departmentA1);
+        employeeA3.setAddress(address8);
+
+        HashSet set = new HashSet();
+        set.add(companyA);
+        set.add(companyB);
+        set.add(contractorA);
+        set.add(contractorB);
+        set.add(departmentA1);
+        set.add(departmentB1);
+        set.add(departmentB2);
+        set.add(employeeA1);
+        set.add(employeeA2);
+        set.add(employeeA3);
+        set.add(employeeB1);
+        set.add(employeeB2);
+        set.add(employeeB3);
+        set.add(secretary1);
+        set.add(secretary2);
+        set.add(secretary3);
+        set.add(address1);
+        set.add(address2);
+        set.add(address3);
+        set.add(address4);
+        set.add(address5);
+        set.add(address6);
+        set.add(address7);
+        set.add(address8);
+        set.add(types1);
+
+        map(set);
     }
 
     private static void map(Collection c) throws Exception {

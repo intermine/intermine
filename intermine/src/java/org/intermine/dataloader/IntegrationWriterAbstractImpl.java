@@ -64,7 +64,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param skeleton is this a skeleton object?
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public abstract void store(Object o, boolean skeleton) throws ObjectStoreException;
+    public abstract void store(FlyMineBusinessObject o, boolean skeleton) throws ObjectStoreException;
 
     /**
      * Store an object in this ObjectStore, delegates to internal ObjectStoreWriter.
@@ -72,7 +72,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(Object o) throws ObjectStoreException {
+    public void store(FlyMineBusinessObject o) throws ObjectStoreException {
         osw.store(o);
     }
 
@@ -82,7 +82,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param o the object to delete
      * @throws ObjectStoreException if an error occurs during deletion of the object
      */
-    public void delete(Object o) throws ObjectStoreException {
+    public void delete(FlyMineBusinessObject o) throws ObjectStoreException {
         osw.delete(o);
     }
 
@@ -204,5 +204,12 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
             throws ObjectStoreException {
         return osw.getObjectByExample(o, fieldNames);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStoreWriter#close
+     */
+    public void close() {
+        osw.close();
     }
 }

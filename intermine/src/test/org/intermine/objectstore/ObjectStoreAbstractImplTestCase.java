@@ -88,7 +88,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
     public void testTooMuchTime()  throws Exception {
         // try to run a query that takes longer than max amount of time
         long before = osai.maxTime;
-        osai.maxTime = 0;
+        osai.maxTime = -1;
         try {
             osai.execute((Query) queries.get("SelectSimpleObject"), 0, 1, true);
             fail("Expected: ObjectStoreException");

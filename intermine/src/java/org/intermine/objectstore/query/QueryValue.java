@@ -31,6 +31,9 @@ public class QueryValue implements QueryEvaluable
      * @throws IllegalArgumentException if value is not a Number, String, Boolean or Date
      */
     public QueryValue(Object value) {
+        if (value == null) {
+            throw new NullPointerException("Cannot create a QueryValue with null");
+        }
         if (!((value instanceof Number)
               || (value instanceof String)
               || (value instanceof Boolean)

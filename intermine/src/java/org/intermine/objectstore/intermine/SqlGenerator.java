@@ -18,11 +18,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.flymine.metadata.AttributeDescriptor;
@@ -82,13 +84,12 @@ public class SqlGenerator
      * @param q the Query to convert
      * @param start the number of the first row for the query to return, numbered from zero
      * @param limit the maximum number of rows for the query to return
-     * @param optimise true if the SQL Optimiser should be used
      * @param model the Model to look up metadata in
      * @return a String suitable for passing to an SQL server
      */
-    public static String generate(Query q, int start, int limit, boolean optimise, Model model) 
+    public static String generate(Query q, int start, int limit, Model model) 
             throws ObjectStoreException {
-        return generate(q, start, limit, optimise, model, QUERY_NORMAL);
+        return generate(q, start, limit, model, QUERY_NORMAL);
     }
 
     /**
@@ -98,19 +99,21 @@ public class SqlGenerator
      * @param q the Query to convert
      * @param start the number of the first row for the query to return, numbered from zero
      * @param limit the maximum number of rows for the query to return
-     * @param optimise true if the SQL Optimiser should be used
      * @param model the Model to look up metadata in
      * @param kind Query type
      * @return a String suitable for passing to an SQL server
      */
-    protected static String generate(Query q, int start, int limit, boolean optimise, Model model,
+    protected static String generate(Query q, int start, int limit, Model model,
             int kind) throws ObjectStoreException {
         State state = new State();
         buildFromComponent(state, q, model);
         buildWhereClause(state, q, model);
+        String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, model) : "");
         return "SELECT " + (q.isDistinct() ? "DISTINCT " : "")
-            + buildSelectComponent(q, model, kind) + state.getFrom() + state.getWhere()
-            + buildGroupBy(q, model) + (kind == QUERY_NORMAL ? buildOrderBy(q, model) : "");
+            + buildSelectComponent(state, q, model, kind) + state.getFrom() + state.getWhere()
+            + buildGroupBy(q, model) + orderBy
+            + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+            + (start == 0 ? "" : " OFFSET " + start);
     }
 
     /**
@@ -136,7 +139,7 @@ public class SqlGenerator
                 state.addToFrom(DatabaseUtil.getTableName(cld) + " AS "
                         + ((String) q.getAliases().get(fromElement)));
             } else if (fromElement instanceof Query) {
-                state.addToFrom("(" + generate((Query) fromElement, 0, Integer.MAX_VALUE, false,
+                state.addToFrom("(" + generate((Query) fromElement, 0, Integer.MAX_VALUE,
                                 model, QUERY_SUBQUERY_FROM) + ") AS "
                         + ((String) q.getAliases().get(fromElement)));
             }
@@ -157,9 +160,7 @@ public class SqlGenerator
             if (state.getWhereBuffer().length() > 0) {
                 state.addToWhere(" AND ");
             }
-            state.addToWhere("(");
             constraintToString(state, c, q, model);
-            state.addToWhere(")");
         }
     }
 
@@ -185,8 +186,9 @@ public class SqlGenerator
             containsConstraintToString(state, (ContainsConstraint) c, q, model);
         } else if (c instanceof BagConstraint) {
             bagConstraintToString(state, (BagConstraint) c, q, model);
+        } else {
+            throw (new IllegalArgumentException("Unknown constraint type: " + c));
         }
-        throw (new IllegalArgumentException("Unknown constraint type: " + c));
     }
 
     /**
@@ -258,7 +260,7 @@ public class SqlGenerator
             queryClassToString(state.getWhereBuffer(), cls, q, model, QUERY_SUBQUERY_CONSTRAINT);
         }
         state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, 0, Integer.MAX_VALUE,
-                        false, model, QUERY_SUBQUERY_CONSTRAINT) + ")");
+                        model, QUERY_SUBQUERY_CONSTRAINT) + ")");
     }
 
     /**
@@ -314,7 +316,7 @@ public class SqlGenerator
         String arg1Alias = ((String) q.getAliases().get(arg1.getQueryClass()));
         if (arg1 instanceof QueryObjectReference) {
             state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
-                    + " " + c.getOp().toString() + " ");
+                    + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
             queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY);
         } else if (arg1 instanceof QueryCollectionReference) {
             ClassDescriptor arg2Class = model.getClassDescriptorByName(arg2.getType().getName());
@@ -325,20 +327,21 @@ public class SqlGenerator
             String arg2Alias = ((String) q.getAliases().get(arg2));
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY);
-                state.addToWhere(" " + c.getOp().toString() + " " + arg2Alias + "."
+                state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ") + arg2Alias + "."
                         + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
             } else {
                 CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
                 String indirectTableAlias = state.getIndirectAlias();
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
-                state.addToWhere(c.getOp().equals(ConstraintOp.EQUALS) ? "(" : "( NOT (");
+                state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? "(" : "( NOT (");
                 queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY);
-                state.addToWhere(" = " + indirectTableAlias
+                state.addToWhere(" = " + indirectTableAlias + "."
                         + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc) + " AND "
+                        + indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
                 queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY);
-                state.addToWhere(c.getOp().equals(ConstraintOp.EQUALS) ? ")" : "))");
+                state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? ")" : "))");
             }
         }
     }
@@ -417,9 +420,10 @@ public class SqlGenerator
                         + " without an ID set");
             }
             buffer.append(id.toString());
+        } else {
+            throw (new IllegalArgumentException("Invalid Object in QueryValue: "
+                                                + value));
         }
-        throw (new IllegalArgumentException("Invalid Object in QueryValue: "
-                                            + value));
     }
 
     /**
@@ -436,30 +440,48 @@ public class SqlGenerator
         String alias = (String) q.getAliases().get(qc);
         if (kind == QUERY_SUBQUERY_CONSTRAINT) {
             buffer.append(alias)
-                .append(".ID");
+                .append(".id");
         } else {
             buffer.append(alias)
-                .append(".OBJECT AS ")
-                .append(alias);
+                .append(".OBJECT");
+            if ((kind == QUERY_NORMAL) || (kind == QUERY_SUBQUERY_FROM)) {
+                buffer.append(" AS ")
+                    .append(alias.equals(alias.toLowerCase()) ? alias : "\"" + alias + "\"");
+            }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)) {
                 Set fields = model.getClassDescriptorByName(qc.getType().getName())
                     .getAllFieldDescriptors();
+                Map fieldMap = new TreeMap();
                 Iterator fieldIter = fields.iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                     String columnName = DatabaseUtil.getColumnName(field);
                     if (columnName != null) {
-                        buffer.append(", ")
-                            .append(alias)
-                            .append(".")
-                            .append(columnName);
-                        if (kind == QUERY_SUBQUERY_FROM) {
-                            buffer.append(" AS ")
-                                .append(alias)
-                                .append(columnName);
-                        }
+                        fieldMap.put(columnName, field);
                     }
                 }
+                Iterator fieldMapIter = fieldMap.entrySet().iterator();
+                while (fieldMapIter.hasNext()) {
+                    Map.Entry fieldEntry = (Map.Entry) fieldMapIter.next();
+                    FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
+                    String columnName = DatabaseUtil.getColumnName(field);
+
+                    buffer.append(", ")
+                        .append(alias)
+                        .append(".")
+                        .append(columnName);
+                    if (kind == QUERY_SUBQUERY_FROM) {
+                        buffer.append(" AS ")
+                            .append(alias.equals(alias.toLowerCase()) ? alias + columnName
+                                    : "\"" + alias + columnName + "\"");
+                    }
+                }
+            } else {
+                buffer.append(", ")
+                    .append(alias)
+                    .append(".id AS ")
+                    .append(alias.equals(alias.toLowerCase()) ? alias + "id" : "\"" + alias
+                            + "id" + "\"");
             }
         }
     }
@@ -528,6 +550,7 @@ public class SqlGenerator
             switch (nodeF.getOperation()) {
             case QueryFunction.COUNT:
                 buffer.append("COUNT(*)");
+                break;
             case QueryFunction.SUM:
                 buffer.append("SUM(");
                 queryEvaluableToString(buffer, nodeF.getParam(), q);
@@ -564,12 +587,13 @@ public class SqlGenerator
     /**
      * Builds a String representing the SELECT component of the Sql query.
      *
+     * @param state the current Sql Query state
      * @param q the Query
      * @param model the Model
      * @param kind the kind of output requested
      * @return a String
      */
-    protected static String buildSelectComponent(Query q, Model model, int kind)
+    protected static String buildSelectComponent(State state, Query q, Model model, int kind)
             throws ObjectStoreException {
         boolean needComma = false;
         StringBuffer retval = new StringBuffer();
@@ -584,8 +608,21 @@ public class SqlGenerator
                 queryClassToString(retval, (QueryClass) node, q, model, kind);
             } else if (node instanceof QueryEvaluable) {
                 queryEvaluableToString(retval, (QueryEvaluable) node, q);
-                retval.append(" AS " + q.getAliases().get(node));
+                String alias = (String) q.getAliases().get(node);
+                if ((kind == QUERY_NORMAL) || (kind == QUERY_SUBQUERY_FROM)) {
+                    retval.append(" AS " + (alias.equals(alias.toLowerCase()) ? alias : "\"" + alias
+                                + "\""));
+                }
             }
+        }
+        iter = state.getOrderBy().iterator();
+        while (iter.hasNext()) {
+            String orderByField = (String) iter.next();
+            if (needComma) {
+                retval.append(", ");
+            }
+            needComma = true;
+            retval.append(orderByField);
         }
         return retval.toString();
     }
@@ -603,7 +640,7 @@ public class SqlGenerator
         Iterator groupByIter = q.getGroupBy().iterator();
         while (groupByIter.hasNext()) {
             QueryNode node = (QueryNode) groupByIter.next();
-            retval.append(needComma ? ", " : "GROUP BY ");
+            retval.append(needComma ? ", " : " GROUP BY ");
             needComma = true;
             if (node instanceof QueryClass) {
                 queryClassToString(retval, (QueryClass) node, q, model, NO_ALIASES_ALL_FIELDS);
@@ -617,11 +654,12 @@ public class SqlGenerator
     /**
      * Builds a String representing the ORDER BY component of the Sql query.
      *
+     * @param state the current Sql Query state
      * @param q the Query
      * @param model the Model
      * @return a String
      */
-    protected static String buildOrderBy(Query q, Model model) throws ObjectStoreException {
+    protected static String buildOrderBy(State state, Query q, Model model) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
         List orderBy = new ArrayList(q.getOrderBy());
@@ -630,12 +668,19 @@ public class SqlGenerator
         while (orderByIter.hasNext()) {
             QueryNode node = (QueryNode) orderByIter.next();
             if (!(node instanceof QueryValue)) {
-                retval.append(needComma ? ", " : "ORDER BY ");
+                retval.append(needComma ? ", " : " ORDER BY ");
                 needComma = true;
                 if (node instanceof QueryClass) {
                     queryClassToString(retval, (QueryClass) node, q, model, ID_ONLY);
                 } else {
                     queryEvaluableToString(retval, (QueryEvaluable) node, q);
+                    if (!q.getSelect().contains(node)) {
+                        StringBuffer buffer = new StringBuffer();
+                        queryEvaluableToString(buffer, (QueryEvaluable) node, q);
+                        buffer.append(" AS ")
+                            .append(state.getOrderByAlias());
+                        state.addToOrderBy(buffer.toString());
+                    }
                 }
             }
         }
@@ -645,13 +690,14 @@ public class SqlGenerator
     private static class State {
         private StringBuffer whereText = new StringBuffer();
         private StringBuffer fromText = new StringBuffer();
+        private Set orderBy = new LinkedHashSet();
         private int number = 0;
 
         public State() {
         }
 
         public String getWhere() {
-            return whereText.toString();
+            return (whereText.length() == 0 ? "" : " WHERE " + whereText.toString());
         }
 
         public StringBuffer getWhereBuffer() {
@@ -663,16 +709,12 @@ public class SqlGenerator
         }
 
         public void addToWhere(String text) {
-            if (whereText.length() == 0) {
-                whereText.append("WHERE ").append(text);
-            } else {
-                whereText.append(text);
-            }
+            whereText.append(text);
         }
 
         public void addToFrom(String text) {
             if (fromText.length() == 0) {
-                fromText.append("FROM ").append(text);
+                fromText.append(" FROM ").append(text);
             } else {
                 fromText.append(", ").append(text);
             }
@@ -680,6 +722,18 @@ public class SqlGenerator
 
         public String getIndirectAlias() {
             return "indirect" + (number++);
+        }
+
+        public String getOrderByAlias() {
+            return "orderbyfield" + (number++);
+        }
+
+        public void addToOrderBy(String s) {
+            orderBy.add(s);
+        }
+
+        public Set getOrderBy() {
+            return orderBy;
         }
     }
 }

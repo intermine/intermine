@@ -30,6 +30,7 @@ import org.acedb.Reference;
 import org.acedb.staticobj.StaticAceObject;
 
 import org.flymine.FlyMineException;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.metadata.AttributeDescriptor;
@@ -143,7 +144,7 @@ public class AceDataLoader extends DataLoader
                     throw new NullPointerException("name is null");
                 }
                 AceObject aceObj = (AceObject) aceSet.retrieve(name);
-                Object obj = processAceObject(aceObj);
+                FlyMineBusinessObject obj = processAceObject(aceObj);
                 //iw.getObjectStore().prefetchObjectByExample(obj);
                 synchronized (this) {
                     try {
@@ -185,7 +186,7 @@ public class AceDataLoader extends DataLoader
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected Object processAceObject(AceObject aceObject)
+    protected FlyMineBusinessObject processAceObject(AceObject aceObject)
         throws AceException, FlyMineException {
         if (aceObject == null) {
             throw new NullPointerException("aceObject must not be null");
@@ -194,7 +195,7 @@ public class AceDataLoader extends DataLoader
 
         String clsName = pkgName
             + AceModelParser.formatAceName(((AceObject) aceObject).getClassName());
-        Object currentObject = instantiate(clsName);
+        FlyMineBusinessObject currentObject = instantiate(clsName);
         Object identifier = aceObject.getName();
 //         if ("".equals(identifier)) {
 //             identifier = null;
@@ -273,11 +274,7 @@ public class AceDataLoader extends DataLoader
             //check whether currentObject has a field of this name (if not, it's a nesting tag)
             ClassDescriptor cld = model.getClassDescriptorByName(currentObject
                                                                  .getClass().getName());
-            FieldDescriptor fd = null;
-            try {
-                fd = cld.getFieldDescriptorByName(nodeName);
-            } catch (NullPointerException e) {
-            }
+            FieldDescriptor fd = cld.getFieldDescriptorByName(nodeName);
             if (fd != null) {
                  if (!aceNode.iterator().hasNext()) {
                     if ((fd instanceof AttributeDescriptor)
@@ -410,10 +407,10 @@ public class AceDataLoader extends DataLoader
         return false;
     }
 
-    private Object instantiate(String clsName) {
-        Object obj = null;
+    private FlyMineBusinessObject instantiate(String clsName) {
+        FlyMineBusinessObject obj = null;
         try {
-            obj = Class.forName(clsName).newInstance();
+            obj = (FlyMineBusinessObject) Class.forName(clsName).newInstance();
         } catch (Exception e) {
             LOG.error("Cannot instantiate '" + clsName + "':" + e);
         }

@@ -419,7 +419,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
     public void testGetObjectByExampleNull() throws Exception {
         try {
-            os.getObjectByExample(null, new ArrayList());
+            os.getObjectByExample(null, Collections.singletonList("name"));
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -474,12 +474,23 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         assertEquals(d1.getIntObjType(), d.getIntObjType());
         assertEquals(d1.getFloatObjType(), d.getFloatObjType());
         assertEquals(d1.getDoubleObjType(), d.getDoubleObjType());
-        // Boolean objects not properly supported in OJB
-        // assertEquals(d1.getBooleanObjType(), d.getBooleanObjType());
+        assertEquals(d1.getBooleanObjType(), d.getBooleanObjType());
         assertEquals(d1.getStringObjType(), d.getStringObjType());
         assertEquals(d1.getDateObjType(), d.getDateObjType());
     }
 
+    public void testGetObjectByNullId() throws Exception {
+        try {
+            os.getObjectById(null);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+
+    public void testGetObjectById() throws Exception {
+        Employee e = (Employee) os.getObjectById(((Employee) data.get("EmployeeA1")).getId());
+        assertEquals(data.get("EmployeeA1"), e);
+    }
 
     // helper method
 

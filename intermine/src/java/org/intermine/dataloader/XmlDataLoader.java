@@ -15,6 +15,7 @@ import java.util.List;
 import org.xml.sax.InputSource;
 
 import org.flymine.FlyMineException;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.XmlBinding;
 
@@ -51,7 +52,7 @@ public class XmlDataLoader extends DataLoader
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                store(iter.next());
+                store((FlyMineBusinessObject) iter.next());
             }
         } catch (ObjectStoreException e) {
             throw new FlyMineException("Problem with store method", e);

@@ -10,6 +10,7 @@ package org.flymine.dataloader;
  *
  */
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 
@@ -32,7 +33,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @return details of database object and which fields can be overwrittern
      * @throws ObjectStoreException if anything goes wrong
      */
-    public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException;
+    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj) throws ObjectStoreException;
 
     /**
      * Store an object in this ObjectStore.
@@ -41,5 +42,5 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @param skeleton is this a skeleton object?
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(Object o, boolean skeleton) throws ObjectStoreException;
+    public void store(FlyMineBusinessObject o, boolean skeleton) throws ObjectStoreException;
 }

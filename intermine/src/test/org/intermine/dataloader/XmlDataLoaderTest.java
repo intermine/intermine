@@ -63,7 +63,7 @@ public class XmlDataLoaderTest extends TestCase
     public void tearDown() throws Exception {
         Iterator deleteIter = toDelete.iterator();
         while (deleteIter.hasNext()) {
-            Object o = deleteIter.next();
+            FlyMineBusinessObject o = (FlyMineBusinessObject) deleteIter.next();
             writer.delete(o);
         }
         if (file != null) {

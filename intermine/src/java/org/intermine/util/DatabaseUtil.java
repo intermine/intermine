@@ -74,6 +74,9 @@ public class DatabaseUtil
         if (fd instanceof AttributeDescriptor) {
             return generateSqlCompatibleName(fd.getName());
         }
+        if (fd instanceof CollectionDescriptor) {
+            return null;
+        }
         if (fd instanceof ReferenceDescriptor) {
             return fd.getName() + "Id";
         }

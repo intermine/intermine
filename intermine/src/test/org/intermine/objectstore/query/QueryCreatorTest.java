@@ -15,6 +15,7 @@ import junit.framework.*;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.metadata.Model;
@@ -36,6 +37,19 @@ public class QueryCreatorTest extends QueryTestCase
         return OneTimeTestCase.buildSuite(QueryCreatorTest.class);
     }
 
+    public void testCreateQueryForId() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
+                    new QueryValue(new Integer(5))));
+
+        assertEquals(q, QueryCreator.createQueryForId(new Integer(5)));
+    }
+
+
+    /*
     public void testQueryForExampleObjectNullObject() throws Exception {
         try {
             QueryCreator.createQueryForExampleObject(null, model);
@@ -44,6 +58,7 @@ public class QueryCreatorTest extends QueryTestCase
         }
     }
 
+    
     public void testQueryForExampleObjectKeyAttributes() throws Exception {
         // Address's key is "address" field
         Address a = new Address();
@@ -182,6 +197,7 @@ public class QueryCreatorTest extends QueryTestCase
         assertEquals(expected, q);
     }
 
+    
     public void testQueryForExampleObjectAttributeMissing() throws Exception {
         // Employee's key is "name", "address", "fullTime" fields
 
@@ -216,6 +232,7 @@ public class QueryCreatorTest extends QueryTestCase
         } catch (IllegalArgumentException e) {
         }
     }
+*/
 
     public void testCreateQueryForQueryNodeValues1() throws Exception {
         QueryClass qcCompany = new QueryClass(Company.class);

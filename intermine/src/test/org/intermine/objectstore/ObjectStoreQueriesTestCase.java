@@ -863,6 +863,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         return q;
     }
 
+    /*
+     * select Secretary from Company, Secretary where Company.name = 'CompanyA' AND Company.secretarys CONTAINS Secretary
+     */
     public static Query selectUnidirectionalCollection() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Secretary.class);

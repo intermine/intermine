@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.ConsistentSet;
 import org.flymine.util.TypeUtil;
@@ -61,7 +62,7 @@ public class DataLoader
      * @param obj an object to store
      * @throws ObjectStoreException if something goes wrong
      */
-    public void store(Object obj) throws ObjectStoreException {
+    public void store(FlyMineBusinessObject obj) throws ObjectStoreException {
         store(obj, new ConsistentSet(), false);
     }
 
@@ -73,7 +74,7 @@ public class DataLoader
      * @param skeleton whether this object is a skeleton
      * @throws ObjectStoreException if something goes wrong
      */
-    protected void store(Object obj, Set set, boolean skeleton)
+    protected void store(FlyMineBusinessObject obj, Set set, boolean skeleton)
         throws ObjectStoreException {
         if (set.contains(obj)) {
             return;
@@ -102,19 +103,22 @@ public class DataLoader
                     ClassDescriptor cld = iw.getObjectStore().getModel()
                         .getClassDescriptorByName(className);
                     FieldDescriptor fd = cld.getFieldDescriptorByName(fieldname);
-                    if (fd instanceof CollectionDescriptor) {
+                    if (fd == null) {
+                        throw new ObjectStoreException("Field does not exist that was there"
+                                + " before: " + className + "." + fieldname);
+                    } else if (fd instanceof CollectionDescriptor) {
                         Collection objs = (Collection) valueInObjectToStore;
                         if (objs != null) {  // if any collection members in new object store them
                             Iterator objIter = objs.iterator();
                             while (objIter.hasNext()) {
-                                Object subObj = objIter.next();
+                                FlyMineBusinessObject subObj = (FlyMineBusinessObject) objIter.next();
                                 store(subObj, set, true);
                             }
                         }
                     } else {
                         if (fd instanceof ReferenceDescriptor) {
                             if (valueInObjectToStore != null) {
-                                store(valueInObjectToStore, set, true);
+                                store((FlyMineBusinessObject) valueInObjectToStore, set, true);
                             }
                         }
                         // A normal attribute, which should be set if the IntegrationDescriptor

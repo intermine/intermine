@@ -29,6 +29,7 @@ import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
+import org.flymine.sql.precompute.QueryOptimiser;
 import org.flymine.sql.query.ExplainResult;
 
 import org.apache.log4j.Logger;
@@ -65,16 +66,25 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      *
      * @return a java.sql.Connection
      */
-    private Connection getConnection() throws SQLException {
-        return db.getConnection();
+    protected Connection getConnection() throws SQLException {
+        Connection retval = db.getConnection();
+        if (! retval.getAutoCommit()) {
+            retval.setAutoCommit(true);
+        }
+        return retval;
     }
 
     /**
      * Allows one to put a connection back.
      */
-    private void releaseConnection(Connection c) {
+    protected void releaseConnection(Connection c) {
         if (c != null) {
             try {
+                if (! c.getAutoCommit()) {
+                    LOG.error("releaseConnection called while in transaction - rolling back");
+                    c.rollback();
+                    c.setAutoCommit(true);
+                }
                 c.close();
             } catch (SQLException e) {
                 StringWriter message = new StringWriter();
@@ -131,9 +141,12 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
         throws ObjectStoreException {
         checkStartLimit(start, limit);
 
-        String sql = SqlGenerator.generate(q, start, limit, (everOptimise && optimise), model);
+        String sql = SqlGenerator.generate(q, start, limit, model);
         Connection c = null;
         try {
+            if (optimise && everOptimise) {
+                sql = QueryOptimiser.optimise(sql, db);
+            }
             c = getConnection();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
 
@@ -161,9 +174,12 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, true, model);
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
         Connection c = null;
         try {
+            if (everOptimise) {
+                sql = QueryOptimiser.optimise(sql, db);
+            }
             c = getConnection();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
@@ -182,10 +198,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @throws ObjectStoreException if an error occurs counting the query
      */
     public int count(Query q) throws ObjectStoreException {
-        String sql = "SELECT COUNT(*) FROM (" + SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
-                    true, model) + ") as fake_table";
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
         Connection c = null;
         try {
+            if (everOptimise) {
+                sql = QueryOptimiser.optimise(sql, db);
+            }
+            sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             c = getConnection();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             sqlResults.next();

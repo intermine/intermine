@@ -17,12 +17,11 @@ import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
 import org.flymine.util.DynamicUtil;
 
-public class ObjectStoreWriterTestCase extends TestCase
+public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 {
-    protected ObjectStore os;
-    protected ObjectStoreWriter writer;
+    protected static ObjectStoreWriter writer;
 
-    protected Address address1;
+    /*protected Address address1;
     protected Company company1, company2;
     protected Department department1;
     protected CEO employee1;
@@ -32,11 +31,23 @@ public class ObjectStoreWriterTestCase extends TestCase
     protected Company company1Template;
     protected CEO employee1Template;
     protected Contractor contractor1Template, contractor3Template;
-
+*/
     public ObjectStoreWriterTestCase(String arg) {
         super(arg);
     }
 
+    public static void oneTimeSetUp() throws Exception {
+        os = writer;
+        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+    }
+
+    public void setUp() throws Exception {
+        super.setUp();
+        if (writer.isInTransaction()) {
+            writer.abortTransaction();
+        }
+    }
+/*
     public void setUp() throws Exception {
         super.setUp();
 
@@ -101,18 +112,7 @@ public class ObjectStoreWriterTestCase extends TestCase
         contractor3Template.setBusinessAddress(contractor3.getBusinessAddress());
         contractor3Template.setPersonalAddress(contractor3.getPersonalAddress());
     }
-
-    /**
-     * Storing an object without a primary key should not be allowed
-     */
-    public void testStoreObjectWithInvalidKey() throws Exception {
-        Address address = new Address();
-        try {
-            writer.store(address);
-            fail("Expected: ObjectStoreException");
-        } catch (ObjectStoreException e) {
-        }
-    }
+*/
 
     /**
      * Storing an object without an ID field should insert it into the database
@@ -438,10 +438,14 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(address1);
             writer.store(address2);
 
-            // Should be nothing there until we commit
+            // Should be nothing in OS until we commit
             Results res = os.execute(q);
             assertEquals(0, res.size());
 
+            // However, they should be in the WRITER.
+            res = writer.execute(q);
+            assertEquals(2, res.size());
+            
             writer.commitTransaction();
             assertFalse(writer.isInTransaction());
             res = os.execute(q);
@@ -480,11 +484,17 @@ public class ObjectStoreWriterTestCase extends TestCase
         writer.store(address1);
         writer.store(address2);
 
+        Results res = writer.execute(q);
+        assertEquals(2, res.size());
+
         writer.abortTransaction();
         assertFalse(writer.isInTransaction());
 
         // Should be nothing there until we commit
-        Results res = os.execute(q);
+        res = os.execute(q);
+        assertEquals(0, res.size());
+
+        res = writer.execute(q);
         assertEquals(0, res.size());
     }
 }

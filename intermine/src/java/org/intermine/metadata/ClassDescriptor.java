@@ -217,10 +217,6 @@ public class ClassDescriptor
                 fd = superClass.getFieldDescriptorByName(name);
             }
         }
-        if (fd == null) {
-            throw new NullPointerException("ClassDescriptor '" + getName()
-                                           + "' has no field named '" + name + "'");
-        }
         return fd;
     }
 

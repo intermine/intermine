@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.TypeUtil;
@@ -54,7 +55,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @return details of object in database and which fields can be overwritten
      * @throws ObjectStoreException if error occurs finding object
      */
-    public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException {
+    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj) throws ObjectStoreException {
         /*Object dbObj = osw.getObjectStore().getObjectByExample(obj);
         IntegrationDescriptor retval = new IntegrationDescriptor();
 
@@ -102,7 +103,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @param skeleton whether the object is a skeleton
      * @throws ObjectStoreException if anything goes wrong during store
      */
-    public void store(Object obj, boolean skeleton) throws ObjectStoreException {
+    public void store(FlyMineBusinessObject obj, boolean skeleton) throws ObjectStoreException {
         // Here, we are assuming that the store(Object) method sets the ID in the object.
         store(obj);
         if (!skeleton) {

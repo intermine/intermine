@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.SetupDataTestCase;
@@ -51,7 +52,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 
         Iterator deleteIter = toDelete.iterator();
         while (deleteIter.hasNext()) {
-            Object o = deleteIter.next();
+            FlyMineBusinessObject o = (FlyMineBusinessObject) deleteIter.next();
             writer.delete(o);
         }
     }
