@@ -141,93 +141,91 @@ public class CreateReferencesTest extends TestCase {
         removeData();
     }
 
-// waiting for a fix to the ObjectStore to stop multiple identical entries in the indirection
-// tables
     public void testInsertGeneReferences() throws Exception {
-//         createData();
-//         CreateReferences cr = new CreateReferences(osw);
-//         cr.insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
-//         cr.insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
-//         cr.insertGeneExonReferences("exons");
+        createData();
+        CreateReferences cr = new CreateReferences(osw);
+        cr.insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
+        cr.insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
+        cr.insertGeneExonReferences("exons");
 
-//         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-//         expectedGene.setName("gene1");
-//         expectedGene.setId(storedGene.getId());
-  
-//         Transcript expectedTranscript =
-//             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-//         expectedTranscript.setName("trans1");
-//         expectedTranscript.setId(storedTranscript.getId());
-//         expectedTranscript.setGene(expectedGene);
-//         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
-  
-//         SimpleRelation expectedTranscriptRelation =
-//             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
-//         expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
-//         expectedTranscriptRelation.setObject(expectedGene);
-//         expectedTranscriptRelation.setSubject(expectedTranscript);
-//         expectedTranscript.setObjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
-//         expectedGene.setSubjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
-  
-//         Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-//         expectedExon.setName("exon1");
-//         expectedExon.setId(storedExon.getId());
-//         expectedTranscript.setExons(Arrays.asList(new Object[] {expectedExon}));
-//         expectedExon.setTranscripts(Arrays.asList(new Object[] {expectedTranscript}));
-//         expectedGene.setExons(Arrays.asList(new Object[] {expectedExon}));
-//         expectedExon.setGene(expectedGene);
-  
-//         RankedRelation expectedExonRelation =
-//             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-//         expectedExonRelation.setId(storedExonRelation.getId());
-//         expectedExonRelation.setRank(new Integer(1));
-//         expectedExonRelation.setObject(expectedTranscript);
-//         expectedExonRelation.setSubject(expectedExon);
-//         expectedTranscript.setSubjects(Arrays.asList(new Object[] { expectedExonRelation }));
-//         expectedExon.setObjects(Arrays.asList(new Object[] { expectedExonRelation }));
-  
-//         Item expGeneItem = toItem(expectedGene);
-//         Item expTranscriptItem = toItem(expectedTranscript);
-//         Item expExonItem = toItem(expectedExon);
-  
-//         ObjectStore os = osw.getObjectStore();
-  
-//         Query q = new Query();
-//         QueryClass qcGene = new QueryClass(Gene.class);
-//         q.addFrom(qcGene);
-//         q.addToSelect(qcGene);
-//         Results res = new Results(q, os, os.getSequence());
-//         ResultsRow row = (ResultsRow) res.iterator().next();
-  
-//         Gene resGene = (Gene) row.get(0);
-//         Item resGeneItem = toItem(resGene);
-  
-//         assertEquals(expGeneItem, resGeneItem);
-  
-//         q = new Query();
-//         QueryClass qcTranscript = new QueryClass(Transcript.class);
-//         q.addFrom(qcTranscript);
-//         q.addToSelect(qcTranscript);
-  
-//         res = new Results(q, os, os.getSequence());
-//         row = (ResultsRow) res.iterator().next();
-  
-//         Transcript resTranscript = (Transcript) row.get(0);
-//         Item resTranscriptItem = toItem(resTranscript);
-//         assertEquals(expTranscriptItem, resTranscriptItem);
-  
-//         q = new Query();
-//         QueryClass qcExon = new QueryClass(Exon.class);
-//         q.addFrom(qcExon);
-//         q.addToSelect(qcExon);
-  
-//         res = new Results(q, os, os.getSequence());
-//         row = (ResultsRow) res.iterator().next();
-  
-//         Exon resExon = (Exon) row.get(0);
-//         Item resExonItem = toItem(resExon);
-//         assertEquals(expExonItem, resExonItem);
-//         removeData();
+        Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        expectedGene.setName("gene1");
+        expectedGene.setId(storedGene.getId());
+
+        Transcript expectedTranscript =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript.setName("trans1");
+        expectedTranscript.setId(storedTranscript.getId());
+        expectedTranscript.setGene(expectedGene);
+        expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
+
+        SimpleRelation expectedTranscriptRelation =
+            (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
+        expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
+        expectedTranscriptRelation.setObject(expectedGene);
+        expectedTranscriptRelation.setSubject(expectedTranscript);
+        expectedTranscript.setObjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
+        expectedGene.setSubjects(Arrays.asList(new Object[] { expectedTranscriptRelation }));
+
+        Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        expectedExon.setName("exon1");
+        expectedExon.setId(storedExon.getId());
+        expectedTranscript.setExons(Arrays.asList(new Object[] {expectedExon}));
+        expectedExon.setTranscripts(Arrays.asList(new Object[] {expectedTranscript}));
+        expectedGene.setExons(Arrays.asList(new Object[] {expectedExon}));
+        expectedExon.setGene(expectedGene);
+
+        RankedRelation expectedExonRelation =
+            (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
+        expectedExonRelation.setId(storedExonRelation.getId());
+        expectedExonRelation.setRank(new Integer(1));
+        expectedExonRelation.setObject(expectedTranscript);
+        expectedExonRelation.setSubject(expectedExon);
+        expectedTranscript.setSubjects(Arrays.asList(new Object[] { expectedExonRelation }));
+        expectedExon.setObjects(Arrays.asList(new Object[] { expectedExonRelation }));
+
+        Item expGeneItem = toItem(expectedGene);
+        Item expTranscriptItem = toItem(expectedTranscript);
+        Item expExonItem = toItem(expectedExon);
+
+        ObjectStore os = osw.getObjectStore();
+
+        Query q = new Query();
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        Results res = new Results(q, os, os.getSequence());
+        ResultsRow row = (ResultsRow) res.iterator().next();
+
+        Gene resGene = (Gene) row.get(0);
+        Item resGeneItem = toItem(resGene);
+
+        assertEquals(expGeneItem, resGeneItem);
+
+        q = new Query();
+        QueryClass qcTranscript = new QueryClass(Transcript.class);
+        q.addFrom(qcTranscript);
+        q.addToSelect(qcTranscript);
+
+        res = new Results(q, os, os.getSequence());
+        row = (ResultsRow) res.iterator().next();
+
+        Transcript resTranscript = (Transcript) row.get(0);
+        Item resTranscriptItem = toItem(resTranscript);
+        assertEquals(expTranscriptItem, resTranscriptItem);
+
+        q = new Query();
+        QueryClass qcExon = new QueryClass(Exon.class);
+        q.addFrom(qcExon);
+        q.addToSelect(qcExon);
+
+        res = new Results(q, os, os.getSequence());
+        row = (ResultsRow) res.iterator().next();
+
+        Exon resExon = (Exon) row.get(0);
+        Item resExonItem = toItem(resExon);
+        assertEquals(expExonItem, resExonItem);
+        removeData();
     }
     
     private void createData() throws Exception {
