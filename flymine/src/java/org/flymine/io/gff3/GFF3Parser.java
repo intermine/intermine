@@ -24,6 +24,12 @@ import java.io.BufferedReader;
 
 public class GFF3Parser
 {
+    /**
+     * Read GFF3 lines from a BufferedReader and return a List of GFF3Records, one per line.
+     * @param reader the Reader to reader from
+     * @return a List of GFF3Record objects
+     * @throws IOException if there is an error during reading or parsing
+     */
     public static List parse(final BufferedReader reader) throws IOException {
         int lineNum = 0;
         List list = new ArrayList();
