@@ -397,18 +397,17 @@ public class OJBModelOutputTest extends TestCase
         assertEquals(parents, mo.getParents(cld3));
     }
 
-    public void testGenerateOJBSqlType() throws Exception {
-        assertEquals("INTEGER", mo.generateOJBSqlType("int"));
-        assertEquals("INTEGER", mo.generateOJBSqlType("java.lang.Integer"));
-        assertEquals("LONGVARCHAR", mo.generateOJBSqlType("java.lang.String"));
-        assertEquals("INTEGER\" conversion=\"org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion", mo.generateOJBSqlType("boolean"));
-        assertEquals("FLOAT", mo.generateOJBSqlType("java.lang.Float"));
-        assertEquals("FLOAT", mo.generateOJBSqlType("float"));
-        assertEquals("DATE\" conversion=\"org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion",
-                     mo.generateOJBSqlType("java.util.Date"));
-        assertEquals("some_type", mo.generateOJBSqlType("some_type"));
+    public void testGenerateJdbcType() throws Exception {
+        assertEquals("INTEGER", mo.generateJdbcType("int"));
+        assertEquals("INTEGER", mo.generateJdbcType("java.lang.Integer"));
+        assertEquals("LONGVARCHAR", mo.generateJdbcType("java.lang.String"));
+        assertEquals("INTEGER", mo.generateJdbcType("boolean"));
+        assertEquals("FLOAT", mo.generateJdbcType("java.lang.Float"));
+        assertEquals("FLOAT", mo.generateJdbcType("float"));
+        assertEquals("DATE", mo.generateJdbcType("java.util.Date"));
+        assertEquals("some_type", mo.generateJdbcType("some_type"));
         try {
-            mo.generateOJBSqlType(null);
+            mo.generateJdbcType(null);
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }

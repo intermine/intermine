@@ -26,12 +26,15 @@ import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 
 /**
- * Maps FlyMine metadata to an OJB repository file
+ * Map FlyMine metadata to an OJB repository file
  *
  * @author Mark Woodbridge
  */
 public class OJBModelOutput extends ModelOutput
 {
+    static final String ID = "ID";
+    static final String CLASS = "CLASS";
+   
     protected StringBuffer references, collections;
 
     /**
@@ -108,7 +111,7 @@ public class OJBModelOutput extends ModelOutput
             sb.append(INDENT + INDENT)
                 .append("<field-descriptor")
                 .append(" name=\"id\"")
-                .append(" column=\"ID\"")
+                .append(" column=\"" + ID + "\"")
                 .append(" jdbc-type=\"INTEGER\"")
                 .append(" primarykey=\"true\"")
                 .append(" autoincrement=\"true\"/>" + ENDL);
@@ -117,7 +120,7 @@ public class OJBModelOutput extends ModelOutput
                 sb.append(INDENT + INDENT)
                     .append("<field-descriptor")
                     .append(" name=\"ojbConcreteClass\"")
-                    .append(" column=\"CLASS\"")
+                    .append(" column=\"" + CLASS + "\"")
                     .append(" jdbc-type=\"VARCHAR\"/>" + ENDL);
             }
 
@@ -151,8 +154,10 @@ public class OJBModelOutput extends ModelOutput
             .append("\" column=\"")
             .append(DatabaseUtil.getColumnName(attr))
             .append("\" jdbc-type=\"")
-            .append(generateOJBSqlType(attr.getType()))
-            .append("\"/>" + ENDL);
+            .append(generateJdbcType(attr.getType()))
+            .append("\"")
+            .append(generateConversion(attr.getType()))
+            .append("/>" + ENDL);
         return sb.toString();
     }
 
@@ -284,12 +289,12 @@ public class OJBModelOutput extends ModelOutput
 
     /**
      * Convert java primitive and object names to those compatible
-     * with ojb reposiory file.  Returns unaltered string if no
+     * with ojb repository file.  Returns unaltered string if no
      * conversion is required.
      * @param type the string to convert
      * @return ojb mapping file compatible name
      */
-    protected String generateOJBSqlType(String type) {
+    protected static String generateJdbcType(String type) {
         if (type.equals("int") || type.equals("java.lang.Integer")) {
             return "INTEGER";
         }
@@ -297,17 +302,31 @@ public class OJBModelOutput extends ModelOutput
             return "LONGVARCHAR";
         }
         if (type.equals("boolean")) {
-            return "INTEGER\" conversion=\""
-                + "org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion";
+            return "INTEGER";
         }
         if (type.equals("float") || type.equals("java.lang.Float")) {
             return "FLOAT";
         }
         if (type.equals("java.util.Date")) {
-            return "DATE\" conversion=\""
-                + "org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion";
+            return "DATE";
         }
         return type;
     }
 
+    /**
+     * Return conversion from Java type to database representation if necessary
+     * @param type the string to convert
+     * @return an XML attribute string for the ojb mapping file
+     */
+    protected static String generateConversion(String type) {
+        if (type.equals("boolean")) {
+            return " conversion=\""
+                + "org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion\"";
+        }
+        if (type.equals("java.util.Date")) {
+            return " conversion=\""
+                + "org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion\"";
+        }
+        return "";
+    }
 }
