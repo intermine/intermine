@@ -546,6 +546,9 @@ null:BioSequence__propertySets a owl:ObjectProperty;
     rdfs:domain :Publication;
     rdfs:range :Author.
 
+null:Publication__year a owl:DatatypeProperty;
+    owl:equivalentProperty mage:BibliographicReference__year.
+
 null:BibliographicReference__authors a owl:DatatypeProperty;
     owl:equivalentProperty mage:BibliographicReference__authors.
 null:BibliographicReference__publisher a owl:DatatypeProperty;
