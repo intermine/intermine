@@ -753,7 +753,12 @@
     <delete dir="${build.src.test}"/>
     <delete dir="${build.resources}"/>
     <delete dir="${build.schema}"/>
-    <delete file="velocity.log" />
+    <delete>
+    <fileset dir=".">
+      <include name="velocity.log*"/>
+      <include name="flymine.log*"/>
+    </fileset>
+    </delete>
     <delete file="flymine.log" />
     <delete file="${build}/testmodel_.xmi" />
     <antcall target="prepare" />
