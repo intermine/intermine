@@ -16,6 +16,7 @@ import org.flymine.metadata.Model;
 public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
 {
     private List rows = new ArrayList();
+    private Model model = null;
     private int resultsSize = 0;
     private int executeTime = 10;
     private int executeCalls = 0;
@@ -224,9 +225,16 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     }
 
     /**
+     * Set the model to be returned by this ObjectStore
+     */
+    public void setModel() {
+        this.model = model;
+    }
+
+    /**
      * @see ObjectStore#getModel
      */
     public Model getModel() {
-        return null;
+        return this.model;
     }
 }
