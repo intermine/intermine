@@ -13,6 +13,8 @@ package org.flymine.objectstore.flymine;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -50,7 +52,9 @@ import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.UnknownTypeValue;
+import org.flymine.util.AlwaysMap;
 import org.flymine.util.DatabaseUtil;
+import org.flymine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
 
@@ -106,7 +110,7 @@ public class SqlGenerator
         String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, model) : "");
         return "SELECT " + (q.isDistinct() ? "DISTINCT " : "")
             + buildSelectComponent(state, q, model, kind) + state.getFrom() + state.getWhere()
-            + buildGroupBy(q, model) + orderBy
+            + buildGroupBy(q, model, state) + orderBy
             + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
             + (start == 0 ? "" : " OFFSET " + start);
     }
@@ -126,18 +130,59 @@ public class SqlGenerator
         while (fromIter.hasNext()) {
             FromElement fromElement = (FromElement) fromIter.next();
             if (fromElement instanceof QueryClass) {
-                ClassDescriptor cld = model.getClassDescriptorByName(
-                        ((QueryClass) fromElement).getType().getName());
-                if (cld == null) {
-                    throw new ObjectStoreException(((QueryClass) fromElement).getType().toString()
-                            + " is not in the model");
+                QueryClass qc = (QueryClass) fromElement;
+                Set classes = DynamicUtil.decomposeClass(qc.getType());
+                Set clds = new HashSet();
+                Map aliases = new HashMap();
+                int sequence = 0;
+                String lastAlias = "";
+                Iterator classIter = classes.iterator();
+                while (classIter.hasNext()) {
+                    Class cls = (Class) classIter.next();
+                    ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
+                    if (cld == null) {
+                        throw new ObjectStoreException(cls.toString() + " is not in the model");
+                    }
+                    clds.add(cld);
+                    String baseAlias = (String) q.getAliases().get(qc);
+                    if (sequence == 0) {
+                        aliases.put(cld, baseAlias);
+                        state.addToFrom(DatabaseUtil.getTableName(cld) + " AS " + baseAlias);
+                    } else {
+                        aliases.put(cld, baseAlias + "_" + sequence);
+                        state.addToFrom(DatabaseUtil.getTableName(cld) + " AS " + baseAlias
+                                + "_" + sequence);
+                        if (state.getWhereBuffer().length() > 0) {
+                            state.addToWhere(" AND ");
+                        }
+                        state.addToWhere(baseAlias + lastAlias + ".id = " + baseAlias
+                                + "_" + sequence + ".id");
+                        lastAlias = "_" + sequence;
+                    }
+                    sequence++;
                 }
-                state.addToFrom(DatabaseUtil.getTableName(cld) + " AS "
-                        + ((String) q.getAliases().get(fromElement)));
+                Map fields = model.getFieldDescriptorsForClass(qc.getType());
+                Map fieldToAlias = state.getFieldToAlias(qc);
+                Iterator fieldIter = fields.entrySet().iterator();
+                while (fieldIter.hasNext()) {
+                    Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
+                    FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
+                    String name = field.getName();
+                    Iterator aliasIter = aliases.entrySet().iterator();
+                    while (aliasIter.hasNext()) {
+                        Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
+                        ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
+                        String alias = (String) aliasEntry.getValue();
+                        if (cld.getAllFieldDescriptors().contains(field)) {
+                            fieldToAlias.put(name, alias);
+                        }
+                    }
+                }
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, 0, Integer.MAX_VALUE,
                                 model, QUERY_SUBQUERY_FROM) + ") AS "
                         + ((String) q.getAliases().get(fromElement)));
+                state.setFieldToAlias(fromElement, new AlwaysMap(q.getAliases().get(fromElement)));
             }
         }
     }
@@ -233,11 +278,11 @@ public class SqlGenerator
      */
     protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q,
             Model model) throws ObjectStoreException {
-        queryEvaluableToString(state.getWhereBuffer(), c.getArg1(), q);
+        queryEvaluableToString(state.getWhereBuffer(), c.getArg1(), q, state);
         state.addToWhere(" " + c.getOp().toString());
         if (c.getArg2() != null) {
             state.addToWhere(" ");
-            queryEvaluableToString(state.getWhereBuffer(), c.getArg2(), q);
+            queryEvaluableToString(state.getWhereBuffer(), c.getArg2(), q, state);
         }
     }
 
@@ -256,9 +301,10 @@ public class SqlGenerator
         QueryEvaluable qe = c.getQueryEvaluable();
         QueryClass cls = c.getQueryClass();
         if (qe != null) {
-            queryEvaluableToString(state.getWhereBuffer(), qe, q);
+            queryEvaluableToString(state.getWhereBuffer(), qe, q, state);
         } else {
-            queryClassToString(state.getWhereBuffer(), cls, q, model, QUERY_SUBQUERY_CONSTRAINT);
+            queryClassToString(state.getWhereBuffer(), cls, q, model, QUERY_SUBQUERY_CONSTRAINT,
+                    state);
         }
         state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, 0, Integer.MAX_VALUE,
                         model, QUERY_SUBQUERY_CONSTRAINT) + ")");
@@ -276,17 +322,12 @@ public class SqlGenerator
     protected static void classConstraintToString(State state, ClassConstraint c, Query q,
             Model model) throws ObjectStoreException {
         QueryClass arg1 = c.getArg1();
-        String alias1 = ((String) q.getAliases().get(arg1)) + ".";
         QueryClass arg2QC = c.getArg2QueryClass();
-        String alias2 = null;
-        if (arg2QC != null) {
-            alias2 = ((String) q.getAliases().get(arg2QC)) + ".";
-        }
         FlyMineBusinessObject arg2O = c.getArg2Object();
-        queryClassToString(state.getWhereBuffer(), arg1, q, model, ID_ONLY);
+        queryClassToString(state.getWhereBuffer(), arg1, q, model, ID_ONLY, state);
         state.addToWhere(" " + c.getOp().toString() + " ");
         if (arg2QC != null) {
-            queryClassToString(state.getWhereBuffer(), arg2QC, q, model, ID_ONLY);
+            queryClassToString(state.getWhereBuffer(), arg2QC, q, model, ID_ONLY, state);
         } else if (arg2O.getId() != null) {
             objectToString(state.getWhereBuffer(), arg2O);
         } else {
@@ -316,20 +357,23 @@ public class SqlGenerator
         }
         ReferenceDescriptor arg1Desc = (ReferenceDescriptor) arg1Class
             .getFieldDescriptorByName(arg1.getFieldName());
-        String arg1Alias = ((String) q.getAliases().get(arg1.getQueryClass()));
         if (arg1 instanceof QueryObjectReference) {
+            String arg1Alias = (String) state.getFieldToAlias(arg1.getQueryClass()).get(arg1Desc
+                    .getName());
             state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
                     + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
-            queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY);
+            queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
         } else if (arg1 instanceof QueryCollectionReference) {
             ClassDescriptor arg2Class = model.getClassDescriptorByName(arg2.getType().getName());
             if (arg2Class == null) {
                 throw new ObjectStoreException(arg2.getType().toString()
                         + " is not in the model");
             }
-            String arg2Alias = ((String) q.getAliases().get(arg2));
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY);
+                String arg2Alias = (String) state.getFieldToAlias(arg2)
+                    .get(arg1Desc.getReverseReferenceDescriptor().getName());
+                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY,
+                        state);
                 state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ") + arg2Alias
                         + "."
                         + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
@@ -339,12 +383,13 @@ public class SqlGenerator
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
                 state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? "(" : "( NOT (");
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY);
+                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY,
+                        state);
                 state.addToWhere(" = " + indirectTableAlias + "."
                         + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc) + " AND "
                         + indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
-                queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY);
+                queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
                 state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? ")" : "))");
             }
         }
@@ -365,11 +410,11 @@ public class SqlGenerator
         String leftHandSide;
         if (c.getQueryNode() instanceof QueryEvaluable) {
             StringBuffer lhsBuffer = new StringBuffer();
-            queryEvaluableToString(lhsBuffer, (QueryEvaluable) c.getQueryNode(), q);
+            queryEvaluableToString(lhsBuffer, (QueryEvaluable) c.getQueryNode(), q, state);
             leftHandSide = lhsBuffer.toString() + " = ";
         } else {
             StringBuffer lhsBuffer = new StringBuffer();
-            queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, model, ID_ONLY);
+            queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, model, ID_ONLY, state);
             leftHandSide = lhsBuffer.toString() + " = ";
         }
         SortedSet filteredBag = new TreeSet();
@@ -440,9 +485,10 @@ public class SqlGenerator
      * @param q the Query
      * @param model the Model
      * @param kind the type of the output requested
+     * @param state a State object
      */
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
-            Model model, int kind) {
+            Model model, int kind, State state) {
         String alias = (String) q.getAliases().get(qc);
         if (kind == QUERY_SUBQUERY_CONSTRAINT) {
             buffer.append(alias)
@@ -473,7 +519,7 @@ public class SqlGenerator
                     String columnName = DatabaseUtil.getColumnName(field);
 
                     buffer.append(", ")
-                        .append(alias)
+                        .append((String) state.getFieldToAlias(qc).get(field.getName()))
                         .append(".")
                         .append(columnName);
                     if (kind == QUERY_SUBQUERY_FROM) {
@@ -498,14 +544,15 @@ public class SqlGenerator
      * @param buffer the StringBuffer to add text to
      * @param node the QueryEvaluable
      * @param q the Query
+     * @param state a State object
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void queryEvaluableToString(StringBuffer buffer, QueryEvaluable node,
-            Query q) throws ObjectStoreException {
+            Query q, State state) throws ObjectStoreException {
         if (node instanceof QueryField) {
             QueryField nodeF = (QueryField) node;
             FromElement nodeClass = nodeF.getFromElement();
-            String classAlias = (String) q.getAliases().get(nodeClass);
+            String classAlias = (String) state.getFieldToAlias(nodeClass).get(nodeF.getFieldName());
 
             buffer.append(classAlias)
                 .append(".")
@@ -519,11 +566,11 @@ public class SqlGenerator
                 QueryEvaluable arg3 = nodeE.getArg3();
 
                 buffer.append("Substr(");
-                queryEvaluableToString(buffer, arg1, q);
+                queryEvaluableToString(buffer, arg1, q, state);
                 buffer.append(", ");
-                queryEvaluableToString(buffer, arg2, q);
+                queryEvaluableToString(buffer, arg2, q, state);
                 buffer.append(", ");
-                queryEvaluableToString(buffer, arg3, q);
+                queryEvaluableToString(buffer, arg3, q, state);
                 buffer.append(")");
             } else {
                 QueryEvaluable arg1 = nodeE.getArg1();
@@ -547,9 +594,9 @@ public class SqlGenerator
                                                             + nodeE.getOperation()));
                 }
                 buffer.append("(");
-                queryEvaluableToString(buffer, arg1, q);
+                queryEvaluableToString(buffer, arg1, q, state);
                 buffer.append(op);
-                queryEvaluableToString(buffer, arg2, q);
+                queryEvaluableToString(buffer, arg2, q, state);
                 buffer.append(")");
             }
         } else if (node instanceof QueryFunction) {
@@ -560,22 +607,22 @@ public class SqlGenerator
                 break;
             case QueryFunction.SUM:
                 buffer.append("SUM(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q);
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;
             case QueryFunction.AVERAGE:
                 buffer.append("AVG(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q);
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;
             case QueryFunction.MIN:
                 buffer.append("MIN(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q);
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;
             case QueryFunction.MAX:
                 buffer.append("MAX(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q);
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;
             default:
@@ -613,9 +660,9 @@ public class SqlGenerator
             }
             needComma = true;
             if (node instanceof QueryClass) {
-                queryClassToString(retval, (QueryClass) node, q, model, kind);
+                queryClassToString(retval, (QueryClass) node, q, model, kind, state);
             } else if (node instanceof QueryEvaluable) {
-                queryEvaluableToString(retval, (QueryEvaluable) node, q);
+                queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 String alias = (String) q.getAliases().get(node);
                 if ((kind == QUERY_NORMAL) || (kind == QUERY_SUBQUERY_FROM)) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase()) ? alias : "\"" + alias
@@ -640,10 +687,12 @@ public class SqlGenerator
      *
      * @param q the Query
      * @param model the Model
+     * @param state a State object
      * @return a String
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildGroupBy(Query q, Model model) throws ObjectStoreException {
+    protected static String buildGroupBy(Query q, Model model,
+            State state) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
         Iterator groupByIter = q.getGroupBy().iterator();
@@ -652,9 +701,10 @@ public class SqlGenerator
             retval.append(needComma ? ", " : " GROUP BY ");
             needComma = true;
             if (node instanceof QueryClass) {
-                queryClassToString(retval, (QueryClass) node, q, model, NO_ALIASES_ALL_FIELDS);
+                queryClassToString(retval, (QueryClass) node, q, model, NO_ALIASES_ALL_FIELDS,
+                        state);
             } else {
-                queryEvaluableToString(retval, (QueryEvaluable) node, q);
+                queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
             }
         }
         return retval.toString();
@@ -682,12 +732,12 @@ public class SqlGenerator
                 retval.append(needComma ? ", " : " ORDER BY ");
                 needComma = true;
                 if (node instanceof QueryClass) {
-                    queryClassToString(retval, (QueryClass) node, q, model, ID_ONLY);
+                    queryClassToString(retval, (QueryClass) node, q, model, ID_ONLY, state);
                 } else {
-                    queryEvaluableToString(retval, (QueryEvaluable) node, q);
+                    queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                     if (!q.getSelect().contains(node)) {
                         StringBuffer buffer = new StringBuffer();
-                        queryEvaluableToString(buffer, (QueryEvaluable) node, q);
+                        queryEvaluableToString(buffer, (QueryEvaluable) node, q, state);
                         buffer.append(" AS ")
                             .append(state.getOrderByAlias());
                         state.addToOrderBy(buffer.toString());
@@ -704,6 +754,7 @@ public class SqlGenerator
         private StringBuffer fromText = new StringBuffer();
         private Set orderBy = new LinkedHashSet();
         private int number = 0;
+        private Map fromToFieldToAlias = new HashMap();
 
         public State() {
         }
@@ -747,7 +798,18 @@ public class SqlGenerator
         public Set getOrderBy() {
             return orderBy;
         }
+
+        public Map getFieldToAlias(FromElement from) {
+            Map retval = (Map) fromToFieldToAlias.get(from);
+            if (retval == null) {
+                retval = new HashMap();
+                fromToFieldToAlias.put(from, retval);
+            }
+            return retval;
+        }
+
+        public void setFieldToAlias(FromElement from, Map map) {
+            fromToFieldToAlias.put(from, map);
+        }
     }
 }
-
-

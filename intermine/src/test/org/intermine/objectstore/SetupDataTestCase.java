@@ -156,12 +156,14 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
     // Used to re-generate testmodel_data.xml file from java objects, called by main method
     public static void setUpDataObjects() throws Exception {
-        Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company companyA = (Company) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
         companyA.setName("CompanyA");
         companyA.setVatNumber(1234);
+        ((Broke) companyA).setDebt(876324);
 
-        Contractor contractorA = new Contractor();
+        Contractor contractorA = (Contractor) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Contractor.class, Broke.class})));
         contractorA.setName("ContractorA");
+        ((Broke) contractorA).setDebt(7634);
 
         Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));;
         companyB.setName("CompanyB");
@@ -182,12 +184,13 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Department departmentB1 = new Department();
         departmentB1.setName("DepartmentB1");
 
-        CEO employeeB1 = new CEO();
+        CEO employeeB1 = (CEO) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {CEO.class, Broke.class})));
         employeeB1.setName("EmployeeB1");
         employeeB1.setFullTime(true);
         employeeB1.setAge(40);
         employeeB1.setTitle("Mr.");
         employeeB1.setSalary(45000);
+        ((Broke) employeeB1).setDebt(340);
 
         Address address4 = new Address();
         address4.setAddress("Employee Street, BVille");

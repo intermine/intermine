@@ -10,6 +10,7 @@ package org.flymine.util;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -123,5 +124,13 @@ public class DynamicUtilTest extends TestCase
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    public void testConstructors() throws Exception {
+        Class c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
+        Company obj = (Company) c.newInstance();
+        ((net.sf.cglib.Factory) obj).interceptor(new DynamicBean());
+        obj.setName("Fred");
+        assertEquals("Fred", obj.getName());
     }
 }

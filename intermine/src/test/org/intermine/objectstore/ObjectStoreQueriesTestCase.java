@@ -18,9 +18,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 
+import org.flymine.SummaryAssertionFailedError;
+import org.flymine.SummaryException;
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
 
@@ -120,9 +123,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         errorMessage.flush();
 
         if (status == 1) {
-            fail(errorMessage.toString());
+            throw new SummaryAssertionFailedError(errorMessage.toString(), "Failures present");
         } else if (status == 2) {
-            throw new Throwable(errorMessage.toString());
+            throw new SummaryException(errorMessage.toString(), "Errors present");
         }
     }
 
@@ -172,6 +175,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("EmptyNorConstraintSet", emptyNorConstraintSet());
         queries.put("BagConstraint", bagConstraint());
         queries.put("InterfaceField", interfaceField());
+        queries.put("DynamicClass", dynamicClass());
+        queries.put("DynamicClass2", dynamicClass2());
     }
 
     /*
@@ -948,6 +953,36 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(qc1);
         q1.addFrom(qc1);
         q1.setConstraint(new SimpleConstraint(new QueryField(qc1, "name"), ConstraintOp.EQUALS, new QueryValue("EmployeeA1")));
+        return q1;
+    }
+
+    public static Query dynamicClass() throws Exception {
+        Set classes = new LinkedHashSet();
+        classes.add(Broke.class);
+        classes.add(Company.class);
+        QueryClass qc1 = new QueryClass(classes);
+        QueryField f1 = new QueryField(qc1, "debt");
+        QueryField f2 = new QueryField(qc1, "vatNumber");
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        q1.addToSelect(f1);
+        q1.addToSelect(f2);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new SimpleConstraint(f1, ConstraintOp.GREATER_THAN, new QueryValue(new Integer(0))));
+        cs.addConstraint(new SimpleConstraint(f2, ConstraintOp.GREATER_THAN, new QueryValue(new Integer(0))));
+        q1.setConstraint(cs);
+        return q1;
+    }
+
+    public static Query dynamicClass2() throws Exception {
+        Set classes = new LinkedHashSet();
+        classes.add(Broke.class);
+        classes.add(Employable.class);
+        QueryClass qc1 = new QueryClass(classes);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
         return q1;
     }
 }

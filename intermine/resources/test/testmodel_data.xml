@@ -1,5 +1,5 @@
 <items>
-<object xml_id="1" class="" implements="http://www.flymine.org/model/testmodel#Company">
+<object xml_id="1" class="" implements="http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company">
 <collection name="contractors">
 <reference ref_id="3"/>
 <reference ref_id="4"/>
@@ -10,6 +10,7 @@
 <reference ref_id="3"/>
 <reference ref_id="4"/>
 </collection>
+<field name="debt" value="876324"/>
 <collection name="departments">
 <reference ref_id="5"/>
 </collection>
@@ -42,7 +43,7 @@
 </collection>
 <reference name="cEO" ref_id="11"/>
 </object>
-<object xml_id="3" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
+<object xml_id="3" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Broke">
 <collection name="companys">
 <reference ref_id="1"/>
 <reference ref_id="2"/>
@@ -52,6 +53,7 @@
 <reference ref_id="1"/>
 <reference ref_id="2"/>
 </collection>
+<field name="debt" value="7634"/>
 <reference name="businessAddress" ref_id="21"/>
 <field name="name" value="ContractorA"/>
 </object>
@@ -116,11 +118,12 @@
 <field name="name" value="EmployeeA3"/>
 <reference name="department" ref_id="5"/>
 </object>
-<object xml_id="11" class="http://www.flymine.org/model/testmodel#CEO" implements="http://www.flymine.org/model/testmodel#HasSecretarys">
+<object xml_id="11" class="http://www.flymine.org/model/testmodel#CEO" implements="http://www.flymine.org/model/testmodel#Broke">
 <field name="age" value="40"/>
 <field name="title" value="Mr."/>
 <field name="fullTime" value="true"/>
 <reference name="address" ref_id="20"/>
+<field name="debt" value="340"/>
 <field name="name" value="EmployeeB1"/>
 <reference name="department" ref_id="6"/>
 <field name="salary" value="45000"/>

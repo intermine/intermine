@@ -11,12 +11,15 @@ package org.flymine.util;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.Arrays;
 
 import net.sf.cglib.*;
 
@@ -30,6 +33,7 @@ import org.flymine.metadata.ClassDescriptor;
  */
 public class DynamicUtil
 {
+    private static Map classMap = new HashMap();
 
     /**
      * Cannot construct
@@ -45,45 +49,84 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if fields are not
      * compatible.
      */
-    public static Object createObject(Set classes) throws IllegalArgumentException {
-        Iterator classIter = classes.iterator();
-        Class clazz = null;
-        Set interfaces = new HashSet();
-        while (classIter.hasNext()) {
-            Class cls = (Class) classIter.next();
-            if (cls.isInterface()) {
-                interfaces.add(cls);
-            } else if (clazz == null) {
-                clazz = cls;
-            } else {
-                throw new IllegalArgumentException("Cannot create a class from multiple classes");
+    public static synchronized Object createObject(Set classes) throws IllegalArgumentException {
+        Class requiredClass = (Class) classMap.get(classes);
+        if (requiredClass != null) {
+            Object retval = null;
+            try {
+                retval = requiredClass.newInstance();
+            } catch (Exception e) {
+                IllegalArgumentException e2 = new IllegalArgumentException();
+                e2.initCause(e);
+                throw e2;
             }
-        }
-        if (clazz != null) {
-            interfaces.removeAll(Arrays.asList(clazz.getInterfaces()));
-        }
-        if (interfaces.isEmpty()) {
-            if (clazz == null) {
-                throw new IllegalArgumentException("Cannot create a class from nothing");
-            } else {
-                try {
-                    return clazz.newInstance();
-                } catch (InstantiationException e) {
-                    IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
-                            + " constructor");
-                    e2.initCause(e);
-                    throw e2;
-                } catch (IllegalAccessException e) {
-                    IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
-                            + " constructor");
-                    e2.initCause(e);
-                    throw e2;
+            if (retval instanceof Factory) {
+                ((Factory) retval).interceptor(new DynamicBean());
+            }
+            return retval;
+        } else {
+            Iterator classIter = classes.iterator();
+            Class clazz = null;
+            Set interfaces = new HashSet();
+            while (classIter.hasNext()) {
+                Class cls = (Class) classIter.next();
+                if (cls.isInterface()) {
+                    interfaces.add(cls);
+                } else if (clazz == null) {
+                    clazz = cls;
+                } else {
+                    throw new IllegalArgumentException("Cannot create a class from multiple"
+                            + " classes");
                 }
             }
+            if (clazz != null) {
+                interfaces.removeAll(Arrays.asList(clazz.getInterfaces()));
+            }
+            if (interfaces.isEmpty()) {
+                if (clazz == null) {
+                    throw new IllegalArgumentException("Cannot create a class from nothing");
+                } else {
+                    try {
+                        classMap.put(classes, clazz);
+                        return clazz.newInstance();
+                    } catch (InstantiationException e) {
+                        IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
+                                + " constructor");
+                        e2.initCause(e);
+                        throw e2;
+                    } catch (IllegalAccessException e) {
+                        IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
+                                + " constructor");
+                        e2.initCause(e);
+                        throw e2;
+                    }
+                }
+            }
+            Object retval = DynamicBean.create(clazz, (Class [])
+                    interfaces.toArray(new Class[] {}));
+            classMap.put(classes, retval.getClass());
+            return retval;
         }
-        return DynamicBean.create(clazz, (Class []) interfaces.toArray(new Class[] {}));
     }
 
+    /**
+     * Return the Class for a set of Class objects. NOTE: Creating an instance of this class is not
+     * trivial: after calling Class.newInstance(), cast the Object to net.sf.cglib.Factory, and call
+     * interceptor(new org.flymine.util.DynamicBean()) on it.
+     *
+     * @param classes the classes and interfaces to extend/implement
+     * @return the Class
+     * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
+     * compatible.
+     */
+    public static synchronized Class composeClass(Set classes) throws IllegalArgumentException {
+        Class retval = (Class) classMap.get(classes);
+        if (retval == null) {
+            retval = createObject(classes).getClass();
+        }
+        return retval;
+    }
+    
     /**
      * Create a DynamicBean from a set of interface names
      *
@@ -139,7 +182,7 @@ public class DynamicUtil
     public static Set decomposeClass(Class clazz) {
         if (net.sf.cglib.Factory.class.isAssignableFrom(clazz)) {
             // Decompose
-            Set retval = new HashSet();
+            Set retval = new LinkedHashSet();
             retval.add(clazz.getSuperclass());
             Class interfs[] = clazz.getInterfaces();
             for (int i = 0; i < interfs.length; i++) {

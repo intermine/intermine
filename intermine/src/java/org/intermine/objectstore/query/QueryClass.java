@@ -10,6 +10,10 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.Set;
+
+import org.flymine.util.DynamicUtil;
+
 /**
  * Represents the database extent of a Java class
  * NOTE - No equals() method is defined for this class and none should be.
@@ -31,6 +35,15 @@ public class QueryClass implements QueryNode, FromElement
      */
     public QueryClass(Class type) {
         this.type = type;
+    }
+
+    /**
+     * Constructs a QueryClass representing the specified set of classes
+     *
+     * @param types the Set of classes
+     */
+    public QueryClass(Set types) {
+        this.type = DynamicUtil.composeClass(types);
     }
 
     /**
