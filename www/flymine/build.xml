@@ -46,7 +46,7 @@
            style="../main.xsl" includes="**/*.xml" force="false">
       <param name="branding" expression="flymine" />
       <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
+      <param name="webappprefix" expression="${webapp.prefix}"/>
       <param name="outputext" expression="html" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
