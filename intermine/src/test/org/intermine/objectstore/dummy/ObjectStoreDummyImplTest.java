@@ -23,7 +23,7 @@ public class ObjectStoreDummyImplTest extends TestCase
         row.add(field2);
 
         os.addRow(row);
-        List rows = os.execute(new Query(), 1, 1);
+        List rows = os.execute(new Query(), 0, 0);
 
         assertEquals(1, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
@@ -38,7 +38,7 @@ public class ObjectStoreDummyImplTest extends TestCase
         q.addToSelect(new QueryClass(String.class));
         q.addToSelect(new QueryClass(Department.class));
 
-        List rows = os.execute(q, 1, 1);
+        List rows = os.execute(q, 0, 0);
 
         assertEquals(1, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
@@ -60,7 +60,7 @@ public class ObjectStoreDummyImplTest extends TestCase
         row.add(field2);
 
         os.addRow(row);
-        List rows = os.execute(q, 1, 2);
+        List rows = os.execute(q, 0, 1);
 
         assertEquals(2, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
@@ -73,5 +73,14 @@ public class ObjectStoreDummyImplTest extends TestCase
         assertTrue(newRow.get(1) instanceof Department);
     }
 
+    public void testRowLimit() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        Query q = new Query();
+        os.setResultsSize(10);
+        Results res = os.execute(q);
+
+        assertEquals(10, res.size());
+
+    }
 
 }
