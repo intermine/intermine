@@ -327,7 +327,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         try {
             // Make sure this object has an ID
             if (o.getId() == null) {
-                throw new IllegalArgumentException("Attempt to delete an object without an ID");
+                throw new IllegalArgumentException("Attempt to delete an object without an ID: "
+                        + o.toString());
             }
 
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());

@@ -49,6 +49,7 @@ public class DataLoaderTest extends TestCase
             FlyMineBusinessObject o = (FlyMineBusinessObject) deleteIter.next();
             iw.delete(o);
         }
+        toDelete.clear();
         iw.close();
     }
 
@@ -56,10 +57,11 @@ public class DataLoaderTest extends TestCase
         // store an address, has no obj/collection references
         Address a = new Address();
         a.setAddress("1 Unit Road, TestVille");
-        toDelete.add(a);
 
         loader.store(a);
+        toDelete.add(a);
 
+        assertTrue("address id sould be set", (a.getId() != null));
         Address a2 = (Address) iw.getObjectByExample(a, Collections.singleton("address"));
 
         assertNotNull("Expected addess to be retrieved from DB", a2);
@@ -69,16 +71,16 @@ public class DataLoaderTest extends TestCase
     public void testStoreWithObjectRef() throws Exception {
         Address a = new Address();
         a.setAddress("2 Unit Road, TestVille");
-        toDelete.add(a);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setAddress(a);
         c.setName("UnitTest Ltd");
         c.setVatNumber(100);
-        toDelete.add(c);
 
         // storing Company should store associated Address as a skeleton
         loader.store(c);
+        toDelete.add(a);
+        toDelete.add(c);
 
         // check address was stored
         Address a2 = (Address) iw.getObjectByExample(a, Collections.singleton("address"));
@@ -96,20 +98,20 @@ public class DataLoaderTest extends TestCase
     public void testStoreWithObjectRefNtoOne() throws Exception {
         Address a = new Address();
         a.setAddress("2 Unit Road, TestVille");
-        toDelete.add(a);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("Acme Testing");
         c.setAddress(a);
-        toDelete.add(c);
 
         Department d = new Department();
         d.setName("Department1");
         d.setCompany(c);
-        toDelete.add(d);
 
         // Store department, company and address should get stored as well
         loader.store(d);
+        toDelete.add(a);
+        toDelete.add(c);
+        toDelete.add(d);
 
         // check address was stored
         Address a2 = (Address) iw.getObjectByExample(a, Collections.singleton("address"));
@@ -136,20 +138,20 @@ public class DataLoaderTest extends TestCase
         Address aDb = new Address();
         aDb.setAddress("3 Unit Road, TestVille");
         iw.store(aDb);
-        toDelete.add(aDb);
 
         Address a = new Address();
         a.setAddress("3 Unit Road, TestVille");
-        toDelete.add(a);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setAddress(a);
         c.setName("Testing Ltd");
         c.setVatNumber(1000);
-        toDelete.add(c);
 
         // storing Company should store associated Address as a skeleton
         loader.store(c);
+        toDelete.add(aDb);
+        toDelete.add(a);
+        toDelete.add(c);
 
         // check address was stored, an exception is thrown by getByExample if same addess was stored twice
         Address a2 = (Address) iw.getObjectByExample(a, Collections.singleton("address"));
@@ -171,11 +173,9 @@ public class DataLoaderTest extends TestCase
 
         Address a1 = new Address();
         a1.setAddress("1 Unit Road, TestVille");
-        toDelete.add(a1);
 
         Address a2 = new Address();
         a2.setAddress("2 Unit Road, TestVille");
-        toDelete.add(a2);
 
         // a skeleton company
         Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -187,10 +187,12 @@ public class DataLoaderTest extends TestCase
         ceo.setFullTime(true);
         ceo.setAddress(a2);
         ceo.setCompany(c1);
-        toDelete.add(ceo);
 
         // Now store the ceo, check that company is stored
         loader.store(ceo);
+        toDelete.add(a1);
+        toDelete.add(a2);
+        toDelete.add(ceo);
 
         Company ex1 = (Company) iw.getObjectByExample(c1, Collections.singleton("name"));
         assertNotNull("Expected company to be retieved from DB", ex1);
@@ -202,9 +204,9 @@ public class DataLoaderTest extends TestCase
         c2.setName("Acme Testing");
         c2.setAddress(a1);
         c2.setVatNumber(1000);
-        toDelete.add(c2);
 
         loader.store(c2);
+        toDelete.add(c2);
 
         // check that vatNumber got set in company in database
         Company ex2 = (Company) iw.getObjectByExample(c2, Collections.singleton("name"));
@@ -230,13 +232,12 @@ public class DataLoaderTest extends TestCase
         c.getDepartments().add(d1);
         c.getDepartments().add(d2);
 
+        // Storing Company should store associated address and departments as skeletons.
+        loader.store(c);
         toDelete.add(a);
         toDelete.add(c);
         toDelete.add(d1);
         toDelete.add(d2);
-
-        // Storing Company should store associated address and departments as skeletons.
-        loader.store(c);
 
         // Now check that the two departments were stored.
         Department gotD1 = (Department) iw.getObjectByExample(d1, Collections.singleton("name"));
@@ -294,6 +295,7 @@ public class DataLoaderTest extends TestCase
         d1.getCompanys().add(c2);
         d2.getCompanys().add(c1);
 
+        loader.store(c1);
         toDelete.add(c1);
         toDelete.add(c2);
         toDelete.add(d1);
@@ -305,7 +307,6 @@ public class DataLoaderTest extends TestCase
         toDelete.add(a5);
         toDelete.add(a6);
 
-        loader.store(c1);
         iw.flushObjectById();
 
         // Check company 1.
