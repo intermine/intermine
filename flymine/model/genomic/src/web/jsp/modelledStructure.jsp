@@ -8,7 +8,7 @@
   <param name="progressbar" value="true"/>
   <param name="progresscolor" value="blue"/>
   <!--param name="load" value="http://localhost:8080/1417.atm"/-->
-  <param name="load" value="<html:rewrite action='/getAtm?id=${object.id}'/>"/>
+  <param name="load" value="<html:rewrite action='/getAttributeAsFile?object=${object.id}&field=atm'/>"/>
   <param name="script" value="select all; cpk off; wireframe off; backbone 0.3; color backbone structure"/>
 </applet>
 <!-- /modelledStructure.jsp -->
