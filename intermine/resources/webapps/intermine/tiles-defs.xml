@@ -99,7 +99,7 @@
   </definition>
   <!--tiles-->
   <definition name="classDescription.tile" path="/classDescription.jsp" controllerUrl="/initClassDescription.do"/>
-  <definition name="begin.tile" path="/begin.jsp"/>
+  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
