@@ -61,7 +61,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(p1);
-        List flatList = (List)flatten(list);
+        List flatList = TypeUtil.flatten(list);
         setIds(flatList);
 
         ListBean bean = new ListBean();
@@ -93,7 +93,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(e1);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -130,7 +130,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(e1);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -174,7 +174,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(c1);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -219,7 +219,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(d1);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -264,7 +264,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(c1);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
 
@@ -330,7 +330,7 @@ public class CastorModelOutputTest extends TestCase
         List list = new ArrayList();
         list.add(c1);
         list.add(c2);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -395,7 +395,7 @@ public class CastorModelOutputTest extends TestCase
 
         List list = new ArrayList();
         list.add(d1);
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -467,38 +467,6 @@ public class CastorModelOutputTest extends TestCase
         }
         return null;
     }
-
-    // make all nested objects top-level in returned collection
-    Collection flatten(Collection c) throws Exception {
-        List toStore = new ArrayList();
-        Iterator i = c.iterator();
-        while(i.hasNext()) {
-            flatten(i.next(), toStore);
-        }
-        return toStore;
-    }
-
-    void flatten(Object o, Collection c) throws Exception {
-        if(o == null || c.contains(o)) {
-            return;
-        }
-        c.add(o);
-        Method[] getters = TypeUtil.getGetters(o.getClass());
-        for(int i=0;i<getters.length;i++) {
-            Method getter = getters[i];
-            Class returnType = getter.getReturnType();
-            if(ModelUtil.isCollection(returnType)) {
-                Iterator iter = ((Collection)getter.invoke(o, new Object[] {})).iterator();
-                while(iter.hasNext()) {
-                    flatten(iter.next(), c);
-                }
-            } else if(ModelUtil.isReference(returnType)) {
-                flatten(getter.invoke(o, new Object[] {}), c);
-            }
-        }
-    }
-
-
 
     Contractor c1() {
         Address a1 = new Address();

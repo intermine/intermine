@@ -121,7 +121,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Reader reader = new FileReader(testdataUrl.getFile());
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-        map(flatten(result));
+        map(TypeUtil.flatten(result));
     }
 
     private static void map(Collection c) throws Exception {
@@ -136,35 +136,6 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
                 data.put((String)name.invoke(o, new Object[] {}), o);
             } else {
                 data.put(new Integer(o.hashCode()), o);
-            }
-        }
-    }
-
-    private static Collection flatten(Collection c) throws Exception {
-        List toStore = new ArrayList();
-        Iterator i = c.iterator();
-        while(i.hasNext()) {
-            flatten_(i.next(), toStore);
-        }
-        return toStore;
-    }
-
-    private static void flatten_(Object o, Collection c) throws Exception {
-        if(o == null || c.contains(o)) {
-            return;
-        }
-        c.add(o);
-        Method[] getters = TypeUtil.getGetters(o.getClass());
-        for(int i=0;i<getters.length;i++) {
-            Method getter = getters[i];
-            Class returnType = getter.getReturnType();
-            if(ModelUtil.isCollection(returnType)) {
-                Iterator iter = ((Collection)getter.invoke(o, new Object[] {})).iterator();
-                while(iter.hasNext()) {
-                    flatten_(iter.next(), c);
-                }
-            } else if(ModelUtil.isReference(returnType)) {
-                flatten_(getter.invoke(o, new Object[] {}), c);
             }
         }
     }

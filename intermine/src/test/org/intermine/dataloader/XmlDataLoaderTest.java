@@ -20,9 +20,6 @@ import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.util.*;
 import org.flymine.model.testmodel.*;
 
-
-
-
 public class XmlDataLoaderTest extends TestCase {
 
     protected ObjectStoreWriter writer;
@@ -95,7 +92,7 @@ public class XmlDataLoaderTest extends TestCase {
         Marshaller marshaller = new Marshaller(writer);
         marshaller.setMapping(map);
 
-        List flat = (List)flatten(list);
+        List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
@@ -149,35 +146,4 @@ public class XmlDataLoaderTest extends TestCase {
         }
         return null;
     }
-
-    // make all nested objects top-level in returned collection
-    Collection flatten(Collection c) throws Exception {
-        List toStore = new ArrayList();
-        Iterator i = c.iterator();
-        while(i.hasNext()) {
-            flatten(i.next(), toStore);
-        }
-        return toStore;
-    }
-
-    void flatten(Object o, Collection c) throws Exception {
-        if(o == null || c.contains(o)) {
-            return;
-        }
-        c.add(o);
-        Method[] getters = TypeUtil.getGetters(o.getClass());
-        for(int i=0;i<getters.length;i++) {
-            Method getter = getters[i];
-            Class returnType = getter.getReturnType();
-            if(ModelUtil.isCollection(returnType)) {
-                Iterator iter = ((Collection)getter.invoke(o, new Object[] {})).iterator();
-                while(iter.hasNext()) {
-                    flatten(iter.next(), c);
-                }
-            } else if(ModelUtil.isReference(returnType)) {
-                flatten(getter.invoke(o, new Object[] {}), c);
-            }
-        }
-    }
-
 }
