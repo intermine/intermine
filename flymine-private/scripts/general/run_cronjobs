@@ -90,7 +90,7 @@ sub RunJob() {
 	return;
     }
     elsif (defined ($pid)) {
-	system("(ssh -l $jobs{$_}->{'user'} $jobs{$_}->{'machine'} $jobs{$_}->{'command'})| logfile $jobs{$_}->{'logfile'} $jobs{$_}->{'log'}");
+	system("(ssh -l $jobs{$_}->{'user'} $jobs{$_}->{'machine'} $jobs{$_}->{'command'}) 2>&1 | logfile $jobs{$_}->{'logfile'} $jobs{$_}->{'log'}");
 	exit;
     }
     elsif ($! =~ /No more process/) {
