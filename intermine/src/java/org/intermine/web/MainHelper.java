@@ -79,7 +79,7 @@ public class MainHelper
             String fieldName = fd.getName();
 
             if (fieldName.equals("id")) {
-                return;
+                continue;
             }
 
             String head, tail;
