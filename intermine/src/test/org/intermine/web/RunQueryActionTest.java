@@ -41,7 +41,7 @@ public class RunQueryActionTest extends MockStrutsTestCase {
     public void testRunNoQueryPresent() {
         setRequestPathInfo("/runQuery");
         actionPerform();
-        verifyForward("error");
+        verifyForward("buildquery");
         assertNull(getSession().getAttribute("results"));
     }
 }
