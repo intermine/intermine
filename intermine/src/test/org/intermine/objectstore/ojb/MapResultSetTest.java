@@ -29,6 +29,8 @@ public class MapResultSetTest extends TestCase
         map.put("col1", new Integer(1));
         map.put("col2", "test");
         map.put("col3", new Double(0.4));
+        map.put("col4", new Float(0.6));
+        map.put("col5", null);
         mrs = new MapResultSet(map);
     }
 
@@ -43,12 +45,19 @@ public class MapResultSetTest extends TestCase
     public void testGet() throws Exception {
         assertEquals(1, mrs.getInt("col1"));
         assertEquals("test", mrs.getString("col2"));
-        assertTrue(0.4 == mrs.getDouble("col3"));
+        assertTrue(0.4d == mrs.getDouble("col3"));
+        assertTrue(0.6f == mrs.getFloat("col4"));
+
+        // Null column
+        assertTrue(0 == mrs.getInt("col5"));
+        assertTrue(null == mrs.getString("col5"));
+        assertTrue(0.0d == mrs.getDouble("col5"));
+        assertTrue(0.0f == mrs.getFloat("col5"));
     }
 
     public void testGetInvalidColumn() throws Exception {
         try {
-            mrs.getInt("col4");
+            mrs.getInt("col99");
             fail("Expected: SQLException");
         } catch (SQLException e) {
         }
