@@ -83,8 +83,9 @@ public interface ObjectStore
      *
      * @param q Flymine Query on which to count rows
      * @return the number of rows that will be produced by query
+     * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q);
+    public int count(Query q) throws ObjectStoreException;
 
     /**
      * Return the metadata associated with this ObjectStore
