@@ -32,4 +32,15 @@ public class StringUtilTest extends TestCase
         assertEquals(1,StringUtil.countOccurances("e", "effffffff"));
         assertEquals(1,StringUtil.countOccurances("e", "ffffffffffffff  fffe"));
     }
+
+    public void testCapitalise() throws Exception {
+
+        assertEquals("A", StringUtil.capitalise("a"));
+        assertEquals("A", StringUtil.capitalise("A"));
+        assertEquals("Aaaa", StringUtil.capitalise("aaaa"));
+        assertEquals("AaaaBbbb", StringUtil.capitalise("aaaaBbbb"));
+        assertEquals("", StringUtil.capitalise(""));
+        assertNull(StringUtil.capitalise(null));
+    }
+
 }
