@@ -93,6 +93,16 @@ public class ClassDescriptorTest extends TestCase {
     }
 
 
+    public void testInterfaceNotImplemented() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", Collections.singleton(cld1));
+        try {
+            assertTrue(cld1.getImplementorDescriptors().size() == 0);
+        } catch (IllegalStateException e) {
+            fail("IllegalStateException when getting implementor descriptors");
+        }
+    }
+
     public void testSuperClassExists() throws Exception {
         ClassDescriptor superCld = new ClassDescriptor("superCld", null, null, false,
                                                        new HashSet(), new HashSet(), new HashSet());
