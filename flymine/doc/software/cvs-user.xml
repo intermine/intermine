@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2003-06-16</date>
+<title>Obtaining FlyMine source code using CVS</title>
+</artheader>
+
+<para>Anonymous CVS access to the FlyMine source code is via our
+public CVS server, cvs.flymine.org. This server contains a read-only
+snapshot of the CVS source the software developers are using, updated
+every 10 minutes.</para>
+
+<sect1>
+<title>Instructions</title>
+
+<itemizedlist>
+
+<listitem><command>cd</command> to the directory into which you intend
+to check out the source.</listitem>
+
+<listitem>Issue the command <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No password is needed.</listitem>
+
+<listitem>Then type <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs co flymine</command>.</listitem>
+
+</itemizedlist>
+
+<para>Once you have checked out the source from the CVS server, the
+command <command>cvs update</command> will obtain any updates to the
+code made by the development team. You should issue this command
+regularly.</para>
+
+</sect1>
+
+</article>
