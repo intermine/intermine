@@ -72,36 +72,16 @@
       </factory>
     </style>
   </target>
-<!--
-  <target name="www-intermine" depends="prepare">
-    <xmlvalidate>
-      <fileset dir="${build.www}" includes="**/*.xml"/>
-    </xmlvalidate>
-    <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
-           style="../main.xsl" includes="**/*.xml" force="false">
-      <param name="branding" expression="intermine" />
-      <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.prefix}"/>
-      <param name="outputext" expression="html" />
-      <param name="file" expression="systemId()" />
-      <param name="sourceref" expression="${build.www}" />
-      <factory>
-        <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
-      </factory>
-    </style>
-  </target>
--->
 
   <target name="validate-site-xml" depends="prepare">
-<!--    <xmlvalidate>
+    <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
-        <exclude name="internal/**"/>-->
+        <exclude name="internal/**"/>
         <!-- necessary until we can accommodate "presentation" within docbook -->
-<!--        <exclude name="doc/presentations/index.xml"/>
+        <exclude name="doc/presentations/index.xml"/>
       </fileset>
-    </xmlvalidate>-->
+    </xmlvalidate>
   </target>
-
 
   <target name="transform-site"
           depends="validate-site-xml, style-front-page, style-site"
