@@ -55,6 +55,16 @@ public abstract class AbstractConstraint implements SQLStringable
      * <br>For example, "a &gt; 5" and "a &lt; 8".
      */
     public static final int OR = 14;
+    /**
+     * Describes two constraints as being both true.
+     * This is a subset of EQUAL.
+     */
+    public static final int BOTH_TRUE = 8;
+    /**
+     * Describes two constraints as being both false.
+     * This is a subset of EQUAL.
+     */
+    public static final int BOTH_FALSE = 1;
     
     /**
      * Returns a String representation of this AbstractConstraint object, suitable for forming
@@ -82,7 +92,9 @@ public abstract class AbstractConstraint implements SQLStringable
     public boolean equals(Object obj) {
         if (obj instanceof AbstractConstraint) {
             AbstractConstraint objC = (AbstractConstraint) obj;
-            return (compare(objC) == EQUAL);
+            int compareVal = compare(objC);
+            return ((compareVal == EQUAL) || (compareVal == BOTH_TRUE)
+                    || (compareVal == BOTH_FALSE));
         }
         return false;
     }

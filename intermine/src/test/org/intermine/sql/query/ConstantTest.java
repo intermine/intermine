@@ -58,8 +58,8 @@ public class ConstantTest extends TestCase
         assertEquals(AbstractValue.INCOMPARABLE, c6.compare(c4));
         assertEquals(AbstractValue.INCOMPARABLE, c3.compare(c6));
         assertEquals(AbstractValue.INCOMPARABLE, c6.compare(c3));
-        assertEquals(AbstractValue.INCOMPARABLE, c3.compare(c5));
-        assertEquals(AbstractValue.INCOMPARABLE, c5.compare(c3));
+        assertEquals(AbstractValue.NOT_EQUAL, c3.compare(c5));
+        assertEquals(AbstractValue.NOT_EQUAL, c5.compare(c3));
         assertEquals(AbstractValue.LESS, c4.compare(c5));
         assertEquals(AbstractValue.GREATER, c5.compare(c4));
         assertEquals(AbstractValue.LESS, c1.compare(c3));

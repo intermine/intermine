@@ -4,8 +4,8 @@ import junit.framework.*;
 
 public class ConstraintTest extends TestCase
 {
-    private AbstractValue v1, v2, v3, v4, a;
-    private Constraint c1, c2, c3, c4, c5, c6, c7, c8;
+    private AbstractValue v1, v2, v3, v4, a, b, c;
+    private Constraint c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
 
     public ConstraintTest(String arg1) {
         super(arg1);
@@ -17,6 +17,8 @@ public class ConstraintTest extends TestCase
         v3 = new Constant("'Flibble'");
         v4 = new Constant("'Flobble'");
         a = new Field("a", new Table("table1"));
+        b = new Field("b", new Table("table1"));
+        c = new Field("c", new Table("table1"));
         c1 = new Constraint(a, Constraint.EQ, v1);
         c2 = new Constraint(a, Constraint.EQ, v2);
         c3 = new Constraint(a, Constraint.LT, v1);
@@ -25,6 +27,10 @@ public class ConstraintTest extends TestCase
         c6 = new Constraint(v3, Constraint.EQ, v4);
         c7 = new Constraint(a, Constraint.LIKE, v3);
         c8 = new Constraint(a, Constraint.LIKE, v4);
+        c9 = new Constraint(a, Constraint.EQ, b);
+        c10 = new Constraint(a, Constraint.LT, b);
+        c11 = new Constraint(b, Constraint.LT, a);
+        c12 = new Constraint(a, Constraint.EQ, c);
     }
 
     public void testGetSQLString() throws Exception {
@@ -35,6 +41,11 @@ public class ConstraintTest extends TestCase
         assertEquals("1 < table1.a", c5.getSQLString());
         assertEquals("'Flibble' = 'Flobble'", c6.getSQLString());
         assertEquals("table1.a LIKE 'Flibble'", c7.getSQLString());
+        assertEquals("table1.a LIKE 'Flobble'", c8.getSQLString());
+        assertEquals("table1.a = table1.b", c9.getSQLString());
+        assertEquals("table1.a < table1.b", c10.getSQLString());
+        assertEquals("table1.b < table1.a", c11.getSQLString());
+        assertEquals("table1.a = table1.c", c12.getSQLString());
     }
 
     public void testCompare() throws Exception {
@@ -44,6 +55,9 @@ public class ConstraintTest extends TestCase
         assertEquals(AbstractConstraint.IMPLIES, c1.compare(c4));
         assertEquals(AbstractConstraint.EXCLUDES, c1.compare(c5));
         assertEquals(AbstractConstraint.INDEPENDENT, c1.compare(c7));
+        assertEquals(AbstractConstraint.INDEPENDENT, c1.compare(c9));
+        assertEquals(AbstractConstraint.INDEPENDENT, c1.compare(c10));
+        assertEquals(AbstractConstraint.INDEPENDENT, c1.compare(c11));
 
         assertEquals(AbstractConstraint.EXCLUDES, c2.compare(c1));
         assertEquals(AbstractConstraint.EQUAL, c2.compare(c2));
@@ -84,6 +98,25 @@ public class ConstraintTest extends TestCase
         assertEquals(AbstractConstraint.EQUAL, c7.compare(c7));
         assertEquals(AbstractConstraint.INDEPENDENT, c7.compare(c8));
 
+        assertEquals(AbstractConstraint.EQUAL, c9.compare(c9));
+        assertEquals(AbstractConstraint.EXCLUDES, c9.compare(c10));
+        assertEquals(AbstractConstraint.EXCLUDES, c9.compare(c11));
+        assertEquals(AbstractConstraint.INDEPENDENT, c9.compare(c12));
+
+        assertEquals(AbstractConstraint.EXCLUDES, c10.compare(c9));
+        assertEquals(AbstractConstraint.EQUAL, c10.compare(c10));
+        assertEquals(AbstractConstraint.EXCLUDES, c10.compare(c11));
+        assertEquals(AbstractConstraint.INDEPENDENT, c10.compare(c12));
+
+        assertEquals(AbstractConstraint.EXCLUDES, c11.compare(c9));
+        assertEquals(AbstractConstraint.EXCLUDES, c11.compare(c10));
+        assertEquals(AbstractConstraint.EQUAL, c11.compare(c11));
+        assertEquals(AbstractConstraint.INDEPENDENT, c11.compare(c12));
+
+        assertEquals(AbstractConstraint.INDEPENDENT, c12.compare(c9));
+        assertEquals(AbstractConstraint.INDEPENDENT, c12.compare(c10));
+        assertEquals(AbstractConstraint.INDEPENDENT, c12.compare(c11));
+        assertEquals(AbstractConstraint.EQUAL, c12.compare(c12));
 
     }
 }

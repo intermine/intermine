@@ -69,9 +69,10 @@ public class Constant extends AbstractValue
         }
         if (obj instanceof Constant) {
             Constant objC = (Constant) obj;
-            if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'') 
+            if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'')
                     && (objC.value.charAt(0) == '\'')
                     && (objC.value.charAt(value.length() - 1) == '\'')) {
+                // Both this and obj are string constants.
                 return (value.compareTo(objC.value) < 0 ? LESS : GREATER);
             }
             try {
@@ -79,6 +80,23 @@ public class Constant extends AbstractValue
                         : GREATER);
             } catch (NumberFormatException e) {
                 // That's not a problem
+            }
+            if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'')) {
+                try {
+                    double a = Double.parseDouble(objC.value);
+                    return NOT_EQUAL;
+                } catch (NumberFormatException e) {
+                    // That's okay - obj is not a number
+                }
+            }
+            if ((objC.value.charAt(0) == '\'')
+                    && (objC.value.charAt(objC.value.length() - 1) == '\'')) {
+                try {
+                    double a = Double.parseDouble(value);
+                    return NOT_EQUAL;
+                } catch (NumberFormatException e) {
+                    // That's okay - this is not a number
+                }
             }
         }
         return INCOMPARABLE;

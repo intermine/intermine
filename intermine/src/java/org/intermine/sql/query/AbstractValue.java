@@ -22,9 +22,14 @@ public abstract class AbstractValue implements SQLStringable
      */
     public static final int GREATER = 2;
     /**
-     * Describes one AbstractValue as being incomparable to another AbstractValue.
+     * Describes one AbstractValue as being definitely not equal to another AbstractValue.
      */
-    public static final int INCOMPARABLE = 3;
+    public static final int NOT_EQUAL = 3;
+    /**
+     * Describes one AbstractValue as being incomparable to another AbstractValue. In other words,
+     * we can't tell if they are equal or not.
+     */
+    public static final int INCOMPARABLE = 4;
 
     /**
      * Returns a String representation of this AbstractValue object, suitable for forming
@@ -54,7 +59,7 @@ public abstract class AbstractValue implements SQLStringable
      * Constants.
      *
      * @param obj an AbstractValue to compare to
-     * @return EQUAL, LESS, GREATER, or INCOMPARABLE
+     * @return EQUAL, LESS, GREATER, NOT_EQUAL, or INCOMPARABLE
      */
     public int compare(AbstractValue obj) {
         return (equals(obj) ? EQUAL : INCOMPARABLE);
@@ -83,4 +88,47 @@ public abstract class AbstractValue implements SQLStringable
     public boolean greaterThan(AbstractValue obj) {
         return (compare(obj) == GREATER);
     }
+
+    /**
+     * Compare this value of this AbstractValue with another to see if it is not equal. It uses the
+     * compare method of AbstractValue. Note that the result being false does not imply EQUAL - it
+     * may be incomparable.
+     *
+     * @param obj an AbstractValue to compare to
+     * @return true if this is definitely not equal to obj
+     */
+    public boolean notEqualTo(AbstractValue obj) {
+        int compareVal = compare(obj);
+        return (compareVal == NOT_EQUAL) || (compareVal == LESS) || (compareVal == GREATER);
+    }
+
+    /**
+     * Compare this value of this AbstractValue with another to see if it is more or equal.
+     * This only really
+     * makes sense with Constants. It uses the compare method of AbstractValue. Note that the
+     * result being false does not imply less than - it may be incomparable.
+     *
+     * @param obj an AbstractValue to compare to
+     * @return true if this is more than obj
+     */
+    public boolean greaterOrEqual(AbstractValue obj) {
+        int compareVal = compare(obj);
+        return (compareVal == GREATER) || (compareVal == EQUAL);
+    }
+
+    /**
+     * Compare the value of this AbstractValue with another to see if it is less or equal. This
+     * only really
+     * makes sense with Constants. It uses the compare method of AbstractValue. Note that the
+     * result being false does not imply greater than - it may be incomparable.
+     *
+     * @param obj an AbstractValue to compare to
+     * @return true if this is less than obj
+     */
+    public boolean lessOrEqual(AbstractValue obj) {
+        int compareVal = compare(obj);
+        return (compareVal == LESS) || (compareVal == EQUAL);
+    }
+
+
 }
