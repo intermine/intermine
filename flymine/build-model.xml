@@ -57,8 +57,7 @@
   <target name="copy-keydefs" depends="prepare">
     <copy todir="${build.model}/${model.name}">
       <fileset dir="${model.src}/resources">
-        <include name="*_keyDefs.properties"/>
-        <include name="*_keys.properties"/>
+        <include name="*.properties"/>
       </fileset>
     </copy>
   </target>
