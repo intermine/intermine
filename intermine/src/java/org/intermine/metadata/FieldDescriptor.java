@@ -113,4 +113,33 @@ public abstract class FieldDescriptor
      * @return int to describe the relationship type
      */
     public abstract int relationType(); // attr (NOT_RELATION), ref (N_1, 1_1) or coll (1_N, M_N)
+
+    /**
+     * Is this FieldDescriptor an attribute?
+     *
+     * @return true if this FieldDescriptor describes an attribute
+     */
+    public boolean isAttribute() {
+        return relationType() == NOT_RELATION;
+    }
+
+    /**
+     * Is this FieldDescriptor a reference?
+     *
+     * @return true if this FieldDescriptor describes an attribute
+     */
+    public boolean isReference() {
+        return (relationType() == ONE_ONE_RELATION) || (relationType() == N_ONE_RELATION);
+    }
+
+    /**
+     * Is this FieldDescriptor a collection?
+     *
+     * @return true if this FieldDescriptor describes an attribute
+     */
+    public boolean isCollection() {
+        return (relationType() == ONE_N_RELATION) || (relationType() == M_N_RELATION);
+    }
+
+
 }
