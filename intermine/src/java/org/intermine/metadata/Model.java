@@ -29,7 +29,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.util.TypeUtil;
-import org.intermine.ontology.OntologyUtil;
+import org.intermine.util.XmlUtil;
 
 /**
  * Represents a named business model, makes available metadata for each class
@@ -106,7 +106,7 @@ public class Model
 
         this.name = name;
 
-        this.nameSpace = new URI(OntologyUtil.correctNamespace(nameSpace));
+        this.nameSpace = new URI(XmlUtil.correctNamespace(nameSpace));
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
 
         ClassDescriptor intermineObject = new ClassDescriptor(

@@ -22,10 +22,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.*;
-import org.intermine.ontology.OntologyUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.SAXParser;
+import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Reference;
@@ -308,7 +308,7 @@ import org.intermine.xml.full.ItemHelper;
         }
 
         private String clsName(String itemName) {
-            return model.getPackageName() + "." + OntologyUtil.getFragmentFromURI(itemName);
+            return model.getPackageName() + "." + XmlUtil.getFragmentFromURI(itemName);
         }
     }
  }

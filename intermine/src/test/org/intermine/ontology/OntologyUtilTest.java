@@ -83,65 +83,6 @@ public class OntologyUtilTest extends TestCase
         assertEquals("address", OntologyUtil.generateFieldName(prop2, cls));
     }
 
-    public void testXmlToJava() throws Exception {
-        assertEquals("java.lang.String", OntologyUtil.xmlToJavaType("string"));
-        assertEquals("java.lang.String", OntologyUtil.xmlToJavaType("normalizedString"));
-        assertEquals("java.lang.String", OntologyUtil.xmlToJavaType("language"));
-        assertEquals("java.lang.String", OntologyUtil.xmlToJavaType("Name"));
-        assertEquals("java.lang.String", OntologyUtil.xmlToJavaType("NCName"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("positiveInteger"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("negativeInteger"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("int"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("nonNegativeInteger"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("unsignedInt"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("integer"));
-        assertEquals("java.lang.Integer", OntologyUtil.xmlToJavaType("nonPositiveInteger"));
-        assertEquals("java.lang.Short", OntologyUtil.xmlToJavaType("short"));
-        assertEquals("java.lang.Short", OntologyUtil.xmlToJavaType("unsignedShort"));
-        assertEquals("java.lang.Long", OntologyUtil.xmlToJavaType("long"));
-        assertEquals("java.lang.Long", OntologyUtil.xmlToJavaType("unsignedLong"));
-        assertEquals("java.lang.Byte", OntologyUtil.xmlToJavaType("byte"));
-        assertEquals("java.lang.Byte", OntologyUtil.xmlToJavaType("unsignedByte"));
-        assertEquals("java.lang.Float", OntologyUtil.xmlToJavaType("float"));
-        assertEquals("java.lang.Float", OntologyUtil.xmlToJavaType("decimal"));
-        assertEquals("java.lang.Double", OntologyUtil.xmlToJavaType("double"));
-        assertEquals("java.lang.Boolean", OntologyUtil.xmlToJavaType("boolean"));
-        assertEquals("java.net.URL", OntologyUtil.xmlToJavaType("anyURI"));
-        assertEquals("java.util.Date", OntologyUtil.xmlToJavaType("dateTime"));
-
-        try {
-            OntologyUtil.xmlToJavaType("rubbish");
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-    }
-
-
-    public void testJavaToXml() throws Exception {
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "string", OntologyUtil.javaToXmlType("java.lang.String"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "integer", OntologyUtil.javaToXmlType("java.lang.Integer"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "integer", OntologyUtil.javaToXmlType("int"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "short", OntologyUtil.javaToXmlType("java.lang.Short"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "short", OntologyUtil.javaToXmlType("short"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "long", OntologyUtil.javaToXmlType("java.lang.Long"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "long", OntologyUtil.javaToXmlType("long"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "double", OntologyUtil.javaToXmlType("java.lang.Double"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "double", OntologyUtil.javaToXmlType("double"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "float", OntologyUtil.javaToXmlType("java.lang.Float"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "float", OntologyUtil.javaToXmlType("float"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "boolean", OntologyUtil.javaToXmlType("java.lang.Boolean"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "boolean", OntologyUtil.javaToXmlType("boolean"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "byte", OntologyUtil.javaToXmlType("java.lang.Byte"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "byte", OntologyUtil.javaToXmlType("byte"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "anyURI", OntologyUtil.javaToXmlType("java.net.URL"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "dateTime", OntologyUtil.javaToXmlType("java.util.Date"));
-        try {
-            OntologyUtil.javaToXmlType("rubbish");
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-    }
-
     public void testHasMaxCardinalityOne() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL
             + ENDL
@@ -172,7 +113,6 @@ public class OntologyUtilTest extends TestCase
         assertFalse(OntologyUtil.hasMaxCardinalityOne(ont, ont.getOntProperty(ns + "departments"),
                                         (OntResource) ont.getOntClass(ns + "Company")));
     }
-
 
     public void testGetStatementFor() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL
@@ -218,19 +158,6 @@ public class OntologyUtilTest extends TestCase
 
         assertEquals(expected, types);
     }
-
-
-    public void testCorrectNamespace() throws Exception {
-        assertEquals("http://www.intermine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.intermine.org/test#junk"));
-        assertEquals("http://www.intermine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.intermine.org/test#junk#morejunk"));
-        assertEquals("http://www.intermine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.intermine.org/test/"));
-        assertEquals("http://www.intermine.org/test#",
-                     OntologyUtil.correctNamespace("http://www.intermine.org/test"));
-    }
-
 
     public void testFindRestrictedSubclassesDatatype() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL
@@ -375,7 +302,6 @@ public class OntologyUtilTest extends TestCase
         assertEquals(expected, OntologyUtil.findRestrictedSubclasses(ont, cls1));
     }
 
-
     public void testPropertyTypes() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL
             + ENDL
@@ -459,8 +385,6 @@ public class OntologyUtilTest extends TestCase
         assertNull(equiv.get(src1Ns + "Address"));
         assertNull(equiv.get(tgtNs + "Address"));
     }
-
-
 
     public void testBuildEquivalenceMapSrcNs() throws Exception {
         String tgtNs = "http://www.intermine.org/target#";
@@ -750,8 +674,6 @@ public class OntologyUtilTest extends TestCase
         }
     }
 
-
-
     private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {
         Iterator stmtIter = model.listStatements();
         while (stmtIter.hasNext()) {
@@ -938,7 +860,6 @@ public class OntologyUtilTest extends TestCase
 
         assertEquals(expected, OntologyUtil.getRestrictionSubclassTemplateMap(model, OntologyUtil.getRestrictedSubclassMap(model)));
     }
-
 
     public void testGetRestrictionSubclassSimple() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL

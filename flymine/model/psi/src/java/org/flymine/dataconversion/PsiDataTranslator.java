@@ -28,7 +28,6 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.ontology.OntologyUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -37,6 +36,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
+import org.intermine.util.XmlUtil;
 
 /**
  * DataTranslator specific to Protein Interaction data in PSI XML format.
@@ -74,14 +74,14 @@ public class PsiDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
 
         Collection result = new HashSet();
-        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
-        String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
+        String srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
+        String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
-                String tgtClassName =  OntologyUtil.getFragmentFromURI(tgtItem.getClassName());
+                String tgtClassName =  XmlUtil.getFragmentFromURI(tgtItem.getClassName());
                 if ("ExperimentType".equals(className)) {
                     Item pub = createPublication(srcItem);
                     if (pub != null) {
@@ -177,7 +177,7 @@ public class PsiDataTranslator extends DataTranslator
         Item interaction = createItem(tgtNs + "ProteinInteraction", "");
 
         Item experimentList = ItemHelper.convert(srcItemReader
-                                              .getItemById(intElType.getReference("experimentList").getRefId()));
+                                 .getItemById(intElType.getReference("experimentList").getRefId()));
         String experimentId = experimentList.getReference("experimentRef").getRefId();
         //addReferencedItem(interaction, getPub(experimentId), "evidence", true, "", false);
 
@@ -242,7 +242,8 @@ public class PsiDataTranslator extends DataTranslator
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        PsiDataTranslator dt = new PsiDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace);
+        PsiDataTranslator dt = new PsiDataTranslator(new ObjectStoreItemReader(osSrc), model,
+                                                     namespace);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();

@@ -38,6 +38,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlUtil;
 
 import org.apache.log4j.Logger;
 
@@ -50,7 +51,7 @@ import org.apache.log4j.Logger;
 public class OntologyUtil
 {
     /**
-     * the XML namespace
+     * XSD namespace.
      */
     public static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
     /**
@@ -111,7 +112,7 @@ public class OntologyUtil
      * @return the new property name
      */
     public static String generatePropertyName(String ns, String domain, String prop) {
-        return correctNamespace(ns) + domain + "__" + prop;
+        return XmlUtil.correctNamespace(ns) + domain + "__" + prop;
     }
 
 
@@ -131,83 +132,6 @@ public class OntologyUtil
             }
         }
         return name;
-    }
-
-
-    /**
-     * Return an XML datatype given a java string describing a java type.
-     * @param javaType string describing a fully qualified java type.
-     * @return a string describing and XML data type
-     */
-    public static String javaToXmlType(String javaType) {
-        if (javaType.equals("java.lang.String")) {
-            return OntologyUtil.XSD_NAMESPACE + "string";
-        } else if (javaType.equals("java.lang.Integer") || javaType.equals("int")) {
-            return OntologyUtil.XSD_NAMESPACE + "integer";
-        } else if (javaType.equals("java.lang.Short") || javaType.equals("short")) {
-            return OntologyUtil.XSD_NAMESPACE + "short";
-        } else if (javaType.equals("java.lang.Long") || javaType.equals("long")) {
-            return OntologyUtil.XSD_NAMESPACE + "long";
-        } else if (javaType.equals("java.lang.Double") || javaType.equals("double")) {
-            return OntologyUtil.XSD_NAMESPACE + "double";
-        } else if (javaType.equals("java.lang.Float") || javaType.equals("float")) {
-            return OntologyUtil.XSD_NAMESPACE + "float";
-        } else if (javaType.equals("java.lang.Boolean") || javaType.equals("boolean")) {
-            return OntologyUtil.XSD_NAMESPACE + "boolean";
-        } else if (javaType.equals("java.lang.Byte") || javaType.equals("byte")) {
-            return OntologyUtil.XSD_NAMESPACE + "byte";
-        } else if (javaType.equals("java.net.URL")) {
-            return OntologyUtil.XSD_NAMESPACE + "anyURI";
-        } else if (javaType.equals("java.util.Date")) {
-            return (OntologyUtil.XSD_NAMESPACE + "dateTime");
-        } else if (javaType.equals("java.math.BigDecimal")) {
-            return (OntologyUtil.XSD_NAMESPACE + "bigDecimal");
-        } else {
-            throw new IllegalArgumentException("Unrecognised Java type: " + javaType);
-        }
-    }
-
-
-    /**
-     * Convert an XML xsd: type to a fully qualified class name of a java type.
-     * @param xmlType the local name of an XML type
-     * @return a string representing a java class name
-     * @throws IllegalArgumentException if XML datatype unrecognised
-     */
-    public static String xmlToJavaType(String xmlType) throws IllegalArgumentException {
-        if (xmlType.equals("string") || xmlType.equals("normalizedString")
-            || xmlType.equals("language") || xmlType.equals("Name") || xmlType.equals("NCName")) {
-            return "java.lang.String";
-        } else if (xmlType.equals("positiveInteger") || xmlType.equals("negativeInteger")
-                   || xmlType.equals("int") || xmlType.equals("nonNegativeInteger")
-                   || xmlType.equals("unsignedInt") || xmlType.equals("integer")
-                   || xmlType.equals("nonPositiveInteger")) {
-            return "java.lang.Integer";
-        } else if (xmlType.equals("short") || xmlType.equals("unsignedShort")) {
-            return "java.lang.Short";
-        } else if (xmlType.equals("long") || xmlType.equals("unsignedLong")) {
-            return "java.lang.Long";
-        } else if (xmlType.equals("byte") || xmlType.equals("unsignedByte")) {
-            return "java.lang.Byte";
-        } else if (xmlType.equals("float") || xmlType.equals("decimal")) {
-            return "java.lang.Float";
-        }  else if (xmlType.equals("double")) {
-            return "java.lang.Double";
-        } else if (xmlType.equals("boolean")) {
-            return "java.lang.Boolean";
-        } else if (xmlType.equals("anyURI")) {
-            return "java.net.URL";
-        } else if (xmlType.equals("date")) {
-            return "java.util.Date";
-        } else if (xmlType.equals("dateTime")) {
-            return "java.util.Date";
-        } else if (xmlType.equals("bigDecimal")) {
-            return "java.math.BigDecimal";
-        } else if (xmlType.equals("ID")) {
-            return "java.lang.String";
-        } else {
-            throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
-        }
     }
 
     /**
@@ -231,7 +155,6 @@ public class OntologyUtil
         return false;
     }
 
-
     /**
      * For the given OntClass get a set of subclasses with a hasValue restriction
      * on a particular DatatypeProperty.  May have to follow ObjectProperties to
@@ -245,7 +168,6 @@ public class OntologyUtil
     public static Set findRestrictedSubclasses(OntModel model, OntClass srcCls) {
         return findRestrictedSubclasses(model, srcCls, null);
     }
-
 
     /**
      * For the given OntClass get a set of subclasses with a hasValue restriction
@@ -307,7 +229,6 @@ public class OntologyUtil
         i.close();
         return subclasses;
     }
-
 
     /**
      * Create a map of class URI -> restricted subclass URIs
@@ -415,7 +336,6 @@ public class OntologyUtil
         }
         return srMap;
     }
-
 
     /**
      * Build a map from SubclassRetriction objects (with values filled in) to
@@ -676,7 +596,6 @@ public class OntologyUtil
         return prop.getRange();
     }
 
-
     /**
      * Move equivalence statements from one property to another, removes statements
      * from original property.
@@ -770,7 +689,6 @@ public class OntologyUtil
         return false;
     }
 
-
     /**
      * Test whether a given property is an object property.  If type of property
      * is not owl:ObjectProperty establishes whether it is a DatatypeProperty.
@@ -783,7 +701,6 @@ public class OntologyUtil
         }
         return !isDatatypeProperty(prop);
     }
-
 
     /**
      * Return a set of jena rdf statement objects from model for given subject and predicate.
@@ -803,31 +720,6 @@ public class OntologyUtil
             }
         }
         return statements;
-    }
-
-
-    /**
-     * Return the namespace portion of URI string (i.e. everything before a #).
-     * @param uri a uri string
-     * @return the namespace or original uri if no # present
-     */
-    public static String getNamespaceFromURI(String uri) {
-        if (uri.indexOf('#') > 0) {
-            return uri.substring(0, uri.indexOf('#') + 1);
-        }
-        return uri;
-    }
-
-    /**
-     * Return the fragment portion of a URI string (i.e. everything after a #).
-     * @param uri a uri string
-     * @return the fragment or original uri if no # present
-     */
-    public static String getFragmentFromURI(String uri) {
-        if (uri.indexOf('#') > 0) {
-            return uri.substring(uri.indexOf('#') + 1);
-        }
-        return uri;
     }
 
     /**
@@ -865,21 +757,6 @@ public class OntologyUtil
     }
 
     /**
-     * If a given namespace uri does not end in a '#' add one, rmoving trailing '/' if present.
-     * @param ns the namespace uri
-     * @return the corrected namespace
-     */
-    public static String correctNamespace(String ns) {
-        if (ns.indexOf('#') >= 0) {
-            return ns.substring(0, ns.indexOf('#') + 1);
-        } else if (ns.endsWith("/")) {
-            return ns.substring(0, ns.length() - 1) + "#";
-        } else {
-            return ns + "#";
-        }
-    }
-
-    /**
      * Return a valid resource given a resource name fragment, currently just replaces
      * spaces with underscores.
      * @param fragment fragment part of a resource name uri
@@ -903,9 +780,9 @@ public class OntologyUtil
         }
         StringBuffer sb = new StringBuffer();
         for (Iterator i = StringUtil.tokenize(classNames).iterator(); i.hasNext();) {
-            sb.append(model.getPackageName() + "." + getFragmentFromURI((String) i.next()) + " ");
+            sb.append(model.getPackageName() + "."
+                      + XmlUtil.getFragmentFromURI((String) i.next()) + " ");
         }
         return sb.toString().trim();
     }
-
 }

@@ -27,6 +27,8 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.*;
 
+import org.intermine.util.XmlUtil;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -87,7 +89,7 @@ public class MergeOwl
         }
         OntModel source = ModelFactory.createOntologyModel();
         source.read(sourceOwl, null, format);
-        mergeByEquivalence(source, OntologyUtil.correctNamespace(srcNs));
+        mergeByEquivalence(source, XmlUtil.correctNamespace(srcNs));
     }
 
     /**
@@ -134,7 +136,7 @@ public class MergeOwl
                  && !subject.getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
                  && !subject.getNameSpace().equals(OntologyUtil.RDFS_NAMESPACE)
                  && !subject.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE)
-                 && !subject.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
+                 && !subject.getNameSpace().equals(XmlUtil.XSD_NAMESPACE)) {
                 statements.add(stmt);
             }
 

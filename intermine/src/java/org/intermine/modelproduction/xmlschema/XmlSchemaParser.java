@@ -85,7 +85,7 @@ import org.exolab.castor.xml.schema.reader.SchemaUnmarshaller;
 
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.metadata.*;
-import org.intermine.ontology.OntologyUtil;
+import org.intermine.util.XmlUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.dataconversion.XmlMetaData;
 
@@ -161,7 +161,7 @@ public class XmlSchemaParser implements ModelParser
 
         process(schema);
 
-        Model m = new Model(modelName, OntologyUtil.correctNamespace(nameSpace), classes);
+        Model m = new Model(modelName, nameSpace, classes);
         return m;
     }
 
@@ -326,7 +326,7 @@ public class XmlSchemaParser implements ModelParser
             String attrName = path.substring(path.lastIndexOf('/') + 1);
 
             AttributeDescriptor atd = new AttributeDescriptor(attrName,
-                                   OntologyUtil.xmlToJavaType(complexType.getBaseType().getName()));
+                                        XmlUtil.xmlToJavaType(complexType.getBaseType().getName()));
             Set atds = getFieldSetForClass(attributes, (String) clsStack.peek());
             atds.add(atd);
         }
@@ -379,7 +379,7 @@ public class XmlSchemaParser implements ModelParser
             LOG.debug("creating atd (" + attribute.getName() + ","
                       + attribute.getSimpleType().getName() + ")" + " for class: " + clsName);
             AttributeDescriptor atd = new AttributeDescriptor(generateJavaName(attribute.getName()),
-                            OntologyUtil.xmlToJavaType(attribute.getSimpleType().getName()));
+                                        XmlUtil.xmlToJavaType(attribute.getSimpleType().getName()));
             Set atds = getFieldSetForClass(attributes, clsName);
             atds.add(atd);
         }
@@ -452,7 +452,7 @@ public class XmlSchemaParser implements ModelParser
                               + " for class: " + clsName);
                     AttributeDescriptor atd = new AttributeDescriptor(
                                     generateJavaName(eDecl.getName()),
-                                    OntologyUtil.xmlToJavaType(type));
+                                    XmlUtil.xmlToJavaType(type));
                     Set atds = getFieldSetForClass(attributes, (String) clsStack.peek());
                     atds.add(atd);
                 }
