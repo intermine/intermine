@@ -1,6 +1,5 @@
 package org.flymine.objectstore.ojb;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.commons.pool.KeyedObjectPool;
@@ -59,12 +58,5 @@ class PoolablePersistenceBrokerFlyMine extends PoolablePersistenceBroker
      */
     public Database getDatabase() {
         return ((PersistenceBrokerFlyMine) getBroker()).getDatabase();
-    }
-
-    /**
-     * @see PersistenceBrokerFlyMine#describeRelation
-     */
-    public int describeRelation(Field field) {
-        return ((PersistenceBrokerFlyMine) getBroker()).describeRelation(field);
     }
 }

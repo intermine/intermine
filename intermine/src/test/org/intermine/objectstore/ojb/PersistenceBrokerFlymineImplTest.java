@@ -21,7 +21,6 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.model.testmodel.*;
-import org.flymine.util.RelationType;
 
 public class PersistenceBrokerFlymineImplTest extends TestCase
 {
@@ -145,48 +144,6 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         if (obj instanceof LazyReference)
             fail("Expected Department.company to be a materialized object but was a LazyReference");
     }
-
-
-    public void testDescribeRelationOneToOne() throws Exception {
-        Field f = Company.class.getDeclaredField("CEO");
-        assertEquals(RelationType.ONE_TO_ONE, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationOneToN() throws Exception {
-        Field f = Company.class.getDeclaredField("departments");
-        assertEquals(RelationType.ONE_TO_N, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationNToOne() throws Exception {
-        Field f = Department.class.getDeclaredField("company");
-        assertEquals(RelationType.N_TO_ONE, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationMToN() throws Exception {
-        Field f = Company.class.getDeclaredField("contractors");
-        assertEquals(RelationType.M_TO_N, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationNamedMToN() throws Exception {
-        Field f = Company.class.getDeclaredField("oldContracts");
-        assertEquals(RelationType.M_TO_N, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationNamedOneToN() throws Exception {
-        Field f = Department.class.getDeclaredField("rejectedEmployees");
-        assertEquals(RelationType.ONE_TO_N, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationNamedNToOne() throws Exception {
-        Field f = Employee.class.getDeclaredField("departmentThatRejectedMe");
-        assertEquals(RelationType.N_TO_ONE, broker.describeRelation(f));
-    }
-
-    public void testDescribeRelationNoRelation() throws Exception {
-        Field f = Department.class.getDeclaredField("name");
-        assertEquals(RelationType.NOT_RELATION, broker.describeRelation(f));
-    }
-
 
     // set up a Department object with an id
     private Department getDeptExampleObject() throws Exception {

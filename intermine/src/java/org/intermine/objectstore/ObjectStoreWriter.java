@@ -1,7 +1,5 @@
 package org.flymine.objectstore;
 
-import java.lang.reflect.Field;
-
 /**
  * Store, update, and delete objects
  *
@@ -64,14 +62,4 @@ public interface ObjectStoreWriter
      * @throws IllegalArgumentException if obj does not have all its primary key fields set
      */
     public Object getObjectByExample(Object obj) throws ObjectStoreException ;
-
-    /**
-     * Return an integer describing the type of relationship the given field represents,
-     * where relationship types are 1:1, 1:N, N:1, M:N and "not a relationship".
-     *
-     * @param field object describing the field in querstion
-     * @return int to describe the relationship type
-     */
-    public int describeRelation(Field field);
-
 }

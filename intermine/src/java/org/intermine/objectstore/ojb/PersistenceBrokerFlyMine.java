@@ -1,6 +1,5 @@
 package org.flymine.objectstore.ojb;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.ojb.broker.PersistenceBroker;
@@ -57,13 +56,4 @@ public interface PersistenceBrokerFlyMine extends PersistenceBroker
      * @return the Database object
      */
     public Database getDatabase();
-
-    /**
-     * Return an integer describing the type of relationship the given field represents,
-     * where relationship types are 1:1, 1:N, N:1, M:N and "not a relationship".
-     *
-     * @param field object describing the field in question
-     * @return int to describe the relationship type
-     */
-    public int describeRelation(Field field);
 }

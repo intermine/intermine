@@ -19,7 +19,6 @@ import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.model.testmodel.*;
-import org.flymine.util.RelationType;
 import org.flymine.util.TypeUtil;
 
 

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.lang.reflect.Field;
 
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.Identity;
@@ -19,7 +17,6 @@ import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
 import org.apache.ojb.broker.metadata.ObjectReferenceDescriptor;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.CollectionDescriptor;
-import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
 
 import org.flymine.objectstore.query.*;
@@ -28,7 +25,6 @@ import org.flymine.objectstore.proxy.LazyInitializer;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
-import org.flymine.util.RelationType;
 
 /**
  * Extension of PersistenceBrokerImpl to implement PersistenceBrokerFlyMine
@@ -261,51 +257,5 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
      */
     public Database getDatabase() {
         return database;
-    }
-
-    /**
-     * @see PersistenceBrokerFlyMine#describeRelation
-     */
-    public int describeRelation(Field field) {
-        Class cls = field.getDeclaringClass();
-
-        DescriptorRepository dr = getDescriptorRepository();
-        ClassDescriptor cld = dr.getDescriptorFor(cls);
-
-        // get other end type from ClassDescriptor
-        CollectionDescriptor thisCod = cld.getCollectionDescriptorByName(field.getName());
-        ObjectReferenceDescriptor thisOrd = cld.getObjectReferenceDescriptorByName(field.getName());
-        if (thisCod != null) {
-            // ?:N relationship
-            if (thisCod.isMtoNRelation()) {
-                return RelationType.M_TO_N;
-            } else {
-                return RelationType.ONE_TO_N;
-            }
-        } else if (thisOrd != null) {
-            // ?:1 - search inverse foreign keys of other objects collections to see if any match
-            // fks of this object descriptor
-            Set thisFks = new HashSet(thisOrd.getForeignKeyFields());
-            ClassDescriptor otherCld = dr.getDescriptorFor(thisOrd.getItemClass());
-            List cods = otherCld.getCollectionDescriptors();
-
-            Iterator codIter = cods.iterator();
-            while (codIter.hasNext()) {
-                CollectionDescriptor cod = (CollectionDescriptor) codIter.next();
-                if (!cod.isMtoNRelation()) {
-                    Set otherFks = new HashSet(cod.getForeignKeyFields());
-                    if (thisFks.equals(otherFks)) {
-                        return RelationType.N_TO_ONE;
-                    }
-                }
-            }
-
-            // this end is not collection, must be 1:1
-            return RelationType.ONE_TO_ONE;
-
-        } else {
-            // field is not an object or collection reference
-            return RelationType.NOT_RELATION;
-        }
     }
 }

@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.ConsistentSet;
-import org.flymine.util.RelationType;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -74,10 +73,8 @@ public abstract class AbstractDataLoader
                     LOG.warn(obj.getClass() + ": " + field.getName() + " = "
                             + valueInObjectToStore);
 
-                    int fieldType = iw.describeRelation(field);
-                    if ((fieldType == RelationType.ONE_TO_N)
-                        || (fieldType == RelationType.M_TO_N)) { // it's a collection
-
+                    Class fieldType = field.getType();
+                    if (Collection.class.isAssignableFrom(field.getType())) {
                         Collection objs = (Collection) valueInObjectToStore;
                         if (objs != null) {  // if any collection members in new object store them
                             Iterator objIter = objs.iterator();
@@ -87,9 +84,8 @@ public abstract class AbstractDataLoader
                             }
                         }
                     } else {
-                        if ((fieldType == RelationType.ONE_TO_ONE)
-                            || (fieldType == RelationType.N_TO_ONE)) { // it's an object reference
-
+                        //TODO: This is a very temporary fix until all metadata is updated
+                        if (fieldType.getName().startsWith("org.flymine")) {
                             if (valueInObjectToStore != null) {
                                 store(valueInObjectToStore, iw, set, true);
                             }
