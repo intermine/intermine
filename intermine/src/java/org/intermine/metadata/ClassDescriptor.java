@@ -103,7 +103,17 @@ public class ClassDescriptor
             fieldDescriptors.put(fieldDescriptor.getName(), fieldDescriptor);
         }
     }
-
+    
+    /**
+     * Construct a ClassDescriptor that takes on all the properties of <code>cld</code>
+     * without attaching to a particular Model.
+     * @param cld the ClassDescriptor to clone
+     */
+    public ClassDescriptor(ClassDescriptor cld) {
+        this(cld.name, cld.supers, cld.isInterface,
+             cld.attDescriptors, cld.refDescriptors, cld.colDescriptors);
+    }
+    
     /**
      * Returns the fully qualified class name described by this ClassDescriptor.
      * @return qualified name of the described Class
@@ -124,6 +134,14 @@ public class ClassDescriptor
         }
     }
 
+    /**
+     * Return list of space seperated superclass names.
+     * @return space seperated list of superclass names
+     */
+    public String getSupers() {
+        return supers;
+    }
+    
     /**
      * Returns unqualified name of class described by this ClassDescriptor.
      * @return unqualified name of the described Class
