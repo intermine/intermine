@@ -98,13 +98,13 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
         }
         synchronized (instances) {
             if (!(instances.containsKey(urlString))) {
-                Model model;
+                Model classpathModel;
                 try {
-                    model = getModelFromClasspath(osAlias, props);
+                    classpathModel = getModelFromClasspath(osAlias, props);
                 } catch (MetaDataException metaDataException) {
                     throw new ObjectStoreException("Cannot load model", metaDataException);
                 }
-                instances.put(urlString, new ObjectStoreClient(url, model));
+                instances.put(urlString, new ObjectStoreClient(url, classpathModel));
             }
         }
         return (ObjectStoreClient) instances.get(urlString);
