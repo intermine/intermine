@@ -87,6 +87,7 @@
     <action path="/initQuery" type="org.flymine.web.QueryInitAction"> 
     </action>
 
+    <action path="/initQueryView" type="org.flymine.web.QueryViewController"/>
   </action-mappings>
 
   <!-- ========== Controller Configuration ================================ -->

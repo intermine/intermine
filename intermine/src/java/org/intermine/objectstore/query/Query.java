@@ -281,7 +281,7 @@ public class Query implements FromElement
      * @param obj the element to alias
      * @param alias the alias to give
      */
-    protected void alias(Object obj, String alias) {
+    public void alias(Object obj, String alias) {
 
         if ((alias != null) && reverseAliases.containsKey(alias)
             && (!obj.equals(reverseAliases.get(alias)))) {

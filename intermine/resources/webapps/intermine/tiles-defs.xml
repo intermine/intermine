@@ -33,7 +33,9 @@
 <definition name="query.tile" extends="tribody.template" controllerUrl="/initQuery.do">
     <put name="left" value="/queryClassSelect.jsp"/>
     <put name="top" value="/query.jsp" />
-    <put name="bottom" value="/queryView.jsp"/>
+    <put name="bottom" value="queryView.tile"/>
+</definition>
+<definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do">
 </definition>
 </tiles-definitions>
 
