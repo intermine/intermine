@@ -1566,6 +1566,16 @@
     <mappings alias="osw.production" type="transfer-sequences"/>
   </target>
 
+  <target name="summarise-objectstore">
+    <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
+      <classname refid="class.path"/>
+    </taskdef>
+    <summarise-objectstore alias="${os.production}" 
+                           outputFile="${dest.properties.file}"
+                           inputFile="${summarise.properties}"/>
+  </target>
+
+
   <target name="post-process">
     <antcall target="calculate-locations"/>
     <antcall target="create-references"/>
@@ -1923,6 +1933,14 @@
             value="${webapp.prefix}/${webapp.viewByID.prefix}"/>
     <filter token="FLYMINE_SITE_PREFIX" 
             value="${www.location}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE" 
+            value="${gbrowse.database}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_HOST" 
+            value="${gbrowse.database.host}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_USER" 
+            value="${gbrowse.database.user}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_PASSWORD" 
+            value="${gbrowse.database.password}"/>
     <copy file="${build.gbrowse}/${gbrowse.config.file}"
           toFile="${gbrowse.config.directory}/${gbrowse.config.file}"
           filtering="true"/>
