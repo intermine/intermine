@@ -7,6 +7,7 @@
 <tiles:importAttribute/>
 
 <!-- objectView.jsp -->
+
 <div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
@@ -22,44 +23,22 @@
       </c:choose>
     </c:when>
     <c:otherwise>
-      <c:if test="${viewType == 'summary'}">
-        <nobr>
-            <c:forEach var="cld" items="${leafClds}">
-              <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
-            </c:forEach>
-          [<html:link action="/objectDetails?id=${object.id}">
-             <fmt:message key="results.details"/>
-           </html:link>]
-        </nobr>
-        <br/>
-      </c:if>
+      <nobr>
+        <c:forEach var="cld" items="${leafClds}">
+          <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
+        </c:forEach>
+        [<html:link action="/objectDetails?id=${object.id}">
+          <fmt:message key="results.details"/>
+        </html:link>]
+      </nobr>
+      <br/>
       <div style="margin-left: 8px">
         <c:forEach var="cld" items="${leafClds}">
           <c:set var="cld" value="${cld}" scope="request"/>
           <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
           <c:set var="object" value="${object}" scope="request"/>
           <c:set var="primaryKeyFields" value="${primaryKeyFields}" scope="request"/>
-          <c:choose>
-
-            <c:when test="${viewType == 'summary' &&
-                          !empty DISPLAYERS[cld.name].shortDisplayers}">
-              <c:forEach items="${DISPLAYERS[cld.name].shortDisplayers}" var="displayer">
-                <tiles:insert beanName="displayer" beanProperty="src"/>
-              </c:forEach>
-            </c:when>
-
-            <c:when test="${viewType == 'detail' &&
-                          !empty DISPLAYERS[cld.name].longDisplayers}">
-              <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
-                <tiles:insert beanName="displayer" beanProperty="src"/>
-              </c:forEach>
-            </c:when>
-
-            <c:otherwise>
-              <tiles:insert name="/objectFields.jsp"/>
-            </c:otherwise>
-            
-          </c:choose>
+          <tiles:insert name="/objectFields.jsp"/>
         </c:forEach>
       </div>
     </c:otherwise>
