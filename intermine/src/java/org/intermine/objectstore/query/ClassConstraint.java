@@ -180,6 +180,7 @@ public class ClassConstraint implements Constraint
             ClassConstraint objCC = (ClassConstraint) obj;
             return  (qc1.equals(objCC.qc1)
                      && (type == objCC.type)
+                     && (negated == objCC.negated)
                      && ((qc2 != null) ? qc2.equals(objCC.qc2) : (objCC.qc2 == null))
                      && ((this.obj != null) ? this.obj.equals(objCC.obj) : (objCC.obj == null)));
         }
@@ -193,7 +194,9 @@ public class ClassConstraint implements Constraint
      */
     public int hashCode() {
         return qc1.hashCode() + (3 * type)
-            + (5 * ((qc2 != null) ? qc2.hashCode() : obj.hashCode()));
+            + (5 * ((qc2 != null) ? qc2.hashCode() : obj.hashCode()))
+            + (negated ? 29 : 0);
+
     }
 
     /**
