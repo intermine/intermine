@@ -134,13 +134,14 @@
       <!-- can't use normal token as xml must be parseable before this replacement -->
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
-
-    <copy todir="${build.webapp}/intermine/model">
+    <mkdir dir="${build.webapp}/intermine/"/>
+    <copy todir="${build.webapp}/intermine/model" failonerror="false" >
       <fileset dir="${model}/${model.name}/src/web/jsp"/>
       <fileset dir="${model}/${model.name}/src/web/images"/>
       <fileset file="${model}/${model.name}/resources/web/model.css"/>
     </copy>
     
+  
     <war destfile="${war}" update="true">
       <fileset dir="${build.webapp}/intermine" includes="model/**/*" excludes="*.properties"/>
       <webinf file="${build.tmp}/WEB-INF/struts-config.xml"/>

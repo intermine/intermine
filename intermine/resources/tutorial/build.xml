@@ -1,6 +1,8 @@
  <project name="InterMine tutorial" default="help" basedir=".">
   <description>Build file for InterMine tutorial application</description>
   
+  <property file="build.properties"/>
+
   <!-- directory locations -->
   <property name="model" location="model"/>
   <property name="build" location="build"/>
@@ -13,10 +15,12 @@
   <property name="src" location="src"/>
   <property name="src.java" location="${src}/java"/>
   <property name="dist" location="dist"/>
+  <property name="build.webapp" location="${build}/webapp"/>
 
   <!-- runtime settings -->
   <property name="runtime.properties" value="intermine.properties" />
-
+  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
+  <property name="namespace" value="http://www.intermine.org/model"/>
   <!-- classpaths -->
   <path id="project.class.path">
     <pathelement path="${build.java}"/>
@@ -40,9 +44,12 @@
     <mkdir dir="${build.model}"/>
     <mkdir dir="${build.model}/tutorial"/>
     <mkdir dir="${build.resources}"/>
-
-    <copy file="${runtime.properties}" tofile="${build.resources}/intermine.properties"/>
-     <copy todir="${build.resources}">
+    <mkdir dir="${build.webapp}"/>
+   
+    <copy file="${lib}/intermine.war" todir="${build.webapp}"/>
+    <copy file="${runtime.properties}" tofile="${build.resources}/default.intermine.properties"/>
+     <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties" failonerror="false"/>
+    <copy todir="${build.resources}">
       <fileset dir="${resources}"/>
     </copy>
   </target>
@@ -59,6 +66,7 @@
   </target>
 
   <!-- build model -->
+  <!--
   <target name="build-model" depends="prepare" >
     <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
@@ -66,13 +74,15 @@
       <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>
   </target>
+   -->
+
 
   <!-- Example of building model from an ArgoUML file -->
   <!-- The name of the project within the zargo file should be the same as ${model.name} here, -->
   <!-- and you need to make sure the constituent files in the .zargo file are correctly named -->
   <!-- (modelname_.xmi, modelname.argo, etc) -->
 
-  <!--
+  
   <target name="build-model" depends="prepare" >
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
@@ -80,7 +90,7 @@
       <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>
   </target>
-  -->
+  
 
   <!-- create database -->
   <target name="build-db" depends="build-model">
@@ -88,6 +98,7 @@
       <property name="model.name" value="tutorial"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
       <property name="db.name" value="db.tutorial"/>
+      <property name="objectstore.name" value="os.tutorial"/>
     </ant>
   </target>
   
@@ -95,11 +106,12 @@
   <target name="insert-data" depends="build-db">
     <taskdef
       name="insert-xml-data"
-      classname="org.intermine.dataloader.InsertXmlDataTask">
-      <classpath refid="project.class.path"/>
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="tutorial.class.path"/>
     </taskdef>
 
-    <insert-xml-data integrationWriter="integration.tutorial" file="${resources}/tutorial_data.xml">
+    <echo message="${runtime.properties}"/>
+    <insert-xml-data integrationWriter="integration.tutorial"  xmlFile="${resources}/tutorial_data.xml"  sourceName="tutorialsource">
       <classpath refid="tutorial.class.path"/>
     </insert-xml-data>
   </target>
@@ -126,6 +138,44 @@
       <classpath refid="tutorial.class.path"/>
     </java>
   </target>
+ 
+  <target name="test" depends="clean, compile, insert-data">
+    <antcall target="build-db"/>
+  
+
+  </target>
+
+ <target name="build-webapp" depends="jar-model">
+   <ant antfile="build-webapp.xml" target="add-model-to-webapp" inheritRefs="true">
+      <property name="war" value="${build.webapp}/intermine.war"/>
+      <property name="model.name" value="tutorial"/>
+      <reference torefid="class.path" refid="tutorial.class.path"/>
+      <property name="model.src" value="${model}/tutorial"/>
+    </ant>        
+    <patternset id="intermine-properties">
+      <include name="intermine.properties"/>
+    </patternset>
+    <ant antfile="build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
+      <property name="war" value="${build.webapp}/intermine.war"/>
+      <property name="file.dir" value="."/>
+      <reference torefid="file.names" refid="intermine-properties"/>
+    </ant>
+  </target>
+
+  <target name="release-webapp" depends="build-webapp">
+   <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
+      <property name="war" value="${build.webapp}/intermine.war"/>
+      <reference torefid="class.path" refid="tutorial.class.path"/>
+    </ant>    
+   </target>
+
+ <target name="remove-webapp"
+    description="remove the web application from the server">
+     <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
+      <property name="war" value="${build.webapp}/intermine.war"/>
+      <reference torefid="class.path" refid="tutorial.class.path"/>
+    </ant>    
+  </target>
 
   <!-- cleaning up targets -->
   <target name="clean"
@@ -136,3 +186,13 @@
     <delete file="velocity.log"/>
   </target>
 </project>
+
+
+
+
+
+
+
+
+
+
