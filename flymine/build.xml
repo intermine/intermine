@@ -2782,11 +2782,25 @@
   <target name="build-ensembl-human-production"
           depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
 
+ <!-- BUILD PRODUCTION DATABASE -->
+  
+  <!-- Build genomic model database to hold production data -->
+  <target name="build-db-production-human" depends="compile-genomic-human-model, copy-genomic-config">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.production"/>
+      <property name="objectstore.name" value="os.production"/>
+    </ant>
+  </target>
+
    <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="human-production-build"
-          depends="create-production-model, compile-genomic-human-model,jar-genomic,
-                   build-db-production,create-indexes-production, load-static,
+          depends="create-human-production-model, compile-genomic-human-model,jar-genomic,
+                   build-db-production-human,create-indexes-production, load-static,
                    build-ensembl-human-production, build-go-human-production,
+                   build-tfbs-production, build-firstef-production,
+                   build-regions-production, build-disease-regions-production,
                    analyse-db-production, grant-db-production"/>
 
 
@@ -2834,7 +2848,7 @@
 
   <target name="test-human-models-inc"
           depends="ensembl-human-test, rnai-test, psi-test, orthologue-test, go-test,
-                   taxonomy-test, uniprot-test, protein_structure-test">
+                   taxonomy-test, uniprot-test, protein_structure-test, ucsc-test">
     <antcall target="test-report"/>
   </target>
 
@@ -3123,7 +3137,8 @@
                ignoreDuplicates="false"/>
   </target>
 
-  <target name="build-disease-regions-production" depends="retrieve-disease-regions, load-disease-regions"/>
+  <target name="build-disease-regions-production" 
+          depends="retrieve-disease-regions, load-disease-regions"/>
 
 
 
