@@ -138,7 +138,7 @@ public class OntologyUtil
             return OntologyUtil.XSD_NAMESPACE + "boolean";
         } else if (javaType.equals("java.lang.Byte") || javaType.equals("byte")) {
             return OntologyUtil.XSD_NAMESPACE + "byte";
-        } else if (javaType.equals("java.net.URI")) {
+        } else if (javaType.equals("java.net.URL")) {
             return OntologyUtil.XSD_NAMESPACE + "anyURI";
         } else if (javaType.equals("java.util.Date")) {
             return (OntologyUtil.XSD_NAMESPACE + "dateTime");
@@ -178,7 +178,7 @@ public class OntologyUtil
         } else if (xmlType.equals("boolean")) {
             return "java.lang.Boolean";
         } else if (xmlType.equals("anyURI")) {
-            return "java.net.URI";
+            return "java.net.URL";
         } else if (xmlType.equals("dateTime")) {
             return "java.util.Date";
         } else if (xmlType.equals("bigDecimal")) {
