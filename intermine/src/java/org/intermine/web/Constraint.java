@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import org.apache.commons.lang.ObjectUtils;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
@@ -106,8 +107,8 @@ public class Constraint
     public String getDisplayValue(PathNode node) {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
             return MainForm.wildcardSqlToUser(getValue().toString());
-            //} else if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(getOp())) {
-            //    return MainForm.dotPathToNicePath("" + getValue());
+        } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
+            return "";
         } else {
             return "" + getValue();
         }
@@ -130,7 +131,7 @@ public class Constraint
         if (o instanceof Constraint) {
             Constraint other = (Constraint) o;
             if (op.equals(other.op)
-                && value.equals(other.value)) {
+                && ObjectUtils.equals(value, other.value)) {
                 if (description == null) {
                     if (other.description != null) {
                         return false;
@@ -161,7 +162,7 @@ public class Constraint
      */
     public int hashCode() {
         return 2 * op.hashCode()
-            + 3 * value.hashCode()
+            + 3 * (value != null ? value.hashCode() : 0)
             + (description == null ? 0 : 5 * description.hashCode())
             + (identifier == null ? 0 : 7 * identifier.hashCode());
     }
