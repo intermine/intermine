@@ -199,6 +199,13 @@
     </javac>
   </target>
 
+  <target name="compile-webapp-java" depends="prepare">
+    <javac destdir="${build.model.dir}" listfiles="yes">
+      <classpath refid="compile.class.path"/>
+      <src path="${model.src}/src/web/java"/>
+    </javac>
+  </target>
+
   <target name="compile-test" depends="compile-java, copy-test-resources">
     <depend srcdir="${model.src}/src/test" destdir="${build.model.dir.tmp}" closure="yes" dump="yes">
       <classpath>
@@ -301,6 +308,7 @@
     <jar destfile="${dist}/intermine-${model.name}.jar">
       <fileset dir="${build.model.dir}" >
         <exclude name="**/*.java"/>
+        <exclude name="**/web/*.java"/>
       </fileset>
     </jar>
   </target>
@@ -328,7 +336,7 @@
     </replace>
 
     <copy todir="${build.webapp}/intermine/model">
-      <fileset dir="${model}/${model.name}/src/web"/>
+      <fileset dir="${model}/${model.name}/src/web/jsp"/>
       <fileset file="${model}/${model.name}/resources/web/model.css"/>
     </copy>
 
@@ -342,6 +350,11 @@
 
     <copy todir="${build.webapp}/intermine/WEB-INF/classes">
        <fileset dir="${model}/${model.name}/resources/web" includes="model*.properties"/>
+    </copy>
+
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes"
+          failonerror="false" verbose="true">
+       <fileset dir="${build.model.dir}" includes="**/web/*.class"/>
     </copy>
 
     <copy todir="${build.webapp}/intermine/WEB-INF/lib">
