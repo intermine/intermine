@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.results.PagedResults;
 
 /**
@@ -110,8 +111,13 @@ public class TemplateAction extends InterMineAction
         HttpSession session = request.getSession();
         
         if (skipBuilder) {
+            RunQueryMonitor monitor = new RunQueryMonitor() {
+                public void queryProgress(Results r) {
+                }
+            };
+            
             // If the form wants to skip the query builder we need to execute the query
-            if (!SessionMethods.runQuery (this, session, request, saveQuery)) {
+            if (!SessionMethods.runQuery (this, session, request, saveQuery, monitor)) {
                 return mapping.findForward("failure");
             }
             // Look at results, if only one result, go straight to object details page
@@ -120,7 +126,7 @@ public class TemplateAction extends InterMineAction
                 Object o = ((List) pr.getAllRows ().get(0)).get(0);
                 if (o instanceof InterMineObject) {
                     return new ActionForward("/objectDetails.do?id="
-                                                        + ((InterMineObject) o).getId(), true);
+                            + ((InterMineObject) o).getId(), true);
                 }
             }
             return mapping.findForward("results");
