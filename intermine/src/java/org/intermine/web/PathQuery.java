@@ -190,4 +190,11 @@ public class PathQuery
             + 3 * nodes.hashCode()
             + 5 * view.hashCode();
     }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return "<PathQuery: " + model + ", " + nodes + ", " + view + ">";
+    }
 }
