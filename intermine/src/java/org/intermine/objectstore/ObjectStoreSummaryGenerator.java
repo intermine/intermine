@@ -139,7 +139,7 @@ public class ObjectStoreSummaryGenerator
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
 
             if (cld == null) {
-                throw new ClassNotFoundException("class \"" + className +"\" is not in the model");
+                throw new ClassNotFoundException("class \"" + className + "\" is not in the model");
             }
             
             Set allClds = new HashSet();
