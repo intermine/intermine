@@ -5,7 +5,14 @@
 
 <!-- queryBuild.jsp -->
 <html:form action="/query">
-  <fmt:message key="query.current"/>
+  <c:choose>
+    <c:when test="${empty QUERY_CLASSES}">
+      <fmt:message key="query.empty"/>
+    </c:when>
+    <c:otherwise>
+      <fmt:message key="query.current"/>
+    </c:otherwise>
+  </c:choose>
   <br/>
   <div class="queryBuildCurrentQuery">
   <c:forEach items="${QUERY_CLASSES}" var="entry" varStatus="classStatus">
