@@ -82,6 +82,11 @@
     <pathelement location="${build.model}/testmodel"/>
   </path>
 
+  <path id="prod.class.path">
+    <path refid="project.class.path"/>
+    <pathelement location="${build.model}/acedb"/>
+  </path>
+
   <path id="webapptest.class.path">
     <path refid="test.class.path"/>
     <fileset dir="${weblib}">
@@ -168,7 +173,7 @@
      <taskdef
        name="model-generation"
        classname="org.flymine.task.ModelGenerationTask">
-       <classpath refid="project.class.path"/>
+       <classpath refid="prod.class.path"/>
      </taskdef>
   </target>
 
@@ -184,13 +189,14 @@
 
   <!-- generate acedb model from acemodel file -->
   <target name="generate-acemodel" depends="prepare-model-generation">
+    <mkdir dir="${build.model}/acedb" />
+
     <model-generation
       type="acedb"
       modelname="acedb"
       source="${src.java}/org/flymine/model/acedb/acemodel.wrm"
       destdir="${build.resources}"
    />     
-
   </target> 
 
 
@@ -201,7 +207,7 @@
   <!-- define task for model output, make sure application compiled -->
   <target name="model-output-prepare" depends="compile-main">
     <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
-      <classpath refid="project.class.path" />
+      <classpath refid="prod.class.path" />
     </taskdef>
   </target>
 
@@ -317,13 +323,9 @@
 
 
 
-  <!-- Production build target (currently uses ace model) -->
+  <!-- Production build targets (currently uses ace model) -->
   
-  <target name="build-production" depends ="compile-acedb, build-db-acedb"
-          description="build the production FlyMine system with acedb model" >
-      
 
-  </target>  
 
 
   <!-- generate java source for acedb model -->
@@ -336,14 +338,14 @@
   <!-- compile java source for acedb model -->
   <target name="compile-acedb" depends="generate-java-acedb">
     <javac destdir="${build.model}/acedb" listfiles="yes">
-      <classpath refid="project.class.path"/>
+      <classpath refid="prod.class.path"/>
       <src path="${build.model}/acedb" />
     </javac>
   </target>
 
 
   <!-- generate repository descriptor for acedb model -->
-  <target name="generate-repository-acedb" depends="model-output-prepare">
+  <target name="generate-repository-acedb" depends="model-output-prepare, generate-acemodel">
     <model-output type="ojb" model="acedb" destdir="${build.model}/acedb"/>
 
     <!-- Copy the default repository files across -->
@@ -355,7 +357,7 @@
   </target>
 
   <!-- generate mapping file for castor xml binding -->
-  <target name="generate-castorxmlmapping-acedb" depends="model-output-prepare" >
+  <target name="generate-castorxmlmapping-acedb" depends="model-output-prepare, generate-acemodel" >
     <model-output type="castor" model="acedb" destdir="${build.model}/acedb"/>
 
     <!-- Copy acrosss castor include file(s) -->
@@ -394,6 +396,24 @@
         </fileset>
     </build-db>
   </target>
+
+   <target name="insert-acedb-data" depends="build-db-acedb, compile-acedb">
+    <taskdef
+          name="insert-ace-data"
+          classname="org.flymine.task.InsertAceDataTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+
+    <insert-ace-data integrationWriter="integration.acedb" user="rns" password="abc123" host="localhost" port="23100">
+      <classpath refid="prod.class.path"/>
+    </insert-ace-data>
+  </target>
+
+  <target name="build-production" depends ="insert-acedb-data"
+          description="build the production FlyMine system with acedb model" >
+  </target>  
+
+
 
 
   <!-- Unit test targets -->
@@ -467,22 +487,9 @@
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <insert-xml-data objectStore="os.unittest" file="${build.resources.testxml}/testmodel.xml">
+    <insert-xml-data integrationWriter="integration.unittest" file="${build.resources.testxml}/testmodel.xml">
       <classpath refid="test.class.path"/>
     </insert-xml-data>
-
-  </target>
-
-  <target name="insert-data" depends="generate-repository-testmodel, compile-testmodel">
-    <taskdef
-          name="insert-ace-data"
-          classname="org.flymine.task.InsertAceDataTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-
-    <insert-ace-data objectStore="os.unittest" user="andy" password="abc123" host="localhost" port="23100">
-      <classpath refid="test.class.path"/>
-    </insert-ace-data>
 
   </target>
 
