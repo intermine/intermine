@@ -213,6 +213,7 @@ public class BuildTemplateForm extends ValidatorForm
         constraintIds = new HashMap();
         templateDescription = "";
         shortName = "";
+        category = "";
     }
     
     /**
