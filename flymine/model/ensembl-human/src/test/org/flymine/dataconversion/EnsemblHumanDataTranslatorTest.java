@@ -58,14 +58,14 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         writer.write(FullRenderer.render(tgtIw.getItems()));
         writer.close();
 
-        // String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
-        // String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
+        String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
+        String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
 
-        // if (expectedNotActual.length() > 25) {
-        //    System.out.println(expectedNotActual);
-        //    System.out.println(actualNotExpected);
-        // }
-        //assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
+        if (expectedNotActual.length() > 25) {
+            System.out.println(expectedNotActual);
+            System.out.println(actualNotExpected);
+        }
+        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
 
@@ -187,9 +187,19 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
     public void testSetOrganismDbId() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl-human#";
         Item gene = createItem(srcNs + "gene", "1_1", "");
+        gene.addReference(new Reference("seq_region", "1_99"));
+
+        Item seq =  createItem(srcNs + "seq_region", "1_99", "");
+        seq.addReference(new Reference("coord_system", "30_1"));
+        seq.addAttribute(new Attribute("name", "1"));
+        seq.addAttribute(new Attribute("length", "24612"));
+
+        Item coord = createItem(srcNs + "coord_system", "30_1", "");
+        coord.addAttribute(new Attribute("name", "chromosome"));
 
         Item genedes = createItem(srcNs + "gene_description", "5_1", "");
         genedes.addReference(new Reference("gene", "1_1"));
+
         Item transcript = createItem(srcNs + "transcript", "2_1", "");
         transcript.addReference(new Reference("gene", "1_1"));
         transcript.addReference(new Reference("translation", "4_1"));
@@ -197,7 +207,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         stableId.addAttribute(new Attribute("stable_id", "FBgn1001"));
         stableId.addReference(new Reference("gene", "1_1"));
 
-        Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, genedes, stableId, transcript})));
+        Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, genedes, stableId, transcript, seq, coord})));
         EnsemblHumanDataTranslator translator = new EnsemblHumanDataTranslator(
                       new MockItemReader(itemMap), getOwlModel(), tgtNs, "HS");
 
@@ -205,15 +215,16 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         exp1.addAttribute(new Attribute("organismDbId", "FBgn1001"));
         exp1.addAttribute(new Attribute("identifier", "FBgn1001"));
         exp1.addReference(new Reference("organism", "-1_1"));
-        exp1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_4", "-1_2"}))));
+        exp1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_5", "-1_2"}))));
         exp1.addCollection(new ReferenceList("comments", new ArrayList(Collections.singleton("5_1"))));
         exp1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_3"))));
         Item exp2 = createItem(tgtNs + "Location", "-1_3", "");
         exp2.addAttribute(new Attribute("endIsPartial", "false"));
         exp2.addAttribute(new Attribute("startIsPartial", "false"));
         exp2.addReference(new Reference("subject", "1_1"));
+        exp2.addReference(new Reference("object", "-1_4"));
 
-        Item exp3 = createItem(tgtNs + "ComputationalResult", "-1_4", "");
+        Item exp3 = createItem(tgtNs + "ComputationalResult", "-1_5", "");
         exp3.addReference(new Reference("source", "-1_2"));
 
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
@@ -268,6 +279,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         //protein.addAttribute(new Attribute("idenitifer", "Q1001"));
         protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
         protein.addReference(new Reference("organism", "-1_1"));
+        protein.addCollection(new ReferenceList("subjects", new ArrayList(Arrays.asList(new Object[] {"-1_10","-1_13"}))));
         protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_9"))));
         Item synonym0 = createItem(tgtNs + "Synonym", "-1_9", "");
         synonym0.addAttribute(new Attribute("type", "accession"));
@@ -321,7 +333,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
 
 
     protected Collection getExpectedItems() throws Exception {
-        return null;// FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
     }
 
     protected Collection getSrcItems() throws Exception {
