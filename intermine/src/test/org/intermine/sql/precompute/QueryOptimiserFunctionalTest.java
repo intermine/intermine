@@ -300,15 +300,11 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         StringUtil.setNextUniqueNumber(35);
         String sql1 = "SELECT table2.col1, table2.col2, table3.col1, table3.col2 FROM table2, table3 WHERE table2.col1 = table3.col1 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2";
         //String sql1 = "SELECT table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table3 WHERE table3.col1 < " + (DATA_SIZE/2);
-        LOG.error("Just before first optimise");
         String sqlOpt1 = QueryOptimiser.optimise(sql1, getDatabase());
-        LOG.error("Just after first optimise");
         assertEquals("SELECT P35.table2_col1 AS col1, P35.table2_col2 AS col2, P35.table3_col1 AS col1, P35.table3_col2 AS col2 FROM precomp_table2Table3onCol1 AS P35 ORDER BY P35.orderby_field", sqlOpt1);
         PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(getDatabase());
         ptm.delete(toDelete);
-        LOG.error("Just before second optimise");
         String sqlOpt2 = QueryOptimiser.optimise(sql1, getDatabase());
-        LOG.error("Just after second optimise");
         assertEquals(sql1, sqlOpt2);
     }
 }
