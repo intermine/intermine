@@ -38,6 +38,11 @@ public class PrimaryKey
         }
     }
     
+    /**
+     * Return the Set of field names
+     *
+     * @return the Set of field names
+     */
     public Set getFieldNames() {
         return fieldNames;
     }
