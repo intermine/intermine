@@ -169,6 +169,7 @@ public class RNAiConverter extends FileConverter
         if (item == null) {
             item = newItem("Gene");
             item.addAttribute(new Attribute("sequenceName", sequenceName));
+            item.addAttribute(new Attribute("organismDbId", sequenceName));
             if ((commonName != null) && (!"".equals(commonName))) {
                 item.addAttribute(new Attribute("commonName", commonName));
             }
