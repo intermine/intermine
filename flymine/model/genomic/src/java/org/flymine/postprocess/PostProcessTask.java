@@ -82,11 +82,13 @@ public class PostProcessTask extends Task
                 TransferSequences ts = new TransferSequences(osw);
                 LOG.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
-                LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
-                ts.transferToLocatedSequenceFeatures();
-                LOG.info("Starting TransferSequences.transferToTranscripts()");
-                ts.transferToTranscripts();
-                LOG.info("Finished transfer-sequences");
+                LOG.info("Skipping TransferSequences.transferToLocatedSequenceFeatures()");
+                LOG.info("Skipping TransferSequences.transferToTranscripts()");
+//                 LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
+//                 ts.transferToLocatedSequenceFeatures();
+//                 LOG.info("Starting TransferSequences.transferToTranscripts()");
+//                 ts.transferToTranscripts();
+//                 LOG.info("Finished transfer-sequences");
             } else {
                 throw new BuildException("unknown type: " + type);
             }
