@@ -1,0 +1,23 @@
+<project name="Flymine Internal Documentation" default="build" basedir=".">
+
+
+<target name="clean" description="remove all generated html files">
+    <delete>
+        <fileset dir=".">
+            <include name="**/*.html"/>
+        </fileset>
+    </delete>
+</target>
+
+
+<target name="build" description="build the html files">
+    <xslt processor="xalan" basedir="." destdir="." extension=".html" style="/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/html/docbook.xsl" />
+</target>
+
+
+<target name="install" depends="build" description="install to the webserver">
+
+</target>
+
+</project>
+
