@@ -334,18 +334,6 @@ public class MainForm extends ActionForm
         }
         return exp;
     }
-    
-    /**
-     * Convert a period delimited path into some nicer for the user - a path with > instead
-     * of dots.
-     *
-     * @param path  dot delimited path
-     * @return      path to display to user
-     */
-    public static String dotPathToNicePath(String path) {
-        return path;
-        //.replaceAll("\\.", " > ");
-    }
 
     /**
      * @see ActionForm#reset
