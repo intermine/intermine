@@ -22,6 +22,8 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.util.MessageResources;
+import org.apache.struts.Globals;
 
 import org.apache.log4j.Logger;
 
@@ -96,7 +98,9 @@ public class SessionMethods
         final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         final PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
+        final MessageResources resources =
+            (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+
         RunQueryThread runnable = new RunQueryThread() {
             public void run () {
                 try {
@@ -109,6 +113,8 @@ public class SessionMethods
                         ? "errors.query.estimatetimetoolong"
                         : "errors.query.objectstoreerror";
                     action.recordError(new ActionMessage(key), request);
+                    
+                    recordError(resources.getMessage(key), session);
 
                     // put stack trace in the log
                     StringWriter sw = new StringWriter();
