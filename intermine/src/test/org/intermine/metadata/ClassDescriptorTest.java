@@ -164,22 +164,6 @@ public class ClassDescriptorTest extends TestCase {
         assertNotNull(cld.getCollectionDescriptorByName("cld2"));
     }
 
-    public void testPkFieldDescriptors() throws Exception {
-        List atbs = getAttributes();
-        List rfds = getReferences();
-        List clds = getCollections();
-
-        // six fields in class, three of them are pks
-        List pks = new ArrayList();
-        pks.add(atbs.get(1));
-        pks.add(rfds.get(1));
-        pks.add(clds.get(1));
-
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
-                                                  atbs, rfds, clds);
-
-        assertEquals(pks, cld.getPkFieldDescriptors());
-    }
 
 
     public void testUltimateSuperClassOne() throws Exception {
@@ -210,6 +194,67 @@ public class ClassDescriptorTest extends TestCase {
         assertTrue("ultimate superclass should have been null", cld1.getUltimateSuperclassDescriptor() == null);
     }
 
+
+    public void testGetAllAttributeDescriptors() throws Exception {
+        // three superclass levels with one attribute each, getAllAttributeDescriptors on cld3 should return all 3
+        AttributeDescriptor atb1 = new AttributeDescriptor("att1", false, "String");
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, Arrays.asList(new Object[] {atb1}), new ArrayList(), new ArrayList());
+        AttributeDescriptor atb2 = new AttributeDescriptor("att2", false, "String");
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, Arrays.asList(new Object[] {atb2}), new ArrayList(), new ArrayList());
+        AttributeDescriptor atb3 = new AttributeDescriptor("att3", false, "String");
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", null, false, Arrays.asList(new Object[] {atb3}), new ArrayList(), new ArrayList());
+
+        List atts = Arrays.asList(new Object[] {atb3, atb2, atb1});
+        Model model = new Model("test", Arrays.asList(new Object[] {cld1, cld2, cld3}));
+
+        assertEquals(atts, cld3.getAllAttributeDescriptors());
+    }
+
+
+    public void testGetPkFieldDescriptors() throws Exception {
+        AttributeDescriptor atb1 = new AttributeDescriptor("att1", false, "String");
+        AttributeDescriptor atb2 = new AttributeDescriptor("att2", true, "String");
+        List atts = Arrays.asList(new Object[] {atb1, atb2});
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", true, "Class2", null);
+        List refs = Arrays.asList(new Object[] {rfd1, rfd2});
+        CollectionDescriptor cod1 = new CollectionDescriptor("cld1", false, "Class2", null, false);
+        CollectionDescriptor cod2 = new CollectionDescriptor("cld2", true, "Class2", null, false);
+        List cols = Arrays.asList(new Object[] {cod1, cod2});
+
+
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, refs, cols);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        Model model = new Model("test", Arrays.asList(new Object[] {cld1, cld2}));
+
+        // six fields in class, three of them are pks
+        List pks = Arrays.asList(new Object[] {atb2, rfd2, cod2});
+
+        assertEquals(pks, cld1.getPkFieldDescriptors());
+    }
+
+
+
+    public void testGetPkFieldDescriptorsSuper() throws Exception {
+
+        AttributeDescriptor atb1 = new AttributeDescriptor("att1", true, "String");
+        AttributeDescriptor atb2 = new AttributeDescriptor("att2", false, "String");
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, Arrays.asList(new Object[] {atb1, atb2}),
+                                                   new ArrayList(), new ArrayList());
+        AttributeDescriptor atb3 = new AttributeDescriptor("att3", true, "String");
+        AttributeDescriptor atb4 = new AttributeDescriptor("att4", false, "String");
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, Arrays.asList(new Object[] {atb3, atb4}),
+                                                   new ArrayList(), new ArrayList());
+        AttributeDescriptor atb5 = new AttributeDescriptor("att5", true, "String");
+        AttributeDescriptor atb6 = new AttributeDescriptor("att6", false, "String");
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", null, false, Arrays.asList(new Object[] {atb5, atb6}),
+                                                   new ArrayList(), new ArrayList());
+
+        List pks = Arrays.asList(new Object[] {atb5, atb3, atb1});
+        Model model = new Model("test", Arrays.asList(new Object[] {cld1, cld2, cld3}));
+
+        assertEquals(pks, cld3.getPkFieldDescriptors());
+    }
 
     // ------------
 
