@@ -85,6 +85,9 @@
     </taskdef>
 
     <model-output type="wsdd" model="${model.name}" destdir="${build.tmp}"/>
+    <loadfile srcFile="${build.tmp}/${model.name}.wsdd" property="model.wsdd"/>
+    <filter token="WSDD_INCLUDE" value="${model.wsdd}"/>
+    <copy todir="${build.tmp}" filtering="true" file="${resources}/webapps/webservice/deploy-ObjectStore.wsdd"/>
   </target>
 
   <target name="generate-java" depends="prepare"

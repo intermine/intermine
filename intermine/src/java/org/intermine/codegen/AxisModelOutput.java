@@ -21,7 +21,7 @@ import org.flymine.metadata.*;
 import org.flymine.objectstore.webservice.ser.SerializationUtil;
 
 /**
- * Maps FlyMine metadata to a Castor XML binding mapping file
+ * Maps FlyMine metadata to typeMapping entries in a wsdd file
  *
  * @author Mark Woodbridge
  */
@@ -38,7 +38,7 @@ public class AxisModelOutput extends ModelOutput
      * @see ModelOutput#process
      */
     public void process() {
-        File path = new File(file, "deploy-ObjectStore.wsdd");
+        File path = new File(file, model.getName() + ".wsdd");
         initFile(path);
         outputToFile(path, generate(model));
     }
@@ -49,18 +49,6 @@ public class AxisModelOutput extends ModelOutput
     protected String generate(Model model) {
         StringBuffer sb = new StringBuffer();
         try {
-            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENDL + ENDL)
-                .append("<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\"" + ENDL)
-                .append(INDENT + "xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">"
-                        + ENDL)
-                .append(INDENT + "<service name=\"ObjectStore\" provider=\"java:RPC\">" + ENDL)
-                .append(INDENT + INDENT + "<parameter name=\"className\""
-                        + " value=\"org.flymine.objectstore.webservice.ObjectStoreServer\"/>"
-                        + ENDL)
-                .append(INDENT + INDENT + "<parameter name=\"scope\" value=\"Session\"/>" + ENDL)
-                .append(INDENT + INDENT + "<parameter name=\"allowedMethods\" value=\"*\"/>"
-                        + ENDL + ENDL);
-
             TypeMapping tm = ((Call) new Service().createCall()).getTypeMapping();
             SerializationUtil.registerDefaultMappings(tm);
             SerializationUtil.registerMappings(tm, model);
@@ -70,35 +58,9 @@ public class AxisModelOutput extends ModelOutput
                 Class cls = classes[i];
                 if (cls.getName().startsWith("org.flymine")
                    || cls.getName().equals("java.util.ArrayList")) {
-
-                    QName qname = tm.getTypeQName(cls);
-                    String localPart = qname.getLocalPart();
-                    String namespace = qname.getNamespaceURI();
-                    String prefix = null;
-                    if (!"".equals(namespace)) {
-                        prefix = namespace.substring(namespace.lastIndexOf("/") + 1,
-                                                     namespace.length());
-                    }
-                        
-                    String type = "java:" + cls.getName();
-                    String serializer = tm.getSerializer(cls).getClass().getName();
-                    String deserializer = tm.getDeserializer(qname).getClass().getName();
-                    String encoding = "http://schemas.xmlsoap.org/soap/encoding/";
-
-                    sb.append(INDENT + "<typeMapping qname=\"")
-                        .append(prefix != null ? prefix + ":" : "")
-                        .append(localPart + "\"" + ENDL)
-                        .append(prefix != null ? INDENT + INDENT + "xmlns:" + prefix + "=\""
-                                + namespace + "\"" + ENDL : "")
-                        .append(INDENT + INDENT + "type=\"" + type + "\"" + ENDL)
-                        .append(INDENT + INDENT + "serializer=\"" + serializer + "\"" + ENDL)
-                        .append(INDENT + INDENT + "deserializer=\"" + deserializer + "\"" + ENDL)
-                        .append(INDENT + INDENT + "encodingStyle=\"" + encoding + "\"/>" + ENDL);
+                    sb.append(generateTypeMapping(cls, tm) + ENDL);
                 }
             }
-
-            sb.append(INDENT + "</service>" + ENDL)
-                .append("</deployment>");
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -131,5 +93,38 @@ public class AxisModelOutput extends ModelOutput
      */
     protected String generate(CollectionDescriptor col) {
         return "";
+    }
+
+    /**
+     * Generates the typeMapping entry for a class
+     * @param cls the Class
+     * @param tm the TypeMapping that includes the serialization information for that class
+     * @return an XML element as a string
+     */
+    protected String generateTypeMapping(Class cls, TypeMapping tm) {
+        QName qname = tm.getTypeQName(cls);
+        String localPart = qname.getLocalPart();
+        String namespace = qname.getNamespaceURI();
+        String prefix = null;
+        if (!"".equals(namespace)) {
+            prefix = namespace.substring(namespace.lastIndexOf("/") + 1,
+                                         namespace.length());
+        }
+        
+        String type = "java:" + cls.getName();
+        String serializer = tm.getSerializer(cls).getClass().getName();
+        String deserializer = tm.getDeserializer(qname).getClass().getName();
+        String encoding = "http://schemas.xmlsoap.org/soap/encoding/";
+       
+        StringBuffer sb = new StringBuffer();
+        sb.append("<typeMapping qname=\"")
+            .append(prefix != null ? prefix + ":" : "")
+            .append(localPart + "\"")
+            .append(prefix != null ? " xmlns:" + prefix + "=\"" + namespace + "\"" : "")
+            .append(" type=\"" + type + "\"")
+            .append(" serializer=\"" + serializer + "\"")
+            .append(" deserializer=\"" + deserializer + "\"")
+            .append(" encodingStyle=\"" + encoding + "\"/>");
+        return sb.toString();
     }
 }
