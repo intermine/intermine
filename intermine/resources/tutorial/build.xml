@@ -76,7 +76,6 @@
   <target name="build-model" depends="prepare" >
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
-      <!-- the following directory should contain the .zargo file -->
       <property name="model.src" value="${model}/tutorial"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>
