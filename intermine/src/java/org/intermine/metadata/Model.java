@@ -3,6 +3,7 @@ package org.flymine.metadata;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Collection;
 import java.util.Set;
 import java.util.LinkedHashSet;
@@ -20,7 +21,7 @@ import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 public class Model
 {
-    private static Model model;
+    private static Map models = new HashMap();
     private final String name;
     private final Map cldMap = new LinkedHashMap();
     private final Map subclassMap = new LinkedHashMap();
@@ -33,19 +34,23 @@ public class Model
      * @throws MetaDataException if there is problem parsing the model xml
      */
     public static Model getInstanceByName(String name) throws MetaDataException {
-        String filename = name + "_model.xml";
-        InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
-        if (is == null) {
-            throw new IllegalArgumentException("Model '" + name + "' cannot be found ("
-                                               + filename + ")");
+        if (!models.containsKey(name)) {
+            Model model = null;
+            String filename = name + "_model.xml";
+            InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
+            if (is == null) {
+                throw new IllegalArgumentException("Model '" + name + "' cannot be found ("
+                                                   + filename + ")");
+            }
+            try {
+                ModelParser parser = new FlyMineModelParser();
+                model = parser.process(is);
+            } catch (Exception e) {
+                throw new MetaDataException("Error parsing metadata: " + e);
+            }
+            models.put(name, model);
         }
-        try {
-            ModelParser parser = new FlyMineModelParser();
-            model = parser.process(is);
-        } catch (Exception e) {
-            throw new MetaDataException("Error parsing metadata: " + e);
-        }
-        return model;
+        return (Model) models.get(name);
     }
 
     /**
