@@ -3,16 +3,16 @@ package org.flymine.metadata;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Collection;
 import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 
 import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 /**
- * Represents a named business model, makes availble metadata for each class
+ * Represents a named business model, makes available metadata for each class
  * within model.
  *
  * @author Richard Smith
@@ -22,9 +22,9 @@ public class Model
 {
     private static Model model;
     private final String name;
-    private final Map cldMap = new HashMap();
-    private final Map subclassMap = new HashMap();
-    private final Map implementorsMap = new HashMap();
+    private final Map cldMap = new LinkedHashMap();
+    private final Map subclassMap = new LinkedHashMap();
+    private final Map implementorsMap = new LinkedHashMap();
 
     /**
      * Return a Model for specified model name (loading Model if necessary)
@@ -69,7 +69,8 @@ public class Model
         }
 
         this.name = name;  // check for valid package name??
-        Iterator cldIter = clds.iterator();
+        LinkedHashSet orderedClds = new LinkedHashSet(clds);
+        Iterator cldIter = orderedClds.iterator();
 
         // 1. Put all ClassDescriptors in model.
         while (cldIter.hasNext()) {
@@ -77,13 +78,13 @@ public class Model
             cldMap.put(cld.getClassName(), cld);
 
             // create maps of ClassDescriptor to empty sets for subclasses and implementors
-            subclassMap.put(cld, new HashSet());
-            implementorsMap.put(cld, new HashSet());
+            subclassMap.put(cld, new LinkedHashSet());
+            implementorsMap.put(cld, new LinkedHashSet());
         }
 
         // 2. Now set model in each ClassDescriptor, this sets up superclass, interface,
         //    etc descriptors.  Set ClassDescriptors and reverse refs in ReferenceDescriptors.
-        cldIter = clds.iterator();
+        cldIter = orderedClds.iterator();
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cld.setModel(this);
@@ -110,7 +111,7 @@ public class Model
 
         // 3. Finally, set completed sets of subclasses and implementors in
         //    each ClassDescriptor.
-        cldIter = clds.iterator();
+        cldIter = orderedClds.iterator();
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
 
@@ -142,7 +143,7 @@ public class Model
      * @return a set of all ClassDescriptors in the model
      */
     public Set getClassDescriptors() {
-        return new HashSet(cldMap.values());
+        return new LinkedHashSet(cldMap.values());
     }
 
     /**
