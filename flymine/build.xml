@@ -52,7 +52,7 @@
   <property name="dist"  location="dist"/>
   <property name="dist.www"  location="${dist}/www"/>
   <property name="dist.webapp"  location="${dist}/webapp"/>
-  <property name="dist.javadoc"  location="${dist.www}/internal/api"/>
+  <property name="dist.javadoc"  location="${dist.www}/api"/>
 
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
@@ -791,7 +791,7 @@
 
   <!-- Releasing targets -->
 
-  <target name="release-www" depends="dist-www"
+  <target name="release-www" depends="dist-javadoc, dist-www"
     description="releases the static website to the webserver">
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
