@@ -745,7 +745,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     
-    <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-dros-src-items"/>
+    <retrieve-ensembl database="db.ensembl-dros" model="ensembl" osName="osw.ensembl-dros-src-items"/>
 
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
