@@ -256,12 +256,23 @@ public class FeatureHolderFM extends AbstractFeatureHolder implements FeatureHol
   // Methods
   // =======================================================================
 
+  /**
+   * printing all Features
+   * @return a String with all Features
+   */
   public String toStringAllFeatures() {
     StringBuffer result = new StringBuffer(this.toString());
     for (Iterator it = features(); it.hasNext();) {
       result.append("\t" + it.next());
     }
     return result.toString();
+  }
+
+  /**
+   * @return Underlying Sequence of this FeautreHolder
+   */
+  public SequenceFM getSequence() {
+    return _sourceSeq;
   }
 
   // -----------------------------------------------------------------------

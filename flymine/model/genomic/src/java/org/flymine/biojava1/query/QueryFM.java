@@ -848,8 +848,10 @@ public class QueryFM implements IQueryFM {
       }
 
       if (Config.HASA) {
-        if (_sofaUtils == null) _sofaUtils = ModelUtilsSoFa.getInstance();
-        assert (_sofaUtils != null);
+        if (_sofaUtils == null){
+          _sofaUtils = ModelUtilsSoFa.getInstance();
+          assert (_sofaUtils != null);
+        }
         ///provide has_a/contains relations in annotation bundle:
         //get all has_a of a certain type, e.g. a Gene has_a Transcripts and RegulatoryRegions
         final Collection containsField = _sofaUtils.hasA(templ.type);
@@ -866,8 +868,10 @@ public class QueryFM implements IQueryFM {
       }
 
       if (Config.INVHASA) {
-        if (_sofaUtils == null) _sofaUtils = ModelUtilsSoFa.getInstance();
-        assert (_sofaUtils != null);
+        if (_sofaUtils == null) {
+          _sofaUtils = ModelUtilsSoFa.getInstance();
+          assert (_sofaUtils != null);
+        }
         ///provide containedBy relations in annotation bundle (inverse of contains):
         //get all containedBy of a certain type, e.g. a Gene has_a Transcripts and
         // RegulatoryRegions
@@ -904,8 +908,10 @@ public class QueryFM implements IQueryFM {
    */
   private Set getChildrenHelper(final String pParent, final Set pParentIDs, final boolean pRecurse)
       throws ModelException {
-    if (_sofaUtils == null) _sofaUtils = ModelUtilsSoFa.getInstance();
-    assert (_sofaUtils != null);
+    if (_sofaUtils == null) {
+      _sofaUtils = ModelUtilsSoFa.getInstance();
+      assert (_sofaUtils != null);
+    }
     //get direct children of parent and process each of them
     final Collection partOfFields = _sofaUtils.hasA(pParent);
     if (partOfFields == null) { throw new ModelException(ModelException.CLASSNOTINMODEL, pParent
