@@ -12,18 +12,24 @@ package org.flymine.objectstore.query.fql;
 
 import junit.framework.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.testing.OneTimeTestCase;
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
+import org.flymine.objectstore.SetupDataTestCase;
 
 /**
- * Test for testing the parser on the flymine query object.
+ * Test case that sets up various FqlQueries.
+ * This class extends SetupDataTestCase because we use various example
+ * objects as part of the tests. These are set up in
+ * SetupDataTestCase. We do not actually contact the database in this
+ * test.
  *
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public abstract class FqlQueryTestCase extends ObjectStoreQueriesTestCase
+public abstract class FqlQueryTestCase extends SetupDataTestCase
 {
     public FqlQueryTestCase(String arg) {
         super(arg);
@@ -34,7 +40,7 @@ public abstract class FqlQueryTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static void oneTimeSetUp() throws Exception {
-        ObjectStoreQueriesTestCase.oneTimeSetUp();
+        SetupDataTestCase.oneTimeSetUp();
 
         setUpResults();
     }
@@ -43,37 +49,48 @@ public abstract class FqlQueryTestCase extends ObjectStoreQueriesTestCase
      * Set up all the results expected for a given subset of queries
      */
     public static void setUpResults() {
-        results.put("SelectSimpleObject", "select a1_ from Company as a1_");
-        results.put("SubQuery", "select a1_.a1_.name AS a2_, a1_.a2_ AS a3_ from (select a1_, 5 as a2_ from Company as a1_) as a1_");
-        results.put("WhereSimpleEquals", "select a1_.name as a2_ from Company as a1_ where a1_.vatNumber = 1234");
-        results.put("WhereSimpleNotEquals", "select a1_.name as a2_ from Company as a1_ where a1_.vatNumber != 1234");
-        results.put("WhereSimpleLike", "select a1_.name as a2_ from Company as a1_ where a1_.name like 'Company%'");
-        results.put("WhereEqualsString", "select a1_.name as a2_ from Company as a1_ where a1_.name = 'CompanyA'");
-        results.put("WhereAndSet", "select a1_.name as a2_ from Company as a1_ where a1_.name like 'Company%' and a1_.vatNumber > 2000");
-        results.put("WhereOrSet", "select a1_.name as a2_ from Company as a1_ where a1_.name like 'CompanyA%' or a1_.vatNumber > 2000");
-        results.put("WhereNotSet", "select a1_.name as a2_ from Company as a1_ where not (a1_.name like 'Company%' and a1_.vatNumber > 2000)");
-        results.put("WhereSubQueryField", "select a1_ from Department as a1_ where a1_.name in (select a1_.name as a2_ from Department as a1_) order by a1_.name");
-        results.put("WhereSubQueryClass", "select a1_ from Company as a1_ where a1_ in (select a1_ from Company as a1_ where a1_.name = 'CompanyA')");
-        results.put("WhereNotSubQueryClass", "select a1_ from Company as a1_ where a1_ not in (select a1_ from Company as a1_ where a1_.name = 'CompanyA')");
-        results.put("WhereNegSubQueryClass", "select a1_ from Company as a1_ where not (a1_ in (select a1_ from Company as a1_ where a1_.name = 'CompanyA'))");
-        results.put("WhereClassClass", "select a1_, a2_ from Company as a1_, Company as a2_ where a1_ = a2_");
-        results.put("WhereNotClassClass", "select a1_, a2_ from Company as a1_, Company as a2_ where a1_ != a2_");
-        results.put("WhereNegClassClass", "select a1_, a2_ from Company as a1_, Company as a2_ where not a1_ = a2_");
-        results.put("Contains11", "select a1_, a2_ from Department as a1_, Manager as a2_ where a1_.manager contains a2_ and a1_.name = 'DepartmentA1'");
-        results.put("ContainsNot11", "select a1_, a2_ from Department as a1_, Manager as a2_ where a1_.manager does not contain a2_ and a1_.name = 'DepartmentA1'");
-        results.put("ContainsNeg11", "select a1_, a2_ from Department as a1_, Manager as a2_ where not a1_.manager contains a2_ and a1_.name = 'DepartmentA1'");
-        results.put("Contains1N", "select a1_, a2_ from Company as a1_, Department as a2_ where a1_.departments contains a2_ and a1_.name = 'CompanyA'");
-        results.put("ContainsN1", "select a1_, a2_ from Department as a1_, Company as a2_ where a1_.company contains a2_ and a2_.name = 'CompanyA'");
-        results.put("ContainsMN", "select a1_, a2_ from Contractor as a1_, Company as a2_ where a1_.companys contains a2_ and a1_.name = 'ContractorA'");
-        results.put("ContainsDuplicatesMN", "select a1_, a2_ from Contractor as a1_, Company as a2_ where a1_.oldComs contains a2_");
-        results.put("SimpleGroupBy", "select a1_, count(*) as a2_ from Company as a1_, Department as a3_ where a1_.departments contains a3_ group by a1_");
-        results.put("MultiJoin", "select a1_, a2_, a3_, a4_ from Company as a1_, Department as a2_, Manager as a3_, Address as a4_ where a1_.departments contains a2_ and a2_.manager contains a3_ and a3_.address contains a4_ and a3_.name = 'EmployeeA1'");
-        results.put("SelectComplex", "select avg(a1_.vatNumber) + 20 as a3_, a2_.name as a4_, a2_ from Company as a1_, Department as a2_ group by a2_");
-        results.put("SelectClassAndSubClasses", "select a1_ from Employee as a1_ order by a1_.name");
-        results.put("SelectInterfaceAndSubClasses", "select a1_ from Employable as a1_");
-        results.put("SelectInterfaceAndSubClasses2", "select a1_ from RandomInterface as a1_");
-        results.put("SelectInterfaceAndSubClasses3", "select a1_ from ImportantPerson as a1_");
-        results.put("OrderByAnomaly", "select 5 as a2_, a1_.name as a3_ from Company as a1_");
+        results.put("SelectSimpleObject", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", null));
+        results.put("SubQuery", new FqlQuery("SELECT a1_.a1_.name AS a2_, a1_.a2_ AS a3_ FROM (SELECT a1_, 5 AS a2_ FROM org.flymine.model.testmodel.Company AS a1_) AS a1_", null));
+        results.put("WhereSimpleEquals", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber = 1234", null));
+        results.put("WhereSimpleNotEquals", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber != 1234", null));
+        results.put("WhereSimpleLike", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name LIKE 'Company%'", null));
+        results.put("WhereEqualsString", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA'", null));
+        results.put("WhereAndSet", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE (a1_.name LIKE 'Company%' AND a1_.vatNumber > 2000)", null));
+        results.put("WhereOrSet", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE (a1_.name LIKE 'CompanyA%' OR a1_.vatNumber > 2000)", null));
+        results.put("WhereNotSet", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE ( NOT (a1_.name LIKE 'Company%' AND a1_.vatNumber > 2000))", null));
+        results.put("WhereSubQueryField", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Department AS a1_ WHERE a1_.name IN (SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Department AS a1_) ORDER BY a1_.name", null));
+        results.put("WhereSubQueryClass", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_ IN (SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA')", null));
+        results.put("WhereNotSubQueryClass", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_ NOT IN (SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA')", null));
+        results.put("WhereNegSubQueryClass", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_ NOT IN (SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA')", null));
+        //results2.put("WhereNegSubQueryClass", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE NOT (a1_ IN (SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA'))", null));
+        results.put("WhereClassClass", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE a1_ = a2_", null));
+        FqlQuery fq = new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_ = ?", null);
+        fq.setParameters(Collections.singletonList(data.get("CompanyA")));
+        results.put("WhereClassObject", fq);
+        results.put("WhereNotClassClass", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE a1_ != a2_", null));
+        results.put("WhereNegClassClass", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE a1_ != a2_", null));
+        //results.put("WhereNegClassClass", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE NOT a1_ = a2_", null));
+        results.put("Contains11", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Manager AS a2_ WHERE (a1_.manager CONTAINS a2_ AND a1_.name = 'DepartmentA1')", null));
+        results.put("ContainsNot11", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Manager AS a2_ WHERE (a1_.manager DOES NOT CONTAIN a2_ AND a1_.name = 'DepartmentA1')", null));
+        results.put("ContainsNeg11", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Manager AS a2_ WHERE (a1_.manager DOES NOT CONTAIN a2_ AND a1_.name = 'DepartmentA1')", null));
+        //results.put("ContainsNeg11", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Manager AS a2_ WHERE NOT a1_.manager CONTAINS a2_ AND a1_.name = 'DepartmentA1'", null));
+        results.put("Contains1N", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a1_.name = 'CompanyA')", null));
+        results.put("ContainsN1", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE (a1_.company CONTAINS a2_ AND a2_.name = 'CompanyA')", null));
+        results.put("ContainsMN", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Contractor AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE (a1_.companys CONTAINS a2_ AND a1_.name = 'ContractorA')", null));
+        results.put("ContainsDuplicatesMN", new FqlQuery("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Contractor AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE a1_.oldComs CONTAINS a2_", null));
+        results.put("SimpleGroupBy", new FqlQuery("SELECT a1_, COUNT(*) AS a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a3_ WHERE a1_.departments CONTAINS a3_ GROUP BY a1_", null));
+        results.put("MultiJoin", new FqlQuery("SELECT a1_, a2_, a3_, a4_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_, org.flymine.model.testmodel.Manager AS a3_, org.flymine.model.testmodel.Address AS a4_ WHERE (a1_.departments CONTAINS a2_ AND a2_.manager CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a3_.name = 'EmployeeA1')", null));
+        results.put("SelectComplex", new FqlQuery("SELECT AVG(a1_.vatNumber) + 20 AS a3_, a2_.name AS a4_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_ GROUP BY a2_", null));
+        results.put("SelectClassAndSubClasses", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Employee AS a1_ ORDER BY a1_.name", null));
+        results.put("SelectInterfaceAndSubClasses", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Employable AS a1_", null));
+        results.put("SelectInterfaceAndSubClasses2", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.RandomInterface AS a1_", null));
+        results.put("SelectInterfaceAndSubClasses3", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.ImportantPerson AS a1_", null));
+        results.put("OrderByAnomaly", new FqlQuery("SELECT 5 AS a2_, a1_.name AS a3_ FROM org.flymine.model.testmodel.Company AS a1_", null));
+        results.put("SelectUnidirectionalCollection", new FqlQuery("SELECT a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Secretary AS a2_ WHERE (a1_.name = 'CompanyA' AND a1_.secretarys CONTAINS a2_)", null));
+        fq = new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_ WHERE (a1_ = ? AND a1_.departments CONTAINS a2_ AND a2_ IN (SELECT a1_ FROM org.flymine.model.testmodel.Department AS a1_ WHERE a1_ = ?))", null);
+        fq.setParameters(Arrays.asList(new Object [] {data.get("CompanyA"), data.get("DepartmentA1")}));
+        results.put("SelectClassObjectSubquery", fq);
+
     }
 
 }
