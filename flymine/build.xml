@@ -1468,8 +1468,7 @@
 
   <!-- Load organism XML data into production database -->
   <target name="load-static" depends="prepare-build-model">
-    <taskdef
-      name="load-xml-data"
+    <taskdef name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -2545,22 +2544,9 @@
   <target name="human-production-build" 
           depends="create-production-model, compile-genomic-human-model,jar-genomic,
                    build-db-production,create-indexes-production, load-static,
-                   build-ensembl-human-production, build-psi-production,
-                   build-orthologues-production, build-rnai-production,
-                   build-phenotype-production, build-go-human-production,
-                   build-protein_structure-production, build-uniprot-production,
+                   build-ensembl-human-production, build-go-human-production,
                    analyse-db-production, grant-db-production"/>
 
-  <!--POST PROCESSING 
-  <target name="post-process-human">    
-    <antcall target="create-references"/>
-    <antcall target="analyse-db-production"/>
-    <antcall target="make-spanning-locations"/>
-    <antcall target="analyse-db-production"/>
-    <antcall target="transfer-sequences"/>
-    <antcall target="create-indexes-production-attribute"/>
-    <antcall target="analyse-db-production"/>
-  </target>-->
 
   <!--POST PROCESSING -->
   <target name="fetch-contig-sequences" depends="compile-genomic-java-from-db">
@@ -2570,9 +2556,22 @@
     <fetch-sequences operation="fetch-contig-sequences-human" objectStoreWriter="osw.production" ensemblDb="db.ensembl-human"/>
   </target>
 
+  <target name="transfer-sequences-chromosome" depends="compile-genomic-java-from-db">
+    <taskdef name="transfer-sequences" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <transfer-sequences operation="transfer-sequences-chromosome" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="post-process-human">   
       <antcall target="fetch-contig-sequences"/>
-      <antcall target="transfer-sequences"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="create-references"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="transfer-sequences-chromosome"/>
+      <antcall target="analyse-db-production"/>
+      <!--antcall target="create-indexes-production-attribute"/-->
+      <!--antcall target="analyse-db-production"/-->
   </target>
 
   <!--COMPILATION AND TESTING TARGETS -->
