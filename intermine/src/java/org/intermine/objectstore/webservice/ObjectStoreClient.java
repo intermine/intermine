@@ -189,7 +189,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStore#getObjectByExample
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+    public Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
         Object object = remoteMethod("getObjectByExample", new Object[] {obj});
         promoteProxies(object);
         return object;
