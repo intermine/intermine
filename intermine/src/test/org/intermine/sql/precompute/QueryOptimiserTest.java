@@ -693,7 +693,6 @@ public class QueryOptimiserTest extends TestCase
         Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five'");
         Query eq3 = new Query("SELECT P44.fhjs AS t1_a, P44.sjhf AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM precomp1 AS P44, precomp2 AS P43");
         Set eSet = new ConsistentSet();
-        eSet.add(q1);
         eSet.add(eq1);
         eSet.add(eq2);
         eSet.add(eq3);
@@ -716,7 +715,6 @@ public class QueryOptimiserTest extends TestCase
         Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P49.fhjs AS t2_a, P49.sjhf AS t2_b FROM table AS table1, precomp1 AS P49 WHERE table1.c = 'five'");
         Query eq3 = new Query("SELECT P47.fhjs AS t1_a, P47.sjhf AS t1_b, P45.fhjs AS t2_a, P45.sjhf AS t2_b FROM precomp1 AS P47, precomp1 AS P45");
         Set eSet = new ConsistentSet();
-        eSet.add(q1);
         eSet.add(eq1);
         eSet.add(eq2);
         eSet.add(eq3);

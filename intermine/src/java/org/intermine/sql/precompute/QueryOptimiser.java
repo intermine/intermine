@@ -20,6 +20,7 @@ import org.flymine.util.StringUtil;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,11 +52,59 @@ public class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     public static String optimise(String query, Database database) throws SQLException {
+        long start = new Date().getTime();
+        long parseTime = 0;
+        // If we want to do any query caching, here is where we should do it.
+        OptimiserCache cache = OptimiserCache.getInstance(database);
+        LimitOffsetQuery limitOffsetQuery = new LimitOffsetQuery(query);
+        String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
+                limitOffsetQuery.getOffset());
+        if (cachedQuery != null) {
+            //System//.out.println("Optimising query took " + ((new Date()).getTime() - start)
+            //        + " ms - cache hit: " + query);
+            return cachedQuery;
+        }
         try {
-            return optimise(new Query(query), database).getSQLString();
+            Connection explainConnection = database.getConnection();
+            BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
+            String optimisedQuery = null;
+            int expectedRows = 0;
+            int expectedTime = 0;
+            try {
+                // First, add the original string to the BestQuery object, so it has an opportunity
+                // to say optimisation is not worth it, before parsing.
+                bestQuery.add(query);
+                expectedTime = (int) bestQuery.getBestExplainResult().getComplete();
+                Query originalQuery = new Query(query);
+                parseTime = new Date().getTime();
+                remapAliasesToAvoidPrecomputePrefix(originalQuery);
+                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
+                Set precomputedTables = ptm.getPrecomputedTables();
+                recursiveOptimise(precomputedTables, originalQuery, bestQuery, originalQuery);
+            } catch (BestQueryException e) {
+                // Ignore - bestQuery decided to cut short the search
+                expectedTime = (int) bestQuery.getBestExplainResult().getComplete();
+            } finally {
+                explainConnection.close();
+            }
+            optimisedQuery = bestQuery.getBestQueryString();
+            expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
+            // Add optimised query to the cache here.
+            LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
+            cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
+                    limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
+            //System//.out.println("Optimising " + expectedTime + " ms query took "
+            //        + ((new Date()).getTime() - start)
+            //        + (parseTime == 0 ? " ms without parsing " : " ms including "
+            //            + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
+            return optimisedQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
+            //System//.out.println("Exception: " + e.toString());
+            //e.printStackTrace(System//.out);
         }
+        //System//.out.println("Optimising query took " + ((new Date()).getTime() - start)
+        //        + " ms - unparsable query: " + query);
         return query;
     }
 
@@ -70,18 +119,19 @@ public class QueryOptimiser
     protected static Query optimise(Query query, Database database) throws SQLException {
         Connection explainConnection = database.getConnection();
         Query retval = null;
+        BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
         try {
-            BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
+            bestQuery.add(query);
             remapAliasesToAvoidPrecomputePrefix(query);
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
             Set precomputedTables = ptm.getPrecomputedTables();
             recursiveOptimise(precomputedTables, query, bestQuery, query);
-            retval = bestQuery.getBestQuery();
         } catch (BestQueryException e) {
             // Ignore - bestQuery decided to cut short the search
         } finally {
             explainConnection.close();
         }
+        retval = bestQuery.getBestQuery();
         return retval;
     }
 
@@ -122,8 +172,6 @@ public class QueryOptimiser
      */
     protected static void recursiveOptimise(Set precomputedTables, Query query,
             BestQuery bestQuery, Query originalQuery) throws BestQueryException, SQLException {
-        // First, update BestQuery with this Query.
-        bestQuery.add(query);
         // This line creates a Map from PrecomputedTable objects to Sets of optimised Query objects.
         SortedMap map = mergeMultiple(precomputedTables, query, originalQuery);
         // Now we want to iterate through every optimised Query in the Map of Sets.
@@ -139,6 +187,8 @@ public class QueryOptimiser
             Iterator queryIter = queries.iterator();
             while (queryIter.hasNext()) {
                 Query optimisedQuery = (Query) queryIter.next();
+                // First, update BestQuery with this Query.
+                bestQuery.add(optimisedQuery);
                 // Now we want to call recursiveOptimise on each one.
                 recursiveOptimise(newPrecomputedTables, optimisedQuery, bestQuery, originalQuery);
             }
