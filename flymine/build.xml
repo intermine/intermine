@@ -1568,7 +1568,7 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-src-items"/>
+      <property name="db.name" value="db.uniprot-src-items"/>
       <property name="objectstore.name" value="os.uniprot-src-items-std"/>
     </ant>
 
