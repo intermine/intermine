@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.presentation;
+package org.flymine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -27,11 +27,11 @@ import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Company;
 
 
-public class QueryCreatorTest extends TestCase
+public class QueryHelperTest extends TestCase
 {
     Model model;
 
-    public QueryCreatorTest(String arg) {
+    public QueryHelperTest(String arg) {
         super(arg);
     }
 
@@ -49,7 +49,7 @@ public class QueryCreatorTest extends TestCase
         ops.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
 
         Query q = new Query();
-        QueryCreator.addToQuery(q, new QueryClass(Employee.class), fields, ops, model);
+        QueryHelper.addToQuery(q, new QueryClass(Employee.class), fields, ops, model);
 
         ArrayList from = new ArrayList(q.getFrom());
         assertEquals(Employee.class, ((QueryClass) from.get(0)).getType());
@@ -82,7 +82,7 @@ public class QueryCreatorTest extends TestCase
 
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
-        QueryCreator.addToQuery(q, qc, fields1, ops1, model);
+        QueryHelper.addToQuery(q, qc, fields1, ops1, model);
         assertEquals(1, q.getFrom().size());
         assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
 
@@ -97,7 +97,7 @@ public class QueryCreatorTest extends TestCase
         ops2.put("fullTime", SimpleConstraint.NOT_EQUALS.getIndex().toString());
         ops2.put("age", SimpleConstraint.EQUALS.getIndex().toString());
 
-        QueryCreator.addToQuery(q, qc, fields2, ops2, model);
+        QueryHelper.addToQuery(q, qc, fields2, ops2, model);
         assertEquals(1, q.getFrom().size());
         List list = new ArrayList(((ConstraintSet) q.getConstraint()).getConstraints());
         assertFalse(list.get(0) instanceof ConstraintSet);
@@ -109,31 +109,31 @@ public class QueryCreatorTest extends TestCase
         Query q = new Query();
 
         try {
-            QueryCreator.addToQuery(null, new QueryClass(Employee.class), new HashMap(), new HashMap(), model);
+            QueryHelper.addToQuery(null, new QueryClass(Employee.class), new HashMap(), new HashMap(), model);
             fail("Expected NullPointerException, q parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, null, new HashMap(), new HashMap(), model);
+            QueryHelper.addToQuery(q, null, new HashMap(), new HashMap(), model);
             fail("Expected NullPointerException, clsName parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, new QueryClass(Employee.class), null, new HashMap(), model);
+            QueryHelper.addToQuery(q, new QueryClass(Employee.class), null, new HashMap(), model);
             fail("Expected NullPointerException, fields parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, new QueryClass(Employee.class), new HashMap(), null, model);
+            QueryHelper.addToQuery(q, new QueryClass(Employee.class), new HashMap(), null, model);
             fail("Expected NullPointerException, ops parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, new QueryClass(Employee.class), new HashMap(), new HashMap(), null);
+            QueryHelper.addToQuery(q, new QueryClass(Employee.class), new HashMap(), new HashMap(), null);
             fail("Expected NullPointerException, model parameter null");
         } catch (NullPointerException e) {
         }
@@ -151,7 +151,7 @@ public class QueryCreatorTest extends TestCase
         QueryClass qc = new QueryClass(Employee.class);
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
 
-        ConstraintSet c = QueryCreator.generateConstraints(qc, fields, ops, new HashMap(), model);
+        ConstraintSet c = QueryHelper.generateConstraints(qc, fields, ops, new HashMap(), model);
         ArrayList list = new ArrayList(c.getConstraints());
         SimpleConstraint res1 = (SimpleConstraint) list.get(0);
         assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());
@@ -180,7 +180,7 @@ public class QueryCreatorTest extends TestCase
         QueryClass qc2 = new QueryClass(Department.class);
         aliases.put("a1_", qc2);
 
-        ConstraintSet cs = QueryCreator.generateConstraints(qc1, fields, ops, aliases, model);
+        ConstraintSet cs = QueryHelper.generateConstraints(qc1, fields, ops, aliases, model);
         ContainsConstraint cc = (ContainsConstraint) cs.getConstraints().iterator().next();
         assertEquals(qc1.getType(), cc.getReference().getQueryClass().getType());
         assertEquals(qc2.getType(), cc.getReference().getType());
@@ -190,13 +190,13 @@ public class QueryCreatorTest extends TestCase
 
     public void testAddConstraintNull() throws Exception {
        try {
-            QueryCreator.addConstraint(null, new ConstraintSet(ConstraintSet.AND));
+            QueryHelper.addConstraint(null, new ConstraintSet(ConstraintSet.AND));
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addConstraint(new Query(), null);
+            QueryHelper.addConstraint(new Query(), null);
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -208,7 +208,7 @@ public class QueryCreatorTest extends TestCase
         SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
 
         q.setConstraint(sc);
-        QueryCreator.addConstraint(q, new ConstraintSet(ConstraintSet.AND));
+        QueryHelper.addConstraint(q, new ConstraintSet(ConstraintSet.AND));
 
         assertEquals(sc, q.getConstraint());
     }
@@ -220,7 +220,7 @@ public class QueryCreatorTest extends TestCase
         ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);
         cs.addConstraint(sc);
 
-        QueryCreator.addConstraint(q, cs);
+        QueryHelper.addConstraint(q, cs);
 
         assertEquals(cs, q.getConstraint());
     }
@@ -234,7 +234,7 @@ public class QueryCreatorTest extends TestCase
         cs2.addConstraint(sc2);
 
         q.setConstraint(sc1);
-        QueryCreator.addConstraint(q, cs2);
+        QueryHelper.addConstraint(q, cs2);
 
         ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
         cs3.addConstraint(sc1);
@@ -254,7 +254,7 @@ public class QueryCreatorTest extends TestCase
         cs2.addConstraint(sc2);
 
         q.setConstraint(cs1);
-        QueryCreator.addConstraint(q, cs2);
+        QueryHelper.addConstraint(q, cs2);
 
         ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
         cs3.addConstraint(sc1);
@@ -282,9 +282,9 @@ public class QueryCreatorTest extends TestCase
         q.setConstraint(c);
 
         assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
-        QueryCreator.removeConstraints(q, qc1);
+        QueryHelper.removeConstraints(q, qc1);
         assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
-        QueryCreator.removeConstraints(q, qc2);
+        QueryHelper.removeConstraints(q, qc2);
         assertEquals(0, ((ConstraintSet) q.getConstraint()).getConstraints().size());
     }
 
@@ -292,25 +292,25 @@ public class QueryCreatorTest extends TestCase
     public void testCreateQueryValue() throws Exception {
         QueryValue qv = null;
 
-        qv = QueryCreator.createQueryValue(Integer.class, "101");
+        qv = QueryHelper.createQueryValue(Integer.class, "101");
         assertEquals(new Integer(101), (Integer) qv.getValue());
-        qv = QueryCreator.createQueryValue(Float.class, "1.01");
+        qv = QueryHelper.createQueryValue(Float.class, "1.01");
         assertEquals(new Float(1.01), (Float) qv.getValue());
-        qv = QueryCreator.createQueryValue(Double.class, "1.01");
+        qv = QueryHelper.createQueryValue(Double.class, "1.01");
         assertEquals(new Double(1.01), (Double) qv.getValue());
-        qv = QueryCreator.createQueryValue(Boolean.class, "false");
+        qv = QueryHelper.createQueryValue(Boolean.class, "false");
         assertEquals(new Boolean(false), (Boolean) qv.getValue());
-        qv = QueryCreator.createQueryValue(String.class, "test");
+        qv = QueryHelper.createQueryValue(String.class, "test");
         assertEquals("test", qv.getValue());
-        qv = QueryCreator.createQueryValue(Long.class, "101");
+        qv = QueryHelper.createQueryValue(Long.class, "101");
         assertEquals(new Long(101), (Long) qv.getValue());
-        qv = QueryCreator.createQueryValue(Short.class, "101");
+        qv = QueryHelper.createQueryValue(Short.class, "101");
         assertEquals(new Short((short)101), (Short) qv.getValue());
-        qv = QueryCreator.createQueryValue(Date.class, "30/08/76");
-        assertEquals(new SimpleDateFormat(QueryCreator.DATE_FORMAT).parse("30/08/76"), qv.getValue());
+        qv = QueryHelper.createQueryValue(Date.class, "30/08/76");
+        assertEquals(new SimpleDateFormat(QueryHelper.DATE_FORMAT).parse("30/08/76"), qv.getValue());
 
         try {
-            qv = QueryCreator.createQueryValue(java.util.Iterator.class, "test");
+            qv = QueryHelper.createQueryValue(java.util.Iterator.class, "test");
             fail("Expected an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }

@@ -1,4 +1,4 @@
-package org.flymine.objectstore.query.presentation;
+package org.flymine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -16,7 +16,6 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
-import org.flymine.objectstore.query.*;
 import org.flymine.metadata.*;
 import org.flymine.FlyMineException;
 
@@ -25,7 +24,7 @@ import org.flymine.FlyMineException;
  *
  * @author Richard Smith
  */
-public abstract class QueryCreator
+public abstract class QueryHelper
 {
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
@@ -163,11 +162,9 @@ public abstract class QueryCreator
             cs = (ConstraintSet) c;
         }
 
-        Iterator iter = ConstraintListCreator.createList(q, qc).iterator();
+        Iterator iter = ConstraintHelper.createList(q, qc).iterator();
         while (iter.hasNext()) {
-            // TODO will be simplified when refactoring of ConstraintListCreator done
-            Constraint constraint = ((AssociatedConstraint) iter.next()).getConstraint();
-            cs.removeConstraint(constraint);
+            cs.removeConstraint((Constraint) iter.next());
         }
     }
 

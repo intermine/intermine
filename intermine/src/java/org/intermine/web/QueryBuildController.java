@@ -35,8 +35,7 @@ import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.query.*;
 
-import org.flymine.objectstore.query.presentation.ConstraintListCreator;
-import org.flymine.objectstore.query.presentation.AssociatedConstraint;
+import org.flymine.objectstore.query.ConstraintHelper;
 
 /**
  * Perform initialisation steps for query editing tile prior to calling
@@ -98,12 +97,11 @@ public class QueryBuildController extends TilesAction
     protected void populateQueryBuildForm(QueryBuildForm form, Query q, QueryClass qc)
         throws Exception {
 
-        List constraints = ConstraintListCreator.createList(q, qc);
+        List constraints = ConstraintHelper.createList(q, qc);
 
         Iterator iter = constraints.iterator();
         while (iter.hasNext()) {
-            AssociatedConstraint ac = (AssociatedConstraint) iter.next();
-            Constraint c = ac.getConstraint();
+            Constraint c = (Constraint) iter.next();
             if (c instanceof SimpleConstraint) {
                 SimpleConstraint sc = (SimpleConstraint) c;
                 if ((sc.getArg1() instanceof QueryField)  && (sc.getArg2() instanceof QueryValue)) {

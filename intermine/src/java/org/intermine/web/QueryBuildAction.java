@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionMapping;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.*;
-import org.flymine.objectstore.query.presentation.QueryCreator;
 
 
 /**
@@ -70,7 +69,7 @@ public class QueryBuildAction extends LookupDispatchAction
             Model model = ((DisplayModel) session.getAttribute("model")).getModel();
             QueryBuildForm queryBuildForm = (QueryBuildForm) form;
 
-            QueryCreator.addToQuery(query, qc, queryBuildForm.getFieldValues(),
+            QueryHelper.addToQuery(query, qc, queryBuildForm.getFieldValues(),
                                     queryBuildForm.getFieldOps(), model);
             session.setAttribute("query", query);
         }

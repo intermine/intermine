@@ -30,8 +30,11 @@ import javax.servlet.ServletException;
 
 import org.flymine.objectstore.query.FromElement;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.presentation.ConstraintListCreator;
+import org.flymine.objectstore.query.ConstraintHelper;
+import org.flymine.objectstore.query.Constraint;
+import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.presentation.PrintableConstraint;
+import org.flymine.objectstore.query.presentation.AssociatedConstraint;
 
 /**
  * Splits up the query in the request into little bits for queryView.jsp to display.
@@ -47,7 +50,7 @@ public class QueryViewController extends TilesAction
             HttpServletRequest request, HttpServletResponse response) throws IOException,
             ServletException {
         Query query = (Query) request.getSession().getAttribute("query");
-        List pclist = ConstraintListCreator.createList(query);
+        List pclist = ConstraintHelper.createList(query);
         Map perFromConstraints = new HashMap();
         Set noFromConstraints = new HashSet();
         Map perFromTitle = new HashMap();
@@ -68,15 +71,25 @@ public class QueryViewController extends TilesAction
                 perFromConstraints.put(fromElement, fromSet);
                 Iterator conIter = pclist.iterator();
                 while (conIter.hasNext()) {
-                    PrintableConstraint pc = (PrintableConstraint) conIter.next();
-                    if (pc.isAssociatedWith(fromElement)) {
-                        fromSet.add(pc);
+                    Constraint c = (Constraint) conIter.next();
+                    if (!(c instanceof ConstraintSet)) {
+                        AssociatedConstraint ac = new AssociatedConstraint(query, c);
+                        if (ac.isAssociatedWith(fromElement)) {
+                            fromSet.add(ac);
+                        }
                     }
                 }
             }
             Iterator conIter = pclist.iterator();
             while (conIter.hasNext()) {
-                PrintableConstraint pc = (PrintableConstraint) conIter.next();
+                Constraint c = (Constraint) conIter.next();
+                PrintableConstraint pc;
+                if (c instanceof ConstraintSet) {
+                    pc = new PrintableConstraint(query, (ConstraintSet) c);
+                } else {
+                    pc = new AssociatedConstraint(query, c);
+                }
+
                 if (pc.isAssociatedWithNothing()) {
                     noFromConstraints.add(pc);
                 }
