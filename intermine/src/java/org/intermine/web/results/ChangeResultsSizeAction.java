@@ -11,8 +11,6 @@ package org.intermine.web.results;
  */
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
@@ -30,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineBag;
+import org.intermine.web.BagHelper;
 
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the
@@ -56,7 +55,7 @@ public class ChangeResultsSizeAction extends Action
         ActionForward forward = null;
 
         ChangeResultsForm crsForm = (ChangeResultsForm) form;
-        String button = crsForm.getButton();        
+        String button = crsForm.getButton();
 
         if ("changePageSize".equals(button)) {
             return changePageSize(mapping, form, request, response);
@@ -147,21 +146,10 @@ public class ChangeResultsSizeAction extends Action
 
         HttpSession session = request.getSession();
 
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        if (savedBags == null) {
-            savedBags = new LinkedHashMap();
-            session.setAttribute(Constants.SAVED_BAGS, savedBags);
-        }
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         String[] selectedObjects = changeResultsForm.getSelectedObjects();
 
-        Collection bag = (Collection) savedBags.get(bagName);
-
-        if (bag == null) {
-            bag = new InterMineBag();
-            savedBags.put(bagName, bag);
-        }
+        InterMineBag bag = new InterMineBag();
 
         // Go through the selected items and add to the set
         for (Iterator itemIterator = Arrays.asList(selectedObjects).iterator();
@@ -184,6 +172,8 @@ public class ChangeResultsSizeAction extends Action
                 bag.add(((List) pt.getList().get(row)).get(column));
             }
         }
+
+        BagHelper.saveBag(request, bagName, bag);
     }
 
     /**
