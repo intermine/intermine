@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <brand>
     <title>InterMine</title>
-    <stylesheet file="style/intermine.css"/>
+    <stylesheet file="style/default.css"/>
     <meta name="keywords" content="OQL, integration, query optimiser"/>
     <meta name="description" content="Object integration and warehousing software"/>
     <headline>Object integration and warehousing software</headline>
