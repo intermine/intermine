@@ -176,14 +176,13 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("repeat_feature".equals(className)) {
-                    // temporarily ignore repeat_features
-                    //tgtItem.addReference(getOrgRef());
-                    //result.add(createAnalysisResult(srcItem, tgtItem));
-                    //result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
-                    //promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
-                    //             "repeat_consensus");
-                    //promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
-                    //promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
+                    tgtItem.addReference(getOrgRef());
+                    result.add(createAnalysisResult(srcItem, tgtItem));
+                    result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
+                    promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
+                                "repeat_consensus");
+                    promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
+                    promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
                     storeTgtItem = false;
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
@@ -783,17 +782,17 @@ public class EnsemblDataTranslator extends DataTranslator
         String orgAbbrev = args[5];
 
         Map paths = new HashMap();
-        //ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", "identifier"));
-        //paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
-        //        Collections.singleton(desc));
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", "identifier"));
+        paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
+               Collections.singleton(desc));
 
         HashSet descSet = new HashSet();
         //desc = new ItemPrefetchDescriptor("transcript.display_xref");
         //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", "identifier"));
         //descSet.add(desc);
 
-        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor(
+        desc = new ItemPrefetchDescriptor(
                 "(transcript.translation");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("translation", "identifier"));
         descSet.add(desc);
