@@ -171,6 +171,14 @@ public class Query implements FromElement
     }
 
     /**
+     * Clears the ORDER BY clause of this Query
+     *
+     */
+    public void clearOrderBy() {
+        orderBy.clear();
+    }
+
+    /**
      * Gets the ORDER BY clause of this Query
      *
      * @return the List of ORDER BY nodes
@@ -212,6 +220,8 @@ public class Query implements FromElement
      */
     public Query deleteFromSelect(QueryNode node) {
         select.remove(node);
+
+        // Don't think the following is sufficient - what if the node is also in the FROM list?
         String alias = (String) aliases.remove(node);
         if (alias != null) {
             reverseAliases.remove(alias);
@@ -226,6 +236,14 @@ public class Query implements FromElement
      */
     public List getSelect() {
         return Collections.unmodifiableList(select);
+    }
+
+    /**
+     * Clears the SELECT list
+     *
+     */
+    public void clearSelect() {
+        select.clear();
     }
 
     /**
