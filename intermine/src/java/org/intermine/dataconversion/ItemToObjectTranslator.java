@@ -237,10 +237,11 @@ public class ItemToObjectTranslator extends Translator
         try {
             for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
                 Attribute attr = (Attribute) i.next();
+                //LOG.error("processing: " + DynamicUtil.decomposeClass(obj.getClass()) + "." + attr.getName());
                 FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
                     throw new MetaDataException("Attribute not found in model: "
-                                                + obj.getClass() + "." + attr.getName());
+                                                + DynamicUtil.decomposeClass(obj.getClass()) + "." + attr.getName());
                 }
                 Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
@@ -251,17 +252,19 @@ public class ItemToObjectTranslator extends Translator
 
             for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
                 Reference ref = (Reference) i.next();
+                //LOG.error("processing: " + DynamicUtil.decomposeClass(obj.getClass()) + "." + ref.getName());
                 Integer identifier = identifierToId(ref.getRefId());
                 if (TypeUtil.getFieldInfo(obj.getClass(), ref.getName()) != null) {
                     TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier));
                 } else {
                     throw new MetaDataException("Reference not found in model: "
-                                                + obj.getClass() + "." + ref.getName());
+                                                + DynamicUtil.decomposeClass(obj.getClass()) + "." + ref.getName());
                 }
             }
 
             for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
                 ReferenceList refs = (ReferenceList) i.next();
+                //LOG.error("processing: " + DynamicUtil.decomposeClass(obj.getClass()) + "." + refs.getName());
                 QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
                 QueryField qf = new QueryField(qc, "id");
                 BagConstraint bc =
@@ -276,7 +279,7 @@ public class ItemToObjectTranslator extends Translator
                                                                              os.getSequence()));
                 } else {
                     throw new MetaDataException("Collection not found in model: "
-                                                + obj.getClass() + "." + refs.getName());
+                                                + DynamicUtil.decomposeClass(obj.getClass()) + "." + refs.getName());
                 }
             }
         } catch (IllegalAccessException e) {
