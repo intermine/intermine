@@ -9,7 +9,7 @@
 <html:form action="/queryClassSelect">
   <html:select property="className" size="20">
     <c:forEach items="${classes}" var="entry">
-      <c:if test="${classCounts[entry.key] > 0}">--%>
+      <c:if test="${classCounts[entry.key] > 0}">
         <html:option value="${entry.key}">
           <c:out value="${entry.value}"/>
         </html:option>
