@@ -62,7 +62,7 @@ public class TypeUtil
     }
 
     /**
-     * Returns the unqualifed class name from a fully qualified class name
+     * Returns the unqualified class name from a fully qualified class name
      *
      * @param className the fully qualified class name
      * @return the unqualified name
