@@ -11,6 +11,8 @@ package org.intermine.web.results;
  */
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ArrayList;
 
 import servletunit.struts.MockStrutsTestCase;
@@ -40,6 +42,13 @@ public class ObjectSummaryControllerTest extends MockStrutsTestCase
         assertTrue(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
         assertFalse(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
         assertFalse(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
+        Map primaryKeyFields = (Map) context.getAttribute("primaryKeyFields");
+        assertNotNull(primaryKeyFields);
+        LinkedHashMap testFieldNames = new LinkedHashMap();
+        testFieldNames.put("id","id");
+        testFieldNames.put("name","name");
+        testFieldNames.put("company","company");
+        assertEquals(testFieldNames, primaryKeyFields);
     }
 
     public void testNonBusinessObject() throws Exception {
