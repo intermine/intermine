@@ -88,18 +88,23 @@ public class ItemToObjectTranslator extends Translator
                 && ((QueryField) ((BagConstraint) constraint).getQueryNode()).getFromElement() == qn
                 && ((QueryField) ((BagConstraint) constraint).getQueryNode())
                 .getFieldName().equals("id")) {
-                BagConstraint bc = new BagConstraint(new QueryField(qc, "identifier"),
-                                                     ConstraintOp.IN, toStrings(((BagConstraint) constraint).getBag()));
+                BagConstraint bc =
+                    new BagConstraint(new QueryField(qc, "identifier"),
+                                      ConstraintOp.IN,
+                                      toStrings(((BagConstraint) constraint).getBag()));
                 q.setConstraint(bc);
             } else if (constraint instanceof SimpleConstraint
                        && constraint.getOp() == ConstraintOp.EQUALS
                        && ((SimpleConstraint) constraint).getArg1() instanceof QueryField
-                       && ((QueryField) ((SimpleConstraint) constraint).getArg1()).getFromElement() == qn
+                       && ((QueryField) ((SimpleConstraint) constraint).getArg1())
+                           .getFromElement() == qn
                        && ((QueryField) ((SimpleConstraint) constraint).getArg1())
                        .getFieldName().equals("id")) {
-                SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "identifier"),
-                                                           ConstraintOp.EQUALS, 
-                                                           new QueryValue(((QueryValue) ((SimpleConstraint) constraint).getArg2()).getValue().toString()));
+                SimpleConstraint sc =
+                    new SimpleConstraint(new QueryField(qc, "identifier"),
+                         ConstraintOp.EQUALS, 
+                          new QueryValue(((QueryValue) ((SimpleConstraint) constraint)
+                                                         .getArg2()).getValue().toString()));
                 q.setConstraint(sc);
             } else {
                 throw new ObjectStoreException("Query cannot be translated: " + query);
@@ -152,8 +157,9 @@ public class ItemToObjectTranslator extends Translator
                 ReferenceList refs = (ReferenceList) i.next();
                 QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
                 QueryField qf = new QueryField(qc, "id");
-                BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN,
-                                                     toIntegers(new HashSet(StringUtil.tokenize(refs.getRefIds()))));
+                BagConstraint bc =
+                    new BagConstraint(qf, ConstraintOp.IN,
+                        toIntegers(new HashSet(StringUtil.tokenize(refs.getRefIds()))));
                 Query q = new Query();
                 q.addToSelect(qc);
                 q.addFrom(qc);
@@ -166,6 +172,11 @@ public class ItemToObjectTranslator extends Translator
         return obj;
     }
 
+    /**
+     * Convert a set of Integers to a set of String using toString()
+     * @param integers a set of Integers
+     * @return the corresponding set of Strings
+     */
     protected Set toStrings(Set integers) {
         Set strings = new HashSet();
         for (Iterator i = integers.iterator(); i.hasNext();) {
@@ -174,6 +185,11 @@ public class ItemToObjectTranslator extends Translator
         return strings;
     }
 
+    /**
+     * Convert a set of Strings to a set of Integers using valueOf()
+     * @param strings a set of Strings
+     * @return the corresponding set of Integers
+     */
     protected Set toIntegers(Set strings) {
         Set integers = new HashSet();
         for (Iterator i = strings.iterator(); i.hasNext();) {
