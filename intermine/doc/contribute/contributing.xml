@@ -17,7 +17,7 @@ unnecessary duplication of work.</para>
 
 <para>We prefer to accept patches against the current CVS
 repository. All code must adhere to the <ulink
-url="coding-standards">InterMine coding standards</ulink> (note
+url="coding-standards.xml">InterMine coding standards</ulink> (note
 specifically that every method of every class must have comprehensive
 unit tests), and not cause any existing unit tests to fail.</para>
 

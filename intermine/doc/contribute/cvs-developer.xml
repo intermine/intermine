@@ -13,7 +13,7 @@
 <para>This document details how active developers can obtain InterMine
 source code from the main CVS server. If you are looking for read-only
 access to the InterMine public CVS server, instructions are <ulink
-url="cvs-user">here</ulink>.</para>
+url="../software/cvs-user.xml">here</ulink>.</para>
 
 </sect1>
 
