@@ -100,7 +100,8 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
         return result;
     }
 
-    // block execution of OJB queries (?)
+    // block execution of OJB queries (?) - currently need OJB queries to be used
+    // e.g. when doing a store or delete
     /**
      * Refuses to create a Select statement for the OJB-specific statement type.
      *
@@ -109,12 +110,13 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      * @return never
      * @throws UnsupportedOperationException all the time
      */
-    public String getPreparedSelectStatement(org.apache.ojb.broker.query.Query query,
+    /*    public String getPreparedSelectStatement(org.apache.ojb.broker.query.Query query,
             ClassDescriptor cld) {
         throw (new UnsupportedOperationException("Method not "
                     + "supported in SqlGeneratorFlymineImpl"));
-    }
-       
+                    }
+    */
+
     /**
      * Refuses to create a Select statement for the OJB-specific statement type.
      *
@@ -123,11 +125,13 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      * @return never
      * @throws UnsupportedOperationException all the time
      */
+    /*
     public String getSelectStatementDep(org.apache.ojb.broker.query.Query query,
             ClassDescriptor cld) {
         throw (new UnsupportedOperationException("Method not "
                     + "supported in SqlGeneratorFlymineImpl"));
-    }
+                    }
+    */
 
     /**
      * Refuses to create a Select statement for the OJB-specific statement type.
@@ -138,10 +142,12 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      * @return never
      * @throws UnsupportedOperationException all the time
      */
+    /*
     public String getSelectMNStatement(String table, String[] selectColumns, String[] columns) {
         throw (new UnsupportedOperationException("Method not "
                     + "supported in SqlGeneratorFlymineImpl"));
     }
+    */
 
     /**
      * Refuses to create a Select statement for the OJB-specific statement type.
@@ -150,9 +156,10 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      * @return never
      * @throws UnsupportedOperationException all the time
      */
+    /*
     public String getPreparedSelectByPkStatement(ClassDescriptor cld) {
         throw (new UnsupportedOperationException("Method not "
                     + "supported in SqlGeneratorFlymineImpl"));
     }
-
+    */
 }
