@@ -1,7 +1,7 @@
 package org.intermine.web.config;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,10 +42,21 @@ public class Displayer
         return this.src;
     }
 
+    /**
+     * Add a stored parameter to this Displayer.
+     *
+     * @param name the name of the parameter to add
+     * @param value the value of the parameter to add
+     */
     public void addParam(String name, String value) {
         params.put(name, value);
     }
 
+    /**
+     * Return the parameters stored in this Displayer.
+     *
+     * @return the stored parameters
+     */
     public Map getParams() {
         return params;
     }
