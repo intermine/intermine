@@ -14,8 +14,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.Map;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -36,12 +34,8 @@ public class DeleteBagAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         String name = request.getParameter("name");
-
-        if (savedBags != null) {
-            savedBags.remove(name);
-        }
+        BagHelper.getSavedBags(session).remove(name);
 
         return mapping.findForward("history");
     }
