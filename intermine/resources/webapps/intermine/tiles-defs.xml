@@ -1,4 +1,4 @@
-<!DOCTYPE tiles-definitions PUBLIC
+ <!DOCTYPE tiles-definitions PUBLIC
   "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
   "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
 
@@ -29,9 +29,9 @@
 </definition>
 <definition name="tribody.template" path="/tribody.jsp">
 </definition>
-<definition name="query.tile" extends="tribody.template">
+<definition name="query.tile" extends="tribody.template" controllerUrl="/initQuery.do">
     <put name="left" value="/model.jsp"/>
-    <put name="top" value="/query.jsp"/>
+    <put name="top" value="/query.jsp" />
     <put name="bottom" value="/queryView.jsp"/>
 </definition>
 </tiles-definitions>

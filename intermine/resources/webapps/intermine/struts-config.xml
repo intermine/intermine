@@ -51,6 +51,10 @@
             forward="documentation.page">
     </action>
 
+    <action path="/initQuery" type="org.flymine.web.QueryInitAction"> 
+    </action>
+
+
   </action-mappings>
 
 
