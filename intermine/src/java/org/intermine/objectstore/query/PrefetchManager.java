@@ -14,10 +14,8 @@ import org.apache.log4j.Logger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.LinkedList;
 import java.util.Set;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.util.PropertiesUtil;
 
 /**
  * A manager for the prefetch mechanism for the Results object.
@@ -37,14 +35,6 @@ public class PrefetchManager
 
     protected static final int LOADING = 3;
         
-    // This bit here adds a little usefulness to the WeakHashMap objects in the Results objects.
-    // The mappings in them tend to be garbage collected ridiculously quickly. So, we hold the last
-    // few in this system-wide queue, and turf them off the end once the queue has more than
-    // os.queue-len entries.
-    protected static LinkedList cacheHolder = new LinkedList();
-    protected static final int MAX_QUEUE_ENTRIES = Integer.parseInt((String)
-                PropertiesUtil.getPropertiesStartingWith("os").get("os.queue-len"));
-
     /**
      * Adds a request to the Set of pending requests, and wakes up a Thread to handle it.
      *
@@ -196,7 +186,6 @@ public class PrefetchManager
                 // And add the result to batches, assuming we didn't get an exception.
                 Integer key = new Integer(request.batchNo);
                 request.result.batches.put(key, retval);
-                addToQueue(key);
             } finally {
                 // And then report that it is finished, inside a lock, even if we did get an
                 // exception.
@@ -268,21 +257,6 @@ public class PrefetchManager
         return retval;
     }
 
-    /**
-     * Adds a key Integer to the cacheHolder queue, and keeps the queue no larger than
-     * MAX_QUEUE_ENTRIES. This prevents those latest keys from being garbage collected.
-     *
-     * @param key the key to add to the queue
-     */
-    protected static void addToQueue(Integer key) {
-        synchronized (cacheHolder) {
-            cacheHolder.add(key);
-            if (cacheHolder.size() > MAX_QUEUE_ENTRIES) {
-                cacheHolder.removeFirst();
-            }
-        }
-    }
-
     private static class Request
     {
         private Results result;
@@ -319,7 +293,6 @@ public class PrefetchManager
                         // And add the result to batches, assuming we didn't get an exception.
                         Integer key = new Integer(request.batchNo);
                         request.result.batches.put(key, batch);
-                        addToQueue(key);
                     } catch (Exception e) {
                         LOG.info("ServiceThread.run - Received exception                " + request
                                 + " " + e);

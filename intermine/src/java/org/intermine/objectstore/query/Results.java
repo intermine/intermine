@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
-import java.util.WeakHashMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -28,6 +27,7 @@ import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreLimitReachedException;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
+import org.flymine.util.CacheMap;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -62,7 +62,7 @@ public class Results extends AbstractList
     protected static final Logger LOG = Logger.getLogger(Results.class);
 
     // A map of batch number against a List of ResultsRows
-    protected Map batches = Collections.synchronizedMap(new WeakHashMap());
+    protected Map batches = Collections.synchronizedMap(new CacheMap());
 
     /**
      * No argument constructor for testing purposes
