@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class BufferedItemWriter implements ItemWriter
 {
-    protected static final Logger LOG = Logger.getLogger(BufferedItemWriter.class);
+    private static final Logger LOG = Logger.getLogger(BufferedItemWriter.class);
     private ObjectPipe pipe = new ObjectPipe(PIPE_LENGTH);
     private ItemWriter iw;
     private int batchCounter = 0;
@@ -79,7 +79,7 @@ public class BufferedItemWriter implements ItemWriter
         batchCharCounter += itemSize;
         if ((batchCounter >= BATCH_SIZE) || (batchCharCounter >= BATCH_CHAR_SIZE)) {
             pipe.put(batch);
-            LOG.info("put batch of size " + batchCounter + " items (" + batchCharCounter
+            LOG.debug("put batch of size " + batchCounter + " items (" + batchCharCounter
                       + " chars) into pipe");
             batch = new ArrayList();
             batchCounter = 0;
@@ -88,7 +88,7 @@ public class BufferedItemWriter implements ItemWriter
         }
         //long end = System.currentTimeMillis();
         //if (end - start > 50) {
-        //    LOG.error("Had to wait for PipeReader for " + (end - start) + " ms");
+        //    LOG.debug("Had to wait for PipeReader for " + (end - start) + " ms");
         //}
     }
 
@@ -107,7 +107,7 @@ public class BufferedItemWriter implements ItemWriter
         checkException();
         //long end = System.currentTimeMillis();
         //if (end - start > 50) {
-        //    LOG.error("Had to wait for PipeReader for " + (end - start) + " ms");
+        //    LOG.debug("Had to wait for PipeReader for " + (end - start) + " ms");
         //}
     }
 
@@ -150,7 +150,7 @@ public class BufferedItemWriter implements ItemWriter
                 if (problem == null) {
                     try {
                         Collection col = (Collection) nextInPipe;
-                        LOG.info("took batch of " + col.size() + " items from pipe");
+                        LOG.debug("took batch of " + col.size() + " items from pipe");
                         iw.storeAll(col);
                     } catch (ObjectStoreException e) {
                         synchronized (BufferedItemWriter.this) {

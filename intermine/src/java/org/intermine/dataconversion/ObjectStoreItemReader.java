@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 public class ObjectStoreItemReader implements ItemReader
 {
     private ObjectStoreItemPathFollowingImpl os;
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreItemReader.class);
 
     /**
      * Constructs a new ObjectStoreItemReader.

@@ -57,7 +57,7 @@ import org.apache.log4j.Logger;
  */
 public class DataTranslator
 {
-    protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
+    private static final Logger LOG = Logger.getLogger(DataTranslator.class);
 
     protected ItemReader srcItemReader;
     protected Map equivMap;       // lookup equivalent resources - excludes restricted subclass info
@@ -113,13 +113,13 @@ public class DataTranslator
                     if (opCount % 1000 == 0) {
                         long now = System.currentTimeMillis();
                         if (times[(opCount / 1000) % 20] == -1) {
-                            LOG.error("Translated " + opCount + " objects - running at "
+                            LOG.info("Translated " + opCount + " objects - running at "
                                     + (60000000 / (now - time)) + " (avg "
                                     + ((60000L * opCount) / (now - start))
                                     + ") objects per minute -- now on "
                                     + srcItem.getClassName());
                         } else {
-                            LOG.error("Translated " + opCount + " objects - running at "
+                            LOG.info("Translated " + opCount + " objects - running at "
                                     + (60000000 / (now - time)) + " (20000 avg "
                                     + (1200000000 / (now - times[(opCount / 1000) % 20]))
                                     + ") (avg " + ((60000L * opCount) / (now - start))

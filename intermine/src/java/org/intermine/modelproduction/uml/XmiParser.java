@@ -61,8 +61,6 @@ import org.intermine.metadata.*;
  */
 public class XmiParser implements ModelParser
 {
-    protected static final Logger LOG = Logger.getLogger(XmiParser.class);
-
     protected String nameSpace;
     protected String modelName;
 

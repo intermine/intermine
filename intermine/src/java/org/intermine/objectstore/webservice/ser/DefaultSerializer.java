@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class DefaultSerializer implements Serializer
 {
-    protected static final Logger LOG = Logger.getLogger(DefaultSerializer.class);
+    private static final Logger LOG = Logger.getLogger(DefaultSerializer.class);
 
     /**
      * @see Serializer#serialize

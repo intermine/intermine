@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  */
 public class SourcePriorityComparator implements Comparator
 {
-    protected static final Logger LOG = Logger.getLogger(SourcePriorityComparator.class);
+    private static final Logger LOG = Logger.getLogger(SourcePriorityComparator.class);
 
     private DataTracker dataTracker;
     private FieldDescriptor field;

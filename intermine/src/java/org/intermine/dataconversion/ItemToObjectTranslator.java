@@ -63,7 +63,7 @@ import org.apache.log4j.Logger;
  */
 public class ItemToObjectTranslator extends Translator
 {
-    protected static final Logger LOG = Logger.getLogger(ItemToObjectTranslator.class);
+    private static final Logger LOG = Logger.getLogger(ItemToObjectTranslator.class);
 
     protected Model model;
     protected SortedMap idToNamespace = new TreeMap();
@@ -226,7 +226,7 @@ public class ItemToObjectTranslator extends Translator
         }
         itemSize += item.getReferences().size() * 50;
         if (itemSize > 1000000) {
-            LOG.error("Translating large object " + item.getIdentifier() + " ("
+            LOG.info("Translating large object " + item.getIdentifier() + " ("
                     + identifierToId(item.getIdentifier()) + ") - classname = "
                     + item.getClassName() + ", size = " + itemSize);
         }

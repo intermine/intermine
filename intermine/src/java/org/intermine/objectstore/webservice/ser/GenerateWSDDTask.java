@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class GenerateWSDDTask extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(GenerateWSDDTask.class);
+    private static final Logger LOG = Logger.getLogger(GenerateWSDDTask.class);
     protected static final String INDENT = "    ";
     protected static final String ENDL = System.getProperty("line.separator");
     
@@ -54,7 +54,7 @@ public class GenerateWSDDTask extends Task
         if (this.destFile == null) {
             throw new BuildException("destFile attribute is not set");
         }
-        LOG.info("Generating " + destFile.getPath());
+        LOG.debug("Generating " + destFile.getPath());
         BufferedWriter fos = null;
         try {
             fos = new BufferedWriter(new FileWriter (destFile));

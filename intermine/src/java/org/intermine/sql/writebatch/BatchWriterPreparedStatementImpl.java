@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
  */
 public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
 {
-    protected static final Logger LOG = Logger.getLogger(BatchWriterPreparedStatementImpl.class);
+    private static final Logger LOG = Logger.getLogger(BatchWriterPreparedStatementImpl.class);
 
     /**
      * @see BatchWriter#write
@@ -47,7 +47,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             long beforeFlush = System.currentTimeMillis();
             simpleBatch.executeBatch();
             long now = System.currentTimeMillis();
-            LOG.info("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
+            LOG.debug("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
                     + (now - start) + " ms, of which " + (now - beforeFlush) + " for flush)");
         }
         simpleBatch = null;
@@ -98,7 +98,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             long beforeFlush = System.currentTimeMillis();
             prepS.executeBatch();
             long now = System.currentTimeMillis();
-            LOG.info("Flushing PreparedStatement batch for table " + name + " (" + insertCount
+            LOG.debug("Flushing PreparedStatement batch for table " + name + " (" + insertCount
                     + " inserts, total time = " + (now - start) + " ms, of which "
                     + (now - beforeFlush) + " for flush)");
             table.getIdsToInsert().clear();

@@ -45,7 +45,6 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     protected static ObjectStoreWriter writer;
     protected static ObjectStore os;
     protected static IntegrationWriterDataTrackingImpl iw;
-    protected static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImplTest.class);
     protected boolean doIds;
 
     public IntegrationWriterDataTrackingImplTest(String arg) {

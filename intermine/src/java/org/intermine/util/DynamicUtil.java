@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
  */
 public class DynamicUtil
 {
-    protected static final Logger LOG = Logger.getLogger(DynamicUtil.class);
     private static Map classMap = new HashMap();
 
     /**

@@ -36,8 +36,6 @@ import org.apache.log4j.Logger;
  */
 public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstractImpl
 {
-    protected static final Logger LOG = Logger.getLogger(IntegrationWriterSingleSourceImpl.class);
-
     /**
      * Creates a new instance of this class, given the properties defining it.
      *

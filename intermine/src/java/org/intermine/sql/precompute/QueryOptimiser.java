@@ -51,7 +51,7 @@ import java.sql.SQLException;
  */
 public class QueryOptimiser
 {
-    protected static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
+    private static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
     private static final int REPORT_INTERVAL = 10000;
 
     private static final String ALIAS_PREFIX = "P";
@@ -106,7 +106,7 @@ public class QueryOptimiser
         }
         callCount++;
         if (callCount % REPORT_INTERVAL == 0) {
-            LOG.error("Optimiser called " + callCount + " times");
+            LOG.info("Optimiser called " + callCount + " times");
         }
         long start = new Date().getTime();
         long parseTime = 0;
@@ -118,7 +118,7 @@ public class QueryOptimiser
         String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
                 limitOffsetQuery.getOffset());
         if (cachedQuery != null) {
-            LOG.info("Optimising query took " + ((new Date()).getTime() - start)
+            LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
@@ -154,11 +154,11 @@ public class QueryOptimiser
             expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
             // Add optimised query to the cache here.
             LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
-            LOG.info("New cache line produced - expectedRows = " + expectedRows + ", limit = "
+            LOG.debug("New cache line produced - expectedRows = " + expectedRows + ", limit = "
                     + limitOffsetQuery.getLimit());
             cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
                     limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
-            LOG.info("Optimising " + expectedTime + " ms query took "
+            LOG.debug("Optimising " + expectedTime + " ms query took "
                     + ((new Date()).getTime() - start)
                     + (parseTime == 0 ? " ms without parsing " : " ms including "
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
@@ -167,7 +167,7 @@ public class QueryOptimiser
             // Query was not acceptable.
             LOG.warn("Exception: " + e.toString());
         }
-        LOG.info("Optimising query took " + ((new Date()).getTime() - start)
+        LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
         return new BestQueryFallback(originalQuery, query);
     }

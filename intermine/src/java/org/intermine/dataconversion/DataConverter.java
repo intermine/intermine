@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  */
  public abstract class DataConverter
 {
-    protected static final Logger LOG = Logger.getLogger(DataConverter.class);
+    private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
     protected ItemWriter writer;
     protected Map aliases = new HashMap();
@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
         }
         String nextIndex = "" + (nextClsId++);
         aliases.put(className, nextIndex);
-        LOG.error("Aliasing className " + className + " to index " + nextIndex);
+        LOG.info("Aliasing className " + className + " to index " + nextIndex);
         return nextIndex;
     }
 }

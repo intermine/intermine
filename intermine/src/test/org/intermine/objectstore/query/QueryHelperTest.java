@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 public class QueryHelperTest extends TestCase
 {
-    protected static final Logger LOG = Logger.getLogger(QueryHelperTest.class);
+    private static final Logger LOG = Logger.getLogger(QueryHelperTest.class);
 
     Model model;
 
@@ -128,8 +128,8 @@ public class QueryHelperTest extends TestCase
         QueryHelper.addConstraint(q, "fullTime", qc,
                                   ConstraintOp.EQUALS, new QueryValue(Boolean.TRUE));
 
-        LOG.info("testAddToQueryExists(): " + q.getConstraint());
-        LOG.info("testAddToQueryExists(): " +
+        LOG.debug("testAddToQueryExists(): " + q.getConstraint());
+        LOG.debug("testAddToQueryExists(): " +
                  ((ConstraintSet) q.getConstraint()).getConstraints());
 
         assertEquals(1, q.getFrom().size());

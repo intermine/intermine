@@ -24,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class PrefetchManager
 {
+    private static final Logger LOG = Logger.getLogger(PrefetchManager.class);
     /** Pending set of requests - always accessed inside a synchronise on sync. */
     protected static Set pending = new HashSet();
     /** Set of requests currently being serviced. This Set is not accessed inside a block
@@ -31,7 +32,6 @@ public class PrefetchManager
     protected static Set serviced = Collections.synchronizedSet(new HashSet());
     protected static int serviceThreads = 0;
     private static Object sync = new Object();
-    protected static final Logger LOG = Logger.getLogger(PrefetchManager.class);
 
     protected static final int LOADING = 3;
 
@@ -50,10 +50,10 @@ public class PrefetchManager
                     // The request has not been done.
                     if (!serviced.contains(request)) {
                         // And it isn't currently being serviced.
-                        if (!pending.contains(request)) {
-                            LOG.info("addRequest - adding request:                          "
-                                    + request);
-                        }
+                        //if (!pending.contains(request)) {
+                        //    LOG.debug("addRequest - adding request:                          "
+                        //            + request);
+                        //}
                         pending.add(request);
                         if ((pending.size() + serviced.size()) > (serviceThreads * LOADING)) {
                             // There are too many requests for the servicing threads.
@@ -184,7 +184,7 @@ public class PrefetchManager
             retval = doRequest(request);
         } else {
             try {
-                LOG.info("doRequest - servicing request:                        " + request);
+                //LOG.debug("doRequest - servicing request:                        " + request);
                 // Now, we can service this request in a normal manner, outside all locks.
                 retval = request.result.fetchBatchFromObjectStore(request.batchNo);
             } finally {
@@ -287,12 +287,12 @@ public class PrefetchManager
             try {
                 while (true) {
                     Request request = PrefetchManager.getRequest();
-                    LOG.info("ServiceThread.run - servicing request                 " + request);
+                    //LOG.debug("ServiceThread.run - servicing request                 " + request);
                     try {
                         // Now, we can service this request in a normal manner, outside all locks.
                         List batch = request.result.fetchBatchFromObjectStore(request.batchNo);
                     } catch (Exception e) {
-                        LOG.info("ServiceThread.run - Received exception                " + request
+                        LOG.warn("ServiceThread.run - Received exception                " + request
                                 + " " + e);
                         // We don't care about any exception - we NEED this thread to keep running.
                         // Otherwise, things go pear-shaped.

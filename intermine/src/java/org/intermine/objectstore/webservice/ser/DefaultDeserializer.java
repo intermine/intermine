@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  */
 public class DefaultDeserializer extends DeserializerImpl
 {
-    protected static final Logger LOG = Logger.getLogger(DefaultDeserializer.class);
+    private static final Logger LOG = Logger.getLogger(DefaultDeserializer.class);
 
     protected QName xmlType;
     protected Class javaType;

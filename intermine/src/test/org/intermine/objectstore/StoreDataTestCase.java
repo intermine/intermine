@@ -52,7 +52,6 @@ import org.apache.log4j.Logger;
 
 public abstract class StoreDataTestCase extends SetupDataTestCase
 {
-    protected static final Logger LOG = Logger.getLogger(StoreDataTestCase.class);
     protected static ObjectStoreWriter storeDataWriter;
     
     public StoreDataTestCase(String arg) {

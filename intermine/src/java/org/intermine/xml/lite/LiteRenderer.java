@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class LiteRenderer
 {
-    protected static final Logger LOG = Logger.getLogger(LiteRenderer.class);
+    private static final Logger LOG = Logger.getLogger(LiteRenderer.class);
     protected static final String DELIM = "$_^";
 
     /**
@@ -92,7 +92,7 @@ public class LiteRenderer
             // Yes, this looks silly, but it prevents the String holding a reference to a char
             // array that is up to twice the size of the String. We throw away the larger char
             // array immediately anyway.
-            LOG.error("Converting StringBuffer (size = " + (sb.length() / 512) + " kB, capacity = "
+            LOG.info("Converting StringBuffer (size = " + (sb.length() / 512) + " kB, capacity = "
                     + (sb.capacity() / 512) + " kb) to String");
             return new String(sb.toString());
         }
@@ -146,7 +146,7 @@ public class LiteRenderer
             // Yes, this looks silly, but it prevents the String holding a reference to a char
             // array that is up to twice the size of the String. We throw away the larger char
             // array immediately anyway.
-            LOG.error("Converting StringBuffer (size = " + (sb.length() / 512) + " kB, capacity = "
+            LOG.info("Converting StringBuffer (size = " + (sb.length() / 512) + " kB, capacity = "
                     + (sb.capacity() / 512) + " kb) to String");
             return new String(sb.toString());
         }

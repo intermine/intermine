@@ -28,8 +28,6 @@ import org.intermine.xml.full.FullRenderer;
  */
 public class XmlBinding
 {
-    protected static final Logger LOG = Logger.getLogger(XmlBinding.class);
-
     protected Model model;
 
     /**

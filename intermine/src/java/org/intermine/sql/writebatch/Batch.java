@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class Batch
 {
-    protected static final Logger LOG = Logger.getLogger(Batch.class);
+    private static final Logger LOG = Logger.getLogger(Batch.class);
     private static final int MAX_BATCH_SIZE = 20000000;
 
     private Map tables = new HashMap();

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class ReadAheadDBReader extends BatchingDBReader
 {
-    protected static final Logger LOG = Logger.getLogger(ReadAheadDBReader.class);
+    private static final Logger LOG = Logger.getLogger(ReadAheadDBReader.class);
 
     protected DBBatch referenceBatch, nextBatch;
     protected SQLException nextProblem;
@@ -69,7 +69,7 @@ public class ReadAheadDBReader extends BatchingDBReader
             }
             //long end = System.currentTimeMillis();
             //if (end - start > 50) {
-            //    LOG.error("Had to wait for worker thread for " + (end - start) + " ms");
+            //    LOG.debug("Had to wait for worker thread for " + (end - start) + " ms");
             //}
             referenceBatch = nextBatch;
             if (nextProblem != null) {
@@ -104,7 +104,7 @@ public class ReadAheadDBReader extends BatchingDBReader
         }
         synchronized (this) {
             if (referenceBatch != previous) {
-                LOG.error("Batch prediction failed in worker thread");
+                LOG.info("Batch prediction failed in worker thread");
             } else {
                 nextBatch = next;
                 nextProblem = problem;

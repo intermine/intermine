@@ -77,7 +77,7 @@ import org.apache.torque.engine.platform.PlatformFactory;
  */
 public class SqlGenerator
 {
-    protected static final Logger LOG = Logger.getLogger(SqlGenerator.class);
+    private static final Logger LOG = Logger.getLogger(SqlGenerator.class);
     protected static final int QUERY_NORMAL = 0;
     protected static final int QUERY_SUBQUERY_FROM = 1;
     protected static final int QUERY_SUBQUERY_CONSTRAINT = 2;
@@ -143,7 +143,7 @@ public class SqlGenerator
                 sqlCache.put(q, cached);
             }
             cached.put(new Integer(start), sql);
-            LOG.error("Created cache entry for offset " + start + " (cache contains "
+            LOG.info("Created cache entry for offset " + start + " (cache contains "
                     + cached.keySet() + ") for query " + q + ", sql = " + sql);
         }
     }

@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class BatchWriterSimpleImpl implements BatchWriter
 {
-    protected static final Logger LOG = Logger.getLogger(BatchWriterSimpleImpl.class);
+    private static final Logger LOG = Logger.getLogger(BatchWriterSimpleImpl.class);
 
     protected Connection con;
     protected Statement simpleBatch;
@@ -54,7 +54,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
             long beforeFlush = System.currentTimeMillis();
             simpleBatch.executeBatch();
             long now = System.currentTimeMillis();
-            LOG.info("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
+            LOG.debug("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
                     + (now - start) + " ms, of which " + (now - beforeFlush) + " for flush)");
         }
         simpleBatch = null;
@@ -134,14 +134,14 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if an error occurs
      */
     protected void addToSimpleBatch(String sql) throws SQLException {
-        //LOG.warn("Batching " + sql);
+        //LOG.debug("Batching " + sql);
         simpleBatch.addBatch(sql);
         simpleBatchSize += sql.length();
         if (simpleBatchSize > 10000000) {
             long start = System.currentTimeMillis();
             simpleBatch.executeBatch();
             long now = System.currentTimeMillis();
-            LOG.info("Flushing simpleBatch (size = " + simpleBatchSize + ", time = "
+            LOG.debug("Flushing simpleBatch (size = " + simpleBatchSize + ", time = "
                 + (now - start) + " ms for flush) out-of-band");
             simpleBatch.clearBatch();
             simpleBatchSize = 0;

@@ -34,7 +34,6 @@ import org.apache.log4j.Logger;
  */
 public class FullRenderer
 {
-    protected static final Logger LOG = Logger.getLogger(FullRenderer.class);
     protected static final String ENDL = System.getProperty("line.separator");
 
     /**

@@ -34,8 +34,6 @@ import org.apache.log4j.Logger;
  */
 public class DBRetrieverTask extends Task
 {
-    protected static final Logger LOG = Logger.getLogger(DBRetrieverTask.class);
-
     protected String database;
     protected String model;
     protected String osName;

@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
  */
 public class AceDataLoader extends DataLoader
 {
-    protected static final Logger LOG = Logger.getLogger(AceDataLoader.class);
+    private static final Logger LOG = Logger.getLogger(AceDataLoader.class);
 
     protected static final String DATETYPE = "DateType";
     protected static final String FLOAT = "Float";
@@ -124,7 +124,7 @@ public class AceDataLoader extends DataLoader
             }
             mainLoop(workSource);
 
-            LOG.error("Committing transaction");
+            LOG.info("Committing transaction");
             iw.commitTransaction();
         } catch (Exception e) {
             throw new InterMineException(e);
@@ -169,7 +169,7 @@ public class AceDataLoader extends DataLoader
                     }
                 }*/
             } catch (Exception e) {
-                LOG.error("Object " + todo.getName() + " not retrievable: " + e.getMessage());
+                LOG.warn("Object " + todo.getName() + " not retrievable: " + e.getMessage());
             }
             todo = workSource.next();
         }
@@ -191,7 +191,7 @@ public class AceDataLoader extends DataLoader
         if (aceObject == null) {
             throw new NullPointerException("aceObject must not be null");
         }
-        LOG.info("Processing " + aceObject.getClassName() + " " + aceObject.getName());
+        LOG.debug("Processing " + aceObject.getClassName() + " " + aceObject.getName());
 
         String clsName = pkgName
             + AceModelParser.formatAceName(((AceObject) aceObject).getClassName());
@@ -486,7 +486,7 @@ public class AceDataLoader extends DataLoader
                 AceURL objURL = source.relativeURL(aceClazzName);
                 fetchedAceObjects = (AceSet) Ace.fetch(objURL);
                 if (fetchedAceObjects != null) {
-                    LOG.error("Processing " + fetchedAceObjects.size() + " "
+                    LOG.info("Processing " + fetchedAceObjects.size() + " "
                               + aceClazzName + " objects...");
                     nameIter = fetchedAceObjects.nameIterator();
                 } else {

@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class SerializationUtil
 {
-    protected static final Logger LOG = Logger.getLogger(SerializationUtil.class);
+    private static final Logger LOG = Logger.getLogger(SerializationUtil.class);
 
     /**
      * Register type mappings for the 5 built-in InterMine types that are sent over the wire

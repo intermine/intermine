@@ -52,7 +52,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreItemPathFollowingImpl.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreItemPathFollowingImpl.class);
 
     Map descriptiveCache = Collections.synchronizedMap(new CacheMap(
                 "ObjectStoreItemPathFollowingImpl DescriptiveCache"));
@@ -166,12 +166,12 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 }
             }
             q.setConstraint(cs);
-            //LOG.error("Fetching Items by description: " + description + ", query = "
+            //LOG.debug("Fetching Items by description: " + description + ", query = "
             //        + q.toString());
             retval = new SingletonResults(q, os, os.getSequence());
             descriptiveCache.put(description, retval);
             if (misses % 1000 == 0) {
-                LOG.error("getItemsByDescription: ops = " + ops + ", misses = " + misses
+                LOG.info("getItemsByDescription: ops = " + ops + ", misses = " + misses
                         + " cache size: " + descriptiveCache.size());
             }
         }
@@ -207,7 +207,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                         constraints.add(constraint);
                     } catch (IllegalArgumentException e) {
                         // Alright - the item didn't match the prefetch info. It's only a hint.
-                        LOG.error("IllegalArgumentException while finding constraint for " + desc
+                        LOG.warn("IllegalArgumentException while finding constraint for " + desc
                                 + " applied to " + item);
                     }
                 }
@@ -246,7 +246,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                     conIter.remove();
                 }
             }
-            //LOG.error(dac.descriptor + " -> (size = " + originalSize + " -> "
+            //LOG.debug(dac.descriptor + " -> (size = " + originalSize + " -> "
             //        + dac.constraints.size() + ") " + dac.constraints);
 
             // So, we have a constraints Set, with constraints that have all been generated from the
@@ -255,7 +255,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
 
             if (dac.constraints.size() > 1) {
                 Query q = buildQuery(dac);
-                //LOG.error(dac.descriptor + " -> " + q.toString());
+                //LOG.debug(dac.descriptor + " -> " + q.toString());
 
                 Map constraintToList = new HashMap();
                 conIter = dac.constraints.iterator();
@@ -285,7 +285,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                     List conResults = (List) conEntry.getValue();
                     batch.addToHolder(conResults);
                     descriptiveCache.put(constraint, conResults);
-                    //LOG.error("Created cache lookup for " + constraint + " to " + conResults);
+                    //LOG.debug("Created cache lookup for " + constraint + " to " + conResults);
                 }
 
                 // Now follow the path on...
@@ -300,7 +300,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                             Set constraint = descriptor.getConstraint(item);
                             constraints.add(constraint);
                         } catch (IllegalArgumentException e) {
-                            LOG.error("IllegalArgumentException while finding constraint for "
+                            LOG.warn("IllegalArgumentException while finding constraint for "
                                     + descriptor + " applied to " + item);
                         }
                     }
@@ -308,7 +308,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 }
 
                 long now = (new Date()).getTime();
-                LOG.error("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
+                LOG.info("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
                         + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
                         + (now - afterExecute) + " ms to process results for " + dac.descriptor);
             }

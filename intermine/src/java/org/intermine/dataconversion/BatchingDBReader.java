@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class BatchingDBReader extends DirectDBReader
 {
-    protected static final Logger LOG = Logger.getLogger(BatchingDBReader.class);
+    private static final Logger LOG = Logger.getLogger(BatchingDBReader.class);
 
     protected Model model;
     private int executeCount = 0;
@@ -76,7 +76,7 @@ public class BatchingDBReader extends DirectDBReader
                 }
             }
         }
-        LOG.error("SQL not cached: " + sql);
+        LOG.warn("SQL not cached: " + sql);
         return super.execute(sql);
     }
 
@@ -135,7 +135,7 @@ public class BatchingDBReader extends DirectDBReader
                             rowList.add(Collections.singletonMap(refClsNameId.toLowerCase(),
                                         thatIdValue));
                         } else {
-                            LOG.error("Missing value for this: " + thisIdValue + ", that: "
+                            LOG.warn("Missing value for this: " + thisIdValue + ", that: "
                                     + thatIdValue + " for " + tableName + "." + refClsName);
                         }
                     }
@@ -151,7 +151,7 @@ public class BatchingDBReader extends DirectDBReader
                     long end = System.currentTimeMillis();
                     oobTime += end - start;
                     if (oobTime / 10000 > (oobTime - end + start) / 10000) {
-                        LOG.error("Spent " + oobTime + " ms on out-of-band queries like ("
+                        LOG.info("Spent " + oobTime + " ms on out-of-band queries like ("
                                 + (afterExecute - start) + " + " + (end - afterExecute) + " ms) "
                                 + collSql);
                     }

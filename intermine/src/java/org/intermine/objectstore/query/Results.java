@@ -36,6 +36,8 @@ import org.intermine.util.CacheMap;
  */
 public class Results extends AbstractList
 {
+    private static final Logger LOG = Logger.getLogger(Results.class);
+
     protected Query query;
     protected ObjectStore os;
     protected int sequence;
@@ -63,8 +65,6 @@ public class Results extends AbstractList
 
     protected int lastGetAtGetInfoBatch = -1;
     protected ResultsInfo info;
-
-    protected static final Logger LOG = Logger.getLogger(Results.class);
 
     // A map of batch number against a List of ResultsRows
     protected Map batches = Collections.synchronizedMap(new CacheMap("Results batches"));
@@ -319,7 +319,7 @@ public class Results extends AbstractList
         try {
             resultList = range(index, index);
         } catch (ObjectStoreException e) {
-            LOG.info("get - " + e);
+            //LOG.debug("get - " + e);
             throw new RuntimeException("ObjectStore error has occured (in get)", e);
         }
         return resultList.get(0);
@@ -336,7 +336,7 @@ public class Results extends AbstractList
         try {
             ret = range(start, end - 1);
         } catch (ObjectStoreException e) {
-            LOG.info("subList - " + e);
+            //LOG.debug("subList - " + e);
             throw new RuntimeException("ObjectStore error has occured (in subList)", e);
         }
         return ret;
@@ -367,16 +367,16 @@ public class Results extends AbstractList
                 throw new RuntimeException("ObjectStore error has occured (in size)", e);
             }
             minSize = maxSize;
-            LOG.info("size - returning                                      Result "
-                    + query.hashCode() + "         size " + maxSize);
+            //LOG.debug("size - returning                                      Result "
+            //        + query.hashCode() + "         size " + maxSize);
         } else {
             int iterations = 0;
             while (minSize < maxSize) {
                 try {
                     int toGt = (maxSize == originalMaxSize ? minSize * 2
                             : (minSize + maxSize) / 2);
-                    LOG.info("size - getting " + toGt + "                                   Result "
-                            + query.hashCode() + "         size " + minSize + " - " + maxSize);
+                    //LOG.debug("size - getting " + toGt + "                                   Result "
+                    //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
                     get(toGt);
                 } catch (ObjectStoreLimitReachedException e) {
                     throw e;
@@ -389,9 +389,9 @@ public class Results extends AbstractList
                 }
                 iterations++;
             }
-            LOG.info("size - returning after " + (iterations > 9 ? "" : " ") + iterations
-                    + " iterations                  Result "
-                    + query.hashCode() + "         size " + maxSize);
+            //LOG.debug("size - returning after " + (iterations > 9 ? "" : " ") + iterations
+            //        + " iterations                  Result "
+            //        + query.hashCode() + "         size " + maxSize);
         }
         return maxSize;
     }

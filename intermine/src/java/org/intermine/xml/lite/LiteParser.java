@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
  */
 public class LiteParser
 {
-    protected static final Logger LOG = Logger.getLogger(LiteParser.class);
     protected static final String DELIM = "\\$_\\^";
 
     /**

@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstractImpl
 {
-    protected static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
+    private static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
     protected DataTracker dataTracker;
 
     /**
@@ -115,13 +115,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         //String oText = o.getClass().getName() + ":" + o.getId().toString();
         //int oTextLength = oText.length();
         //oText = oText.substring(oTextLength > 60 ? 60 : oTextLength);
-        //LOG.error("store() called on " + oText);
+        //LOG.debug("store() called on " + oText);
         Set equivalentObjects = getEquivalentObjects(o, source);
         if ((equivalentObjects.size() == 1) && (type == SKELETON)) {
             InterMineObject onlyEquivalent = (InterMineObject)
                 equivalentObjects.iterator().next();
             if (onlyEquivalent instanceof ProxyReference) {
-                //LOG.error("store() finished trivially for object " + oText);
+                //LOG.debug("store() finished trivially for object " + oText);
                 return onlyEquivalent;
             }
         }
@@ -176,7 +176,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                             if (type != FROM_DB) {
                                 assignMapping(o.getId(), obj.getId());
                             }
-                            //LOG.error("store() finished simply for object " + oText);
+                            //LOG.debug("store() finished simply for object " + oText);
                             return obj;
                         }
                         if (getModel().getFieldDescriptorsForClass(obj.getClass())
@@ -239,7 +239,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         if (type != FROM_DB) {
             assignMapping(o.getId(), newObj.getId());
         }
-        //LOG.error("store() finished normally for object " + oText);
+        //LOG.debug("store() finished normally for object " + oText);
         return newObj;
     }
 

@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
     protected static Map instances = new HashMap();
     protected Database db;
@@ -184,7 +184,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 ExplainResult explainResult = ExplainResult.getInstance(sql, c);
                 //long now = (new Date()).getTime();
                 //if (now - time > 10) {
-                //    LOG.error(getModel().getName() + ": Executed SQL (time = "
+                //    LOG.debug(getModel().getName() + ": Executed SQL (time = "
                 //            + (now - time) + "): EXPLAIN " + sql);
                 //}
 
@@ -203,11 +203,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     + (sql.length() / 20);
             if (now - time > permittedTime) {
                 if (now - time > sql.length()) {
-                    LOG.error(getModel().getName() + ": Executed SQL (time = "
+                    LOG.info(getModel().getName() + ": Executed SQL (time = "
                             + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
                             + "): " + sql);
                 } else {
-                    LOG.error(getModel().getName() + ": Executed SQL (time = "
+                    LOG.info(getModel().getName() + ": Executed SQL (time = "
                             + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
                             + "): " + (sql.length() > 1000 ? sql.substring(0, 1000) : sql));
                 }
@@ -275,7 +275,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             ExplainResult explain = ExplainResult.getInstance(sql, c);
             //long now = (new Date()).getTime();
             //if (now - time > 10) {
-            //    LOG.error(getModel().getName() + ": Executed SQL (time = "
+            //    LOG.debug(getModel().getName() + ": Executed SQL (time = "
             //            + (now - time) + "): EXPLAIN " + sql);
             //}
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
@@ -323,7 +323,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             //long now = (new Date()).getTime();
             //if (now - time > 10) {
-            //    LOG.error(getModel().getName() + ": Executed SQL (time = "
+            //    LOG.debug(getModel().getName() + ": Executed SQL (time = "
             //            + (now - time) + "): " + sql);
             //}
             sqlResults.next();
@@ -396,7 +396,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 //if (currentColumn.length() < CACHE_LARGEST_OBJECT) {
                     cacheObjectById(retval.getId(), retval);
                 //} else {
-                //    LOG.error("Not cacheing large object " + retval.getId() + " on getObjectById"
+                //    LOG.debug("Not cacheing large object " + retval.getId() + " on getObjectById"
                 //            + " (size = " + (currentColumn.length() / 512) + " kB)");
                 //}
                 return retval;

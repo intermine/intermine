@@ -46,7 +46,7 @@ public class MergeOwl
     protected Map equiv;
     protected Map subMap;
 
-    protected static final Logger LOG = Logger.getLogger(MergeOwl.class);
+    private static final Logger LOG = Logger.getLogger(MergeOwl.class);
 
     /**
      * Construct with a Reader for the merge spec (which becomes the initial target model) and
@@ -97,11 +97,11 @@ public class MergeOwl
      * @throws Exception if problem renaming properties
      */
     protected void mergeByEquivalence(OntModel srcModel, String srcNs) throws Exception {
-        LOG.error("building equivalence map");
+        LOG.info("building equivalence map");
         equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
 
         // build map from source class to restricted subclasses
-        LOG.error("building restricted subclass map");
+        LOG.info("building restricted subclass map");
         subMap = new HashMap();
         Iterator clsIter = srcModel.listClasses();
         while (clsIter.hasNext()) {
@@ -177,7 +177,7 @@ public class MergeOwl
             }
         }
         tgtModel.add(statements);
-        LOG.error("calling reorganiseProperties");
+        LOG.debug("calling reorganiseProperties");
         OntologyUtil.reorganiseProperties(tgtModel, tgtNs);
     }
 

@@ -32,8 +32,6 @@ import org.intermine.util.TypeUtil;
  */
 public class QueryCreator
 {
-    protected static final Logger LOG = Logger.getLogger(QueryCreator.class);
-
     /**
      * Create a query that will retrieve an object from the objectstore, given an ID.
      *

@@ -63,7 +63,7 @@ public class DataLoaderHelper
     protected static Map sourceKeys = new HashMap();
     protected static Map modelDescriptors = new HashMap();
 
-    protected static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
+    private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
 
     /**
      * Compare the priorities of two sources over a field

@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
-    protected static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
+    private static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
 
     protected static final int MAX_MAPPINGS = 1000000;
     protected ObjectStoreWriter osw;
@@ -144,7 +144,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         store(o, source, skelSource, SOURCE);
         long now = (new Date()).getTime();
         if (now - time > 20000) {
-            LOG.error("Stored object " + o.getClass().getName() + ":" + o.getId() + " - took "
+            LOG.info("Stored object " + o.getClass().getName() + ":" + o.getId() + " - took "
                     + (now - time) + " ms");
         }
     }
@@ -238,7 +238,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         }
                         if (target != null) {
                             if (target instanceof ProxyReference) {
-                                LOG.error("Reifying object for modification in place");
+                                LOG.debug("Reifying object for modification in place");
                                 target = ((ProxyReference) target).getObject();
                             }
                             InterMineObject targetsReferent = (InterMineObject)
@@ -305,7 +305,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             idMap.put(source, dest);
             idMapOps++;
             if (idMapOps % 100000 == 0) {
-                LOG.error("idMap size = " + idMap.size() + ", ops = " + idMapOps);
+                LOG.info("idMap size = " + idMap.size() + ", ops = " + idMapOps);
             }
         }
     }

@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePassthruImpl
 {
-    protected static final Logger LOG = Logger.getLogger(
+    private static final Logger LOG = Logger.getLogger(
             ObjectStoreFastCollectionsForTranslatorImpl.class);
     private IntPresentSet doneAlready = new IntPresentSet();
 
@@ -196,12 +196,12 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             Integer toId = (Integer) toIdIter.next();
                             if (doneAlready.contains(toId)) {
                                 toIdIter.remove();
-                                //LOG.error("Avoiding loading object with id " + toId);
+                                //LOG.debug("Avoiding loading object with id " + toId);
                             }
                         }
 
                         //if (toIdSize > 0) {
-                        //    LOG.error("Fetching batch of collection items - size: " + toIdSize
+                        //    LOG.debug("Fetching batch of collection items - size: " + toIdSize
                         //            + ", after cache: " + toIdSizeAfterCache
                         //            + ", after doneAlready: " + toIds.size());
                         //}

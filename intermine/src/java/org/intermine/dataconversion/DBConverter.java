@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class DBConverter extends DataConverter
 {
-    protected static final Logger LOG = Logger.getLogger(DBConverter.class);
+    private static final Logger LOG = Logger.getLogger(DBConverter.class);
     protected Connection c = null;
     protected Model model;
     protected Database db;
@@ -217,13 +217,13 @@ public class DBConverter extends DataConverter
                 if (count % 1000 == 0) {
                     long now = System.currentTimeMillis();
                     if (times[(count / 1000) % 20] == -1) {
-                        LOG.error("Processed " + count + " rows - running at "
+                        LOG.info("Processed " + count + " rows - running at "
                                 + (60000000 / (now - time)) + " (avg "
                                 + ((60000L * count) / (now - start))
                                 + ") rows per minute -- now on "
                                 + clsName);
                     } else {
-                        LOG.error("Processed " + count + " rows - running at "
+                        LOG.info("Processed " + count + " rows - running at "
                                 + (60000000 / (now - time)) + " (20000 avg "
                                 + (1200000000 / (now - times[(count / 1000) % 20]))
                                 + ") (avg " + ((60000L * count) / (now - start))
@@ -400,7 +400,6 @@ public class DBConverter extends DataConverter
      */
     protected  ResultSet executeQuery(Connection c, String sql) throws SQLException {
         Statement s = c.createStatement();
-        LOG.error("Running SQL: " + sql);
         return s.executeQuery(sql);
     }
 

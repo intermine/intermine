@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class DataTracker
 {
-    protected static final Logger LOG = Logger.getLogger(DataTracker.class);
+    private static final Logger LOG = Logger.getLogger(DataTracker.class);
 
     /* We need a Map or two to store the entries. Each entry can be in several states:
      * 1. Recently-used and new - must be written to the database eventually.
@@ -177,7 +177,7 @@ public class DataTracker
         }
         ops++;
         if (ops % 1000000 == 0) {
-            LOG.error("Operations: " + ops + ", cache misses: " + misses);
+            LOG.info("Operations: " + ops + ", cache misses: " + misses);
         }
         return desc;
     }
@@ -243,7 +243,7 @@ public class DataTracker
             int cacheSize = cache.size();
             Map writeBatch = getWriteBatch();
             if (writeBatch != null) {
-                LOG.error("Writing cache batch - batch size: " + writeBatch.size()
+                LOG.info("Writing cache batch - batch size: " + writeBatch.size()
                         + ", cache size: " + cacheSize + "->" + cache.size());
                 try {
                     writeMap(writeBatch, false);
@@ -256,7 +256,7 @@ public class DataTracker
                 clearWriteBack();
                 return true;
             } else {
-                LOG.error("Not writing cache batch - no dirty entries");
+                LOG.debug("Not writing cache batch - no dirty entries");
                 return false;
             }
         }
@@ -271,7 +271,7 @@ public class DataTracker
             e.initCause(broken);
             throw e;
         }
-        LOG.error("Flushing cache - size: " + cache.size());
+        LOG.info("Flushing cache - size: " + cache.size());
         // Synchronise in this order to prevent deadlocks.
         synchronized (writeBack) {
             synchronized (this) {
@@ -360,7 +360,7 @@ public class DataTracker
             }
             if (copyManager == null) {
                 s = storeConn.createStatement();
-                LOG.error("Using slow portable writing method");
+                LOG.warn("Using slow portable writing method");
             }
             Iterator iter = map.entrySet().iterator();
             while (iter.hasNext()) {
@@ -414,7 +414,7 @@ public class DataTracker
             throw new SQLException(e.toString());
         }
         long now = System.currentTimeMillis();
-        LOG.info("Finished storing batch (time = " + (now - start) + " ms)");
+        LOG.debug("Finished storing batch (time = " + (now - start) + " ms)");
     }
 
     /**

@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 
 public class ObjectStoreWriterFactory
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreWriterFactory.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreWriterFactory.class);
 
     /**
      * Return an ObjectStoreWriter configured using properties file
@@ -99,7 +99,7 @@ public class ObjectStoreWriterFactory
                     BatchWriter batchWriter = (BatchWriter) c.newInstance(new Object[] {});
                     ((ObjectStoreWriterInterMineImpl) osw).setBatchWriter(batchWriter);
                 } catch (Exception e) {
-                    LOG.error("Could not find requested BatchWriter " + batchWriterClass);
+                    LOG.warn("Could not find requested BatchWriter " + batchWriterClass);
                 }
             }
         }

@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class CacheMap implements Map
 {
-    protected static final Logger LOG = Logger.getLogger(CacheMap.class);
+    private static final Logger LOG = Logger.getLogger(CacheMap.class);
 
     private Map subMap;
     private ReferenceQueue queue = new ReferenceQueue();
@@ -117,7 +117,7 @@ public class CacheMap implements Map
         }
         int newSize = subMap.size();
         if (newSize != oldSize) {
-            LOG.info(name + ": Expunged stale entries - size " + oldSize + " -> " + newSize);
+            LOG.debug(name + ": Expunged stale entries - size " + oldSize + " -> " + newSize);
         }
     }
     

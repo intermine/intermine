@@ -29,8 +29,6 @@ import org.apache.log4j.Logger;
  */
 public class ClassDescriptor
 {
-    protected static final Logger LOG = Logger.getLogger(ClassDescriptor.class);
-
     private final String name;        // name of this class
 
     private final String supers;

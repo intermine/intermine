@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreTranslatingImpl.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreTranslatingImpl.class);
     private ObjectStore os;
     private Translator translator;
     private Map queryCache = Collections.synchronizedMap(new WeakHashMap());
@@ -197,12 +197,14 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //pw.flush();
         //LOG.error(sw.toString());
         synchronized (cache) {
-            LOG.error("internalGetObjectById called for " + retval.getClass().toString()
-                    + " with id " + id + ", cache size = " + cache.size());
+            LOG.warn("Probable inefficiency: internalGetObjectById called for "
+                    + retval.getClass().toString() + " with id " + id
+                    + ", cache size = " + cache.size() + " - maybe you should use"
+                    + " ObjectStoreFastCollectionsForTranslatorImpl");
         }
         internalGetObjectByIdCount++;
         if (internalGetObjectByIdCount % 1000 == 0) {
-            LOG.error("internalGetObjectById run " + internalGetObjectByIdCount + " times");
+            LOG.info("internalGetObjectById run " + internalGetObjectByIdCount + " times");
         }
         return retval;
     }

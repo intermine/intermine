@@ -26,7 +26,7 @@ import org.intermine.metadata.*;
  */
 public abstract class ModelOutput
 {
-    protected static final Logger LOG = Logger.getLogger(ModelOutput.class);
+    private static final Logger LOG = Logger.getLogger(ModelOutput.class);
     protected static final String INDENT = "    ";
     protected static final String ENDL = System.getProperty("line.separator");
 
@@ -92,7 +92,7 @@ public abstract class ModelOutput
         try {
             f.delete();
         } catch (SecurityException exp) {
-            LOG.debug("Cannot delete: " + f.getPath());
+            LOG.warn("Cannot delete: " + f.getPath());
         }
         LOG.info("Generating " + f.getPath());
     }
@@ -114,7 +114,7 @@ public abstract class ModelOutput
                     fos.close();
                 }
             } catch (IOException exp) {
-                LOG.debug("FAILED: " + f.getPath());
+                LOG.warn("FAILED: " + f.getPath());
             }
         }
     }

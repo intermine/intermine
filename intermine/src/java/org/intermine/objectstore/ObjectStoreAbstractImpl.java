@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class ObjectStoreAbstractImpl implements ObjectStore
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreAbstractImpl.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreAbstractImpl.class);
 
     protected static Random rand = new Random(); 
 
@@ -70,7 +70,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         synchronized (rand) {
             sequence = rand.nextInt();
         }
-        LOG.error("Creating new " + getClass().getName() + " with sequence = " + sequence
+        LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequence
                 + ", model = \"" + model.getName() + "\"");
         cache = new CacheMap(getClass().getName() + " with sequence = " + sequence + ", model = \""
                 + model.getName() + "\" getObjectById cache");
@@ -268,7 +268,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             pw.flush();
             String m = sw.toString();
             int index = m.indexOf("at junit.framework.TestCase.runBare");
-            LOG.error(index < 0 ? m : m.substring(0, index));
+            LOG.warn(index < 0 ? m : m.substring(0, index));
         }
     }
 

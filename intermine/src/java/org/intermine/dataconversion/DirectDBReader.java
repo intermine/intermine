@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class DirectDBReader implements DBReader
 {
-    protected static final Logger LOG = Logger.getLogger(DirectDBReader.class);
+    private static final Logger LOG = Logger.getLogger(DirectDBReader.class);
 
     protected static final int BATCH_SIZE = 1000;
     protected static final int MAX_SIZE = 10000000;
@@ -96,7 +96,7 @@ public class DirectDBReader implements DBReader
         long end = System.currentTimeMillis();
         oobTime += end - start;
         if (oobTime / 10000 > (oobTime - end + start) / 10000) {
-            LOG.error("Spent " + oobTime + " ms on out-of-band queries like (" + (end - start)
+            LOG.info("Spent " + oobTime + " ms on out-of-band queries like (" + (end - start)
                     + " ms) " + sql);
         }
         return rows;
@@ -139,7 +139,7 @@ public class DirectDBReader implements DBReader
                 long end = System.currentTimeMillis();
                 iteratorTime += end - start;
                 if (iteratorTime / 10000 > (iteratorTime - end + start) / 10000) {
-                    LOG.error("Spent " + iteratorTime + " ms on iterator queries like ("
+                    LOG.info("Spent " + iteratorTime + " ms on iterator queries like ("
                             + (end - start) + " ms) " + tempSizeQuery);
                 }
                 tempSql = tempSql + (whereIndex == -1 ? " WHERE " : " AND ") + idField + " > "
@@ -168,7 +168,7 @@ public class DirectDBReader implements DBReader
             long end = System.currentTimeMillis();
             iteratorTime += end - start;
             if (iteratorTime / 10000 > (iteratorTime - end + start) / 10000) {
-                LOG.error("Spent " + iteratorTime + " ms on iterator queries like ("
+                LOG.info("Spent " + iteratorTime + " ms on iterator queries like ("
                         + (afterExecute - start) + " + " + (end - afterExecute) + " ms) "
                         + tempSql);
             }

@@ -36,8 +36,6 @@ import org.apache.log4j.Logger;
  */
 public class AceModelParser implements ModelParser
 {
-    protected static final Logger LOG = Logger.getLogger(AceModelParser.class);
-
     protected String nameSpace;
     protected String modelName, pkgName;
 

@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreDataLoader extends DataLoader
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreDataLoader.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreDataLoader.class);
 
     /**
      * Construct an ObjectStoreDataLoader
@@ -84,13 +84,13 @@ public class ObjectStoreDataLoader extends DataLoader
             if (opCount % 1000 == 0) {
                 long now = (new Date()).getTime();
                 if (times[(opCount / 1000) % 20] == -1) {
-                    LOG.error("Dataloaded " + opCount + " objects - running at "
+                    LOG.info("Dataloaded " + opCount + " objects - running at "
                             + (60000000 / (now - time)) + " (avg "
                             + ((60000L * opCount) / (now - startTime))
                             + ") objects per minute -- now on "
                             + DynamicUtil.decomposeClass(obj.getClass()));
                 } else {
-                    LOG.error("Dataloaded " + opCount + " objects - running at "
+                    LOG.info("Dataloaded " + opCount + " objects - running at "
                             + (60000000 / (now - time)) + " (20000 avg "
                             + (1200000000 / (now - times[(opCount / 1000) % 20])) + ") (avg = "
                             + ((60000L * opCount) / (now - startTime))
@@ -103,7 +103,7 @@ public class ObjectStoreDataLoader extends DataLoader
                 iw.beginTransaction();
             }
         }
-        LOG.error("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
+        LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
                     / ((new Date()).getTime() - startTime)) + " object per minute");
         iw.commitTransaction();
         iw.close();

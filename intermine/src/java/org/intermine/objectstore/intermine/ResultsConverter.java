@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
  */
 public class ResultsConverter
 {
-    protected static final Logger LOG = Logger.getLogger(ResultsConverter.class);
+    private static final Logger LOG = Logger.getLogger(ResultsConverter.class);
 
     /**
      * Method to convert from SQL results to InterMine object-based results.
@@ -77,7 +77,7 @@ public class ResultsConverter
                             //        .CACHE_LARGEST_OBJECT) {
                                 os.cacheObjectById(obj.getId(), obj);
                             //} else {
-                            //    LOG.error("Not cacheing large object " + obj.getId()
+                            //    LOG.debug("Not cacheing large object " + obj.getId()
                             //            + " on read"
                             //            + " (size = " + (objectField.length() / 512) + " kB)");
                             //}

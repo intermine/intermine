@@ -36,8 +36,6 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreServer
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreServer.class);
-
     private int nextQueryId = 0;
     private ObjectStore os;
     private Map registeredResults = new HashMap();

@@ -47,7 +47,6 @@ import org.apache.log4j.Logger;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
-    protected static final Logger LOG = Logger.getLogger(SetupDataTestCase.class);
     protected static Map data = new LinkedHashMap();
     protected static Model model;
 

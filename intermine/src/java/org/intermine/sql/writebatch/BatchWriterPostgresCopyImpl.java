@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImpl
 {
-    protected static final Logger LOG = Logger.getLogger(BatchWriterPostgresCopyImpl.class);
+    private static final Logger LOG = Logger.getLogger(BatchWriterPostgresCopyImpl.class);
     protected static final BigInteger TEN = new BigInteger("10");
     protected static final BigInteger HUNDRED = new BigInteger("100");
     protected static final BigInteger THOUSAND = new BigInteger("1000");
@@ -52,7 +52,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     copyManager = ((PGConnection) con).getCopyAPI();
                 }
                 if (copyManager == null) {
-                    LOG.error("Database is incompatible with the PostgreSQL COPY command - falling"
+                    LOG.warn("Database is incompatible with the PostgreSQL COPY command - falling"
                             + " back to prepared statements");
                     super.doInserts(name, table);
                 } else {
@@ -87,7 +87,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     long beforeFlush = System.currentTimeMillis();
                     copyManager.copyInQuery(sql, new ByteArrayInputStream(baos.toByteArray()));
                     long now = System.currentTimeMillis();
-                    LOG.info("Flushing COPY batch for table " + name + " (size = " + baos.size()
+                    LOG.debug("Flushing COPY batch for table " + name + " (size = " + baos.size()
                             + ", total time = " + (now - start) + " ms, of which "
                             + (now - beforeFlush) + " for flush)");
                     table.getIdsToInsert().clear();
@@ -161,23 +161,23 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                 dos.writeShort(digits.size() - nBaseScale - 1);
                 dos.writeShort(signum == 1 ? 0x0000 : 0x4000);
                 dos.writeShort(scale);
-                StringBuffer log = new StringBuffer("Writing BigDecimal ")
-                    .append(o.toString())
-                    .append(" as (digitCount = ")
-                    .append(Integer.toString(digits.size()))
-                    .append(", weight = ")
-                    .append(Integer.toString(digits.size() - nBaseScale - 1))
-                    .append(", sign = ")
-                    .append(Integer.toString(signum == 1 ? 0x0000 : 0x4000))
-                    .append(", dscale = ")
-                    .append(Integer.toString(scale))
-                    .append(")");
-                for (int i = digits.size() - 1; i >= 0; i--) {
-                    int digit = ((Integer) digits.get(i)).intValue();
-                    dos.writeShort(digit);
-                    log.append(" " + digit);
-                }
-                LOG.error(log.toString());
+                //StringBuffer log = new StringBuffer("Writing BigDecimal ")
+                //    .append(o.toString())
+                //    .append(" as (digitCount = ")
+                //    .append(Integer.toString(digits.size()))
+                //    .append(", weight = ")
+                //    .append(Integer.toString(digits.size() - nBaseScale - 1))
+                //    .append(", sign = ")
+                //    .append(Integer.toString(signum == 1 ? 0x0000 : 0x4000))
+                //    .append(", dscale = ")
+                //    .append(Integer.toString(scale))
+                //    .append(")");
+                //for (int i = digits.size() - 1; i >= 0; i--) {
+                //    int digit = ((Integer) digits.get(i)).intValue();
+                //    dos.writeShort(digit);
+                //    log.append(" " + digit);
+                //}
+                //LOG.error(log.toString());
             }
         } else {
             throw new IllegalArgumentException("Cannot store values of type " + o.getClass());

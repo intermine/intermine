@@ -27,7 +27,7 @@ import org.intermine.sql.Database;
  */
 public class OptimiserCache
 {
-    protected static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
+    private static final Logger LOG = Logger.getLogger(OptimiserCache.class);
 
     /** Maximum number of cache linesets in the cache. */
     public static final int MAX_LINESETS = 1000;
@@ -110,7 +110,7 @@ public class OptimiserCache
      */
     public synchronized String lookup(String original, int limit, int offset) {
         expire();
-        LOG.debug("Looking up query \"" + original + "\" with limit " + limit
+        //LOG.debug("Looking up query \"" + original + "\" with limit " + limit
                 + " and offset " + offset + " - ");
         boolean originalWasExplain = false;
         if (original.toUpperCase().startsWith("EXPLAIN ")) {
@@ -120,7 +120,7 @@ public class OptimiserCache
         Set lines = (Set) cacheLines.get(original);
         if (lines == null) {
             // Couldn't find anything.
-            LOG.debug("Complete cache miss");
+            //LOG.debug("Complete cache miss");
             return null;
         }
         double bestScore = Double.POSITIVE_INFINITY;
@@ -135,10 +135,10 @@ public class OptimiserCache
             }
         }
         if (bestScore > 1.0) {
-            LOG.debug("Cache didn't have anything near enough");
+            //LOG.debug("Cache didn't have anything near enough");
             return null;
         }
-        LOG.debug("Cache hit"); 
+        //LOG.debug("Cache hit"); 
         return (originalWasExplain ? "EXPLAIN " : "") + bestLine.getOptimised();
     }
 
@@ -149,8 +149,8 @@ public class OptimiserCache
         if ((--untilNextExpiration) <= 0) {
             untilNextExpiration = EXPIRE_INTERVAL;
             while (cacheLines.size() > MAX_LINESETS) {
-                LOG.info("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = "
-                        + evictionQueue.size());
+                //LOG.debug("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = "
+                //        + evictionQueue.size());
                 DateAndSequence d = (DateAndSequence) evictionQueue.firstKey();
                 OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(d);
                 expire(line);
@@ -177,10 +177,10 @@ public class OptimiserCache
             Set lines = line.getLineSet();
             String original = line.getOriginal();
             lines.remove(line);
-            LOG.debug("Expired cache line for original query " + original);
+            //LOG.debug("Expired cache line for original query " + original);
             if (lines.isEmpty()) {
                 cacheLines.remove(original);
-                LOG.debug("Expired entire cache lineset for original query " + original);
+                //LOG.debug("Expired entire cache lineset for original query " + original);
             }
         } else {
             LOG.error("Expire called on null OptimiserCacheLine");

@@ -56,7 +56,7 @@ import org.apache.log4j.Logger;
 public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     implements ObjectStoreWriter
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreWriterInterMineImpl.class);
+    private static final Logger LOG = Logger.getLogger(ObjectStoreWriterInterMineImpl.class);
     protected Connection conn = null;
     protected boolean connInUse = false;
     protected ObjectStoreInterMineImpl os;
@@ -144,23 +144,23 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 PrintWriter pw = new PrintWriter(message);
                 trace.printStackTrace(pw);
                 pw.flush();
-                LOG.error("Connection in use - entering wait - " + message.toString());*/
+                LOG.debug("Connection in use - entering wait - " + message.toString());*/
                 if (loops > 1000) {
                     LOG.error("Waited for connection for 100 seconds - probably a deadlock"
                             + " - throwing exception");
                     throw new SQLException("This ObjectStoreWriter appears to be dead due to"
                             + " deadlock");
                 } else if (loops > 1) {
-                    LOG.error("Waited for connection for " + 2 + " seconds - perhaps there's"
+                    LOG.info("Waited for connection for " + 2 + " seconds - perhaps there's"
                             + " a deadlock");
                 } else {
-                    LOG.info("Connection in use - entering wait");
+                    LOG.debug("Connection in use - entering wait");
                 }
                 try {
                     conn.wait(1000L);
                 } catch (InterruptedException e) {
                 }
-                LOG.info("Notified or timed out");
+                LOG.debug("Notified or timed out");
                 loops++;
             }
             connInUse = true;
@@ -172,7 +172,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             trace.printStackTrace(pw);
             pw.flush();
             LOG.error("getConnection returning connection - " + message.toString());*/
-            LOG.info("getConnection returning connection");
+            //LOG.debug("getConnection returning connection");
             return conn;
         }
     }
@@ -184,7 +184,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         if (c == conn) {
             synchronized (conn) {
                 connInUse = false;
-                LOG.info("Released connection - notifying");
+                //LOG.debug("Released connection - notifying");
                 conn.notify();
             }
         } else if (c != null) {
@@ -194,7 +194,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             PrintWriter pw = new PrintWriter(message);
             trace.printStackTrace(pw);
             pw.flush();
-            LOG.error("Attempt made to release the wrong connection - " + message.toString());
+            LOG.warn("Attempt made to release the wrong connection - " + message.toString());
         }
     }
 
@@ -213,7 +213,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @see ObjectStoreWriter#close
      */
     public void close() {
-        LOG.error("Close called on ObjectStoreWriterInterMineImpl with sequence = " + sequence);
+        LOG.info("Close called on ObjectStoreWriterInterMineImpl with sequence = " + sequence);
         try {
            if (isInTransaction()) {
                abortTransaction();

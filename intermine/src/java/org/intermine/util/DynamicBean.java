@@ -32,8 +32,6 @@ import org.intermine.objectstore.proxy.ProxyReference;
  */
 public class DynamicBean implements MethodInterceptor
 {
-    protected static final Logger LOG = Logger.getLogger(DynamicBean.class);
-
     private Map map = new HashMap();
 
     /**
