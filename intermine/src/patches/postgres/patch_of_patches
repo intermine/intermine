@@ -1,0 +1,47 @@
+--- patch_from_email	2005-02-10 17:02:38.000000000 +0000
++++ patch_from_email_plus_minimal_changes	2005-02-11 14:41:04.000000000 +0000
+@@ -138,7 +138,7 @@
+ diff -N org/postgresql/copy/CopyManager.java
+ --- /dev/null	1 Jan 1970 00:00:00 -0000
+ +++ org/postgresql/copy/CopyManager.java	1 Jan 1970 00:00:00 -0000
+-@@ -0,0 +1,238 @@
++@@ -0,0 +1,250 @@
+ +package org.postgresql.copy;
+ +
+ +import java.io.InputStream;
+@@ -148,9 +148,11 @@
+ +import java.sql.SQLException;
+ +
+ +import org.postgresql.core.BaseConnection;
+++import org.postgresql.core.BaseStatement;
+ +import org.postgresql.core.PGStream;
+ +import org.postgresql.core.Encoding;
+ +import org.postgresql.core.Notification;
+++import org.postgresql.core.QueryExecutor;
+ +import org.postgresql.util.PSQLState;
+ +import org.postgresql.util.PSQLException;
+ +import org.postgresql.util.PSQLWarning;
+@@ -187,6 +189,11 @@
+ +    public void copyInQuery(String query, InputStream is) throws SQLException {
+ +
+ +        synchronized (pgStream) {
+++            if (!pgConn.getAutoCommit() && !pgConn.getInTransaction()) {
+++                pgConn.setInTransaction(true);
+++                BaseStatement s = (BaseStatement) pgConn.createStatement();
+++                QueryExecutor.execute(new String[] {"BEGIN;"}, new Object[0], s);
+++            }
+ +            sendQuery(query);
+ +            copyResultLoop(is, null);
+ +        }
+@@ -208,6 +215,11 @@
+ +     */
+ +    public void copyOutQuery(String query, OutputStream os) throws SQLException {
+ +        synchronized (pgStream) {
+++            if (!pgConn.getAutoCommit() && !pgConn.getInTransaction()) {
+++                pgConn.setInTransaction(true);
+++                BaseStatement s = (BaseStatement) pgConn.createStatement();
+++                QueryExecutor.execute(new String[] {"BEGIN;"}, new Object[0], s);
+++            }
+ +            sendQuery(query);
+ +            copyResultLoop(null, os);
+ +        }

@@ -609,7 +609,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
             Statement s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT value FROM " + tableName);
-            r.first();
+            r.next();
 
             Set resultStrings = new HashSet();
 
