@@ -196,6 +196,17 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         if ((equivalentObjects.size() == 1) && (fieldSource != null)
                                 && (fieldSource.equals(source) || (fieldSource.equals(skelSource)
                                         && (type != SOURCE)))) {
+                            if (type == SOURCE) {
+                                LOG.error("Unequivalent objects have the same"
+                                        + " non-skeleton Source; o1 = \"" + o + "\", o2 = \"" + obj
+                                        + "\", source1 = \"" + source + "\", source2 = \""
+                                        + fieldSource + "\" for field \"" + field.getName() + "\"");
+                                throw new IllegalArgumentException("Unequivalent objects have the"
+                                        + " same non-skeleton Source; o1 = \"" + o
+                                        + "\", o2 = \"" + obj + "\", source1 = \"" + source
+                                        + "\", source2 = \"" + fieldSource + "\" for field \""
+                                        + field.getName() + "\"");
+                            }
                             if (type != FROM_DB) {
                                 assignMapping(o.getId(), obj.getId());
                             }

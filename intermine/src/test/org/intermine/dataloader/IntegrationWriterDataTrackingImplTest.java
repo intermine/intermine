@@ -739,5 +739,28 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertEquals(8762, ((Broke) re).getDebt());
         assertEquals(new Integer(876123), ((Manager) re).getSeniority());
     }
+
+    public void testSourceWithMultipleCopies() throws Exception {
+        Employee e1 = new Employee();
+        e1.setName("EmployeeA1");
+        Employee e2 = new Employee();
+        e2.setName("EmployeeA1");
+
+        if (doIds) {
+            e1.setId(new Integer(1));
+            e2.setId(new Integer(2));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(e1, source, skelSource);
+
+        try {
+            iw.store(e2, source, skelSource);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 }
 
