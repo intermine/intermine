@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -30,8 +32,9 @@ import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.dataconversion.ItemPrefetchDescriptor;
+import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
+import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
@@ -285,16 +288,114 @@ public class PsiDataTranslator extends DataTranslator
         String format = args[3];
         String namespace = args[4];
 
-        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
+        Map paths = new HashMap();
+
+        Set descSet = new HashSet();
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("ExperimentType.attributeList");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("attributeList",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor("ExperimentType.bibref");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("bibref",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc2);
+        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor("ExperimentType.bibref.xref");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("bibref",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2.addPath(desc3);
+        ItemPrefetchDescriptor desc4 = new
+            ItemPrefetchDescriptor("ExperimentType.bibref.xref.primaryRef");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("bibref",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc3.addPath(desc4);
+        paths.put("http://www.flymine.org/model/psi#ExperimentType", descSet);
+
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("InteractionElementType.experimentList");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("experimentList", 
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("InteractionElementType.attributeList");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("attributeList",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("InteractionElementType.participantList");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("participantList",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/psi#InteractionElementType", descSet);
+
+        desc = new ItemPrefetchDescriptor("ProteinInteractorType.xref");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("xref",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor("ProteinInteractorType.xref.primaryRef");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc.addPath(desc2);
+        paths.put("http://www.flymine.org/model/psi#ProteinInteractorType",
+                  Collections.singleton(desc));
+
+        desc = new ItemPrefetchDescriptor("Source_Entry_EntrySet.names");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("names",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        paths.put("http://www.flymine.org/model/psi#Source_Entry_EntrySet",
+                  Collections.singleton(desc));
+        
+        desc = new ItemPrefetchDescriptor("CvType.xref");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("xref",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2 = new ItemPrefetchDescriptor("CvType.xref.primaryRef");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc.addPath(desc2);
+        paths.put("http://www.flymine.org/model/psi#CvType", Collections.singleton(desc));
+
+        desc = new ItemPrefetchDescriptor("ProteinParticipantType.featureList");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("featureList",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        paths.put("http://www.flymine.org/model/psi#ProteinParticipantType",
+                  Collections.singleton(desc));
+
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("FeatureType.featureDescription");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("featureDescription",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        desc2 = new ItemPrefetchDescriptor("FeatureType.featureDescription.xref");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("xref",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc.addPath(desc2);
+        desc3 = new ItemPrefetchDescriptor("FeatureType.featureDescription.xref.primaryRef");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc2.addPath(desc3);
+        desc =  new ItemPrefetchDescriptor("FeatureType.location");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("location",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/psi#FeatureType", descSet);
+
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("BaseLocationType.start");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("start",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("BaseLocationType.end");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("end",
+                                                      ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/psi#BaseLocationType", Collections.singleton(desc));
+
+        ItemReader itemReader = new ObjectStoreItemReader(ObjectStoreFactory
+                                                          .getObjectStore(srcOsName), paths);
+        ItemWriter itemWriter = new ObjectStoreItemWriter(ObjectStoreWriterFactory
+                                                          .getObjectStoreWriter(tgtOswName));
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        PsiDataTranslator dt = new PsiDataTranslator(new ObjectStoreItemReader(osSrc), model,
-                                                     namespace);
+        PsiDataTranslator dt = new PsiDataTranslator(itemReader, model, namespace);
         model = null;
-        dt.translate(tgtItemWriter);
-        tgtItemWriter.close();
+        dt.translate(itemWriter);
+        itemWriter.close();
     }
 }
