@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Iterator;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -525,7 +526,7 @@ public class DatabaseUtil
 
     /**
      * Analyse given database, perform vacuum full analyse if full parameter true.
-     * WARNING: currently PostgreSQL specifice
+     * WARNING: currently PostgreSQL specific
      * @param db the database to analyse
      * @param full if true perform VACUUM FULL ANALYSE
      * @throws SQLException if db problem
@@ -540,6 +541,50 @@ public class DatabaseUtil
                 s.execute("VACUUM FULL ANALYSE");
             } else {
                 s.execute("ANALYSE");
+            }
+            conn.setAutoCommit(autoCommit);
+        } finally {
+            conn.setAutoCommit(autoCommit);
+            conn.close();
+        }
+    }
+
+
+    /**
+     * Analyse database table for a given class and all associated indirection tables.
+     * WARNING: currently PostgreSQL specific
+     * @param db the database to analyse
+     * @param cld description of class to analyse
+     * @param full if true perform VACUUM FULL ANALYSE
+     * @throws SQLException if db problem
+     */
+    public static void analyse(Database db, ClassDescriptor cld, boolean full) throws SQLException {
+        Set tables = new HashSet();
+        tables.add(getTableName(cld));
+        Iterator iter = cld.getAllCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            CollectionDescriptor col = (CollectionDescriptor) iter.next();
+            if (FieldDescriptor.M_N_RELATION == col.relationType()) {
+                tables.add(getIndirectionTableName(col));
+            }
+        }
+
+        Connection conn = db.getConnection();
+        boolean autoCommit = conn.getAutoCommit();
+        try {
+            conn.setAutoCommit(true);
+            Statement s = conn.createStatement();
+            Iterator tablesIter = tables.iterator();
+            while (tablesIter.hasNext()) {
+                if (full) {
+                    String sql = "VACUUM FULL ANALYSE " + (String) tablesIter.next();
+                    LOG.info(sql);
+                    s.execute(sql);
+                } else {
+                    String sql = "ANALYSE " + (String) tablesIter.next();
+                    LOG.info(sql);
+                    s.execute(sql);
+                }
             }
             conn.setAutoCommit(autoCommit);
         } finally {
