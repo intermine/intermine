@@ -10,6 +10,7 @@
         <item><ulink url="/system">System</ulink></item>
         <item><ulink url="/user">User</ulink></item>
         <item><ulink url="/developer">Developer</ulink></item>
+        <item><ulink url="/api">API<nbsp/>JavaDoc</ulink></item>
     </section>
     <section>
         <heading><ulink url="/user/building">Download</ulink></heading>
