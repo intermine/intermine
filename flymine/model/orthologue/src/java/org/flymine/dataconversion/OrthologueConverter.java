@@ -29,15 +29,12 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 
-import org.apache.log4j.Logger;
-
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
  * @author Mark Woodbridge
  */
 public class OrthologueConverter extends FileConverter
 {
-    private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
     protected static final String ORTHOLOGUE_NS = "http://www.flymine.org/model/genomic#";
 
     protected int id = 0;
@@ -77,7 +74,8 @@ public class OrthologueConverter extends FileConverter
 
                 Item gene1 = createGene(array[0], organism1);
                 Item gene2 = createGene(array[1], organism2);
-                Item result = createResult(getAnalysis(array[2], array[3], array[4]), getSource(array[5]));
+                Item result = createResult(getAnalysis(array[2], array[3], array[4]),
+                                           getSource(array[5]));
                 items.add(ItemHelper.convert(result));
                 Item orth1 = createOrthologue(gene1, gene2, result, getSource(array[5]));
                 items.add(ItemHelper.convert(orth1));
@@ -155,7 +153,6 @@ public class OrthologueConverter extends FileConverter
 
     private Item createGene(String name, Item organism) {
         String key = name + organism.getIdentifier();
-        LOG.error("gene=" + key);
         Item gene = (Item) genes.get(key);
         if (gene == null) {
             gene = newItem("Gene");
