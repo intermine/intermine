@@ -555,8 +555,8 @@ public class PrecomputeTask extends Task
 
                 queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
                                                 thisSubjectCD.getType(), true));
-                queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                                                thisSubjectCD.getType(), false));
+//                 queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
+//                                                 thisSubjectCD.getType(), false));
             }
         }
 
@@ -625,9 +625,9 @@ public class PrecomputeTask extends Task
                                                     thisObject2CD.getType(), connectingFieldname2,
                                                     thisObject3CD.getType(), true));
 
-                    queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
-                                                    thisObject2CD.getType(), connectingFieldname2,
-                                                    thisObject3CD.getType(), false));
+//                    queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
+//                                                    thisObject2CD.getType(), connectingFieldname2,
+//                                                    thisObject3CD.getType(), false));
                 }
             }
         }
