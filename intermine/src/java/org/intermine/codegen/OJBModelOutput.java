@@ -20,6 +20,8 @@ public class OJBModelOutput extends ModelOutput
 {
     protected StringBuffer references, collections;
 
+
+
     /**
      * @see ModelOutput#Constructor
      */
@@ -32,7 +34,7 @@ public class OJBModelOutput extends ModelOutput
      */
     public void process() {
         File path = new File(file, "repository_" + model.getName() + ".xml");
-        initFile(path);
+        //initFile(path);
         outputToFile(path, generate(model));
     }
 
@@ -56,7 +58,7 @@ public class OJBModelOutput extends ModelOutput
 
         sb.append("&internal;" + ENDL)
             .append("</descriptor-repository>" + ENDL);
-        
+
         return sb.toString();
     }
 
@@ -133,7 +135,7 @@ public class OJBModelOutput extends ModelOutput
             .append("</class-descriptor>" + ENDL + ENDL);
         return sb.toString();
     }
-    
+
     /**
      * @see ModelOutput#generate(AttributeDescriptor)
      */
@@ -182,12 +184,13 @@ public class OJBModelOutput extends ModelOutput
      * @see ModelOutput#generate(CollectionDescriptor)
      */
     protected String generate(CollectionDescriptor col) {
+
         StringBuffer sb = new StringBuffer();
 
-        String name1 = col.getReverseReferenceDescriptor().getName();
         String name2 = col.getName();
 
         if (col.getReverseReferenceDescriptor() instanceof CollectionDescriptor) { //many:many
+            String name1 = col.getReverseReferenceDescriptor().getName();
             String joiningTableName = "";
             if (name1.compareTo(name2) < 0) {
                 joiningTableName = StringUtil.capitalise(name1) + StringUtil.capitalise(name2);
@@ -218,7 +221,8 @@ public class OJBModelOutput extends ModelOutput
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
-        } else { //one:many
+        } else if (col.getReverseReferenceDescriptor() instanceof ReferenceDescriptor) { //one:many
+            String name1 = col.getReverseReferenceDescriptor().getName();
             collections.append(INDENT + INDENT)
                 .append("<collection-descriptor name=\"")
                 .append(name2)
@@ -233,7 +237,23 @@ public class OJBModelOutput extends ModelOutput
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
+        } else { // unidirectional relationship
+            collections.append(INDENT + INDENT)
+                .append("<collection-descriptor name=\"")
+                .append(name2)
+                .append("\" element-class-ref=\"")
+                .append(col.getReferencedClassDescriptor().getClassName())
+                .append("\" collection-class=\"")
+                .append(col.getCollectionClass().getName())
+                .append("\" proxy=\"true\">" + ENDL)
+                .append(INDENT + INDENT + INDENT)
+                .append("Id\"/>" + ENDL)
+                .append(INDENT + INDENT)
+                .append("</collection-descriptor>" + ENDL);
         }
+
+
+
         return sb.toString();
     }
 
@@ -284,7 +304,7 @@ public class OJBModelOutput extends ModelOutput
     }
 
     private String generateOJBSqlType(String type) {
-        if (type.equals("int")) {
+        if (type.equals("int") || type.equals("java.lang.Integer")) {
             return "INTEGER";
         }
         if (type.equals("java.lang.String")) {
@@ -294,7 +314,7 @@ public class OJBModelOutput extends ModelOutput
             return "INTEGER\" conversion=\""
                 + "org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion";
         }
-        if (type.equals("float")) {
+        if (type.equals("float") || type.equals("java.lang.Float")) {
             return "FLOAT";
         }
         if (type.equals("java.util.Date")) {
