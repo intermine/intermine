@@ -27,6 +27,8 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.FieldConfig;
 
 import org.intermine.util.TypeUtil;
 
@@ -45,6 +47,7 @@ public class DisplayObject
     Map refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
     List keyAttributes = new ArrayList();
     List keyReferences = new ArrayList();
+    List fieldExprs = new ArrayList();
     Map verbosity = new HashMap();
     
     /**
@@ -92,6 +95,16 @@ public class DisplayObject
                         collections.put(fd.getName(), newCollection);
                     }
                 }
+            }
+
+            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webconfigTypeMap, cld);
+
+            Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
+
+            while (cldFieldConfigIter.hasNext()) {
+                FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+
+                fieldExprs.add(fc.getFieldExpr());
             }
         }
 
@@ -185,6 +198,15 @@ public class DisplayObject
     }
 
     /**
+     * Return the path expressions for the fields that should be used when summarising this
+     * DisplayObject.
+     * @return the expressions
+     */
+    public List getFieldExprs() {
+        return fieldExprs;
+    }
+
+    /**
      * Get the map indication whether individuals fields are to be display verbosely
      * @return the map
      */
@@ -196,9 +218,8 @@ public class DisplayObject
      * Set the verbosity for a field
      * @param fieldName the field name
      * @param verbose true or false
-     * @throws Exception if an error occurs
      */
-    public void setVerbosity(String fieldName, boolean verbose) throws Exception {
+    public void setVerbosity(String fieldName, boolean verbose) {
         verbosity.put(fieldName, verbose ? fieldName : null);
     }
 }
