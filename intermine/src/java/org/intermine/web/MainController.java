@@ -91,18 +91,19 @@ public class MainController extends TilesAction
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
             }
             
-            if (node.getParentType().equals("null") == false)
-            {
-                String parentClassName = MainHelper.getClass(node.getParentType(), os.getModel()).getName();
+            String parentType = "" + node.getParentType();
+            if (parentType.equals("null") == false) {
+                String parentClassName = MainHelper.getClass(parentType, os.getModel()).getName();
                 List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
-                if (fieldNames != null && node.getType() != null)
-                {
+                if (fieldNames != null && node.getType() != null) {
                     request.setAttribute("attributeOptions", fieldNames);
-                    List fixedOps = SimpleConstraint.fixedEnumOps(MainHelper.getClass(node.getType()));
+                    Class parentClass = MainHelper.getClass(node.getType());
+                    List fixedOps = SimpleConstraint.fixedEnumOps(parentClass);
                     List fixedOpsCodes = new ArrayList();
                     Iterator iter = fixedOps.iterator();
-                    while (iter.hasNext())
+                    while (iter.hasNext()) {
                         fixedOpsCodes.add(((ConstraintOp) iter.next()).getIndex());
+                    }
                     request.setAttribute("fixedOptionsOps", fixedOpsCodes);
                 }
             }
