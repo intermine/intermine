@@ -362,6 +362,7 @@ public class CalculateLocations
      */
     protected Location createLocation(BioEntity parent, SimpleLoc parentOnChr,
                                       BioEntity child, SimpleLoc childOnChr) {
+        //BioEntity child, SimpleLoc childOnChr, boolean strandIsOrientation) {
         if (!overlap(childOnChr, parentOnChr)) {
             throw new IllegalArgumentException("parent (" + parentOnChr.getStart()
                                                + ", " + parentOnChr.getEnd()
@@ -381,6 +382,7 @@ public class CalculateLocations
         if (childOnChr.getEnd() > parentOnChr.getEnd()) {
             endIsPartial = true;
         }
+
         Location childOnParent = null;
         if (startIsPartial && endIsPartial) {
             //      --------       parent
@@ -388,8 +390,8 @@ public class CalculateLocations
             //   --------------    child
             PartialLocation pl = (PartialLocation)
                 DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
-            pl.setSubjectStart(new Integer(parentOnChr.getStart() - childOnChr.getStart() + 1));
-            pl.setSubjectEnd(new Integer(parentOnChr.getEnd() - childOnChr.getStart() + 1));
+            pl.setSubjectStart(new Integer((parentOnChr.getStart() - childOnChr.getStart()) + 1));
+            pl.setSubjectEnd(new Integer((parentOnChr.getEnd() - childOnChr.getStart()) + 1));
             childOnParent = pl;
         } else if (startIsPartial) {
             //       --------------  parent
@@ -407,7 +409,7 @@ public class CalculateLocations
             PartialLocation pl = (PartialLocation)
                 DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
             pl.setSubjectStart(new Integer(1));
-            pl.setSubjectEnd(new Integer(parentOnChr.getEnd() - childOnChr.getStart() + 1));
+            pl.setSubjectEnd(new Integer((parentOnChr.getEnd() - childOnChr.getStart()) + 1));
             childOnParent = pl;
         } else {
             //  ------------------  parent
@@ -446,8 +448,8 @@ public class CalculateLocations
                                               Chromosome chr, BioEntity child) {
         Location childOnChr =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        childOnChr.setStart(new Integer(parentOnChr.getStart() + childOnParent.getStart() - 1));
-        childOnChr.setEnd(new Integer(parentOnChr.getStart() + childOnParent.getEnd() - 1));
+        childOnChr.setStart(new Integer((parentOnChr.getStart() + childOnParent.getStart()) - 1));
+        childOnChr.setEnd(new Integer((parentOnChr.getStart() + childOnParent.getEnd()) - 1));
         childOnChr.setStrand(new Integer(0));
         childOnChr.setStartIsPartial(Boolean.FALSE);
         childOnChr.setEndIsPartial(Boolean.FALSE);
