@@ -5,6 +5,11 @@
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
+
+# This file defines additional references and collections between BioEntities in the
+# FlyMine genomic model.  It is thus dependent on specific oather meodels, particularly
+# on the Sequence Ontology.
+
 :Chromosome a owl:Class.
 
 :Chromosome__transcripts a owl:ObjectProperty;
@@ -18,6 +23,13 @@
 :Chromosome__exons a owl:ObjectProperty;
     rdfs:domain :Chromosome;
     rdfs:range :Exon.
+
+:Chromosome__bands a owl:ObjectProperty;
+    rdfs:domain :Chromosome;
+    rdfs:range :ChromosomeBand.
+
+:ChromosomeBand__chromosome a owl:ObjectProperty;
+    owl:inverseOf :Chromosome__bands .
 
 :Transcript a owl:Class;
     rdfs:subClassOf
@@ -60,6 +72,30 @@
     owl:inverseOf :Exon__gene.
 
 
+### Gene * <-> * GOTerm
+:Gene__GOTerms a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :GOTerm.
 
+:GOTerm__genes a owl:ObjectProperty;
+    owl:inverseOf :Gene__GOTerms.
+
+### Gene -> * Orthologue
+:Gene__orthologues a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Orthologue.
+
+### Gene * <-> * Phenotype
+:Gene__phenotypes a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Phenotype.
+
+:Phenotype__genes a owl:ObjectProperty;
+    owl:inverseOf :Gene__phenotypes.
+
+### Protein -> * ProteinInteraction
+:Protein__interactions a owl:ObjectProperty;
+    rdfs:domain :Protein;
+    rdfs:range :ProteinInteraction.
 
 
