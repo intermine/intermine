@@ -32,18 +32,18 @@
   <c:otherwise>
     <html:form action="/changeResultsSize" styleId="changeResultsForm">
 
-      <table class="results" cellspacing="0" width="1%">
+      <table class="results" cellspacing="0">
         <%-- The headers --%>
         <tr>
           <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">
-            <th align="center" width="1%">
+            <th align="center">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                              onclick="selectColumnCheckboxes(${status.index})">
                 <c:out value="${status.index}"/>
               </html:multibox>
             </th>
 
-            <th align="center" width="1%">
+            <th align="center">
               <div>
                 <nobr>
                   <c:out value="${column.name}"/>
@@ -126,7 +126,7 @@
                 <c:choose>
                   <c:when test="${column.visible}">
                     <%-- the checkbox to select this object --%>
-                    <td align="center" width="1%">
+                    <td align="center">
                       <html:multibox property="selectedObjects"
                                      styleId="selectedObjects_${status2.index}_${status.index}"
                                      onclick="unselectColumnCheckbox(${status2.index})">
