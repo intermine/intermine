@@ -533,8 +533,7 @@
       <classpath refid="test.class.path"/>
     </taskdef>
     
-    <retrieve-chado database="db.chado" model="chado" destFile="${build.tmp}/chadoFullData.xml"
-                    osName="osw.chado-items"/>
+    <retrieve-chado database="db.chado" model="chado" osName="osw.chado-items"/>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
