@@ -25,6 +25,9 @@ public class ClassDescriptor
     private List interfaceNames = new ArrayList();
     private List interfaceDescriptors = new ArrayList(); // names of interfaces
 
+    private ClassDescriptor ultimateSuperclassDesc;
+    private boolean ultimateSuperSet = false;
+
     private boolean isInterface;
     private List attDescriptors;
     private List refDescriptors;
@@ -280,7 +283,20 @@ public class ClassDescriptor
      * @throws IllegalStateException if model not set
      */
     public ClassDescriptor getUltimateSuperclassDescriptor() throws IllegalStateException {
-        return this;
+        if (!modelSet) {
+            throw new IllegalStateException("This ClassDescriptor has not yet been added "
+                                            + "to a model.");
+        }
+        if (!ultimateSuperSet) {
+            ClassDescriptor cld = this;
+            while (cld.getSuperclassDescriptor() != null) {
+                cld = cld.getSuperclassDescriptor();
+                this.ultimateSuperclassDesc = cld;
+            }
+            ultimateSuperSet = true;
+        }
+        return this.ultimateSuperclassDesc;
+
     }
 
     /**
@@ -316,7 +332,7 @@ public class ClassDescriptor
     private void findSuperclassDescriptor() throws MetaDataException {
         // descriptor for super class
         if (superclassName != null && superclassName != "") {
-            this.superclassDescriptor = model.getDescriptorByName(superclassName);
+            this.superclassDescriptor = model.getClassDescriptorByName(superclassName);
             if (superclassDescriptor == null) {
                 throw new MetaDataException("No ClassDescripor for super class: "
                                             + superclassName + " found in model.");
@@ -338,11 +354,11 @@ public class ClassDescriptor
             Iterator iter = interfaceNames.iterator();
             while (iter.hasNext()) {
                 String iName = (String) iter.next();
-                if (!model.hasDescriptorFor(iName)) {
+                if (!model.hasClassDescriptor(iName)) {
                     throw new MetaDataException("No ClassDescriptor for interface ( "
                                                 + iName + ") found in model.");
                 }
-                ClassDescriptor iDescriptor = model.getDescriptorByName(iName);
+                ClassDescriptor iDescriptor = model.getClassDescriptorByName(iName);
                 if (!iDescriptor.isInterface()) {
                     throw new MetaDataException("ClassDescriptor for ( " + iName
                                                 + ") does not describe and interface.");

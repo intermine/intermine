@@ -77,8 +77,8 @@ public class ReferenceDescriptor extends FieldDescriptor
     protected void findReferencedDescriptor() throws MetaDataException {
 
         // find ClassDescriptor for referenced class
-        if (this.cld.getModel().hasDescriptorFor(refName)) {
-            this.refClassDescriptor = this.cld.getModel().getDescriptorByName(refName);
+        if (this.cld.getModel().hasClassDescriptor(refName)) {
+            this.refClassDescriptor = this.cld.getModel().getClassDescriptorByName(refName);
 
         } else {
             throw new MetaDataException("Unable to find ClassDescriptor for: "

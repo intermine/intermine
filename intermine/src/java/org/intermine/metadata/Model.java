@@ -58,7 +58,7 @@ public class Model
      * @param name name of ClassDescriptor requested
      * @return the requested ClassDescriptor
      */
-    public ClassDescriptor getDescriptorByName(String name) {
+    public ClassDescriptor getClassDescriptorByName(String name) {
         if (cldMap.containsKey(name)) {
             return (ClassDescriptor) cldMap.get(name);
         } else {
@@ -71,15 +71,15 @@ public class Model
      * @return a list of all ClassDescriptors in the model
      */
     public List getClassDescriptors() {
-        return new ArrayList();
+        return (List) cldMap.values();
     }
 
     /**
      * Return true if named ClassDescriptor is found in the model
      * @param name named of ClassDescriptor search for
-     * @return truw if named descriptor found
+     * @return true if named descriptor found
      */
-    public boolean hasDescriptorFor(String name) {
+    public boolean hasClassDescriptor(String name) {
         return cldMap.containsKey(name);
     }
 
