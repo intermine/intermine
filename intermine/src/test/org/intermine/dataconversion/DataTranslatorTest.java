@@ -187,6 +187,60 @@ public class DataTranslatorTest extends TestCase
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
+    public void testTranslateItemSubclass() throws Exception {
+        String ENDL = System.getProperty("line.separator");
+
+        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
+            + "@prefix src: <" + srcNs + "> ." + ENDL
+            + "@prefix null: <" + nullNs + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Organisation a owl:Class ;" + ENDL
+            + "              owl:equivalentClass src:Organisation ." + ENDL
+            + "src:Organisation a owl:Class." + ENDL
+            + "src:Organisation__name a owl:DatatypeProperty;" + ENDL
+            + "       rdfs:domain src:Organisation;" + ENDL
+            + "       rdfs:range xsd:string." + ENDL
+            + ":Organisation__name a owl:DatatypeProperty;" + ENDL
+            + "    rdfs:domain :Organisation;" + ENDL
+            + "    rdfs:range xsd:string;" + ENDL
+            + "    owl:equivalentProperty src:Organisation__name." + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "    rdfs:subClassOf :Organisation ;" + ENDL
+            + "    owl:equivalentClass src:LtdCompany ." + ENDL
+            + "src:LtdCompany a owl:Class;" + ENDL
+            + "    rdfs:subClassOf src:Organisation." + ENDL;
+
+        OntModel ont = ModelFactory.createOntologyModel();
+        ont.read(new StringReader(owl), null, "N3");
+
+
+        Item src1 = new Item();
+        src1.setIdentifier("1");
+        src1.setClassName(srcNs + "LtdCompany");
+        Attribute a1 = new Attribute("name", "LtdCompanyName");
+        src1.addAttribute(a1);
+
+        Item expected = new Item();
+        expected.setIdentifier("1");
+        expected.setClassName(tgtNs + "Company");
+        Attribute aa1 = new Attribute("name", "LtdCompanyName");
+        expected.addAttribute(a1);
+
+        translator = new DataTranslator(null, ont, tgtNs);
+
+        System.out.println("templateMap: " + translator.templateMap.toString());
+        System.out.println("restrictionMap: " + translator.restrictionMap.toString());
+        System.out.println("equivMap: " + translator.equivMap.toString());
+        System.out.println("clsPropMap: " + translator.clsPropMap.toString());
+
+        assertEquals(expected, translator.translateItem(src1).iterator().next());
+    }
+
     public void testTranslateItemRestrictedSubclassSingleLevel() throws Exception {
         String ENDL = System.getProperty("line.separator");
 
@@ -355,10 +409,10 @@ public class DataTranslatorTest extends TestCase
 
         translator = new DataTranslator(new MockItemReader(itemMap), model, tgtNs);
 
-         System.out.println("templateMap: " + translator.templateMap.toString());
-         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
-         System.out.println("equivMap: " + translator.equivMap.toString());
-         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
+//          System.out.println("templateMap: " + translator.templateMap.toString());
+//          System.out.println("restrictionMap: " + translator.restrictionMap.toString());
+//          System.out.println("equivMap: " + translator.equivMap.toString());
+//          System.out.println("clsPropMap: " + translator.clsPropMap.toString());
 
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
@@ -817,9 +871,9 @@ public class DataTranslatorTest extends TestCase
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
             + ENDL
-            + ":Organisation a owl:Class ;" + ENDL
-            + "              owl:equivalentClass src:Organisation ." + ENDL
-            + ":Company a owl:Class ;" + ENDL
+            + ":Organisation a owl:Class;" + ENDL
+            + "    owl:equivalentClass src:Organisation." + ENDL
+            + ":Company a owl:Class;" + ENDL
             + "         rdfs:subClassOf :Organisation ;" + ENDL
             + "         rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
@@ -843,7 +897,26 @@ public class DataTranslatorTest extends TestCase
             + ":Company__departments a owl:ObjectProperty ;" + ENDL
             + "                     rdfs:domain :Company ;" + ENDL
             + "                     rdfs:range :Address ;" + ENDL
-            + "                     owl:equivalentProperty src:LtdCompany__departments ." + ENDL;
+            + "                     owl:equivalentProperty src:LtdCompany__departments ." + ENDL
+            + "src:Organisation a owl:Class." + ENDL
+            + "src:Address a owl:Class." + ENDL
+            + "src:LtdCompany a owl:Class;" + ENDL
+            + "    rdfs:subClassOf" + ENDL
+            + "       [ a owl:Restriction ;" + ENDL
+            + "           owl:maxCardinality \"1\" ;" + ENDL
+            + "           owl:onProperty :Company_address ] ." + ENDL
+            + "src:LtdCompany__name a owl:DatatypeProperty;" + ENDL
+            + "    rdfs:domain src:LtdCompany;" + ENDL
+            + "    rdfs:range xsd:string." + ENDL
+            + "src:LtdCompany__vatNumber a owl:DatatypeProperty;" + ENDL
+            + "    rdfs:domain src:LtdCompany;" + ENDL
+            + "    rdfs:range xsd:integer." + ENDL
+            + "src:LtdCompany__address a owl:ObjectProperty;" + ENDL
+            + "    rdfs:domain :Company;" + ENDL
+            + "    rdfs:range :Address." + ENDL
+            + "src:LtdCompany__departments a owl:ObjectProperty;" + ENDL
+            + "    rdfs:domain :Company;" + ENDL
+            + "    rdfs:range :Address." + ENDL;
 
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(new StringReader(owl), null, "N3");

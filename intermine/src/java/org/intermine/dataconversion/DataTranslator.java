@@ -145,7 +145,7 @@ public class DataTranslator
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
-        
+
         // see if there are any SubclassRestriction template for this class
         String tgtClsName = null;
         Set templates = (Set) templateMap.get(srcItem.getClassName());
@@ -182,7 +182,7 @@ public class DataTranslator
             Attribute att = (Attribute) i.next();
             if (!att.getName().equals("nonUniqueId")) {
                 String attSrcURI = srcItem.getClassName() + "__" + att.getName();
-                String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
+                String attTgtURI = getTargetFieldURI(srcItem.getClassName(), attSrcURI);
                 if (attTgtURI == null) {
                     throw new InterMineException("no target attribute found for " + attSrcURI
                                                + " in class " + tgtClsName);
@@ -200,7 +200,8 @@ public class DataTranslator
         for (Iterator i = srcItem.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
             String refSrcURI = srcItem.getClassName() + "__" + ref.getName();
-            String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
+            //            String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
+            String refTgtURI = getTargetFieldURI(srcItem.getClassName(), ref.getName());
             if (refTgtURI == null) {
                 throw new InterMineException("no target reference found for " + refSrcURI
                                            + " in class " + tgtClsName);
@@ -217,7 +218,8 @@ public class DataTranslator
         for (Iterator i = srcItem.getCollections().iterator(); i.hasNext();) {
             ReferenceList col = (ReferenceList) i.next();
             String colSrcURI = srcItem.getClassName() + "__" + col.getName();
-            String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
+            //String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
+            String colTgtURI = getTargetFieldURI(srcItem.getClassName(), col.getName());
             if (colTgtURI == null) {
                 throw new InterMineException("no target collection found for " + colSrcURI
                                            + " in class " + tgtClsName);
@@ -397,29 +399,31 @@ public class DataTranslator
     }
 
     /**
-     * Get URI of a target property given parent class and source property URI.
+     * Get name of a target property given parent class and source property URI.
      * First examines class/property then uses equivalence map if no value found.
-     * @param clsURI URI of property domain in source model
-     * @param srcPropURI URI of property in source model
+     * @param srcClsURI URI of property domain in source model
+     * @param srcPropName Name of property in source model
      * @return corresponding URI for property in target model
      */
-    protected String getTargetFieldURI(String clsURI, String srcPropURI) {
+    protected String getTargetFieldURI(String srcClsURI, String srcPropName) {
         String tgtPropURI = null;
-        if (clsPropMap.containsKey(clsURI)) {
-            Map propMap = (Map) clsPropMap.get(clsURI);
-            tgtPropURI = (String) propMap.get(srcPropURI);
+        if (clsPropMap.containsKey(srcClsURI)) {
+            Map propMap = (Map) clsPropMap.get(srcClsURI);
+            if (srcPropName.indexOf("__") > 0) {
+                srcPropName = srcPropName.split("__")[1];
+            }
+            tgtPropURI = (String) propMap.get(srcPropName);
         }
         if (tgtPropURI == null) {
-            tgtPropURI = (String) equivMap.get(srcPropURI);
+            tgtPropURI = (String) equivMap.get(srcClsURI + "__" + srcPropName);
         }
         return tgtPropURI;
     }
 
-
     /**
      * Classes in target OWL model specifically inherit superclass properties (inherited
      * properties are subPropertyOf parent property).  Build a map of class/
-     * src_property_uri/tgt_property_uri.
+     * src_property_localname/tgt_property_localname.
      * @param model the OntModel
      */
     protected void buildPropertiesMap(OntModel model) {
@@ -430,11 +434,71 @@ public class DataTranslator
         while (clsIter.hasNext()) {
             OntClass cls = (OntClass) clsIter.next();
             if (!cls.isAnon() && cls.getNameSpace().equals(tgtNs)) {
+                ExtendedIterator propIter = cls.listDeclaredProperties(false);
+                while (propIter.hasNext()) {
+                    OntProperty prop = (OntProperty) propIter.next();
+                    //if (prop.getNameSpace().equals(tgtNs)) {
+                        ExtendedIterator equivIter = prop.listEquivalentProperties();
+                        while (equivIter.hasNext()) {
+                            OntProperty srcProp = (OntProperty) equivIter.next();
+                            OntClass srcCls = getPropertyDomain(srcProp);
+                            addToClsPropMap(srcCls.getURI(), srcProp.getLocalName(), prop.getURI());
+
+                            // now apply this property equivalence to all subclasses of srcCls
+                            // that exist in the src namespace
+                            ExtendedIterator subIter = srcCls.listSubClasses(false); // all
+                            while (subIter.hasNext()) {
+                                OntClass subCls = (OntClass) subIter.next();
+                                if (!subCls.isAnon()
+                                    && subCls.getNameSpace().equals(srcCls.getNameSpace())) {
+                                    addToClsPropMap(subCls.getURI(), srcProp.getLocalName(),
+                                                    prop.getURI());
+                                }
+                            }
+                            subIter.close();
+                        }
+                        equivIter.close();
+                        //}
+                }
+                propIter.close();
+            }
+        }
+        clsIter.close();
+    }
+
+    private OntClass getPropertyDomain(OntProperty prop) {
+        OntClass domain = null;
+        if (prop.getInverseOf() != null) {
+            domain = (OntClass) prop.getInverseOf().getRange().as(OntClass.class);
+        } else {
+            domain = (OntClass) prop.getDomain().as(OntClass.class);
+        }
+        return domain;
+    }
+
+
+    /**
+     * Classes in target OWL model specifically inherit superclass properties (inherited
+     * properties are subPropertyOf parent property).  Build a map of class/
+     * src_property_uri/tgt_property_uri.
+     * @param model the OntModel
+     */
+    protected void buildPropertiesMapOld(OntModel model) {
+        clsPropMap = new HashMap();
+        impMap = new HashMap();
+
+        ExtendedIterator clsIter = model.listClasses();
+        while (clsIter.hasNext()) {
+            OntClass cls = (OntClass) clsIter.next();
+            if (!cls.isAnon() && cls.getNameSpace().equals(tgtNs)) {
+                Set subclasses = new HashSet();
+
                 Map propMap = new HashMap();
                 ExtendedIterator propIter = cls.listDeclaredProperties(false);
                 while (propIter.hasNext()) {
                     OntProperty prop = (OntProperty) propIter.next();
-                    if (prop.getNameSpace().equals(tgtNs) && prop.getSuperProperty() != null) {
+                    //if (prop.getNameSpace().equals(tgtNs) && prop.getSuperProperty() != null) {
+                    if (prop.getNameSpace().equals(tgtNs)) {
                         ExtendedIterator equivIter = prop.listEquivalentProperties();
                         while (equivIter.hasNext()) {
                             propMap.put(((OntProperty) equivIter.next()).getURI(), prop.getURI());
@@ -443,6 +507,8 @@ public class DataTranslator
                     }
                 }
                 propIter.close();
+
+
                 if (!propMap.isEmpty()) {
                     clsPropMap.put(cls.getURI(), propMap);
                 }
@@ -463,6 +529,15 @@ public class DataTranslator
         clsIter.close();
     }
 
+
+    private void addToClsPropMap(String srcClsName, String srcPropName, String tgtPropName) {
+        Map propMap = (Map) clsPropMap.get(srcClsName);
+        if (propMap == null) {
+            propMap = new HashMap();
+        }
+        propMap.put(srcPropName.split("__")[1], tgtPropName);
+        clsPropMap.put(srcClsName, propMap);
+    }
 
     /**
      * Build a map of src/tgt resource URI.  Does not include resources
