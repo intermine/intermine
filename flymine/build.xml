@@ -43,6 +43,7 @@
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
+  <property name="build.resources.test" location="${build.resources}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
@@ -151,6 +152,10 @@
     </fileset>
   </path>
 
+  <path id="test.class.path">
+    <pathelement path="${build.resources.test}"/>
+    <path refid="models.class.path"/>
+  </path>
 
   <!-- Initialisation targets -->
   <target name="prepare">
@@ -166,6 +171,7 @@
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
+    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.model}/fulldata" />
     <mkdir dir="${build.src.java}"/>
@@ -192,10 +198,8 @@
   </target>
 
   <target name="prepare-test" depends="prepare">
-    <copy todir="${build.resources}" flatten="true" includeEmptyDirs="false" overwrite="true">
-      <fileset dir="${resources}/test/">
-        <exclude name="default.intermine.properties"/>
-      </fileset>
+    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false" overwrite="true">
+      <fileset dir="${resources}/test/"/>
     </copy>
   </target>
 
@@ -1746,7 +1750,7 @@
     <target name="build-db-genomic-test" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.genomic-test"/>
       <property name="objectstore.name" value="os.genomic-test"/>
     </ant>
@@ -1755,7 +1759,7 @@
   <target name="create-indexes-genomic-test">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.genomic-test"/>
       <property name="objectstore.name" value="os.genomic-test"/>
     </ant>
@@ -1909,7 +1913,7 @@
   <target name="genomic-test" depends ="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
     <antcall target="test-report"/>
   </target>
