@@ -109,6 +109,9 @@ public class MageDataTranslator extends DataTranslator
     protected Set cdnaSet = new HashSet();
     protected Map geneMap =  new HashMap(); //organisamDbId, geneItem
     protected Set assaySet = new HashSet();
+    protected Map sample2LabeledExtract = new HashMap();
+    protected Set labeledExractSet = new HashSet();
+    protected Map reporter2rl = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -150,11 +153,6 @@ public class MageDataTranslator extends DataTranslator
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
 
-        i = processAssayTissue().iterator();
-        while (i.hasNext()) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
-
         i = processOrganism().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
@@ -170,6 +168,15 @@ public class MageDataTranslator extends DataTranslator
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
 
+        i = processLabeledExtract2Assay().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
+        i = processAssay2Experiment().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
     }
 
     /**
@@ -240,6 +247,7 @@ public class MageDataTranslator extends DataTranslator
                     storeTgtItem = false;
                 } else if (className.equals("LabeledExtract")) {
                     translateLabeledExtract(srcItem, tgtItem);
+                    storeTgtItem = false;
                 } else if (className.equals("BioSource")) {
                     translateSample(srcItem, tgtItem);
                     storeTgtItem = false;
@@ -338,6 +346,10 @@ public class MageDataTranslator extends DataTranslator
             //            + srcItem.getIdentifier()
             //            + " does not have featureInformationSource");
 
+        }
+
+        if (srcItem.hasReference("reporter")) {
+            reporter2rl.put(srcItem.getReference("reporter").getRefId(), srcItem.getIdentifier());
         }
     }
 
@@ -587,7 +599,7 @@ public class MageDataTranslator extends DataTranslator
                     physical = baItem.getIdentifier();
                 }
             }
-            tgtItem.addCollection(newRl);
+            //tgtItem.addCollection(newRl);
         }
 
         //prefetch?
@@ -980,7 +992,10 @@ public class MageDataTranslator extends DataTranslator
                 }
             }
             tgtItem.addReference(new Reference("sample", sampleId));
+            sample2LabeledExtract.put(sampleId, tgtItem.getIdentifier());
+
         }
+        labeledExractSet.add(tgtItem);
     }
 
     /**
@@ -1129,9 +1144,10 @@ public class MageDataTranslator extends DataTranslator
         Iterator i = bioSource.iterator();
         while (i.hasNext()) {
             Item bioSourceItem = (Item) i.next();
+            String sampleId = (String) bioSourceItem.getIdentifier();
             List treatList = new ArrayList();
-            String s = (String) treatment2BioSourceMap.get((String) bioSourceItem.getIdentifier());
-            LOG.debug("treatmentList " + s + " for " + bioSourceItem.getIdentifier());
+            String s = (String) treatment2BioSourceMap.get(sampleId);
+            LOG.debug("treatmentList " + s + " for " + sampleId);
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s);
                 while (st.hasMoreTokens()) {
@@ -1141,28 +1157,54 @@ public class MageDataTranslator extends DataTranslator
 
             ReferenceList treatments = new ReferenceList("treatments", treatList);
             bioSourceItem.addCollection(treatments);
+
+            //add labeledExtract reference to Sample
+            String le = null;
+            if (sample2LabeledExtract.containsKey(sampleId)) {
+                le = (String) sample2LabeledExtract.get(sampleId);
+                if (le != null) {
+                    bioSourceItem.addReference(new Reference("labeledExtract", le));
+                }
+            }
+
             results.add(bioSourceItem);
         }
         return results;
     }
 
     /**
-     * add tissues collection to MicroArrayAssay
-     * @return MicroArrayAssay
+     * get le2Assay hashmap from assay2LabeledExtract map
+     * add assay reference to LabeledExtract
+     * @return LabeledExtract
      */
-    protected Set processAssayTissue() {
+    protected Set processLabeledExtract2Assay() {
         Set results = new HashSet();
+        Map le2Assay = new HashMap();
         for (Iterator i = assaySet.iterator(); i.hasNext(); ) {
             Item assayItem = (Item) i.next();
             String id = (String) assayItem.getIdentifier();
             if (assay2LabeledExtract.containsKey(id)) {
                 List tissue = (ArrayList) assay2LabeledExtract.get(id);
                 if (tissue != null) {
-                    assayItem.addCollection(new ReferenceList("tissues", tissue));
-                    results.add(assayItem);
+                    for (Iterator j = tissue.iterator(); j.hasNext();) {
+                        le2Assay.put((String) j.next(), id);
+                    }
                 }
             }
         }
+
+        for (Iterator k = labeledExractSet.iterator(); k.hasNext();) {
+            Item leItem = (Item) k.next();
+            String key = (String) leItem.getIdentifier();
+            if (le2Assay.containsKey(key)) {
+                String assay = (String) le2Assay.get(key);
+                if (assay != null) {
+                    leItem.addReference(new Reference("assay", assay));
+                    results.add(leItem);
+                }
+            }
+        }
+
         return results;
     }
 
@@ -1332,6 +1374,8 @@ public class MageDataTranslator extends DataTranslator
         Set results = new HashSet();
         for (Iterator i = reporterSet.iterator(); i.hasNext();) {
             Item reporter = (Item) i.next();
+            String rl = (String) reporter2rl.get(reporter.getIdentifier());
+            reporter.addReference(new Reference("location", rl));
             if (reporter.hasReference("material")) {
                 String bioEntityId = (String) reporter.getReference("material").getRefId();
                 if (bioEntityRefMap.containsKey(bioEntityId)) {
@@ -1609,6 +1653,20 @@ public class MageDataTranslator extends DataTranslator
             }
         }
         return maer2Gene;
+    }
+
+    /**
+     * add experiment reference to MicroArrayAssay
+     * @return assay set
+     */
+    protected Set processAssay2Experiment() {
+        Set results = new HashSet();
+        for (Iterator i = assaySet.iterator(); i.hasNext();) {
+            Item assayItem = (Item) i.next();
+            assayItem.addReference(new Reference("experiment", expItem.getIdentifier()));
+            results.add(assayItem);
+        }
+        return results;
     }
 
     /**
