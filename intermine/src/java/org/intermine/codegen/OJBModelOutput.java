@@ -43,7 +43,6 @@ import org.xml.sax.InputSource;
 
 public class OJBModelOutput extends ModelOutput
 {
-    //    private File f;
     private Collection fields = new HashSet();
     private StringBuffer references, collections;
 
