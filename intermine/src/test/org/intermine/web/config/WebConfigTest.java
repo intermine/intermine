@@ -12,6 +12,8 @@ package org.flymine.web.config;
 
 import junit.framework.TestCase;
 
+import java.io.InputStream;
+
 public class WebConfigTest extends TestCase
 {
 
@@ -20,7 +22,8 @@ public class WebConfigTest extends TestCase
     }
 
     public void testParse() throws Exception{
-        WebConfig wc1 = WebConfig.parse("test/WebConfigTest.xml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test/WebConfigTest.xml");
+        WebConfig wc1 = WebConfig.parse(is);
 
         Displayer disp1 = new Displayer();
         disp1.setSrc("page1.jsp");
@@ -29,6 +32,7 @@ public class WebConfigTest extends TestCase
         Displayer disp3 = new Displayer();
         disp3.setSrc("/model/page2.jsp");
         Type type1 = new Type();
+        type1.setName("Class1");
         type1.addShortDisplayer(disp1);
         type1.addShortDisplayer(disp2);
         type1.addLongDisplayer(disp3);
@@ -40,6 +44,7 @@ public class WebConfigTest extends TestCase
         Displayer disp6 = new Displayer();
         disp6.setSrc("tile2.tile");
         Type type2 = new Type();
+        type2.setName("Class2");
         type2.addShortDisplayer(disp4);
         type2.addLongDisplayer(disp5);
         type2.addLongDisplayer(disp6);
@@ -49,7 +54,14 @@ public class WebConfigTest extends TestCase
         wc2.addType(type2);
 
         assertEquals(wc2, wc1);
+    }
 
+    public void testParseNull() throws Exception{
+        try {
+            WebConfig.parse(null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
 
     }
 
