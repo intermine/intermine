@@ -55,13 +55,9 @@ public class LoadQueryActionTest extends MockStrutsTestCase
     public void testNewSuccessful() throws Exception {
         setRequestPathInfo("/loadQuery");
         HttpSession session = getSession();
-        addRequestParameter("action", "Load from saved queries");
+        addRequestParameter("queryName", "query1");
 
         session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
-
-        LoadQueryForm form = new LoadQueryForm();
-        form.setQueryName("query1");
-        setActionForm(form);
 
         actionPerform();
         verifyForward("buildquery");
@@ -77,14 +73,10 @@ public class LoadQueryActionTest extends MockStrutsTestCase
     public void testReplaceSuccessful() throws Exception {
         setRequestPathInfo("/loadQuery");
         HttpSession session = getSession();
-        addRequestParameter("action", "Load from saved queries");
+        addRequestParameter("queryName", "query2");
 
         session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
         session.setAttribute(Constants.QUERY, new Query());
-
-        LoadQueryForm form = new LoadQueryForm();
-        form.setQueryName("query2");
-        setActionForm(form);
 
         actionPerform();
         verifyForward("buildquery");
