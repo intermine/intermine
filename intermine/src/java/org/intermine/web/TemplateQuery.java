@@ -91,6 +91,22 @@ public class TemplateQuery
     }
 
     /**
+     * Return a List of all the Constraints of fields in this template query.
+     * @return a List of all the Constraints of fields in this template query
+     */
+    public List getAllConstraints() {
+        List returnList = new ArrayList();
+
+        Iterator iter = constraints.values().iterator();
+
+        while (iter.hasNext()) {
+            returnList.addAll((List) iter.next());
+        }
+
+        return returnList;
+    }
+
+    /**
      * Get the tempalte description.
      * @return the description
      */
