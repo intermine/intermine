@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.objectstore.query.Results;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
 import org.flymine.util.PropertiesUtil;
@@ -35,7 +37,7 @@ public class ObjectStoreServer
 {
 
     private int nextQueryId = 0;
-    private Map registeredQueries = new HashMap();
+    private Map registeredResults = new HashMap();
     private ObjectStore os;
 
     /**
@@ -68,52 +70,71 @@ public class ObjectStoreServer
 
 
     /**
-     * Register a query with this class. This is useful to avoid repeated
-     * transfer of query objects across the network.
+     * Register a query with this class. This is useful to avoid
+     * repeated transfer of query objects across the network. We
+     * actually store a Results object so that we can change the batch
+     * size, rather than passing execute requests straight on the the
+     * underlying ObjectStore.
      *
      * @param query the FqlQuery to register
      * @return an id representing the query
+     * @throws ObjectStoreException if an error occurs with the underlying ObjectStore
      */
-    public int registerQuery(FqlQuery query) {
+    public int registerQuery(FqlQuery query) throws ObjectStoreException {
         if (query == null) {
             throw new NullPointerException("query should not be null");
         }
 
         Query q = query.toQuery();
-        synchronized (registeredQueries) {
-            registeredQueries.put(new Integer(++nextQueryId), q);
+        synchronized (registeredResults) {
+            registeredResults.put(new Integer(++nextQueryId), os.execute(q));
         }
         return nextQueryId;
     }
 
     /**
-     * Lookup a previously registered query
+     * Lookup a previously registered Results object
      *
      * @param queryId a query id
-     * @return the previously registered query
+     * @return the previously registered Results
      * @throws IllegalArgumentException if queryId has not been registered
      */
-    protected Query lookupQuery(int queryId) {
+    protected Results lookupResults(int queryId) {
         Integer key = new Integer(queryId);
-        if (!registeredQueries.containsKey(key)) {
+        if (!registeredResults.containsKey(key)) {
             throw new IllegalArgumentException("Query id " + queryId + " has not been registered");
         }
-        return (Query) registeredQueries.get(key);
+        return (Results) registeredResults.get(key);
     }
 
     /**
-     * Execute a registered query
+     * Execute a registered query.
+     * In this implementation we actually return rows from the registered Results object. This allows
+     * us to change the batch size.
      *
      * @param queryId the id of the query
      * @param start the start row
      * @param limit the maximum number of rows to return
-     * @param optimise whether to optimise
      * @throws ObjectStoreException if an error occurs executing the query
+     * @throws FlyMineException if an error occurs promoting proxies in the Results
      * @return a List of ResultRows
      */
-    public List execute(int queryId, int start, int limit, boolean optimise)
-            throws ObjectStoreException {
-        return os.execute(lookupQuery(queryId), start, limit, optimise);
+    public List execute(int queryId, int start, int limit)
+            throws ObjectStoreException, FlyMineException {
+        // Results.range() can throw an IndexOutOfBoundsException if end is off the
+        // end of the results set. Here we will catch it and then call range again
+        // with size() (which is now known to the results set).
+
+        List ret = null;
+        Results results = lookupResults(queryId);
+
+        try {
+            ret = results.range(start, start + limit - 1);
+        } catch (IndexOutOfBoundsException e) {
+            ret = results.range(start, results.size() - start + 1);
+        }
+
+        return ret;
     }
 
     /**
@@ -124,7 +145,7 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs
      */
     public int count(int queryId) throws ObjectStoreException {
-        return os.count(lookupQuery(queryId));
+        return lookupResults(queryId).size();
     }
 
     /**
@@ -135,7 +156,7 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(int queryId) throws ObjectStoreException {
-        return os.estimate(lookupQuery(queryId));
+        return os.estimate(lookupResults(queryId).getQuery());
     }
 
     /**
@@ -151,7 +172,7 @@ public class ObjectStoreServer
      */
     public ExplainResult estimate(int queryId, int start, int limit, boolean optimise)
             throws ObjectStoreException {
-        return os.estimate(lookupQuery(queryId), start, limit, optimise);
+        return os.estimate(lookupResults(queryId).getQuery(), start, limit, optimise);
     }
 
     /**
