@@ -179,7 +179,7 @@ public class OrthologueConverter extends FileConverter
 
     private Item getSource(String name) {
         if (name.equals("Ensembl Database")) {
-            name = "Ensembl";
+            name = "ensembl";
         }
         Item source = (Item) sources.get(name);
         if (source == null) {
