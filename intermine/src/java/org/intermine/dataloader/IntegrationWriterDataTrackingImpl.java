@@ -296,6 +296,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      */
     public void close() {
         osw.close();
-        dataTracker.flush();
+        dataTracker.close();
     }
 }

@@ -101,7 +101,8 @@ public class DataTracker
     }
 
     /**
-     * Clears the data tracker of all entries
+     * Clears the data tracker of all entries. This method may only be called immediately after
+     * construction.
      *
      * @throws SQLException sometimes
      */
@@ -288,6 +289,25 @@ public class DataTracker
     }
 
     /**
+     * Closes this DataTracker, releasing both connections to the database. No further operations
+     * can be performed on the tracker.
+     */
+    public void close() {
+        cacheStorer.die();
+        flush();
+        synchronized (this) {
+            try {
+                conn.close();
+                storeConn.close();
+            } catch (SQLException e) {
+                IllegalArgumentException e2 = new IllegalArgumentException();
+                e2.initCause(e);
+                throw e2;
+            }
+        }
+    }
+
+    /**
      * Returns a Map created from cache, containing the entries that should be flushed to the
      * backing database. The entries are removed from the cache and put in a special write-back
      * cache before this method terminates. Once you have finished storing the entries, you should
@@ -468,6 +488,8 @@ public class DataTracker
     private class CacheStorer implements Runnable
     {
         private boolean needAction = false;
+        private boolean dontQuit = true;
+        private boolean notDead = true;
 
         public CacheStorer() {
         }
@@ -476,9 +498,25 @@ public class DataTracker
             needAction = true;
             notify();
         }
+
+        public synchronized void die() {
+            needAction = true;
+            dontQuit = false;
+            notify();
+            while (notDead) {
+                try {
+                    wait(100000L);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+
+        private synchronized boolean dontQuitNow() {
+            return needAction || dontQuit;
+        }
         
         public void run() {
-            while (true) {
+            while (dontQuitNow()) {
                 synchronized (this) {
                     while (!needAction) {
                         try {
@@ -489,11 +527,21 @@ public class DataTracker
                 }
                 while (needAction) {
                     try {
-                        needAction = doWrite();
+                        synchronized (this) {
+                            needAction = false;
+                        }
+                        boolean tempNeedAction = doWrite();
+                        synchronized (this) {
+                            needAction = needAction || tempNeedAction;
+                        }
                     } catch (Exception e) {
                         LOG.error("CacheStorer received exception: " + e);
                     }
                 }
+            }
+            synchronized (this) {
+                notDead = false;
+                notifyAll();
             }
         }
     }

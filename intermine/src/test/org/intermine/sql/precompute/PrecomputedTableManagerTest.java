@@ -136,19 +136,21 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testAddDelete() throws Exception {
         synchronized (pt1) {
+            Connection con = database.getConnection();
             PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             try {
                 createTable();
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
-                assertTrue(DatabaseUtil.tableExists(database.getConnection(), "precomp1"));
+                assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
-                assertTrue(!(DatabaseUtil.tableExists(database.getConnection(), "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(con, "precomp1")));
             } catch (SQLException e) {
                 throw (SQLException) Util.verboseException(e);
             } finally {
                 deleteTable();
+                con.close();
             }
         }
     }
@@ -161,10 +163,10 @@ public class PrecomputedTableManagerTest extends TestCase
                 createTable();
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
-                assertTrue(DatabaseUtil.tableExists(database.getConnection(), "precomp1"));
+                assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
-                assertTrue(!(DatabaseUtil.tableExists(database.getConnection(), "precomp1")));
+                assertTrue(!(DatabaseUtil.tableExists(con, "precomp1")));
             } catch (SQLException e) {
                 throw (SQLException) Util.verboseException(e);
             } finally {

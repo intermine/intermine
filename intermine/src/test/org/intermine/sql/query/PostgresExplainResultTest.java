@@ -12,6 +12,7 @@ package org.intermine.sql.query;
 
 import junit.framework.*;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -107,15 +108,17 @@ public class PostgresExplainResultTest extends TestCase
 
     public void testNullWarningPreparedStatement() throws Exception {
         // pass in an sql statement without an EXPLAIN, should give no warnings
-
+        Connection con = DatabaseFactory.getDatabase("db.unittest").getConnection();
         try {
             String sql = "select 1";
-            PreparedStatement stmt = DatabaseFactory.getDatabase("db.unittest").getConnection().prepareStatement(sql);
+            PreparedStatement stmt = con.prepareStatement(sql);
             er = new PostgresExplainResult(stmt);
             fail("Expected: SQLException");
         } catch (SQLException e) {
         } catch (NullPointerException e) {
             fail("Expected SQLException but Null PointerException thrown");
+        } finally {
+            con.close();
         }
     }
 

@@ -10,30 +10,44 @@ package org.intermine.sql;
  *
  */
 
-import java.util.Properties;
-import java.util.Enumeration;
-import java.lang.reflect.Method;
+//import java.io.PrintWriter;
+//import java.io.StringWriter;
+//import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import javax.sql.DataSource;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import javax.sql.DataSource;
+
+//import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 import org.intermine.util.StringUtil;
 
+import org.apache.log4j.Logger;
 
 /**
  * Class that represents a physical SQL database
  *
  * @author Andrew Varley
+ * @author Matthew Wakeling
  */
-
-public class Database
+public class Database implements Shutdownable
 {
+    private static final Logger LOG = Logger.getLogger(Database.class);
+
     protected DataSource datasource;
     protected String platform;
     protected String driver;
 
     // Store all the properties this Database was configured with
     protected Properties settings;
+
+    protected Map createSituations = new HashMap();
 
     /**
      * No argument constructor for testing purposes
@@ -51,6 +65,14 @@ public class Database
     protected Database(Properties props) throws ClassNotFoundException {
         settings = props;
         configure(props);
+        try {
+            LOG.info("Creating new Database " + getURL() + "(" + toString() + ") with ClassLoader "
+                    + getClass().getClassLoader());
+        } catch (Exception e) {
+            LOG.info("Creating new invalid Database with ClassLoader "
+                    + getClass().getClassLoader());
+        }
+        //ShutdownHook.registerObject(new WeakReference(this));
     }
 
     /**
@@ -69,7 +91,43 @@ public class Database
      * @throws SQLException if there is a problem in the underlying database
      */
     public Connection getConnection() throws SQLException {
-        return datasource.getConnection();
+        Connection retval = datasource.getConnection();
+        /*
+        Exception e = new Exception();
+        e.fillInStackTrace();
+        StringWriter message = new StringWriter();
+        PrintWriter pw = new PrintWriter(message);
+        e.printStackTrace(pw);
+        pw.close();
+        String createSituation = message.toString();
+        int index = createSituation.indexOf("at junit.framework.TestCase.runBare");
+        createSituation = (index < 0 ? createSituation : createSituation.substring(0, index));
+        createSituations.put(retval, createSituation);
+        */
+        return retval;
+    }
+
+    /**
+     * Logs stuff
+     */
+    public void shutdown() {
+        int totalConnections = 0;
+        int activeConnections = 0;
+        Iterator iter = createSituations.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            Connection con = (Connection) entry.getKey();
+            String sit = (String) entry.getValue();
+            String conDesc = con.toString();
+            if (conDesc.indexOf("Pooled connection wrapping physical connection null") == -1) {
+                LOG.info("Possibly active connection for Database " + getURL() + "(" + toString()
+                        + "), connection: " + con + ", createSituation: " + sit);
+                activeConnections++;
+            }
+            totalConnections++;
+        }
+        LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
+                + " connections, of which " + activeConnections + " are active");
     }
 
     /**

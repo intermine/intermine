@@ -31,7 +31,7 @@ public class DataTrackingTest extends TestCase {
     }
 
     public void tearDown() throws Exception {
-        dt.flush();
+        dt.close();
     }
 
     public void testSetSourceNullIds() throws Exception {

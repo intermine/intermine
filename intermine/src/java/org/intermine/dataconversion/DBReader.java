@@ -49,4 +49,10 @@ public interface DBReader
      * @throws SQLException if something goes wrong
      */
     public List execute(String sql) throws SQLException;
+
+    /**
+     * Closes down this instance, guaranteeing that no part of it remains that ties up precious
+     * resources or cannot be garbage collected.
+     */
+    public void close();
 }

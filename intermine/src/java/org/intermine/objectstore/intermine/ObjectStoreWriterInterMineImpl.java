@@ -43,6 +43,7 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -55,7 +56,7 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  */
 public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
-    implements ObjectStoreWriter
+    implements ObjectStoreWriter, Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreWriterInterMineImpl.class);
     protected Connection conn = null;
@@ -240,7 +241,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected void finalize() {
         if (conn != null) {
             LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
-                    + sequence + " createSituation: " + createSituation);
+                    + sequence + " and Database " + os.getDatabase().getURL()
+                    + ", createSituation: " + createSituation);
             close();
         }
     }
@@ -257,6 +259,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
                         + " - transaction aborted");
             }
+            batch.close(c);
             os.releaseConnection(c);
             conn = null;
         } catch (Exception e) {
@@ -784,7 +787,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     public void shutdown() {
         if (conn != null) {
             LOG.error("Shutting down open ObjectStoreWriterInterMineImpl with sequence = "
-                    + sequence + ", createSituation = " + createSituation);
+                    + sequence + " and Database " + os.getDatabase().getURL()
+                    + ", createSituation = " + createSituation);
             close();
         }
     }

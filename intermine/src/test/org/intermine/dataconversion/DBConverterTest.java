@@ -41,14 +41,20 @@ public class DBConverterTest extends TestCase {
     private DBConverter converter;
     private ArrayList blank;
     private Map map;
+    private DBReader reader;
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
         Database db = DatabaseFactory.getDatabase("db.unittest");
         itemWriter = new MockItemWriter(new HashMap());
-        converter = new MockDBConverter(model, db, new MockDBReader(), itemWriter);
+        reader = new MockDBReader();
+        converter = new MockDBConverter(model, db, reader, itemWriter);
         blank = new ArrayList();
         map = new HashMap();
+    }
+
+    public void tearDown() throws Exception {
+        reader.close();
     }
 
     public void testAttribute() throws Exception {
@@ -422,6 +428,8 @@ public class DBConverterTest extends TestCase {
         }
         public List execute(String sql) throws SQLException {
             return (List) map.get(sql);
+        }
+        public void close() {
         }
     }
 }

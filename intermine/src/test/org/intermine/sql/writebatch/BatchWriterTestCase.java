@@ -113,7 +113,7 @@ public abstract class BatchWriterTestCase extends TestCase
             batch.addRow(con, "table1", new Integer(22), colNames, new Object[] {new Integer(22), new Integer(222)});
             batch.addRow(con, "table1", new Integer(23), colNames, new Object[] {new Integer(23), new Integer(223)});
             batch.addRow(con, "table1", new Integer(25), colNames, new Object[] {new Integer(25), new Integer(225)});
-            batch.flush(con);
+            batch.close(con);
             con.commit();
             s = con.createStatement();
             r = s.executeQuery("SELECT col1, col2 FROM table1");
@@ -132,8 +132,6 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(53), new Integer(503));
             expected.put(new Integer(55), new Integer(505));
             assertEquals(expected, got);
-            batch.flush(con);
-            con.commit();
             s = con.createStatement();
             r = s.executeQuery("SELECT col1, col2 FROM table1");
             got = new TreeMap();
@@ -187,7 +185,7 @@ public abstract class BatchWriterTestCase extends TestCase
             batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(2), new Integer(202)});
             batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(3), new Integer(203)});
             batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(4), new Integer(204)});
-            batch.flush(con);
+            batch.close(con);
             con.commit();
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT col1, col2 FROM table1");
@@ -249,7 +247,7 @@ public abstract class BatchWriterTestCase extends TestCase
             Batch batch = new Batch(writer);
             batch.deleteRow(con, "table1", "col1", new Integer(2));
             batch.deleteRow(con, "table1", "col1", new Integer(4));
-            batch.flush(con);
+            batch.close(con);
             con.commit();
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT col1, col2 FROM table1");
@@ -313,7 +311,7 @@ public abstract class BatchWriterTestCase extends TestCase
                         Boolean.TRUE,
                         new BigDecimal("982413415465245.87639871238764321"),
                         "kjhlasdurhe"});
-            batch.flush(con);
+            batch.close(con);
             con.commit();
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT key, int2, int4, int8, float, double, bool, bigdecimal, string FROM table1");
@@ -379,7 +377,7 @@ public abstract class BatchWriterTestCase extends TestCase
             for (int i = 0; i < 100000; i++) {
                 batch.addRow(con, "table1", new Integer(i), colNames, new Object[] {new Integer(i), new Integer(765234 * i)});
             }
-            batch.flush(con);
+            batch.close(con);
             con.commit();
         } catch (SQLException e) {
             StringWriter sw = new StringWriter();
@@ -424,7 +422,7 @@ public abstract class BatchWriterTestCase extends TestCase
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             batch.addRow(con, "table1", null, new String[] {"key"}, new Object[] {"Flibble\u00A0fds\u786f"});
-            batch.flush(con);
+            batch.close(con);
             con.commit();
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT key FROM table1");
@@ -510,7 +508,7 @@ public abstract class BatchWriterTestCase extends TestCase
             assertEquals(expected, getGot(con));
 
             batch.deleteRow(con, "table1", "a", "b", 1, 2);
-            batch.flush(con);
+            batch.close(con);
             con.commit();
             expected.remove(new Row(1, 2));
             assertEquals(expected, getGot(con));
