@@ -7,7 +7,7 @@
   </artheader>
 
   <para>
-    InterMine provides flexible facilities to integrate, store and retrieve data in varying formats from muliple user-specified sources. For a demonstration of its capabilities, whilst neglecting most implementation details, consider the following example which concerns data describing the (simplified) structure of a enterprise. In this case no data integration is performed, as only one data source is used.
+    InterMine provides flexible facilities to integrate, store and retrieve data in varying formats from muliple user-specified sources. For a demonstration of its capabilities, whilst neglecting most implementation details, consider the following example which concerns data describing the (simplified) structure of an enterprise. In this case no data integration is performed, as only one data source is used.
   </para>
 
   <para>
@@ -54,7 +54,7 @@
   </para>
 
   <para>
-    Given this data, the model, and some extra configuration information InterMine is capable of storing the data in a relational database. The data is subsequently accessible using an object-oriented query language that returns Java objects representing the data. The system is capable of exposing the datastore to web users using an HTML interface, and other remote users using a SOAP interface. Ultimately this means that whilst the prerequisites for building an InterMine database include the installation of a relational database (PostgreSQL) and a Java runtime, end users can simply use a web browser or a simple Java API (which accepts queries in either an <ulink url="../java_query/spec.xml">object-oriented</ulink> or <ulink url="../iql_query/spec.xml">OQL-like format</ulink>) to access the data.
+    Given this data, the model, and some extra configuration information, InterMine is capable of storing the data in a relational database. The data is subsequently accessible using an object-oriented query language that returns Java objects representing the data. The system is capable of exposing the datastore to web users using a HTML interface, and other remote users using a SOAP interface. Ultimately this means that whilst the prerequisites for building an InterMine database include the installation of a relational database (eg. PostgreSQL) and a Java runtime environment, end users can simply use a web browser or a simple Java API (which accepts queries in either an <ulink url="../java_query/spec.xml">object-oriented</ulink> or <ulink url="../iql_query/spec.xml">OQL-like format</ulink>) to access the data.
   </para>
 
   <para>
@@ -62,7 +62,7 @@
   </para>
 
   <para>
-    Also available is a Java client for a demo of the SOAP interface. If you have a Java runtime installed, simply add the .jar file to your CLASSPATH and run java org.intermine.objectstore.query.iql.IqlShell, which will display a shell to OQL-like queries remotely against the InterMine demo database. For some suitable queries to run consult <ulink url="../howto_query.xml">"How to query InterMine"</ulink>. It is also possible to use this .jar file to build and run queries from Java using the full API.
+    Also available is a Java client for a demo of the SOAP interface. If you have a Java runtime environment installed, simply add the .jar file to your CLASSPATH and run java org.intermine.objectstore.query.iql.IqlShell, which will display a shell to OQL-like queries remotely against the InterMine demo database. For some suitable queries to run consult <ulink url="../howto_query.xml">"How to query InterMine"</ulink>. It is also possible to use this .jar file to build and run queries from Java using the full API.
   </para>
 
 </article>

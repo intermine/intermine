@@ -89,12 +89,5 @@ ptm.add(pt2);
 			<para>Simply call the function <command>optimisedSqlString = QueryOptimiser.optimise(sqlString, database)</command> (where database is an org.intermine.sql.Database as created in the above code snippet), wherever you have an sql string that needs optimising.
 				Run the resulting optimised SQL string as usual.</para>
 		</sect2>
-
-		<sect2>
-			<title>Intercepting JDBC calls</title>
-			<para>The Query Optimiser can be used in conjunction with the <ulink url="http://www.p6spy.com">P6Spy</ulink> software to intercept JDBC calls and rewrite queries to use the optimiser.
-				This has the advantage that no changes to the application need to be made.
-				More details to follow shortly....</para>
-		</sect2>
 	</sect1>
 </article>
