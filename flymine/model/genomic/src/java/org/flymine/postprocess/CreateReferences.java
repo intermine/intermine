@@ -50,11 +50,9 @@ public class CreateReferences
     public void insertReferences() throws Exception {
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
         insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
-
+        
         insertReferences(Chromosome.class, "subjects", Location.class, "subject",
                          Exon.class, "chromosome");
-        insertReferences(Contig.class, "subjects", Location.class, "subject",
-                         Exon.class, "contig");
         insertReferences(Gene.class, "subjects", SimpleRelation.class, "subject",
                          Transcript.class, "gene");
         insertReferences(Gene.class, "transcripts", Transcript.class, "exons",
@@ -131,8 +129,8 @@ public class CreateReferences
                           + " has no " + collectionFieldName + " field");
             }
         }
-        LOG.debug("Created " + count + " references in " + objectClass.getName() + " to "
-                  + subjectClass.getName() + " via the " + collectionFieldName + " field");
+        LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
+                 + subjectClass.getName() + " via the " + collectionFieldName + " field");
         osw.commitTransaction();
     }
 
@@ -200,7 +198,7 @@ public class CreateReferences
         }
 
         LOG.info("Created " + count + " references in " + destinationClass.getName() + " to "
-                  + sourceClass.getName() + " via " + connectingClass.getName());
+                 + sourceClass.getName() + " via " + connectingClass.getName());
         osw.commitTransaction();
     }
 }
