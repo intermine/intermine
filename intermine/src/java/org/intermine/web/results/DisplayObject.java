@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -37,10 +38,11 @@ public class DisplayObject
 {
     InterMineObject object;
     Set clds;
-    Map attributes = new HashMap();
-    Map references = new HashMap();
-    Map collections = new HashMap();
-    Map refsAndCollections = new HashMap();
+
+    Map attributes = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+    Map references = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+    Map collections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+    Map refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
     List keyAttributes = new ArrayList();
     List keyReferences = new ArrayList();
     Map verbosity = new HashMap();
