@@ -1156,7 +1156,7 @@
   </target>
 
 
-  <target name="test-webapp" depends="compile-test, build-db-testmodel, build-testable-webapp, release-webapp"
+  <target name="test-webapp" depends="compile-test, build-testable-webapp"
           description="perform JUnit tests on web application" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
@@ -1172,7 +1172,6 @@
       </batchtest>
     </junit>
 
-    <antcall target="remove-webapp"/>
     <antcall target="test-report"/>
   </target>
 
