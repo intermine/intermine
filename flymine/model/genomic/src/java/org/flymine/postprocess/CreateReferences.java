@@ -21,6 +21,8 @@ import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * Fill in additional references/collections in genomic model
  *
@@ -29,6 +31,8 @@ import org.flymine.model.genomic.*;
  */
 public class CreateReferences
 {
+    private static final Logger LOG = Logger.getLogger(CreateReferences.class);
+
     protected ObjectStoreWriter osw;
 
     /**
@@ -47,33 +51,29 @@ public class CreateReferences
         insertReferences(Chromosome.class, Transcript.class, Relation.class, "transcripts");
         insertReferences(Chromosome.class, Exon.class, Relation.class, "exons");
         insertReferences(Chromosome.class, Gene.class, Relation.class, "genes");
-        insertReferences(Chromosome.class, Contig.class, Relation.class, "contigs");
-        insertReferences(Chromosome.class, Supercontig.class, Relation.class, "supercontigs");
-        insertReferences(Chromosome.class, ChromosomeBand.class, Relation.class, "chromosomeBands");
-        
-        insertReferences(ChromosomeBand.class, Transcript.class, Relation.class, "transcripts");
-        insertReferences(ChromosomeBand.class, Exon.class, Relation.class, "exons");
-        insertReferences(ChromosomeBand.class, Gene.class, Relation.class, "genes");
-        insertReferences(ChromosomeBand.class, Contig.class, Relation.class, "contigs");
-        insertReferences(ChromosomeBand.class, Supercontig.class, Relation.class, "supercontigs");
-        
-        insertReferences(Supercontig.class, Transcript.class, Relation.class, "transcripts");
-        insertReferences(Supercontig.class, Exon.class, Relation.class, "exons");
-        insertReferences(Supercontig.class, Gene.class, Relation.class, "genes");
-        
-        insertReferences(Contig.class, Transcript.class, Relation.class, "transcripts");
-        insertReferences(Contig.class, Gene.class, Relation.class, "genes");
-        insertReferences(Contig.class, Exon.class, Relation.class, "exons");
-        
+//         insertReferences(Chromosome.class, Contig.class, Relation.class, "contigs");
+//         insertReferences(Chromosome.class, Supercontig.class, Relation.class, "supercontigs");
+//         insertReferences(Chromosome.class, ChromosomeBand.class, Relation.class, "chromosomeBands");
+     
+//         insertReferences(ChromosomeBand.class, Transcript.class, Relation.class, "transcripts");
+//         insertReferences(ChromosomeBand.class, Exon.class, Relation.class, "exons");
+//         insertReferences(ChromosomeBand.class, Gene.class, Relation.class, "genes");
+//         insertReferences(ChromosomeBand.class, Contig.class, Relation.class, "contigs");
+//         insertReferences(ChromosomeBand.class, Supercontig.class, Relation.class, "supercontigs");
+     
+//         insertReferences(Supercontig.class, Transcript.class, Relation.class, "transcripts");
+//         insertReferences(Supercontig.class, Exon.class, Relation.class, "exons");
+//         insertReferences(Supercontig.class, Gene.class, Relation.class, "genes");
+     
+//         insertReferences(Contig.class, Transcript.class, Relation.class, "transcripts");
+//         insertReferences(Contig.class, Gene.class, Relation.class, "genes");
+//         insertReferences(Contig.class, Exon.class, Relation.class, "exons");
+     
         insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
 
-        osw.flushObjectById();
-        osw.getObjectStore().flushObjectById();
         // special case
         insertGeneExonReferences("exons");
-        osw.flushObjectById();
-        osw.getObjectStore().flushObjectById();
     }
 
     /**
@@ -95,6 +95,8 @@ public class CreateReferences
         // results will be ordered by object
         osw.beginTransaction();
 
+        int count = 0;
+        
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             InterMineObject thisObject = (InterMineObject) rr.get(0);
@@ -114,8 +116,14 @@ public class CreateReferences
                     // clone so we don't change the ObjectStore cache
                     InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
 
-                    TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-                    osw.store(tempObject);
+                    try {
+                        TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+                        count += newCollection.size();
+                        osw.store(tempObject);
+                    } catch (IllegalAccessException e) {
+                        LOG.error("Object with ID: " + tempObject.getId()
+                                  + " has no " + collectionFieldName + " field");
+                    }
                 }
 
                 newCollection = new ArrayList();
@@ -129,10 +137,17 @@ public class CreateReferences
         if (lastObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-
-            osw.store(tempObject);
+            try {
+                TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
+                count += newCollection.size();
+                osw.store(tempObject);
+            } catch (IllegalAccessException e) {
+                LOG.error("Object with ID: " + tempObject.getId()
+                          + " has no " + collectionFieldName + " field");
+            }
         }
+        LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
+                 + subjectClass.getName() + " via the " + collectionFieldName + " field");
         osw.commitTransaction();
     }
 
