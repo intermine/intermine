@@ -78,7 +78,7 @@ public class GFF3Converter
         this.orgAbbrev = orgAbbrev;
         this.tgtModel = tgtModel;
         this.handler = handler;
-        this.itemFactory = new ItemFactory(tgtModel, "0_");
+        this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         this.organism = getOrganism();
         this.infoSource = createItem("InfoSource");
