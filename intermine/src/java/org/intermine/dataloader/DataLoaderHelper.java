@@ -62,11 +62,24 @@ public class DataLoaderHelper
      * @param fd FieldDescriptor for the field
      * @param src1 the first Source
      * @param src2 the second Source
-     * @return true if src1 is of higher priority than src2, false if src2 is of higher
-     * priority than src1 or null if the class is not in the file, or both of the sources are not
-     * listed for that class
+     * @return a positive integer if src1 is of higher priority than src2, a negative integer if
+     * src2 is of higher priority than src1 or zero if the sources are equal.
+     * @throws IllegalArgumentException if the class is not in the file, or both of the sources
+     * are not listed for that class
      */
-    public static Boolean comparePriority(FieldDescriptor fd, Source src1, Source src2) {
+    public static int comparePriority(FieldDescriptor fd, Source src1, Source src2) {
+        if (src1.equals(src2)) {
+            return 0;
+        }
+        if (src1.getName().equals(src2.getName())) {
+            if (src1.getSkeleton() && (!src2.getSkeleton())) {
+                return -1;
+            } else if (src2.getSkeleton() && (!src1.getSkeleton())) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
         ClassDescriptor cld = fd.getClassDescriptor();
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Map descriptorSources = getDescriptors(cld.getModel());
@@ -75,9 +88,12 @@ public class DataLoaderHelper
             srcs = (List) descriptorSources.get(cldName);
         }
         if (srcs != null && srcs.contains(src1.getName()) && srcs.contains(src2.getName())) {
-            return new Boolean(srcs.indexOf(src1.getName()) < srcs.indexOf(src2.getName()));
+            return srcs.indexOf(src2.getName()) - srcs.indexOf(src1.getName());
         } else {
-            return null;
+            throw new IllegalArgumentException("Could not determine priorities for sources "
+                    + src1.getName() + " and " + src2.getName() + " for field "
+                    + fd.getClassDescriptor().getName() + "." + fd.getName()
+                    + " - is the config file set up correctly?");
         }
     }
 

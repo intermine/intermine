@@ -210,8 +210,9 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceB.setName("SourceB");
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("age");
-        assertEquals(new Boolean(true), DataLoaderHelper.comparePriority(fd, sourceA, sourceB));
-        assertEquals(new Boolean(false), DataLoaderHelper.comparePriority(fd, sourceB, sourceA));
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) < 0);
+        assertEquals(0, DataLoaderHelper.comparePriority(fd, sourceA, sourceA));
     }
 
     public void testComparePriorityClass() throws Exception {
@@ -221,8 +222,8 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceB.setName("SourceB");
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("fullTime");
-        assertEquals(new Boolean(true), DataLoaderHelper.comparePriority(fd, sourceB, sourceA));
-        assertEquals(new Boolean(false), DataLoaderHelper.comparePriority(fd, sourceA, sourceB));
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) < 0);
     }
 
     public void testComparePriorityMissing() throws Exception {
@@ -232,6 +233,10 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceB.setName("SourceB");
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
         FieldDescriptor fd = cld.getFieldDescriptorByName("name");
-        assertNull(DataLoaderHelper.comparePriority(fd, sourceA, sourceB));
+        try {
+            DataLoaderHelper.comparePriority(fd, sourceA, sourceB);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 }

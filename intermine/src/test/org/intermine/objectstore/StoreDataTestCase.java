@@ -108,12 +108,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             throw new Exception(e);
         }
 
-        Database db = DatabaseFactory.getDatabase("db.unittest");
-        java.sql.Connection con = db.getConnection();
+        //Database db = DatabaseFactory.getDatabase("db.unittest");
+        //java.sql.Connection con = db.getConnection();
+        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
         java.sql.Statement s = con.createStatement();
-        con.setAutoCommit(true);
+        //con.setAutoCommit(true);
         s.execute("vacuum analyze");
-        con.close();
+        ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
+        //con.close();
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
 

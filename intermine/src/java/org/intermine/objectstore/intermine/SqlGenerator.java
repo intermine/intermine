@@ -75,6 +75,17 @@ public class SqlGenerator
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
 
     /**
+     * Generates a query to retrieve a single object from the database, by id.
+     *
+     * @param id the id of the object to fetch
+     * @return a String suitable for passing to an SQL server
+     */
+    public static String generateQueryForId(Integer id) {
+        return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM FlyMineBusinessObject AS a1_ WHERE a1_.id"
+            + " = " + id.toString() + " LIMIT 2";
+    }
+
+    /**
      * Converts a Query object into an SQL String. To produce an SQL query that does not have
      * OFFSET and LIMIT clauses, set start to 0, and limit to Integer.MAX_VALUE.
      *

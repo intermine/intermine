@@ -82,8 +82,14 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see IntegrationWriter#store
      */
-    public abstract void store(FlyMineBusinessObject o, Source source)
-        throws ObjectStoreException;
+    public void store(FlyMineBusinessObject o, Source source, Source skelSource)
+            throws ObjectStoreException {
+        if (o == null) {
+            throw new NullPointerException("Object o should not be null");
+        }
+        store(o, source, skelSource, SOURCE);
+    }
+
 
     /**
      * Stores the given object in the objectstore. This method recurses into the object's fields
@@ -91,12 +97,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      *
      * @param o the object to store
      * @param source the data Source to which to attribute the data
+     * @param skelSource the data Source to which to attribute skeleton data
      * @param type the type of action required, from SOURCE, SKELETON, or FROM_DB
      * @return the FlyMineBusinessObject that was written to the database
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    protected abstract FlyMineBusinessObject store(FlyMineBusinessObject o, Source source, int type)
-        throws ObjectStoreException;
+    protected abstract FlyMineBusinessObject store(FlyMineBusinessObject o, Source source,
+            Source skelSource, int type) throws ObjectStoreException;
 
     /**
      * Copies the value of the field given from the source object into the destination object.
@@ -104,6 +111,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param srcObj the source object
      * @param dest the destination object
      * @param source the data Source to which to attribute the data
+     * @param skelSource the data Source to which to attribute skeleton data
      * @param field the FieldDescriptor describing the field to copy
      * @param type the type of copy required - SOURCE for a full copy, SKELETON for a minimal copy
      * that guarantees limited recursion, and FROM_DB to indicate that the source object originated
@@ -112,8 +120,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws ObjectStoreException if an error ocurs in the underlying objectstore
      */
     protected void copyField(FlyMineBusinessObject srcObj, FlyMineBusinessObject dest,
-            Source source, FieldDescriptor field, int type) throws IllegalAccessException,
-    ObjectStoreException {
+            Source source, Source skelSource, FieldDescriptor field, int type)
+            throws IllegalAccessException, ObjectStoreException {
         String fieldName = field.getName();
         if (!"id".equals(fieldName)) {
             switch (field.relationType()) {
@@ -130,7 +138,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                     TypeUtil.getFieldValue(srcObj, fieldName));
                         } else {
                             FlyMineBusinessObject target = store((FlyMineBusinessObject)
-                                    TypeUtil.getFieldValue(srcObj, fieldName), source, SKELETON);
+                                    TypeUtil.getFieldValue(srcObj, fieldName), source, skelSource,
+                                    SKELETON);
                             TypeUtil.setFieldValue(dest, fieldName, target);
                         }
                     }
@@ -156,7 +165,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         FlyMineBusinessObject target = null;
                         if (type == SOURCE) {
                             target = store((FlyMineBusinessObject)
-                                    TypeUtil.getFieldValue(srcObj, fieldName), source, SKELETON);
+                                    TypeUtil.getFieldValue(srcObj, fieldName), source, skelSource,
+                                    SKELETON);
                         } else {
                             target = (FlyMineBusinessObject) TypeUtil.getFieldValue(srcObj,
                                     fieldName);
@@ -188,9 +198,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             TypeUtil.setFieldValue(colObj, reverseRef.getName(), dest);
                             if (type == FROM_DB) {
                                 store(colObj);
-                                store(colObj, source, FROM_DB);
+                                store(colObj, source, skelSource, FROM_DB);
                             } else {
-                                store(colObj, source, SKELETON);
+                                store(colObj, source, skelSource, SKELETON);
                             }
                         }
                     }
@@ -206,7 +216,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             if (type == FROM_DB) {
                                 destCol.add(colObj);
                             } else {
-                                destCol.add(store(colObj, source, SKELETON));
+                                destCol.add(store(colObj, source, skelSource, SKELETON));
                             }
                         }
                     }

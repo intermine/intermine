@@ -58,7 +58,7 @@
 
   <!-- build model -->
   <target name="build-model" depends="prepare" >
-    <ant antfile="build-model.xml" target="build-model-from-xml">
+    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
       <property name="model.src" value="${model}"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
@@ -82,7 +82,7 @@
 
   <!-- create database -->
   <target name="build-db" depends="build-model">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
       <property name="db.name" value="db.tutorial"/>
@@ -112,7 +112,7 @@
 
   <target name="jar-model" depends="build-model"
           description="create a jar of the model">
-    <ant antfile="build-model.xml" target="jar">
+    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>    

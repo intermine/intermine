@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.query.Query;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.xml.lite.LiteRenderer;
@@ -51,6 +53,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected static final int SEQUENCE_MULTIPLE = 100;
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
+    protected Statement batch = null;
 
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
@@ -74,7 +77,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     /**
      * @see ObjectStoreFlyMineImpl#getConnection
      */
-    protected Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         synchronized (conn) {
             while (connInUse) {
                 /*Exception trace = new Exception();
@@ -108,7 +111,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     /**
      * @see ObjectStoreFlyMineImpl#releaseConnection
      */
-    protected void releaseConnection(Connection c) {
+    public void releaseConnection(Connection c) {
         if (c == conn) {
             synchronized (conn) {
                 connInUse = false;
@@ -203,17 +206,24 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             String xml = LiteRenderer.render(o, model);
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
-            boolean alreadyThere = getObjectById(o.getId()) != null;
-            conn = getConnection();
-            Statement s = conn.createStatement();
+            Statement s = null;
+            if (batch != null) {
+                s = batch;
+            } else {
+                conn = getConnection();
+                s = conn.createStatement();
+                if (wasInTransaction) {
+                    batch = s;
+                }
+            }
             
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
-                if (alreadyThere) {
-                    s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
-                }
+                s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
+                //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
+                //        + tableName + " WHERE id = " + o.getId());
                 StringBuffer sql = new StringBuffer("INSERT INTO ")
                     .append(tableName)
                     .append(" (OBJECT");
@@ -254,6 +264,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                 indirectSql.append(inCollection.getId().toString())
                                     .append(");");
                                 s.addBatch(indirectSql.toString());
+                                //System//.out.println(getModel().getName() + ": Batched SQL:  "
+                                //        + indirectSql.toString());
                             }
                         }
                     } else {
@@ -269,9 +281,14 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 sql.append(");");
 
                 s.addBatch(sql.toString());
+                //System//.out.println(getModel().getName() + ": Batched SQL:  " + sql);
             }
 
-            s.executeBatch();
+            if (batch == null) {
+                s.executeBatch();
+                //System//.out.println(getModel().getName()
+                //        + ": Executed SQL batch at end of store()");
+            }
             invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
@@ -300,6 +317,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 c = getConnection();
                 Statement s = c.createStatement();
                 ResultSet r = s.executeQuery("SELECT nextval('serial');");
+                //System//.out.println(getModel().getName()
+                //        + ": Executed SQL: SELECT nextval('serial');");
                 if (!r.next()) {
                     throw new SQLException("No result while attempting to get a unique id");
                 }
@@ -334,17 +353,31 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
 
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
-            conn = getConnection();
-            Statement s = conn.createStatement();
-            
+            Statement s = null;
+            if (batch != null) {
+                s = batch;
+            } else {
+                conn = getConnection();
+                s = conn.createStatement();
+                if (wasInTransaction) {
+                    batch = s;
+                }
+            }
+ 
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
                 s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
+                //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
+                //        + tableName + " WHERE id = " + o.getId());
             }
 
-            s.executeBatch();
+            if (batch == null) {
+                s.executeBatch();
+                //System//.out.println(getModel().getName()
+                //        + ": Executed SQL batch at end of delete()");
+            }
             invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while deleting", e);
@@ -395,6 +428,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * @see ObjectStoreWriter#commitTransaction
      */
     public void commitTransaction() throws ObjectStoreException {
+        flushBatch();
         Connection c = null;
         try {
             c = getConnection();
@@ -415,6 +449,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * @see ObjectStoreWriter#abortTransaction
      */
     public void abortTransaction() throws ObjectStoreException {
+        flushBatch();
         Connection c = null;
         try {
             c = getConnection();
@@ -429,6 +464,54 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             throw new ObjectStoreException("Error aborting transaction", e);
         } finally {
             releaseConnection(c);
+        }
+    }
+
+    /**
+     * @see ObjectStoreFlyMineImpl#execute(Query, int, int, boolean)
+     *
+     * This method is overridden in order to flush batches properly before the read.
+     */
+    public List execute(Query q, int start, int limit, boolean optimise)
+        throws ObjectStoreException {
+        flushBatch();
+        return super.execute(q, start, limit, optimise);
+    }
+    
+    /**
+     * @see ObjectStoreFlyMineImpl#count
+     * 
+     * This method is overridden in order to flush batches properly before the read.
+     */
+    public int count(Query q) throws ObjectStoreException {
+        flushBatch();
+        return super.count(q);
+    }
+
+    /**
+     * @see ObjectStoreFlyMineImpl#internalGetObjectById
+     *
+     * This method is overridden in order to flush matches properly before the read.
+     */
+    protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+        flushBatch();
+        return super.internalGetObjectById(id);
+    }
+
+    private void flushBatch() throws ObjectStoreException {
+        if (batch != null) {
+            Connection conn = null;
+            try {
+                conn = getConnection();
+                batch.executeBatch();
+                //System//.out.println(getModel().getName()
+                //        + ": Executed SQL batch in flushBatch()");
+                batch = null;
+            } catch (SQLException e) {
+                throw new ObjectStoreException("Error while flushing a batch", e);
+            } finally {
+                releaseConnection(conn);
+            }
         }
     }
 }

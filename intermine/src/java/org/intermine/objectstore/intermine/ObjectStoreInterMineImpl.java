@@ -10,6 +10,8 @@ package org.flymine.objectstore.flymine;
  *
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -24,6 +26,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
@@ -34,7 +37,9 @@ import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.precompute.QueryOptimiser;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.xml.lite.LiteParser;
 
+import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
 
 /**
@@ -71,7 +76,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @return a java.sql.Connection
      * @throws SQLException if there is a problem with that
      */
-    protected Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         Connection retval = db.getConnection();
         if (!retval.getAutoCommit()) {
             retval.setAutoCommit(true);
@@ -84,7 +89,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      *
      * @param c a Connection
      */
-    protected void releaseConnection(Connection c) {
+    public void releaseConnection(Connection c) {
         if (c != null) {
             try {
                 if (!c.getAutoCommit()) {
@@ -157,6 +162,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             c = getConnection();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
 
+            //System//.out.println(getModel().getName() + ": Executed SQL: EXPLAIN " + sql);
+
             if (explain.getTime() > maxTime) {
                 throw (new ObjectStoreException("Estimated time to run query(" + explain.getTime()
                                                 + ") greater than permitted maximum ("
@@ -165,6 +172,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             }
 
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             return objResults;
         } catch (SQLException e) {
@@ -190,6 +198,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             }
             c = getConnection();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
+            //System//.out.println(getModel().getName() + ": Executed SQL: EXPLAIN " + sql);
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
                     (int) explain.getEstimatedRows());
         } catch (SQLException e) {
@@ -198,6 +207,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             releaseConnection(c);
         }
     }
+
     /**
      * Runs a COUNT(*) for the given query, returning the number of rows the query will produce.
      *
@@ -215,6 +225,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             c = getConnection();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
             sqlResults.next();
             return sqlResults.getInt(1);
         } catch (SQLException e) {
@@ -244,6 +255,48 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             if ((writer != this) && (writer != except)) {
                 writer.flushObjectById();
             }
+        }
+    }
+
+    /**
+     * @see ObjectStoreAbstractImpl#internalGetObjectById
+     *
+     * This method is overridden in order to improve the performance of the operation - this
+     * implementation does not bother with the EXPLAIN call to the underlying SQL database.
+     */
+    protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+        String sql = SqlGenerator.generateQueryForId(id);
+        String currentColumn = null;
+        Connection c = null;
+        try {
+            c = getConnection();
+            ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
+            if (sqlResults.next()) {
+                currentColumn = sqlResults.getString("a1_");
+                FlyMineBusinessObject retval = LiteParser.parse(new ByteArrayInputStream(
+                            currentColumn.getBytes()), this);
+                if (sqlResults.next()) {
+                    throw new ObjectStoreException("More than one object in the database has this"
+                            + " primary key");
+                }
+                return retval;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);
+        } catch (IOException e) {
+            throw new ObjectStoreException("Impossible IO error reading from ByteArrayInputStream"
+                    + " while converting results: " + currentColumn, e);
+        } catch (SAXException e) {
+            throw new ObjectStoreException("Illegal data in OBJECT field in database while"
+                    + " converting results: " + currentColumn, e);
+        } catch (ClassNotFoundException e) {
+            throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
+                    + " while converting results: " + currentColumn, e);
+        } finally {
+            releaseConnection(c);
         }
     }
 }

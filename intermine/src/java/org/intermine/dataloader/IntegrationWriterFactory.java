@@ -10,11 +10,9 @@ package org.flymine.dataloader;
  *
  */
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.PropertiesUtil;
 
@@ -52,34 +50,27 @@ public class IntegrationWriterFactory
             throw new ObjectStoreException(alias + " does not have an integration class specified"
                                            + " (check properties file)");
         }
-        String writerAlias = props.getProperty("osw");
-        if (writerAlias == null) {
-            throw new ObjectStoreException(alias + " does not have an osw alias specified"
-                                           + " (check properties file)");
-        }
-
-        ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
 
         // now build IntegrationWriter using datasource name and ObjectStoreWriter
 
-        IntegrationWriterAbstractImpl iw = null;
+        props.setProperty("alias", alias);
+        IntegrationWriter iw = null;
         try {
             Class integrationWriterClass = Class.forName(integrationWriterClassName);
-            Constructor c = integrationWriterClass.getConstructor(
-                    new Class[] {ObjectStoreWriter.class });
-            iw = (IntegrationWriterAbstractImpl) c.newInstance(new Object[] {writer });
+            Method m = integrationWriterClass.getMethod("getInstance", new Class[]
+                    {Properties.class});
+            iw = (IntegrationWriter) m.invoke(null, new Object[] {props});
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified IntegrationWriter class '"
                                            + integrationWriterClassName
-                                           + "' for " + alias + " (check properties file)");
+                                           + "' for " + alias + " (check properties file)", e);
         } catch (NoSuchMethodException e) {
-            throw new ObjectStoreException("Cannot find appropriate constructor for "
+            throw new ObjectStoreException("Cannot find getInstance method for "
                                            + "IntegrationWriter: " + integrationWriterClassName 
-                                           + "(ObjectStoreWriter)"
-                                           + " - check properties file");
+                                           + " - check properties file", e);
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate IntegrationWriter "
-                                           + "class: " + integrationWriterClassName);
+                                           + "class: " + integrationWriterClassName, e);
         }
         return iw;
     }

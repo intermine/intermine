@@ -32,6 +32,7 @@ import java.lang.reflect.*;
 public class OneTimeTestCase extends TestCase
 {
     private static Method oneTimeTearDownMethod = null;
+    private static Exception exception = null;
     
     /**
      * Constructor.
@@ -46,13 +47,20 @@ public class OneTimeTestCase extends TestCase
      */
     public void setUp() throws Exception {
         super.setUp();
-        if (oneTimeTearDownMethod == null) {
-            // This is the first time for this test class.
-            Class subjectClass = this.getClass();
-            Method OTSetUp = subjectClass.getMethod("oneTimeSetUp", new Class[] {});
-            OTSetUp.invoke(null, new Object[] {});
-            oneTimeTearDownMethod = subjectClass.getMethod("oneTimeTearDown", new Class[] {});
-            System.out.println("Setting one-time teardown method to " + oneTimeTearDownMethod);
+        if ((oneTimeTearDownMethod == null) && (exception == null)) {
+            try {
+                // This is the first time for this test class.
+                Class subjectClass = this.getClass();
+                Method OTSetUp = subjectClass.getMethod("oneTimeSetUp", new Class[] {});
+                OTSetUp.invoke(null, new Object[] {});
+                oneTimeTearDownMethod = subjectClass.getMethod("oneTimeTearDown", new Class[] {});
+                System.out.println("Setting one-time teardown method to " + oneTimeTearDownMethod);
+            } catch (Exception e) {
+                exception = e;
+                throw e;
+            }
+        } else if (exception != null) {
+            throw exception;
         }
     }
 

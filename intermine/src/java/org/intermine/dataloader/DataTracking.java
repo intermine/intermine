@@ -10,8 +10,9 @@ package org.flymine.dataloader;
  *
  */
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
@@ -19,29 +20,28 @@ import org.flymine.model.datatracking.Field;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.query.Results;
-import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.QueryReference;
-import org.flymine.objectstore.query.QueryObjectReference;
-import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.ConstraintSet;
-import org.flymine.objectstore.query.ConstraintOp;
+import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.util.CacheMap;
 
 /**
  * Class providing API for datatracking
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
+ * @author Matthew Wakeling
  */
 public class DataTracking
 {
+    private static HashMap dataTrackerToCache = new HashMap();
+
     /**
-     * Retrieve the Source for a specified field of an object stored in the database
+     * Retrieve the Source for a specified field of an object stored in the database.
      *
      * @param obj the object
      * @param field the name of the field
@@ -51,40 +51,63 @@ public class DataTracking
      */
     public static Source getSource(FlyMineBusinessObject obj, String field, ObjectStore os)
         throws ObjectStoreException {
-        // select source from source, field where field.source contains source
-        // and field.name = name and field.objectId = objectId
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Source.class);
-        QueryClass qc2 = new QueryClass(Field.class);
-        QueryReference qr = new QueryObjectReference(qc2, "source");
-        ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc1);
-        QueryField qf1 = new QueryField(qc2, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(qf1,
-                                                    ConstraintOp.EQUALS,
-                                                    new QueryValue(field));
-        QueryField qf2 = new QueryField(qc2, "objectId");
-        SimpleConstraint sc2 = new SimpleConstraint(qf2,
-                                                    ConstraintOp.EQUALS,
-                                                    new QueryValue(obj.getId()));
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(cc);
-        cs.addConstraint(sc1);
-        cs.addConstraint(sc2);
-        q.setConstraint(cs);
-        q.addFrom(qc1);
-        q.addFrom(qc2);
-        q.addToSelect(qc1);
+        Field fieldObj = getField(obj, field, os);
+        if (fieldObj != null) {
+            return fieldObj.getSource();
+        }
+        return null;
+    }
 
-        Results res = os.execute(q);
-        if (res.size() == 0) {
-            throw new ObjectStoreException("No source for field '" + field
-                                           + "' in object with id '" + obj.getId() + "'");
+    /**
+     * Retrieve the Field for a specified fieldname of an object stored in the database.
+     *
+     * @param obj the FlyMineBusinessObject
+     * @param field the name of the field
+     * @param os the ObjectStore used for datatracking
+     * @return the Field
+     * @throws ObjectStoreException if an error occurs
+     */
+    public static Field getField(FlyMineBusinessObject obj, String field, ObjectStore os)
+            throws ObjectStoreException {
+        if (obj.getId() != null) {
+            Object cacheId = os;
+            if (cacheId instanceof ObjectStoreWriter) {
+                cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
+            }
+            Map cache = (Map) dataTrackerToCache.get(cacheId);
+            if (cache == null) {
+                cache = new CacheMap();
+                dataTrackerToCache.put(cacheId, cache);
+            }
+            Map cachedObject = (Map) cache.get(obj.getId());
+            if (cachedObject == null) {
+                cachedObject = new HashMap();
+                Query q = new Query();
+                QueryClass qc1 = new QueryClass(Field.class);
+                QueryField qf = new QueryField(qc1, "objectId");
+                SimpleConstraint sc = new SimpleConstraint(qf,
+                        ConstraintOp.EQUALS, new QueryValue(obj.getId()));
+                q.setConstraint(sc);
+                q.addFrom(qc1);
+                q.addToSelect(qc1);
+
+                SingletonResults res = new SingletonResults(q, os);
+                Iterator resIter = res.iterator();
+                while (resIter.hasNext()) {
+                    Field fieldObj = (Field) resIter.next();
+                    String fieldName = fieldObj.getName();
+                    if (cachedObject.containsKey(fieldName)) {
+                        throw new ObjectStoreException("Found more than one source for field '"
+                                + field + "' in object with id '" + obj.getId() + "'");
+                    }
+                    cachedObject.put(fieldName, fieldObj);
+                }
+                cache.put(obj.getId(), cachedObject);
+            }
+            return (Field) cachedObject.get(field);
+        } else {
+            return null;
         }
-        if (res.size() > 1) {
-            throw new ObjectStoreException("Found more than one source for field '" + field
-                                           + "' in object with id '" + obj.getId() + "'");
-        }
-        return (Source) ((ResultsRow) res.get(0)).get(0);
     }
 
     /**
@@ -92,31 +115,42 @@ public class DataTracking
      * 
      * @param obj the object
      * @param field the name of the field
-     * @param source the Source of the field
+     * @param source the Source of the field - this should be the version already present in the
+     *                data tracker
      * @param osw the ObjectStoreWriter used for data tracking
      * @throws ObjectStoreException if an error occurs
      */
     public static void setSource(FlyMineBusinessObject obj, String field, Source source,
-                                 ObjectStoreWriter osw) throws ObjectStoreException {
+            ObjectStoreWriter osw) throws ObjectStoreException {
         if (obj.getId() == null) {
             throw new IllegalArgumentException("obj id is null");
         }
         if (source.getId() == null) {
             throw new IllegalArgumentException("source id is null");
         }
+        Field fieldObj = getField(obj, field, osw);
+        
         Field f = new Field();
         f.setObjectId(obj.getId());
         f.setName(field);
-        Set s = new HashSet();
-        s.add("objectId");
-        s.add("name");
-        Field existingField = (Field) osw.getObjectByExample(f, s);
-        if (existingField == null) {
-            f.setSource(source);
-            osw.store(f);
-        } else {
-            existingField.setSource(source);
-            osw.store(existingField);
+        if (fieldObj != null) {
+            f.setId(fieldObj.getId());
+        }
+        f.setSource(source);
+        osw.store(f);
+        
+        Object cacheId = osw;
+        if (cacheId instanceof ObjectStoreWriter) {
+            cacheId = ((ObjectStoreWriter) cacheId).getObjectStore();
+        }
+        Map cache = (Map) dataTrackerToCache.get(cacheId);
+        if (cache == null) {
+            cache = new CacheMap();
+            dataTrackerToCache.put(cacheId, cache);
+        }
+        Map cachedObject = (Map) cache.get(obj.getId());
+        if (cachedObject != null) {
+            cachedObject.put(field, f);
         }
     }
 }

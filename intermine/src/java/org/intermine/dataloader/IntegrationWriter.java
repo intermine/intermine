@@ -21,6 +21,7 @@ import org.flymine.objectstore.ObjectStoreException;
  * a mapping tool specific implementation of ObjectStoreWriter.
  *
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
 
 public interface IntegrationWriter extends ObjectStoreWriter
@@ -33,7 +34,9 @@ public interface IntegrationWriter extends ObjectStoreWriter
      *
      * @param o the object to store
      * @param source the data Source to which to attribute the data
+     * @param skelSource the data Source to which to attribute skeleton data
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    public void store(FlyMineBusinessObject o, Source source) throws ObjectStoreException;
+    public void store(FlyMineBusinessObject o, Source source, Source skelSource)
+        throws ObjectStoreException;
 }

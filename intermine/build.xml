@@ -352,7 +352,7 @@
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="datatracking"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.unittest"/>
+      <property name="db.name" value="db.datatrackingtest"/>
     </ant>
   </target>
   
@@ -610,10 +610,11 @@
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
-          <exclude name="org/flymine/dataloader/DataLoaderTest*" />
-          <exclude name="org/flymine/dataloader/XmlDataLoaderTest*" />
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
+          <exclude name="org/flymine/dataloader/DataLoaderTest.class" />
+          <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
+          <exclude name="org/flymine/dataloader/DataLoaderHelperTest.class" />
         </fileset>
       </batchtest>
     </junit>

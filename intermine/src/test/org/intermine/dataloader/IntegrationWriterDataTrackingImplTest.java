@@ -14,33 +14,41 @@ import java.util.Collections;
 import junit.framework.Test;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
-import org.flymine.testing.OneTimeTestCase;
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.StoreDataTestCase;
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.StoreDataTestCase;
+import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.testing.OneTimeTestCase;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 
-public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
+public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
 {
     protected static ObjectStore os;
-    protected static IntegrationWriterSingleSourceImpl iw;
+    protected static IntegrationWriterDataTrackingImpl iw;
 
-    public IntegrationWriterSingleSourceImplTest(String arg) {
+    public IntegrationWriterDataTrackingImplTest(String arg) {
         super(arg);
     }
 
     public static Test suite() {
-        return OneTimeTestCase.buildSuite(IntegrationWriterSingleSourceImplTest.class);
+        return OneTimeTestCase.buildSuite(IntegrationWriterDataTrackingImplTest.class);
     }
 
     public void setUp() throws Exception {
@@ -48,20 +56,87 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         strictTestQueries = false;
         removeDataFromStore();
         storeData();
-        assertTrue(!iw.isInTransaction());
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
+        removeDataFromTracker();
     }
 
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
-        //iw = (IntegrationWriterSingleSourceImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
-        iw = new IntegrationWriterSingleSourceImpl(writer);
+        //iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+        iw = new IntegrationWriterDataTrackingImpl(writer, ObjectStoreWriterFactory.getObjectStoreWriter("osw.datatrackingtest"));
         os = iw.getObjectStore();
     }
 
+    public static void storeData() throws Exception {
+        System.out.println("Storing data");
+        if (iw == null) {
+            throw new NullPointerException("iw must be set before trying to store data");
+        }
+        long start = new Date().getTime();
+        Source source = new Source();
+        source.setName("storedata");
+        source.setSkeleton(false);
+        iw.getDataTracker().store(source);
+        Source skelSource = new Source();
+        skelSource.setName("storedata");
+        skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
+        try {
+            iw.beginTransaction();
+            iw.getDataTracker().beginTransaction();
+            Iterator iter = data.entrySet().iterator();
+            while (iter.hasNext()) {
+                FlyMineBusinessObject o = (FlyMineBusinessObject) ((Map.Entry) iter.next())
+                    .getValue();
+                iw.store(o, source, skelSource);
+            }
+            iw.commitTransaction();
+            iw.getDataTracker().commitTransaction();
+        } catch (Exception e) {
+            iw.abortTransaction();
+            iw.getDataTracker().abortTransaction();
+            throw new Exception(e);
+        }
+
+        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
+        java.sql.Statement s = con.createStatement();
+        s.execute("vacuum analyze");
+        ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
+    }
+
+    public static void removeDataFromTracker() throws Exception {
+        System.out.println("Removing data from tracker");
+        long start = new Date().getTime();
+        ObjectStoreWriter dataTracker = iw.getDataTracker();
+        if (dataTracker == null) {
+            throw new NullPointerException("writer must be set before trying to remove data");
+        }
+        try {
+            dataTracker.beginTransaction();
+            Query q = new Query();
+            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            Set dataToRemove = new SingletonResults(q, dataTracker);
+            Iterator iter = dataToRemove.iterator();
+            while (iter.hasNext()) {
+                dataTracker.delete((FlyMineBusinessObject) iter.next());
+            }
+            dataTracker.commitTransaction();
+        } catch (Exception e) {
+            dataTracker.abortTransaction();
+            throw e;
+        }
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from tracker");
+    }
+
+
+
+    
     // Not doing the Query tests here
     public void executeTest(String type) throws Exception {
     }
@@ -77,9 +152,11 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
         iw.store(c, source, skelSource);  // method we are testing
 
@@ -119,11 +196,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
-        iw.store(c, source, skelSource); // method we are testing
+        iw.store(c, source, skelSource);  // method we are testing
 
         Company rc = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
         assertNotNull("Object from db should not be null", rc);
@@ -147,9 +226,11 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
         {
             Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -197,6 +278,14 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertEquals(rCEOA, rCompanyA.getCEO());
         assertEquals(rCEOB, rCompanyB.getCEO());
         
+        Source source2 = new Source();
+        source2.setName("testsource2");
+        source2.setSkeleton(false);
+        iw.getDataTracker().store(source2);
+        Source skelSource2 = new Source();
+        skelSource2.setName("testsource2");
+        skelSource2.setSkeleton(true);
+        iw.getDataTracker().store(skelSource2);
         {
             Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
             Address a = new Address();
@@ -217,7 +306,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
             ceo.setAddress(a2);
 
 
-            iw.store(c, source, skelSource); // method we are testing
+            iw.store(c, source2, skelSource2); // method we are testing
             //          CompanyA ------- CEOA            CompanyA --.   - CEOA
             // Change                             to                 \
             //          CompanyB ------- CEOB            CompanyB -   `-- CEOB
@@ -249,9 +338,11 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
         iw.store(c, source, skelSource); // method we are testing
 
@@ -292,11 +383,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
-        iw.store(e, source, skelSource); // method we are testing
+        iw.store(e, source, skelSource);  // method we are testing
 
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
@@ -330,11 +423,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
-        iw.store(e, source, skelSource); // method we are testing
+        iw.store(e, source, skelSource);  // method we are testing
 
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
@@ -373,11 +468,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
-        iw.store(d, source, skelSource); // method we are testing
+        iw.store(d, source, skelSource);  // method we are testing
 
         Department rd = (Department) iw.getObjectByExample(d, Collections.singleton("name"));
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
@@ -413,11 +510,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
+        iw.getDataTracker().store(skelSource);
 
-        iw.store(con, source, skelSource); // method we are testing
+        iw.store(con, source, skelSource);  // method we are testing
 
         Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
         Contractor rcon = (Contractor) iw.getObjectByExample(con, Collections.singleton("name"));
@@ -427,6 +526,14 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertTrue(rca.getContractors().contains(rcon));
         assertTrue(rcon.getCompanys().contains(rca));
 
+        Source source2 = new Source();
+        source2.setName("testsource2");
+        source2.setSkeleton(false);
+        iw.getDataTracker().store(source2);
+        Source skelSource2 = new Source();
+        skelSource2.setName("testsource2");
+        skelSource2.setSkeleton(true);
+        iw.getDataTracker().store(skelSource2);
 
         Address companyBAddress = new Address();
         Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -436,7 +543,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         con.addCompanys(companyB);
         companyB.addContractors(con);
 
-        iw.store(con, source, skelSource);
+        iw.store(con, source2, skelSource2);
 
         rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
         Company rcb = (Company) iw.getObjectByExample(companyB, Collections.singleton("name"));
@@ -497,6 +604,29 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         iw.store(conC);
         iw.store(conD);
 
+        Source source = new Source();
+        source.setName("testsource");
+        source.setSkeleton(false);
+        iw.getDataTracker().store(source);
+
+        ObjectStoreWriter dataTracker = iw.getDataTracker();
+        DataTracking.setSource(ca, "name", source, dataTracker);
+        DataTracking.setSource(ca, "address", source, dataTracker);
+        DataTracking.setSource(ca, "vatNumber", source, dataTracker);
+        DataTracking.setSource(ca, "cEO", source, dataTracker);
+        DataTracking.setSource(conA, "personalAddress", source, dataTracker);
+        DataTracking.setSource(conA, "businessAddress", source, dataTracker);
+        DataTracking.setSource(conA, "name", source, dataTracker);
+        DataTracking.setSource(conA, "seniority", source, dataTracker);
+        DataTracking.setSource(conC, "personalAddress", source, dataTracker);
+        DataTracking.setSource(conC, "businessAddress", source, dataTracker);
+        DataTracking.setSource(conC, "name", source, dataTracker);
+        DataTracking.setSource(conC, "seniority", source, dataTracker);
+        DataTracking.setSource(conD, "personalAddress", source, dataTracker);
+        DataTracking.setSource(conD, "businessAddress", source, dataTracker);
+        DataTracking.setSource(conD, "name", source, dataTracker);
+        DataTracking.setSource(conD, "seniority", source, dataTracker);
+
         // Now set up a standard store operation that will set off a object merge.
         Contractor con = new Contractor();
         Address companyAAddress = new Address();
@@ -508,12 +638,14 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
+        Source source2 = new Source();
+        source2.setName("testsource2");
+        source2.setSkeleton(false);
+        iw.getDataTracker().store(source2);
+        Source skelSource2 = new Source();
+        skelSource2.setName("testsource2");
+        skelSource2.setSkeleton(true);
+        iw.getDataTracker().store(skelSource2);
 
         // Make sure there are currently multiple copies of CompanyA and ContractorA.
         try {
@@ -528,7 +660,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         } catch (IllegalArgumentException e) {
         }
         
-        iw.store(con, source, skelSource); // method we are testing
+        iw.store(con, source2, skelSource2); // method we are testing
 
         // Get objects (and test that there is only one copy of everything).
         Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
@@ -549,7 +681,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertTrue(rconZ.getCompanys().contains(rca));
 
         conA.setCompanys(new ArrayList());
-        iw.store(conA, source, skelSource);
+        iw.store(conA, source2, skelSource2);
         Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         assertNotNull(rconA);
         assertTrue(rca.getContractors().contains(rconA));
@@ -564,11 +696,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source source = new Source();
         source.setName("testsource");
         source.setSkeleton(false);
+        iw.getDataTracker().store(source);
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
-        
-        iw.store(e, source, skelSource);
+        iw.getDataTracker().store(skelSource);
+
+        iw.store(e, source, skelSource);  // method we are testing
         
         FlyMineBusinessObject re = iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
@@ -579,3 +713,4 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertEquals(new Integer(876123), ((Manager) re).getSeniority());
     }
 }
+

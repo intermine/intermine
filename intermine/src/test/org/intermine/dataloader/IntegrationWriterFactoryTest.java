@@ -22,9 +22,14 @@ public class IntegrationWriterFactoryTest extends TestCase
         super(args);
     }
 
-    public void testValidAlias() throws Exception {
+    public void testValidSingleAlias() throws Exception {
         IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
         assertNotNull(iw);        
+    }
+
+    public void testValidMultiAlias() throws Exception {
+        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+        assertNotNull(iw);
     }
 
     public void testInvalidAlias() throws Exception {

@@ -15,20 +15,22 @@ package org.flymine.dataloader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
 import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
 
 /**
- * Simple implementation of IntegrationWriter - assumes that this is the only (or first) data source
- * to be written to the database.
+ * Simple implementation of IntegrationWriter. Always overrides whatever is already in the
+ * objectstore.
  *
  * @author Matthew Wakeling
  */
@@ -36,6 +38,25 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
 {
     protected static final Logger LOG = Logger.getLogger(IntegrationWriterSingleSourceImpl.class);
 
+    /**
+     * Creates a new instance of this class, given the properties defining it.
+     *
+     * @param props the Properties
+     * @return an instance of this class
+     * @throws ObjectStoreException sometimes
+     */
+    public static IntegrationWriterSingleSourceImpl getInstance(Properties props) 
+            throws ObjectStoreException {
+        String writerAlias = props.getProperty("osw");
+        if (writerAlias == null) {
+            throw new ObjectStoreException(props.getProperty("alias") + " does not have an osw"
+                    + " alias specified (check properties file)");
+        }
+
+        ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
+        return new IntegrationWriterSingleSourceImpl(writer);
+    }
+    
     /**
      * Constructs a new instance of IntegrationWriterSingleSourceImpl.
      *
@@ -46,19 +67,9 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriter#store(FlymineBusinessObject, Source)
+     * @see IntegrationWriterAbstractImpl#store(FlyMineBusinessObject, Source, Source, int)
      */
-    public void store(FlyMineBusinessObject o, Source source) throws ObjectStoreException {
-        if (o == null) {
-            throw new NullPointerException("Object o should not be null");
-        }
-        store(o, source, SOURCE);
-    }
-
-    /**
-     * @see IntegrationWriterAbstractImpl#store(FlyMineBusinessObject, Source, int)
-     */
-    protected FlyMineBusinessObject store(FlyMineBusinessObject o, Source source,
+    protected FlyMineBusinessObject store(FlyMineBusinessObject o, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         if (o == null) {
             return null;
@@ -80,15 +91,15 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         newObj.setId(newId);
 
         if (type == SKELETON) {
-            copyFields(o, newObj, source, type);
+            copyFields(o, newObj, source, skelSource, type);
         }
         objIter = equivalentObjects.iterator();
         while (objIter.hasNext()) {
             FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
-            copyFields(obj, newObj, source, FROM_DB);
+            copyFields(obj, newObj, source, skelSource, FROM_DB);
         }
         if (type == SOURCE) {
-            copyFields(o, newObj, source, type);
+            copyFields(o, newObj, source, skelSource, type);
         }
         store(newObj);
  
@@ -101,13 +112,13 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     private void copyFields(FlyMineBusinessObject srcObj, FlyMineBusinessObject dest,
-            Source source, int type) throws ObjectStoreException {
+            Source source, Source skelSource, int type) throws ObjectStoreException {
         try {
             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(srcObj.getClass());
             Iterator fieldIter = fieldDescriptors.entrySet().iterator();
             while (fieldIter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next()).getValue();
-                copyField(srcObj, dest, source, field, type);
+                copyField(srcObj, dest, source, skelSource, field, type);
             }
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
