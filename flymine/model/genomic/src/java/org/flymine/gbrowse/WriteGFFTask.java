@@ -339,7 +339,11 @@ public class WriteGFFTask extends Task
         }
 
         ArrayList flyMineIDs = new ArrayList();
-        flyMineIDs.add("FlyMineInternalID_" + bioEntity.getId());
+        if (bioEntity instanceof Exon && parent != null) {
+            flyMineIDs.add("FlyMineInternalID_" + parent.getId());
+        } else {
+            flyMineIDs.add("FlyMineInternalID_" + bioEntity.getId());
+        }
         attributes.put("FlyMineInternalID", flyMineIDs.clone());
         List allIds = (List) flyMineIDs.clone();
 
