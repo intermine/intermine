@@ -43,16 +43,20 @@ span.fly
     margin-bottom: 0px;
 }
 
-#headerTitle a
+#header h1
 {
     font-size: 1.6em;
     font-weight: bold;
-    color: #5C0075;
-    text-decoration: none;
     margin: 3px;
 }
 
-#headerSubtitle
+#header h1 a
+{
+    color: #5C0075;
+    text-decoration: none;
+}
+
+#header p
 {
     font-size: 1.2em;
     font-weight: normal;
