@@ -1,9 +1,12 @@
 package org.flymine.objectstore.ojb;
 
 import java.util.Date;
+import java.util.Vector;
+import java.util.Iterator;
 
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
+import org.apache.ojb.broker.metadata.*;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
@@ -237,8 +240,8 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
 
 
 
-
-
+    // Following tests throw exceptions containing ojb metadata values for various business
+    // objects.  Uncomment for debug/research purposes.
 
     /*
     public void testEmployee() throws Exception {
@@ -246,7 +249,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -255,7 +258,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -264,7 +267,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -273,7 +276,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -282,7 +285,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -291,7 +294,7 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr);
         throw (new Exception(s1.getStatement()));
     }
 
@@ -322,6 +325,12 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
 
     public void testCompanyGetExtentClasses() throws Exception {
         ClassDescriptor cld = dr.getDescriptorFor(Company.class);
+        outputData(cld);
+    }
+
+
+   public void testDepartmentGetExtentClasses() throws Exception {
+        ClassDescriptor cld = dr.getDescriptorFor(Department.class);
         outputData(cld);
     }
 
@@ -383,4 +392,5 @@ public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
         return retval;
     }
     */
+
 }
