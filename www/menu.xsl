@@ -23,11 +23,13 @@
         <ul>
           <xsl:for-each select="item">
             <li>
-              <!-- Display the link after alteration -->
-              <xsl:call-template name="menulink">
-                <xsl:with-param name="url" select="@url"/>
-                <xsl:with-param name="title" select="@title"/>
-              </xsl:call-template>
+              <nobr>
+                <!-- Display the link after alteration -->
+                <xsl:call-template name="menulink">
+                  <xsl:with-param name="url" select="@url"/>
+                  <xsl:with-param name="title" select="@title"/>
+                </xsl:call-template>
+              </nobr>
             </li>
           </xsl:for-each>
         </ul>
@@ -59,8 +61,16 @@
       </xsl:choose>
     </xsl:attribute>
 
-    <xsl:value-of select="$title"/>
+    <xsl:attribute name="class">
+      <xsl:choose>
+        <xsl:when test="substring(@url, string-length(@url)-2) = '.do'">
+          <xsl:text>webapplink</xsl:text>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:attribute>
     
+    <xsl:value-of select="$title"/>
+    <!--
     <xsl:choose>
       <xsl:when test="substring($url,string-length($url)-2) = '.do'">
         <xsl:text> </xsl:text>
@@ -71,6 +81,7 @@
         </img>
       </xsl:when>
     </xsl:choose>
+    -->
   </a>
 </xsl:template>
 
