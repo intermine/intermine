@@ -593,7 +593,7 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
-       merge-phenotype-model, merge-go-model, merge-so-model">
+       merge-phenotype-model, merge-go-model, merge-mage-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1204,7 +1204,7 @@
   <!-- MAGE PIPELINE -->
     <path id="mage.class.path">
       <path refid="models.class.path"/>
-      <pathelement location="${build.tmp}"/>
+      <pathelement location="${build.tmp}/mage"/>
       <fileset dir="${model}/mage/">
         <include name="lib/*.jar"/>
         <include name="resources/MAGE-ML.dtd"/>
@@ -1212,17 +1212,86 @@
     </path>
 
 
-  <target name="retrieve-mage-test" depends="prepare-test, compile-mage-java, convert-mage">
-    <copy file="/shared/data/mage/FlyChip_002.adf.clean.feb_04_current.txt.xml" tofile="${build.tmp}/test_mage.xml"/>
-    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}"/>
+  <target name="retrieve-mage" depends="prepare-test, compile-mage-java, convert-mage">
+    <!-- MAGEstk toolkit wants write access to source files (?) -->
+    <delete dir="${build}/tmp/mage"/>
+    <copy todir="${build.tmp}/mage">
+      <fileset dir="/shared/data/mage/"/>
+    </copy>
 
-    <java classname="org.flymine.dataconversion.MageConverter" fork="true" maxmemory="600m"
-      failonerror="true">
-      <classpath refid="mage.class.path" />
-      <arg value="test_mage.xml" />
-      <arg value="tmp.xml" />
-    </java>
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
+
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.mage-src-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="mage.class.path"/>
+    </taskdef>
+
+    <convert-file osName="osw.mage-src-items"
+                  clsName="org.flymine.dataconversion.MageConverter">
+      <fileset dir="${build.tmp}/mage/">
+        <include name="*.xml"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+    </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.common-src-items"/>
   </target>
+
+
+  <target name="translate-mage" depends="prepare-build-model, compile-mage-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.mage-tgt-items-std"/>
+    </ant>
+    <java classname="org.flymine.dataconversion.MageDataTranslator" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.mage-src-items" />
+      <arg value="osw.mage-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.common-tgt-items"/>
+  </target>
+
+  <target name="load-mage">
+    <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-mage integrationWriter="integration.production" source="os.mage-translated" sourceName="mage" ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-mage-production" depends="retrieve-mage, translate-mage, load-mage"/>
 
   <!-- GO PIPELINE -->
 
