@@ -15,9 +15,9 @@
 
   <form-beans>
 
-    <!-- Query form bean -->
-    <form-bean      name="queryForm"
-                    type="org.flymine.web.QueryForm"/>
+    <!-- QueryBuild form bean -->
+    <form-bean      name="queryBuildForm"
+                    type="org.flymine.web.QueryBuildForm"/>
 
     <!-- FQL Query form bean -->
     <form-bean      name="fqlQueryForm"
@@ -49,8 +49,8 @@
 
     <!-- Input a query -->
     <action path="/query"
-                   type="org.flymine.web.QueryAction"
-                   name="queryForm"
+                   type="org.flymine.web.QueryBuildAction"
+                   name="queryBuildForm"
                    parameter="action">
       <forward name="buildquery" path="query.page"/>
     </action>
@@ -66,7 +66,7 @@
       <forward name="buildquery"           path="query.page"/>
     </action>
 
-    <!-- Input a query -->
+    <!-- Select a QueryClass -->
     <action    path="/queryClassSelect"
                type="org.flymine.web.QueryClassSelectAction"
                name="queryClassSelectForm"
@@ -85,6 +85,9 @@
     </action>
 
     <action path="/initQuery" type="org.flymine.web.QueryController"> 
+    </action>
+
+    <action path="/initQueryBuild" type="org.flymine.web.QueryBuildController"> 
     </action>
 
     <action path="/initQueryView" type="org.flymine.web.QueryViewController"/>
