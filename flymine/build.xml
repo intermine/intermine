@@ -184,7 +184,7 @@
     <model-generation
       type="xmi"
       modelname="testmodel"      
-      source="${build}/TestModel_.xmi"
+      source="${build.tmp}/TestModel_.xmi"
       destdir="${build.resources}"
     />     
   </target>
@@ -218,7 +218,7 @@
   <target name="unpack-testmodel.check" depends="prepare">
     <uptodate property="unpack-testmodel.uptodate">
       <srcfiles dir="${src.java}/org/flymine/model/testmodel" includes="**/*.zargo"/>
-      <mapper type="glob" from="*.zargo" to="${build}/*_.xmi" />
+      <mapper type="glob" from="*.zargo" to="${build.tmp}/*_.xmi" />
     </uptodate>
   </target>
   
@@ -227,19 +227,19 @@
           description="unpacks the testmodel from .zargo file"
           unless="unpack-testmodel.uptodate">
     <mkdir dir="${build.model}/testmodel" />
-    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build}">
+    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.tmp}">
       <!-- <patternset>
         <include name="**/*.xmi"/>
       </patternset> -->
     </unzip>
-    <touch file="${build}/TestModel_.xmi" />
+    <touch file="${build.tmp}/TestModel_.xmi" />
   </target>
 
 
 
   <!-- is our java source older than the model? -->
   <target name="testmodel-java.check" depends="unpack-testmodel">
-    <uptodate property="testmodel-java.outofdate" targetfile="${build}/TestModel_.xmi">
+    <uptodate property="testmodel-java.outofdate" targetfile="${build.tmp}/TestModel_.xmi">
       <srcfiles dir="${build.model}/testmodel" includes="**/*.java"/>
     </uptodate>
   </target>
@@ -262,7 +262,7 @@
 
   <!-- is our repository descriptor older than the model? -->
   <target name="testmodel-repository.check" depends="unpack-testmodel">
-    <uptodate property="testmodel-repository.outofdate" targetfile="${build}/TestModel_.xmi">
+    <uptodate property="testmodel-repository.outofdate" targetfile="${build.tmp}/TestModel_.xmi">
       <srcfiles dir="${build.model}/testmodel" includes="**/*.xml"/>
     </uptodate>
   </target>
