@@ -1,21 +1,37 @@
-<query-list>
-  <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee">
-    <node path="Employee.department.company.name">
-      <constraint op="=" value="CompanyA"/>
-    </node>
-    <node path="Employee.department.name">
-      <constraint op="LIKE" value="Department%"/>
-    </node>
-  </query>
-  <query name="employeesOfACertainAge" model="testmodel" view="Employee">
-    <node path="Employee.age">
-      <constraint op=">" value="35"/>
-    </node>
-  </query>
-  <query name="employeeByName" model="testmodel" view="Employee">
-    <node path="Employee.name">
-      <constraint op="=" value=""/>
-    </node>
-  </query>
+<template-list>
+
+  <template name="employeesFromCompanyAndDepartment"
+            description="View all the employees that work within a certain department of the specified company"
+            category="People">
+    <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee">
+      <node path="Employee.department.company.name">
+        <constraint op="=" value="CompanyA" editable="true" description="Company name"/>
+      </node>
+      <node path="Employee.department.name">
+        <constraint op="LIKE" value="Department%" editable="true" description="Department name"/>
+      </node>
+    </query>
+  </template>
   
-</query-list>
+  <template name="employeesOfACertainAge"
+            description="View all the employees of a certain age"
+            category="People">
+    <query name="employeesOfACertainAge" model="testmodel" view="Employee">
+      <node path="Employee.age">
+        <constraint op=">" value="35" editable="true" description=""/>
+        <constraint op="!=" value="55" editable="true" description=""/>
+      </node>
+    </query>
+  </template>
+  
+  <template name="employeeByName"
+            description="View all the employees with certain name"
+            category="People">
+    <query name="employeeByName" model="testmodel" view="Employee">
+      <node path="Employee.name">
+        <constraint op="=" value="" editable="true" description="Employee name"/>
+      </node>
+    </query>
+  </template>
+  
+</template-list>
