@@ -92,7 +92,7 @@ public class ReferenceDescriptor extends FieldDescriptor
             if (reverseRef == null) {
                 throw new MetaDataException("Unable to find named reverse reference ("
                                             + reverseRefName + ") in class ("
-                                            + this.cld.getClassName() + ").");
+                                            + this.refClassDescriptor.getClassName() + ").");
             }
         }
 
