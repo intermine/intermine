@@ -13,13 +13,13 @@ package org.intermine.web.results;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-//import java.util.Map;
-//import java.util.HashMap;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-//import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -35,7 +35,7 @@ public class InlineResultsTable
     protected LazyCollection results;
     protected int size = 10;
     protected List keyAttributes;
-    //protected Map keyReferences = new HashMap();
+    protected Map keyReferences = new HashMap();
 
     /**
      * Constructor
@@ -53,10 +53,10 @@ public class InlineResultsTable
         }
      
         keyAttributes = keyAttributes(cld);
-        // for (Iterator i = keyReferences(cld).iterator(); i.hasNext();) {
-//             ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
-//             keyReferences.put(ref, keyAttributes(ref.getReferencedClassDescriptor()));
-//         }
+        for (Iterator i = keyReferences(cld).iterator(); i.hasNext();) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
+            keyReferences.put(ref, keyAttributes(ref.getReferencedClassDescriptor()));
+        }
     }
     
     /**
@@ -67,10 +67,14 @@ public class InlineResultsTable
         return keyAttributes;
     }
 
-//     public Map getKeyReferences() {
-//         return keyReferences;
-//     }
-
+    /**
+     * Return the key references
+     * @return the key attributes
+     */
+    public Map getKeyReferences() {
+        return keyReferences;
+    }
+    
     /**
      * Return the list of fields that are both attributes and primary keys
      * @param cld the metadata for the class
@@ -89,18 +93,23 @@ public class InlineResultsTable
         return keyAttributes;
     }
 
-    //     protected static List keyReferences(ClassDescriptor cld) {
-//         List keyReferences = new ArrayList();
-//         for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(),
-//    cld.getType()).iterator();
-//              i.hasNext();) {
-//             FieldDescriptor fd = (FieldDescriptor) i.next();
-//             if (fd.isReference()) {
-//                 keyReferences.add(fd);
-//             }
-//         }
-//         return keyReferences;
-//     }
+    /**
+     * Return the list of fields that are both references and primary keys
+     * @param cld the metadata for the class
+     * @return the list of fields
+     */
+    protected static List keyReferences(ClassDescriptor cld) {
+        List keyReferences = new ArrayList();
+        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(),
+                                                             cld.getType()).iterator();
+             i.hasNext();) {
+            FieldDescriptor fd = (FieldDescriptor) i.next();
+            if (fd.isReference()) {
+                keyReferences.add(fd);
+            }
+        }
+        return keyReferences;
+    }
 
     /**
      * Get a set of field values from an object, given the object and a list of fields
@@ -128,13 +137,14 @@ public class InlineResultsTable
             Object o = i.next();
             List row = new ArrayList();
             row.addAll(getFieldValues(o, keyAttributes));
-            // for (Iterator j = keyReferences.entrySet().iterator(); j.hasNext();) {
-//                 Map.Entry entry = (Map.Entry) j.next();
-//                 Object ref = TypeUtil.getFieldValue(o, (String) entry.getKey());
-//                 if (ref != null) {
-//                     row.addAll(getFieldValues(ref, (List) entry.getValue()));
-//                 }
-//             }
+            for (Iterator j = keyReferences.entrySet().iterator(); j.hasNext();) {
+                Map.Entry entry = (Map.Entry) j.next();
+                Object ref = TypeUtil.getFieldValue(o, ((ReferenceDescriptor) entry
+                                                        .getKey()).getName());
+                if (ref != null) {
+                    row.addAll(getFieldValues(ref, (List) entry.getValue()));
+                }
+            }
             rows.add(row);
         }
         return rows;
