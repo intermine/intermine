@@ -10,6 +10,9 @@
         <item><ulink url="/internal/design/design_issues">Design issues</ulink></item>
         <item><ulink url="/internal/design/usage_scenarios">Usage scenarios</ulink></item>
         <item><ulink url="/internal/design/functional_requirements">Functional requirements</ulink></item>
+        <item><ulink url="/internal/design/architecture">Architecture</ulink></item>
+        <item><ulink url="/internal/design/link-ins">Link ins</ulink></item>
+        <item><ulink url="/internal/design/scope">Scope</ulink></item>
     </section>
     <section>
         <heading>Reports</heading>
