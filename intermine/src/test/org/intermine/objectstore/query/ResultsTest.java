@@ -9,8 +9,11 @@ import java.lang.reflect.Field;
 
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.proxy.LazyCollection;
+import org.flymine.objectstore.proxy.LazyReference;
+import org.flymine.objectstore.proxy.LazyInitializer;
 import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Employee;
+import org.flymine.model.testmodel.Company;
 
 public class ResultsTest extends TestCase
 {
@@ -209,9 +212,10 @@ public class ResultsTest extends TestCase
 
     }
 
-    public void testSimpleLazyCollection() throws Exception {
+    public void testLazyCollectionPromotion() throws Exception {
         // Create a Department object with a LazyCollection
         Department dept = getDeptExampleObject();
+        assertTrue(dept.getEmployees() instanceof LazyCollection);
 
         // build a List of ResultsRows to simulate call to promoteProxies
         ResultsRow rr = new ResultsRow();
@@ -231,8 +235,32 @@ public class ResultsTest extends TestCase
         }
     }
 
+    public void testLazyReferencePromotion() throws Exception {
+        // Create a Department object with a LazyCollection
+        Department dept = getDeptExampleObject();
+        assertTrue(dept.getCompany() instanceof LazyReference);
+
+        // build a List of ResultsRows to simulate call to promoteProxies
+        ResultsRow rr = new ResultsRow();
+        rr.add(dept);
+        List list = new ArrayList(1);
+        list.add(rr);
+
+        Query q = new Query();
+        Results r = os.execute(q);
+        r.promoteProxies(list);
+        Department resDept = (Department) ((List)list.get(0)).get(0);
+
+        // Company should now be materialized
+        Object obj = resDept.getCompany();
+        if (!(obj instanceof Company)) {
+            fail("LazyCollection was not converted to a Results object");
+        }
+    }
+
 
     // set up a Department object with an id and Employees as a LazyCollection
+    // and a LazyReference
     private Department getDeptExampleObject() throws Exception {
         Department dept = new Department();
         Class deptClass = dept.getClass();
@@ -240,13 +268,22 @@ public class ResultsTest extends TestCase
         f.setAccessible(true);
         f.set(dept, new Integer(1234));
 
-        Query lazyQuery = new Query();
-        QueryClass qc = new QueryClass(Employee.class);
-        lazyQuery.addToSelect(qc);
-        lazyQuery.addFrom(qc);
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
 
-        LazyCollection lazyCol = new LazyCollection(lazyQuery);
+        LazyCollection lazyCol = new LazyCollection(q1);
         dept.setEmployees((List)lazyCol);
+
+        Query q2 = new Query();
+        QueryClass qc2 = new QueryClass(Company.class);
+        q2.addToSelect(qc2);
+        q2.addFrom(qc2);
+
+        LazyReference lazyRef = (LazyReference) LazyInitializer.getDynamicProxy(Company.class, q2, new Integer(101));
+        dept.setCompany((Company)lazyRef);
+
         return dept;
     }
 
