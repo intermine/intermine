@@ -10,7 +10,7 @@ package org.flymine.modelproduction;
  *
  */
 
-import java.io.InputStream;
+import java.io.Reader;
 
 import org.flymine.metadata.Model;
 
@@ -25,10 +25,10 @@ public interface ModelParser
 
     /**
      * Read source model information and construct a FlyMine Model object.
-     * @param is the source model to parse
+     * @param reader the source model to parse
      * @return the FlyMine Model created
      * @throws Exception if Model not created successfully
      */
-    public Model process(InputStream is) throws Exception;
+    public Model process(Reader reader) throws Exception;
 
 }
