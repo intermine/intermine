@@ -81,7 +81,7 @@
 	</sect1>
 
 	<sect1>
-		<title>Extending the FQL query language</title>
+		<title>Extending the IQL query language</title>
 		<para><highlights>This is partially implemented</highlights>.
 			Queries of the form:
 			<programlisting>SELECT Department FROM Department
@@ -89,14 +89,14 @@
 			generally run faster than queries of the form:
 			<programlisting>SELECT Department FROM Department, Company
 	WHERE Department.company CONTAINS Company AND Company = <emphasis>&lt;object&gt;</emphasis></programlisting>
-			however, before this was implemented, the former query was not possible in FQL.
-			Now, the former query IS possible in FQL, but only if the Department.company is a reference, not a collection.
+			however, before this was implemented, the former query was not possible in IQL.
+			Now, the former query IS possible in IQL, but only if the Department.company is a reference, not a collection.
 			Now, the primary key query uses the former query when it knows the ID of the object in the reference (from the ID Map for example).
 		</para>
 	</sect1>
 
 	<sect1>
-		<title>Proxy collections do not take advantage of extended FQL</title>
+		<title>Proxy collections do not take advantage of extended IQL</title>
 		<para><highlights>This is partially implemented</highlights>.
 			Proxy collections could make use of queries of the form
 			<programlisting>SELECT Department FROM Department
@@ -177,7 +177,7 @@
 	</sect1>
 
 	<sect1>
-		<title>Further extending the FQL query language</title>
+		<title>Further extending the IQL query language</title>
 		<para><highlights>This is NOT implemented</highlights>.
 			Queries of the form:
 			<programlisting>SELECT Department FROM Department
@@ -188,7 +188,7 @@
 	WHERE Department.company CONTAINS Company
 	AND Company IN (SELECT Company FROM Company
 		WHERE Company.name = 'CompanyA')</programlisting>
-			however, this is not possible in the current implementation of FQL.
+			however, this is not possible in the current implementation of IQL.
 		</para>
 	</sect1>
 
