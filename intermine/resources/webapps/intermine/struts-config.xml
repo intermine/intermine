@@ -363,7 +363,7 @@
       <forward name="history" path="history.page"/>
     </action>
     
-    <action path="/portalQuery"
+    <action path="/portal"
 	        type="org.intermine.web.PortalQuery">
 	  <forward name="failure" path="begin.page"/>
 	  <forward name="results" path="results.page"/>
