@@ -238,7 +238,7 @@ public class XmlSchemaParser implements ModelParser
                 clsName = eDecl.getName();
             }
             LOG.debug("pushing: " + clsName);
-            clsStack.push(clsName);
+            clsStack.push(StringUtil.capitalise(clsName));
             processComplexType(complexType);
             if (complexType.isTopLevel()) {
                 return null;
@@ -313,8 +313,8 @@ public class XmlSchemaParser implements ModelParser
             LOG.debug(clsName + " has super " + baseType);
         }
 
-        LOG.debug("creating new cld: " + StringUtil.capitalise(clsName));
-        ClassDescriptor cld = new ClassDescriptor(StringUtil.capitalise(clsName), baseType, true,
+        LOG.debug("creating new cld: " + clsName);
+        ClassDescriptor cld = new ClassDescriptor(clsName, baseType, true,
                                                   getFieldSetForClass(attributes, clsName),
                                                   getFieldSetForClass(references, clsName),
                                                   getFieldSetForClass(collections, clsName));

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema targetNamespace="org:flymine:model:test" xmlns="org:flymine:model:test" xmlns:xs="http://www.w3.org/2001/XMLSchema">
- <xs:element name="Company">
+ <xs:element name="company">
   <xs:complexType>
    <xs:sequence>
-    <xs:element name="Department" maxOccurs="unbounded">
+    <xs:element name="department" maxOccurs="unbounded">
      <xs:complexType>
       <xs:sequence>
-       <xs:element name="manager" type="Employee"/>
-       <xs:element name="employees" type="Employee" maxOccurs="unbounded"/>
+       <xs:element name="manager" type="employee"/>
+       <xs:element name="employees" type="employee" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string"/>
      </xs:complexType>
@@ -18,16 +18,16 @@
   </xs:complexType>
  </xs:element>
 
- <xs:complexType name="Employee">
+ <xs:complexType name="employee">
   <xs:complexContent>
-   <xs:extension base="Employable">
+   <xs:extension base="employable">
     <xs:attribute name="fullTime" type="xs:boolean"/>
     <xs:attribute name="age" type="xs:integer"/>
    </xs:extension>
   </xs:complexContent>
  </xs:complexType>
 
- <xs:complexType name="Employable">
+ <xs:complexType name="employable">
   <xs:attribute name="name" type="xs:string"/>
  </xs:complexType>
 </xs:schema>
