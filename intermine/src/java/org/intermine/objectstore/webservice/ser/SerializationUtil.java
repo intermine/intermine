@@ -16,16 +16,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Calendar;
-import javax.xml.namespace.QName;
 
-import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.lite.LiteParser;
 import org.intermine.xml.lite.LiteRenderer;
-
-import org.apache.axis.encoding.TypeMapping;
 
 import org.apache.log4j.Logger;
 
@@ -37,52 +33,6 @@ import org.apache.log4j.Logger;
 public class SerializationUtil
 {
     private static final Logger LOG = Logger.getLogger(SerializationUtil.class);
-
-    /**
-     * Register type mappings for the 5 built-in InterMine types that are sent over the wire
-     * Note that Axis only allows mappings for concrete classes (not superclasses or interfaces)
-     * In particular this means that we only map ArrayLists (everything else is converted) and
-     * we map InterMineObjects at the client/server level rather than at serialization time
-     * @param tm the type mapping to register to
-     */
-    public static void registerDefaultMappings(TypeMapping tm) {
-        tm.register(org.intermine.metadata.Model.class,
-                    getQName(org.intermine.metadata.Model.class),
-                    new ModelSerializerFactory(),
-                    new ModelDeserializerFactory());
-        tm.register(java.util.ArrayList.class,
-                    getQName(java.util.ArrayList.class),
-                    new ListSerializerFactory(),
-                    new ListDeserializerFactory());
-        registerMapping(tm, org.intermine.objectstore.webservice.ser.InterMineString.class);
-        registerMapping(tm, org.intermine.objectstore.query.iql.IqlQuery.class);
-        registerMapping(tm, org.intermine.objectstore.query.ResultsInfo.class);
-    }
-
-    /**
-     * Register type with our default (bean-like) serializer
-     * @param tm the type mapping to register to
-     * @param type the type to register
-     */
-    protected static void registerMapping(TypeMapping tm, Class type) {
-        tm.register(type,
-                    getQName(type),
-                    new DefaultSerializerFactory(),
-                    new DefaultDeserializerFactory(type, getQName(type)));
-    }
-
-    /**
-     * Convert a Java type to a QName
-     * @param type the Java type
-     * @return the QName
-     */
-    protected static QName getQName(Class type) {
-        if (java.util.ArrayList.class.equals(type)) {
-            return new QName("http://soapinterop.org/xsd", "list");
-        } else {
-            return new QName("", TypeUtil.unqualifiedName(type.getName()));
-        }
-    }
 
     /**
      * Use the LiteParser to produce a business object from its serialized string version

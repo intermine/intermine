@@ -113,7 +113,8 @@ public class ModifyQueryAction extends Action
         String[] selectedQueries = ((ModifyQueryForm) form).getSelectedQueries();
         
         response.setContentType("text/plain");
-        
+        response.setHeader("Content-Disposition", "Attachment; Filename=\"savedQueries.xml\"");
+
         PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
         out.println("<query-list>");
         for (int i = 0; i < selectedQueries.length; i++) {

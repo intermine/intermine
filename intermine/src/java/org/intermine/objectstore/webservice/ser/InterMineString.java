@@ -10,12 +10,14 @@ package org.intermine.objectstore.webservice.ser;
  *
  */
 
+import java.io.Serializable;
+
 /**
  * This class is a wrapper for the XML string used to represent
  * InterMineObjects when they are serialized
  * @author Mark Woodbridge
  */
-public class InterMineString
+public class InterMineString implements Serializable
 {
     protected String string;
 

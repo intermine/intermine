@@ -33,7 +33,7 @@ public class GenerateWSDDTaskTest extends TestCase
 
     public void setUp() throws Exception {
         tm = ((Call) new Service().createCall()).getTypeMapping();
-        SerializationUtil.registerDefaultMappings(tm);
+        MappingUtil.registerDefaultMappings(tm);
         task = new GenerateWSDDTask();
     }
 

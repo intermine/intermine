@@ -35,6 +35,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
+import org.intermine.objectstore.webservice.ser.MappingUtil;
 
 /**
  * ObjectStore implementation that accesses a remote ObjectStore via JAX-RPC.
@@ -67,7 +68,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
             call.setMaintainSession(true);
             call.setTargetEndpointAddress(url);
 
-            SerializationUtil.registerDefaultMappings(call.getTypeMapping());
+            MappingUtil.registerDefaultMappings(call.getTypeMapping());
         } catch (Exception e) {
             throw new ObjectStoreException("Calling remote service failed", e);
         }

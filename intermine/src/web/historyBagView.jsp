@@ -41,6 +41,9 @@
     <html:submit property="delete">
       <fmt:message key="history.delete"/>
     </html:submit>
+    <html:submit property="export">
+      <fmt:message key="history.export"/>
+    </html:submit>
     <html:submit property="union">
       <fmt:message key="history.union"/>
     </html:submit>

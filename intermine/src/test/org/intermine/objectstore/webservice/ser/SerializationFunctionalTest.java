@@ -69,7 +69,7 @@ public class SerializationFunctionalTest extends TestCase
             tm = (TypeMapping) reg.createTypeMapping();
             reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
         }
-        SerializationUtil.registerDefaultMappings(tm);
+        MappingUtil.registerDefaultMappings(tm);
         msg.output(context);
             
         String msgString = stringWriter.toString();

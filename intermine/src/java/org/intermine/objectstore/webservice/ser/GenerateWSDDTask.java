@@ -79,7 +79,7 @@ public class GenerateWSDDTask extends Task
         StringBuffer sb = new StringBuffer();
         try {
             TypeMapping tm = ((Call) new Service().createCall()).getTypeMapping();
-            SerializationUtil.registerDefaultMappings(tm);
+            MappingUtil.registerDefaultMappings(tm);
 
             Class[] classes = tm.getAllClasses();
             for (int i = 0; i < classes.length; i++) {
