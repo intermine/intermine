@@ -1,18 +1,24 @@
 <query-list>
-  <query name='DM_GoTerms' model='genomic' view='Gene'>
-    <node path='Gene' type='Gene'>
+  <query name="DM_GoTerms" model="genomic" view="Gene">
+    <node path="Gene" type="Gene">
     </node>
-    <node path='Gene.organism' type='Organism'>
+    <node path="Gene.organism" type="Organism">
     </node>
-    <node path='Gene.organism.name' type='String'>
-      <constraint op='LIKE' value='%melanogaster'/>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="LIKE" value="%melanogaster"/>
     </node>
-    <node path='Gene.annotations' type='Annotation'>
+    <node path="Gene.annotations" type="Annotation">
     </node>
-    <node path='Gene.annotations.property' type='GOTerm'>
+    <node path="Gene.annotations.property" type="GOTerm">
     </node>
-    <node path='Gene.annotations.property.identifier' type='String'>
-      <constraint op='=' value='GO:0007568'/>
+    <node path="Gene.annotations.property.identifier" type="String">
+      <constraint op="=" value="GO:0007568"/>
+    </node>
+  </query>
+  <query name="Gene_Synonyms2" model="genomic" view="Gene.organismDbId Gene.synonyms.value">
+    <node path="Gene" type="Gene"/>
+    <node path="Gene.organismDbId" type="String">
+      <constraint op="=" value="FBgn0004053"/>
     </node>
   </query>
 </query-list>
