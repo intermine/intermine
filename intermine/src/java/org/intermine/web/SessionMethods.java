@@ -122,11 +122,16 @@ public class SessionMethods
                     LOG.error(sw.toString());
                     
                     error = true;
+                } catch (Throwable err) {
+                    StringWriter sw = new StringWriter();
+                    err.printStackTrace(new PrintWriter(sw));
+                    recordError(sw.toString(), session);
+                    error = true;
                 }
                 
                 // debug pause
                 /*try {
-                    Thread.currentThread().sleep(2000);
+                    Thread.currentThread().sleep(5000);
                 } catch (Exception _) {
                     
                 }*/
