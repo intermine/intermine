@@ -81,6 +81,7 @@ public abstract class QueryTestCase extends TestCase
         queries.put("WhereClassObject", whereClassObject());
         queries.put("Contains11", contains11());
         queries.put("Contains1N", contains1N());
+        queries.put("ContainsN1", containsN1());
         queries.put("ContainsMN", containsMN());
         queries.put("SimpleGroupBy", simpleGroupBy());
         queries.put("MultiJoin", multiJoin());
@@ -148,7 +149,7 @@ public abstract class QueryTestCase extends TestCase
      *
      * @throws Exception if an error occurs
      */
-    public void testQueries() throws Exception {
+    public void testQueries() throws Throwable {
         Iterator i = results.keySet().iterator();
         while (i.hasNext()) {
             String type = (String) i.next();
@@ -156,7 +157,11 @@ public abstract class QueryTestCase extends TestCase
             if (!(queries.containsKey(type))) {
                 throw new Exception(type + " does not appear in the queries map");
             }
-            executeTest(type);
+            try {
+                executeTest(type);
+            } catch (Throwable t) {
+                throw new Throwable("Failed on " + type, t);
+            }
         }
     }
 
@@ -525,6 +530,32 @@ public abstract class QueryTestCase extends TestCase
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
         QueryValue v1 = new QueryValue("CompanyA");
         QueryField qf1 = new QueryField(qc1, "name");
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        cs1.addConstraint(cc1);
+        cs1.addConstraint(c1);
+        q1.setConstraint(cs1);
+        return q1;
+      }
+
+    /*
+      select department, company
+      from Department, company
+      where department.company = company
+      and company.name = "CompanyA"
+    */
+      public Query containsN1() throws Exception {
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryReference qr1 = new QueryObjectReference(qc1, "company");
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        QueryValue v1 = new QueryValue("CompanyA");
+        QueryField qf1 = new QueryField(qc2, "name");
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addToSelect(qc2);
