@@ -47,7 +47,7 @@ public class ViewChange extends DispatchAction
 
         view.remove(path);
 
-        return null;
+        return mapping.findForward("query");
     }
 
     /**
@@ -72,7 +72,7 @@ public class ViewChange extends DispatchAction
         view.set(index - 1, view.get(index));
         view.set(index, o);
 
-        return null;
+        return mapping.findForward("query");
     }
 
     /**
@@ -97,6 +97,6 @@ public class ViewChange extends DispatchAction
         view.set(index + 1, view.get(index));
         view.set(index, o);
 
-        return null;
+        return mapping.findForward("query");
     }
 }
