@@ -27,6 +27,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     private List rows = new ArrayList();
     private Model model = null;
     private int resultsSize = 0;
+    private int estimatedResultsSize = 0;
     private int executeTime = 10;
     private int executeCalls = 0;
     private int poisonRowNo = -1;
@@ -140,6 +141,16 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      */
     public void setResultsSize(int size) {
         this.resultsSize = size;
+        setEstimatedResultsSize(size);
+    }
+
+    /**
+     * Set the number of rows to be contained in the returned Results object
+     *
+     * @param size the number of rows in the returned Results object
+     */
+    public void setEstimatedResultsSize(int size) {
+        this.estimatedResultsSize = size;
     }
 
     /**
@@ -209,7 +220,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
-        return new ResultsInfo(0, 0, 1);
+        return new ResultsInfo(0, 0, estimatedResultsSize);
     }
 
     /**
