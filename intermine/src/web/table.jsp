@@ -206,25 +206,31 @@
       <br/>
 
       <%-- Save bag controls --%>
-      <br/>
+      <br/><br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
-        <c:if test="${!empty PROFILE.savedBags}">
-          <html:select property="existingBagName">
-            <c:forEach items="${PROFILE.savedBags}" var="entry">
-              <html:option value="${entry.key}"/>
-            </c:forEach>
-          </html:select>
-          <html:submit property="addToExistingBag">
-            <fmt:message key="bag.existing"/>
-          </html:submit>
-          <br/>
-          <br/>
-        </c:if>
-        <html:text property="newBagName"/>
-        <html:submit property="saveNewBag">
-          <fmt:message key="bag.new"/>
-        </html:submit>
-        <br/>
+        <fmt:message key="bag.saveselections"/>
+        <ul>
+          <li>
+            <fmt:message key="bag.new"/>
+            <html:text property="newBagName"/>
+            <html:submit property="saveNewBag">
+              <fmt:message key="button.save"/>
+            </html:submit>
+          </li>
+          <c:if test="${!empty PROFILE.savedBags}">
+            <li>
+              <fmt:message key="bag.existing"/>
+              <html:select property="existingBagName">
+                <c:forEach items="${PROFILE.savedBags}" var="entry">
+                  <html:option value="${entry.key}"/>
+                </c:forEach>
+              </html:select>
+              <html:submit property="addToExistingBag">
+                <fmt:message key="button.add"/>
+              </html:submit>
+            </li>
+          </c:if>
+        </ul>
       </c:if>
     </html:form>
 
