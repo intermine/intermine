@@ -30,12 +30,15 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 
+import org.apache.log4j.Logger;
+
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
  * @author Mark Woodbridge
  */
 public class OrthologueConverter extends FileConverter
 {
+    private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
     protected static final String ORTHOLOGUE_NS = "http://www.flymine.org/model/genomic#";
 
     protected int id = 0;
