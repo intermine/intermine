@@ -38,14 +38,15 @@ null:featureprop a owl:Class ;
     owl:equivalentProperty chado:feature_relationship__object .
 
 # TODO do not want chado:feature_relationship converted to type -> restricted subclasses?
-:RankedRelation__type a owl:ObjectProperty ;
+# relationship types are partof and producedby
+null:feature_relationship__type a owl:ObjectProperty ;
       owl:equivalentClass chado:feature_relationship__type .
 
 
 # ------------ chado:featureloc ------------ #
 
 # chado:featureloc equivalent to Location with some name changes 
-# and some fields nor wanted.  
+# and some fields not wanted.  
 # featureloc__strand and featureloc__phase map unaltered
 
 :Location a owl:Class ;
@@ -96,26 +97,27 @@ null:cv a owl:Class ;
 null:cvterm_relationship a owl:Class ;
     owl:equivalentClass chado:cvterm_relationship .
 
+null:feature_cvterm a owl:Class ;
+    owl:equivalentClass chado:feature_cvterm .
 
 # ------------ Synonyms link a BioEntity with name/id from an InfoSource ----------- #
 
-#:Synonym a owl:Class ;
-#    owl:equivalentClass chado:feature_synonym ; 
-#    owl:equivalentClass chado:dbxref .
+:Synonym a owl:Class ;
+    owl:equivalentClass chado:feature_synonym ; 
+    owl:equivalentClass chado:dbxref .
 
-#:Synonym__subject a owl:ObjectProperty ;
-#    owl:equivalentProperty chado:feature_synonym__feature ;
-#    owl:equivalentProperty chado:dbxref__feature .
+:Synonym__subject a owl:ObjectProperty ;
+    owl:equivalentProperty chado:feature_synonym__feature ;
+    owl:equivalentProperty chado:dbxref__feature .
 
 :Synonym__source a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature_synonym__pub ;
     owl:equivalentProperty chado:dbxref__db .
 
 # DataTranslator - how will this work??
-#:Synonym__synonym a owl:DatatypeProperty 
-#    owl:equivalentProperty chado:synonym__name ;
-#    owl:equivalentProperty chado:dbxref__accession .
-
+:Synonym__synonym a owl:DatatypeProperty ; 
+    owl:equivalentProperty chado:synonym__name ;
+    owl:equivalentProperty chado:dbxref__accession .
 
 null:feature_synonym__synonym a owl:ObjectProperty ;
       owl:equivalentProperty chado:feature_synonym__synonym .
@@ -149,10 +151,49 @@ null:feature_dbxref a owl:Class ;
 :ComputationalResult a owl:Class ;
       owl:equivalentClass chado:analysisfeature .
 
+:ComputationalResult__score a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysisfeature__rawscore .
+
+null:analysisfeature__normscore a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysisfeature__normscore .
+
+null:analysisfeature__identity a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysisfeature__identity .
+
+null:analysisfeature__significance a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysisfeature__significance .
+
+
 :ComputationalAnalysis a owl:Class ;
       owl:equivalentClass chado:analysis .
 
-# TODO analysis should have analysisprops applied to it
+:ComputationalAnalysis__algorithm a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:analysis__program .
+
+# TODO all other fields currently nulled
+null:analysis__name a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__name .
+
+null:analysis__description a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__description .
+
+null:analysis__algorithm a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__algorithm .
+
+null:analysis__programversion a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__programversion .
+
+null:analysis__sourcename a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__sourcename .
+
+null:analysis__sourceversion a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__sourceversion .
+
+null:analysis__timeexecuted a owl:DatatypeProperty ;
+    owl:equivalentClass chado:analysis__timeexecuted .
+
+
+# TODO has analysisprops applied to it, should they go to ComputationalResult
 null:analysisprop a owl:Class ;
       owl:equivalentClass chado:analysisprop .
 
@@ -174,17 +215,26 @@ null:analysisprop a owl:Class ;
 null:pub__feature_synonyms a owl:ObjectProperty ;
     owl:equivalentProperty chado:pub__feature_synonyms .
 
-null:Publication__series_name a owl:DatatypeProperty ;
+null:pub__series_name a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__series_name .
 
-null:Publication__volumetitle a owl:DatatypeProperty ;
+null:pub__volumetitle a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__volumetitle .
 
-null:Publication__publisher a owl:DatatypeProperty ;
+null:pub__publisher a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__publisher .
 
-null:Publication__miniref a owl:DatatypeProperty ;
+null:pub__miniref a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__miniref .
+
+null:pub__is_obsolete a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:pub__is_obsolete .
+
+null:pub__feature_synonyms a owl:ObjectProperty ;
+    owl:equivalentProperty chado:pub__feature_synonyms .
+
+null:pub__feature_cvterms a owl:ObjectProperty ;
+    owl:equivalentProperty chado:pub__feature_cvterms .
 
 :Author a owl:Class ;
     owl:equivalentClass chado:author .
@@ -199,11 +249,18 @@ null:Publication__miniref a owl:DatatypeProperty ;
 null:db__urlprefix a owl:DatatypeProperty ;
     owl:equivalentProperty chado:db__urlprefix .
 
-
+null:db__description a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:db__description .
 
 # Organism will map to a phylogeny when that data is available
 :Organism a owl:Class ;
     owl:equivalentClass chado:organism .
+
+:Organism__name a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:organism__common_name .
+
+null:organism__comment a owl:DatatypeProperty ;
+    owl:equivalentProperty chado:organism__comment .
 
 
 # ---------------------------------------------------------------------------- #
@@ -212,6 +269,623 @@ null:db__urlprefix a owl:DatatypeProperty ;
 
 
 :LocatedSequenceFeature a owl:Class ;
-      rdfs:subClassOf :BioEntity ;
-      owl:equivalentClass chado:feature .
+    rdfs:subClassOf :BioEntity ;
+    owl:equivalentClass chado:feature .
+
+:LocatedSequenceFeature__synonyms a owl:ObjectProperty ;
+    owl:equivalentProperty chado:feature__dbxref ;
+    owl:equivalentProperty chado:feature__feature_synonyms .
+
+null:feature__feature_cvterms a owl:ObjectProperty ;
+    owl:equivalentProperty chado:feature__feature_cvterms .
+
+null:feature__md5checksum a owl:ObjectProperty ;
+    owl:equivalentProperty chado:feature__md5checksum .
+
+
+
+:BAC a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "BAC"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+:EST a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "EST"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:CDNAClone a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "cDNA_clone"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:ChromosomeArm a owl:Class ;
+      rdfs:subclassOf :BioEntity ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "chromosome_arm"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:ChromosomeBand a owl:Class ;
+      rdfs:subclassOf :BioEntity ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "chromosome_band"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:Exon a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "exon"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:Gene a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "gene"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:GoldenPath a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "golden_path_region"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:MRNA a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "mRNA"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:Match a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "match"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:NcRNA a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "ncRNA"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:Oligo a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subclassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "oligonucleotide"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:ProcessedTranscript a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "processed_transcript"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:Protein a owl:Class ;
+      rdfs:subclassOf :BioEntity ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "protein"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:Pseudogene a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "pseudogene"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:SnRNA a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "snRNA"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+:SnoRNA a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "snoRNA"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
+:TRNA a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "tRNA"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+:TranscriptionStartSite a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "transcription_start_site"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+:TransposableElement a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "transposable_element"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+:TransposableElementInsertionSite a owl:Class ;
+      rdfs:subclassOf :LocatedSequenceFeature ;
+      rdfs:subClassOf chado:feature ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+           owl:onProperty chado:feature__type ;
+           owl:hasValue
+               [  rdfs:subClassOf chado:cvterm ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__name ;
+                        owl:hasValue "transposable_element_insertion_site"
+                      ] ;
+                  rdfs:subClassOf
+                      [ a owl:Restriction ;
+                        owl:onProperty chado:cvterm__cv ;
+                        owl:hasValue
+                            [ rdfs:subClassOf chado:cv ;
+                              rdfs:subClassOf
+                                   [ a owl:Restriction ;
+                                       owl:onProperty chado:cv__name ;
+                                       owl:hasValue "so"
+                                   ]
+                            ]
+                      ]
+               ]
+       ] .
+
+
 
