@@ -33,8 +33,6 @@ import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.sql.Database;
@@ -199,8 +197,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
                     if (!lastObj.equals(thisObj)) {
                         done = true;
                         SqlGenerator.registerOffset(q, start + rowNo + 1, model, db,
-                                (thisObj instanceof FlyMineBusinessObject ?
-                                    ((FlyMineBusinessObject) thisObj).getId() : thisObj));
+                                (thisObj instanceof FlyMineBusinessObject
+                                    ? ((FlyMineBusinessObject) thisObj).getId() : thisObj));
                     }
                     rowNo--;
                 }

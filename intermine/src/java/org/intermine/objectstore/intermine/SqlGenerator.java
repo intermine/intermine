@@ -102,6 +102,8 @@ public class SqlGenerator
      *
      * @param q the Query
      * @param start the offset
+     * @param model the Model to look up metadata in
+     * @param db the Database that the ObjectStore uses
      * @param value a value, such that adding a WHERE component first_order_field &gt; value with
      * OFFSET 0 is equivalent to the original query with OFFSET offset
      * @throws ObjectStoreException if something goes wrong
@@ -170,7 +172,8 @@ public class SqlGenerator
                 }
                 if (lastKey != null) {
                     int offset = lastKey.intValue();
-                    return cached.get(lastKey) + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                    return cached.get(lastKey)
+                        + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
                             + (start == offset ? "" : " OFFSET " + (start - offset)));
                 }
             }

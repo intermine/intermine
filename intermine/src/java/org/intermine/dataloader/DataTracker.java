@@ -60,6 +60,7 @@ public class DataTracker
     private Connection storeConn;
     private Exception broken = null;
     private CacheStorer cacheStorer;
+    private int version = 0;
 
     private int ops = 0;
     private int misses = 0;
@@ -86,13 +87,14 @@ public class DataTracker
             } catch (SQLException e2) {
             }
             s = conn.createStatement();
-            s.execute("create table tracker (objectid int, fieldname text, sourcename text)");
+            s.execute("create table tracker (objectid int, fieldname text, sourcename text,"
+                    + " version int)");
             s.execute("create index tracker_objectid on tracker (objectid);");
         } catch (SQLException e) {
             throw new IllegalArgumentException("Could not access SQL database");
         }
         cacheStorer = new CacheStorer();
-        Thread cacheStorerThread = new Thread(cacheStorer, "DataTracker.CacheStorer thread");
+        Thread cacheStorerThread = new Thread(cacheStorer, "DataTracker.CacheStorer");
         cacheStorerThread.start();
     }
 
@@ -131,8 +133,8 @@ public class DataTracker
             desc = new ObjectDescription();
             try {
                 Statement s = conn.createStatement();
-                ResultSet r = s.executeQuery("select fieldname, sourcename from tracker where"
-                        + " objectid = " + id);
+                ResultSet r = s.executeQuery("select fieldname, sourcename, version from tracker"
+                        + " where objectid = " + id + " ORDER BY version");
                 while (r.next()) {
                     desc.putClean(r.getString(1).intern(), stringToSource(r.getString(2)));
                 }
@@ -201,8 +203,10 @@ public class DataTracker
 
     /**
      * Performs maintenance of the cache, writing stuff to the backing database.
+     *
+     * @return true if some action was performed
      */
-    public void doWrite() {
+    public boolean doWrite() {
         if (broken != null) {
             IllegalArgumentException e = new IllegalArgumentException();
             e.initCause(broken);
@@ -223,8 +227,10 @@ public class DataTracker
                     throw e2;
                 }
                 clearWriteBack();
+                return true;
             } else {
                 LOG.error("Not writing cache batch - no dirty entries");
+                return false;
             }
         }
     }
@@ -309,7 +315,6 @@ public class DataTracker
      */
     private void writeMap(Map map, boolean clean) throws SQLException {
         Statement s = storeConn.createStatement();
-        HashMap fieldNameToStringBuffer = new HashMap();
         Iterator iter = map.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
@@ -323,23 +328,11 @@ public class DataTracker
                     Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
                     String field = (String) fieldEntry.getKey();
                     Source source = (Source) fieldEntry.getValue();
-                    if (orig.containsKey(field)) {
-                        if (!orig.get(field).equals(source)) {
-                            // Update required.
-                            if (!fieldNameToStringBuffer.containsKey(field)) {
-                                fieldNameToStringBuffer.put(field, new StringBuffer("UPDATE tracker"
-                                            + " SET sourcename = '" + sourceToString(source)
-                                            + "' WHERE fieldname = '" + field
-                                            + "' AND objectid IN (" + id));
-                            } else {
-                                ((StringBuffer) fieldNameToStringBuffer.get(field))
-                                    .append(", " + id);
-                            }
-                        }
-                    } else {
+                    if (!orig.containsKey(field) || (!orig.get(field).equals(source))) {
                         // Insert required
-                        s.addBatch("INSERT INTO tracker (objectid, fieldname, sourcename) VALUES ("
-                                + id + ", '" + field + "', '" + sourceToString(source) + "')");
+                        s.addBatch("INSERT INTO tracker (objectid, fieldname, sourcename, version)"
+                                + " VALUES (" + id + ", '" + field + "', '"
+                                + sourceToString(source) + "', " + version + ")");
                     }
                 }
                 if (clean) {
@@ -347,16 +340,8 @@ public class DataTracker
                 }
             }
         }
-        iter = fieldNameToStringBuffer.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String field = (String) entry.getKey();
-            StringBuffer update = (StringBuffer) entry.getValue();
-            update.append(")");
-            s.addBatch(update.toString());
-            iter.remove();
-        }
         s.executeBatch();
+        version++;
         storeConn.commit();
     }
 
@@ -429,12 +414,13 @@ public class DataTracker
                         } catch (InterruptedException e) {
                         }
                     }
-                    needAction = false;
                 }
-                try {
-                    doWrite();
-                } catch (Exception e) {
-                    LOG.error("CacheStorer received exception: " + e);
+                while (needAction = true) {
+                    try {
+                        needAction = doWrite();
+                    } catch (Exception e) {
+                        LOG.error("CacheStorer received exception: " + e);
+                    }
                 }
             }
         }

@@ -476,6 +476,7 @@
   <target name="create-indexes-chado-test" depends="build-db-chado-test">
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="chado"/>
+      <property name="model.src" value="${model}/chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-test"/>
     </ant>
