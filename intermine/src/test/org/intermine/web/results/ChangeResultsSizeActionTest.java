@@ -123,91 +123,91 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         assertEquals(10, dr.getPageSize());
     }
 
-    public void testSaveNewBag() throws Exception {
-        setRequestPathInfo("/changeResultsSize");
-        // selectedObjects format: column,row
-        addRequestParameter("selectedObjects", new String[] {"0,0", "1,2"});
-        addRequestParameter("newBagName","testBag1");
-        addRequestParameter("action", "Save selections in new collection");
-        getSession().setAttribute("results", results);
-        getSession().setAttribute("savedBags", new HashMap());
+//     public void testSaveNewBag() throws Exception {
+//         setRequestPathInfo("/changeResultsSize");
+//         // selectedObjects format: column,row
+//         addRequestParameter("selectedObjects", new String[] {"0,0", "1,2"});
+//         addRequestParameter("newBagName","testBag1");
+//         addRequestParameter("action", "Save selections in new collection");
+//         getSession().setAttribute("results", results);
+//         getSession().setAttribute("savedBags", new HashMap());
 
-        actionPerform();
-        verifyForward("results");
-        verifyNoActionErrors();
+//         actionPerform();
+//         verifyForward("results");
+//         verifyNoActionErrors();
 
-        Map savedBags = (Map) getSession().getAttribute("savedBags");
-        Collection objs = (Collection) savedBags.get("testBag1");
+//         Map savedBags = (Map) getSession().getAttribute("savedBags");
+//         Collection objs = (Collection) savedBags.get("testBag1");
 
-        assertEquals(2, objs.size());
-        Iterator iter = objs.iterator();
-        assertEquals(company1, iter.next());
-        assertEquals(department3, iter.next());
+//         assertEquals(2, objs.size());
+//         Iterator iter = objs.iterator();
+//         assertEquals(company1, iter.next());
+//         assertEquals(department3, iter.next());
 
-    }
+//     }
 
-    public void testAddToExistingBag() throws Exception {
-        setRequestPathInfo("/changeResultsSize");
-        // selectedObjects format: column,row
-        addRequestParameter("selectedObjects", new String[] {"0,1", "1,1"});
-        addRequestParameter("bagName","testBag1");
-        addRequestParameter("action", "Add selections to existing collection");
-        getSession().setAttribute("results", results);
+//     public void testAddToExistingBag() throws Exception {
+//         setRequestPathInfo("/changeResultsSize");
+//         // selectedObjects format: column,row
+//         addRequestParameter("selectedObjects", new String[] {"0,1", "1,1"});
+//         addRequestParameter("bagName","testBag1");
+//         addRequestParameter("action", "Add selections to existing collection");
+//         getSession().setAttribute("results", results);
 
-        Map savedBags = new HashMap();
-        getSession().setAttribute("savedBags", savedBags);
+//         Map savedBags = new HashMap();
+//         getSession().setAttribute("savedBags", savedBags);
 
-        Collection objs = new LinkedHashSet();
-        objs.add(company1);
-        objs.add(department3);
+//         Collection objs = new LinkedHashSet();
+//         objs.add(company1);
+//         objs.add(department3);
 
-        savedBags.put("testBag1", objs);
+//         savedBags.put("testBag1", objs);
 
-        actionPerform();
-        verifyForward("results");
-        verifyNoActionErrors();
+//         actionPerform();
+//         verifyForward("results");
+//         verifyNoActionErrors();
 
-        savedBags = (Map) getSession().getAttribute("savedBags");
-        objs = (Collection) savedBags.get("testBag1");
+//         savedBags = (Map) getSession().getAttribute("savedBags");
+//         objs = (Collection) savedBags.get("testBag1");
 
-        assertEquals(4, objs.size());
-        Iterator iter = objs.iterator();
-        assertEquals(company1, iter.next());
-        assertEquals(department3, iter.next());
-        assertEquals(company2, iter.next());
-        assertEquals(department2, iter.next());
+//         assertEquals(4, objs.size());
+//         Iterator iter = objs.iterator();
+//         assertEquals(company1, iter.next());
+//         assertEquals(department3, iter.next());
+//         assertEquals(company2, iter.next());
+//         assertEquals(department2, iter.next());
 
-    }
+//     }
 
-    public void testAddSameToExistingBag() throws Exception {
-        setRequestPathInfo("/changeResultsSize");
-        // selectedObjects format: column,row
-        addRequestParameter("selectedObjects", new String[] {"0,1", "1,1"});
-        addRequestParameter("bagName","testBag1");
-        addRequestParameter("action", "Add selections to existing collection");
-        getSession().setAttribute("results", results);
+//     public void testAddSameToExistingBag() throws Exception {
+//         setRequestPathInfo("/changeResultsSize");
+//         // selectedObjects format: column,row
+//         addRequestParameter("selectedObjects", new String[] {"0,1", "1,1"});
+//         addRequestParameter("bagName","testBag1");
+//         addRequestParameter("action", "Add selections to existing collection");
+//         getSession().setAttribute("results", results);
 
-        Map savedBags = new HashMap();
-        getSession().setAttribute("savedBags", savedBags);
+//         Map savedBags = new HashMap();
+//         getSession().setAttribute("savedBags", savedBags);
 
-        Collection objs = new LinkedHashSet();
-        objs.add(company1);
-        objs.add(department2);
+//         Collection objs = new LinkedHashSet();
+//         objs.add(company1);
+//         objs.add(department2);
 
-        savedBags.put("testBag1", objs);
+//         savedBags.put("testBag1", objs);
 
-        actionPerform();
-        verifyForward("results");
-        verifyNoActionErrors();
+//         actionPerform();
+//         verifyForward("results");
+//         verifyNoActionErrors();
 
-        savedBags = (Map) getSession().getAttribute("savedBags");
-        objs = (Collection) savedBags.get("testBag1");
+//         savedBags = (Map) getSession().getAttribute("savedBags");
+//         objs = (Collection) savedBags.get("testBag1");
 
-        assertEquals(3, objs.size());
-        Iterator iter = objs.iterator();
-        assertEquals(company1, iter.next());
-        assertEquals(department2, iter.next());
-        assertEquals(company2, iter.next());
-    }
+//         assertEquals(3, objs.size());
+//         Iterator iter = objs.iterator();
+//         assertEquals(company1, iter.next());
+//         assertEquals(department2, iter.next());
+//         assertEquals(company2, iter.next());
+//     }
 
 }

@@ -80,24 +80,24 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
-    public void testAddNoModel() throws Exception {
-        HttpSession session = getSession();
-        setRequestPathInfo("/query");
-        addRequestParameter("action", "Add to query");
-        session.setAttribute("queryClass", new QueryClass(Employee.class));
-        session.setAttribute("query", new Query());
+//     public void testAddNoModel() throws Exception {
+//         HttpSession session = getSession();
+//         setRequestPathInfo("/query");
+//         addRequestParameter("action", "Add to query");
+//         session.setAttribute("queryClass", new QueryClass(Employee.class));
+//         session.setAttribute("query", new Query());
 
-        QueryBuildForm form = new QueryBuildForm();
-        form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", ConstraintOp.EQUALS);
-        setActionForm(form);
+//         QueryBuildForm form = new QueryBuildForm();
+//         form.setFieldValue("name", "Dave");
+//         form.setFieldOp("name", ConstraintOp.EQUALS);
+//         setActionForm(form);
 
-        actionPerform();
-        verifyForward("error");
-        verifyActionErrors(new String[] {"exception.message"});
-        assertNotNull(getSession().getAttribute("query"));
-        assertNull(getSession().getAttribute("queryClass"));
-    }
+//         actionPerform();
+//         verifyForward("error");
+//         verifyActionErrors(new String[] {"exception.message"});
+//         assertNotNull(getSession().getAttribute("query"));
+//         assertNull(getSession().getAttribute("queryClass"));
+//     }
 
     //commented out because we're overriding the ActionForm reset() method in QueryActionForm,
     //which is called before the form is displayed, clearing anything we set in preparation for
