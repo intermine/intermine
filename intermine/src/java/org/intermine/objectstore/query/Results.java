@@ -198,7 +198,8 @@ public class Results extends AbstractList
      */
     protected List fetchBatchFromObjectStore(int batchNo) throws ObjectStoreException {
         int start = batchNo * batchSize;
-        int end = start + batchSize - 1;
+        int limit = batchSize;
+        //int end = start + batchSize - 1;
         initialised = true;
         // We now have 3 possibilities:
         // a) This is a full batch
@@ -208,7 +209,7 @@ public class Results extends AbstractList
 
         List rows = null;
         try {
-            rows = os.execute(query, start, end);
+            rows = os.execute(query, start, limit);
 
             synchronized (this) {
                 // Now deal with a partial batch, so we can update the maximum size
