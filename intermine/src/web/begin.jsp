@@ -116,5 +116,11 @@
 
 <p>
 
+<c:if test="${!empty GLOBAL_TEMPLATE_QUERIES && IS_SUPERUSER}">
+  <form method="link" action="<html:rewrite action="/exportTemplates"/>">
+    <input type="hidden" name="type" value="global"/>
+    <input type="submit" value="<fmt:message key="begin.exportTemplates"/>"/>
+  </form>
+</c:if>
 
 <!-- /begin.jsp -->
