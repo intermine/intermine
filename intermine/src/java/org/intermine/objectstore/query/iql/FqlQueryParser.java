@@ -672,6 +672,10 @@ public class FqlQueryParser
             case FqlTokenTypes.OR_CONSTRAINT_SET:
                 return processConstraintSet(ast.getFirstChild(), ConstraintSet.OR,
                                             q, modelPackage, iterator);
+            case FqlTokenTypes.LITERAL_true:
+                return new ConstraintSet(ConstraintSet.AND);
+            case FqlTokenTypes.LITERAL_false:
+                return new ConstraintSet(ConstraintSet.OR);
             case FqlTokenTypes.CONSTRAINT:
                 return processSimpleConstraint(ast, q, iterator);
             case FqlTokenTypes.SUBQUERY_CONSTRAINT:

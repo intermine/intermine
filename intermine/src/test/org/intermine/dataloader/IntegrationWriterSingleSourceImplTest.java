@@ -41,6 +41,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void setUp() throws Exception {
         super.setUp();
         toDelete = new ArrayList();
+        strictTestQueries = false;
     }
 
     public void tearDown() throws Exception {

@@ -33,6 +33,16 @@ public class FqlQueryParserTest extends FqlQueryTestCase
         return OneTimeTestCase.buildSuite(FqlQueryParserTest.class);
     }
 
+    public static void oneTimeSetUp() throws Exception {
+        FqlQueryTestCase.oneTimeSetUp();
+
+        results.put("WhereNegSubQueryClass", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE NOT (a1_ IN (SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name = 'CompanyA'))", null));
+        results.put("WhereNegClassClass", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Company AS a2_ WHERE NOT a1_ = a2_", null));
+        results.put("ContainsNeg11", new FqlQuery("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Department AS a1_, org.flymine.model.testmodel.Manager AS a2_ WHERE NOT a1_.manager CONTAINS a2_ AND a1_.name = 'DepartmentA1'", null));
+        results.put("EmptyNandConstraintSet", NO_RESULT);
+        results.put("EmptyNorConstraintSet", NO_RESULT);
+    }
+
     public void executeTest(String type) throws Exception {
         FqlQuery fq = (FqlQuery) results.get(type);
         Query parsed = FqlQueryParser.parse(fq);

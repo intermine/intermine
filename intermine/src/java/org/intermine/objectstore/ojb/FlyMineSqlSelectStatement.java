@@ -492,19 +492,23 @@ public class FlyMineSqlSelectStatement implements SqlStatement
      * @return the converted String
      */
     protected String constraintSetToString(ConstraintSet cs) {
-        String retval = (cs.isNegated() ? "( NOT (" : "(");
-        boolean needComma = false;
-        Set constraints = cs.getConstraints();
-        Iterator constraintIter = constraints.iterator();
-        while (constraintIter.hasNext()) {
-            Constraint subC = (Constraint) constraintIter.next();
-            if (needComma) {
-                retval +=  (cs.getDisjunctive() ? " OR " : " AND ");
+        if (cs.getConstraints().isEmpty()) {
+            return ((cs.getDisjunctive() ? cs.isNegated() : !cs.isNegated()) ? "true" : "false");
+        } else {
+            String retval = (cs.isNegated() ? "( NOT (" : "(");
+            boolean needComma = false;
+            Set constraints = cs.getConstraints();
+            Iterator constraintIter = constraints.iterator();
+            while (constraintIter.hasNext()) {
+                Constraint subC = (Constraint) constraintIter.next();
+                if (needComma) {
+                    retval +=  (cs.getDisjunctive() ? " OR " : " AND ");
+                }
+                needComma = true;
+                retval += constraintToString(subC);
             }
-            needComma = true;
-            retval += constraintToString(subC);
+            return retval + (cs.isNegated() ? "))" : ")");
         }
-        return retval + (cs.isNegated() ? "))" : ")");
     }
 
     /**

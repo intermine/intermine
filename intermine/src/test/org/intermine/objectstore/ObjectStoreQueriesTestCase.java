@@ -10,10 +10,14 @@ package org.flymine.objectstore;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
+
+import junit.framework.AssertionFailedError;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
@@ -27,8 +31,11 @@ import org.flymine.objectstore.query.*;
 
 public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 {
+    public static final Object NO_RESULT = new Object();
+
     protected static Map queries = new HashMap();
     protected static Map results = new LinkedHashMap();
+    protected boolean strictTestQueries = true;
 
     /**
      * Constructor
@@ -72,18 +79,48 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
      * @throws Exception if an error occurs
      */
     public void testQueries() throws Throwable {
+        StringWriter errorMessage = new StringWriter();
+        PrintWriter writer = new PrintWriter(errorMessage);
+        int status = 0; // 0 = everything fine, 1 = Failure, 2 = Error
         Iterator i = results.keySet().iterator();
         while (i.hasNext()) {
             String type = (String) i.next();
             // Does this appear in the queries map;
             if (!(queries.containsKey(type))) {
-                throw new Exception(type + " does not appear in the queries map");
+                writer.println(type + " does not appear in the queries map");
+                status = 1;
             }
-            try {
-                executeTest(type);
-            } catch (Throwable t) {
-                throw new Throwable("Failed on " + type, t);
+        }
+        i = queries.keySet().iterator();
+        while (i.hasNext()) {
+            String type = (String) i.next();
+            Object result = results.get(type);
+            if (result == null) {
+                if (strictTestQueries) {
+                    writer.println(type + " does not appear in the results map");
+                    status = (status == 2 ? 2 : 1);
+                }
+            } else if (result != NO_RESULT) {
+                try {
+                    executeTest(type);
+                } catch (AssertionFailedError e) {
+                    writer.println(type + " has failed: " + e.getMessage());
+                    //e.printStackTrace(writer);
+                    status = (status == 2 ? 2 : 1);
+                } catch (Throwable t) {
+                    writer.println(type + " produced an error:");
+                    t.printStackTrace(writer);
+                    status = 2;
+                }
             }
+        }
+        writer.flush();
+        errorMessage.flush();
+
+        if (status == 1) {
+            fail(errorMessage.toString());
+        } else if (status == 2) {
+            throw new Throwable(errorMessage.toString());
         }
     }
 
@@ -126,6 +163,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         //queries.put("SelectClassFromSubQuery", selectClassFromSubQuery());
         queries.put("OrderByAnomaly", orderByAnomaly());
         queries.put("SelectUnidirectionalCollection", selectUnidirectionalCollection());
+        queries.put("EmptyAndConstraintSet", emptyAndConstraintSet());
+        queries.put("EmptyOrConstraintSet", emptyOrConstraintSet());
+        queries.put("EmptyNandConstraintSet", emptyNandConstraintSet());
+        queries.put("EmptyNorConstraintSet", emptyNorConstraintSet());
     }
 
     /*
@@ -810,6 +851,42 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         qs.addConstraint(new SimpleConstraint(new QueryField(qc1, "name"), SimpleConstraint.EQUALS, new QueryValue("CompanyA")));
         qs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ContainsConstraint.CONTAINS, qc2));
         q.setConstraint(qs);
+        return q;
+    }
+
+    public static Query emptyAndConstraintSet() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new ConstraintSet(ConstraintSet.AND));
+        return q;
+    }
+
+    public static Query emptyOrConstraintSet() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new ConstraintSet(ConstraintSet.OR));
+        return q;
+    }
+
+    public static Query emptyNandConstraintSet() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new ConstraintSet(ConstraintSet.AND, true));
+        return q;
+    }
+
+    public static Query emptyNorConstraintSet() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new ConstraintSet(ConstraintSet.OR, true));
         return q;
     }
 }

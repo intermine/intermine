@@ -105,12 +105,7 @@ public class FqlQuery
             }
         }
         if (q.getConstraint() != null) {
-            if (q.getConstraint() instanceof ConstraintSet) {
-                retval += (((ConstraintSet) q.getConstraint()).getConstraints().isEmpty() ? ""
-                           : " WHERE " + constraintToString(q, q.getConstraint(), parameters));
-            } else {
-                retval += " WHERE " + constraintToString(q, q.getConstraint(), parameters);
-            }
+            retval += " WHERE " + constraintToString(q, q.getConstraint(), parameters);
         }
         if (!q.getGroupBy().isEmpty()) {
             retval += " GROUP BY ";
@@ -285,7 +280,8 @@ public class FqlQuery
                 }
                 return retval + (c.isNegated() ? "))" : ")");
             }
-            return "";
+            return ((((ConstraintSet) cc).getDisjunctive() ? cc.isNegated() : !cc.isNegated())
+                    ? "true" : "false");
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }

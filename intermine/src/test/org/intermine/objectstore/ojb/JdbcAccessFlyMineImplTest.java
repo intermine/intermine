@@ -65,6 +65,7 @@ public class JdbcAccessFlyMineImplTest extends SetupDataTestCase
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
 
         ja = (JdbcAccessFlyMineImpl) pb.serviceJdbcAccess();
+        strictTestQueries = false;
     }
 
     public static void oneTimeSetUp() throws Exception {

@@ -10,10 +10,11 @@ package org.flymine.objectstore;
  *
  */
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
@@ -123,9 +124,18 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1") } };
         results.put("Contains1N", toList(r));
 
+        r = new Object[][] { { data.get("DepartmentA1"), data.get("CompanyA") } };
+        results.put("ContainsN1", toList(r));
+
         r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
                              { data.get("ContractorA"), data.get("CompanyB") } };
         results.put("ContainsMN", toList(r));
+        
+        r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
+                             { data.get("ContractorA"), data.get("CompanyB") },
+                             { data.get("ContractorB"), data.get("CompanyA") },
+                             { data.get("ContractorB"), data.get("CompanyB") } };
+        results.put("ContainsDuplicatesMN", toList(r));
 
         r = new Object[][] { { data.get("CompanyA"), new Long(1) },
                              { data.get("CompanyB"), new Long(2) } };
@@ -171,10 +181,28 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
                              { data.get("EmployeeA1") } };
         results.put("SelectInterfaceAndSubClasses3", toList(r));
 
+        r = new Object[][] { { new Integer(5), "CompanyA" },
+                             { new Integer(5), "CompanyB" } };
+        results.put("OrderByAnomaly", toList(r));
+
         r = new Object[][] { { data.get("Secretary1") },
                              { data.get("Secretary2") },
                              { data.get("Secretary3") } };
         results.put("SelectUnidirectionalCollection", toList(r));
+
+        r = new Object[][] { { data.get("CompanyA") } };
+        results.put("SelectClassObjectSubquery", toList(r));
+
+        r = new Object[][] { { data.get("CompanyA") },
+                             { data.get("CompanyB") } };
+        results.put("EmptyAndConstraintSet", toList(r));
+
+        results.put("EmptyOrConstraintSet", Collections.EMPTY_LIST);
+
+        results.put("EmptyNandConstraintSet", Collections.EMPTY_LIST);
+
+        results.put("EmptyNorConstraintSet", toList(r));
+
     }
 
     /**

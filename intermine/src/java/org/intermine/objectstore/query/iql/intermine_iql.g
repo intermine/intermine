@@ -174,6 +174,8 @@ abstract_constraint: (constraint_set)=> constraint_set | safe_abstract_constrain
 safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | (subquery_constraint)=> subquery_constraint
             | (contains_constraint)=> contains_constraint
+            | "true"
+            | "false"
             | constraint
             | not_constraint
     ;
