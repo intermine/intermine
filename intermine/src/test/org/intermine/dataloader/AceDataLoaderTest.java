@@ -7,8 +7,11 @@ import junit.framework.TestCase;
 import org.acedb.*;
 import org.acedb.staticobj.*;
 
-import org.flymine.model.testmodel.*;
+import org.xml.sax.InputSource;
 
+import org.flymine.metadata.Model;
+import org.flymine.modelproduction.xml.FlyMineModelParser;
+import org.flymine.util.TypeUtil;
 
 public class AceDataLoaderTest extends TestCase {
 
@@ -16,10 +19,17 @@ public class AceDataLoaderTest extends TestCase {
         super(arg);
     }
 
-    private AceDataLoader loader  = new AceDataLoader();
+    private AceDataLoader loader;
+
 
     public void setUp() throws Exception {
         super.setUp();
+        loader = new AceDataLoader();
+        FlyMineModelParser parser = new FlyMineModelParser();
+        Model model = parser.process(getClass().getClassLoader()
+                                     .getResourceAsStream("test/acetest_model.xml"));
+        loader.model = model;
+        loader.packageName = TypeUtil.packageName(getClass().getName());
     }
 
     public void tearDown() throws Exception {
@@ -27,7 +37,7 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testSimpleTag() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("stringValue", obj);
         obj.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
@@ -44,7 +54,7 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testNestedTag() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("baseTag", obj);
         obj.addNode(node1);
         StaticAceNode node2 = new StaticAceNode("stringValue", node1);
@@ -63,7 +73,7 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testManyValuesForSameTag() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("stringValue", obj);
         obj.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
@@ -85,7 +95,7 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testOneValueForCollection() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("stringValues", obj);
         obj.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
@@ -103,7 +113,7 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testTwoValuesForCollection() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("stringValues", obj);
         obj.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
@@ -125,7 +135,7 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testBooleanTag() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("onOrOff", obj);
         obj.addNode(node1);
 
@@ -142,11 +152,11 @@ public class AceDataLoaderTest extends TestCase {
     }
 
     public void testReference() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("reference", obj);
         obj.addNode(node1);
         Reference ref1 = new StaticReference("AceTestObject2", node1,
-                                             new AceURL("acedb", "host", 1234, AceTestObject.class.getName(), "", "", "username", "password"));
+                                             new AceURL("acedb", "host", 1234, "AceTestObject", "", "", "username", "password"));
         node1.addNode(ref1);
 
         AceTestObject testObj1 = new AceTestObject();
@@ -164,14 +174,14 @@ public class AceDataLoaderTest extends TestCase {
 
 
     public void testReferences() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("references", obj);
         obj.addNode(node1);
         Reference ref1 = new StaticReference("AceTestObject2", node1,
-                                             new AceURL("acedb", "host", 1234, AceTestObject.class.getName(), "", "", "username", "password"));
+                                             new AceURL("acedb", "host", 1234, "AceTestObject", "", "", "username", "password"));
         node1.addNode(ref1);
         Reference ref2 = new StaticReference("AceTestObject3", node1,
-                                             new AceURL("acedb", "host", 1234, AceTestObject.class.getName(), "", "", "username", "password"));
+                                             new AceURL("acedb", "host", 1234, "AceTestObject", "", "", "username", "password"));
         node1.addNode(ref2);
 
         AceTestObject testObj1 = new AceTestObject();
@@ -190,8 +200,8 @@ public class AceDataLoaderTest extends TestCase {
         assertEquals(testObj1.references.size(), ret.references.size());
     }
 
-    public void testHash() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+    public void testHashReference() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("hashValue", obj);
         obj.addNode(node1);
         StaticAceNode node2 = new StaticAceNode("stringValue", node1);
@@ -214,9 +224,32 @@ public class AceDataLoaderTest extends TestCase {
 
     }
 
+    public void testHashCollection() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
+        StaticAceNode node1 = new StaticAceNode("hashValues", obj);
+        obj.addNode(node1);
+        StaticAceNode node2 = new StaticAceNode("stringValue", node1);
+        node1.addNode(node2);
+        StaticStringValue value1 = new StaticStringValue("A string", node2);
+        node2.addNode(value1);
+
+        AceTestObject testObj1 = new AceTestObject();
+        AceTestObject testObj2 = new AceTestObject();
+        testObj1.identifier = "AceTestObject1";
+        testObj2.identifier = "";
+        testObj2.stringValue = "A string";
+        testObj1.hashValues.add(testObj2);
+
+        AceTestObject ret = (AceTestObject) loader.processAceObject(obj);
+
+        assertEquals(testObj1.identifier, ret.identifier);
+        assertEquals(testObj1.hashValues.size(), ret.hashValues.size());
+
+    }
+
     // Expect nothing to be set, but the object to be created
     public void testFieldMissing() throws Exception {
-        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("nonexistentValue", obj);
         obj.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
@@ -248,12 +281,12 @@ public class AceDataLoaderTest extends TestCase {
 
     public void testProcessObjects() throws Exception {
         StaticAceSet set = new StaticAceSet(null, null, null);
-        StaticAceObject obj1 = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceObject obj1 = new StaticAceObject("AceTestObject1", null, "AceTestObject");
         StaticAceNode node1 = new StaticAceNode("stringValue", obj1);
         obj1.addNode(node1);
         StaticStringValue value1 = new StaticStringValue("A string", node1);
         node1.addNode(value1);
-        StaticAceObject obj2 = new StaticAceObject("AceTestObject2", null, AceTestObject.class.getName());
+        StaticAceObject obj2 = new StaticAceObject("AceTestObject2", null, "AceTestObject");
         StaticAceNode node2 = new StaticAceNode("stringValue", obj2);
         obj2.addNode(node2);
         StaticStringValue value2 = new StaticStringValue("A second string", node2);
