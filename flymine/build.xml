@@ -1,0 +1,232 @@
+<project name="FlyMine" default="all" basedir=".">
+  <description>FlyMine build file</description>
+
+  <!-- set up some buildtime and runtime properties -->
+
+  <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+  <property file="${build.properties.local}"/>
+  <property file="build.properties"/>
+
+  <!-- Libraries and binaries -->
+  <property name="lib" location="lib"/>
+  <property name="bin" location="bin"/>
+
+  <!-- source directories -->
+  <property name="src.java" location="src"/>
+  <property name="src.www" location="doc"/>
+  <property name="src.www-internal" location="../flymine-private/doc"/>
+
+  <!-- build directories -->
+  <property name="build" location="build"/>
+  <property name="build.java" location="${build}/java"/>
+  <property name="build.javadoc" location="${build}/api"/>
+  <property name="build.www" location="${build}/www"/>
+  <property name="build.www-internal" location="${build}/www/internal"/>
+
+  <!-- results directories -->
+  <property name="results"  location="results"/>
+  <property name="results.junit"  location="${results}/junit"/>
+
+  <!-- distributable directories -->
+  <property name="dist"  location="dist"/>
+  <property name="dist.www"  location="${dist}/www"/>
+
+
+
+  <!-- set the classpath for the build - basically everything in lib -->
+  <path id="project.class.path">
+    <pathelement path="${build.java}"/>
+    <pathelement path="${lib}"/>
+    <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- Initialisation targets -->
+
+  <target name="prepare">
+    <tstamp>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.javadoc}"/>
+    <mkdir dir="${build.www}"/>
+    <mkdir dir="${build.www-internal}"/>
+
+    <mkdir dir="${results}"/>
+    <mkdir dir="${results.junit}"/>
+
+  </target>
+
+  <target name="prepare-dist">
+
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist.www}"/>
+
+  </target>
+    
+
+  <!-- Compilation targets -->
+
+  <!-- Unit tests -->
+
+  <!-- Functional tests -->
+
+  <!-- System tests -->
+
+  <!-- Javadoc -->
+
+  <!-- Web targets -->
+
+  <target name="build-www" depends="prepare"
+          description="build the static website" >
+    <mkdir dir="${build.www}" />
+    <mkdir dir="${build.www-internal}" />
+
+    <available file="${src.www-internal}" type="dir" property="www-internal.present"/>
+
+    <antcall target="www-external" />
+    <antcall target="www-internal" />
+
+  </target>
+
+
+  <target name="www-external" depends="prepare">
+
+    <!-- Make sure files dependent on sidebar are handled correctly -->
+    <dependset>
+      <srcfilelist dir="${src.www}" files="sidebar.xml,flymine.xsl" />
+      <targetfileset dir="${build.www}" includes="**/*.html" />
+    </dependset>
+
+    <dependset>
+      <srcfilelist dir="${bin}" files="diatopng,pstopng,buildpngfromdia,pnmscalealpha" />
+      <targetfileset dir="${build.www}" includes="**/*.png" />
+    </dependset>
+
+    <dependset>
+      <srcfilelist dir="${bin}" files="buildgiffrompng" />
+      <targetfileset dir="${build.www}" includes="**/*.gif" />
+    </dependset>
+
+    <!-- Main web site -->
+    <copy todir="${build.www}">
+      <fileset dir="${src.www}">
+        <exclude name="**/*.xml" />
+        <exclude name="**/*.xsl" />
+	<exclude name="**/*.dia" />
+      </fileset>
+    </copy>
+
+    <style basedir="${src.www}" destdir="${build.www}" extension=".html"
+      style="${src.www}/flymine.xsl" includes="**/*.xml">
+      <classpath refid="project.class.path"/>
+      <param name="basedir" expression="${www.location}" />
+    </style>
+
+    <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www}">
+      <fileset dir="${src.www}">
+	<include name="**/*.dia" />
+      </fileset>
+      <mapper type="glob" from="*.dia" to="*.png" />
+      <srcfile />
+      <targetfile />
+    </apply>
+
+    <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www}">
+      <fileset dir="${build.www}">
+	<include name="**/*.png" />
+      </fileset>
+      <mapper type="glob" from="*.png" to="*.gif" />
+      <srcfile />
+      <targetfile />
+    </apply>
+
+  </target>
+
+  <target name="www-internal" depends="prepare"
+          if="www-internal.present" >
+    <!-- Internal web site -->
+    <copy todir="${build.www-internal}">
+      <fileset dir="${src.www-internal}">
+        <exclude name="**/*.xml" />
+        <exclude name="**/*.xsl" />
+	<exclude name="**/*.dia" />
+      </fileset>
+    </copy>
+
+    <style basedir="${src.www-internal}" destdir="${build.www-internal}" extension=".html"
+      style="${src.www}/flymine.xsl" includes="**/*.xml">
+      <classpath refid="project.class.path"/>
+      <param name="basedir" expression="${www.location}" />
+    </style>
+
+    <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www-internal}">
+      <fileset dir="${src.www-internal}">
+	<include name="**/*.dia" />
+      </fileset>
+      <mapper type="glob" from="*.dia" to="*.png" />
+      <srcfile />
+      <targetfile />
+    </apply>
+    <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www-internal}">
+      <fileset dir="${build.www-internal}">
+	<include name="**/*.png" />
+      </fileset>
+      <mapper type="glob" from="*.png" to="*.gif" />
+      <srcfile />
+      <targetfile />
+    </apply>
+
+  </target>
+
+
+  <!-- Packaging/distribution targets -->
+
+  <target name="dist-www" depends="prepare-dist,build-www"
+          description="makes the static website available for distribution">
+    <copy todir="${dist.www}">
+      <fileset dir="${build.www}">
+      </fileset>
+    </copy>
+
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist.www}">
+	<include name="**/**" />
+      </fileset>
+    </chmod>
+    <chmod perm="a+rx" type="dir">
+      <fileset dir="${dist.www}">
+	<include name="**/**" />
+      </fileset>
+    </chmod>
+  </target>
+
+
+  <!-- Releasing targets -->
+
+  <target name="release-www" depends="dist-www"
+    description="releases the static website to the webserver">
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
+    </exec>
+  </target>
+
+  <!-- Cleaning-up targets -->
+
+  <target name="clean"
+          description="clean up generated files">
+    <delete dir="${build}"/>
+    <delete dir="${results}"/>
+    <delete>
+      <fileset dir="." includes="junit*.properties"/>
+    </delete>
+  </target>
+
+  <target name="distclean" depends="clean"
+          description="clean up all distribution files">
+    <delete dir="${dist}"/>
+  </target>
+
+</project>
