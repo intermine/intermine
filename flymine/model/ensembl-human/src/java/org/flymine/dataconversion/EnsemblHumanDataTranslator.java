@@ -289,8 +289,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     protected Item createLocation(Item srcItem, Item tgtItem, boolean srcItemIsChild)
         throws ObjectStoreException {
-        String namespace = XmlUtil.getNamespaceFromURI(tgtItem.getClassName());
-        Item location = createItem(namespace + "Location", "");
+
+        Item location = createItem(tgtNs + "Location", "");
         Item seq = new Item();
         if (srcItem.hasAttribute("seq_region_start")) {
             moveField(srcItem, location, "seq_region_start", "start");
