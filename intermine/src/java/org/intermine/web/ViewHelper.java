@@ -17,14 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.Globals;
-
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.results.TableHelper;
@@ -58,8 +53,9 @@ public abstract class ViewHelper
      *
      * @param request The HTTP request we are currently processing
      * @return the results of running the query
+     * @throws ObjectStoreException if an error occurs accessing the ObjectStore
      */
-    public static PagedResults runQuery(HttpServletRequest request) {
+    public static PagedResults runQuery(HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -67,23 +63,10 @@ public abstract class ViewHelper
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
-        PagedResults pr = null;
-        try {
-            pr = TableHelper.makeTable(os, makeQuery(request), view);
-            String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
-            ResultsInfo resultsInfo = pr.getResults().getInfo();
-            SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
-        } catch (ObjectStoreException e) {
-            ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
-            if (errors == null) {
-                errors = new ActionErrors();
-                request.setAttribute(Globals.ERROR_KEY, errors);
-            }
-            String key = (e instanceof ObjectStoreQueryDurationException)
-                ? "errors.query.estimatetimetoolong"
-                : "errors.query.objectstoreerror";
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
-        }
+        PagedResults pr = TableHelper.makeTable(os, makeQuery(request), view);
+        String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
+        ResultsInfo resultsInfo = pr.getResults().getInfo();
+        SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
         return pr;
     }
 

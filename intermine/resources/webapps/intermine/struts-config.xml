@@ -87,7 +87,6 @@
             parameter="method">
       <forward name="query" path="query.page"/>
       <forward name="results" path="results.page"/>
-      <forward name="export" path="export.page"/>
     </action>
 
     <action path="/exportAction"

@@ -20,6 +20,12 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.Globals;
+
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 
 /**
  * Action to handle links on view tile
@@ -118,8 +124,21 @@ public class ViewChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
-
+        try {
+            session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
+        } catch (ObjectStoreException e) {
+            ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+            if (errors == null) {
+                errors = new ActionErrors();
+                request.setAttribute(Globals.ERROR_KEY, errors);
+            }
+            String key = (e instanceof ObjectStoreQueryDurationException)
+                ? "errors.query.estimatetimetoolong"
+                : "errors.query.objectstoreerror";
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
+            return mapping.findForward("query");
+        }
+        
         return mapping.findForward("results");
     }
 }
