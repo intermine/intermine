@@ -155,5 +155,55 @@ public class QueryTestCaseTest extends QueryTestCase
         }
     }
 
+    public void testQueriesConstraintSet() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Department.class);
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.OR);
+
+        QueryField qf1 = new QueryField(qc1, "name");
+        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Department1"));
+        Constraint c2 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Department2"));
+        cs1.addConstraint(c1);
+        cs1.addConstraint(c2);
+        q1.setConstraint(cs1);
+
+
+
+        Query q2 = new Query();
+        QueryClass qc2 = new QueryClass(Department.class);
+        q2.addToSelect(qc2);
+        q2.addFrom(qc2);
+
+        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.OR);
+
+        QueryField qf2 = new QueryField(qc2, "name");
+        Constraint c3 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department1"));
+        Constraint c4 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department2"));
+        cs2.addConstraint(c3);
+        cs2.addConstraint(c4);
+        q2.setConstraint(cs2);
+
+        assertEquals(q1, q2);
+
+        Constraint c5 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("Department4"));
+        cs2.addConstraint(c5);
+        q2.setConstraint(cs2);
+
+        failed = false;
+        try {
+            assertEquals(q1, q2);
+            failed = true;
+        } catch (AssertionFailedError e) {
+        }
+        finally {
+            if (failed) {
+                fail("q1 and q2 should not be equal");
+            }
+        }
+    }
+
 
 }
