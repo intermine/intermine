@@ -33,6 +33,7 @@ import org.intermine.objectstore.query.SingletonResults;
 public class ObjectStoreItemReader implements ItemReader
 {
     private ObjectStoreItemPathFollowingImpl os;
+    private int defaultBatchSize = 1000;
 
     /**
      * Constructs a new ObjectStoreItemReader.
@@ -86,8 +87,21 @@ public class ObjectStoreItemReader implements ItemReader
      * @throws ObjectStoreException if anything goes wrong
      */
     public Iterator itemIterator(Query q) throws ObjectStoreException {
+        return itemIterator(q, defaultBatchSize);
+    }
+
+   /**
+     * Returns an iterator through the set of Items present in the source Item ObjectStore for the
+     * given Query and batch size.
+     *
+     * @param q the Query - must have one element in the SELECT list, which must be an Item Object
+     * @param batchSize number of items to read in each batch
+     * @return an Iterator
+     * @throws ObjectStoreException if anything goes wrong
+     */
+    public Iterator itemIterator(Query q, int batchSize) throws ObjectStoreException {
         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
-        sr.setBatchSize(1000);
+        sr.setBatchSize(batchSize);
         return sr.iterator();
     }
 
