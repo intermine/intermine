@@ -5,8 +5,21 @@
 
 <c:if test="${cld != null}">
     <html:form action="/query">
-        <c:out value="${cld.unqualifiedName}"/><br/>
-          
+        <c:choose>
+            <c:when test="${!empty alias}">
+                <c:set var="startStr" value="Edit"/>
+                <c:set var="aliasStr" value="${alias}"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="startStr" value="New"/>
+                <c:set var="aliasStr" value=""/>
+            </c:otherwise>
+        </c:choose>
+
+        <c:out value="${startStr}"/> 
+        <font class="queryViewFromItemTitle"> <c:out value="${cld.unqualifiedName}"/> </font> 
+        <font class="queryViewFromItemAlias"> <c:out value="${aliasStr}"/></font>              
+
         <table border="0">        
             <c:forEach var="field" items="${cld.allAttributeDescriptors}">
                 <tr>

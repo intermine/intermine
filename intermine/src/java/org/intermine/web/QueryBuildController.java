@@ -14,9 +14,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.action.ActionForm;
@@ -27,6 +29,14 @@ import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.Constraint;
+import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.QueryField;
+
+import org.flymine.objectstore.query.presentation.ConstraintListCreator;
+import org.flymine.objectstore.query.presentation.AssociatedConstraint;
 
 /**
  * Perform initialisation steps for query editing tile prior to calling
@@ -46,11 +56,51 @@ public class QueryBuildController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
 
-        ClassDescriptor cld = (ClassDescriptor) request.getSession().getAttribute("cld");
+        HttpSession session = request.getSession();
+
+        ClassDescriptor cld = (ClassDescriptor) session.getAttribute("cld");
         if (cld != null) {
             request.getSession().setAttribute("ops", getOps(cld));
         }
+
+        if (session.getAttribute("alias") != null) {
+            populateQueryBuildForm((QueryBuildForm) form, session);
+            session.removeAttribute("alias");
+        }
         return null;
+    }
+
+    /**
+     * Editing an QueryClass already on query so need to fill in form from
+     * constraints already on query.
+     *
+     * @param form the QueryBuildForm to populate
+     * @param session HttpSession to get alias and query from
+     * @throws Exception if anything goes wrong
+     */
+    protected void populateQueryBuildForm(QueryBuildForm form, HttpSession session)
+        throws Exception {
+
+        String alias = (String) session.getAttribute("alias");
+        Query q = (Query) session.getAttribute("query");
+        QueryClass qc = (QueryClass) q.getReverseAliases().get(alias);
+        List constraints = ConstraintListCreator.createList(q, qc);
+
+        Iterator iter = constraints.iterator();
+        while (iter.hasNext()) {
+            AssociatedConstraint ac = (AssociatedConstraint) iter.next();
+            Constraint c = ac.getConstraint();
+            if (c instanceof SimpleConstraint) {
+                SimpleConstraint sc = (SimpleConstraint) c;
+                if ((sc.getArg1() instanceof QueryField)  && (sc.getArg2() instanceof QueryValue)) {
+                    form.setFieldValue(((QueryField) sc.getArg1()).getFieldName(),
+                                       ((QueryValue) sc.getArg2()).getValue());
+
+                    //form.setOpValue(((QueryField)sc.getArg1()).getFieldName(),
+                    //                sc.getOp());
+                }
+            }
+        }
     }
 
     /**

@@ -46,6 +46,15 @@ public class PrintableConstraint
     }
 
     /**
+     * Return the wrapped Constraint.
+     *
+     * @return the original Constraint
+     */
+    public Constraint getConstraint() {
+        return this.constraint;
+    }
+
+    /**
      * Returns a String describing the constraint.
      *
      * @return a String

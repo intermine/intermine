@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <html:form action="/queryClassSelect">
+    Add a new class to query<br/>
     <html:select property="cldName">
         <html:options name="model" property="classNames" labelName="model" labelProperty="unqualifiedClassNames"/>
     </html:select>

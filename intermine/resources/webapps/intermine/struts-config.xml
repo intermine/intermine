@@ -27,6 +27,10 @@
     <form-bean      name="queryClassSelectForm"
                     type="org.flymine.web.QueryClassSelectForm"/>
 
+    <!-- QueryAliasSelect form bean -->
+    <form-bean      name="queryAliasSelectForm"
+                    type="org.flymine.web.QueryAliasSelectForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -76,6 +80,16 @@
       <forward name="buildquery"           path="query.page"/>
     </action>
 
+    <!-- Select alias of class already in query -->
+    <action    path="/queryAliasSelect"
+               type="org.flymine.web.QueryAliasSelectAction"
+               name="queryAliasSelectForm"
+              scope="request"
+              input="query"
+              parameter="action">
+      <forward name="buildquery"           path="query.page"/>
+    </action>
+
     <action    path="/buildquery"
             forward="query.page">
     </action>
@@ -84,10 +98,10 @@
             forward="documentation.page">
     </action>
 
-    <action path="/initQuery" type="org.flymine.web.QueryController"> 
-    </action>
+    <action path="/initQuery" type="org.flymine.web.QueryController"/> 
 
-    <action path="/initQueryBuild" type="org.flymine.web.QueryBuildController"> 
+    <action path="/initQueryBuild" type="org.flymine.web.QueryBuildController"
+            name="queryBuildForm"> 
     </action>
 
     <action path="/initQueryView" type="org.flymine.web.QueryViewController"/>

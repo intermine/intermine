@@ -30,14 +30,17 @@
 </definition>
 <definition name="tribody.template" path="/tribody.jsp">
 </definition>
-
+<definition name="sidebar.tile" path="/sidebar.jsp">
+    <put name="sidebarOne" value="queryClassSelect.jsp"/>
+    <put name="sidebarTwo" value="queryAliasSelect.jsp"/>
+</definition>
 <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do">
 </definition>
 <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do">
 </definition>
 
 <definition name="query.tile" extends="tribody.template" controllerUrl="/initQuery.do">
-    <put name="left" value="/queryClassSelect.jsp"/>
+    <put name="left" value="sidebar.tile"/>
     <put name="top" value="queryBuild.tile" />
     <put name="bottom" value="queryView.tile"/>
 </definition>
