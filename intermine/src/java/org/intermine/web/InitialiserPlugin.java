@@ -15,6 +15,11 @@ import javax.servlet.ServletContext;
 
 import java.util.Properties;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.TreeSet;
@@ -29,6 +34,8 @@ import org.apache.struts.config.ModuleConfig;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.web.config.WebConfig;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -64,11 +71,13 @@ public class InitialiserPlugin implements PlugIn
         ObjectStore os = null;
         try {
             os = ObjectStoreFactory.getObjectStore();
+            servletContext.setAttribute(Constants.OBJECTSTORE, os); 
+
+            processWebConfig(servletContext);
         } catch (Exception e) {
             throw new ServletException("Unable to instantiate ObjectStore", e);
         }
 
-        servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         summarizeObjectStore(servletContext, os);   
     }
 
@@ -169,6 +178,48 @@ public class InitialiserPlugin implements PlugIn
         }
         servletContext.setAttribute(Constants.EXAMPLE_QUERIES, exampleQueries);
     }
+
+    /**
+     * Create the DISPLAYERS ServletContext attribute by looking at the model and the WebConfig.
+     */
+    private void processWebConfig(ServletContext servletContext)
+        throws Exception {
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        WebConfig wc = (WebConfig) servletContext.getAttribute("webconfig");
+
+        Map displayersMap = new HashMap();
+
+        for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
+             modelIter.hasNext();) {
+            String className = (String) modelIter.next();
+            Set cds = model.getClassDescriptorsForClass(Class.forName(className));
+            List cdList = new ArrayList(cds);
+            Map wcTypeMap = (Map) wc.getTypes();
+
+            Collections.reverse(cdList);
+            
+            for (Iterator cdIter = cdList.iterator(); cdIter.hasNext(); ) {
+                ClassDescriptor cd = (ClassDescriptor) cdIter.next();
+
+                if (wcTypeMap.get(cd.getName()) != null) {
+                    displayersMap.put(className, wcTypeMap.get(cd.getName()));
+                }
+
+                for (Iterator fdIter = cd.getFieldDescriptors().iterator(); fdIter.hasNext(); ) {
+                    FieldDescriptor fd = (FieldDescriptor) fdIter.next();
+                    String newKey = cd.getName() + " " + fd.getName();
+
+                    if (wcTypeMap.get(newKey) != null) {
+                        displayersMap.put(className + " " + fd.getName(), wcTypeMap.get(newKey));
+                    }
+                }
+            }
+        }
+
+        servletContext.setAttribute(Constants.DISPLAYERS, displayersMap);
+    }
+
 
     /**
      * Destroy method called at Servlet destroy
