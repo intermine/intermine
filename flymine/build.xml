@@ -518,7 +518,7 @@
 
   <!-- test out creating java objects from chado model -->
   <target name="retrieve-chado" depends="convert-chado, build-db-chado-src-items">
-    <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.DBRetrieverTask">
+    <taskdef name="retrieve-chado" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -588,7 +588,7 @@
 
   <!-- retrieve ensembl anopheles data -->
   <target name="retrieve-ensembl-anopheles" depends="convert-ensembl, build-db-ensembl-anoph-src-items">
-    <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
+    <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -603,7 +603,7 @@
 
   <!-- retrieve ensembl drosophila data -->
   <target name="retrieve-ensembl-drosophila" depends="convert-ensembl, build-db-ensembl-dros-src-items">
-    <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
+    <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -618,7 +618,7 @@
 
   <!-- load orthologue/paralogue data -->
   <target name="retrieve-orthologue" depends="build-db-orthologue-tgt-items">
-    <taskdef name="retrieve-orthologue" classname="org.flymine.dataconversion.FileConverterTask">
+    <taskdef name="retrieve-orthologue" classname="org.intermine.dataconversion.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -639,7 +639,7 @@
 
   <!-- load rnai data -->
   <target name="retrieve-rnai" depends="build-db-rnai-src-items">
-    <taskdef name="retrieve-rnai" classname="org.flymine.dataconversion.FileConverterTask">
+    <taskdef name="retrieve-rnai" classname="org.intermine.dataconversion.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -1125,8 +1125,7 @@
       </fileset>
     </copy>
   </target>
-
-
+ 
   <!-- Cleaning-up targets -->
 
   <target name="clean"
