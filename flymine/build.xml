@@ -762,13 +762,6 @@
 
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
   <target name="load-ensembl-drosophila" depends="compile-main, build-db-dros-test, create-indexes-dros-test">
-
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.dros-test"/>
-    </ant>
-
     <taskdef name="load-dros" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
