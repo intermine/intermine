@@ -5,11 +5,11 @@
 <div>
   <div class="headerTitle">
     <html:link href="${WEB_PROPERTIES['project.titleURL']}">
-      <c:out value="${WEB_PROPERTIES['project.title']}"/>
+      <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
     </html:link>
   </div>
   <div class="headerSubtitle">
-    <c:out value="${WEB_PROPERTIES['project.subTitle']}"/>
+    <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
   </div>
 </div>
 <!-- /header.jsp -->
