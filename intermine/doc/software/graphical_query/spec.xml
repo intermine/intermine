@@ -3,7 +3,6 @@
 <article>
 
 <artheader>
-	<date>2002-11-13</date>
 	<title>InterMine - Graphical Query Specification</title>
 	<authorgroup>
 		<author>
@@ -24,13 +23,13 @@
 <title>Initial description</title>
 <para>
 	Our database stores separate collections of data, where each collection stores data all of the same type.
-	<graphic fileref="Gene" format="PNG" align="Left" />
+	<graphic fileref="Gene.png" align="Left"/>
 	These collections can be compared to tables in SQL or object classes in an Object Oriented DB.
 	A query will retrieve data from one or more of these collections - so the graphical representation of a query consists of an arrangement of objects on the screen, each of which represent one of these collections.
 	The figure on the left is an example of such an object, which represents the collection of Genes in the database.
 	The object type "Gene" is represented as a box, with a title at the top declaring its type, and a list of fields in the object below it.
 <!--	(Note that these aren't necessarily the fields of a Gene object - it is just an example picture.) -->
-	<graphic fileref="Gene2" format="PNG" align="Right" />
+	<graphic fileref="Gene2.png" align="Right"/>
 	The picture shown on the right is a complete query - it represents "List all genes" - a relatively simple query.
 </para>
 
@@ -44,19 +43,19 @@
 <title>Joining multiple object types</title>
 <para>
 	The query on the left shows two object types in a query, joined together with a line between Gene.Sequences and Sequence.Genes.
-	<graphic fileref="GeneSequenceR" format="PNG" align="Left" />
+	<graphic fileref="GeneSequenceR.png" align="Left"/>
 	Formally, the query results contain every possible combination of each Gene with each Sequence, where the restriction represented by the line (Gene contains Sequence) is true.
 </para>
 
 <para>
-	<graphic fileref="GeneSequenceR2" format="PNG" align="Right" />
+	<graphic fileref="GeneSequenceR2.png" align="Right"/>
 	It is also possible to draw a line between two fields of an object, with an operator on the line.
 	This type of link (shown on the right) is restricting the results so that only results where the "Gene.A field" field is equal to the "Sequence.This field" are shown.
 	As well as equals (<emphasis>=</emphasis>), there is greater than (<emphasis>&gt;</emphasis>), greater or equal (<emphasis>&gt;=</emphasis>), not equal (<emphasis>!=</emphasis>), less than (<emphasis>&lt;</emphasis>), less or equal (<emphasis>&lt;=</emphasis>), and like (which performs a string pattern match).
 </para>
 
 <para>
-	<graphic fileref="GeneSequence" format="PNG" align="Left" />
+	<graphic fileref="GeneSequence.png" align="Left"/>
 	For completeness, the query on the left is also valid - it represents "List all possible combinations of every Gene with every Sequence."
 	It is not normally useful to produce a query like this.
 </para>
@@ -65,9 +64,9 @@
 <sect1>
 <title>What results actually get shown</title>
 <para>
-	<graphic fileref="Gene3" format="PNG" align="Left" />
+	<graphic fileref="Gene3.png" align="Left"/>
 	To indicate what data we actually want to see in our results, we place tick-marks against all the items we wish to be included.
-	<graphic fileref="GeneSequenceR3" format="PNG" align="Right" />
+	<graphic fileref="GeneSequenceR3.png" align="Right"/>
 	This can happen on an object-wide level, or field-by-field.
 	For instance, the query on the left specifies that all Genes should be listed, and they should be shown as a table with a single column, being the gene.
 	The query on the right produces a table with two columns - the gene, against the sequence field "This field".
@@ -78,7 +77,7 @@
 <sect1>
 <title>Aggregate functions</title>
 <para>
-	<graphic fileref="GeneSequenceC" format="PNG" align="Right" />
+	<graphic fileref="GeneSequenceC.png" align="Right"/>
 	An aggregate function is a function that takes a set of one or more rows in a result, and combines them into a single row.
 	In SQL and OQL, once can specify a set of fields which the results are to be grouped by, and the aggregate will convert each group into a single row.
 	For instance, if one needs to show a table of Gene against the number of Sequences it contains, one would create a join between Gene and Sequence (to give a list of all the combinations of Gene with a Sequence attached to it), then group by Gene (to produce a list of groups of Gene-Sequence combinations that have the same Gene), and apply the "count" aggregate function to reduce each group to the Gene and the count of the rows in the group.
@@ -87,7 +86,7 @@
 </para>
 
 <para>
-	<graphic fileref="GeneSequenceCR" format="PNG" align="Right" />
+	<graphic fileref="GeneSequenceCR.png" align="Right"/>
 	Aggregate functions that are available include <emphasis>count</emphasis>, <emphasis>max(a field)</emphasis>, <emphasis>min(a field)</emphasis>, <emphasis>sum(a field)</emphasis>, etc.
 	Most of the aggregate functions operate on a particular field in the aggregation - <emphasis>count</emphasis> is unusual in that it doesn't do this.
 </para>
@@ -101,11 +100,11 @@
 <sect1>
 <title>More interesting restrictions</title>
 <para>
-	<graphic fileref="Gene4" format="PNG" align="Left" />
+	<graphic fileref="Gene4.png" align="Left"/>
 	It is not sufficient for a query language to be merely capable of restricting results by a set of restrictions ANDed together.
 	Sometimes one wishes to view results where one thing is true OR another thing is true.
 	This is represented in our query language by lines leading from the restrictions to an operation to perform on those restrictions, as in the diagram on the left.
-	<graphic fileref="Gene5" format="PNG" align="Right" />
+	<graphic fileref="Gene5.png" align="Right"/>
 	In this query, all Genes will be listed that have either their "A field" field equal to "Hello", or their "Another field" field equal to "Bye".
 	The arrows on the blue lines in our diagrams are present so that more complex combinations of restrictions are unambiguous.
 <!--	For example, the diagram on the right describes the OR of two fields together with the AND of two fields, rather than the AND of two fields together with the OR of two fields.-->
@@ -118,7 +117,7 @@
 <sect1>
 <title>Left and right joins</title>
 <para>
-	<graphic fileref="GeneOtherName" format="PNG" align="Right" />
+	<graphic fileref="GeneOtherName.png" align="Right"/>
 	Sometimes, one may wish to list a selection from a particular object type, and also show against each object any objects of a particular type that are linked to it - additional information.
 	For example, one may wish to list a particular selection of Genes, and get the system to also show you any alternative names for that Gene that may exist.
 	If there are no alternative names for a given Gene, you still want to see the Gene.

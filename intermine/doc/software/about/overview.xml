@@ -8,7 +8,7 @@
   
   <para>At the software level, InterMine is an general-purpose database that supports the storage and retrieval of Java objects. It is designed to support large quantities of data, possibly from different sources of varying reliability.  The resultant complexity in data integration and efficient querying is handled by the provision of well-defined components (see diagram below) which can be flexibly configured. An understanding of these is useful preparation both for using the software and <ulink url="../../contribute/index.xml">contributing</ulink> to the project by suggesting enhancements or writing code.</para>
   
-  <inlinegraphic fileref="overview" format="PNG" align="center"/>
+  <inlinegraphic fileref="overview.png" align="center"/>
 
   <para>The organisation of the InterMine codebase reflects the structure of its components, the most important of which are represented as blue boxes in the diagram. The yellow boxes denote the interfaces available to query the integrated data. For more API information and implementation details please consult the JavaDoc - class names in this document link to the relevant pages. A basic <ulink url="../start/tutorial.xml">tutorial</ulink> that describes how to get started with the ObjectStore using a simple UML model is also available.</para>
   
