@@ -12,4 +12,10 @@
       <constraint op=">" value="35"/>
     </node>
   </query>
+  <query name="employeeByName" model="testmodel" view="Employee">
+    <node path="Employee.name">
+      <constraint op="=" value=""/>
+    </node>
+  </query>
+  
 </query-list>
