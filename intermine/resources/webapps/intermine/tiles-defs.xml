@@ -60,7 +60,7 @@
 
   <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
 
-  <definition name="iqlQuery.tile" path="/iqlquery.jsp" controllerUrl="/initIqlQuery.do"/>
+  <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
 
   <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
 
