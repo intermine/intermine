@@ -241,6 +241,7 @@
 			This doesn't quite give us all the flexibility that a real SQL planner has, but it probably gives us most of the advantage in all but the most obscure of circumstances.
 			It isn't completely clear what happens when you have more than two levels of select statements.</listitem>
 		<listitem>It doesn't cope with non-fully-qualified value names in the SELECT portion of the SQL statement, even if there is only one table present in the FROM portion.</listitem>
+		<listitem>It doesn't cope with aggregate functions at all - it sees them as non-fully-qualified value names, and therefore rejects them.</listitem>
 	</itemizedlist>
 </para>
 </sect1>
