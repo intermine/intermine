@@ -120,6 +120,13 @@ public class PagedResults extends PagedTable
     }
 
     /**
+     * @see PagedTable#getMaxRetrievableIndex
+     */
+    public int getMaxRetrievableIndex() {
+        return results.getObjectStore().getMaxOffset();
+    }
+
+    /**
      * Call setType() on each Column, setting it the type to a ClassDescriptor, a FieldDescriptor
      * or Object.class
      */

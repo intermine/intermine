@@ -81,4 +81,11 @@ public class PagedCollection extends PagedTable
     protected void updateRows() {
         rows = list.subList(startRow, Math.min(startRow + pageSize, list.size()));
     }
+
+    /**
+     * @see PagedTable#getMaxRetrievableIndex
+     */
+    public int getMaxRetrievableIndex() {
+        return Integer.MAX_VALUE;
+    }
 }

@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * A pageable and configurable table, eg. a Results object
+ * A pageable and configurable table of data.
  *
  * @author Andrew Varley
  * @author Kim Rutherford
@@ -220,4 +220,12 @@ public abstract class PagedTable
      * Update the internal row list
      */
     protected abstract void updateRows();
+
+    /**
+     * Return the maximum retrievable index for this PagedTable.  This will only ever return less
+     * than getExactSize() if the underlying data source has a restriction on the maximum index
+     * that can be retrieved.
+     * @return the maximum retrieved index
+     */
+    public abstract int getMaxRetrievableIndex();
 }
