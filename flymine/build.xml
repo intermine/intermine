@@ -377,6 +377,15 @@
     </ant>
   </target>
 
+  <!-- Orthologue items -->
+    <target name="build-db-orthologue-items" depends="convert-ensembl">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.orthologue-items"/>
+    </ant>
+  </target>
+
   <!-- Chado items -->
   <target name="build-db-chado-items" depends="convert-chado">
     <ant antfile="build-model.xml" target="build-db">
@@ -590,8 +599,22 @@
       <classpath refid="test.class.path"/>
     </taskdef>
     
-    <retrieve-ensembl database="db.ensembl" model="ensembl" 
-                    osName="osw.ensembl-items"/>
+    <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-items"/>
+  </target>
+
+  <!-- load orthologue/paralogue data -->
+  <target name="retrieve-orthologue" depends="build-db-orthologue-items">
+    <taskdef name="retrieve-orthologue" classname="org.flymine.dataconversion.FileConverterTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    
+    <concat destfile="${build.tmp}/orthologues">
+      <path>
+        <fileset dir="/shared/data/orthologues" includes="orthologues.*"/>
+      </path>
+    </concat>
+
+    <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-items"/>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
