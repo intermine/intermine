@@ -16,7 +16,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
@@ -46,6 +48,9 @@ public class DBConverter extends DataConverter
     protected Model model;
     protected Database db;
     protected DBReader reader;
+    protected Map uniqueIdMap = new HashMap();
+    protected Map uniqueRefIdMap = new HashMap();
+    protected Map maxIdMap = new HashMap();
 
     /**
      * Constructor
@@ -70,18 +75,86 @@ public class DBConverter extends DataConverter
      */
     public void process() throws Exception {
         try {
+            // if source db table has a non-unique id need to create a unique identifier
+            // references to the non-unique id will be pointed at an arbitrary unique
+            // identifier dor that group of items.  It is assumed that the group of items
+            // will become one after data translation.
+
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
-                    //if (cld.getName().equals("org.flymine.model.ensembl.protein_align_feature")) {
+                    if (idsProvided(cld) && !idIsUnique(cld)) {
+                        buildUniqueIdMap(TypeUtil.unqualifiedName(cld.getName()));
+                    }
+                }
+            }
+
+            for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
+                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
                     processClassDescriptor(cld);
-                    //}
                 }
             }
         } finally {
             writer.close();
         }
     }
+
+
+    /**
+     * Get an assigned unique id for an item, if the id provided is already
+     * unique it will be returned unaltered.
+     * @param id an id to get a unique id for
+     * @return a different unique id or the original id
+     */
+    protected String getUniqueId(String id) {
+        if (uniqueIdMap.containsKey(id)) {
+            String newId = (String) ((Stack) uniqueIdMap.get(id)).pop();
+            if (((Stack) uniqueIdMap.get(id)).empty()) {
+                uniqueIdMap.remove(id);
+            }
+            return newId;
+        }
+        return id;
+    }
+
+    /**
+     * Get an assigned unique id for a referenced item, if the id provided is already
+     * unique it will be returned unaltered.
+     * @param refId an id to get a unique id for
+     * @return a different unique id or the original id
+     */
+    protected String getUniqueRefId(String refId) {
+        if (uniqueRefIdMap.containsKey(refId)) {
+            return (String) uniqueRefIdMap.get(refId);
+        }
+        return refId;
+    }
+
+
+    /**
+     * Given class that has a non-unique id column in the source database create and store
+     * sufficient unique ids that can later be retrieved from a map.
+     * @param clsName name of class with a non-unique id
+     * @throws SQLException if problem querying database
+     */
+    protected void buildUniqueIdMap(String clsName) throws SQLException {
+        String idCol = clsName + "_id";
+        Iterator iter = reader.execute("SELECT " + idCol + " FROM " + clsName).iterator();
+        while (iter.hasNext()) {
+            String clsId = alias(clsName) + "_" + ((Map) iter.next()).get(idCol);
+            if (!uniqueIdMap.containsKey(clsId)) {
+                uniqueIdMap.put(clsId, new Stack());
+            }
+            String newId = alias(clsName) + "_" + getNextTableId(clsName);
+            ((Stack) uniqueIdMap.get(clsId)).push(newId);
+
+            if (!uniqueRefIdMap.containsKey(clsId)) {
+                uniqueRefIdMap.put(clsId, newId);
+            }
+        }
+    }
+
 
     /**
      * Process a single class from the model
@@ -98,17 +171,28 @@ public class DBConverter extends DataConverter
             //LOG.error("Processing class: " + clsName);
 
             boolean idsProvided = idsProvided(cld);
-            if (idsProvided) {
+            boolean nonUniqueId = !idIsUnique(cld);
+            if (idsProvided && !nonUniqueId) {
                 iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
             } else {
                 iter = reader.execute("SELECT * FROM " + clsName).iterator();
             }
 
-            int identifier = 1;
+            int identifier = 0;
             while (iter.hasNext()) {
                 Map row = (Map) iter.next();
-                String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (identifier++);
-                writer.store(getItem(cld, clsId, row));
+                String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (++identifier);
+                String uniqueId = (String) getUniqueId(alias(clsName) + "_" + clsId);
+                Item item = getItem(cld, uniqueId, clsId, row);
+
+                if (nonUniqueId) {
+                    Attribute attr = new Attribute();
+                    attr.setItem(item);
+                    attr.setName("nonUniqueId");
+                    attr.setValue(alias(clsName) + "_" + clsId);
+                    item.addAttributes(attr);
+                }
+                writer.store(item);
             }
         } finally {
             if (c != null) {
@@ -137,18 +221,46 @@ public class DBConverter extends DataConverter
     }
 
     /**
+     * Find out if the id column a given table in source database is unique.
+     * @param cld class corresponding to table in source db
+     * @return true if index is unique
+     * @throws SQLException if problem querying database
+     */
+    protected boolean idIsUnique(ClassDescriptor cld) throws SQLException {
+        String clsName = TypeUtil.unqualifiedName(cld.getName());
+        String idCol = clsName + "_id";
+
+        ResultSet rs = c.getMetaData().getIndexInfo(null, null, clsName, true, false);
+        while (rs.next()) {
+            if (rs.getString(9).equals(idCol)) {
+                return true;
+            }
+        }
+
+        rs = executeQuery(c, "SELECT " + idCol + ", COUNT(*) FROM " + clsName
+                                   + " GROUP BY " + idCol + " HAVING COUNT(*) > 1");
+        while (rs.next()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Use a ResultSet and some metadata for a Class and materialise an Item corresponding
      * to that class
      * @param cld metadata for the class
-     * @param clsId the id to use as the basis for the Item's identifier
+     * @param uniqueId the id to use as the basis for the Item's identifier
+     * @param clsId id from the source database, will be the same as uniqueId if source db
+     *              table has a uniqe index
      * @param row the Map from which to retrieve data
      * @return the Item that has been constructed
      * @throws SQLException if an error occurs when accessing the database
      */
-    protected Item getItem(ClassDescriptor cld, String clsId, Map row) throws SQLException {
+    protected Item getItem(ClassDescriptor cld, String uniqueId, String clsId, Map row)
+        throws SQLException {
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         Item item = new Item();
-        item.setIdentifier(alias(clsName) + "_" + clsId);
+        item.setIdentifier(uniqueId);
         item.setClassName(cld.getModel().getNameSpace() + clsName);
         item.setImplementations("");
         for (Iterator fdIter = cld.getFieldDescriptors().iterator(); fdIter.hasNext();) {
@@ -171,7 +283,8 @@ public class DBConverter extends DataConverter
                 if (value != null && !TypeUtil.objectToString(value).equals("0")) {
                     String refClsName = TypeUtil.unqualifiedName(
                         ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getName());
-                    ref.setRefId(alias(refClsName) + "_" + TypeUtil.objectToString(value));
+                    ref.setRefId(getUniqueRefId(alias(refClsName) + "_"
+                                                + TypeUtil.objectToString(value)));
                     item.addReferences(ref);
                 }
             } else if (fd.isCollection()) {
@@ -197,7 +310,8 @@ public class DBConverter extends DataConverter
                 StringBuffer refIds = new StringBuffer();
                 while (idSet.hasNext()) {
                     Map idRow = (Map) idSet.next();
-                    refIds.append(alias(refClsName) + "_" + idRow.get(refClsName + "_id") + " ");
+                    refIds.append(getUniqueRefId(alias(refClsName) + "_"
+                                                 + idRow.get(refClsName + "_id") + " "));
                 }
                 if (refIds.length() > 0) {
                     refs.setRefIds(refIds.toString());
@@ -235,5 +349,25 @@ public class DBConverter extends DataConverter
     protected  ResultSet executeQuery(Connection c, String sql) throws SQLException {
         Statement s = c.createStatement();
         return s.executeQuery(sql);
+    }
+
+
+    /**
+     * Generate a new table-context id for a given class, finds maximum in source db
+     * and increments.
+     * @param clsName class name corresponding to source db table
+     * @return next id
+     * @throws SQLException if problem querying db
+     */
+    protected String getNextTableId(String clsName) throws SQLException {
+        if (!maxIdMap.containsKey(clsName)) {
+            Iterator i = reader.execute("SELECT MAX(" + clsName + "_id FROM " + clsName).iterator();
+            maxIdMap.put(clsName, (String) ((Map) i.next()).get(clsName + "_id"));
+        }
+
+        String id = (String) maxIdMap.get(clsName);
+        Integer newId = new Integer(Integer.parseInt(id) + 1);
+        id = newId.toString();
+        return alias(clsName) + "_" + id;
     }
 }

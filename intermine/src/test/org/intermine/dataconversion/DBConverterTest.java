@@ -18,16 +18,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.ResultSetMetaData;
-import java.util.Map;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
@@ -302,6 +293,78 @@ public class DBConverterTest extends TestCase {
         assertEquals(expected, itemWriter.getItems());
     }
 
+    public void testBuildUniqueIdMap() throws Exception {
+        List rows = rowify( new String[] {"Company_id"},
+                            new Object[][] { new Object[] {"1"},
+                                             new Object[] {"1"},
+                                             new Object[] {"2"},
+                                             new Object[] {"2"}});
+
+        map.put("SELECT Company_id FROM Company", rows);
+
+        Map expected = new HashMap();
+        Stack s1 = new Stack();
+        s1.push("0_3");
+        s1.push("0_4");
+        expected.put("0_1", s1);
+        Stack s2 = new Stack();
+        s2.push("0_5");
+        s2.push("0_6");
+        expected.put("0_2", s2);
+
+        converter.buildUniqueIdMap("Company");
+        assertEquals(expected, converter.uniqueIdMap);
+    }
+
+
+    public void testProcessNonUniqueIds() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+
+        List rows = rowify(
+                           new String[] {"Department_id", "name", "company_id", "manager_id"},
+                           new Object[][] {new Object[]
+                                           {new Integer(1), null, new Integer(14), null},
+                                           {new Integer(1), null, new Integer(14), null}});
+
+
+        map.put("SELECT * FROM Department", rows);
+
+        map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 1", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 1", blank);
+
+        Map idMap = new HashMap();
+        Stack s1 = new Stack();
+        s1.push("1_3");
+        s1.push("1_4");
+        idMap.put("1_1", s1);
+        converter.uniqueIdMap = idMap;
+        ((MockDBConverter) converter).setIsUnique(false);
+
+        Reference ref = new Reference();
+        ref.setName("company");
+        ref.setRefId(converter.alias("Company") + "_14");
+        Item item1 = new Item();
+        item1.setClassName(model.getNameSpace() + "Department");
+        item1.setIdentifier(converter.alias("Department") + "_3");
+        item1.addReference(ref);
+        Attribute att1 = new Attribute();
+        att1.setName("nonUniqueId");
+        att1.setValue("1_1");
+        item1.addAttribute(att1);
+        Item item2 = new Item();
+        item2.setClassName(model.getNameSpace() + "Department");
+        item2.setIdentifier(converter.alias("Department") + "_4");
+        item2.addReference(ref);
+        Attribute att2 = new Attribute();
+        att2.setName("nonUniqueId");
+        att2.setValue("1_1");
+        item2.addAttribute(att2);
+
+        converter.processClassDescriptor(cld);
+        assertEquals(new HashSet(Arrays.asList(new Object[] {item1, item2})), itemWriter.getItems());
+
+    }
+
     protected List rowify(String[] names, Object[] values) {
         Map map = new HashMap();
         for (int i=0; i < names.length; i++) {
@@ -319,8 +382,15 @@ public class DBConverterTest extends TestCase {
     }
 
     class MockDBConverter extends DBConverter {
+        private int identifier = 2;
+        private boolean isUnique = true;
+
         public MockDBConverter(Model model, Database db, DBReader reader, ItemWriter writer) {
             super(model, db, reader, writer);
+        }
+
+        protected void setIsUnique(boolean b) {
+            isUnique = b;
         }
 
         //we provide ids, return true here to save us having to create mock resultset metadata to prove it
@@ -328,8 +398,16 @@ public class DBConverterTest extends TestCase {
             return true;
         }
 
+        protected boolean idIsUnique(ClassDescriptor cld) throws SQLException {
+            return isUnique;
+        }
+
         protected String findIndirectionTable(String clsName, String otherClsName) throws SQLException {
             return clsName + "_" + otherClsName;
+        }
+
+        protected String getNextTableId(String clsName) {
+            return "" + (++identifier);
         }
     }
 
