@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
@@ -213,8 +212,6 @@ public class DisplayableResults
         try {
             results.range(start, start + pageSize);
         } catch (IndexOutOfBoundsException e) {
-        } catch (FlyMineException e) {
-            throw new RuntimeException(e);
         }
 
         return results.getInfo().getRows();

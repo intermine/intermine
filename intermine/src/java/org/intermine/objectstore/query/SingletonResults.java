@@ -10,12 +10,9 @@ package org.flymine.objectstore.query;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 
@@ -27,7 +24,6 @@ import org.flymine.objectstore.ObjectStoreException;
  */
 public class SingletonResults extends Results implements Set
 {
-
     /**
      * Constructor for a SingletonResults object
      *
@@ -38,38 +34,24 @@ public class SingletonResults extends Results implements Set
      public SingletonResults(Query q, ObjectStore os) {
          super(q, os);
 
-         // Test that this Query only returns a single column of results, and that that column
-         // is a QueryClass
-
+         // Test that this Query returns a single column of type QueryClass
          if (q.getSelect().size() != 1) {
              throw new IllegalArgumentException("Query must return a single column");
          }
+
          if (!(q.getSelect().get(0) instanceof QueryClass)) {
              throw new IllegalArgumentException("Query must select a QueryClass");
          }
      }
 
-
     /**
-     * Returns a range of objects. Will fetch batches from the
-     * underlying ObjectStore if necessary.
-     *
-     * @param start the start index
-     * @param end the end index
-     * @return the relevant Objects as a List
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     * @throws IndexOutOfBoundsException if end is beyond the number of rows in the results
-     * @throws IllegalArgumentException if start > end
-     * @throws FlyMineException if an error occurs promoting proxies
      * @see Results#range
      */
-    public List range(int start, int end) throws ObjectStoreException, FlyMineException {
+    public List range(int start, int end) throws ObjectStoreException {
         List rows = super.range(start, end);
-        List ret = new ArrayList();
-        Iterator rowsIter = rows.iterator();
-        while (rowsIter.hasNext()) {
-            ret.add(((ResultsRow) rowsIter.next()).get(0));
+        for (int i = 0; i < rows.size(); i++) {
+            rows.set(i, ((List) rows.get(i)).get(0));
         }
-        return ret;
+        return rows;
     }
 }

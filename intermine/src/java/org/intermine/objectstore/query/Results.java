@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 
-import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreLimitReachedException;
@@ -38,6 +37,8 @@ public class Results extends AbstractList
 {
     protected Query query;
     protected ObjectStore os;
+    protected boolean optimise = true;
+
     protected int minSize = 0;
     // TODO: update this to use ObjectStore.getMaxRows().
     protected int maxSize = Integer.MAX_VALUE;
@@ -46,7 +47,6 @@ public class Results extends AbstractList
     protected int originalMaxSize = maxSize;
     protected int batchSize = 100;
     protected boolean initialised = false;
-    private boolean optimise = true;
 
     // Some prefetch stuff.
     protected int lastGet = -1;
@@ -107,14 +107,6 @@ public class Results extends AbstractList
     }
 
     /**
-     * Return the batches retrieved for this Results object
-     * @return a map from batch number to items
-     */
-    protected Map getBatches() {
-        return batches;
-    }
-
-    /**
      * Returns a range of rows of results. Will fetch batches from the
      * underlying ObjectStore if necessary.
      *
@@ -124,21 +116,20 @@ public class Results extends AbstractList
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      * @throws IndexOutOfBoundsException if end is beyond the number of rows in the results
      * @throws IllegalArgumentException if start &gt; end
-     * @throws FlyMineException if an error occurs promoting proxies
      */
-    public List range(int start, int end) throws ObjectStoreException, FlyMineException {
+    public List range(int start, int end) throws ObjectStoreException {
         if (start > end) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("start=" + start + " > end=" + end);
         }
-
-        int startBatch = getBatchNoForRow(start);
-        int endBatch = getBatchNoForRow(end);
 
         // If we know the size of the results (ie. have had a last partial batch), check that
         // the end is within range
         if (end >= maxSize) {
-            throw new IndexOutOfBoundsException("End = " + end + ", size = " + maxSize);
+            throw new IndexOutOfBoundsException("end=" + end + " > size=" + maxSize);
         }
+
+        int startBatch = getBatchNoForRow(start);
+        int endBatch = getBatchNoForRow(end);
 
         if (start - 1 == lastGet) {
             sequential += end - start + 1;
@@ -150,8 +141,9 @@ public class Results extends AbstractList
             //LOG.debug("This access not sequential                            Result "
             //        + query.hashCode() + "         access " + start + " - " + end);
         }
-        if ((sequential > PREFETCH_SEQUENTIAL_THRESHOLD) && (getBatchNoForRow(maxSize) > endBatch)
-                && (!batches.containsKey(new Integer(endBatch + 1)))) {
+        if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD
+            && getBatchNoForRow(maxSize) > endBatch
+            && !batches.containsKey(new Integer(endBatch + 1))) {
             PrefetchManager.addRequest(this, endBatch + 1);
         }
         lastGet = end;
@@ -167,26 +159,9 @@ public class Results extends AbstractList
             }
         }
         */
-        return localRange(start, end);
-    }
 
-    /**
-     * Returns a combined list of objects from the batches Map
-     *
-     * @param start the start row
-     * @param end the end row
-     * @return a List of ResultsRows made up of the ResultsRows in the individual batches
-     * @throws FlyMineException if an error occurs promoting proxies
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     * @throws IndexOutOfBoundsException if the batch is off the end of the results
-     */
-    protected List localRange(int start, int end) throws FlyMineException, ObjectStoreException {
         List ret = new ArrayList();
-        int startBatch = getBatchNoForRow(start);
-        int endBatch = getBatchNoForRow(end);
-
         for (int i = startBatch; i <= endBatch; i++) {
-            List rows = getRowsFromBatch(i, start, end);
             ret.addAll(getRowsFromBatch(i, start, end));
         }
         return ret;
@@ -290,9 +265,6 @@ public class Results extends AbstractList
         } catch (ObjectStoreException e) {
             LOG.info("get - " + e);
             throw new RuntimeException("ObjectStore error has occured (in get)", e);
-        } catch (FlyMineException e) {
-            LOG.info("get - " + e);
-            throw new RuntimeException("FlyMineException occurred (in get)", e);
         }
         return resultList.get(0);
     }
@@ -310,9 +282,6 @@ public class Results extends AbstractList
         } catch (ObjectStoreException e) {
             LOG.info("subList - " + e);
             throw new RuntimeException("ObjectStore error has occured (in subList)", e);
-        } catch (FlyMineException e) {
-            LOG.info("subList - " + e);
-            throw new RuntimeException("FlyMineException occurred (in subList)", e);
         }
         return ret;
     }
@@ -395,15 +364,6 @@ public class Results extends AbstractList
             throw new IllegalStateException("Cannot set batchSize if rows have been retrieved");
         }
         batchSize = size;
-    }
-
-    /**
-     * Gets the number of rows requested from the ObjectStore whenever an execute call is made
-     *
-     * @return the number of rows
-     */
-    public int getBatchSize() {
-        return batchSize;
     }
 
     /**
