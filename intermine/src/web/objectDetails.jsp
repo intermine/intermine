@@ -132,7 +132,7 @@
       
         <%-- show important templates here --%>
         <c:if test="${showImportantTemplatesFlag == 'true'}">
-          <im:heading id="important">Important Templates</im:heading>
+          <im:heading id="important">Predefined template queries</im:heading>
           <im:vspacer height="3"/>
           <im:body id="important">
             <c:forEach items="${CATEGORIES}" var="category">
