@@ -404,7 +404,7 @@
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <insert-ace-data integrationWriter="integration.acedb" user="rns" password="abc123" host="localhost" port="23100">
+    <insert-ace-data integrationWriter="integration.acedb" user="${acedb.user}" password="${acedb.password}" host="${acedb.host}" port="${acedb.port}">
       <classpath refid="prod.class.path"/>
     </insert-ace-data>
   </target>
