@@ -19,9 +19,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.ontology.SubclassRestriction;
 import org.intermine.xml.full.Attribute;
@@ -36,7 +33,6 @@ public class DataTranslatorTest extends TestCase
     private String nullNs = "http://www.intermine.org/null#";
     private String tgtNs = "http://www.intermine.org/target#";
     private DataTranslator translator;
-    private ObjectStoreWriter writer;
     protected Map itemMap;
 
     public void setUp() throws Exception {
