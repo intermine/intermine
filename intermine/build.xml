@@ -486,11 +486,12 @@
   </target>
 
   <!-- test out creating java objects from chado model -->
-  <target name="compile-chado" depends="convert-chado">
-    <ant antfile="build-model.xml" target="compile-java">
-      <property name="model.name" value="chado"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-    </ant>
+  <target name="retrieve-chado" depends="convert-chado">
+    <taskdef name="retrieve-chado" classname="org.flymine.task.ChadoRetrieverTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    
+    <retrieve-chado database="db.chado" model="chado" destFile="${build.tmp}/chadoFullData.xml"/>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
