@@ -212,7 +212,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 //         assertEquals(company2, iter.next());
 //     }
 
-    class MockChangeResultsForm extends ChangeResultsForm
+    class MockChangeResultsForm extends ChangeResultsSizeForm
     {
         public void reset(ActionMapping mapping, HttpServletRequest request) {
         }

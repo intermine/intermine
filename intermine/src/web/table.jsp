@@ -33,10 +33,30 @@
     </div>
   </c:when>
   <c:otherwise>
+  
+    <html:form action="/changeResultsSize">
+      <div class="body">
+        <%-- Page size controls --%>
+        <fmt:message key="results.changepagesize"/>
+        <html:select property="pageSize" onchange="document.location.href='${requestScope['javax.servlet.include.context_path']}/changeResultsSize.do?changePageSize=1&pageSize='+document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value">
+          <html:option value="10">10</html:option>
+          <html:option value="25">25</html:option>
+          <html:option value="50">50</html:option>
+          <html:option value="100">100</html:option>
+        </html:select>
+        <noscript>
+          <html:submit>
+            <fmt:message key="button.change"/>
+          </html:submit>
+        </noscript>
+      </div>
+    </html:form>
+  
+    <html:form action="/saveBag">
     <div class="body">
-    <html:form action="/changeResultsSize" styleId="changeResultsForm">
 
       <table class="results" cellspacing="0">
+        
         <%-- The headers --%>
         <tr>
           <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">
@@ -203,21 +223,6 @@
         </c:if>
         <br/>
         
-        <%-- Page size controls --%>
-        <fmt:message key="results.changepagesize"/>
-        <html:select property="pageSize" onchange="document.location.href='${requestScope['javax.servlet.include.context_path']}/changeResultsSize.do?changePageSize=1&pageSize='+document.changeResultsForm.pageSize.options[document.changeResultsForm.pageSize.selectedIndex].value">
-          <html:option value="10">10</html:option>
-          <html:option value="25">25</html:option>
-          <html:option value="50">50</html:option>
-          <html:option value="100">100</html:option>
-        </html:select>
-        <noscript>
-          <html:submit property="changePageSize">
-            <fmt:message key="button.change"/>
-          </html:submit>
-        </noscript>
-      
-        <br/>
       </c:if>
 
       <%-- Return to main results link --%>
@@ -231,7 +236,7 @@
       </div> <%-- end of main results table body div --%>
    
       <%-- Save bag controls --%>
-      <br/><br/>
+      <br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
         <div class="heading">
           <fmt:message key="results.save"/><im:helplink key="results.help.save"/>

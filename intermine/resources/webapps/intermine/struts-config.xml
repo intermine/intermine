@@ -34,8 +34,11 @@
     <form-bean name="queryClassSelectForm"
                type="org.intermine.web.QueryClassSelectForm"/>
 
-    <form-bean name="changeResultsForm"
-               type="org.intermine.web.results.ChangeResultsForm"/>
+    <form-bean name="changeResultsSizeForm"
+               type="org.intermine.web.results.ChangeResultsSizeForm"/>
+
+    <form-bean name="saveBagForm"
+               type="org.intermine.web.results.SaveBagForm"/>
 
     <form-bean name="emptyForm"
                type="org.apache.struts.action.DynaActionForm"/>
@@ -233,20 +236,18 @@
     </action>
 
     <!-- Actions invoked using buttons - not validating form -->
-    <action path="/buildBag"
-            type="org.intermine.web.BuildBagAction"
-            name="buildBagForm"
-            parameter="action"
-            input="buildBag">
-      <forward name="buildBag" path="bagBuild.page"/>
-    </action>
-    
     <action path="/createTemplate"
             type="org.intermine.web.CreateTemplateAction">
       <forward name="templateBuilder" path="templateBuilder.page"/>
       <forward name="query" path="query.page"/>
     </action>
-  
+    
+    <action path="/changeResultsSize"
+            name="changeResultsSizeForm"
+            type="org.intermine.web.results.ChangeResultsSizeAction">
+      <forward name="results" path="/results.do" redirect="true"/>
+    </action>
+    
     <!-- Actions invoked using buttons - validating form -->
     <action path="/templateAction"
             type="org.intermine.web.TemplateAction"
@@ -301,12 +302,11 @@
       <forward name="history" path="/history.do" redirect="true"/>
     </action>
 
-    <action path="/changeResultsSize"
-            type="org.intermine.web.results.ChangeResultsSizeAction"
-            name="changeResultsForm"
-            parameter="action"
+    <action path="/saveBag"
+            type="org.intermine.web.results.SaveBagAction"
+            name="saveBagForm"
             input="results">
-      <forward name="results" path="results.page"/>
+      <forward name="results" path="/results.do" redirect="true"/>
     </action>
 
     <action path="/saveQuery"
@@ -314,6 +314,14 @@
             name="saveQueryForm"
             input="query">
       <forward name="query" path="query.page"/>
+    </action>
+    
+    <action path="/buildBag"
+            type="org.intermine.web.BuildBagAction"
+            name="buildBagForm"
+            parameter="action"
+            input="buildBag">
+      <forward name="buildBag" path="bagBuild.page"/>
     </action>
 
     <action path="/buildTemplate"
@@ -393,7 +401,7 @@
 
     <action path="/initCollectionDetails"
             type="org.intermine.web.results.CollectionDetailsController"
-            name="changeResultsForm"/>
+            name="changeResultsSizeForm"/>
 
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
