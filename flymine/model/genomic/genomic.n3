@@ -135,6 +135,22 @@
     rdfs:domain :Location ;
     rdfs:range xsd:integer .
 
+
+# PartialLocation is used where only part of a subject feature overlaps object feature
+# additionally contains start and end in subject feature.
+
+:PartialLocation a owl:Class ;
+    rdfs:subClassOf :Location .
+
+:PartialLocation__subjectStart a owl:DatatypeProperty ;
+    rdfs:domain :PartialLocation ;
+    rdfs:range xsd:integer .
+
+:PartialLocation__subjectEnd a owl:DatatypeProperty ;
+    rdfs:domain :PartialLocation ;
+    rdfs:range xsd:integer .
+
+
 # ------------- Evidence for properties etc. -----------#
 
 :Evidence a owl:Class .
