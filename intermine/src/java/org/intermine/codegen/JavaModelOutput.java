@@ -301,23 +301,38 @@ public class JavaModelOutput extends ModelOutput
                 .append("; }" + ENDL);
         }
 
-        if ((field instanceof ReferenceDescriptor)
-                && (!(field instanceof CollectionDescriptor))) {
-            // This is an object reference.
-            sb.append(INDENT)
-                .append("public void proxy")
-                .append(StringUtil.capitalise(name))
-                .append("(org.flymine.objectstore.proxy.ProxyReference ")
-                .append(name)
-                .append(")");
-            if (!fieldPresent) {
-                sb.append(";" + ENDL);
+        if (field instanceof ReferenceDescriptor) {
+            if (field instanceof CollectionDescriptor) {
+                sb.append(INDENT)
+                    .append("public void add")
+                    .append(StringUtil.capitalise(name))
+                    .append("(")
+                    .append(((CollectionDescriptor) field).getReferencedClassDescriptor().getName())
+                    .append(" arg)");
+                if (fieldPresent) {
+                    sb.append(" { ")
+                        .append(name)
+                        .append(".add(arg); }" + ENDL);
+                } else {
+                    sb.append(";" + ENDL);
+                }
             } else {
-                sb.append(" { this.")
+                // This is an object reference.
+                sb.append(INDENT)
+                    .append("public void proxy")
+                    .append(StringUtil.capitalise(name))
+                    .append("(org.flymine.objectstore.proxy.ProxyReference ")
                     .append(name)
-                    .append(" = ")
-                    .append(name)
-                    .append("; }" + ENDL);
+                    .append(")");
+                if (!fieldPresent) {
+                    sb.append(";" + ENDL);
+                } else {
+                    sb.append(" { this.")
+                        .append(name)
+                        .append(" = ")
+                        .append(name)
+                        .append("; }" + ENDL);
+                }
             }
         }
 

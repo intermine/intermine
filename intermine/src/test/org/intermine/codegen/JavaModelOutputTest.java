@@ -87,7 +87,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class1 [\"+id+\"] \"; }" + ENDL
             + "}" + ENDL;
-        
+
         assertEquals(expected, mo.generate(cld1));
     }
 
@@ -176,7 +176,8 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "// Col: package.name.Class1.cod1" + ENDL
             + INDENT + "protected java.util.List cod1 = new java.util.ArrayList();" + ENDL
             + INDENT + "public java.util.List getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL + ENDL
+            + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "public void addCod1(package.name.Class2 arg) { cod1.add(arg); }" + ENDL + ENDL
             + INDENT + "// Ref: package.name.Class1.rfd1" + ENDL
             + INDENT + "protected Object rfd1;" + ENDL
             + INDENT + "public package.name.Class2 getRfd1() { if (rfd1 instanceof org.flymine.objectstore.proxy.ProxyReference) { rfd1 = ((org.flymine.objectstore.proxy.ProxyReference) rfd1).getObject(); }; return (package.name.Class2) rfd1; }" + ENDL
@@ -234,7 +235,8 @@ public class JavaModelOutputTest extends TestCase
         String expected = INDENT + "// Col: Class1.cod1" + ENDL
             + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
             + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL + ENDL;
+            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "public void addCod1(Class2 arg) { cod1.add(arg); }" + ENDL + ENDL;
 
         assertEquals(expected, mo.generate(cod1, true));
     }
@@ -249,7 +251,8 @@ public class JavaModelOutputTest extends TestCase
         String expected = INDENT + "// Col: Class1.cod1" + ENDL
             + INDENT + "protected java.util.List cod1 = new java.util.ArrayList();" + ENDL
             + INDENT + "public java.util.List getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL + ENDL;
+            + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "public void addCod1(Class2 arg) { cod1.add(arg); }" + ENDL + ENDL;
 
         assertEquals(expected, mo.generate(cod1, true));
     }
