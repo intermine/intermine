@@ -24,6 +24,8 @@ import org.intermine.util.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.FieldDescriptor;
 
+
+import org.flymine.model.genomic.Annotation;
 import org.flymine.model.genomic.Location;
 
 /**
@@ -60,8 +62,9 @@ public class PostProcessUtil
 
     /**
      * Query ObjectStore for all Relation objects (or specified subclass)
-     * between given object and subject classes.  Return an iterator ordered
+     * between given object and a given subject classes.  Return an iterator ordered
      * by objectCls.
+     * e.g.  Transcript -> Location -> Exon
      * @param os an ObjectStore to query
      * @param objectCls object type of the Relation
      * @param subjectCls subject type of the Relation
@@ -97,6 +100,42 @@ public class PostProcessUtil
         res.setBatchSize(10000);
         return res.iterator();
     }
+
+
+    /**
+     * Query ObjectStore for all Relation objects (or specified subclass)
+     * between given object and any subject classes.  Return an iterator ordered
+     * by objectCls.
+     * e.g. Transcript -> Location
+     * @param os an ObjectStore to query
+     * @param objectCls object type of the Relation
+     * @param relationCls type of Relation
+     * @param colName name of collection in objectCls
+     * @return an iterator over the results
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Iterator findRelations(ObjectStore os, Class objectCls, Class relationCls,
+                                         String colName) throws ObjectStoreException {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcObj = new QueryClass(objectCls);
+        q.addFrom(qcObj);
+        q.addToSelect(qcObj);
+        QueryClass qcRel = new QueryClass(relationCls);
+        q.addFrom(qcRel);
+        q.addToSelect(qcRel);
+        q.addToOrderBy(qcObj);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryCollectionReference col1 = new QueryCollectionReference(qcObj, colName);
+        ContainsConstraint cc1 = new ContainsConstraint(col1, ConstraintOp.CONTAINS, qcRel);
+        cs.addConstraint(cc1);
+        q.setConstraint(cs);
+
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(10000);
+        return res.iterator();
+    }
+
 
     /**
      * Return an iterator over the results of a query that connects two classes by a third using
@@ -146,7 +185,7 @@ public class PostProcessUtil
             throw new IllegalAccessException("cannot find field \"" + connectingClassFieldName
                                              + "\" in class " + connectingClass.getName());
         }
-        
+
         if (fd.isReference()) {
             ref2 = new QueryObjectReference(qcConnecting, connectingClassFieldName);
         } else {
@@ -161,6 +200,46 @@ public class PostProcessUtil
 
         return res.iterator();
     }
+
+
+    /**
+     * Query ObjectStore for BioProperty subclasses related to BioEntities by an
+     * Annotation object.  Select BioEntity and BioProperty.  Return an iterator
+     * ordered by BioEntity
+     * @param os an ObjectStore to query
+     * @param entityCls type of BioEntity
+     * @param propertyCls class of BioProperty to select
+     * @return an iterator over the results
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Iterator findProperties(ObjectStore os, Class entityCls, Class propertyCls)
+        throws ObjectStoreException {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcEntity = new QueryClass(entityCls);
+        q.addFrom(qcEntity);
+        q.addToSelect(qcEntity);
+        QueryClass qcAnn = new QueryClass(Annotation.class);
+        q.addFrom(qcAnn);
+        QueryClass qcProperty = new QueryClass(propertyCls);
+        q.addFrom(qcProperty);
+        q.addToSelect(qcProperty);
+        q.addToOrderBy(qcEntity);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryCollectionReference col1 = new QueryCollectionReference(qcEntity, "annotations");
+        ContainsConstraint cc1 = new ContainsConstraint(col1, ConstraintOp.CONTAINS, qcAnn);
+        cs.addConstraint(cc1);
+        QueryObjectReference ref1 = new QueryObjectReference(qcAnn, "property");
+        ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcProperty);
+        cs.addConstraint(cc2);
+        q.setConstraint(cs);
+
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(10000);
+        return res.iterator();
+    }
+
 
     /**
      * Return an iterator over all objects of the given class in the ObjectStore provided.
