@@ -57,6 +57,7 @@ import org.apache.log4j.Logger;
  */
 public class DataTranslator
 {
+    protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
 
     protected ItemReader srcItemReader;
     protected Map equivMap;       // lookup equivalent resources - excludes restricted subclass info
@@ -67,8 +68,6 @@ public class DataTranslator
     protected String tgtNs;
     protected int newItemId = 1;
 
-
-    protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
     /**
      * Construct with a srcItemStore to read from an ontology model.
      * Use model to set up src/tgt maps required during translation.
@@ -94,25 +93,40 @@ public class DataTranslator
      * @throws FlyMineException if no target class/property name can be found
      */
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
-        long count = 0;
-        long start = System.currentTimeMillis();
+        int opCount = 0;
         long time = System.currentTimeMillis();
+        long start = time;
+        long times[] = new long[20];
+        for (int i = 0; i < 20; i++) {
+            times[i] = -1;
+        }
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
             Collection translated = translateItem(srcItem);
             if (translated != null) {
                 for (Iterator j = translated.iterator(); j.hasNext();) {
-                    if (count % 1000 == 0) {
-                        LOG.error("processed " + count + " objects at "
-                                  + ((60000L * count) / ((System.currentTimeMillis() - start) + 1))
-                                  + " per min - current: "
-                                  + 60000000L / ((System.currentTimeMillis() - time) + 1)
-                                  + " (" + srcItem.getClassName() + ")");
-                        time = System.currentTimeMillis();
-                    }
                     Object obj = j.next();
                     tgtItemWriter.store(ItemHelper.convert((Item) obj));
-                    count++;
+                    opCount++;
+                    if (opCount % 1000 == 0) {
+                        long now = System.currentTimeMillis();
+                        if (times[(opCount / 1000) % 20] == -1) {
+                            LOG.error("Translated " + opCount + " objects - running at "
+                                    + (60000000 / (now - time)) + " (avg "
+                                    + ((60000L * opCount) / (now - start))
+                                    + ") objects per minute -- now on "
+                                    + srcItem.getClassName());
+                        } else {
+                            LOG.error("Translated " + opCount + " objects - running at "
+                                    + (60000000 / (now - time)) + " (20000 avg "
+                                    + (1200000000 / (now - times[(opCount / 1000) % 20]))
+                                    + ") (avg " + ((60000L * opCount) / (now - start))
+                                    + ") objects per minute -- now on "
+                                    + srcItem.getClassName());
+                        }
+                        time = now;
+                        times[(opCount / 1000) % 20] = now;
+                    }
                 }
             }
         }

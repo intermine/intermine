@@ -117,7 +117,7 @@ public class CacheMap implements Map
         }
         int newSize = subMap.size();
         if (newSize != oldSize) {
-            LOG.error(name + ": Expunged stale entries - size " + oldSize + " -> " + newSize);
+            LOG.info(name + ": Expunged stale entries - size " + oldSize + " -> " + newSize);
         }
     }
     

@@ -18,7 +18,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +118,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                             + " - throwing exception");
                     throw new SQLException("This ObjectStoreWriter appears to be dead due to"
                             + " deadlock");
-                } if (loops > 1) {
+                } else if (loops > 1) {
                     LOG.error("Waited for connection for " + 2 + " seconds - perhaps there's"
                             + " a deadlock");
                 } else {
@@ -569,13 +568,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             Connection conn = null;
             try {
                 conn = getConnection();
-                long time = (new Date()).getTime();
                 batch.executeBatch();
-                long now = (new Date()).getTime();
-                if (now - time > LOG_TIME) {
-                    LOG.error(getModel().getName() + ": Executed SQL (time = "
-                            + (now - time) + "): Flushed batch");
-                }
                 logFlushBatch();
                 batch = null;
             } catch (SQLException e) {
@@ -593,7 +586,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     private synchronized void logAddBatch() {
         logOps++;
         emptyBatch = false;
-        if ((logOps % 50000) == 0) {
+        if ((logOps % 500000) == 0) {
             outputLog();
         }
     }

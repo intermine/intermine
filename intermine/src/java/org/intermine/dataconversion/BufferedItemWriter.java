@@ -78,7 +78,7 @@ public class BufferedItemWriter implements ItemWriter
         batchCharCounter += itemSize;
         if ((batchCounter >= BATCH_SIZE) || (batchCharCounter >= BATCH_CHAR_SIZE)) {
             pipe.put(batch);
-            LOG.error("put batch of size " + batchCounter + " items (" + batchCharCounter
+            LOG.info("put batch of size " + batchCounter + " items (" + batchCharCounter
                       + " chars) into pipe");
             batch = new ArrayList();
             batchCounter = 0;
@@ -140,7 +140,7 @@ public class BufferedItemWriter implements ItemWriter
                 if (problem == null) {
                     try {
                         Collection col = (Collection) nextInPipe;
-                        LOG.error("took batch of " + col.size() + " items from pipe");
+                        LOG.info("took batch of " + col.size() + " items from pipe");
                         iw.storeAll(col);
                     } catch (ObjectStoreException e) {
                         synchronized (BufferedItemWriter.this) {
