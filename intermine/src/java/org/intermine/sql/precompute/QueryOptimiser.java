@@ -114,14 +114,14 @@ public class QueryOptimiser
         // If we want to do any query caching, here is where we should do it.
         OptimiserCache cache = OptimiserCache.getInstance(database);
         LimitOffsetQuery limitOffsetQuery = new LimitOffsetQuery(query);
-        //LOG.info("Original Query: " + limitOffsetQuery.getQuery() + ", "
-        //        + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
+        LOG.info("Original Query: " + limitOffsetQuery.getQuery() + ", "
+                + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
         String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
                 limitOffsetQuery.getOffset());
         // TODO: fix so that the OptimiserCache is updated when precomputed tables are deleted
-        if (false && cachedQuery != null) {
-            //LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
-            //        + " ms - cache hit: " + query);
+        if (cachedQuery != null) {
+            LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
+                    + " ms - cache hit: " + query);
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
         try {
@@ -158,21 +158,21 @@ public class QueryOptimiser
             expectedRows = Integer.MAX_VALUE;
             // Add optimised query to the cache here.
             LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
-            //LOG.debug("New cache line produced - expectedRows = " + expectedRows + ", limit = "
-            //        + limitOffsetQuery.getLimit());
+            LOG.debug("New cache line produced - expectedRows = " + expectedRows + ", limit = "
+                    + limitOffsetQuery.getLimit());
             cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
                     limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
-            //LOG.debug("Optimising " + expectedTime + " ms query took "
-            //        + ((new Date()).getTime() - start)
-            //        + (parseTime == 0 ? " ms without parsing " : " ms including "
-            //            + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
+            LOG.debug("Optimising " + expectedTime + " ms query took "
+                    + ((new Date()).getTime() - start)
+                    + (parseTime == 0 ? " ms without parsing " : " ms including "
+                        + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
             return bestQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
             LOG.warn("Exception: " + e.toString());
         }
-        //LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
-        //        + " ms - unparsable query: " + query);
+        LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
+                + " ms - unparsable query: " + query);
         return new BestQueryFallback(originalQuery, query);
     }
 
