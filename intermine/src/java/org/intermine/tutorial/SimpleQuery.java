@@ -10,6 +10,7 @@ package org.flymine.tutorial;
  *
  */
 
+import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.flymine.objectstore.ObjectStore;
