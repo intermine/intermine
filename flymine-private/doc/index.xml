@@ -2,7 +2,7 @@
     <section>
         <heading>System information</heading>
         <item><ulink url="http://www.flymine.org/usage">Web server usage</ulink></item>
-        <item><ulink url="http://elonypr.flymine.org/away">FlyMine holiday planner</ulink></item>
+        <item><ulink url="http://flyweb.flymine.org/away/">FlyMine holiday planner</ulink></item>
         <item><ulink url="http://www.flymine.org/autobuild">Automated build daemon</ulink></item>
     </section>
     <section>
