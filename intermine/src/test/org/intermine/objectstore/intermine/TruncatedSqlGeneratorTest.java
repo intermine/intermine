@@ -135,8 +135,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results.put("InterfaceCollection", NO_RESULT);
         results2.put("InterfaceCollection", Collections.singleton("InterMineObject"));
         Set res = new HashSet();
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.Broke' AND (a1__1.debt > 0 AND a1_.age > 0) ORDER BY a1_.id, a1__1.debt, a1_.age");
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.Employee' AND (a1_.debt > 0 AND a1__1.age > 0) ORDER BY a1_.id, a1_.debt, a1__1.age");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.Broke' AND (a1__1.debt > 0 AND a1_.age > 0) ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.class = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.class = 'org.intermine.model.testmodel.Employee' AND (a1_.debt > 0 AND a1__1.age > 0) ORDER BY a1_.id");
         results.put("DynamicInterfacesAttribute", res);
         results2.put("DynamicInterfacesAttribute", Collections.singleton("InterMineObject"));
         res = new HashSet();

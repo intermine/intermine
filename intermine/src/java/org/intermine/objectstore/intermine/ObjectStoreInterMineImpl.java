@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -667,11 +666,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         permittedTime, postConvert - postExecute, q, sql);
             }
             QueryOrderable firstOrderBy = null;
-            try {
-                firstOrderBy = (QueryOrderable) q.getOrderBy().iterator().next();
-            } catch (NoSuchElementException e) {
-                firstOrderBy = (QueryNode) q.getSelect().iterator().next();
-            }
+            firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
             if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
                 int colNo = q.getSelect().indexOf(firstOrderBy);
                 int rowNo = objResults.size() - 1;

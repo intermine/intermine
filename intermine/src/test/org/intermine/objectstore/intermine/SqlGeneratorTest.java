@@ -160,8 +160,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("InterfaceReference", NO_RESULT);
         results.put("InterfaceCollection", NO_RESULT);
         Set res = new HashSet();
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM Employee AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1__1.debt > 0 AND a1_.age > 0) ORDER BY a1_.id, a1__1.debt, a1_.age");
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM Broke AS a1_, Employee AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.debt > 0 AND a1__1.age > 0) ORDER BY a1_.id, a1_.debt, a1__1.age");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM Employee AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1__1.debt > 0 AND a1_.age > 0) ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM Broke AS a1_, Employee AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.debt > 0 AND a1__1.age > 0) ORDER BY a1_.id");
         results.put("DynamicInterfacesAttribute", res);
         results2.put("DynamicInterfacesAttribute", new HashSet(Arrays.asList(new String[] {"Employee", "Broke"})));
         res = new HashSet();

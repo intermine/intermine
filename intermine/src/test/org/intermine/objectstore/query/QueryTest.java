@@ -12,7 +12,9 @@ package org.intermine.objectstore.query;
 
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.intermine.model.testmodel.*;
 
@@ -196,4 +198,28 @@ public class QueryTest extends TestCase
         assertEquals(0, clearQuery.getOrderBy().size());
     }
 
+    public void testGetOrderBy() {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryField qf1 = new QueryField(qc1, "name");
+        QueryField qf2 = new QueryField(qc1, "age");
+        QueryField qf3 = new QueryField(qc2, "id");
+        QueryField qf4 = new QueryField(qc2, "name");
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToOrderBy(qf1);
+        q.addToSelect(qc1);
+        q.addToSelect(qf2);
+        q.addToSelect(qf3);
+        q.addToSelect(qc2);
+        q.addToSelect(qf4);
+
+        List expected = new ArrayList();
+        expected.add(qf1);
+        expected.add(qc1);
+        expected.add(qf3);
+
+        assertEquals(expected, q.getEffectiveOrderBy());
+    }
 }
