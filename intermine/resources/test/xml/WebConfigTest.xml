@@ -1,5 +1,5 @@
 <webconfig>
-  <class className="Class1">
+  <class className="org.intermine.model.testmodel.Employable">
     <fields>
       <fieldconfig fieldExpr="class1field1"/>
       <fieldconfig fieldExpr="class1field2.field"/>
@@ -8,7 +8,7 @@
       <displayer src="/model/page2.jsp"/>
     </longdisplayers>
   </class>
-  <class className="Class2">
+  <class className="org.intermine.model.testmodel.Thing">
     <longdisplayers>
       <displayer src="/model/page4.jsp"/>
       <displayer src="tile2.tile"/>
