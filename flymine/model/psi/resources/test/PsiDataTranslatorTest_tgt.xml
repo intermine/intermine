@@ -61,6 +61,8 @@
     <attribute name="identifier" value="MI:0117"/>
   </item>
   <item id="-1_5" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+    <attribute name="baitIsTagged" value="true"/>
+    <attribute name="baitIsOverexpressed" value="true"/>
     <reference name="bait" ref_id="0_26"/>
     <reference name="object" ref_id="0_32"/>
     <reference name="prey" ref_id="0_32"/>

@@ -177,10 +177,20 @@ public class PsiDataTranslator extends DataTranslator
             if (getReference(participant, "featureList") != null) {
                 createProteinRegion(participant, result);
             }
-            // protein has role attribute which is either prey or bait
-            interaction.addReference(new Reference(participant.getAttribute("role").getValue(),
-                                                   participant.getReference("proteinInteractorRef")
+            String role = participant.getAttribute("role").getValue();
+            interaction.addReference(new Reference(role, participant
+                                                   .getReference("proteinInteractorRef")
                                                    .getRefId()));
+            if (participant.getAttribute("isTaggedProtein") != null) {
+                interaction.addAttribute(new Attribute(role + "IsTagged", participant
+                                                       .getAttribute("isTaggedProtein")
+                                                       .getValue()));
+            }
+            if (participant.getAttribute("isOverexpressedProtein") != null) {
+                interaction.addAttribute(new Attribute(role + "IsOverexpressed", participant
+                                                       .getAttribute("isOverexpressedProtein")
+                                                       .getValue()));
+            }
         }
         // object = prey, subject = bait
         interaction.addReference(new Reference("object",
