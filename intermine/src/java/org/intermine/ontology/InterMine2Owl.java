@@ -128,6 +128,11 @@ public class FlyMine2Owl
     }
 
 
+    /**
+     * Main method to convert FlyMine model XML to OWL.
+     * @param args srcFilename, tgtFilename, OWL format
+     * @throws Exception if anything goes wrong
+     */
     public static void main(String[] args) throws Exception {
         if (args.length != 3) {
             throw new IllegalArgumentException("Usage: FlyMine2Owl source dest format");
