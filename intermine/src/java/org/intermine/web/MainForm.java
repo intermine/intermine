@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
 
 import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 
@@ -135,9 +134,10 @@ public class MainForm extends ActionForm
 
         ActionErrors errors = new ActionErrors();
 
-        FieldDescriptor fd = MainHelper.getFieldDescriptor(path, model);
-        if (fd.isAttribute()) {
-            AttributeDescriptor attr = (AttributeDescriptor) fd;
+        if (path.indexOf(".") == -1
+            && MainHelper.getFieldDescriptor(path, model) instanceof AttributeDescriptor) {
+            AttributeDescriptor attr = (AttributeDescriptor)
+                MainHelper.getFieldDescriptor(path, model);
             Class fieldClass = TypeUtil.instantiate(attr.getType());
             if (Date.class.equals(fieldClass)) {
                 DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,
