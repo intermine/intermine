@@ -83,7 +83,7 @@ null:Confidence_InteractionElementType a owl:Class;
     rdfs:range :Protein.
 
 :ProteinInteraction__comments a owl:ObjectProperty;
-    rdfs:domain :ProteinInteractionExperiment;
+    rdfs:domain :ProteinInteraction;
     rdfs:range :Comment.
 
 :ProteinInteraction__baitIsTagged a owl:DatatypeProperty;
