@@ -33,6 +33,16 @@
       <xsl:apply-templates/>
     </ul>
   </xsl:template>
+  
+  <xsl:template match="section">
+    <div class="box">
+      <div class="heading2"><xsl:apply-templates select="title"/></div>
+      <div class="body">
+        <xsl:apply-templates select="*[position()!=1]"/>
+      </div>
+    </div>
+  </xsl:template>
+  
  <!-- 
   <xsl:template match="section">
     <li><span><xsl:apply-templates select="heading"/></span><ul><xsl:apply-templates select="item"/></ul></li>

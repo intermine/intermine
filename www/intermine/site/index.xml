@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
-"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
 <article>
-  <articleinfo>
+  <sect1>
     <title>InterMine</title>
-  </articleinfo>
 
   <para>InterMine is an general-purpose object-oriented data warehouse system
   developed as part of the <ulink url="http://www.flymine.org">FlyMine</ulink>
@@ -42,4 +41,6 @@
   <ulink url="http://www.flymine.org">FlyMine</ulink> project, an integrated
   genomic database, but is suited to many object warehousing
   applications.</para>
+  
+  </sect1>
 </article>

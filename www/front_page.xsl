@@ -32,9 +32,7 @@
 
   <xsl:template match="sect1">
     <div class="box">
-      <div class="heading">
-        <xsl:apply-templates select="title"/>
-      </div>
+      <div class="heading2"><xsl:apply-templates select="title"/></div>
       <div class="body">
         <xsl:apply-templates select="para"/>
       </div>

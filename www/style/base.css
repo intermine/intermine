@@ -327,7 +327,7 @@ A.bred            { color: #FFFFFF;
 
 
 /* style for boxes with heading - used by the front page and the webapp */
-.box .heading {
+.box .heading, .heading2 {
   border: 1px solid #888;
   background-color: #f5f5f5;
   padding: 0px;
@@ -337,6 +337,14 @@ A.bred            { color: #FFFFFF;
   font-size: 13px;
   color: black;
   white-space: nowrap;
+}
+
+.heading2 {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 4px;
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 .box .body {
