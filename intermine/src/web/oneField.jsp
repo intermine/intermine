@@ -10,8 +10,10 @@
     <c:when test="${fieldDescriptor.attribute}">
       <c:if test="${fieldDescriptor.name != 'id'}">
         <div>
-          <c:out value="${fieldDescriptor.name}"/>:
-          <c:out value="${object[fieldDescriptor.name]}" default="null"/>
+          <nobr>
+            <c:out value="${fieldDescriptor.name}"/>:
+            <c:out value="${object[fieldDescriptor.name]}" default="null"/>
+          </nobr>
         </div>
       </c:if>
     </c:when>
