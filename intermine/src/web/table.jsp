@@ -64,6 +64,7 @@
             <fmt:message key="button.change"/>
           </html:submit>
         </noscript>
+        &nbsp;<tiles:insert page="/tablePageLinks.jsp"/>
       </div>
     </html:form>
     
@@ -212,29 +213,9 @@
             </fmt:message>
           </c:otherwise>
         </c:choose>
-        <br/>
         
         <%-- Paging controls --%>
-        <c:if test="${!RESULTS_TABLE.firstPage}">
-          <html:link action="/results?page=0&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
-            <fmt:message key="results.first"/>
-          </html:link>
-          <html:link action="/results?page=${RESULTS_TABLE.page-1}&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
-            <fmt:message key="results.previous"/>
-          </html:link>
-        </c:if>
-        <c:if test="${!RESULTS_TABLE.lastPage}">
-          <html:link action="/results?page=${RESULTS_TABLE.page+1}&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
-            <fmt:message key="results.next"/>
-          </html:link>
-          <c:if test="${RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
-            <html:link action="/changeResults?method=last&amp;trail=${param.trail}">
-              <fmt:message key="results.last"/>
-            </html:link>
-          </c:if>
-        </c:if>
-        <br/>
-        
+        <p><tiles:insert page="/tablePageLinks.jsp"/></p>
       </c:if>
 
       <%-- Return to main results link --%>
@@ -248,7 +229,6 @@
       </div> <%-- end of main results table body div --%>
    
       <%-- Save bag controls --%>
-      <br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
         <div class="heading">
           <fmt:message key="results.save"/><im:helplink key="results.help.save"/>
