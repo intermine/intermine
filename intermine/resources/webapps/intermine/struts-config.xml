@@ -19,6 +19,10 @@
     <form-bean      name="queryForm"
                     type="org.flymine.web.QueryForm"/>
 
+    <!-- FQL Query form bean -->
+    <form-bean      name="fqlQueryForm"
+                    type="org.flymine.web.FqlQueryForm"/>
+
   </form-beans>
 
 
@@ -35,6 +39,18 @@
     <action    path="/query"
                type="org.flymine.web.QueryAction"
                name="queryForm"
+              scope="request"
+              input="query"
+              parameter="action">
+      <forward name="results"              path="results.page"/>
+      <forward name="error"                path="error.page"/>
+      <forward name="buildquery"           path="query.page"/>
+    </action>
+
+    <!-- Input an fql query -->
+    <action    path="/fqlquery"
+               type="org.flymine.web.FqlQueryAction"
+               name="fqlQueryForm"
               scope="request"
               input="query"
               parameter="action">
