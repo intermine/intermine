@@ -119,8 +119,7 @@ public abstract class AbstractConstraint implements SQLStringable
         if (obj instanceof AbstractConstraint) {
             AbstractConstraint objC = (AbstractConstraint) obj;
             int compareVal = compare(objC);
-            return ((compareVal == EQUAL) || (compareVal == BOTH_TRUE)
-                    || (compareVal == BOTH_FALSE));
+            return checkComparisonEquals(compareVal);
         }
         return false;
     }
@@ -245,5 +244,17 @@ public abstract class AbstractConstraint implements SQLStringable
      */
     public static boolean checkComparisonImplies(int comparison) {
         return ((comparison & LEFT_TRUE_RIGHT_FALSE) == 0);
+    }
+
+    /**
+     * Take an integer as if it was created by compare, and return true if this implies that the
+     * left constraint is EQUAL to the right constraint, in a loose sense.
+     * For example the BOTH_TRUE comparison implies a EQUALS comparison.
+     *
+     * @param comparison the comparison to test
+     * @return true if this is a subset of EQUAL
+     */
+    public static boolean checkComparisonEquals(int comparison) {
+        return ((comparison == EQUAL) || (comparison == BOTH_TRUE) || (comparison == BOTH_FALSE));
     }
 }
