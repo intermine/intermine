@@ -50,6 +50,14 @@ public class PostProcessTask extends Task
     }
 
     /**
+     * Set the alias of the integration writer, if necessary
+     * @param integrationWriter the alias
+     */
+    public void setIntegrationWriter(String integrationWriter) {
+        this.integrationWriter = integrationWriter;
+    }
+
+    /**
      * @see Task#execute
      */
     public void execute() throws BuildException {
@@ -90,8 +98,12 @@ public class PostProcessTask extends Task
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
                 LOG.info("Finished calculate-locations");
             } else if ("update-publications".equals(type)) {
-                LOG.info("Starting UpdatePublications.execute()");
+                if (integrationWriter == null) {
+                    throw new BuildException("integrationWriter attribute is not set");
+                }
+                LOG.info("Starting update-publications");
                 new UpdatePublications(osw).execute();
+                LOG.info("Finished update-publications");
             } else {
                 throw new BuildException("unknown type: " + type);
             }
