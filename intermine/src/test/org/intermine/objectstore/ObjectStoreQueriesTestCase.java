@@ -108,7 +108,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                     //e.printStackTrace(writer);
                     status = (status == 2 ? 2 : 1);
                 } catch (Throwable t) {
-                    writer.println(type + " produced an error:");
+                    writer.println("\n" + type + " produced an error:");
                     t.printStackTrace(writer);
                     status = 2;
                 }
