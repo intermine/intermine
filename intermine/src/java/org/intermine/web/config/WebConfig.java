@@ -106,14 +106,17 @@ public class WebConfig
     }
 
     /**
-     *
+     * Add an Exporter to the Map of Exporters in this WebConfig using exporter.getId() as the Map
+     * key.
+     * @param exporter the Exporter to add
      */
     public void addExporter(Exporter exporter) {
         exporters.put(exporter.getId(), exporter);
     }
 
     /**
-     *
+     * Return the Map of Exporters.
+     * @return the Exporters Map 
      */
     public Map getExporters() {
         return exporters;
