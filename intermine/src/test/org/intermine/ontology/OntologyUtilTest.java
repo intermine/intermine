@@ -44,6 +44,31 @@ public class OntologyUtilTest extends TestCase
         assertEquals(ns + "Class1__atd1", OntologyUtil.generatePropertyName(atd1));
     }
 
+    public void testGeneratePropertyNameProp() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":ceo a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company ;" + ENDL
+            + "             rdfs:range rdfs:Literal ." + ENDL
+            + ":Company__name a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company ;" + ENDL
+            + "             rdfs:range rdfs:Literal ." + ENDL;
+
+        OntModel ont = ModelFactory.createOntologyModel();
+        ont.read(new StringReader(owl), null, "N3");
+
+        OntClass com = ont.getOntClass(ns + "Company");
+        OntProperty ceo = ont.getOntProperty(ns + "ceo");
+        OntProperty name = ont.getOntProperty(ns + "Company__name");
+        assertEquals("Company__ceo", OntologyUtil.generatePropertyName(ceo, com));
+        assertEquals("Company__name", OntologyUtil.generatePropertyName(name, com));
+    }
+
     public void testGenerateFieldName() throws Exception {
         OntModel ont = ModelFactory.createOntologyModel();
         OntClass cls = ont.createClass(ns + "Company");
@@ -470,20 +495,235 @@ public class OntologyUtilTest extends TestCase
         assertNull(equiv.get(tgtNs + "Address"));
     }
 
+    public void testReorganisePropertiesName() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "           rdfs:domain :Company ;" + ENDL
+            + "           rdfs:range rdfs:Literal ." + ENDL
+            + ":Company__address a rdf:Property ;" + ENDL
+            + "           rdfs:domain :Company ;" + ENDL
+            + "           rdfs:range rdfs:Literal ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        OntologyUtil.reorganiseProperties(model, ns);
+
+        assertNotNull(model.getOntClass(ns + "Company"));
+        assertNotNull(model.getOntProperty(ns + "Company__name"));
+        assertNull(model.getOntProperty(ns + "name"));
+        assertNotNull(model.getOntProperty(ns + "Company__address"));
+        assertNull(model.getOntProperty(ns + "address"));
+    }
+
+    public void testReorganisePropertiesEquivalentProperty() throws Exception {
+        String srcNs = "http://www.flymine.org/source#";
+
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix src:  <" + srcNs + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "        rdfs:domain :Company ;" + ENDL
+            + "        rdfs:range rdfs:Literal ;" + ENDL
+            + "        owl:equivalentProperty src:name, src:otherName ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        assertTrue(model.getOntProperty(ns + "name").hasEquivalentProperty(model.createOntProperty(srcNs + "name")));
+        assertTrue(model.getOntProperty(ns + "name").hasEquivalentProperty(model.createOntProperty(srcNs + "otherName")));
+
+        OntologyUtil.reorganiseProperties(model, ns);
+
+        assertNotNull(model.getOntClass(ns + "Company"));
+        assertNotNull(model.getOntProperty(ns + "Company__name"));
+        assertNull(model.getOntProperty(ns + "name"));
+        assertTrue(model.getOntProperty(ns + "Company__name").hasEquivalentProperty(model.createOntProperty(srcNs + "name")));
+        assertTrue(model.getOntProperty(ns + "Company__name").hasEquivalentProperty(model.createOntProperty(srcNs + "otherName")));
+    }
+
+    public void testReorganisePropertiesRestriction() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "         rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:maxCardinality \"1\" ;" + ENDL
+            + "              owl:onProperty :address ] ." + ENDL
+            + ":Address a owl:Class ." + ENDL
+            + ":address a owl:ObjectProperty ;" + ENDL
+            + "           rdfs:domain :Company ;" + ENDL
+            + "           rdfs:range :Address ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, model.getOntProperty(ns + "address"),
+                                                     model.getOntClass(ns + "Company")));
+
+        OntologyUtil.reorganiseProperties(model, ns);
+
+        assertNotNull(model.getOntClass(ns + "Company"));
+        assertNotNull(model.getOntProperty(ns + "Company__address"));
+        assertNull(model.getOntProperty(ns + "address"));
+        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, model.getOntProperty(ns + "Company__address"),
+                                                     model.getOntClass(ns + "Company")));
+    }
+
+    public void testReorganisePropertiesLabel() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "           rdfs:domain :Company ;" + ENDL
+            + "           rdfs:range rdfs:Literal ;" + ENDL
+            + "           rdfs:label \"a label\" ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        OntologyUtil.reorganiseProperties(model, ns);
+
+        assertNotNull(model.getOntClass(ns + "Company"));
+        assertNotNull(model.getOntProperty(ns + "Company__name"));
+        assertNull(model.getOntProperty(ns + "name"));
+        OntProperty comName = model.getOntProperty(ns + "Company__name");
+        assertTrue(comName.getLabel(null).equals("a label"));
+    }
+
+
+    public void testReorganisePropertiesMultipleDomains() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix null:  <http://www.flymine.org.model/null#> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":Address a owl:Class ." + ENDL
+            + ":Department a owl:Class ." + ENDL
+            + "null:Person a owl:Class ." + ENDL
+            + ":address a owl:ObjectProperty ;" + ENDL
+            + "           rdfs:domain :Company , :Department, null:Person ;" + ENDL
+            + "           rdfs:range :Address ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        OntologyUtil.reorganiseProperties(model, ns);
+
+        assertNotNull(model.getOntClass(ns + "Company"));
+        assertNull(model.getOntProperty(ns + "address"));
+        assertNotNull(model.getOntProperty(ns + "Company__address"));
+        assertNotNull(model.getOntProperty(ns + "Department__address"));
+        assertNull(model.getOntProperty(ns + "Person__address"));
+
+        OntClass com = model.getOntClass(ns + "Company");
+        OntProperty comAdd = model.getOntProperty(ns + "Company__address");
+        Iterator i = comAdd.listDomain();
+        assertTrue(com.equals((Resource) i.next()));
+        assertFalse(i.hasNext());
+        OntClass add = model.getOntClass(ns + "Address");
+        i = comAdd.listRange();
+        assertTrue(add.equals((Resource) i.next()));
+        assertFalse(i.hasNext());
+
+        OntClass dep = model.getOntClass(ns + "Department");
+        OntProperty depAdd = model.getOntProperty(ns + "Department__address");
+        i = depAdd.listDomain();
+        assertTrue(dep.equals((Resource) i.next()));
+        assertFalse(i.hasNext());
+        i = depAdd.listRange();
+        assertTrue(add.equals((Resource) i.next()));
+        assertFalse(i.hasNext());
+    }
+
+
+    public void testTranferEquivalenceStatements() throws Exception {
+        String srcNs = "http://www.flymine.org/source#";
+
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix src:  <" + srcNs + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "        rdfs:domain :Company ;" + ENDL
+            + "        rdfs:range rdfs:Literal ;" + ENDL
+            + "        owl:equivalentProperty src:name, src:otherName ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        OntProperty prop = model.getOntProperty(ns + "name");
+        OntProperty srcProp1 = model.createOntProperty(srcNs + "name");
+        OntProperty srcProp2 = model.createOntProperty(srcNs + "otherName");
+        OntProperty newProp = model.createOntProperty(ns + "Company__name");
+
+        assertTrue(hasStatement(model, prop, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp1));
+        assertTrue(hasStatement(model, prop, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp2));
+        OntologyUtil.transferEquivalenceStatements(prop, newProp, model);
+        assertTrue(hasStatement(model, prop, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp1));
+        assertTrue(hasStatement(model, prop, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp2));
+
+        assertTrue(hasStatement(model, newProp, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp1));
+        assertTrue(hasStatement(model, newProp, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp2));
+    }
+
+
+    private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {
+        Iterator stmtIter = model.listStatements();
+        while (stmtIter.hasNext()) {
+            Statement stmt = (Statement) stmtIter.next();
+            if (stmt.getSubject().equals(subject)
+                && stmt.getPredicate().getURI().equals(predicate)) {
+
+                Resource res = stmt.getResource();
+                if (res.equals((Resource) object)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void testGenerateClassNamesNull() throws Exception {
         assertNull(OntologyUtil.generateClassNames(null, null));
     }
-    
+
     public void testGenerateClassNamesEmpty() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         assertEquals("", OntologyUtil.generateClassNames("", model));
     }
-    
+
     public void testGenerateClassNamesSingle() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         assertEquals("org.flymine.model.testmodel.Company", OntologyUtil.generateClassNames(model.getNameSpace() + "Company", model));
     }
-    
+
     public void testGenerateClassNamesMultiple() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         String classNames = " " + model.getNameSpace() + "Company " + model.getNameSpace() + "Department ";

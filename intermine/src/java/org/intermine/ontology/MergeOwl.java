@@ -94,7 +94,6 @@ public class MergeOwl
      * @param srcNs the namespace of the source OWL ontology
      */
     protected void mergeByEquivalence(OntModel srcModel, String srcNs) {
-        // map of src URIs (i.e. class/property/individual names) to equivalent target resources
         equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
 
         // build map from source class to restricted subclasses
@@ -170,6 +169,7 @@ public class MergeOwl
             }
         }
         tgtModel.add(statements);
+        OntologyUtil.reorganiseProperties(tgtModel, tgtNs);
     }
 
 

@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -72,6 +74,22 @@ public class OntologyUtil
         return cld.getModel().getNameSpace()
             + TypeUtil.unqualifiedName(cld.getName()) + "__" + fld.getName();
     }
+
+    /**
+     * Generate a name for a property in OntModel, this takes the form:
+     * <namespace>#<classname>__<propertyname>.
+     * @param prop property to generate name for
+     * @param domain the domain of this property
+     * @return the new property name
+     */
+    public static String generatePropertyName(OntProperty prop, Resource domain) {
+        String propName = prop.getLocalName();
+        if (propName.indexOf("__") > 0) {
+            propName = propName.substring(propName.indexOf("__") + 2);
+        }
+        return domain.getLocalName() + "__" + propName;
+    }
+
 
 
     /**
@@ -230,9 +248,9 @@ public class OntologyUtil
                     while (propIter.hasNext()) {
                         OntProperty prop = (OntProperty) propIter.next();
                         if (res.onProperty(prop) && isDatatypeProperty(prop)) {
-                            if (top != null) {
+                            if (top != null && !top.isAnon()) {
                                 subclasses.add(top);
-                            } else {
+                            } else if (!subcls.isAnon()) {
                                 subclasses.add(subcls);
                             }
                         } else if (res.onProperty(prop) && isObjectProperty(prop)) {
@@ -255,6 +273,115 @@ public class OntologyUtil
         return subclasses;
     }
 
+    /**
+     * Prepare format of OWL properties for generation of a FlyMine model:
+     * a) change names of properties to be <domain>__<property>.
+     * b) where properties have more than one domain create a new property for each
+     *    class they relate to.
+     * @param model the model to alter proerties in
+     * @param ns the namespace within model that we are interested in
+     */
+    public static void reorganiseProperties(OntModel model, String ns) {
+
+        // 1. iterate over properties in model
+        // 2. iterate over domains of each proprty
+        //    a) clone the property for each business model class in the domain
+        //    b) setting name to be correct format property name
+        //    c) delete origninal property
+
+
+        // Jena ExtendedIterators break if an element is altered -> transfer props to set
+        Set properties = new HashSet();
+        Iterator propIter = model.listOntProperties();
+        while (propIter.hasNext()) {
+            properties.add(propIter.next());
+        }
+        propIter = properties.iterator();
+        while (propIter.hasNext()) {
+            OntProperty prop = (OntProperty) propIter.next();
+            if (prop.getNameSpace().equals(ns) && hasMultipleDomains(prop)) {
+                Set domains = new HashSet();
+                 Iterator domainIter = prop.listDomain();
+                 while (domainIter.hasNext()) {
+                     domains.add((OntResource) domainIter.next());
+                 }
+                 domainIter = domains.iterator();
+                 while (domainIter.hasNext()) {
+                     OntResource domain = (OntResource) domainIter.next();
+                     renameProperty(prop, domain, model, domain.getNameSpace());
+                 }
+                 prop.remove();
+            } else if (prop.getNameSpace().equals(ns)) {
+                String name = generatePropertyName(prop, prop.getDomain());
+                if (!prop.getLocalName().equals(name)) {
+                    renameProperty(prop, prop.getDomain(), model, ns);
+                    prop.remove();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Change the name of a property to be <domainName>__<propertyName> and
+     * update any references to the property (e.g. Restrictions) with respect
+     * to change.
+     * @param prop the property to change name of
+     * @param domain the domain of the property
+     * @param model parent OntModel
+     * @param ns namespace to create property name in
+     */
+    protected static void renameProperty(OntProperty prop, OntResource domain,
+                                         OntModel model, String ns) {
+        OntProperty newProp = model.createOntProperty(ns + generatePropertyName(prop, domain));
+        newProp.setDomain(domain);
+        newProp.setRange(prop.getRange());
+        transferEquivalenceStatements(prop, newProp, model);
+        Iterator r = model.listRestrictions();
+        while (r.hasNext()) {
+            Restriction res = (Restriction) r.next();
+            if (res.onProperty(prop)) {
+                res.setOnProperty(newProp);
+            }
+        }
+        Iterator labelIter = prop.listLabels(null);
+        while (labelIter.hasNext()) {
+            newProp.addLabel(((Literal) labelIter.next()).getString(), null);
+        }
+    }
+
+    /**
+     * Return true if the given OntProperty has more than one defined domain.
+     * @param prop the OntProperty to examine
+     * @return true if prop has more than one domain
+     */
+    public static boolean hasMultipleDomains(OntProperty prop) {
+        Iterator i = prop.listDomain();
+        i.next();
+        return i.hasNext();
+    }
+
+    /**
+     * Move equivalence statements from one property to another, removes statements
+     * from original property.
+     * @param prop proprty to transfer statements from
+     * @param newProp target property to transfer statements to
+     * @param model the parent OntModel
+     */
+    protected static void transferEquivalenceStatements(OntProperty prop, OntProperty
+                                                        newProp, OntModel model) {
+        List statements = new ArrayList();
+        Iterator i = model.listStatements();
+        while (i.hasNext()) {
+            Statement stmt = (Statement) i.next();
+            if (!stmt.getSubject().isAnon() && stmt.getSubject().getURI().equals(prop.getURI())
+                && stmt.getPredicate().getURI().equals(OWL_NAMESPACE + "equivalentProperty")) {
+                statements.add(model.createStatement(newProp, stmt.getPredicate(),
+                                                     stmt.getObject()));
+            }
+        }
+        model.add(statements);
+    }
 
     /**
      * Build a map of resources in source namespaces to the equivalent resources
@@ -415,7 +542,7 @@ public class OntologyUtil
     /**
      * Generate a package qualified class name within the specified model from a space separated
      * list of namespace qualified names
-     * 
+     *
      * @param classNames the list of namepace qualified names
      * @param model the relevant model
      * @return the package qualified names
