@@ -144,7 +144,9 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
-
+                    if (!tgtItem.hasAttribute("name")) {
+                        tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
+                    }
                 } else if ("contig".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     Item relation = createItem(tgtNs + "SimpleRelation", "");
@@ -163,7 +165,10 @@ public class EnsemblDataTranslator extends DataTranslator
                     moveField(srcItem, transRelation, "translation", "subject");
                     result.add(transRelation);
                     promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
-
+                    // if no name set the identifier as name (primary key)
+                    if (!tgtItem.hasAttribute("name")) {
+                        tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
+                    }
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
                     tgtItem.addReference(getEnsemblRef());
