@@ -130,7 +130,7 @@ public class ClassDescriptor
             throw new RuntimeException("Can't find class for class descriptor", e);
         }
     }
-    
+
     /**
      * Returns unqualified name of class described by this ClassDescriptor.
      * @return unqualified name of the described Class
@@ -277,7 +277,7 @@ public class ClassDescriptor
         Set set = new LinkedHashSet(getAllFieldDescriptors());
         Iterator fieldIter = set.iterator();
         while (fieldIter.hasNext()) {
-            if (!(fieldIter.next() instanceof ReferenceDescriptor)) {
+            if (!(((FieldDescriptor) fieldIter.next()).isReference())) {
                 fieldIter.remove();
             }
         }
@@ -295,7 +295,8 @@ public class ClassDescriptor
             throw new NullPointerException("Argument 'name' cannot be null");
         }
         if (fieldDescriptors.containsKey(name)
-            && fieldDescriptors.get(name) instanceof ReferenceDescriptor) {
+            && fieldDescriptors.get(name) instanceof ReferenceDescriptor
+            && !(fieldDescriptors.get(name) instanceof CollectionDescriptor)) {
             return (ReferenceDescriptor) fieldDescriptors.get(name);
         } else {
             return null;
