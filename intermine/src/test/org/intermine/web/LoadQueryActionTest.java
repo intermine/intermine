@@ -49,6 +49,9 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         savedQueries.put("query2", q2);
     }
 
+    /**
+     * Test loading a saved query when there is no current query
+     */
     public void testNewSuccessful() throws Exception {
         setRequestPathInfo("/loadQuery");
         HttpSession session = getSession();
@@ -71,6 +74,9 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
+    /**
+     * Test loading a saved query when there is a current query
+     */
     public void testReplaceSuccessful() throws Exception {
         setRequestPathInfo("/loadQuery");
         HttpSession session = getSession();
