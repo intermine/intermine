@@ -42,6 +42,9 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) {
+        String geneNs = getTargetModel().getNameSpace() + "Gene";
+        String publicationNs = getTargetModel().getNameSpace() + "Publication";
+
         Item bindingSite = getFeature();
         String factor = (String) ((List) record.getAttributes().get("Factor")).get(0);
         bindingSite.setAttribute("factor", factor);
@@ -55,8 +58,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         if (pubmedIdMap.containsKey(pmid)) {
             pubmedItem = (Item) pubmedIdMap.get(pmid);
         } else {
-            pubmedItem = getItemFactory().makeItem(null, getTargetModel().getNameSpace()
-                                                   + "Publication", "");
+            pubmedItem = getItemFactory().makeItemForClass(publicationNs);
             pubmedIdMap.put(pmid, pubmedItem);
             pubmedItem.setAttribute("pubMedId", pmid);
             addItem(pubmedItem);
@@ -66,17 +68,19 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         String targetGeneName = (String) ((List) record.getAttributes().get("Target")).get(0);
 
-        Item gene;
+        if (!targetGeneName.toLowerCase().equals("unknown")) {
+            Item gene;
 
-        if (geneIdMap.containsKey(targetGeneName)) {
-            gene = (Item) geneIdMap.get(targetGeneName);
-        } else {
-            gene = getItemFactory().makeItem(null, getTargetModel().getNameSpace() + "Gene", "");
-            geneIdMap.put(targetGeneName, gene);
-            gene.setAttribute("name", targetGeneName);
-            addItem(gene);
+            if (geneIdMap.containsKey(targetGeneName)) {
+                gene = (Item) geneIdMap.get(targetGeneName);
+            } else {
+                gene = getItemFactory().makeItemForClass(geneNs);
+                geneIdMap.put(targetGeneName, gene);
+                gene.setAttribute("name", targetGeneName);
+                addItem(gene);
+            }
+
+            bindingSite.setReference("targetGene", gene.getIdentifier());
         }
-
-        bindingSite.setReference("targetGene", gene.getIdentifier());
     }
 }
