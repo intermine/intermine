@@ -1077,4 +1077,12 @@ public class OntologyUtilTest extends TestCase
 
     }
 
+    public void testGetNamespaceFromClassName() throws Exception {
+        assertEquals("http://www.shortname.org#ShortNameObject",
+                     OntologyUtil.getNamespaceFromClassName("org.shortname.ShortNameObject"));
+        assertEquals("http://www.flymine.org/model/test#SomeObject",
+                     OntologyUtil.getNamespaceFromClassName("org.flymine.model.test.SomeObject"));
+        assertEquals("http://www.intermine.org/model#InterMineObject",
+                     OntologyUtil.getNamespaceFromClassName("org.intermine.model.InterMineObject")); 
+   }
 }
