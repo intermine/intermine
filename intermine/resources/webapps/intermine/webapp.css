@@ -73,12 +73,3 @@ tr.even {
   margin-left: 0px;
   margin-right: 0px;
 }
-#header #status {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  padding: 3px;
-  background:#fff;
-  width: 10em;
-  border: solid 1px grey;
-}
