@@ -1,8 +1,9 @@
 ##gff-version 3 
 ##ucsc tfbsConsSites
-1	Transfac%20matrix%20database	TF_binding_site	17889	17899	936	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$OCT_Q6;zscore=2.37
-1	Transfac%20matrix%20database	TF_binding_site	26173	26183	958	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$OCT_Q6_01;zscore=2.69
-1	Transfac%20matrix%20database	TF_binding_site	3950	3956	1000	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$NKX25_01;zscore=2.38
+1	Transfac%20matrix%20database	TF_binding_site	17889	17899	936	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$OCT_Q6:chr1:17889..17899;Name=V$OCT_Q6;zscore=2.37
+1	Transfac%20matrix%20database	TF_binding_site	26173	26183	958	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$OCT_Q6:chr1:26173..26183;Name=V$OCT_Q6;zscore=2.69
+1	Transfac%20matrix%20database	TF_binding_site	3950	3956	1000	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$NKX25_0:chr1:3950..3956;Name=V$NKX25_0;zscore=2.38
 1	firstEF	promoter	2096705	2097274	1000	+	.	sourceDatabase=UCSC;ID=promoter(90+);Parent=exon(2179-)#2;Name=name1,name2
 2	firstEF	promoter	2096850	2097419	1000	-	.	sourceDatabase=UCSC;ID=promoter(2179-);Parent=exon(2179-)#2
 1	firstEF	exon	2097064	2097289	.	-	.	sourceDatabase=UCSC;ID=exon(2179-)#2
+
