@@ -86,11 +86,7 @@ public class ModelOutputTask extends Task
             throw new BuildException(e);
         }
 
-        if (mo != null) {
-            mo.process();
-        } else {
-            throw new BuildException("Error building ModelOutput");
-        }
+        mo.process();
     }
 }
 
