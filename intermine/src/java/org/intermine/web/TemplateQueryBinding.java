@@ -35,17 +35,13 @@ import org.intermine.util.SAXParser;
 public class TemplateQueryBinding
 {
     /**
-     * Convert a TemplateQuery to XML
+     * Convert a TemplateQuery to XML and write XML to given writer.
      *
-     * @param template the PathQuery
-     * @return the corresponding XML String
+     * @param template theTemplateQuery
+     * @param writer the XMLStreamWriter to write to
      */
-    public String marshal(TemplateQuery template) {
-        StringWriter sw = new StringWriter();
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-
+    public void marshal(TemplateQuery template, XMLStreamWriter writer) {
         try {
-            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
             writer.writeAttribute("description", template.getDescription());
@@ -55,6 +51,24 @@ public class TemplateQueryBinding
                                            template.getQuery().getModel().getName(),
                                            writer);
             writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Convert a TemplateQuery to XML
+     *
+     * @param template the TemplateQuery
+     * @return the corresponding XML String
+     */
+    public String marshal(TemplateQuery template) {
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            marshal(template, writer);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
