@@ -10,26 +10,24 @@ package org.intermine.modelproduction;
  *
  */
 
-import junit.framework.*;
-
-import java.util.Set;
-import java.util.HashSet;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.intermine.modelproduction.xml.InterMineModelParser;
+import junit.framework.TestCase;
+
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 
 
-public class MergeModelsFunctionalTest extends XMLTestCase
+public class MergeModelsFunctionalTest extends TestCase
 {
     InterMineModelParser parser;
 
 
     public void setUp() throws Exception {
-        XMLUnit.setIgnoreWhitespace(true);
         parser = new InterMineModelParser();
     }
 
@@ -57,15 +55,30 @@ public class MergeModelsFunctionalTest extends XMLTestCase
                                 "<attribute name=\"name\" type=\"java.lang.String\"/>" +
                             "</class>" +
                           "</model>";
-        assertXMLEqual(expected, ModelMerger.mergeModel(model, additionClds).toString());
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
     }
-
 
     // model:  A <-- C
     // addition: A <-- B <-- C
     // target should remove A <-- C
     public void testInheritanceChain() throws Exception {
-
+        String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\">"
+                            + "<class name=\"A\" extends=\"C\" is-interface=\"false\"></class>"
+                            + "<class name=\"C\" is-interface=\"false\"></class>"
+                         + "</model>";
+        Model model = parser.process(new StringReader(modelStr));
+        String addition = "<model name=\"testmodel\" namespace=\"testmodel#\">"
+                            + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
+                            + "<class name=\"B\" extends=\"C\" is-interface=\"false\"></class>"
+                         + "</model>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        
+        String expected = "<model name=\"testmodel\" namespace=\"testmodel#\">"
+                            + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
+                            + "<class name=\"B\" extends=\"C\" is-interface=\"false\"></class>"
+                            + "<class name=\"C\" is-interface=\"false\"></class>"
+                          + "</model>";
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
 
     }
 
@@ -256,9 +269,7 @@ public class MergeModelsFunctionalTest extends XMLTestCase
             e.printStackTrace();
         }
     }
-
-
-
+    
     // test conflicting collections
     public void testConflictingCollections() throws Exception {
         String modelStr = "<model name=\"testmodel\" namespace=\"http://www.intermine.org/model/testmodel#\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
