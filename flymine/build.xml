@@ -70,6 +70,9 @@
   <property name="dist.webapp"  location="${dist}/webapp"/>
   <property name="dist.javadoc"  location="${dist.www}/api"/>
 
+  <!-- deafult setting for create-indexes in build-model.xml -->
+  <property name="create.attribute.indexes" value="false"/>
+
   <!-- set up library filesets -->
 
   <!-- Ant tasks and unit testing stuff -->
@@ -2061,7 +2064,7 @@
 
   <!-- WEBAPP TARGETS -->
 
-  <target name="build-production-webapp" depends="prepare-build-model">
+  <target name="build-production-webapp" depends="prepare-build-model, compile-flymine-java">
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
