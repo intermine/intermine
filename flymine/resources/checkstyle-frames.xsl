@@ -218,7 +218,7 @@
                 <th>Errors</th>
             </tr>
             <xsl:apply-templates select="file" mode="filelist">
-                <xsl:sort select="@name"/>
+                <xsl:sort select="count(error)" order="descending" data-type="number"/>
             </xsl:apply-templates>
         </table>
     </xsl:template>
