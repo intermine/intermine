@@ -314,7 +314,7 @@ version="1.0">
 <xsl:template match="anchor">
 <a>
 <xsl:attribute name="name"><xsl:apply-templates/></xsl:attribute>
-</a>
+<xsl:text> </xsl:text></a>
 </xsl:template>
 
 <xsl:template match="menu/section">
