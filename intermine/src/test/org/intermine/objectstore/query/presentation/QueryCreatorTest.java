@@ -96,28 +96,72 @@ public class QueryCreatorTest extends TestCase
         assertEquals(String.class, ((QueryValue) res2.getArg2()).getType());
     }
 
-//     public void testGetConstraintSet() throws Exception {
-//         Query q = new Query();;
-//         QueryClass qc = new QueryClass(Employee.class);
-//         QueryField qf = new QueryField(qc, "name");
-//         SimpleConstraint sc = new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("Neville"));
+    public void testAddConstraintNull() throws Exception {
+        try {
+            QueryCreator.addConstraint(new Query(), null);
+            fail("Expected NullPointerException");
+        } catch (Exception e) {
+        }
+    }
 
-//         // query has no constraint set
-//         ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
-//         assertEquals(c, QueryCreator.getConstraintSet(q));
+    public void testAddConstraintEmpty() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
 
-//         // existing ConstraintSet
-//         c = new ConstraintSet(ConstraintSet.AND);
-//         c.addConstraint(sc);
-//         q.setConstraint(c);
-//         assertEquals(c, QueryCreator.getConstraintSet(q));
+        q.setConstraint(sc);
+        QueryCreator.addConstraint(q, new ConstraintSet(ConstraintSet.AND));
 
-//         // existing constraint
-//         q.setConstraint(sc);
-//         c = new ConstraintSet(ConstraintSet.AND);
-//         c.addConstraint(sc);
-//         assertEquals(c, QueryCreator.getConstraintSet(q));
-//     }
+        assertEquals(sc, q.getConstraint());
+    }
+    
+    public void testAddConstraintToNull() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        Constraint sc = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
+        ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);
+        cs.addConstraint(sc);
+
+        QueryCreator.addConstraint(q, cs);
+
+        assertEquals(cs, q.getConstraint());
+    }
+
+    public void testAddConstraintToConstraint() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc, "age"), SimpleConstraint.EQUALS, new QueryValue(new Integer(54)));
+        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
+        cs2.addConstraint(sc2);
+
+        q.setConstraint(sc1);
+        QueryCreator.addConstraint(q, cs2);
+
+        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
+        cs3.addConstraint(sc1);
+        cs3.addConstraint(sc2);
+        assertEquals(cs3, q.getConstraint());
+    }
+
+    public void testAddConstraintToConstraintSet() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc, "name"), SimpleConstraint.EQUALS, new QueryValue("Bob"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc, "age"), SimpleConstraint.EQUALS, new QueryValue(new Integer(54)));
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        cs1.addConstraint(sc1);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
+        cs2.addConstraint(sc2);
+
+        q.setConstraint(cs1);
+        QueryCreator.addConstraint(q, cs2);
+
+        ConstraintSet cs3 = new ConstraintSet(ConstraintSet.AND);
+        cs3.addConstraint(sc1);
+        cs3.addConstraint(cs2);
+        assertEquals(cs3, q.getConstraint());
+    }
 
     public void testCreateQueryValue() throws Exception {
         String value = null;
