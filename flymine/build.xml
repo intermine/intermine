@@ -26,6 +26,11 @@
   <property name="lib" location="lib"/>
   <property name="bin" location="bin"/>
 
+  <!-- source directories -->
+  <property name="src" location="src"/>
+  <property name="src.java" location="${src}/java"/>
+  <property name="src.test" location="${src}/test"/>
+
   <!-- resources directory -->
   <property name="resources" location="resources"/>
 
@@ -34,12 +39,16 @@
 
   <!-- build directories -->
   <property name="build" location="build"/>
+  <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
   <property name="build.resources.test" location="${build.resources}/test"/>
   <property name="build.model" location="${build}/model" />
+  <property name="build.src.java" location="${build}/javasrc"/>
+  <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
+  <property name="build.webapp.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
 
   <!-- results directories -->
   <property name="results"  location="results"/>
@@ -57,9 +66,10 @@
 
   <!-- Ant tasks and unit testing stuff -->
   <patternset id="lib.build">
-    <include name="AntDoc*.jar" />
-    <include name="junit*.jar" />
-    <include name="catalina-ant.jar" />
+    <include name="AntDoc*.jar"/>
+    <include name="junit*.jar"/>
+    <include name="catalina-ant.jar"/>
+    <include name="biojava*.jar"/>
   </patternset>
 
   <!-- Checkstyle library -->
@@ -67,17 +77,34 @@
     <include name="checkstyle*.jar"/>
   </patternset>
 
-  <!-- Libraries that the FlyMine query webapp uses -->
-  <patternset id="lib.webapp.flymine">
+  <!-- Webapp libraries -->
+  <patternset id="lib.webapp">
+    <include name="biojava*.jar"/>
   </patternset>
+
+  <patternset id="flymine.jar.patternset">
+    <include name="flymine.jar"/>
+  </patternset>
+
 
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
+    <pathelement path="${build.java}"/>
     <pathelement path="${build.resources}"/>
     <fileset dir="${lib}">
       <patternset refid="lib.build"/>
     </fileset>
     <fileset dir="${intermine.dist.path}">
+      <include name="intermine*.jar" />
+    </fileset>
+  </path>
+
+  <path id="webapp.class.path">
+    <path refid="base.class.path"/>
+    <fileset dir="${build.webapp.lib}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${dist}">
       <include name="intermine*.jar" />
     </fileset>
   </path>
@@ -103,21 +130,35 @@
     <pathelement location="${build.model}/fulldata"/>
   </path>
 
+  <path id="project.class.path">
+    <path refid="base.class.path"/>
+    <fileset dir="${dist}">
+      <include name="intermine*.jar" />
+    </fileset>
+  </path>
+
 
   <!-- Initialisation targets -->
-
   <target name="prepare">
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
       <format property="DTSTAMP" pattern="yyyyMMddHHmm"/>
     </tstamp>
 
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist.webapp}"/>
+    <mkdir dir="${dist.javadoc}"/>
+
     <mkdir dir="${build}"/>
+    <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.model}/fulldata" />
+    <mkdir dir="${build.src.java}"/>
+    <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
+    <mkdir dir="${build.webapp}/intermine"/>
 
     <mkdir dir="${results}"/>
     <mkdir dir="${results.junit}"/>
@@ -184,6 +225,37 @@
     <touch file="${build}/build-webapp.xml"/>
   </target>
 
+  <!-- set the copy.intermine.war property if the flymine.war file is older
+       than the intermine.war or if the JARs from intermine.war haven't been
+       expanded into ${build.webapp}/intermine -->
+  <target name="new-intermine-war" depends="prepare">
+    <uptodate property="new.intermine.war"
+              targetfile="${intermine.war.path}">
+      <srcfiles dir="${dist.webapp}" includes="flymine.war"/>
+    </uptodate>
+    <available property="intermine.libs.available"
+               file="${build.webapp}/intermine/WEB-INF/lib/intermine-all.jar"/>
+    <condition property="copy.intermine.war">
+      <or>
+        <isset property="new.intermine.war"/>
+        <not>
+          <isset property="intermine.libs.available"/>
+        </not>
+      </or>
+    </condition>
+  </target>
+
+  <target name="prepare-build-webapp" depends="new-intermine-war" if="copy.intermine.war"
+          description="Prepare the build environment for building the production webapp">
+    <copy file="${intermine.war.path}" tofile="${dist.webapp}/flymine.war" verbose="true"/>
+    <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
+      <patternset>
+        <include name="WEB-INF/lib/*.jar"/>
+        <include name="WEB-INF/struts-config.xml"/>
+      </patternset>
+    </unwar>
+  </target>
+
 
 
   <!-- ============================================================================== -->
@@ -201,7 +273,7 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
- 
+
   <!-- convert ensembl model to OWL -->
   <target name="ensembl-to-owl" depends="convert-ensembl">
     <java classname="org.intermine.ontology.InterMine2Owl" fork="true" failonerror="true">
@@ -556,7 +628,7 @@
     </ant>
   </target>
 
-  <target name="jar-genomic" depends="prepare-dist, create-genomic-model"
+  <target name="jar-genomic" depends="prepare, create-genomic-model"
           description="create a jar of the genomic model">
     <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -798,7 +870,7 @@
 
 
   <!-- ENSEMBL ORTHOLOGUES PIPELINE -->
-  
+
   <!-- retrieve ensembl orthologue/paralogue data into common tgt items database-->
   <target name="retrieve-orthologues-ensembl" depends="prepare-build-model, compile-orthologue-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -814,8 +886,8 @@
 
     <copy file="/shared/data/orthologues/ensembl/orthologues.AG-DM" todir="${build.tmp}"/>
 
-    <retrieve-orthologue file="${build.tmp}/orthologues.AG-DM" 
-       clsName="org.flymine.dataconversion.OrthologueConverter" 
+    <retrieve-orthologue file="${build.tmp}/orthologues.AG-DM"
+       clsName="org.flymine.dataconversion.OrthologueConverter"
        osName="osw.ensembl-orthologue-tgt-items"
        param1="AG"
        param2="DM"/>
@@ -857,9 +929,9 @@
       </path>
     </concat>
 
-    <retrieve-orthologue 
+    <retrieve-orthologue
        file="${build.tmp}/inparanoid"
-       clsName="org.flymine.dataconversion.InparanoidConverter" 
+       clsName="org.flymine.dataconversion.InparanoidConverter"
        osName="osw.inparanoid-orthologue-tgt-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1184,6 +1256,29 @@
     </ant>
   </target>
 
+  <target name="compile-genomic-web-java" depends="jar-flymine-java, prepare-build-webapp">
+    <ant antfile="${build}/build-model.xml" target="compile-webapp-java" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="webapp.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-flymine-java" 
+          depends="prepare-build-model, jar-genomic">
+    <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+      <classpath refid="project.class.path"/>
+      <src path="${build.src.java}"/>
+      <include name="org/flymine/**"/>
+    </javac>
+  </target>
+
+  <target name="jar-flymine-java" depends="compile-flymine-java">
+    <jar destfile="${dist}/flymine.jar">
+      <fileset dir="${build.java}"/>
+    </jar>
+  </target>
+
   <target name="genomic-test" depends ="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1233,6 +1328,10 @@
       <formatter type="xml" tofile="${results.checkstyle}/checkstyle_report.xml" />
       <fileset dir="${model}">
         <include name="**/src/java/**/*.java" />
+        <include name="**/web/java/**/*.java" />
+      </fileset>
+      <fileset dir=".">
+        <include name="src/java/**/*.java" />
       </fileset>
       <property key="checkstyle.header.file" value="${resources}/copyright_header.txt"/>
     </checkstyle>
@@ -1246,23 +1345,50 @@
 
   <!-- WEBAPP TARGETS -->
 
-  <target name="build-production-webapp" depends="jar-genomic">
-    <mkdir dir="${build.webapp}/intermine"/>
-    <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine"/>
-    <move file="${build.webapp}/intermine/WEB-INF/web.xml" todir="${build.tmp}"/>
-    <copy todir="${build.webapp}/intermine/WEB-INF/classes" overwrite="true">
-      <fileset dir="${resources}/webapp" includes="*.properties"/>
-    </copy>
-
-    <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
+  <target name="build-production-webapp"
+          depends="create-genomic-model, prepare-build-webapp, compile-genomic-web-java">
+    <ant antfile="${build}/build-webapp.xml" target="add-model-to-webapp" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/> 
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.src" value="${model}/genomic"/>
     </ant>
 
-    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
-      <fileset dir="${build.webapp}/intermine"/>
-    </war>
+    <copy todir="${build.tmp}"
+          file="${resources}/webapp/default.intermine.properties" 
+          overwrite="true" verbose="true"/>
+    <patternset id="default-intermine-properties">
+      <include name="default.intermine.properties"/>
+    </patternset>
+    <ant antfile="${build}/build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/>
+      <property name="file.dir" value="${build.tmp}"/>
+      <reference torefid="file.names" refid="default-intermine-properties"/>
+    </ant>
+
+    <ant antfile="${build}/build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/>
+      <property name="file.dir" value="${lib}"/>
+      <reference torefid="file.names" refid="lib.webapp"/>
+    </ant>
+
+    <ant antfile="${build}/build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/>
+      <property name="file.dir" value="${dist}"/>
+      <reference torefid="file.names" refid="flymine.jar.patternset"/>
+    </ant>
+
+    <copy todir="${build.tmp}"
+          file="${resources}/webapp/flymine/global.web.properties" 
+          overwrite="true" verbose="true"/>
+    <patternset id="flymine-global-web-properties-patternset">
+      <include name="global.web.properties"/>
+    </patternset>
+    <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/>
+      <property name="file.dir" value="${build.tmp}"/>
+      <reference torefid="file.names" refid="flymine-global-web-properties-patternset"/>
+    </ant>
   </target>
 
   <target name="release-webapp">
@@ -1270,19 +1396,19 @@
       <classpath refid="base.class.path"/>
     </taskdef>
     <tomcat-deploy url="${webapp.baseurl}/manager"
-                   username="${webapp.manager}" 
+                   username="${webapp.manager}"
                    password="${webapp.password}"
-                   path="${webapp.path}" 
-                   war="file://${dist.webapp}/flymine.war"/> 
+                   path="${webapp.path}"
+                   war="file://${dist.webapp}/flymine.war"/>
   </target>
 
   <target name="remove-webapp">
-    <taskdef name="tomcat-undeploy" 
+    <taskdef name="tomcat-undeploy"
       classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="base.class.path"/>
     </taskdef>
     <tomcat-undeploy url="${webapp.baseurl}/manager"
-                     username="${webapp.manager}" 
+                     username="${webapp.manager}"
                      password="${webapp.password}"
                      path="${webapp.path}"/>
   </target>
@@ -1371,7 +1497,7 @@
 
   <!-- PACKAGING/DISTRIBUTION TARGETS -->
 
-  <target name="dist-javadoc" depends="prepare-dist,javadoc"
+  <target name="dist-javadoc" depends="prepare,javadoc"
           description="makes the javadoc available for distribution">
      <copy todir="${dist.javadoc}">
       <fileset dir="${build.javadoc}">
