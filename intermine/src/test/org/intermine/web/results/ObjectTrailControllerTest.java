@@ -39,14 +39,17 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
     public void setUp() throws Exception {
         super.setUp();
         Department d = new Department();
+        d.setId(new Integer(42));
         /*Set classes = new HashSet();
         classes.add(Company.class);
         d.setCompany((Company) DynamicUtil.createObject(classes));*/
         os = new ObjectStoreDummyImpl();
         os.cacheObjectById(new Integer(42), d);
         d = new Department();
+        d.setId(new Integer(43));
         os.cacheObjectById(new Integer(43), d);
         d = new Department();
+        d.setId(new Integer(44));
         os.cacheObjectById(new Integer(44), d);
         ((ObjectStoreDummyImpl) os).setModel(Model.getInstanceByName("testmodel"));
     }
@@ -83,6 +86,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
 
         actionPerform();
         
+        verifyNoActionErrors();
+        
         List c = (List) getRequest().getAttribute("trailElements");
         assertNotNull("trailElements attribute is null", c);
         assertEquals(3, c.size());
@@ -105,7 +110,5 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertEquals(43, e1.getObjectId());
         assertEquals(44, e2.getObjectId());
         
-        
-        verifyNoActionErrors();
     }
 }
