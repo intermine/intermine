@@ -5,9 +5,9 @@
       <name>D. melanogaster genome annotation.</name>
       <description>
         Genome Annotation for D. melanogaster from &lt;a
-        href="http://www.ensembl.org/">Ensembl&lt;/a>
+        href="http://www.flybase.org/">FlyBase&lt;/a>
       </description>
-      <version>Release 3.1</version>
+      <version>Release 4.0</version>
     </source>
    <source>
       <name>A. gambiae genome annotation.</name>
@@ -22,31 +22,25 @@
       <description>
         Proteins for D. melanogaster, A. gambiae and C. elegans from
         &lt;a href="http://www.ebi.uniprot.org/index.shtml">Uniprot
-        (trembl and Swissprot)&lt;/a> 
+        (trembl and swissprot)&lt;/a> 
        </description>
        <version></version>
      </source>
    <source>
-      <name>D. melanogaster : A. gambiae orthologues.</name>
-      <description>
-         Orthologues between D. melanogaster and A. gambiae from &lt;a
-        href="http://www.ensembl.org/">Ensembl&lt;/a>
+       <name>orthologues and paralogues.</name> <description>
+      Orthologues and Paralogues between D. melanogaster and
+      C. elegans, D. melanogaster and A. gambiae and C. elegans and
+      A. gambiae from &lt;a
+      href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version></version>
-    </source>
-    <source>
-       <name>D. melanogaster : C. elegans orthologues and paralogues.</name>
-      <description> 
-        Orthologues and Paralogues between D. melanogaster and C. elegans
-        from &lt;a href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
-      </description>
-      <version>3.0</version>
     </source>
     <source>
      <name>D. melanogaster protein-protein interactions.</name>
       <description>
         2-hybrid protein-protein interactions for D. melanogaster:
-        Curagen set (Giot et al (2003) Science 302 1727-1736). 
+        Curagen set (Giot et al (2003) Science 302 1727-1736); Stanyon
+        set (Stanyon et al (2004) Genome Biology 5: R96
       </description>
       <version></version>
     </source>
@@ -79,16 +73,32 @@
       <description>
         &lt;a href="http://www.geneontology.org/">The Gene Ontology&lt;/a>
       </description>
-      <version>Revision 3.185</version>
+      <version>Revision 3.220</version>
     </source>
     <source>
       <name>GO annotations</name>
       <description>
         &lt;a
         href="http://www.geneontology.org/GO.current.annotations.shtml/">Uniprot
-        Gene Ontology assignments&lt;/a>
+        Gene Ontology assignments&lt;/a>for D. melanogaster, A. Gambiae and C. elegans.
       </description>
-      <version>Dec 22nd 2004</version>
+      <version>March 16th  2005</version>
+    </source>
+    <source>
+      <name>INDAC microarray oligo set</name>
+      <description>
+       &lt;a
+        href="http://www.indac.net/">INDAC&lt;/a>microarray long oligo set 
+      </description>
+      <version>1.0</version>
+    </source>
+    <source>
+      <name>flyreg DNase I footprints</name>
+      <description>DNase I footprints from
+       &lt;a
+        href="http://www.flyreg.org/">Drosophila DNase I Footprint Database&lt;/a> 
+      </description>
+      <version>2.0</version>
     </source>
   </sources>
 </intermine-sources>
