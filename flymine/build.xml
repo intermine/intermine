@@ -1678,14 +1678,16 @@
   <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
                                            load-static,
-
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
+                                           analyse-protein-production,
                                            build-psi-production,
                                            build-orthologues-production,
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
+                                           build-protein_structure-production,
+                                           build-uniprot-production,
                                            analyse-db-production,
                                            grant-db-production"/>
 
@@ -1696,6 +1698,16 @@
     </taskdef>
 
     <analyse-db database="db.production" full="true"/>
+
+  </target>
+
+  <target name="analyse-protein-production" depends="prepare">
+    <!-- analyse protein class in production database -->
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.production" model="genomic" className="org.flymine.model.genomic.Protein"/>
 
   </target>
 
@@ -1970,7 +1982,7 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="fulltest" depends="clean, test-models-full"
+  <target name="fulltest" depends="clean, test-models-full, genomic-test"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
@@ -2312,6 +2324,8 @@
     <fileset dir=".">
       <include name="velocity.log*"/>
       <include name="flymine.log*"/>
+      <include name="build/**/*.java"/>
+      <include name="build/**/*.class"/>
     </fileset>
     </delete>
     <antcall target="prepare" />
