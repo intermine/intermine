@@ -1,0 +1,259 @@
+# Base: 
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix daml:    <http://www.daml.org/2001/03/daml+oil#> .
+@prefix :        <http://www.flymine.org/model/genomic#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix null:	 <http://www.flymine.org/model/null#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+# ---------------------------------------------------------------------------- #
+#                      Core Object Model Elements                              #
+# ---------------------------------------------------------------------------- #
+
+
+# ------------ BioEntity is central class of schema ------------
+
+# represents any biological entity in the object model
+:BioEntity a owl:Class .
+
+:BioEntity__name a owl:DatatypeProperty ;
+      rdfs:domain :BioEntity ;
+      rdfs:range xsd:string .
+
+:BioEntity__synonyms a owl:ObjectProperty ;
+      rdfs:domain :BioEntity ;
+      rdfs:range :Synonym .
+
+:BioEntity__properties a owl:ObjectProperty ;
+      rdfs:domain :BioEntity ;
+      rdfs:range :BioProperty .
+
+:BioEntity__cvterms a owl:ObjectProperty ;
+      rdfs:domain :BioEntity ;
+      rdfs:range :CVTerm .
+
+:BioEntity__analysisResults a owl:ObjectProperty ;
+     rdfs:domain :BioEntity ;
+     rdfs:range :AnalysisResult .
+
+# ------------ BioProperty represents any property of a BioEntity ------------
+
+# any property applied to a BioEntity attributable to an InfoSource and/or
+# an AnalysisResult
+
+:BioProperty a owl:Class ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :BioProperty__subject ] ;    
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :BioProperty__source ] ;  
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :BioProperty__analysis ] .
+
+:BioProperty__subject a owl:ObjectProperty ;
+      rdfs:domain :BioProperty ;
+      rdfs:range :BioEntity .
+
+:BioProperty__source a owl:ObjectProperty ;
+      rdfs:domain :BioProperty ;
+      rdfs:range :InfoSource .
+
+:BioProperty__analysis a owl:ObjectProperty ;
+      rdfs:domain :BioProperty ;
+      rdfs:range :AnalysisResult .
+
+
+# ------------ Relationships between BioEntity classes -----------
+
+# define a common superclass for RankedRelation and Location and LinkedRelation
+# has subject and object references to BioEntity
+
+:Relation a owl:Class ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :Relation__subject ] ;               
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :Relation__object ] .
+
+:Relation__subject a owl:ObjectProperty;
+      rdfs:domain :Relation ;
+      rdfs:range :BioEntity .
+
+:Relation__object a owl:ObjectProperty;
+      rdfs:domain :Relation ;
+      rdfs:range :BioEntity .
+
+# RankedRelation describes an integer order (rank) for objects in subject
+
+:RankedRelation a owl:Class ;
+      rdfs:subClassOf :Relation ;
+
+:RankedRelation__rank a owl:DatatypeProperty ;
+      rdfs:domain :RankedRelation ;
+      rdfs:range xsd:integer .
+
+
+# LinkRelation describes any stated link between two BioEntities with analytical
+# evidence (AnalysisResult) and a literature/database source (InfoSource)
+
+:LinkRelation a owl:Class ;
+      rdfs:subClassOf :Relation ; 
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :LinkRelation__source ] ;               
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :LinkRelation__analysis ] .
+
+:LinkRelation__source a owl:ObjectProperty ;
+      rdfs:domain :LinkRelation ;
+      rdfs:range :InfoSource .
+
+:LinkRelation__analysis a owl:ObjectProperty ;
+      rdfs:domain :LinkRelation ;
+      rdfs:range :AnalysisResult .
+
+
+# Location is a relation with start and end positions on another BioEntity
+
+:Location a owl:Class ;
+      rdfs:subClassOf :Relation .
+
+:Location__start a owl:DatatypeProperty ;
+      rdfs:domain :Location ;
+      rdfs:range xsd:integer .
+
+:Location__startIsPartial a owl:DatatypeProperty ;
+      rdfs:domain :Location ;
+      rdfs:range xsd:boolean .
+
+:Location__end a owl:DatatypeProperty ;
+      rdfs:domain :Location ;
+      rdfs:range xsd:integer .        
+
+:Location__endIsPartial a owl:DatatypeProperty ;
+      rdfs:domain :Location ;
+      rdfs:range xsd:boolean .
+
+# ------------- CVTerms applied to BioEntity according to Evidence -----------#
+
+# TODO should CV be another subclass of InfoSource?
+:CV a owl:Class .
+
+:CV__name a owl:DatatypeProperty ;
+      rdfs:domain :CV ;
+      rdfs:range xsd:string .
+
+# A CVTerm can point to many BioEntity objects and has a single CV
+# can have zero or more pieces of Evidence supporting it 
+:CVTerm a owl:Class ; 
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :CVTerm__cv ] .
+
+:CVTerm__term a owl:DatatypeProperty ;
+      rdfs:domain :CVTerm ;
+      rdfs:range xsd:string .
+
+:CVTerm__subject a owl:ObjectProperty ;
+      rdfs:domain :CVTerm ;
+      rdfs:range :BioEntity .
+
+:CVTerm__evidence a owl:ObjectProperty ;
+      rdfs:domain :CVTerm ;
+      rdfs:range :Evidence .
+
+:Evidence a owl:Class .
+
+
+# ------------ Synonyms link a BioEntity with name/id from an InfoSource ----------- #
+
+:Synonym a owl:Class ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :Synonym__subject ] ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :Synonym__source ] .
+
+:Synonym__subject a owl:ObjectProperty ;
+      rdfs:domain :Synonym ;
+      rdfs:range :BioEntity .
+
+:Synonym__source a owl:ObjectProperty ;
+      rdfs:domain :Synonym ;
+      rdfs:range :InfoSource .
+
+:Synonym__synonym a owl:DatatypeProperty ;
+      rdfs:domain :Synonym ;
+      rdfs:range xsd:string .
+
+
+# ----------- AnalysisResult is an outcome of some form of analysis ------------ #
+
+:AnalysisResult a owl:Class ;
+      rdfs:subClassOf :Evidence ;
+      rdfs:subClassOf
+        [ a owl:Restriction ;
+          owl:maxCardinality "1" ;
+          owl:onProperty :AnalysisResult__analysis ] .
+
+:AnalysisResult__analysis a owl:ObjectProperty ;
+      rdfs:domain :AnalysisResult ;
+      rdfs:range :Analysis .
+
+:AnalysisResult__bioEntity a owl:ObjectProperty ;
+      owl:inverseOf :BioEntity__analysisResults .
+
+:ComputationalResult a owl:Class ;
+      rdfs:subClassOf :AnalysisResult .
+
+:ExperimentalResult a owl:Class ;
+      rdfs:subClassOf :AnalysisResult .
+
+
+:Analysis a owl:Class .
+
+:ComputationalAnalysis a owl:Class ;
+      rdfs:subClassOf :Analysis .
+
+:Experiment a owl:Class ;
+      rdfs:subClassOf :Analysis .
+
+
+
+# Define a common superclass for external info sources: databases and publications
+:InfoSource a owl:Class ;
+      rdfs:subClassOf :Evidence .
+
+:InfoSource__title a owl:DatatypeProperty ;
+      rdfs:domain :InfoSource ;
+      rdfs:range xsd:string .
+
+:Publication a owl:Class ;
+      rdfs:subClassOf :InfoSource .
+
+:Database a owl:Class ;
+      rdfs:subClassOf :InfoSource .
+
+
+
+# Organism will map to a phylogeny when that data is available
+:Organism a owl:Class .
+
+
