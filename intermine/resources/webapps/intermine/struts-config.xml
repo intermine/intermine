@@ -228,8 +228,8 @@
     <action path="/viewAction"
             type="org.intermine.web.ViewAction"
             name="emptyForm">
-      <forward name="results" path="results.page"/>
-      <forward name="query" path="query.page"/>
+      <forward name="results" path="/results.do" redirect="true" />
+      <forward name="query" path="/query.do" redirect="true" />
     </action>
 
     <!-- Actions invoked using buttons - not validating form -->
