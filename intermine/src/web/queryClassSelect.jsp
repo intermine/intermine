@@ -3,8 +3,9 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
+<!-- queryClassSelect -->
 <html:form action="/queryClassSelect">
-    <font size="-1">Add class to query</font><br/>
+    <font size="-1"><bean:message key="queryclass.select"/></font><br/>
     <html:select property="className">
         <html:options name="model" property="classNames" labelName="model" labelProperty="unqualifiedClassNames"/>
     </html:select>
@@ -14,3 +15,4 @@
         <bean:message key="button.select"/>
     </html:submit>
 </html:form>
+<!-- /queryClassSelect -->
