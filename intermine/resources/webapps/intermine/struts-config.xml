@@ -250,9 +250,6 @@
     <action path="/initTree"
             type="org.intermine.web.TreeController"/>
 
-    <action path="/initQueryClassSelect"
-            type="org.intermine.web.QueryClassSelectController"/>
-
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
 
