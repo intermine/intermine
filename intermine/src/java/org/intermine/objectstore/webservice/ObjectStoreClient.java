@@ -152,11 +152,11 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
 
         if (explain) {
             ResultsInfo estimate = estimate(q);
-            if (estimate.getComplete() > maxTime) {
+            if (estimate.getComplete() > getMaxTime()) {
                 throw new ObjectStoreException("Estimated time to run query ("
                                                + estimate.getComplete()
                                                + ") greater than permitted maximum ("
-                                               + maxTime + ")");
+                                               + getMaxTime() + ")");
             }
         }
         List results = (List) remoteMethod("execute", new Object [] {getQueryId(q),

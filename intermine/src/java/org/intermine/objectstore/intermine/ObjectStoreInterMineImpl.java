@@ -307,10 +307,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 //}
 
                 estimatedTime = explainResult.getTime();
-                if (explainResult.getTime() > maxTime) {
+                if (explainResult.getTime() > getMaxTime()) {
                     throw (new ObjectStoreQueryDurationException("Estimated time to run query("
                                 + explainResult.getTime() + ") greater than permitted maximum ("
-                                + maxTime + "): IQL query: " + q + ", SQL query: " + sql));
+                                + getMaxTime() + "): IQL query: " + q + ", SQL query: " + sql));
                 }
             }
 
