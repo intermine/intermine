@@ -30,7 +30,7 @@ public abstract class QueryTestCase extends TestCase
     protected Map results;
     private DescriptorRepository dr;
 
-    protected List companys = new ArrayList();
+    protected Map data = new HashMap();
 
     /**
      * Constructor
@@ -85,7 +85,7 @@ public abstract class QueryTestCase extends TestCase
         queries.put("SimpleGroupBy", simpleGroupBy());
         queries.put("MultiJoin", multiJoin());
         queries.put("SelectComplex", selectComplex());
-        queries.put("SelectClassAndSubClasses", selectInterfaceAndSubClasses());
+        queries.put("SelectClassAndSubClasses", selectClassAndSubClasses());
         queries.put("SelectInterfaceAndSubClasses", selectInterfaceAndSubClasses());
     }
 
@@ -95,13 +95,14 @@ public abstract class QueryTestCase extends TestCase
      * @throws Exception if an error occurs
      */
     public void setUpData() throws Exception {
+        data();
         db = DatabaseFactory.getDatabase("db.unittest");
         PersistenceBrokerFlyMineImpl broker = (PersistenceBrokerFlyMineImpl) ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
          try {
             broker.beginTransaction();
-            Iterator i = data().iterator();
-            while (i.hasNext()) {
-                broker.store(i.next());
+            Iterator iter = data.keySet().iterator();
+            while (iter.hasNext()) {
+                broker.store(data.get(iter.next()));
             }
             broker.commitTransaction();
         } catch (Exception e) {
@@ -114,9 +115,9 @@ public abstract class QueryTestCase extends TestCase
         PersistenceBrokerFlyMineImpl broker = (PersistenceBrokerFlyMineImpl) ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
          try {
             broker.beginTransaction();
-            Iterator i = data().iterator();
-            while (i.hasNext()) {
-                broker.delete(i.next());
+            Iterator iter = data.keySet().iterator();
+            while (iter.hasNext()) {
+                broker.delete(data.get(iter.next()));
             }
             broker.commitTransaction();
         } catch (Exception e) {
@@ -204,7 +205,7 @@ public abstract class QueryTestCase extends TestCase
     */
     public Query whereSimpleNotEquals() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue(new Integer(5));
+        QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
         QueryField f2 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.NOT_EQUALS, v1);
@@ -473,7 +474,9 @@ public abstract class QueryTestCase extends TestCase
         Company obj = new Company();
         ClassDescriptor cld = dr.getDescriptorFor(Company.class);
         FieldDescriptor fld = cld.getFieldDescriptorByName("id");
-        fld.getPersistentField().set(obj, new Integer(2345));
+        //Integer id = (Integer) fld.getPersistentField().get(data.get("CompanyA"));
+        Integer id = new Integer(2345);
+        fld.getPersistentField().set(obj, id);
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
         Query q1 = new Query();
         q1.addFrom(qc1);
@@ -666,14 +669,30 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
-    private Collection data() throws Exception {
+    private void data() throws Exception {
         Company p1 = p1(), p2 = p2();
         Contractor c1 = c1(), c2 = c2();
         p1.setContractors(Arrays.asList(new Object[] { c1, c2 }));
         p2.setContractors(Arrays.asList(new Object[] { c1, c2 }));
-        companys.add(p1);
-        companys.add(p2);
-        return flatten(companys);
+        map(flatten(Arrays.asList(new Object[] { p1, p2 })));
+    }
+
+    private void map(Collection c) throws Exception {
+        Iterator iter = c.iterator();
+        while(iter.hasNext()) {
+            Object o = iter.next();
+            Method name = null;
+            try {
+                name = o.getClass().getMethod("getName", new Class[] {});
+            } catch (Exception e) {}
+            if(name!=null) {
+                System.err.println("putting "+(String)name.invoke(o, new Object[] {})+ " "+o);
+                data.put((String)name.invoke(o, new Object[] {}), o);
+            } else {
+                System.err.println("putting "+o.hashCode()+ " "+o);
+                data.put(new Integer(o.hashCode()), o);
+            }
+        }
     }
 
     private Collection flatten(Collection c) throws Exception {
