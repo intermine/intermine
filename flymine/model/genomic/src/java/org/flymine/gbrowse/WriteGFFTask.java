@@ -367,6 +367,12 @@ public class WriteGFFTask extends Task
             attributes.put("Index", indexList);
         }
 
+        if (bioEntity instanceof PCRProduct) {
+            ArrayList promoterFlagList = new ArrayList();
+            promoterFlagList.add(((PCRProduct) bioEntity).getPromoter().toString());
+            attributes.put("promoter", promoterFlagList);
+        }
+
         lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
 
         gffWriter.println(lineBuffer.toString());
