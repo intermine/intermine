@@ -171,6 +171,7 @@ public class SessionMethods
             query.setInfo(pr.getResultsInfo());
             saveQuery(request, queryName, query);
             action.recordMessage(new ActionMessage("saveQuery.message", queryName), request);
+            recordMessage(resources.getMessage("saveQuery.message", queryName), session);
         }
         
         return true;
