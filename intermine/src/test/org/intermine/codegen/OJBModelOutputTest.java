@@ -30,7 +30,6 @@ import org.flymine.metadata.CollectionDescriptor;
 
 public class OJBModelOutputTest extends TestCase
 {
-
     private String INDENT = ModelOutput.INDENT;
     private String ENDL = ModelOutput.ENDL;
     private Model model;
@@ -46,7 +45,6 @@ public class OJBModelOutputTest extends TestCase
         file = new File("temp.xml");
         mo = new OJBModelOutput(model, file);
     }
-
 
     public void testProcess() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
@@ -213,7 +211,7 @@ public class OJBModelOutputTest extends TestCase
             + INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL
             + INDENT + "</class-descriptor>" + ENDL + ENDL;
 
@@ -288,12 +286,12 @@ public class OJBModelOutputTest extends TestCase
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL
             + INDENT + INDENT + "<collection-descriptor name=\"cod2\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod2\">" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod2Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
 
         mo.collections = new StringBuffer();
@@ -319,7 +317,7 @@ public class OJBModelOutputTest extends TestCase
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
         assertEquals(collections, mo.collections.toString());
     }
@@ -338,8 +336,8 @@ public class OJBModelOutputTest extends TestCase
 
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Cod1Cod2\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"cod2Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
 
         assertEquals(collections, mo.collections.toString());
@@ -402,9 +400,10 @@ public class OJBModelOutputTest extends TestCase
     public void testGenerateSqlCompatibleName() throws Exception {
         assertEquals("finish", mo.generateSqlCompatibleName("end"));
         assertEquals("identifier", mo.generateSqlCompatibleName("id"));
-        assertEquals("number", mo.generateSqlCompatibleName("index"));
-        assertEquals("ord", mo.generateSqlCompatibleName("order"));
+        assertEquals("indx", mo.generateSqlCompatibleName("index"));
+        assertEquals("ordr", mo.generateSqlCompatibleName("order"));
         assertEquals("complete", mo.generateSqlCompatibleName("full"));
+        assertEquals("offst", mo.generateSqlCompatibleName("offset"));
         assertEquals("some_string", mo.generateSqlCompatibleName("some_string"));
 
         try {

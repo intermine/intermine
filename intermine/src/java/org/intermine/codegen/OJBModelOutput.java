@@ -194,26 +194,17 @@ public class OJBModelOutput extends ModelOutput
      */
     protected String generate(CollectionDescriptor col) {
         StringBuffer sb = new StringBuffer();
-        String name2 = col.getName();
         ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
-
         if (rd == null || rd instanceof CollectionDescriptor) { //many:many
-            String name1;
-            if (rd == null) {
-                name1 = TypeUtil.unqualifiedName(col.getClassDescriptor().getClassName());
-            } else {
-                name1 = rd.getName();
-            }
-            String joiningTableName = "";
-            if (StringUtil.capitalise(name1).compareTo(StringUtil.capitalise(name2)) < 0) {
-                joiningTableName = StringUtil.capitalise(name1) + StringUtil.capitalise(name2);
-            } else {
-                joiningTableName = StringUtil.capitalise(name2) + StringUtil.capitalise(name1);
-            }
-
+            String cldName = col.getClassDescriptor().getClassName();
+            String name1 = StringUtil.capitalise(rd == null 
+                                                 ? TypeUtil.unqualifiedName(cldName)
+                                                 : rd.getName());
+            String name2 = StringUtil.capitalise(col.getName());
+            String joiningTableName = name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
             collections.append(INDENT + INDENT)
                 .append("<collection-descriptor name=\"")
-                .append(name2)
+                .append(col.getName())
                 .append("\" element-class-ref=\"")
                 .append(col.getReferencedClassDescriptor().getClassName())
                 .append("\" collection-class=\"")
@@ -225,20 +216,19 @@ public class OJBModelOutput extends ModelOutput
                 .append(INDENT + INDENT + INDENT)
                 .append("<fk-pointing-to-this-class column=\"")
                 // Name of this class's primary key in linkage table
-                .append(name1)
+                .append(TypeUtil.unqualifiedName(cldName))
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT + INDENT)
                 .append("<fk-pointing-to-element-class column=\"")
                 // Name of related class's primary key in linkage table
-                .append(name2)
+                .append(TypeUtil.unqualifiedName(col.getReferencedClassDescriptor().getClassName()))
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
-        } else if (col.getReverseReferenceDescriptor() instanceof ReferenceDescriptor) { //many:one
-            String name1 = col.getReverseReferenceDescriptor().getName();
+        } else { //many:one
             collections.append(INDENT + INDENT)
                 .append("<collection-descriptor name=\"")
-                .append(name2)
+                .append(col.getName())
                 .append("\" element-class-ref=\"")
                 .append(col.getReferencedClassDescriptor().getClassName())
                 .append("\" collection-class=\"")
@@ -246,7 +236,7 @@ public class OJBModelOutput extends ModelOutput
                 .append("\" proxy=\"true\">" + ENDL)
                 .append(INDENT + INDENT + INDENT)
                 .append("<inverse-foreignkey field-ref=\"")
-                .append(name1)
+                .append(rd.getName())
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
@@ -317,13 +307,16 @@ public class OJBModelOutput extends ModelOutput
             return StringUtil.toSameInitialCase("identifier", n);
         }
         if (n.equalsIgnoreCase("index")) {
-            return StringUtil.toSameInitialCase("number", n);
+            return StringUtil.toSameInitialCase("indx", n);
         }
         if (n.equalsIgnoreCase("order")) {
-            return StringUtil.toSameInitialCase("ord", n);
+            return StringUtil.toSameInitialCase("ordr", n);
         }
         if (n.equalsIgnoreCase("full")) {
             return StringUtil.toSameInitialCase("complete", n);
+        }
+        if (n.equalsIgnoreCase("offset")) {
+            return StringUtil.toSameInitialCase("offst", n);
         }
         return n;
 
