@@ -100,6 +100,16 @@
     </ant>
   </target>
 
+  <target name="release-production-webservice">
+    <ant dir="../../intermine-www" target="distclean" inheritRefs="true"/>
+    <ant dir="../../intermine-www" target="build-webservice" inheritRefs="true"/>
+    <ant dir="../../intermine-www" target="jar" inheritRefs="true"/>
+
+    <ant dir="../../flymine-www" target="distclean" inheritRefs="true"/>
+    <ant dir="../../flymine-www" target="build-production-webservice" inheritRefs="true"/>
+    <ant dir="../../flymine-www" target="release-webservice" inheritRefs="true"/>
+  </target>
+
   <target name="clean">
     <delete dir="${build.www}"/>
     <delete dir="${dist.www}"/>
