@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.util.CollectionUtil;
 
 /**
  * Class to represent a path-based query
@@ -27,7 +28,7 @@ import org.intermine.objectstore.query.BagConstraint;
 public class PathQuery
 {
     protected Model model;
-    protected Map nodes = new LinkedHashMap();
+    protected LinkedHashMap nodes = new LinkedHashMap();
     protected List view = new ArrayList();
     protected ResultsInfo info;
    
@@ -45,14 +46,6 @@ public class PathQuery
      */
     public Model getModel() {
         return model;
-    }
-
-    /**
-     * Sets the value of nodes
-     * @param nodes the value of nodes
-     */
-    public void setNodes(Map nodes) {
-        this.nodes = nodes;
     }
 
     /**
@@ -120,11 +113,16 @@ public class PathQuery
      */
     public PathNode addNode(String path) {
         PathNode node;
+
+        // the new node will be inserted after this one or at the end if null
+        String previousNodePath = null;
+
         if (path.indexOf(".") == -1) {
             node = new PathNode(path);
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
             if (nodes.containsKey(prefix)) {
+                previousNodePath = prefix;
                 PathNode parent = (PathNode) nodes.get(prefix);
                 String fieldName = path.substring(path.lastIndexOf(".") + 1);
                 node = new PathNode(parent, fieldName, model);
@@ -133,7 +131,9 @@ public class PathQuery
                 return addNode(path);
             }
         }
-        nodes.put(path, node);
+
+        nodes = CollectionUtil.linkedHashMapAdd(nodes, previousNodePath, path, node);
+
         return node;
     }
 
@@ -195,6 +195,6 @@ public class PathQuery
      * @see Object#toString
      */
     public String toString() {
-        return "<PathQuery: " + model + ", " + nodes + ", " + view + ">";
+        return "{PathQuery: " + model + ", " + nodes + ", " + view + "}";
     }
 }
