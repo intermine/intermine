@@ -10,88 +10,68 @@ package org.flymine.web;
  *
  */
 
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
 import servletunit.struts.MockStrutsTestCase;
 
 import org.flymine.objectstore.query.Query;
-import org.flymine.model.testmodel.Company;
 import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.presentation.DisplayClassDescriptor;
 
-public class QueryActionTest extends MockStrutsTestCase {
-
+public class QueryActionTest extends MockStrutsTestCase
+{
+    protected ClassDescriptor cld;
+    
     public QueryActionTest(String testName) {
         super(testName);
     }
 
     public void setUp() throws Exception {
         super.setUp();
+        cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testSelectSuccessful() throws Exception {
-
-    }
-
-    /*    public void testSubmitSuccessfulQuery() {
+    public void testSubmitSuccessful() throws Exception {
         setRequestPathInfo("/query");
-        addRequestParameter("querystring","select a1_ from Company as a1_");
         addRequestParameter("action", "Submit");
+        getSession().setAttribute("cld", new DisplayClassDescriptor(cld));
         actionPerform();
-        verifyForward("results");
-        assertNotNull((List) getRequest().getAttribute("results"));
-        verifyNoActionErrors();
-    }
-
-    public void testSubmitEmptyQuery() {
-        setRequestPathInfo("/query");
-        addRequestParameter("querystring","");
-        addRequestParameter("action", "Submit");
-        actionPerform();
-        verifyForward("error");
-        assertNull((String) getRequest().getAttribute("results"));
-    }
-
-    public void testSubmitRubbishQuery() {
-        setRequestPathInfo("/query");
-        addRequestParameter("querystring","some rubbish");
-        addRequestParameter("action", "Submit");
-        actionPerform();
-        verifyForward("error");
-        assertNull((String) getRequest().getAttribute("results"));
-    }
-
-    public void testViewSuccessfulQuery() {
-        setRequestPathInfo("/query");
-        addRequestParameter("querystring","select a1_ from Company as a1_");
-        addRequestParameter("action", "View");
-        actionPerform();
+        assertNull(getSession().getAttribute("cld"));
         verifyForward("buildquery");
-        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getRequest().getAttribute("query")).toString());
         verifyNoActionErrors();
+        assertNotNull(getSession().getAttribute("query"));
     }
 
-    public void testViewEmptyQuery() {
-        setRequestPathInfo("/query");
-        addRequestParameter("querystring","");
-        addRequestParameter("action", "View");
-        actionPerform();
-        verifyForward("error");
-        assertNull((String) getRequest().getAttribute("query"));
-    }
+    // commented out because we're overriding the ActionForm reset() method in QueryActionForm,
+    // which is called before the form is displayed, clearing anything we set in preparation for
+    // testing. The alternative is to use our own reset (clear()?) method and call it explicitly
+    // in QueryAction.
 
-    public void testViewRubbishQuery() {
-        setRequestPathInfo("/query");
-        addRequestParameter("querystring","some rubbish");
-        addRequestParameter("action", "View");
-        actionPerform();
-        verifyForward("error");
-        assertNull((String) getRequest().getAttribute("query"));
-    }
-    */
+//     public void testSubmitSuccessfulConstraint() throws Exception {
+//         setRequestPathInfo("/query");
+//         addRequestParameter("action", "Submit");
+//         QueryForm queryForm = new QueryForm();
+//         queryForm.setFieldValue("name", "bob");
+//         setActionForm(queryForm);
+//         getSession().setAttribute("cld", new DisplayClassDescriptor(cld));
+//         actionPerform();
+//         queryForm = (QueryForm) getActionForm();
+//         assertNull(queryForm.getFieldValue("name"));
+//         verifyForward("buildquery");
+//         verifyNoActionErrors();
+//         System.out.println(getSession().getAttribute("query").toString());
+//         assertEquals("SELECT  FROM org.flymine.model.testmodel.Types AS a1_ WHERE (a1_.name = 'bob')", getSession().getAttribute("query").toString());
+//     }
+
+     public void testSubmitUnparseable() {
+         setRequestPathInfo("/query");
+         addRequestParameter("action", "Submit");
+         QueryForm queryForm = new QueryForm();
+         queryForm.setFieldValue("dateObjType", "not_a_date");
+         setActionForm(queryForm);
+         getSession().setAttribute("cld", new DisplayClassDescriptor(cld));
+         actionPerform();
+         verifyForward("error");
+         //current behaviour is to create queryclass but not touch its constraints
+         assertNull(((Query) getSession().getAttribute("query")).getConstraint());
+     }
 }
