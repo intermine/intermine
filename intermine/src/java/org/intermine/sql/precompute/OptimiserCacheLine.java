@@ -23,8 +23,8 @@ public class OptimiserCacheLine
     private static final double MAX_LIMIT_FACTOR = 4.0; // a limit off by this factor will score 1.0
     private static final double OFFSET_SECTIONS = 8.0; // while paging through a large query with a
                                                        // constant LIMIT, optimise this many times.
-    private static final int OFFSET_GRACE = 100; // The difference in offset may be this large
-                                                 // before any score is produced.
+    private static final int OFFSET_GRACE = 1000; // The difference in offset may be this large
+                                                  // before any score is produced.
     
     private String optimised;
     private int limit;
