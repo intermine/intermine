@@ -52,7 +52,6 @@ public class CalculateLocations
     protected Map scToChr = new HashMap();
     protected Map contigToSc = new HashMap();
     protected Map contigToChr = new HashMap();
-    private int i, j, k;
 
     /**
      * Create a new CalculateLocations object from an ObjectStoreWriter
@@ -293,9 +292,7 @@ public class CalculateLocations
         Map partialsOnSupercontigs = new HashMap();
         Map partialsOnChromosomeBands = new HashMap();
 
-        i = 0;
-        j = 0;
-        k = 0;
+        int i = 0, j = 0, k = 0;
         long start = System.currentTimeMillis();
         osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -374,12 +371,21 @@ public class CalculateLocations
             }
         }
 
+        chrById = null;
+        bandToChr = null;
+        chrToBand = null;
+        chrToSc = null;
+        scToChr = null;
+        contigToSc = null;
+        contigToChr = null;
+
         // process partials Locations
         processPartials(partialsOnChromosomes);
         processPartials(partialsOnSupercontigs);
         processPartials(partialsOnChromosomeBands);
 
         osw.commitTransaction();
+
         LOG.info("Stored " + i + " Locations between features and Chromosome.");
         LOG.info("Stored " + j + " Locations between features and Supercontig.");
         LOG.info("Stored " + k + " Locations between features and ChromosomeBand.");
@@ -427,28 +433,28 @@ public class CalculateLocations
                  partialLocListIter.hasNext(); ) {
                 Object nextObject = partialLocListIter.next();
                 PartialLocation pl = (PartialLocation) nextObject;
-                
+
                 // createChromosomeLocation() doesn't set subjectStart or subjectEnd yet
                 //                 if (pl.getSubjectStart().intValue() < minBioStart) {
                 //                     minBioStart = pl.getSubjectStart().intValue();
                 //                 }
-                
+
                 //                 if (pl.getSubjectEnd().intValue() > maxBioEnd) {
                 //                     maxBioEnd = pl.getSubjectEnd().intValue();
                 //                 }
-                
+
                 if (pl.getStart().intValue() < minChrStart) {
                     minChrStart = pl.getStart().intValue();
                     // use the start phase of the first Location in the new Location
                     newStartPhase = pl.getPhase();
                 }
-                
+
                 if (pl.getEnd().intValue() > maxChrEnd) {
                     maxChrEnd = pl.getEnd().intValue();
                     // use the end phase of the last Location in the new Location
                     newEndPhase = pl.getEndPhase();
                 }
-                
+
                 if (newStrand == 0) {
                     newStrand = pl.getStrand().intValue();
                 } else {
@@ -459,12 +465,12 @@ public class CalculateLocations
                     }
                 }
             }
-            
+
             BioEntity newLocationObject = ((Location) partialLocList.get(0)).getObject();
 
             // should check that maxChrEnd - minChrStart = maxBioEnd - minBioStart once
             // createChromosomeLocation() is fixed
-            
+
             Location newLocation =
                 (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
             newLocation.setStart(new Integer(minChrStart));
@@ -480,7 +486,147 @@ public class CalculateLocations
             osw.store(newLocation);
         }
     }
-    
+
+    /**
+     * Create a Location that spans the locations of some child objects.  eg. create a location for
+     * Transcript that is as big as all the exons in it's exons collection.  One new location will
+     * be created for each possible Location.object - Transcript->Chromosome, Transcript->Contig
+     * etc.
+     * @param parentClass the parent, eg. Transcript
+     * @param childClass the child, eg. Exon
+     * @param refField the linking field eg. "exons"
+     * @throws ObjectStoreException if the is a problem with the ObjectStore
+     */
+    public void createSpanningLocations(Class parentClass, Class childClass, String refField)
+        throws ObjectStoreException {
+
+        Iterator resIter = findCollections(os, parentClass, childClass, refField);
+
+        // Map of location.objects to Maps from parent objects to a to their (new) start and end
+        // positions.  eg.  Chromosome10 -> Exon1 -> SimpleLoc {start -> 2111, end -> 2999}
+        //                  Contig23 ->     Exon1 -> SimpleLoc {start -> 1111, end -> 1999}
+        Map locatedOnObjectMap = new HashMap();
+
+        int count = 0;
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            BioEntity parentObject = (BioEntity) rr.get(0);
+            BioEntity childObject = (BioEntity) rr.get(1);
+            Location location = (Location) rr.get(2);
+
+            // the object that childObject is located on
+            BioEntity locatedOnObject = (BioEntity) rr.get(3);
+
+            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject);
+
+            if (parentObjectMap == null) {
+                parentObjectMap = new HashMap();
+                locatedOnObjectMap.put(locatedOnObject, parentObjectMap);
+            }
+
+            SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject);
+
+            if (parentObjectSimpleLoc == null) {
+                parentObjectSimpleLoc = new SimpleLoc(-1, -1, Integer.MAX_VALUE, -1, 0);
+                parentObjectMap.put(parentObject, parentObjectSimpleLoc);
+            }
+
+            int currentParentStart = parentObjectSimpleLoc.getStart();
+            int currentParentEnd = parentObjectSimpleLoc.getEnd();
+
+            if (location.getStart().intValue() < currentParentStart) {
+                parentObjectSimpleLoc.setStart(location.getStart().intValue());
+            }
+
+            if (location.getEnd().intValue() > currentParentEnd) {
+                parentObjectSimpleLoc.setEnd(location.getEnd().intValue());
+            }
+
+            parentObjectSimpleLoc.setStrand(location.getStrand().intValue());
+            
+            // TODO XXX FIXME: deal with partial locations and do consistency checks (eg. make
+            // sure all exons are on the same strand)
+        }
+
+        osw.beginTransaction();
+        // make new locations and store them
+        Iterator locatedOnObjectIterator = locatedOnObjectMap.keySet().iterator();
+        while (locatedOnObjectIterator.hasNext()) {
+            BioEntity locatedOnObject = (BioEntity) locatedOnObjectIterator.next();
+            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject);
+            Iterator parentObjectMapIterator = parentObjectMap.keySet().iterator();
+
+            while (parentObjectMapIterator.hasNext()) {
+                BioEntity parentObject = (BioEntity) parentObjectMapIterator.next();
+                SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject);
+                Location newLocation =
+                    (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+
+                newLocation.setStart(new Integer(parentObjectSimpleLoc.getStart()));
+                newLocation.setEnd(new Integer(parentObjectSimpleLoc.getEnd()));
+                newLocation.setStartIsPartial(Boolean.FALSE);
+                newLocation.setEndIsPartial(Boolean.FALSE);
+                newLocation.setStrand(new Integer(parentObjectSimpleLoc.getStrand()));
+                newLocation.setSubject(parentObject);
+                newLocation.setObject(locatedOnObject);
+
+                osw.store(newLocation);
+            }
+        }
+        osw.commitTransaction();
+    }
+
+    /**
+     * Query a class like Transcript that refers to a collection of located classes (like Exon) and
+     * return an Results object containing Transcript, Exon, Exon location and location.object
+     */
+    private static Iterator findCollections(ObjectStore os, Class parentClass, Class childClass,
+                                            String refField)
+        throws ObjectStoreException {
+
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcParent = new QueryClass(parentClass);
+        q.addFrom(qcParent);
+        q.addToSelect(qcParent);
+        q.addToOrderBy(qcParent);
+        QueryClass qcChild = new QueryClass(childClass);
+        q.addFrom(qcChild);
+        q.addToSelect(qcChild);
+
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+        q.addToSelect(qcLoc);
+
+        QueryClass qcLocObject = new QueryClass(BioEntity.class);
+        q.addFrom(qcLocObject);
+        q.addToSelect(qcLocObject);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcLocObject);
+        cs.addConstraint(cc1);
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChild);
+        cs.addConstraint(cc2);
+
+        QueryCollectionReference ref3 = new QueryCollectionReference(qcParent, refField);
+        ContainsConstraint cc3 = new ContainsConstraint(ref3, ConstraintOp.CONTAINS, qcChild);
+        cs.addConstraint(cc3);
+
+        q.setConstraint(cs);
+
+        org.intermine.web.LogMe.log("i", "running: " + q);
+
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(20000);
+
+        return res.iterator();
+    }
+
+
     /**
      * Return true if and only if all of the Locations in the List have the same object reference.
      */
@@ -663,10 +809,16 @@ public class CalculateLocations
         childOnParent.setStart(new Integer(newChildOnParentStart));
         childOnParent.setEnd(new Integer(newChildOnParentEnd));
 
-        if (childOnChr.getStrand() == parentOnChr.getStrand()) {
+        // we don't just check for (childOnChr.getStrand() == parentOnChr.getStrand()) because we
+        // treat strand of 0 as equal to strand 1
+        if (childOnChr.getStrand() == -1 && parentOnChr.getStrand() == -1) {
             childOnParent.setStrand(new Integer(1));
         } else {
-            childOnParent.setStrand(new Integer(-1));
+            if (childOnChr.getStrand() == -1 || parentOnChr.getStrand() == -1) {
+                childOnParent.setStrand(new Integer(-1));
+            } else {
+                childOnParent.setStrand(new Integer(1));
+            }
         }
 
         if (parentOnChr.getStrand() == -1) {
@@ -752,7 +904,7 @@ public class CalculateLocations
         LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
 
         osw.beginTransaction();
-        i = 0;
+        int i = 0;
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Location scOnChrLoc = (Location) rr.get(2);
@@ -804,8 +956,8 @@ public class CalculateLocations
         LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
 
         osw.beginTransaction();
-        i = 0;
-        j = 0;
+        int i = 0;
+        int j = 0;
         long start = System.currentTimeMillis();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -1054,6 +1206,14 @@ public class CalculateLocations
         }
 
         /**
+         * Set start value
+         * @param start value
+         */
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        /**
          * Get parentId value
          * @return parentId value
          */
@@ -1078,11 +1238,27 @@ public class CalculateLocations
         }
 
         /**
-         * Get stand value
-         * @return stand value
+         * Set end value
+         * @param end value
+         */
+        public void setEnd(int end) {
+            this.end = end;
+        }
+
+        /**
+         * Get strand value
+         * @return strand value
          */
         public int getStrand() {
             return strand;
+        }
+
+        /**
+         * Set strand value
+         * @param strand value
+         */
+        public void setStrand(int strand) {
+            this.strand = strand;
         }
 
         /**
@@ -1094,11 +1270,27 @@ public class CalculateLocations
         }
 
         /**
+         * Set the start-is-partial flag
+         * @param startIsPartial new start-is-partial flag
+         */
+        public void setStartIsPartial(boolean startIsPartial) {
+            this.startIsPartial = startIsPartial;
+        }
+
+        /**
          * Return true if and only if the end is partial.
          * @return true if and only if the end is partial.
          */
         public boolean endIsPartial() {
             return endIsPartial;
+        }
+
+        /**
+         * Set the end-is-partial flag
+         * @param endIsPartial the new end-is-partial
+         */
+        public void setEndIsPartial(boolean endIsPartial) {
+            this.endIsPartial = endIsPartial;
         }
 
         /**
