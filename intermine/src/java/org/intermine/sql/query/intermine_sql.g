@@ -125,18 +125,22 @@ abstract_constraint: constraint | not_constraint | and_constraint_set | or_const
         | subquery_constraint ;
 
 constraint:
+        // (aleft != aleft) becomes NOT (aleft = aright)
         ! ( #( CONSTRAINT abstract_value NOT_EQ ))=> 
             #( CONSTRAINT aleft:abstract_value NOT_EQ aright:abstract_value )
             { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
                 #(#[CONSTRAINT], #aleft, #[EQ, "="], #aright) ); }
+        // (bleft >= bright) becomes NOT (bleft < bright)
         | ! ( #( CONSTRAINT abstract_value GE ))=> 
             #( CONSTRAINT bleft:abstract_value GE bright:abstract_value )
             { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
                 #(#[CONSTRAINT], #bleft, #[LT, "<"], #bright) ); }
+        // (cleft <= cright) becomes NOT (cright < cleft)
         | ! ( #( CONSTRAINT abstract_value LE ))=> 
             #( CONSTRAINT cleft:abstract_value LE cright:abstract_value )
             { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
                 #(#[CONSTRAINT], #cright, #[LT, "<"], #cleft) ); }
+        // (dleft > dright) becomes (dright < dleft)
         | ! ( #( CONSTRAINT abstract_value GT ))=> 
             #( CONSTRAINT dleft:abstract_value GT dright:abstract_value )
             { #constraint = #(#[CONSTRAINT], #dright, #[LT, "<"], #dleft); }
@@ -144,47 +148,45 @@ constraint:
     ;
 
 not_constraint:
+        // NOT (NOT a) becomes a
         ! ( #( NOT_CONSTRAINT NOT_CONSTRAINT ))=> 
             #( NOT_CONSTRAINT #( NOT_CONSTRAINT a:abstract_constraint ) )
             { #not_constraint = #a; }
+        // NOT (b OR c..OR..) becomes NOT b AND NOT c..OR..
         | ! ( #( NOT_CONSTRAINT #( OR_CONSTRAINT_SET abstract_constraint abstract_constraint )))=>
             #( NOT_CONSTRAINT #(OR_CONSTRAINT_SET b:abstract_constraint
                     c:abstract_constraint_list ) )
             { #not_constraint = #(#[AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"],
                     #(#[NOT_CONSTRAINT], #b), #(#[NOT_CONSTRAINT], #(#[OR_CONSTRAINT_SET], #c))); }
-        | ! ( #( NOT_CONSTRAINT OR_CONSTRAINT_SET ))=>
-            #( NOT_CONSTRAINT #(OR_CONSTRAINT_SET d:abstract_constraint ) )
-            { #not_constraint = #(#[AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"],
-                    #(#[NOT_CONSTRAINT], #d) ); }
+        // NOT (e AND f..AND..) becomes NOT e OR NOT f..AND..
         | ! ( #( NOT_CONSTRAINT #( AND_CONSTRAINT_SET abstract_constraint abstract_constraint )))=>
             #( NOT_CONSTRAINT #(AND_CONSTRAINT_SET e:abstract_constraint
                     f:abstract_constraint_list ) )
             { #not_constraint = #(#[OR_CONSTRAINT_SET, "OR_CONSTRAINT_SET"],
                     #(#[NOT_CONSTRAINT], #e), #(#[NOT_CONSTRAINT], #(#[AND_CONSTRAINT_SET], #f))); }
-        | ! ( #( NOT_CONSTRAINT AND_CONSTRAINT_SET ))=>
-            #( NOT_CONSTRAINT #(AND_CONSTRAINT_SET g:abstract_constraint ) )
-            { #not_constraint = #(#[OR_CONSTRAINT_SET, "OR_CONSTRAINT_SET"],
-                    #(#[NOT_CONSTRAINT], #g) ); }
         | #( NOT_CONSTRAINT abstract_constraint ) ;
 
 or_constraint_set:
+        // (a..OR..) OR b..OR.. becomes a..OR.. OR b..OR..
         ! ( #( OR_CONSTRAINT_SET OR_CONSTRAINT_SET abstract_constraint ))=>
             #( ta:OR_CONSTRAINT_SET #( OR_CONSTRAINT_SET a:abstract_constraint_list )
                 b:abstract_constraint_list )
             { #or_constraint_set = #(#ta, #a, #b); }
 
+        // d..OR.. OR (e..OR..) OR f..OR.. becomes d..OR.. OR e..OR.. OR f..OR..
         | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notor OR_CONSTRAINT_SET
                     abstract_constraint ))=>
             #( tc:OR_CONSTRAINT_SET d:abstract_constraint_list_notor #( OR_CONSTRAINT_SET
                     e:abstract_constraint_list ) f:abstract_constraint_list )
             { #or_constraint_set = #(#tc, #d, #e, #f); }
 
+        // g..OR.. OR (h..OR..) becomes g..OR.. OR h..OR..
         | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notor OR_CONSTRAINT_SET ))=>
             #( td:OR_CONSTRAINT_SET g:abstract_constraint_list_notor #( OR_CONSTRAINT_SET
                     h:abstract_constraint_list ))
             { #or_constraint_set = #(#td, #g, #h); }
 
-        // (i AND j) OR k = (i OR k) AND (j OR k)
+        // (i AND j..AND..) OR k..OR.. becomes (i OR k..OR..) AND ((j..AND..) OR k..OR..)
         | ! ( #( OR_CONSTRAINT_SET AND_CONSTRAINT_SET abstract_constraint ))=>
             #( te:OR_CONSTRAINT_SET #( tf:AND_CONSTRAINT_SET i:abstract_constraint
                     j:abstract_constraint_list ) k:abstract_constraint_list )
@@ -192,7 +194,8 @@ or_constraint_set:
                 AST k2_AST = astFactory.dupTree(k_AST);
                 #or_constraint_set = #(#tf, #(#te, #i, #k), #(te2_AST, #j, k2_AST)); }
 
-        // l OR (m AND n) OR o = (l OR m OR o) AND (l OR n OR o)
+        // l..OR.. OR (m AND n..AND..) OR o..OR.. becomes
+        //                      (l..OR.. OR m OR o..OR..) AND (l..OR.. OR (n..AND..) OR o..OR..)
         | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET
                     abstract_constraint_list ))=>
             #( tg:OR_CONSTRAINT_SET l:abstract_constraint_list_notand #( th:AND_CONSTRAINT_SET
@@ -202,32 +205,36 @@ or_constraint_set:
                 AST o2_AST = astFactory.dupTree(o_AST);
                 #or_constraint_set = #(#th, #(#tg, #l, #m, #o), #(tg2_AST, l2_AST, #n, o2_AST)); }
 
-        // p OR (q AND r) = (p OR q) AND (p OR r)
+        // p..OR.. OR (q AND r..AND..) becomes (p..OR.. OR q) AND (p..OR.. OR (r..AND..))
         | ! ( #( OR_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
             #( ti:OR_CONSTRAINT_SET p:abstract_constraint_list_notand #( tj:AND_CONSTRAINT_SET
                     q:abstract_constraint r:abstract_constraint_list ) )
             { AST ti2_AST = astFactory.create(ti);
                 AST p2_AST = astFactory.dupTree(p_AST);
                 #or_constraint_set = #(#tj, #(#ti, #p, #q), #(ti2_AST, p2_AST, #r)); }
-        
+
         | ( #( OR_CONSTRAINT_SET abstract_constraint abstract_constraint ))=>
             #( OR_CONSTRAINT_SET ( abstract_constraint )+ )
 
+        // (OR z) becomes z
         | ! #( OR_CONSTRAINT_SET z:abstract_constraint )
             { #or_constraint_set = #z; } ;
 
-and_constraint_set: 
+and_constraint_set:
+        // (a..AND..) AND b..AND.. becomes a..AND.. b..AND..
         ! ( #( AND_CONSTRAINT_SET AND_CONSTRAINT_SET abstract_constraint ))=>
             #( ta:AND_CONSTRAINT_SET #( AND_CONSTRAINT_SET a:abstract_constraint_list )
                 b:abstract_constraint_list )
             { #and_constraint_set = #(#ta, #a, #b); }
 
+        // d..AND.. AND (e..AND..) AND f..AND.. becomes d..AND.. AND e..AND.. AND f..AND..
         | ! ( #( AND_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET
                     abstract_constraint ))=>
             #( tc:AND_CONSTRAINT_SET d:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
                     e:abstract_constraint_list ) f:abstract_constraint_list )
             { #and_constraint_set = #(#tc, #d, #e, #f); }
 
+        // g..AND.. AND (h..AND..) becomes g..AND.. h..AND..
         | ! ( #( AND_CONSTRAINT_SET abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
             #( td:AND_CONSTRAINT_SET g:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
                     h:abstract_constraint_list ))
@@ -235,7 +242,8 @@ and_constraint_set:
 
         | ( #( AND_CONSTRAINT_SET abstract_constraint abstract_constraint ))=>
             #( AND_CONSTRAINT_SET (abstract_constraint )+ )
-            
+
+        // (AND z) becomes z
         | ! #( AND_CONSTRAINT_SET z:abstract_constraint )
             { #and_constraint_set = #z; } ;
 
@@ -309,7 +317,7 @@ order_clause:
     ;
 
 limit_clause:
-        "limit"! INTEGER ( "offset" INTEGER )?
+        "limit"! INTEGER ( "offset"! INTEGER )?
         { #limit_clause = #([LIMIT_CLAUSE, "LIMIT_CLAUSE"], #limit_clause); }
     ;
 

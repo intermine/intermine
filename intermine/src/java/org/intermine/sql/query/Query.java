@@ -345,6 +345,12 @@ public class Query implements SQLStringable
     private void processAST(AST ast) {
         boolean processSelect = false;
         switch (ast.getType()) {
+            case SqlTokenTypes.LITERAL_explain:
+                explain = true;
+                break;
+            case SqlTokenTypes.LITERAL_distinct:
+                distinct = true;
+                break;
             case SqlTokenTypes.SELECT_LIST:
                 // Always do the select list last.
                 processSelect = true;
@@ -354,6 +360,18 @@ public class Query implements SQLStringable
                 break;
             case SqlTokenTypes.WHERE_CLAUSE:
                 processWhereClause(ast.getFirstChild());
+                break;
+            case SqlTokenTypes.GROUP_CLAUSE:
+                processGroupClause(ast.getFirstChild());
+                break;
+            case SqlTokenTypes.HAVING_CLAUSE:
+                processHavingClause(ast.getFirstChild());
+                break;
+            case SqlTokenTypes.ORDER_CLAUSE:
+                processOrderClause(ast.getFirstChild());
+                break;
+            case SqlTokenTypes.LIMIT_CLAUSE:
+                processLimitClause(ast.getFirstChild());
                 break;
             default:
                 throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -492,6 +510,30 @@ public class Query implements SQLStringable
         } while (ast != null);
         SelectValue sv = new SelectValue(v, alias);
         addSelect(sv);
+    }
+
+    /**
+     * Processes an AST node that describes a GROUP clause.
+     *
+     * @param ast an AST node to process
+     */
+    public void processGroupClause(AST ast) {
+        do {
+            addGroupBy(processNewAbstractValue(ast));
+            ast = ast.getNextSibling();
+        } while (ast != null);
+    }
+
+    /**
+     * Processes an AST node that describes a ORDER clause.
+     *
+     * @param ast an AST node to process
+     */
+    public void processOrderClause(AST ast) {
+        do {
+            addOrderBy(processNewAbstractValue(ast));
+            ast = ast.getNextSibling();
+        } while (ast != null);
     }
 
     /**
@@ -699,6 +741,32 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Processes an AST node that describes a HAVING condition.
+     *
+     * @param ast an AST node to process
+     */
+    private void processHavingClause(AST ast) {
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.AND_CONSTRAINT_SET:
+                    // Recurse - it's an AND set, equivalent to a HAVING_CLAUSE
+                    processHavingClause(ast.getFirstChild());
+                    break;
+                case SqlTokenTypes.OR_CONSTRAINT_SET:
+                case SqlTokenTypes.CONSTRAINT:
+                case SqlTokenTypes.NOT_CONSTRAINT:
+                case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                    addHaving(processNewAbstractConstraint(ast));
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+    }
+
+    /**
      * Processes an AST node that describes an AbstractConstraint.
      *
      * @param ast an AST node to process
@@ -758,6 +826,18 @@ public class Query implements SQLStringable
         }
     }
     
+    /**
+     * Processes an AST node that describes a Limit clause.
+     *
+     * @param ast an AST node to process
+     */
+    public void processLimitClause(AST ast) {
+        limit = Integer.parseInt(ast.getText());
+        if (ast.getNextSibling() != null) {
+            offset = Integer.parseInt(ast.getNextSibling().getText());
+        }
+    }
+
     /**
      * A testing method - converts the argument into a Query object, and then converts it back to
      * a String again.
