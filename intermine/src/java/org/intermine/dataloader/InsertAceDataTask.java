@@ -13,16 +13,17 @@ package org.intermine.dataloader;
 import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Project;
 
-import org.intermine.task.ClassPathTask;
+import org.acedb.AceURL;
 
 /**
- * Uses an ObjectStoreWriter to insert data from an Ace dataase server
+ * Uses an ObjectStoreWriter to insert data from an Ace database server
  *
  * @author Andrew Varley
  */
-public class InsertAceDataTask extends ClassPathTask
+public class InsertAceDataTask extends Task
 {
     protected String integrationWriter;
     protected String user;
@@ -80,7 +81,7 @@ public class InsertAceDataTask extends ClassPathTask
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (this.integrationWriter == null) {
+        if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
         }
         if (user == null) {
@@ -97,28 +98,10 @@ public class InsertAceDataTask extends ClassPathTask
         }
 
         try {
-
-            Object driver = loadClass("org.intermine.dataloader.AceDataLoaderDriver");
-
-            // Have to execute the loadData method by reflection as
-            // cannot cast to something that this class (which may use
-            // a different ClassLoader) can see
-
-            Method method = driver.getClass().getMethod("loadData", new Class[] {String.class,
-                                                                                 String.class,
-                                                                                 String.class,
-                                                                                 String.class,
-                                                                                 int.class });
-            method.invoke(driver, new Object [] {integrationWriter,
-                                                 user,
-                                                 password,
-                                                 host,
-                                                 new Integer(port) });
+            IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
+            new AceDataLoader(iw).processAce(new AceURL("acedb://" + user + ':' + password + '@'
+                                                        + host + ':' + port));
         } catch (Exception e) {
-            if (e.getMessage() != null) {
-                log(e.getMessage(), Project.MSG_INFO);
-            }
-            e.printStackTrace();
             throw new BuildException(e);
         }
     }
