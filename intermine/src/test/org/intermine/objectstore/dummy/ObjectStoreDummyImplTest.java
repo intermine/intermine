@@ -83,4 +83,14 @@ public class ObjectStoreDummyImplTest extends TestCase
 
     }
 
+    public void testexecuteCalls() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        Query q = new Query();
+        Results res = os.execute(q);
+        os.execute(q, 1, 4);
+        assertEquals(1, os.getExecuteCalls());
+        os.execute(q, 5, 7);
+        assertEquals(2, os.getExecuteCalls());
+    }
+
 }
