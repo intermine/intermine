@@ -110,6 +110,10 @@ public class PostProcessTask extends Task
                 cl.fixPartials();
                 LOG.info("Starting CalculateLocations.createLocations()");
                 cl.createLocations();
+            } else if ("create-chromosome-locations".equals(operation)) {
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
+                LOG.info("Starting CalculateLocations.setChromosomeLocations()");
+                cl.setChromosomeLocations();
             } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertReferences()");
