@@ -10,6 +10,9 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 
 /**
+ * Results representation as a List of ResultRows
+ * Extending AbstractList requires implementation of get(int) and size()
+ * In addition subList(int, int) overrides AbstractList implementation for efficiency
  * @author Mark Woodbridge
  * @author Richard Smith
  */
@@ -130,7 +133,7 @@ public class Results extends AbstractList
     }
 
     /**
-     * @see List#get
+     * @see AbstractList#get
      * @param index of the ResultsRow required
      * @return the relevant ResultsRow as an Object
      */
@@ -180,27 +183,25 @@ public class Results extends AbstractList
     }
 
     /**
-     * Sets the number of results rows in this Results object
+     * Sets the number of rows requested from the ObjectStore whenever an execute call is made
      *
-     * @param size the number of rows in this Results object
+     * @param size the number of rows
      */
     public void setBatchSize(int size) {
         if (initialised) {
             throw new IllegalStateException("Cannot set batchSize if rows have been retrieved");
         }
-        this.batchSize = size;
+        batchSize = size;
     }
 
     /**
-     * Gets the number of results rows in this Results object
+     * Gets the number of rows requested from the ObjectStore whenever an execute call is made
      *
-     * @see AbstractList#size
-     * @return the number of rows in this Results object
+     * @return the number of rows
      */
     public int getBatchSize() {
-        return size;
+        return batchSize;
     }
-
 
     /**
      * Gets the batch for a particular row
