@@ -145,6 +145,6 @@ public class Node
      * @see Object#toString
      */
     public String toString() {
-        return path;
+        return path + ":" + type;
     }
 }
