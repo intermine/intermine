@@ -68,6 +68,15 @@ public class PagedCollection implements PagedTable
     }
 
     /**
+     * Return the width (number of columns) of the table.  Used by the JSP because
+     * getColumns().size() isn't possible in JSTL.
+     * @return the table width
+     */
+    public int getTableWidth() {
+        return 1;
+    }
+
+    /**
      * @see PagedTable#moveColumnLeft
      */
     public void moveColumnLeft(int index) {

@@ -30,6 +30,13 @@ public interface PagedTable
     public List getColumns();
 
     /**
+     * Return the width (number of columns) of the table.  Used by the JSP because
+     * getColumns().size() isn't possible in JSTL.
+     * @return the table width
+     */
+    public int getTableWidth();
+
+    /**
      * Move a column left
      *
      * @param index the index of the column to move
