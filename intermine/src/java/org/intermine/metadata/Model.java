@@ -1,11 +1,16 @@
 package org.flymine.metadata;
 
+import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Properties;
+
+import org.flymine.util.PropertiesUtil;
+import org.flymine.modelproduction.xml.ModelParser;
 
 /**
  * Represents a named business model, makes availble metadata for each class
@@ -16,15 +21,48 @@ import java.util.Collection;
 
 public class Model
 {
-
+    private static Model model;
     private final String name;
     private final Map cldMap = new HashMap();
     private final Map subclassMap = new HashMap();
     private final Map implementorsMap = new HashMap();
 
     /**
+     * Return a Model for properties-specified model name (loading Model if necessary)
+     * @return the relevant metadata
+     * @throws MetaDataException if there is problem parsing the model xml
+     */
+    public static Model getInstance() throws MetaDataException {
+        if (model != null) {
+            return model;
+        }
+        Properties props = PropertiesUtil.getPropertiesStartingWith("model");
+         if (props.size() == 0) {
+             throw new MetaDataException("No 'model' properties were found"
+                                         + " (check properties file)");
+         }
+         String modelName = props.getProperty("name");
+         if (modelName == null) {
+             throw new MetaDataException("'model' does not have a name specified"
+                                         + " (check properties file)");
+         }
+         String filename = props.getProperty("name") + "_model.xml";
+         File f = new File(Model.class.getClassLoader().getResource(filename).toString());
+         try {
+             ModelParser parser = new ModelParser();
+             parser.parse(f);
+             model = new Model(parser.getModelName(), parser.getClasses());
+         } catch (Exception e) {
+             throw new MetaDataException("Error parsing metadata: " + e);
+         }
+         return model;
+    }
+    
+    /**
      * Construct a Model with a name and list of ClassDescriptors.  The model will be
-     * set to this in each of the ClassDescriptors.
+     * set to this in each of the ClassDescriptors. NB This method should only be called
+     * by members of the modelproduction package, eventually it may be replaced with
+     * a static addModel method linked to getInstanceByName (or similar)
      * @param name name of model
      * @param clds a List of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
@@ -56,7 +94,7 @@ public class Model
             // add this to list of subclasses if a superclass exists
             ClassDescriptor superCld = cld.getSuperclassDescriptor();
             if (superCld != null) {
-                List sub = (List) subclassMap.get(superCld);
+               List sub = (List) subclassMap.get(superCld);
                 sub.add(cld);
             }
 
@@ -127,7 +165,7 @@ public class Model
      * Get the name of this model - i.e. package name.
      * @return name of the model
      */
-    public String getModelName() {
+    public String getName() {
         return this.name;
     }
 
