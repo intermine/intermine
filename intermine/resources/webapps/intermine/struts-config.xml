@@ -31,6 +31,10 @@
     <form-bean      name="queryAliasSelectForm"
                     type="org.flymine.web.QueryAliasSelectForm"/>
 
+    <!-- ChangeResults from bean -->
+    <form-bean      name="changeResultsForm"
+                    type="org.flymine.web.results.ChangeResultsForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -105,6 +109,14 @@
                type="org.flymine.web.results.ChangeResultsAction"
                parameter="method">
       <forward name="runquery" path="/runQuery.do"/>
+      <forward name="results" path="results.page"/>
+    </action>
+
+    <!-- Action to chnge the displayed results in some way -->
+    <action    path="/changeResultsSize"
+               type="org.flymine.web.results.ChangeResultsSizeAction"
+               name="changeResultsForm"
+               parameter="action">
       <forward name="results" path="results.page"/>
     </action>
 
