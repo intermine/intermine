@@ -113,7 +113,9 @@
   </path>
 
   <path id="webservice.class.path">
-    <path refid="base.class.path"/>
+    <fileset dir="${lib}">
+      <patternset refid="lib.build"/>
+    </fileset>
     <fileset dir="${build.webservice.lib}">
       <include name="*.jar"/>
     </fileset>
@@ -1733,6 +1735,11 @@
   </target>
 
   <target name="build-production-webservice" depends="jar-genomic">
+    <unwar src="${webservice.war.path}" dest="${build.webapp}/webservice">
+      <patternset>
+        <include name="WEB-INF/lib/*.jar"/>
+      </patternset>
+    </unwar>
     <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
     <copy file="${webservice.war.path}" todir="${dist.webapp}"/>
     <war destfile="${dist.webapp}/webservice.war" update="true">
@@ -1744,9 +1751,9 @@
 
   <target name="release-webservice"
           description="release the webservice to the server">
-    <ant antfile="build-webapp.xml" target="release-webservice" inheritRefs="true">
+    <ant antfile="${build}/build-webapp.xml" target="release-webservice" inheritRefs="true">
       <property name="war" value="${dist.webapp}/webservice.war"/>
-      <reference torefid="class.path" refid="project.class.path"/>
+      <reference torefid="class.path" refid="webservice.class.path"/>
     </ant>    
   </target>
 
