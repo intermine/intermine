@@ -2,6 +2,8 @@ package org.flymine.sql.query;
 
 import java.util.*;
 
+import org.flymine.util.ConsistentSet;
+
 /**
  * A representation of a set of constraints ORed together.
  *
