@@ -24,10 +24,8 @@ import org.apache.struts.action.ActionMapping;
  *
  * @author Richard Smith
  */
-
 public class RestartQueryAction extends Action
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -49,13 +47,11 @@ public class RestartQueryAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
         HttpSession session = request.getSession();
-        session.removeAttribute("query");
-        session.removeAttribute("queryClass");
-        session.removeAttribute("ops");
-        session.removeAttribute("constraints");
 
-        return (mapping.findForward("buildquery"));
+        session.removeAttribute("queryClasses");
+        session.removeAttribute("editingAlias");
+
+        return mapping.findForward("buildquery");
     }
 }
