@@ -44,13 +44,13 @@ public class GFF3Converter
     protected static final String NAMESPACE = "http://www.flymine.org/model/genomic#";
     private Item organism;
     private Reference orgRef;
-    private int itemid ;
     protected OntModel model;
     protected GFF3Parser parser;
     protected ItemWriter writer;
     private String seqClsName;
     private String orgAbbrev;
     private String infoSourceTitle;
+    private int itemid = 0;
 
     /**
      * Constructor
@@ -63,14 +63,13 @@ public class GFF3Converter
      * @param itemid counter used as item identifier
      */
     public GFF3Converter(OntModel model, GFF3Parser parser, ItemWriter writer,
-           String seqClsName, String orgAbbrev, String infoSourceTitle, int itemid) {
+           String seqClsName, String orgAbbrev, String infoSourceTitle) {
         this.model = model;
         this.parser = parser;
         this.writer = writer;
         this.seqClsName = seqClsName;
         this.orgAbbrev = orgAbbrev;
         this.infoSourceTitle = infoSourceTitle;
-        this.itemid = itemid;
 
     }
 
