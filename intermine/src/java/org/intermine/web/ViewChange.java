@@ -148,4 +148,36 @@ public class ViewChange extends DispatchAction
 
         return mapping.findForward("results");
     }
+
+    /**
+     * Run the query and forward to the export page.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward export(ActionMapping mapping,
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+        ServletContext servletContext = session.getServletContext();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+
+        ViewHelper.makeQuery(request);
+
+        ActionMessages actionMessages = ViewHelper.runQuery(request);
+        saveMessages(request, actionMessages);
+
+        return mapping.findForward("export");
+    }
 }
