@@ -105,6 +105,7 @@
               input="query"
               parameter="action">
       <forward name="buildquery"           path="query.page"/>
+      <forward name="tree"           path="tree.page"/>
     </action>
 
     <!-- Change an existing alias -->
@@ -164,9 +165,19 @@
       <forward name="results" path="results.page"/>
     </action>
 
+    <!-- Action to change the displayed results in some way -->
+    <action    path="/changeTree"
+               type="org.flymine.web.TreeAction"
+               parameter="method">
+      <forward name="renderTree" path="tree.page"/>
+      <forward name="buildquery" path="query.page"/>
+    </action>
+
     <action    path="/documentation"
             forward="documentation.page">
     </action>
+
+    <action path="/renderTree" forward="tree.page"/>
 
     <action path="/initQuery" type="org.flymine.web.QueryController"/> 
 
@@ -184,6 +195,8 @@
 
     <action path="/initObjectDetails" type="org.flymine.web.results.ObjectDetailsController">
     </action>
+
+    <action path="/initTree" type="org.flymine.web.TreeController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

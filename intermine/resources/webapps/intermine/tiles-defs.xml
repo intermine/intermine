@@ -30,7 +30,9 @@
 <definition name="documentation.page" extends="layout.template">
     <put name="body" value="/docbook.jsp"/>
 </definition>
-
+<definition name="tree.page" extends="layout.template">
+    <put name="body" value="tree.tile"/>
+</definition>
 <definition name="querybody.template" path="/queryMain.jsp">
 </definition>
 
@@ -70,6 +72,9 @@
 </definition>
 
 <definition name="objectDetails.tile" path="/details.jsp" controllerUrl="/initObjectDetails.do">
+</definition>
+
+<definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do">
 </definition>
 
 </tiles-definitions>
