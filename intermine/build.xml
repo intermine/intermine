@@ -674,7 +674,7 @@
     <patternset id="default-intermine-properties">
       <include name="default.intermine.properties"/>
     </patternset>
-    <ant antfile="build-webapp.xml" target="add-files-to-classes" inheritRefs="true">
+    <ant antfile="build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <property name="file.dir" value="${build.tmp}"/>
       <reference torefid="file.names" refid="default-intermine-properties"/>
@@ -684,7 +684,7 @@
 
   <target name="build-testable-webapp" depends="build-testmodel-webapp"
           description="Build webapp including the test model and test libraries">
-    <ant antfile="build-webapp.xml" target="add-files-to-lib" inheritRefs="true">
+    <ant antfile="build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>       
       <reference torefid="file.names" refid="lib.webapptest"/>
       <property name="file.dir" value="${lib}"/>
@@ -692,7 +692,7 @@
     <patternset id="webapp-properties">
       <include name="InterMineWebApp*.properties"/>
     </patternset>
-    <ant antfile="build-webapp.xml" target="add-files-to-root" inheritRefs="true">
+    <ant antfile="build-webapp.xml" target="add-to-war-root" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <reference torefid="file.names" refid="webapp-properties"/>
       <property name="file.dir" value="${resources}/webapps/intermine"/>

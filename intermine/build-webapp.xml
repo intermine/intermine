@@ -85,7 +85,7 @@
     </war>
   </target>
 
-  <target name="add-files-to-root"
+  <target name="add-to-war-root"
           description="Add file(s) to the root directory">
     <war destfile="${war}" update="true">
       <fileset dir="${file.dir}">
@@ -94,7 +94,7 @@
     </war>
   </target>
   
-  <target name="add-files-to-webinf"
+  <target name="add-to-war-webinf"
           description="Add file(s) to the WEB-INF directory">
     <war destfile="${war}" update="true">
       <webinf dir="${file.dir}">
@@ -103,7 +103,7 @@
     </war>
   </target>
   
-  <target name="add-files-to-lib"
+  <target name="add-to-war-lib"
           description="Add file(s) to the WEB-INF/lib directory">
     <war destfile="${war}" update="true">
       <lib dir="${file.dir}">
@@ -112,7 +112,7 @@
     </war>
   </target>
 
-  <target name="add-files-to-classes"
+  <target name="add-to-war-classes"
           description="Add file(s) to the WEB-INF/classes directory">
     <war destfile="${war}" update="true">
       <classes dir="${file.dir}">
