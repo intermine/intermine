@@ -17,10 +17,11 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.flymine.util.DatabaseUtil;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.*;
+import org.flymine.util.DatabaseUtil;
+import org.flymine.util.Util;
 
 public class PrecomputedTableManagerTest extends TestCase
 {
@@ -77,7 +78,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testNullDatabase() throws Exception {
         try {
-            PrecomputedTableManager ptm = new PrecomputedTableManager(null);
+            PrecomputedTableManager ptm = new PrecomputedTableManager((Database) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -133,7 +134,7 @@ public class PrecomputedTableManagerTest extends TestCase
         }
     }
 
-    public void testAddNew() throws Exception {
+    public void testAddDelete() throws Exception {
         synchronized (pt1) {
             PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             try {
@@ -141,27 +142,34 @@ public class PrecomputedTableManagerTest extends TestCase
                 ptm.add(pt1);
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
                 assertTrue(DatabaseUtil.tableExists(database.getConnection(), "precomp1"));
-            }
-            finally {
                 ptm.delete(pt1);
+                assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
+                assertTrue(!(DatabaseUtil.tableExists(database.getConnection(), "precomp1")));
+            } catch (SQLException e) {
+                throw (SQLException) Util.verboseException(e);
+            } finally {
                 deleteTable();
             }
         }
     }
 
-
-    public void testDelete() throws Exception {
+    public void testAddDeleteWithConnection() throws Exception {
         synchronized (pt1) {
-            PrecomputedTableManager ptm = new PrecomputedTableManager(database);
+            Connection con = database.getConnection();
+            PrecomputedTableManager ptm = new PrecomputedTableManager(con);
             try {
                 createTable();
                 ptm.add(pt1);
+                assertTrue(ptm.getPrecomputedTables().contains(pt1));
+                assertTrue(DatabaseUtil.tableExists(database.getConnection(), "precomp1"));
                 ptm.delete(pt1);
                 assertTrue(!(ptm.getPrecomputedTables().contains(pt1)));
                 assertTrue(!(DatabaseUtil.tableExists(database.getConnection(), "precomp1")));
-            }
-            finally {
+            } catch (SQLException e) {
+                throw (SQLException) Util.verboseException(e);
+            } finally {
                 deleteTable();
+                con.close();
             }
         }
     }
@@ -199,8 +207,9 @@ public class PrecomputedTableManagerTest extends TestCase
                 PrecomputedTable pt2 = (PrecomputedTable) ptm2.getPrecomputedTables().iterator().next();
 
                 assertEquals(pt1, pt2);
-            }
-            finally {
+            } catch (SQLException e) {
+                throw (SQLException) Util.verboseException(e);
+            } finally {
                 ptm1.delete(pt1);
                 deleteTable();
             }

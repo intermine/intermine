@@ -32,8 +32,25 @@ public class PrecomputedTableManager
 
     protected Set precomputedTables = new HashSet();
     protected Database database = null;
+    protected Connection conn = null;
     protected static final String TABLE_INDEX = "precompute_index";
     protected static Map instances = new HashMap();
+
+    /**
+     * Create a PrecomputedTableManager for a given Connection.
+     *
+     * @param conn the underlying database connection
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    protected PrecomputedTableManager(Connection conn) throws SQLException {
+        if (conn == null) {
+            throw new NullPointerException("conn cannot be null");
+        }
+
+        synchroniseWithDatabase(conn);
+        
+        this.conn = conn;
+    }
 
     /**
      * Create a PrecomputedTableManager for the given underlying database.
@@ -60,6 +77,23 @@ public class PrecomputedTableManager
             }
         }
         this.database = database;
+    }
+
+    /**
+     * Gets a PrecomputedTableManager instance for the given underlying Connection.
+     *
+     * @param conn the underlying database connection
+     * @return the PrecomputedTableManager for this database connection
+     * @throws IllegalArgumentException if connection is invalid
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    public static PrecomputedTableManager getInstance(Connection conn) throws SQLException {
+        synchronized (instances) {
+            if (!(instances.containsKey(conn))) {
+                instances.put(conn, new PrecomputedTableManager(conn));
+            }
+        }
+        return (PrecomputedTableManager) instances.get(conn);
     }
 
     /**
@@ -133,8 +167,7 @@ public class PrecomputedTableManager
     protected void addTableToDatabase(PrecomputedTable pt) throws SQLException {
         Connection con = null;
         try {
-            con = database.getConnection();
-            con.setAutoCommit(false);
+            con = (conn == null ? database.getConnection() : conn);
 
             // Create the table
             Statement stmt = con.createStatement();
@@ -155,10 +188,11 @@ public class PrecomputedTableManager
             pstmt.setString(1, pt.getName());
             pstmt.setString(2, pt.getQuery().getSQLString());
             pstmt.execute();
-
-            con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
         } finally {
-            if (con != null) {
+            if ((con != null) && (conn == null)) {
                 con.close();
             }
         }
@@ -173,8 +207,7 @@ public class PrecomputedTableManager
     protected void deleteTableFromDatabase(String name) throws SQLException {
         Connection con = null;
         try {
-            con = database.getConnection();
-            con.setAutoCommit(false);
+            con = (conn == null ? database.getConnection() : conn);
             // Drop the entry from the index table
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM "
                                                            + TABLE_INDEX + " WHERE name = ?");
@@ -184,10 +217,11 @@ public class PrecomputedTableManager
             // Drop the table
             Statement stmt = con.createStatement();
             stmt.execute("DROP TABLE " + name);
-
-            con.commit();
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
         } finally {
-            if (con != null) {
+            if ((con != null) && (conn == null)) {
                 con.close();
             }
         }
@@ -205,7 +239,9 @@ public class PrecomputedTableManager
         Statement stmt = con.createStatement();
         stmt.execute("CREATE INDEX index" + table + "_field_" + field + " ON " + table + " ("
                 + field + ")");
-        con.commit();
+        if (!con.getAutoCommit()) {
+            con.commit();
+        }
     }
     
     /**
@@ -242,6 +278,8 @@ public class PrecomputedTableManager
     protected void setupDatabase(Connection con) throws SQLException {
         Statement stmt = con.createStatement();
         stmt.execute("CREATE TABLE " + TABLE_INDEX + "(name varchar(255), statement BYTEA)");
-        con.commit();
+        if (!con.getAutoCommit()) {
+            con.commit();
+        }
     }
 }

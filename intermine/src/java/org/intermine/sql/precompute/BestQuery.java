@@ -39,4 +39,18 @@ public abstract class BestQuery
      * @throws SQLException if error occurs in the underlying database
      */
     public abstract void add(String q) throws BestQueryException, SQLException;
+
+    /**
+     * Gets the best Query found so far
+     *
+     * @return the best Query, or null if no Queries added to this object
+     */
+    public abstract Query getBestQuery();
+
+    /**
+     * Gets the best query String found so far
+     *
+     * @return the best Query, or null if no Queries added to this object
+     */
+    public abstract String getBestQueryString();
 }

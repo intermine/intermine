@@ -67,6 +67,39 @@ public class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     public static String optimise(String query, Database database) throws SQLException {
+        return optimise(query, null, database, null).getBestQueryString();
+    }
+
+    /**
+     * Runs the optimiser through the query, given the database.
+     *
+     * @param query the Query to optimise
+     * @param database the database to use to find precomputed tables
+     * @return the optimised Query
+     * @throws SQLException if a database error occurs
+     */
+    protected static Query optimise(Query query, Database database) throws SQLException {
+        return optimise(query.toString(), query, database, null).getBestQuery();
+    }
+
+    /**
+     * Runs the optimiser through the query represented in the String and Query, given the
+     * Connection and an object to lookup a PrecomputedTable
+     *
+     * @param query the query String to optimise
+     * @param originalQuery the Query object to optimise - or optionally null
+     * @param precompLookup a Database or Connection to lookup a PrecomputedTableManager
+     * @param explainConnection the database connection to use, or null if precompLookup is a
+     * Database
+     * @return a BestQuery object
+     * @throws SQLException if a database error occurs
+     */
+    public static BestQuery optimise(String query, Query originalQuery, Object precompLookup,
+            Connection explainConnection)  throws SQLException {
+        Database database = null;
+        if (precompLookup instanceof Database) {
+            database = (Database) precompLookup;
+        }
         callCount++;
         if (callCount % REPORT_INTERVAL == 0) {
             LOG.error("Optimiser called " + callCount + " times");
@@ -83,10 +116,12 @@ public class QueryOptimiser
         if (cachedQuery != null) {
             LOG.info("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
-            return limitOffsetQuery.reconstruct(cachedQuery);
+            return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
         try {
-            Connection explainConnection = database.getConnection();
+            if (database != null) {
+                explainConnection = database.getConnection();
+            }
             BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
             String optimisedQuery = null;
             int expectedRows = 0;
@@ -96,7 +131,9 @@ public class QueryOptimiser
                 // to say optimisation is not worth it, before parsing.
                 bestQuery.add(query);
                 expectedTime = (int) bestQuery.getBestExplainResult().getComplete();
-                Query originalQuery = new Query(query);
+                if (originalQuery == null) {
+                    originalQuery = new Query(query);
+                }
                 parseTime = new Date().getTime();
                 remapAliasesToAvoidPrecomputePrefix(originalQuery);
                 PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
@@ -106,7 +143,9 @@ public class QueryOptimiser
                 // Ignore - bestQuery decided to cut short the search
                 expectedTime = (int) bestQuery.getBestExplainResult().getComplete();
             } finally {
-                explainConnection.close();
+                if (database != null) {
+                    explainConnection.close();
+                }
             }
             optimisedQuery = bestQuery.getBestQueryString();
             expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
@@ -120,41 +159,14 @@ public class QueryOptimiser
                     + ((new Date()).getTime() - start)
                     + (parseTime == 0 ? " ms without parsing " : " ms including "
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
-            return optimisedQuery;
+            return bestQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
             LOG.warn("Exception: " + e.toString());
         }
         LOG.info("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
-        return query;
-    }
-
-    /**
-     * Runs the optimiser through the query, given the database.
-     *
-     * @param query the Query to optimise
-     * @param database the database to use to find precomputed tables
-     * @return the optimised Query
-     * @throws SQLException if a database error occurs
-     */
-    protected static Query optimise(Query query, Database database) throws SQLException {
-        Connection explainConnection = database.getConnection();
-        Query retval = null;
-        BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
-        try {
-            bestQuery.add(query);
-            remapAliasesToAvoidPrecomputePrefix(query);
-            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(database);
-            Set precomputedTables = ptm.getPrecomputedTables();
-            recursiveOptimise(precomputedTables, query, bestQuery, query);
-        } catch (BestQueryException e) {
-            // Ignore - bestQuery decided to cut short the search
-        } finally {
-            explainConnection.close();
-        }
-        retval = bestQuery.getBestQuery();
-        return retval;
+        return new BestQueryFallback(originalQuery, query);
     }
 
     /**

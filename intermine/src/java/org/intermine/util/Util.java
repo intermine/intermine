@@ -10,6 +10,12 @@ package org.flymine.util;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+
 /**
  * Generic utility functions.
  *
@@ -42,5 +48,48 @@ public class Util
             return 0;
         }
         return obj.hashCode();
+    }
+
+    /**
+     * Takes an Exception, and returns an Exception of similar type with all available information
+     * in the message.
+     *
+     * @param e an Exception
+     * @return a String
+     */
+    public static Exception verboseException(Exception e) {
+        boolean needComma = false;
+        StringWriter message = new StringWriter();
+        PrintWriter pMessage = new PrintWriter(message);
+        Class c = e.getClass();
+        while (e != null) {
+            if (needComma) {
+                pMessage.println("\n---------------NEXT EXCEPTION");
+            }
+            needComma = true;
+            e.printStackTrace(pMessage);
+            if (e instanceof SQLException) {
+                e = ((SQLException) e).getNextException();
+            } else {
+                e = null;
+            }
+        }
+        try {
+            Constructor cons = c.getConstructor(new Class[] {String.class});
+            Exception toThrow = (Exception) cons.newInstance(new Object[] {message.toString()});
+            return toThrow;
+        } catch (NoSuchMethodException e2) {
+            throw new RuntimeException("NoSuchMethodException thrown while handling " + c.getName()
+                    + ": " + message.toString());
+        } catch (InstantiationException e2) {
+            throw new RuntimeException("InstantiationException thrown while handling "
+                    + c.getName() + ": " + message.toString());
+        } catch (IllegalAccessException e2) {
+            throw new RuntimeException("IllegalAccessException thrown while handling "
+                    + c.getName() + ": " + message.toString());
+        } catch (InvocationTargetException e2) {
+            throw new RuntimeException("InvocationTargetException thrown while handling "
+                    + c.getName() + ": " + message.toString());
+        }
     }
 }

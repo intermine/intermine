@@ -68,4 +68,22 @@ public class BestQueryStorer extends BestQuery
     public Set getQueries() {
         return queries;
     }
+
+    /**
+     * Gets the best Query found so far
+     *
+     * @return the best Query, or null if no Queries added to this object
+     */
+    public Query getBestQuery() {
+        throw new RuntimeException("Unsupported Operation");
+    }
+
+    /**
+     * Gets the best query String found so far
+     *
+     * @return the best Query, or null if no Queries added to this object
+     */
+    public String getBestQueryString() {
+        throw new RuntimeException("Unsupported Operation");
+    }
 }

@@ -24,6 +24,7 @@ import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
 import org.flymine.objectstore.webservice.ser.SerializationUtil;
+import org.flymine.util.Util;
 
 import org.apache.log4j.Logger;
 
@@ -58,7 +59,9 @@ public class ObjectStoreServer
      * size, rather than passing execute requests straight on the the
      * underlying ObjectStore.
      *
-     * @param query the FqlQuery to register
+     * @param query the FqlQuery to register - NOTE: this FqlQuery should not be a normal FqlQuery.
+     * Instead, it should be a mangled invalid FqlQuery as produced by ObjectStoreClient for
+     * the purposes of sending over the network.
      * @return an id representing the query
      * @throws ObjectStoreException if an error occurs with the underlying ObjectStore
      */
@@ -66,11 +69,17 @@ public class ObjectStoreServer
         if (query == null) {
             throw new NullPointerException("query should not be null");
         }
-        query.setParameters(SerializationUtil.collectionToObjects(query.getParameters(), os));
-        synchronized (registeredResults) {
-            registeredResults.put(new Integer(++nextQueryId), os.execute(query.toQuery()));
+        try {
+            query.setParameters(SerializationUtil.collectionToObjects(query.getParameters(), os));
+            synchronized (registeredResults) {
+                registeredResults.put(new Integer(++nextQueryId), os.execute(query.toQuery()));
+            }
+            return nextQueryId;
+        } catch (ObjectStoreException e) {
+            throw (ObjectStoreException) Util.verboseException(e);
+        } catch (RuntimeException e) {
+            throw (RuntimeException) Util.verboseException(e);
         }
-        return nextQueryId;
     }
 
     /**
@@ -110,16 +119,20 @@ public class ObjectStoreServer
         Results results = lookupResults(queryId);
         List rows = null;
         try {
-            rows = results.subList(start, start + limit);
-        } catch (IndexOutOfBoundsException e) {
-            //assume start + limit > size and try again (may still fail)
-            rows = results.subList(start, results.size());
+            try {
+                rows = results.subList(start, start + limit);
+            } catch (IndexOutOfBoundsException e) {
+                //assume start + limit > size and try again (may still fail)
+                rows = results.subList(start, results.size());
+            }
+            // note that serialization will reconstruct resultsrows as plain lists
+            for (int i = 0; i < rows.size(); i++) {
+                rows.set(i, SerializationUtil.collectionToStrings((List) rows.get(i), getModel()));
+            }
+            return rows;
+        } catch (RuntimeException e) {
+            throw (RuntimeException) Util.verboseException(e);
         }
-        // note that serialization will reconstruct resultsrows as plain lists
-        for (int i = 0; i < rows.size(); i++) {
-            rows.set(i, SerializationUtil.collectionToStrings((List) rows.get(i), getModel()));
-        }
-        return rows;
     }
     
     /**
@@ -130,7 +143,11 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs performing the count
      */
     public int count(int queryId) throws ObjectStoreException {
-        return lookupResults(queryId).size();
+        try {
+            return lookupResults(queryId).size();
+        } catch (RuntimeException e) {
+            throw (RuntimeException) Util.verboseException(e);
+        }
     }
     
     /**
@@ -141,7 +158,13 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(int queryId) throws ObjectStoreException {
-        return lookupResults(queryId).getInfo();
+        try {
+            return lookupResults(queryId).getInfo();
+        } catch (ObjectStoreException e) {
+            throw (ObjectStoreException) Util.verboseException(e);
+        } catch (RuntimeException e) {
+            throw (RuntimeException) Util.verboseException(e);
+        }
     }
 
     /**
@@ -152,7 +175,13 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
     public FlyMineBusinessString getObjectById(Integer id) throws ObjectStoreException {
-        return SerializationUtil.objectToString(os.getObjectById(id), getModel());
+        try {
+            return SerializationUtil.objectToString(os.getObjectById(id), getModel());
+        } catch (ObjectStoreException e) {
+            throw (ObjectStoreException) Util.verboseException(e);
+        } catch (RuntimeException e) {
+            throw (RuntimeException) Util.verboseException(e);
+        }
     }
 
     /**
