@@ -39,8 +39,7 @@ import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.DynamicBean;
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
-
-
+import org.apache.log4j.Logger;
 /**
  * Read XML Lite format into an Object
  *
@@ -48,6 +47,9 @@ import org.flymine.util.TypeUtil;
  */
 public class LiteParser
 {
+    protected static final Logger LOG = Logger.getLogger(LiteParser.class);
+    protected static String DELIM = "\\$_\\^";
+
     /**
      * Parse a FlyMine Lite XML file
      *
@@ -58,7 +60,7 @@ public class LiteParser
      * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class cannot be found
      */
-    public static FlyMineBusinessObject parse(InputStream is, ObjectStore os)
+    public static FlyMineBusinessObject parseXml(InputStream is, ObjectStore os)
         throws IOException, SAXException, ClassNotFoundException {
 
         if (is == null) {
@@ -85,9 +87,39 @@ public class LiteParser
         digester.addSetNext("object/reference", "addReference");
 
         FlyMineBusinessObject retval = convertToObject(((Item) digester.parse(is)), os);
-        os.cacheObjectById(retval.getId(), retval);
         return retval;
-   }
+    }
+
+    /**
+     * Parse string representation of a FlyMineBusinessObject as used in databases.
+     *
+     * @param objStr the string to parse
+     * @param os the ObjectStore with which to associate any new lazy objects
+     * @return an object
+     * @throws IOException if there is an error reading the XML file
+     * @throws ClassNotFoundException if a class cannot be found
+     */
+    public static FlyMineBusinessObject parse(String objStr, ObjectStore os)
+        throws IOException, ClassNotFoundException {
+        String a[] = objStr.split(DELIM);
+
+        Item item = new Item();
+        item.setClassName(a[0]);
+        item.setImplementations(a[1]);
+        for (int i = 2; i < a.length; i += 2) {
+            Field f = new Field();
+            f.setName(a[i].substring(1));
+            f.setValue(a[i + 1]);
+
+            if (a[i].startsWith("a")) {
+                item.addField(f);
+            } else if (a[i].startsWith("r")) {
+                item.addReference(f);
+            }
+        }
+        return convertToObject(item, os);
+    }
+
 
     /**
      * Convert Item to object

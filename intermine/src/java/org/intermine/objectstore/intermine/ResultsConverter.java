@@ -10,7 +10,6 @@ package org.flymine.objectstore.flymine;
  *
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +26,7 @@ import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.xml.lite.LiteParser;
 
-import org.xml.sax.SAXException;
+import org.apache.log4j.Logger;
 
 /**
  * Provides a method to convert from SQL ResultSet data to FlyMine object-based data.
@@ -37,6 +36,8 @@ import org.xml.sax.SAXException;
  */
 public class ResultsConverter
 {
+    protected static final Logger LOG = Logger.getLogger(ResultsConverter.class);
+
     /**
      * Method to convert from SQL results to FlyMine object-based results.
      * This method accepts an SQL ResultSet and a Query as an input. The ResultSet must contain a
@@ -70,8 +71,10 @@ public class ResultsConverter
                         if (obj == null) {
                             String objectField = sqlResults.getString(alias);
                             currentColumn = objectField;
-                            obj = LiteParser.parse(new ByteArrayInputStream(
-                                        objectField.getBytes()), os);
+                            LOG.warn("parsing object: " + idField);
+                            obj = LiteParser.parse(objectField, os);
+                            LOG.warn("parsed object: " + idField);
+                            os.cacheObjectById(obj.getId(), obj);
                         }
                         row.add(obj);
                     } else {
@@ -87,9 +90,6 @@ public class ResultsConverter
         } catch (IOException e) {
             throw new ObjectStoreException("Impossible IO error reading from ByteArrayInputStream"
                     + " while converting results: " + currentColumn, e);
-        } catch (SAXException e) {
-            throw new ObjectStoreException("Illegal data in OBJECT field in database while"
-                    + " converting results: " + currentColumn, e);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);

@@ -93,7 +93,7 @@ public class SerializationUtil
                                                        ObjectStore os) {
         FlyMineBusinessObject obj = null;
         try {
-            obj = LiteParser.parse(new ByteArrayInputStream(string.getString().getBytes()), os);
+            obj = LiteParser.parseXml(new ByteArrayInputStream(string.getString().getBytes()), os);
         } catch (Exception e) {
             LOG.error("Error in parsing FlyMineBusinessString returned from ObjectStoreServer");
         }
@@ -129,7 +129,7 @@ public class SerializationUtil
      * @return the corresponding FlyMineBusinessString
      */
     public static FlyMineBusinessString objectToString(FlyMineBusinessObject obj, Model model) {
-        return new FlyMineBusinessString(LiteRenderer.render(obj, model));
+        return new FlyMineBusinessString(LiteRenderer.renderXml(obj, model));
     }
 
     /**

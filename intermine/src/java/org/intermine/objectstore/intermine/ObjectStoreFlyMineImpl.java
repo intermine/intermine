@@ -10,7 +10,6 @@ package org.flymine.objectstore.flymine;
  *
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,7 +38,6 @@ import org.flymine.sql.precompute.QueryOptimiser;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.xml.lite.LiteParser;
 
-import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
 
 /**
@@ -56,10 +54,10 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
     protected Database db;
     protected boolean everOptimise = true;
     protected Set writers = new HashSet();
-    
+
     /**
      * Constructs an ObjectStoreFlyMineImpl.
-     * 
+     *
      * @param db the database in which the model resides
      * @param model the name of the model
      * @throws NullPointerException if db or model are null
@@ -69,7 +67,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
         super(model);
         this.db = db;
     }
-    
+
     /**
      * Returns a Connection. Please put them back.
      *
@@ -256,8 +254,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             //System//.out.println(getModel().getName() + ": Executed SQL: " + sql);
             if (sqlResults.next()) {
                 currentColumn = sqlResults.getString("a1_");
-                FlyMineBusinessObject retval = LiteParser.parse(new ByteArrayInputStream(
-                            currentColumn.getBytes()), this);
+                FlyMineBusinessObject retval = LiteParser.parse(currentColumn, this);
+                cacheObjectById(retval.getId(), retval);
                 if (sqlResults.next()) {
                     throw new ObjectStoreException("More than one object in the database has this"
                             + " primary key");
@@ -271,9 +269,6 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
         } catch (IOException e) {
             throw new ObjectStoreException("Impossible IO error reading from ByteArrayInputStream"
                     + " while converting results: " + currentColumn, e);
-        } catch (SAXException e) {
-            throw new ObjectStoreException("Illegal data in OBJECT field in database while"
-                    + " converting results: " + currentColumn, e);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);

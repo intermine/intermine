@@ -20,6 +20,7 @@ import java.util.Map;
 import org.flymine.util.TypeUtil;
 import org.flymine.xml.XmlHelper;
 import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 
 import org.apache.log4j.Logger;
 
@@ -31,7 +32,7 @@ import org.apache.log4j.Logger;
 public class LiteRenderer
 {
     protected static final Logger LOG = Logger.getLogger(LiteRenderer.class);
-
+    protected static String DELIM = "$_^";
     /**
      * Don't allow construction
      */
@@ -45,18 +46,104 @@ public class LiteRenderer
      * @param model the parent model
      * @return the XML for that object
      */
-    public static String render(Object obj, Model model) {
-        StringBuffer sb = new StringBuffer();
+    public static String renderXml(FlyMineBusinessObject obj, Model model) {
+        Item item = objectToItem(obj, model);
+        return renderXml(item);
+    }
 
+
+    /**
+     * Render the given item as XML in FlyMine Lite format
+     *
+     * @param item the item to render
+     * @return the XML for that object
+     */
+    protected static String renderXml(Item item) {
+        StringBuffer sb = new StringBuffer();
         sb.append("<object class=\"")
-            .append(XmlHelper.getClassName(obj, model))
+            .append(item.getClassName())
             .append("\" implements=\"")
-            .append(getImplements(obj))
-            .append("\">")
-            .append(getFields(obj))
-            .append("</object>");
+            .append(item.getImplementations())
+            .append("\">");
+
+        Iterator i = item.getFields().iterator();
+        while (i.hasNext()) {
+            Field f = (Field) i.next();
+            sb.append("<field name=\"")
+                .append(f.getName())
+                .append("\" ")
+                .append("value=\"")
+                .append(f.getValue())
+                .append("\"/>");
+        }
+        i = item.getReferences().iterator();
+        while (i.hasNext()) {
+            Field f = (Field) i.next();
+            sb.append("<reference name=\"")
+                .append(f.getName())
+                .append("\" ")
+                .append("value=\"")
+                .append(f.getValue())
+                .append("\"/>");
+        }
+        sb.append("</object>");
         return sb.toString();
     }
+
+
+    /**
+     * Render the given object as minimal string for starage in database
+     *
+     * @param obj the object to render
+     * @param model the parent model
+     * @return the XML for that object
+     */
+    public static String render(FlyMineBusinessObject obj, Model model) {
+        StringBuffer sb = new StringBuffer();
+        Item item = objectToItem(obj, model);
+
+        sb.append(item.getClassName())
+            .append(DELIM)
+            .append(item.getImplementations());
+
+        Iterator i = item.getFields().iterator();
+        while (i.hasNext()) {
+            Field f = (Field) i.next();
+            sb.append(DELIM)
+                .append("a")
+                .append(f.getName())
+                .append(DELIM)
+                .append(f.getValue());
+        }
+
+        i = item.getReferences().iterator();
+        while (i.hasNext()) {
+            Field f = (Field) i.next();
+            sb.append(DELIM)
+                .append("r")
+                .append(f.getName())
+                .append(DELIM)
+                .append(f.getValue());
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * Convert the FlyMineBusinessObject to Lite XML Item.
+     *
+     * @param obj the object to convert
+     * @param model the parent FlyMine model
+     * @return the generated item
+     */
+    protected static Item objectToItem(FlyMineBusinessObject obj, Model model) {
+        Item item = new Item();
+        item.setClassName(XmlHelper.getClassName(obj, model));
+        item.setImplementations(getImplements(obj));
+        setFields(obj, item);
+        return item;
+    }
+
 
     /**
      * Get all interfaces that an object implements.
@@ -76,29 +163,14 @@ public class LiteRenderer
         return sb.toString().trim();
     }
 
-    /**
-     * Get all interfaces that an object implements.
-     *
-     * @param obj the object
-     * @return space separated list of extended/implemented classes/interfaces
-     */
-    protected static String getClassName(Object obj) {
-        StringBuffer sb = new StringBuffer();
-
-        // This class - will need to be cleverer when dynamic classes introduced
-        sb.append(obj.getClass().getName())
-            .append(" ");
-        return sb.toString().trim();
-    }
 
     /**
-     * Get all classes and interfaces that an object extends/implements.
+     * Set fields and references in given item.
      *
      * @param obj the object
-     * @return string separated list of extended/implemented classes/interfaces
+     * @param item the item to set fields/references in
      */
-    protected static String getFields(Object obj) {
-        StringBuffer sb = new StringBuffer();
+    protected static void setFields(Object obj, Item item) {
 
         Map infos = TypeUtil.getFieldInfos(obj.getClass());
         Iterator iter = infos.keySet().iterator();
@@ -133,18 +205,23 @@ public class LiteRenderer
                 if (id != null) {
                     value = id;
                 }
-                sb.append((id == null ? "<field" : "<reference") + " name=\"")
-                    .append(fieldname)
-                    .append("\" value=\"");
-                    if (value instanceof Date) {
-                        sb.append(((Date) value).getTime());
-                    } else {
-                        sb.append(value);
-                    }
-                    sb.append("\"/>");
+
+                Field f = new Field();
+                f.setName(fieldname);
+
+                if (value instanceof Date) {
+                    f.setValue(new Long(((Date) value).getTime()).toString());
+                } else {
+                    f.setValue(value.toString());
+                }
+
+                if (id == null) {
+                    item.addField(f);
+                } else {
+                    item.addReference(f);
+                }
             }
         } catch (IllegalAccessException e) {
         }
-        return sb.toString().trim();
     }
 }

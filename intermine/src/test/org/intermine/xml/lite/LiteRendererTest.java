@@ -12,11 +12,11 @@ package org.flymine.xml.lite;
 
 import junit.framework.*;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import org.flymine.util.TypeUtil;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
 import org.flymine.metadata.Model;
 
@@ -37,6 +37,26 @@ public class LiteRendererTest extends TestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
+        String expected = "org.flymine.model.testmodel.Employee" + LiteRenderer.DELIM
+            + "org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress"
+            + LiteRenderer.DELIM + "aage" + LiteRenderer.DELIM + "0"
+            + LiteRenderer.DELIM + "afullTime" + LiteRenderer.DELIM + "false"
+            + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
+            + LiteRenderer.DELIM + "aid" + LiteRenderer.DELIM + "1234"
+            + LiteRenderer.DELIM + "rdepartment" + LiteRenderer.DELIM + "5678";
+
+        assertEquals(expected, LiteRenderer.render(e, model));
+    }
+
+
+    public void testRenderXML() throws Exception {
+        Employee e = new Employee();
+        Department d = new Department();
+        e.setId(new Integer(1234));
+        e.setName("Employee1");
+        d.setId(new Integer(5678));
+        e.setDepartment(d);
+
         String expected = "<object class=\"org.flymine.model.testmodel.Employee\" implements=\"org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress\">"
             + "<field name=\"age\" value=\"0\"/>"
             + "<field name=\"fullTime\" value=\"false\"/>"
@@ -45,10 +65,48 @@ public class LiteRendererTest extends TestCase
             + "<reference name=\"department\" value=\"5678\"/>"
             + "</object>";
 
-        assertEquals(expected, LiteRenderer.render(e, model));
+        assertEquals(expected, LiteRenderer.renderXml(e, model));
     }
 
-    public void testRenderTypes() throws Exception {
+
+    public void testObjectToItem() throws Exception {
+        Employee e = new Employee();
+        Department d = new Department();
+        e.setId(new Integer(1234));
+        e.setName("Employee1");
+        d.setId(new Integer(5678));
+        e.setDepartment(d);
+
+        Item exp = new Item();
+        exp.setClassName("org.flymine.model.testmodel.Employee");
+        exp.setImplementations("org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress");
+        Field f1 = new Field();
+        f1.setName("age");
+        f1.setValue("0");
+        Field f2 = new Field();
+        f2.setName("fullTime");
+        f2.setValue("false");
+        Field f3 = new Field();
+        f3.setName("name");
+        f3.setValue("Employee1");
+        Field f4 = new Field();
+        f4.setName("id");
+        f4.setValue("1234");
+        exp.addField(f1);
+        exp.addField(f2);
+        exp.addField(f3);
+        exp.addField(f4);
+        Field f5 = new Field();
+        f5.setName("department");
+        f5.setValue("5678");
+        exp.addReference(f5);
+
+        assertEquals(LiteRenderer.renderXml(exp), LiteRenderer.renderXml(LiteRenderer.objectToItem(e, model)));
+
+    }
+
+
+    public void testTypesRenderXml() throws Exception {
         Types t = new Types();
         t.setId(new Integer(1234));
         t.setName("Types1");
@@ -88,6 +146,6 @@ public class LiteRendererTest extends TestCase
             + "<field name=\"name\" value=\"Types1\"/>"
             + "</object>";
 
-        assertEquals(expected, LiteRenderer.render(t, model));
+        assertEquals(expected, LiteRenderer.renderXml(t, model));
     }
 }
