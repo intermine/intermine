@@ -683,7 +683,7 @@
 
   <!-- Webapp targets -->
 
-  <target name="prepare-webapp" depends="prepare,prepare-dist,jar">
+  <target name="prepare-webapp" depends="prepare,jar">
     <mkdir dir="${build.webapp}/intermine"/>
     <mkdir dir="${build.webapp}/intermine/images"/>
     <mkdir dir="${build.webapp}/intermine/model"/>
@@ -702,7 +702,7 @@
       <fileset dir="${src.www}/images"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF">
-      <fileset dir="${resources}/webapps/intermine" excludes="images/**, *.properties"/>
+      <fileset dir="${resources}/webapps/intermine" excludes="web.xml images/**, *.properties"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF/classes">
       <fileset dir="${resources}/webapps/intermine" includes="*.properties"/>
@@ -723,20 +723,19 @@
   <target name="build-webapp" depends="prepare-webapp"
     description="Build the InterMine web application">
 
+    <!-- copy this so that precompilation can modify it -->
     <copy todir="${build.tmp}" file="${resources}/webapps/intermine/web.xml"/>
-
 
     <!-- this precompilation step is optional -->
     <antcall target="precompile-jsp"/>
 
-    <delete file="${build.webapp}/intermine/WEB-INF/web.xml"/>
     <war destfile="${dist.webapp}/intermine.war" webxml="${build.tmp}/web.xml">
       <fileset dir="${build.webapp}/intermine"/>
     </war>
-
   </target>
   
   <target name="precompile-jsp">
+    <copy file="${resources}/webapps/intermine/web.xml" todir="${build.webapp}/intermine/WEB-INF"/>
     <jspc srcdir="${build.webapp}/intermine"
       destdir="${build.webapp}/intermine/WEB-INF/src"
       package="org.intermine.jsp"
@@ -747,6 +746,7 @@
       <exclude name="index.jsp"/>
       <classpath refid="base.class.path"/>
     </jspc>
+    <delete file="${build.webapp}/intermine/WEB-INF/web.xml"/>
 
     <delete>
       <fileset dir="${build.webapp}/intermine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
@@ -759,11 +759,10 @@
       <replacetoken><![CDATA[<!--@JSPC_INCLUDE@-->]]></replacetoken>
     </replace>
 
-    <javac
-      srcdir="${build.webapp}/intermine/WEB-INF/src"
-      destdir="${build.webapp}/intermine/WEB-INF/classes"
-      listfiles="yes"
-      depend="yes">
+    <javac srcdir="${build.webapp}/intermine/WEB-INF/src"
+           destdir="${build.webapp}/intermine/WEB-INF/classes"
+           listfiles="yes"
+           depend="yes">
       <classpath refid="base.class.path"/>
     </javac>
 
