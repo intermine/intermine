@@ -168,8 +168,6 @@ public class ConstraintHelperTest extends TestCase
         simpleConstraint1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, value1);
         cs2.addConstraint(simpleConstraint1);
 
-        org.intermine.web.LogMe.log("con", "c: " + cs2);
-
         final Map foundConstraints = new HashMap();
 
         foundConstraints.put(ConstraintSet.class, new ArrayList());
