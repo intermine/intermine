@@ -195,4 +195,29 @@ public class OntologyUtil
         return statements;
     }
 
+
+    /**
+     * Return the namespace portion of URI string (i.e. everything before a #).
+     * @param uri a uri string
+     * @return the namespace or original uri if no # present
+     */
+    public static String getNamespaceFromURI(String uri) {
+        if (uri.indexOf('#') > 0) {
+            return uri.substring(0, uri.indexOf('#') + 1);
+        }
+        return uri;
+    }
+
+    /**
+     * Return the fragment portion of a URI string (i.e. everything after a #).
+     * @param uri a uri string
+     * @return the fragment or original uri if no # present
+     */
+    public static String getFragmentFromURI(String uri) {
+        if (uri.indexOf('#') > 0) {
+            return uri.substring(uri.indexOf('#') + 1);
+        }
+        return uri;
+    }
+
 }

@@ -149,12 +149,12 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix junk: <http://www.flymine.org/junk#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ;" + ENDL
-            + "         rdf:subClassOf" + ENDL
-            + "            [ a owl:restriction ;" + ENDL
+            + "         rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
             + "              owl:maxCardinality \"1\" ;" + ENDL
             + "              owl:onProperty :ceo ] ." + ENDL
             + ":CEO a owl:Class ." + ENDL
-            + ":ceo a rdf:Property ;" + ENDL
+            + ":ceo a rdfs:Property ;" + ENDL
             + "             rdfs:domain :Company ;" + ENDL
             + "             rdfs:range :CEO ." + ENDL;
 
@@ -167,6 +167,7 @@ public class Owl2FlyMineTest extends TestCase
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
         assertNotNull(cld.getReferenceDescriptorByName("ceo"));
         ReferenceDescriptor rfd = cld.getReferenceDescriptorByName("ceo");
+        assertTrue(rfd.isReference());
         assertTrue(rfd.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.CEO"));
     }
 
