@@ -173,6 +173,7 @@
       <patternset refid="lib.antlr"/>
     </fileset>
     <pathelement location="${build.model}/datatracking"/>
+    <pathelement location="${build.model}/fulldata"/>
   </path>
 
   <path id="checkstyle.class.path">
@@ -313,11 +314,9 @@
     <javac destdir="${build.java}" listfiles="yes">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
-      <include name="org/flymine/codegen/**"/>
-      <include name="org/flymine/metadata/**"/>
-      <include name="org/flymine/util/**"/>
-      <include name="org/flymine/model/**"/>
-      <include name="org/flymine/task/**"/>
+      <!-- this will include all dependent files of these tasks -->
+      <include name="org/flymine/codegen/ModelOutputTask.java"/>
+      <include name="org/flymine/modelproduction/ModelGenerationTask.java"/>
     </javac>
   </target>
 
@@ -329,7 +328,15 @@
     </ant>
   </target>
 
-  <target name="compile-main" depends="compile-datatracking"
+  <target name="compile-fulldata" depends="precompile-main">
+    <ant antfile="build-model.xml" target="build-model-from-zargo">
+      <property name="model.name" value="fulldata"/>
+      <property name="model.src" value="${model}/fulldata"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-main" depends="compile-datatracking, compile-fulldata"
     description="compile the java source">
     <javac destdir="${build.java}" listfiles="yes">
       <classpath refid="project.class.path"/>
