@@ -75,7 +75,6 @@ public class SerializationFunctionalTest extends TestCase
         msg.output(context);
             
         String msgString = stringWriter.toString();
-        System.out.println(msgString);
         Reader reader = new StringReader(msgString);
             
         DeserializationContext dser = new DeserializationContextImpl(
@@ -96,7 +95,7 @@ public class SerializationFunctionalTest extends TestCase
         List l = new ArrayList();
         l.add("one");
         l.add("two");
-        //args.add(l);
+        args.add(l);
 
         ExplainResult e = new ExplainResult();
         TypeUtil.setFieldValue(e, "rows", new Long(1));
@@ -107,7 +106,7 @@ public class SerializationFunctionalTest extends TestCase
 
         FqlQuery q = new FqlQuery("select c from Company as c", null);
         q.setParameters(l);
-        //args.add(q);
+        args.add(q);
 
         ProxyBean b = new ProxyBean("Company", q, new Integer(42));
         args.add(b);
@@ -127,9 +126,10 @@ public class SerializationFunctionalTest extends TestCase
         Department d2 = new Department();
         d2.setName("d2");
         d2.setCompany(c1);
-         c1.setDepartments(Arrays.asList(new Object[] {d1, d2}));
-         //args.add(c1);
-
+        c1.getDepartments().add(d1);
+        c1.getDepartments().add(d2);
+        args.add(c1);
+         
         return args;
     }
 }
