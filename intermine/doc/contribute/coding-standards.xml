@@ -95,16 +95,16 @@ with a gap of one space.</listitem>
 unless followed by <function>else</function>,
 <function>catch</function>, <function>finally</function> etc.</listitem>
 
-<listitem>Leave one space around operators (eg. <synopsis>if (a ==
-16)</synopsis> and not <synopsis>if (a==16)</synopsis>).</listitem>
+<listitem>Leave one space around operators (eg. <command>if (a ==
+16)</command> and not <command>if (a==16)</command>).</listitem>
 
 <listitem>No line should be longer than 100 characters. Split onto
 multiple lines if necessary.</listitem>
 
 <listitem>Make liberal use of brackets in expressions, even when not
-necessary. For example, <synopsis>newAmount = (4 * oldAmount) +
-17</synopsis> and not <synopsis>newAmount = 4 * oldAmount +
-17</synopsis>.</listitem>
+necessary. For example, <command>newAmount = (4 * oldAmount) +
+17</command> and not <command>newAmount = 4 * oldAmount +
+17</command>.</listitem>
 
 </itemizedlist>
 </sect2>
@@ -131,9 +131,9 @@ file.</listitem>
 
 <listitem>The complete system must build directly out of CVS and not
 require any external jar files or binaries (apart from Ant and the
-JDK!!). Any dependent jar files must be in CVS in either the buildlib
-directory (for jars only needed during the build process) or the lib
-directory.</listitem>
+JDK!!). Any dependent jar files must be in CVS in the lib directory
+and be mentioned in the appropriate section in the
+<filename>build.xml</filename> file..</listitem>
 
 <listitem>Any files no longer used should be removed using the command
 <command>cvs rm</command>.</listitem>
@@ -212,8 +212,8 @@ written to stdout or stderr.</listitem>
 <listitem>Make use of the different logging levels available.</listitem>
 
 <listitem>Log messages must be descriptive. For example,
-<synopsis>log.info("Exon count: "+exonCount)</synopsis> and not
-<synopsis>log.info(exonCount)</synopsis>.</listitem>
+<command>log.info("Exon count: "+exonCount)</command> and not
+<command>log.info(exonCount)</command>.</listitem>
 
 </itemizedlist>
 
