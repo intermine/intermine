@@ -103,7 +103,7 @@ public abstract class QueryTestCase extends TestCase
     public void setUpData() throws Exception {
         data();
         ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
-         try {
+        try {
             writer.beginTransaction();
             Iterator iter = data.keySet().iterator();
             while (iter.hasNext()) {
@@ -114,8 +114,10 @@ public abstract class QueryTestCase extends TestCase
             writer.abortTransaction();
             throw new Exception(e);
         }
+        // clear the cache to ensure that objects are materialised later (in case broker reused)
+        ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
     }
-
+    
     public void tearDownData() throws Exception {
         ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
          try {
