@@ -12,11 +12,6 @@ package org.intermine.util;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +31,15 @@ public abstract class SoftReferenceMap extends ReferenceMap
 {
     private static final Logger LOG = Logger.getLogger(SoftReferenceMap.class);
 
-    public ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key) {
+    /**
+     * Returns a new SoftReferenceWithKey object for the given objects.
+     *
+     * @param value an Object
+     * @param queue a ReferenceQueue
+     * @param key an Object
+     * @return a SoftReferenceWithKey object
+     */
+    protected ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key) {
         return new SoftReferenceWithKey(value, queue, key);
     }
 

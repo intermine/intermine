@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 public abstract class ReferenceMap implements Map
 {
     private static final Logger LOG = Logger.getLogger(ReferenceMap.class);
-    public static final NullValue NULL_VALUE = new NullValue();
+    protected static final NullValue NULL_VALUE = new NullValue();
 
     protected Map subMap;
     protected ReferenceQueue queue = new ReferenceQueue();
@@ -144,7 +144,7 @@ public abstract class ReferenceMap implements Map
      * @return a ReferenceWithKey, that is also a Reference (long story, no multiple inheritance in
      * Java)
      */
-    public abstract ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key);
+    protected abstract ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key);
 
     /**
      * @see java.util.Map.putAll
@@ -208,8 +208,16 @@ public abstract class ReferenceMap implements Map
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Interface for entries in the map.
+     */
     protected static interface ReferenceWithKey
     {
+        /**
+         * Returns the key in the entry.
+         *
+         * @return an Object
+         */
         public Object getKey();
     }
 

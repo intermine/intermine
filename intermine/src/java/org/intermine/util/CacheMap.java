@@ -10,12 +10,8 @@ package org.intermine.util;
  *
  */
 
-import java.lang.ref.ReferenceQueue;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
