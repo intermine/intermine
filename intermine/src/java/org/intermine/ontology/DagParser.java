@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.StringReader;
-import java.io.File;
 
 /**
  * Parse a file in DAG format into a tree of DagTerms.
@@ -35,14 +34,13 @@ public class DagParser
     protected Stack parents = new Stack();
     protected HashSet terms = new HashSet();
     protected HashMap seenTerms = new HashMap();
-    private File tmpFile;
     private DagTerm domainTerm = null;
 
-    private final String comment = "!";
-    private final String domain = "$";
-    private final String isa = "%";
-    private final String partof = "<";
-    private final String delimiter = " ; ";
+    private static final String COMMENT = "!";
+    private static final String DOMAIN = "$";
+    private static final String ISA = "%";
+    private static final String PARTOF = "<";
+    private static final String DELIMITER = " ; ";
 
     /**
      * Parse a DAG file to produce a set of toplevel DagTerms.
@@ -75,7 +73,7 @@ public class DagParser
         while ((line = in.readLine()) != null) {
             DagTerm term = null;
 
-            if (!line.startsWith(comment) && !line.equals("")) {
+            if (!line.startsWith(COMMENT) && !line.equals("")) {
                 int length = line.length();
                 line = trimLeft(line);
                 currspaces = length - line.length();
@@ -118,7 +116,7 @@ public class DagParser
         line = line.trim();
         String token = line.substring(0, 1);
         line = line.substring(1);
-        StringTokenizer tokenizer = new StringTokenizer(line, (domain + isa + partof), true);
+        StringTokenizer tokenizer = new StringTokenizer(line, (DOMAIN + ISA + PARTOF), true);
 
 
         String termStr = tokenizer.nextToken();
@@ -127,13 +125,13 @@ public class DagParser
         // details of this class from first token
         term = dagTermFromString(termStr);
 
-        if (token.equals(domain)) {
+        if (token.equals(DOMAIN)) {
             domainTerm = term;
             terms.add(term);
-        } else if (token.equals(isa)) {
+        } else if (token.equals(ISA)) {
             DagTerm parent = (DagTerm) parents.peek();
             parent.addChild(term);
-        } else if (token.equals(partof)) {
+        } else if (token.equals(PARTOF)) {
             DagTerm whole = (DagTerm) parents.peek();
             whole.addComponent(term);
         }
@@ -141,11 +139,11 @@ public class DagParser
         // other tokens are additional relations; parents or partofs
         while (tokenizer.hasMoreTokens()) {
             String relation = tokenizer.nextToken();
-            if (relation.equals(isa)) {
+            if (relation.equals(ISA)) {
                 relation = tokenizer.nextToken();
                 DagTerm parent = dagTermFromString(relation.trim());
                 parent.addChild(term);
-            }  else if (relation.equals(partof)) {
+            }  else if (relation.equals(PARTOF)) {
                 relation = tokenizer.nextToken();
                 DagTerm whole = dagTermFromString(relation);
                 whole.addComponent(term);
@@ -163,7 +161,7 @@ public class DagParser
      */
     public DagTerm dagTermFromString(String details) throws Exception {
         details = details.trim();
-        String[] elements = details.split(delimiter);
+        String[] elements = details.split(DELIMITER);
         String name = stripEscaped(elements[0]);
         if (elements.length < 2) {
             throw new Exception("term does not have an id: " + details);
@@ -234,11 +232,11 @@ public class DagParser
         BufferedReader buf = new BufferedReader(in);
         String line;
         while ((line = buf.readLine()) != null) {
-            line = line.replaceAll("@ISA@|@isa@|@is_a@|@IS_A@", isa);
-            line = line.replaceAll("@PARTOF@|@partof@|@part_of@|@PART_OF@", partof);
+            line = line.replaceAll("@ISA@|@isa@|@is_a@|@IS_A@", ISA);
+            line = line.replaceAll("@PARTOF@|@partof@|@part_of@|@PART_OF@", PARTOF);
             writer.write(line + "\n");
         }
-        writer.flush();
+        writer.close();
         return new StringReader(writer.toString());
     }
 
@@ -275,7 +273,7 @@ public class DagParser
      * Inner class to identify a DagTerm by its name and id.  If the same id has two different
      * names or vice versa both will be included in hieracrchy.
      */
-    public class Identifier
+    class Identifier
     {
         protected String id;
         protected String name;
