@@ -26,7 +26,7 @@ public class RunQueryActionTest extends MockStrutsTestCase
         getSession().setAttribute("query", new FqlQuery("select c from Company as c", "org.flymine.model.testmodel").toQuery());
         actionPerform();
         verifyForward("results");
-        assertNotNull(getRequest().getAttribute("results"));
+        assertNotNull(getSession().getAttribute("results"));
         verifyNoActionErrors();
     }
 
@@ -34,7 +34,7 @@ public class RunQueryActionTest extends MockStrutsTestCase
         setRequestPathInfo("/runQuery");
         actionPerform();
         verifyForward("buildquery");
-        assertNull(getRequest().getAttribute("results"));
+        assertNull(getSession().getAttribute("results"));
         verifyNoActionErrors();
     }
 }

@@ -65,7 +65,7 @@ public class RunQueryAction extends Action
             ObjectStore os = ObjectStoreFactory.getObjectStore();
 
             Results results = os.execute(QueryCloner.cloneQuery(q));
-            request.setAttribute("results", results);
+            session.setAttribute("results", results);
 
             return mapping.findForward("results");
         }
