@@ -208,16 +208,16 @@ public class XmiParser implements ModelParser
         if (generalizations == null || generalizations.size() == 0) {
             return null;
         }
-        Collection classes = new LinkedHashSet();
-        Iterator enum = generalizations.iterator();
-        while (enum.hasNext()) {
-            MGeneralization g = (MGeneralization) enum.next();
+        Collection classCollection = new LinkedHashSet();
+        Iterator iter = generalizations.iterator();
+        while (iter.hasNext()) {
+            MGeneralization g = (MGeneralization) iter.next();
             MGeneralizableElement ge = g.getParent();
             if (ge != null) {
-                classes.add(ge);
+                classCollection.add(ge);
             }
         }
-        return generateClassSet(classes);
+        return generateClassSet(classCollection);
     }
 
     private String generateClassSet(Collection classifiers) {

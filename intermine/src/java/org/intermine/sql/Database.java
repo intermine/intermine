@@ -138,9 +138,9 @@ public class Database
 
         Properties subProps = new Properties();
 
-        Enumeration enum = props.keys();
-        while (enum.hasMoreElements()) {
-            String propertyName = (String) enum.nextElement();
+        Enumeration propsEnum = props.keys();
+        while (propsEnum.hasMoreElements()) {
+            String propertyName = (String) propsEnum.nextElement();
             Object propertyValue = props.get(propertyName);
             String configName = propertyName.substring(propertyName.lastIndexOf(".") + 1);
             Field field = null;
