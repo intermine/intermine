@@ -26,6 +26,7 @@
   <!-- build directories -->
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
+  <property name="build.resources" location="${build}/resources"/>
   <property name="build.test" location="${build}/test"/>
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.javadoc" location="${build}/api"/>
@@ -47,6 +48,7 @@
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
     <pathelement path="${build.java}"/>
+    <pathelement path="${build.resources}"/>
     <pathelement path="${lib}"/>
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
@@ -82,6 +84,7 @@
     </tstamp>
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.src.java}"/>
     <mkdir dir="${build.javadoc}"/>
@@ -91,6 +94,9 @@
     <mkdir dir="${results}"/>
     <mkdir dir="${results.junit}"/>
     <mkdir dir="${results.checkstyle}"/>
+
+    <copy file="${build.properties.local}" tofile="${build.resources}/flymine.properties">
+    </copy>
 
   </target>
 
