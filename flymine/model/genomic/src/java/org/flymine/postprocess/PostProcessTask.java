@@ -59,6 +59,8 @@ public class PostProcessTask extends Task
             if ("mappings".equals(type)) {
                 CalculateLocations cl = new CalculateLocations(osw);
                 cl.createLocations();
+                CreateReferences cr = new CreateReferences(osw);
+                cr.insertReferences();
             }
         } catch (Exception e) {
             e.printStackTrace(System.out);
