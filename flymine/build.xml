@@ -1089,38 +1089,14 @@
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-src-items"/>
-      <property name="objectstore.name" value="os.phenotype-src-items-std"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.phenotype-tgt-items-std"/>
     </ant>
     <taskdef name="retrieve-phenotype" classname="org.intermine.task.DagConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-phenotype file="${model}/phenotype/phenotype.ontology" osName="osw.phenotype-src-items" namespace="http://www.flymine.org/model/phenotype#"/>
-
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-src-items"/>
-    </ant>
-  </target>
-
- <target name="translate-phenotype" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.phenotype-tgt-items-std"/>
-    </ant>
-    <java classname="org.intermine.dataconversion.DataTranslator" fork="true"
-      maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="os.phenotype-src-items" />
-      <arg value="osw.phenotype-tgt-items" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="N3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-    </java>
+    <retrieve-phenotype file="${model}/phenotype/phenotype.ontology" osName="osw.phenotype-tgt-items" termClass="http://www.flymine.org/model/genomic#Phenotype" relationClass="http://www.flymine.org/model/genomic#DagRelation"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1128,6 +1104,7 @@
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
   </target>
+
 
   <target name="load-phenotype">
     <taskdef name="load-phenotype" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
@@ -1137,7 +1114,7 @@
     <load-phenotype integrationWriter="integration.production" source="os.phenotype-translated" sourceName="phenotype"/>
   </target>
 
-  <target name="build-phenotype-production" depends="retrieve-phenotype, translate-phenotype, load-phenotype"/>
+  <target name="build-phenotype-production" depends="retrieve-phenotype, load-phenotype"/>
 
 
   <!-- LOAD STATIC DATA -->

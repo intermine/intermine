@@ -1,5 +1,5 @@
 ! produced from FlyBase controlled vocabulary (http://flybase.bio.indiana.edu/docs/lk/controlled-vocabularies.txt) on 18/02/04
-$phenotype ; null
+$phenotype ; FlyMine:phenotype
  %wild-type ; FBbt:0010186
  %viable ; FBbt:0010187
   %semi-viable ; FBbt:0010188
@@ -100,7 +100,7 @@ $phenotype ; null
  %developmental rate defective ; FBbt:0010283
  %wound healing defective ; FBbt:0010284
 
-$phenotype qualifier ; null
+$phenotype qualifier ; FlyMine:phenotypeQualifier
  %recessive ; FBbt:0010141
  %dominant ; FBbt:0010142
  %codominant ; FBbt:0010143

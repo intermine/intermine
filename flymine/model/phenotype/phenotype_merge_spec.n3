@@ -7,43 +7,4 @@
 @prefix null:	 <http://www.flymine.org/model/null#>.
 
 :Phenotype a owl:Class;
-    rdfs:subClassOf :BioProperty.
-
-phenotype:Phenotype__ID a owl:DatatypeProperty ;
-    rdfs:domain phenotype:Phenotype ;
-    rdfs:range xsd:string .
-
-phenotype:Phenotype__label a owl:DatatypeProperty ;
-    rdfs:domain phenotype:Phenotype ;
-    rdfs:range xsd:string .
-
-:Phenotype__flyBaseId a owl:DatatypeProperty ;
-    rdfs:domain :Phenotype ;
-    rdfs:range xsd:string ;
-    owl:equivalentProperty phenotype:Phenotype__ID .
-
-:Phenotype__label a owl:DatatypeProperty ;
-    rdfs:domain :Phenotype ;
-    rdfs:range xsd:string ;
-    owl:equivalentProperty phenotype:Phenotype__label .
-
-:PhenotypeQualifier a owl:Class;
-    rdfs:subClassOf :BioProperty.
-
-phenotype:PhenotypeQualifier__ID a owl:DatatypeProperty ;
-    rdfs:domain phenotype:PhenotypeQualifier ;
-    rdfs:range xsd:string .
-
-phenotype:PhenotypeQualifier__label a owl:DatatypeProperty ;
-    rdfs:domain phenotype:PhenotypeQualifier ;
-    rdfs:range xsd:string .
-
-:PhenotypeQualifier__flyBaseId a owl:DatatypeProperty ;
-    rdfs:domain :PhenotypeQualifier ;
-    rdfs:range xsd:string ;
-    owl:equivalentProperty phenotype:PhenotypeQualifier__ID .
-
-:PhenotypeQualifier__label a owl:DatatypeProperty ;
-    rdfs:domain :PhenotypeQualifier ;
-    rdfs:range xsd:string ;
-    owl:equivalentProperty phenotype:PhenotypeQualifier__label .
+    rdfs:subClassOf :DagTerm .

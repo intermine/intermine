@@ -96,11 +96,11 @@
     rdfs:domain :DagTerm ;
     rdfs:range xsd:string .
 
-:DagTerm__parentRelation a owl:ObjectProperty ;
+:DagTerm__parentRelations a owl:ObjectProperty ;
     rdfs:domain :DagTerm ;
     rdfs:range :DagRelation .
 
-:DagTerm__childRelation a owl:ObjectProperty ;
+:DagTerm__childRelations a owl:ObjectProperty ;
     rdfs:domain :DagTerm ;
     rdfs:range :DagRelation .
 
@@ -119,10 +119,10 @@
     rdfs:range xsd:string .
 
 :DagRelation__parentTerm a owl:ObjectProperty ;
-    owl:inverseOf :DagTerm__childRelation .
+    owl:inverseOf :DagTerm__childRelations .
 
 :DagRelation__childTerm a owl:ObjectProperty ;
-    owl:inverseOf :DagTerm__parentRelation .
+    owl:inverseOf :DagTerm__parentRelations .
 
 # ------------ Relationships between BioEntity classes -----------
 
