@@ -147,7 +147,7 @@ ul ul li#current a
 
 /**************************************/
 
-#content
+#pagecontent
 {
     background: #F5F0FF;
     padding: 10px;
@@ -155,13 +155,13 @@ ul ul li#current a
     margin-right: 20px;
 }
 
-#content ul li
+#pagecontent ul li
 {
     margin: 10px  0 0 0;
     padding: 0;
 }
 
-#content ul li span
+#pagecontent ul li span
 {
     font-weight: bold;
 //    letter-spacing: 0.2em;
@@ -169,14 +169,14 @@ ul ul li#current a
     padding: 5px;
 }
 
-#content ul ul
+#pagecontent ul ul
 {
     margin-bottom: 35px;
     list-style-image: none;
     list-style-type: disc;
 }
 
-#content ul ul li
+#pagecontent ul ul li
 {
 //    font-family: times, serif;
     font-size: 1em;
@@ -184,12 +184,12 @@ ul ul li#current a
     margin: 5px 0 0 0;
 }
 
-#content h2.title
+#pagecontent h2.title
 {
     text-align: center;
 }
 
-#content p.author
+#pagecontent p.author
 {
     text-align: center;
 }
@@ -221,18 +221,18 @@ ul ul li#current a
 
 /**************************************/
 
-#content ul.fileformat
+#pagecontent ul.fileformat
 {
     list-style-type: none;
 }
 
-#content .fileformat li
+#pagecontent .fileformat li
 {
     display: inline;
     margin-right: 10px;
 }
 
-#content .fileformat img
+#pagecontent .fileformat img
 {
     border: none;
 }
@@ -283,16 +283,13 @@ span.tutorial, span.organism
   border: solid 1px grey;
 }
 /**************************************/
-/* override flymine2.css */
 #content
 {
   padding: 5px;
   margin-left: 0px;
   margin-right: 0px;
 }
-#gbrowse-content {
 
-}
 .whiteboxwithborder {
                       background-color: #FFFFFF;
                       border: solid 1px grey; 
