@@ -12,7 +12,7 @@ import org.flymine.sql.query.ExplainResult;
  *
  * @author Andrew Varley
  */
-public class ObjectStoreDummyImpl implements ObjectStore
+public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
 {
     private List rows = new ArrayList();
     private int resultsSize = 0;
@@ -22,6 +22,30 @@ public class ObjectStoreDummyImpl implements ObjectStore
      * Construct an ObjectStoreDummyImpl
      */
     public ObjectStoreDummyImpl() {
+    }
+
+    /**
+     * Set the max offset allowed
+     * @param offset the max offset allowed in queries
+     */
+    public void setMaxOffset(int offset) {
+        this.maxOffset = offset;
+    }
+
+    /**
+     * Set the max limit allowed
+     * @param limit the max limit allowed in queries
+     */
+    public void setMaxLimit(int limit) {
+        this.maxLimit = limit;
+    }
+
+    /**
+     * Set the max time allowed
+     * @param time the max time allowed for queries
+     */
+    public void setMaxTime(int time) {
+        this.maxTime = time;
     }
 
     /**
