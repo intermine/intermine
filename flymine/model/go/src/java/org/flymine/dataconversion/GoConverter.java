@@ -189,6 +189,8 @@ public class GoConverter extends FileConverter
                 title = "SGD";
             } else if ("PINC".equals(code)) {
                 title = "PINC";
+            } else if ("HGNC".equals(code)) {
+                title = "HGNC";
             } else {
                 throw new IllegalArgumentException("Database with code '" + code
                                                    + "' not recognised");
