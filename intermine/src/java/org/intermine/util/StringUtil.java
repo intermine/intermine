@@ -13,6 +13,8 @@ package org.flymine.util;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Collection of commonly used String utilities
@@ -44,6 +46,23 @@ public class StringUtil
             count++;
         }
         return count;
+    }
+
+    /**
+     * Returns a String formed by the delimited results of calling toString over a collection
+     * @param c the collection to stringify
+     * @param delimiter the character to join on
+     * @return the string representation
+     */
+    public static String join(Collection c, String delimiter) {
+        StringBuffer sb = new StringBuffer();
+        for (Iterator i = c.iterator(); i.hasNext(); ) {
+            sb.append(i.next().toString());
+            if (i.hasNext()) {
+                sb.append(delimiter);
+            }
+        }
+        return sb.toString();
     }
 
     /**

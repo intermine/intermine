@@ -10,9 +10,11 @@ package org.flymine.util;
  *
  */
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class StringUtilTest extends TestCase
 {
@@ -82,5 +84,13 @@ public class StringUtilTest extends TestCase
 
     public void testDuplicateQuotes() throws Exception{
         assertEquals("it''s", StringUtil.duplicateQuotes("it's"));
+    }
+
+    public void testJoin() throws Exception {
+        List list = new ArrayList();
+        list.add("one");
+        list.add("two");
+        list.add("three");
+        assertEquals("one, two, three", StringUtil.join(list, ", "));
     }
 }
