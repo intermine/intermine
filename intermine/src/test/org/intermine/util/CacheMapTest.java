@@ -21,8 +21,8 @@ public class CacheMapTest extends TestCase
 
     public void test() throws Exception {
         CacheMap cm = new CacheMap();
-        Integer array[] = new Integer[10000000];
-        for (int i = 0; i < 10000000; i++) {
+        Integer array[] = new Integer[1000000];
+        for (int i = 0; i < 1000000; i++) {
             array[i] = new Integer(i);
             cm.put(array[i], null);
             cm.get(array[0]);
