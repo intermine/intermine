@@ -87,6 +87,13 @@
             parameter="method">
       <forward name="query" path="query.page"/>
       <forward name="results" path="results.page"/>
+      <forward name="export" path="export.page"/>
+    </action>
+
+    <action path="/exportAction"
+            type="org.intermine.web.ExportAction"
+            parameter="method">
+      <forward name="error" path="/export"/>
     </action>
 
     <!-- Input a query -->
@@ -112,6 +119,9 @@
 
     <action path="/help"
             forward="help.page"/>
+
+    <action path="/export"
+            forward="export.page"/>
 
     <!-- Input an iql query -->
     <action path="/iqlquery"
