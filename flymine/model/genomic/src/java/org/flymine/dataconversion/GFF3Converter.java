@@ -97,7 +97,7 @@ public class GFF3Converter
         writer.store(ItemHelper.convert(organism));
         writer.store(ItemHelper.convert(infoSource));
 
-        System.err.println("Total " + list.size() + " lines in file");
+        System.err .println("Total " + list.size() + " lines in file");
         LOG.info("Total " + list.size() + " lines in file");
         opCount = 0;
         start = System.currentTimeMillis();
@@ -107,7 +107,7 @@ public class GFF3Converter
             opCount++;
             if (opCount % 1000 == 0) {
                 now = System.currentTimeMillis();
-                System.err.println("processed " + opCount + " lines --took " + (now - start) + " ms");
+                System.err .println("processed " + opCount + " lines --took " + (now - start) + " ms");
                 LOG.info("processed " + opCount + " lines --took " + (now - start) + " ms");
                 start = System.currentTimeMillis();
             }
@@ -143,20 +143,21 @@ public class GFF3Converter
             feature.addAttribute(new Attribute("identifier", record.getId()));
         }
         if (record.getName() != null) {
-            feature.addAttribute(new Attribute("name", record.getName()));
+            //feature.addAttribute(new Attribute("name", record.getName()));
         }
         feature.addReference(getOrgRef());
 
         Item location = createItem(targetNameSpace + "Location", "");
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
-        if (record.getStrand() == null ||record.getStrand().equals(".")) {
-            location.addAttribute(new Attribute("strand", "0"));
-        } else if (record.getStrand().equals("+")) {
+        if (record.getStrand() != null && record.getStrand().equals("+")) {
             location.addAttribute(new Attribute("strand", "1"));
-        } else if (record.getStrand().equals("-")) {
+        } else if (record.getStrand() != null && record.getStrand().equals("-")) {
             location.addAttribute(new Attribute("strand", "-1"));
+        } else {
+            location.addAttribute(new Attribute("strand", "0"));
         }
+
         if (record.getPhase() != null) {
             location.addAttribute(new Attribute("phase", record.getPhase()));
         }
@@ -166,21 +167,27 @@ public class GFF3Converter
                             Arrays.asList(new Object[] {infoSource.getIdentifier()})));
         result.add(location);
 
+        ReferenceList evidence = new ReferenceList("evidence");
+        evidence.addRefId(infoSource.getIdentifier());
 
-        Item computationalResult = createItem(targetNameSpace + "ComputationalResult", "");
-        if (String.valueOf(record.getScore()) != null) {
-            computationalResult.addAttribute(new Attribute("score",
-                                             String.valueOf(record.getScore())));
-        }
-        if (record.getSource() != null) {
-            Item computationalAnalysis = getComputationalAnalysis(record.getSource());
-            computationalResult.addReference(new Reference("analysis",
-                                             computationalAnalysis.getIdentifier()));
-        }
-        result.add(computationalResult);
+        if (record.getScore() != null) {
 
-        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
-                {computationalResult.getIdentifier(), infoSource.getIdentifier()}));
+            Item computationalResult = createItem(targetNameSpace + "ComputationalResult", "");
+            if (String.valueOf(record.getScore()) != null) {
+                computationalResult.addAttribute(new Attribute("score",
+                                                               String.valueOf(record.getScore())));
+            }
+            if (record.getSource() != null) {
+
+                Item computationalAnalysis = getComputationalAnalysis(record.getSource());
+                computationalResult.addReference(new Reference("analysis",
+                                                               computationalAnalysis.getIdentifier()));
+            }
+            result.add(computationalResult);
+            evidence.addRefId(computationalResult.getIdentifier());
+
+        }
+
         feature.addCollection(evidence);
         result.add(feature);
 
