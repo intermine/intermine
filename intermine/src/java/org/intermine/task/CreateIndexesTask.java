@@ -31,7 +31,6 @@ import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.StringUtil;
 
-
 /**
  * Task to create indexes on a database holding objects conforming to a given model by
  * reading that model's primary key configuration information.
@@ -79,43 +78,7 @@ public class CreateIndexesTask extends Task
             Model m = Model.getInstanceByName(model);
             for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) i.next();
-                //add an index for each primary key
-                Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
-                for (Iterator j = primaryKeys.entrySet().iterator(); j.hasNext();) {
-                    Map.Entry entry = (Map.Entry) j.next();
-                    String keyName = (String) entry.getKey();
-                    PrimaryKey key = (PrimaryKey) entry.getValue();
-                    List fieldNames = new ArrayList();
-                    for (Iterator k = key.getFieldNames().iterator(); k.hasNext();) {
-                        String fieldName = (String) k.next();
-                        FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                        fieldNames.add(DatabaseUtil.getColumnName(fd));
-                    }
-                    String tableName = DatabaseUtil.getTableName(cld);
-                    dropIndex(tableName + "__" + keyName);
-                    createIndex(tableName + "__" + keyName, tableName,
-                                StringUtil.join(fieldNames, ", "));
-                }
-                //and one for each N-to-1 relation to increase speed of e.g. company.getDepartments
-                for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
-                    ReferenceDescriptor ref = (ReferenceDescriptor) j.next();
-                    if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
-                        String tableName = DatabaseUtil.getTableName(cld);                      
-                        dropIndex(tableName + "__"  + ref.getName());
-                        createIndex(tableName + "__"  + ref.getName(), tableName,
-                                    DatabaseUtil.getColumnName(ref));
-                    }
-                }
-                //finally add an index to all M-to-N indirection table columns
-                for (Iterator j = cld.getAllCollectionDescriptors().iterator(); j.hasNext();) {
-                    CollectionDescriptor col = (CollectionDescriptor) j.next();
-                    if (FieldDescriptor.M_N_RELATION == col.relationType()) {
-                        String tableName = DatabaseUtil.getIndirectionTableName(col);
-                        String columnName = DatabaseUtil.getInwardIndirectionColumnName(col);
-                        dropIndex(tableName + "__"  + columnName);
-                        createIndex(tableName + "__"  + columnName, tableName, columnName);
-                    }
-                }
+                processClassDescriptor(cld);
             }
         } catch (Exception e) {
             throw new BuildException(e);
@@ -128,16 +91,59 @@ public class CreateIndexesTask extends Task
             }
         }
     }
-    
+
+    /**
+     * Add indexes to the relevant tables for a given ClassDescriptor
+     * @param cld the ClassDescriptor
+     * @throws SQLException if an error occurs
+     */
+    protected void processClassDescriptor(ClassDescriptor cld) throws SQLException {
+        //add an index for each primary key
+        Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
+        for (Iterator j = primaryKeys.entrySet().iterator(); j.hasNext();) {
+            Map.Entry entry = (Map.Entry) j.next();
+            String keyName = (String) entry.getKey();
+            PrimaryKey key = (PrimaryKey) entry.getValue();
+            List fieldNames = new ArrayList();
+            for (Iterator k = key.getFieldNames().iterator(); k.hasNext();) {
+                String fieldName = (String) k.next();
+                FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+                fieldNames.add(DatabaseUtil.getColumnName(fd));
+            }
+            String tableName = DatabaseUtil.getTableName(cld);
+            dropIndex(tableName + "__" + keyName);
+            createIndex(tableName + "__" + keyName, tableName,
+                        StringUtil.join(fieldNames, ", "));
+        }
+        //and one for each N-to-1 relation to increase speed of e.g. company.getDepartments
+        for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) j.next();
+            if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
+                String tableName = DatabaseUtil.getTableName(cld);                      
+                dropIndex(tableName + "__"  + ref.getName());
+                createIndex(tableName + "__"  + ref.getName(), tableName,
+                            DatabaseUtil.getColumnName(ref));
+            }
+        }
+        //finally add an index to all M-to-N indirection table columns
+        for (Iterator j = cld.getAllCollectionDescriptors().iterator(); j.hasNext();) {
+            CollectionDescriptor col = (CollectionDescriptor) j.next();
+            if (FieldDescriptor.M_N_RELATION == col.relationType()) {
+                String tableName = DatabaseUtil.getIndirectionTableName(col);
+                String columnName = DatabaseUtil.getInwardIndirectionColumnName(col);
+                dropIndex(tableName + "__"  + columnName);
+                createIndex(tableName + "__"  + columnName, tableName, columnName);
+            }
+        }
+    }
+
     /**
      * Drop an index by name, ignoring errors
      * @param indexName the index name
      */
     protected void dropIndex(String indexName) {
         try {
-            String sql = "drop index " + indexName;
-            System .out.println(sql);
-            c.createStatement().execute(sql);
+            execute("drop index " + indexName);
         } catch (SQLException e) {
         }
     }
@@ -151,7 +157,15 @@ public class CreateIndexesTask extends Task
      */
     protected void createIndex(String indexName, String tableName, String columnNames)
         throws SQLException {
-        String sql = "create index " + indexName + " on " + tableName + "(" + columnNames + ")";
+        execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
+    }
+
+    /**
+     * Execute an sql statement
+     * @param sql the sql string for the statement to execute
+     * @throws SQLException if an error occurs
+     */
+    protected void execute(String sql) throws SQLException {
         System .out.println(sql);
         c.createStatement().execute(sql);
     }
