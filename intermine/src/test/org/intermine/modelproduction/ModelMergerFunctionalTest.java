@@ -22,7 +22,7 @@ import org.intermine.metadata.Model;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
 
-public class MergeModelsFunctionalTest extends TestCase
+public class ModelMergerFunctionalTest extends TestCase
 {
     InterMineModelParser parser;
 

@@ -21,7 +21,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
-public class MergeModelsTest extends TestCase
+public class ModelMergerTest extends TestCase
 {
     Model testModel;
     InterMineModelParser parser;
