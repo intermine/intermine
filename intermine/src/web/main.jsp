@@ -44,6 +44,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </c:forEach>
             </c:if>
+            <a name="${node.path}"></a>
             <c:choose>
               <c:when test="${node.button == '+'}">
                 <html:link action="/mainChange?method=changePath&amp;path=${node.path}">
