@@ -1,30 +1,46 @@
-<query-list>
-  <query name="Object_Synonym" model="genomic" view="Synonym.subject">
-    <node path="Synonym" type="Synonym"/>
-    <node path="Synonym.value" type="String">
-      <constraint op="=" value="timeout" editable="true"/>
-    </node>
-  </query>
-  <query name="DM_GoTerms" model="genomic" view="Gene">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="LIKE" value="%melanogaster"/>
-    </node>
-    <node path="Gene.annotations" type="Annotation">
-    </node>
-    <node path="Gene.annotations.property" type="GOTerm">
-    </node>
-    <node path="Gene.annotations.property.identifier" type="String">
-      <constraint op="=" value="GO:0007568" editable="true"/>
-    </node>
-  </query>
-  <query name="Gene_Synonyms" model="genomic" view="Gene.organismDbId Gene.synonyms.value">
-    <node path="Gene" type="Gene"/>
-    <node path="Gene.organismDbId" type="String">
-      <constraint op="=" value="FBgn0004053" editable="true"/>
-    </node>
-  </query>
-</query-list>
+<template-list>
+
+  <template name="Object_Synonym"
+            description="Find an entry in the database using any identifier or synonym."
+            category="Genomics">
+    <query name="Object_Synonym" model="genomic" view="Synonym.subject">
+      <node path="Synonym" type="Synonym"/>
+      <node path="Synonym.value" type="String" description="">
+        <constraint op="=" value="timeout" editable="true" description=""/>
+      </node>
+    </query>
+  </template>
+  
+  <template name="DM_GoTerms"
+            description="Show genes from Drosophila annotated with GO term."
+            category="Genomics">
+    <query name="DM_GoTerms" model="genomic" view="Gene">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="LIKE" value="%melanogaster"/>
+      </node>
+      <node path="Gene.annotations" type="Annotation">
+      </node>
+      <node path="Gene.annotations.property" type="GOTerm">
+      </node>
+      <node path="Gene.annotations.property.identifier" type="String">
+        <constraint op="=" value="GO:0007568" editable="true" description=""/>
+      </node>
+    </query>
+  </template>
+  
+  <template name="Gene_Synonyms"
+            description="For a particular genome database identifier, show all other identifiers and synonyms in FlyMine."
+            category="Genomics">
+    <query name="Gene_Synonyms" model="genomic" view="Gene.organismDbId Gene.synonyms.value">
+      <node path="Gene" type="Gene"/>
+      <node path="Gene.organismDbId" type="String">
+        <constraint op="=" value="FBgn0004053" editable="true" description=""/>
+      </node>
+    </query>
+  </template>
+  
+</template-list>
