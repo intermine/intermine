@@ -11,6 +11,7 @@ package org.intermine.objectstore;
  */
 
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -107,35 +108,57 @@ public class ObjectStoreSummaryGenerator
         throws ObjectStoreException, ClassNotFoundException {
         Iterator configurationIterator = configurationProperties.keySet().iterator();
 
+        Integer maxValuesInteger =
+            Integer.valueOf((String) configurationProperties.get("max.field.values"));
+            
+        int maxValues;
+            
+        if (maxValuesInteger == null) {
+            maxValues = Integer.MAX_VALUE;
+        } else {
+            maxValues = maxValuesInteger.intValue();
+        }
+
         while (configurationIterator.hasNext()) {
             String key = (String) configurationIterator.next();
-            if (key.endsWith(FIELDS_SUFFIX)) {
-                String className = key.substring(0, key.length() - FIELDS_SUFFIX.length());
-                String fields = (String) configurationProperties.get(key);
+            if (!key.endsWith(FIELDS_SUFFIX)) {
+                continue;
+            }
+            
+            String className = key.substring(0, key.length() - FIELDS_SUFFIX.length());
+            String fields = (String) configurationProperties.get(key);
+            String[] parts = fields.split("[\t ]");
 
-                Integer maxValuesInteger =
-                    Integer.valueOf((String) configurationProperties.get("max.field.values"));
+            ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
 
-                int maxValues;
+            Set allClds = new HashSet();
+            allClds.add(cld);
+            allClds.addAll(os.getModel().getAllSubs(cld));
 
-                if (maxValuesInteger == null) {
-                    maxValues = Integer.MAX_VALUE;
-                } else {
-                    maxValues = maxValuesInteger.intValue();
-                }
+            for (int partIndex = 0; partIndex < parts.length; partIndex++) {
+                String fieldName = parts[partIndex];
 
-                String[] parts = fields.split("[\t ]");
+                Iterator allCldsIterator = allClds.iterator();
 
-                for (int i = 0; i < parts.length; i++) {
-                    String fieldName = parts[i];
-                    String fieldSummary = getFieldSummary(os, className, fieldName, maxValues);
-                    if (fieldSummary != null) {
-                        outputProperties.put(className + "." + fieldName
-                                             + ObjectStoreSummary.FIELDS_SUFFIX,
-                                             fieldSummary);
-                    }
+                while (allCldsIterator.hasNext()) {
+                    String thisCldClassName =
+                        ((ClassDescriptor) allCldsIterator.next()).getName();
+
+                    processFields(os, thisCldClassName, fieldName, maxValues, outputProperties);
                 }
             }
+        }
+    }
+
+    private static void processFields(ObjectStore os, String className, String fieldName,
+                                      int maxValues, Properties outputProperties)
+        throws ObjectStoreException, ClassNotFoundException {
+
+        String fieldSummary = getFieldSummary(os, className, fieldName, maxValues);
+        if (fieldSummary != null) {
+            outputProperties.put(className + "." + fieldName
+                                 + ObjectStoreSummary.FIELDS_SUFFIX,
+                                 fieldSummary);
         }
     }
 
