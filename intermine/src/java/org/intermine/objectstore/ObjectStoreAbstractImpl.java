@@ -70,6 +70,15 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public abstract ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException;
 
     /**
+     * Execute a COUNT(*) on a query, returns the number of row the query will produce
+     *
+     * @param q Flymine Query on which to run COUNT(*)
+     * @return the number of rows to be produced by query
+     */
+    public abstract int count(Query q);
+
+
+    /**
      * Checks the start and limit to see whether they are inside the
      * hard limits for this ObjectStore
      *
