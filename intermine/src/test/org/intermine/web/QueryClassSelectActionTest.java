@@ -10,44 +10,35 @@ package org.flymine.web;
  *
  */
 
-import javax.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.HashMap;
 
 import servletunit.struts.MockStrutsTestCase;
 
-public class QueryClassSelectActionTest extends MockStrutsTestCase {
-
+public class QueryClassSelectActionTest extends MockStrutsTestCase
+{
     public QueryClassSelectActionTest(String testName) {
         super(testName);
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-//     public void testSelectSuccessful() throws Exception {
-//         setRequestPathInfo("/queryClassSelect");
-//         HttpSession session = getSession();
-//         QueryClassSelectForm form = new QueryClassSelectForm();
-//         form.setClassName("org.flymine.model.testmodel.Company");
-//         setActionForm(form);
-//         addRequestParameter("action", "Select");
-//         actionPerform();
-//         verifyForward("buildquery");
-//         assertNotNull(session.getAttribute("queryClass"));
-//     }
-
-    public void testNoClassNameSet() throws Exception {
+    public void testSelectValidClassName() throws Exception {
         setRequestPathInfo("/queryClassSelect");
-        HttpSession session = getSession();
-        QueryClassSelectForm form = new QueryClassSelectForm();
-        setActionForm(form);
+        getSession().setAttribute("queryClasses", new HashMap());
+        addRequestParameter("className", "org.flymine.model.testmodel.Company");
         addRequestParameter("action", "Select");
         actionPerform();
+
+        verifyForward("buildquery");
+        assertEquals(1, ((Map) getSession().getAttribute("queryClasses")).size());
+    }
+
+    public void testSelectNullClassName() throws Exception {
+        setRequestPathInfo("/queryClassSelect");
+        getSession().setAttribute("queryClasses", new HashMap());
+        addRequestParameter("action", "Select");
+        actionPerform();
+
         verifyForward("error");
-        assertNull(session.getAttribute("queryClass"));
+        assertEquals(0, ((Map) getSession().getAttribute("queryClasses")).size());
     }
 }
