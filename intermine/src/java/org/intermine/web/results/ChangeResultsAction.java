@@ -20,8 +20,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.objectstore.query.Results;
-
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the
  * view of the results in some way.
@@ -48,7 +46,6 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        Results results = (Results) session.getAttribute("results");
         DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
 
         int prevStart = dr.getStart();
@@ -75,7 +72,6 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        Results results = (Results) session.getAttribute("results");
         DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
 
         int prevStart = dr.getStart();
@@ -129,13 +125,12 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        Results results = (Results) session.getAttribute("results");
         DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
 
         int pageSize = dr.getPageSize();
 
         // Here we have to force the results to give us an exact size
-        int size = results.size();
+        int size = dr.getResults().size();
         int start = ((size - 1) / pageSize) * pageSize;
 
         if (start < 0) {
@@ -146,4 +141,61 @@ public class ChangeResultsAction extends DispatchAction
         return mapping.findForward("results");
     }
 
+    /**
+     * Hide a column. Must pass in a parameter "columnAlias" to
+     * indicate the column being hidden.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward hideColumn(ActionMapping mapping, ActionForm form,
+                              HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        HttpSession session = request.getSession();
+
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+
+        String columnAlias = request.getParameter("columnAlias");
+        if (columnAlias == null) {
+            throw new IllegalArgumentException("A columnAlias parameter must be present");
+        }
+
+        dr.getColumn(columnAlias).setVisible(false);
+
+        return mapping.findForward("results");
+    }
+
+    /**
+     * Show a column. Must pass in a parameter "columnAlias" to
+     * indicate the column being hidden.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward showColumn(ActionMapping mapping, ActionForm form,
+                              HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        HttpSession session = request.getSession();
+
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+
+        String columnAlias = request.getParameter("columnAlias");
+        if (columnAlias == null) {
+            throw new IllegalArgumentException("A columnAlias parameter must be present");
+        }
+
+        dr.getColumn(columnAlias).setVisible(true);
+
+        return mapping.findForward("results");
+    }
 }
