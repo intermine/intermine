@@ -82,7 +82,7 @@
   <ant dir="../../intermine" target="build-testmodel-webapp" inheritRefs="true"/>
   <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
 
-  <path id="project.class.path">
+  <path id="demo.class.path">
     <fileset dir="../../intermine/dist" includes="*.jar"/>
   </path>
 
