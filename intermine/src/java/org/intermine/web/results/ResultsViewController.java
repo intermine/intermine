@@ -10,10 +10,6 @@ package org.flymine.web.results;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.IdentityHashMap;
-
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,16 +64,6 @@ public class ResultsViewController extends TilesAction
             drNew.update(drOrig);
         }
         session.setAttribute(Constants.RESULTS_TABLE, drNew);
-
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        if (savedBags == null) {
-            session.setAttribute(Constants.SAVED_BAGS, new HashMap());
-        }
-
-        Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
-        if (savedBagsInverse == null) {
-            session.setAttribute(Constants.SAVED_BAGS_INVERSE, new IdentityHashMap());
-        }
 
         return null;
     }
