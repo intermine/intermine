@@ -18,17 +18,17 @@
 <%-- This should be changed to check chromosomeLocation --%>
 
 <c:if test="${!empty hasLocation || cld.unqualifiedName == 'Chromosome'}">
-  <c:set var="track" value="${cld.unqualifiedName}s"/>
+  <c:set var="type" value="${cld.unqualifiedName}s"/>
   
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript' 
               || cld.unqualifiedName == 'Pseudogene'}">
-    <c:set var="track" value="Genes"/>
+    <c:set var="type" value="Genes"/>
   </c:if>
   
-  <c:set var="label" value="${track}"/>
+  <c:set var="label" value="${type}"/>
   
-  <c:if test="${track != 'Genes'}">
-    <c:set var="track" value="${track}+Genes"/>
+  <c:if test="${type != 'Genes'}">
+    <c:set var="type" value="${type}+Genes"/>
     <c:set var="label" value="${label}-Genes"/>
   </c:if>
   
@@ -47,7 +47,7 @@
       <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
     </div>
     <div>
-      <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};track=${track};name=${name};width=400"/>
+      <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=400"/>
     </div>
   </html:link>
 </c:if>
