@@ -347,7 +347,7 @@ public class Batch
             } catch (InterruptedException e) {
             }
         }
-        if (!jobs.isEmpty()) {
+        if ((!jobs.isEmpty()) || (jobs == CLOSE_DOWN_COMMAND)) {
             flushJobs = jobs;
             notifyAll();
         }
