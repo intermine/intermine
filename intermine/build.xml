@@ -81,6 +81,7 @@
     <include name="MAGE*.jar"/>
     <include name="xerces*.jar"/>
     <include name="xml-apis*.jar"/>
+    <include name="p6spy.jar"/>
   </patternset>
 
   <!-- Ant tasks and unit testing stuff -->
@@ -308,6 +309,7 @@
         outputdirectory="${build.src.java}/org/flymine/objectstore/query/fql">
       <classpath refid="project.class.path"/>
     </antlr>
+    <depend srcdir="${build.src.java}" destdir="${build.java}" closure="yes" dump="yes"/>
     <javac destdir="${build.java}" listfiles="yes">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
@@ -559,6 +561,11 @@
         <include name="**/*.java"/>
       </fileset>
     </copy>
+    <depend srcdir="${build.src.test}" destdir="${build.test}" closure="yes" dump="yes">
+      <classpath>
+        <pathelement path="${build.java}"/>
+      </classpath>
+    </depend>
     <javac destdir="${build.test}" listfiles="yes">
       <classpath refid="test.class.path"/>
       <src path="${build.src.test}" />
@@ -568,12 +575,6 @@
   <!-- run the tests -->
   <target name="test-main" depends="compile-test, build-db-testmodel, build-db-datatrackingtest, copy-model-acedbtest, copy-model-xmitest"
           description="perform JUnit tests on main source code" >
-
-    <!-- this will cause every test to be re-run if any java file changes -->
-    <dependset>
-      <srcfileset dir="${build.java}" includes="**/*.class" />
-      <targetfileset dir="${results.junit}" includes="TEST-*.xml" />
-    </dependset>
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="test.class.path"/>
@@ -597,12 +598,16 @@
 
   <target name="test-webapp" depends="compile-test, build-db-testmodel, build-testable-webapp, release-webapp"
           description="perform JUnit tests on web application" >
-   <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="webapptest.class.path"/>
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
         <fileset dir="${build.test}">
-         <include name="org/flymine/web/**/*Test.class" />
+          <include name="org/flymine/web/**/*Test.class" />
+          <depend targetdir="${results.junit}">
+            <mapper type="package" from="*.class" to="TEST-*.xml" />
+          </depend>
         </fileset>
       </batchtest>
     </junit>
@@ -618,7 +623,10 @@
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
         <fileset dir="${build.test}">
-         <include name="org/flymine/objectstore/webservice/**/*Test.class" />
+          <include name="org/flymine/objectstore/webservice/**/*Test.class" />
+          <depend targetdir="${results.junit}">
+            <mapper type="package" from="*.class" to="TEST-*.xml" />
+          </depend>
         </fileset>
       </batchtest>
     </junit>
@@ -633,11 +641,15 @@
       <fileset dir="${results.junit}" includes="TEST-*.xml"/>
     </delete>
   </target>
-
-  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
-          description="do a full test and fail if there are any errors">
+  
+  <target name="inctest" depends="prepare,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
+          description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
+  </target>
+
+  <target name="fulltest" depends="prepare,junit-clean,clean-code,inctest"
+          description="do a full test and fail if there are any errors">
   </target>
 
   <target name="test-report" depends="prepare"
@@ -882,7 +894,8 @@
     <javac
       srcdir="${build.webapp}/flymine/WEB-INF/src"
       destdir="${build.webapp}/flymine/WEB-INF/classes"
-      listfiles="yes">
+      listfiles="yes"
+      depend="yes">
       <classpath refid="base.class.path"/>
     </javac>
 
