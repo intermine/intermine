@@ -6,7 +6,7 @@ import org.flymine.model.testmodel.*;
 
 public class QueryTest extends TestCase
 {
-    private Query query;
+    private Query query, q1, q2, q3;
 
     public QueryTest(String arg) {
         super(arg);
@@ -15,6 +15,40 @@ public class QueryTest extends TestCase
     public final void setUp() {
         query = new Query();
         assertNotNull("Problem creating Query instance", query);
+
+        // set up three queries for testing .equals() and .hashCode()
+        try {
+            QueryClass qc1 = new QueryClass(Company.class);
+            QueryField qf1 = new QueryField(qc1, "name");
+            QueryField qf2 = new QueryField(qc1, "vatNumber");
+            QueryFunction f1 = new QueryFunction();  // count(*)
+            QueryValue qv1 = new QueryValue("CompanyA");
+            SimpleConstraint sc1 = new SimpleConstraint(qf1, SimpleConstraint.NOT_EQUALS, qv1);
+
+            q1 = new Query();
+            q1.addToSelect(qc1);
+            q1.addToSelect(f1);
+            q1.setConstraint(sc1);
+            q1.addToGroupBy(qc1);
+            q1.addToOrderBy(qf1);
+
+            q2 = new Query();
+            q2.addToSelect(qc1);
+            q2.addToSelect(f1);
+            q2.setConstraint(sc1);
+            q2.addToGroupBy(qc1);
+            q2.addToOrderBy(qf1);
+
+            q3 = new Query();
+            q3.addToSelect(qc1);
+            q3.addToSelect(qc1);
+            q3.setConstraint(sc1);
+            q3.addToGroupBy(qc1);
+            q3.addToOrderBy(qf1);
+        }
+        catch (NoSuchFieldException e) {
+            fail("Problem occurred in setup: " + e.getMessage());
+        }
     }
 
     public  void testAddClass() {
@@ -104,4 +138,17 @@ public class QueryTest extends TestCase
         assertEquals("a2_", (String) query.getAliases().get(qf1));
         assertEquals("a3_", (String) query.getAliases().get(qf2));
     }
+
+    public void testEquals() throws Exception {
+        assertEquals(q1, q1);
+        assertEquals(q1, q2);
+        assertTrue("Expected q1 to not equal q3", !q1.equals(q3));
+    }
+
+    public void testHashCode() throws Exception {
+        assertEquals(q1.hashCode(), q1.hashCode());
+        assertEquals(q1.hashCode(), q2.hashCode());
+        assertTrue("Expected q1 hashcode not to equal q3 hashcode", q1.hashCode() != q3.hashCode());
+    }
+
 }
