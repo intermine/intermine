@@ -246,6 +246,7 @@
       <formatter type="xml" tofile="${results.checkstyle}/checkstyle_report.xml" />
       <fileset dir="${src.java}">
         <include name="**/*.java" />
+        <exclude name="**/codegen/*.java" />
       </fileset>
     </checkstyle>
 
