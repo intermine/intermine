@@ -56,10 +56,10 @@ public class OptimiserCache
      * A Map that holds a mapping from unoptimised query string (with LIMIT and OFFSET stripped off)
      * to a Set of OptimiserCacheLine objects.
      */
-    private Map cacheLines;
-    private TreeMap evictionQueue;
-    private int sequence = 0;
-    private int untilNextExpiration = EXPIRE_INTERVAL;
+    protected Map cacheLines;
+    protected TreeMap evictionQueue;
+    protected int sequence = 0;
+    protected int untilNextExpiration = EXPIRE_INTERVAL;
     
     /**
      * Private constructor for this object - should only be called by getInstance().
@@ -145,7 +145,7 @@ public class OptimiserCache
     /**
      * Removes expired entries from the OptimiserCache, by looking at the evictionQueue.
      */
-    private void expire() {
+    protected void expire() {
         if ((--untilNextExpiration) <= 0) {
             untilNextExpiration = EXPIRE_INTERVAL;
             while (cacheLines.size() > MAX_LINESETS) {
@@ -187,16 +187,29 @@ public class OptimiserCache
         }
     }
 
-    private static class DateAndSequence implements Comparable
+    /**
+     * Class representing a date, but with the added advantage that no two of these should compare
+     * equals if one is careful with the sequence.
+     */
+    protected static class DateAndSequence implements Comparable
     {
         private Date date;
         private int sequence;
 
+        /**
+         * Create a new instance.
+         *
+         * @param date a Date
+         * @param sequence an integer
+         */
         public DateAndSequence(Date date, int sequence) {
             this.date = date;
             this.sequence = sequence;
         }
 
+        /**
+         * @see Comparable#compareTo
+         */
         public int compareTo(Object o) {
             if (o instanceof DateAndSequence) {
                 DateAndSequence d = (DateAndSequence) o;
@@ -209,6 +222,11 @@ public class OptimiserCache
             throw new ClassCastException("Object is not an OptimiserCache.DateAndSequence");
         }
 
+        /**
+         * Getter for date.
+         *
+         * @return date
+         */
         public Date getDate() {
             return date;
         }
