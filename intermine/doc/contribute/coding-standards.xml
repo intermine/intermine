@@ -45,6 +45,9 @@ declared exceptions and runtime exceptions, and for invalid parameters
 <listitem>All JUnit tests should pass on code that is checked in to
 CVS</listitem>
 
+<listitem>All logging to be done via log4j. No output messages to be
+written to stout or sterr.</listitem>
+
 <listitem>All classes and interfaces to have JavaDoc comments at the
 start (including author tags) and for every method apart from getters
 and setters.</listitem>
