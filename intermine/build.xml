@@ -464,9 +464,7 @@
   </target>   
 
 
-  <!-- Distributing targets -->
-
-  <target name="dist" depends="compile-main"
+  <target name="jar" depends="prepare-dist, compile-main"
     description="Makes a JAR file of all the classes and configuration files">
     <jar destfile="${dist}/flymine.jar">
       <fileset dir="${build.java}" />
@@ -483,6 +481,16 @@
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
   </target>
+
+  <target name="release-jar" depends="jar"
+    description="releases the jar file to a release directory">
+    <copy todir="${release.serverlocation}">
+      <fileset dir="${dist}">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+  </target>
+
 
 
   <!-- Cleaning-up targets -->
