@@ -53,4 +53,14 @@ public class NotConstraint extends AbstractConstraint
     public int compare(AbstractConstraint obj) {
         return alterComparisonNotThis(con.compare(obj));
     }
+
+    /**
+     * Overrides Object.hashCode().
+     *
+     * @return an arbitrary integer based on the contents of the NotConstraint
+     */
+    public int hashCode() {
+        return -con.hashCode();
+    }
+
 }

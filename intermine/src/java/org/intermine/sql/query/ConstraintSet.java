@@ -112,4 +112,18 @@ public class ConstraintSet extends AbstractConstraint
         return currentComp;
     }
 
+    /**
+     * Overrides Object.hashCode().
+     *
+     * @return an arbitrary integer based on the contents of the Constraint
+     */
+    public int hashCode() {
+        int retval = 0;
+        Iterator consIter = cons.iterator();
+        while (consIter.hasNext()) {
+            AbstractConstraint con = (AbstractConstraint) consIter.next();
+            retval += con.hashCode();
+        }
+        return retval; 
+    }
 }

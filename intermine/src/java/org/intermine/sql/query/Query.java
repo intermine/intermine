@@ -261,4 +261,33 @@ public class Query
         }
         return retval;
     }
+
+    /**
+     * Overrides Object.equals().
+     *
+     * @param obj an Object to compare to
+     * @return true if the object is equivalent
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof Query) {
+            Query q = (Query) obj;
+            return select.equals(q.select) && from.equals(q.from) && where.equals(q.where)
+                && groupBy.equals(q.groupBy) && having.equals(q.having) && orderBy.equals(q.orderBy)
+                && (limit == q.limit) && (offset == q.limit) && (explain == q.explain)
+                && (distinct == q.distinct);
+        }
+        return false;
+    }
+
+    /**
+     * Overrides Object.hashCode().
+     *
+     * @return an arbitrary integer created from the contents of the Query
+     */
+    public int hashCode() {
+        return (3 * select.hashCode()) + (5 * from.hashCode())
+            + (7 * where.hashCode()) + (11 * groupBy.hashCode())
+            + (13 * having.hashCode()) + (17 * orderBy.hashCode()) + (19 * limit) + (23 * offset)
+            + (explain ? 29 : 0) + (distinct ? 31 : 0);
+    }
 }

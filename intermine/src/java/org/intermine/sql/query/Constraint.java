@@ -193,4 +193,14 @@ public class Constraint extends AbstractConstraint
         // TODO: we shouldn't ever reach this bit of the code. Log?
         return INDEPENDENT;
     }
+
+    /**
+     * Overrides Object.hashCode().
+     *
+     * @return an arbitrary integer based on the contents of the Constraint
+     */
+    public int hashCode() {
+        return (3 * left.hashCode()) + (5 * operation) 
+            + ((operation == EQ ? 3 : 7) * right.hashCode());
+    }
 }

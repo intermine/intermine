@@ -74,6 +74,27 @@ public abstract class AbstractConstraint
     public abstract int compare(AbstractConstraint obj);
 
     /**
+     * Overrides Object.equals();
+     *
+     * @param obj the Object to compare to
+     * @return true if obj is the same
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof AbstractConstraint) {
+            AbstractConstraint objC = (AbstractConstraint) obj;
+            return (compare(objC) == EQUAL);
+        }
+        return false;
+    }
+
+    /**
+     * Overrides Object.hashcode();
+     *
+     * @return an arbitrary integer based on the contents of the AbstractConstraint
+     */
+    public abstract int hashCode();
+    
+    /**
      * Take an integer as if it is a value returned by compare, and return the value that compare
      * would have returned if first constraint (this) had been NOTed.
      * For example, if one passes in the value EQUAL, this method will return OPPOSITE.
