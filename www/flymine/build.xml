@@ -101,7 +101,7 @@
   <ant dir="../../intermine" target="build-webapp" inheritRefs="true"/>
 
   <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
-  <ant dir="../../flymine" target="create-production-model" inheritRefs="true"/>
+  <ant dir="../../flymine" target="compile-genomic-model" inheritRefs="true"/>
   <ant dir="../../flymine" target="jar-genomic" inheritRefs="true"/>
   <ant dir="../../flymine" target="build-production-webapp" inheritRefs="true"/>
   <ant dir="../../flymine" target="remove-webapp" inheritRefs="true"/>
