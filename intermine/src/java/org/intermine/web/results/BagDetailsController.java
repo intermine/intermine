@@ -61,7 +61,8 @@ public class BagDetailsController extends TilesAction
         }
 
         request.setAttribute("bagName", bagName);
-        session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(bagName, bag));
+        session.setAttribute(Constants.RESULTS_TABLE,
+                             new PagedCollection(bagName, bag, Object.class));
 
         return null;
     }
