@@ -218,9 +218,9 @@ public class XmlMetaData
 
 
     private void processContentModelGroup(ContentModelGroup cmGroup) throws Exception {
-        Enumeration enum = cmGroup.enumerate();
-        while (enum.hasMoreElements()) {
-            Structure struct = (Structure) enum.nextElement();
+        Enumeration cmGroupEnum = cmGroup.enumerate();
+        while (cmGroupEnum.hasMoreElements()) {
+            Structure struct = (Structure) cmGroupEnum.nextElement();
             switch (struct.getStructureType()) {
             case Structure.ELEMENT:
                 LOG.debug("process element");
@@ -257,9 +257,9 @@ public class XmlMetaData
         while (iter.hasNext()) {
             Key key = (Key) iter.next();
             String path = paths.peek() + "/" + key.getSelector().getXPath();
-            Enumeration enum = key.getFields();
-            String field = ((IdentityField) enum.nextElement()).getXPath();
-            if (enum.hasMoreElements()) {
+            Enumeration keyFieldEnum = key.getFields();
+            String field = ((IdentityField) keyFieldEnum.nextElement()).getXPath();
+            if (keyFieldEnum.hasMoreElements()) {
                 throw new Exception("Unable to deal with Keys on more than one field");
             }
             if (field.startsWith("@")) {
@@ -273,9 +273,9 @@ public class XmlMetaData
         while (iter.hasNext()) {
             KeyRef keyref = (KeyRef) iter.next();
             String path = paths.peek() + "/" + keyref.getSelector().getXPath();
-            Enumeration enum = keyref.getFields();
-            String field = ((IdentityField) enum.nextElement()).getXPath();
-            if (enum.hasMoreElements()) {
+            Enumeration keyrefEnum = keyref.getFields();
+            String field = ((IdentityField) keyrefEnum.nextElement()).getXPath();
+            if (keyrefEnum.hasMoreElements()) {
                 throw new Exception("Unable to deal with KeyRefs on more than one field");
             }
             if (field.startsWith("@")) {

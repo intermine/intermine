@@ -372,9 +372,9 @@ public class XmlSchemaParser implements ModelParser
             return;
         }
 
-        Enumeration enum = complexType.getAttributeDecls();
-        while (enum.hasMoreElements()) {
-            AttributeDecl attribute = (AttributeDecl) enum.nextElement();
+        Enumeration declEnum = complexType.getAttributeDecls();
+        while (declEnum.hasMoreElements()) {
+            AttributeDecl attribute = (AttributeDecl) declEnum.nextElement();
             String clsName = (String) clsStack.peek();
             LOG.debug("creating atd (" + attribute.getName() + ","
                       + attribute.getSimpleType().getName() + ")" + " for class: " + clsName);
@@ -399,9 +399,9 @@ public class XmlSchemaParser implements ModelParser
 
         String clsName = (String) clsStack.peek();
 
-        Enumeration enum = cmGroup.enumerate();
-        while (enum.hasMoreElements()) {
-            Structure struct = (Structure) enum.nextElement();
+        Enumeration cmGroupEnum = cmGroup.enumerate();
+        while (cmGroupEnum.hasMoreElements()) {
+            Structure struct = (Structure) cmGroupEnum.nextElement();
             switch (struct.getStructureType()) {
             case Structure.ELEMENT:
                 ElementDecl eDecl = (ElementDecl) struct;
