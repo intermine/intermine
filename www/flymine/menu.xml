@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu>
+    <item url="http://www.flymine.org/query/" title="Query"/>
+
+    <item url="/doc/index.xml" title="Documentation">
+        <item url="/doc/presentations/index.xml" title="Presentations"/>
+        <item url="/doc/usage_scenarios/index.xml" title="Usage scenarios"/>
+        <item url="/doc/ontology_merging/index.xml" title="Ontology Merging"/>
+        <item url="http://www.flymine.org/api/" title="API&#160;JavaDoc"/>
+    </item>
+
+    <item url="/download/index.xml" title="Download&#160;software">
+        <item url="http://download.flymine.org/releases/" title="Latest&#160;release"/>
+        <item url="http://download.flymine.org/nightly/" title="Nightly&#160;build"/>
+        <item url="http://cvs.flymine.org/" title="Browse CVS"/>
+    </item>
+
+    <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
+
+    <item url="/project/index.xml" title="Project">
+        <item url="/project/team.xml" title="Team"/>
+        <item url="/project/funding.xml" title="Funding"/>
+        <item url="/project/jobs.xml" title="Jobs"/>
+    </item>
+
+    <item url="/contact/index.xml" title="Contact"/>
+
+    <item url="/internal/index.xml" title="Internal"/>
+</menu>
+

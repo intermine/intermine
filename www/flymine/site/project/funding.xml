@@ -25,22 +25,22 @@ One developer post is supported by The Cambridge-MIT Institute.
         <row>
 	  <entry>
 	    <ulink url="http://www.wellcome.ac.uk">
-	      <inlinegraphic fileref="/images/wellcome_large.gif" format="GIF"/>
+	      <inlinegraphic fileref="../images/wellcome_large.gif" format="GIF"/>
 	    </ulink>
 	  </entry>
 	  <entry>
 	    <ulink url="http://www.bbsrc.ac.uk">
-	      <inlinegraphic fileref="/images/bbsrc.gif" format="GIF"/>
+	      <inlinegraphic fileref="../images/bbsrc.gif" format="GIF"/>
 	    </ulink>
 	  </entry>
 	  <entry>
 	    <ulink url="http://www.trin.cam.ac.uk">
-	      <inlinegraphic fileref="/images/trinity.gif" format="GIF"/>
+	      <inlinegraphic fileref="../images/trinity.gif" format="GIF"/>
 	    </ulink>
 	  </entry>
 	  <entry>
 	    <ulink url="http://www.cambridge-mit.org">
-	      <inlinegraphic fileref="/images/cmi.gif" format="GIF"/>
+	      <inlinegraphic fileref="../images/cmi.gif" format="GIF"/>
 	    </ulink>
 	  </entry>
 	</row>

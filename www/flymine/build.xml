@@ -1,0 +1,94 @@
+<project name="flymine-www" default="www-flymine" basedir=".">
+    <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+
+    <property file="${build.properties.local}"/>
+    <property name="src.www" location="site"/>
+    <property name="src.doc" location="../../flymine/doc"/>
+    <property name="src.internal" location="../../flymine-private/doc"/>
+    <property name="build.www" location="build"/>
+    <property name="dist.www" location="dist"/>
+    <property name="www.location" value="/tests/FlyMine/f"/> <!-- TO BE REMOVED !!! -->
+
+  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
+
+<target name="prepare">
+    <copy todir="${build.www}">
+        <fileset dir="${src.www}">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${build.www}/doc">
+        <fileset dir="${src.doc}">
+            <exclude name="/index.xml"/>
+            <include name="**/*"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${build.www}/internal">
+        <fileset dir="${src.internal}">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${dist.www}/style/">
+        <fileset dir="${build.www}/style/">
+           <include name="*"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${dist.www}/images/">
+        <fileset dir="${build.www}/images/">
+           <include name="*"/>
+        </fileset>
+    </copy>
+
+    <copy todir="${dist.www}/doc/">
+        <fileset dir="${build.www}/doc/">
+            <include name="**/*.pdf"/>
+            <include name="**/*.sxi"/>
+            <include name="**/*.png"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.zargo"/>
+        </fileset>
+     </copy>
+
+</target>
+
+<target name="www-flymine" depends="prepare"> 
+    <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
+        style="../main.xsl" includes="**/*.xml" force="false">
+        <param name="branding" expression="flymine" />
+        <param name="basedir" expression="${www.location}" />
+        <param name="outputext" expression="html" />
+        <param name="file" expression="systemId()" />
+        <param name="sourceref" expression="${build.www}" />
+        <factory>
+            <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
+        </factory>
+    </style>
+</target>
+
+<target name="release-www" depends="www-flymine"
+    description="releases the static website to the webserver">
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <chmod perm="a+rx" type="dir">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz --exclude api --delete ${dist.www}/ ${www.serverlocation}/" />
+    </exec>
+</target>
+
+<target name="clean">
+    <delete dir="${build.www}"/>
+    <delete dir="${dist.www}"/>
+</target>
+
+</project>

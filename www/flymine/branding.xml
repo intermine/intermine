@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<brand>
+    <title>FlyMine</title>
+    <stylesheet file="style/flymine2.css"/>
+    <meta name="keywords" content="microarray, bioinformatics, drosophila, genomics, OQL, integration, query optimiser"/>
+    <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics"/>
+    <headline>An integrated database for <span class="fly">Drosophila</span> and <span class="fly">Anopheles</span> genomics</headline>
+    <funding>FlyMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>.</funding>
+</brand>
