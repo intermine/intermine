@@ -5,18 +5,15 @@
 <tiles:importAttribute/>
 
 <!-- objectSummary.jsp -->
+<html:link action="/objectDetails?id=${object.id}">
+  <font class="resultsCellTitle">
+    <c:forEach var="cld" items="${leafClds}">
+      <c:out value="${cld.unqualifiedName}"/>
+    </c:forEach>
+  </font>
+</html:link>
+<br/>
 <table>
-  <tr>
-    <td>
-      <html:link action="/objectDetails?id=${object.id}">
-        <font class="resultsCellTitle">
-          <c:forEach var="cld" items="${leafClds}">
-            <c:out value="${cld.unqualifiedName}"/>
-          </c:forEach>
-        </font>
-      </html:link>
-    </td>
-  </tr>
   <tr>
     <c:forEach var="cld" items="${leafClds}">
       <td valign="top">
