@@ -1225,7 +1225,8 @@ public class MapResultSet implements ResultSet
         } else if (row.containsKey(s.toLowerCase())) {
             retval = row.get(s.toLowerCase());
         } else {
-            throw new SQLException("Column " + s + " not found");
+            throw new SQLException("Column " + s + " not found - present values are "
+                    + row.keySet());
         }
         lastGetWasNull = (retval == null);
         return retval;
