@@ -86,21 +86,21 @@ OSW 4		        The state of the ObjectStore during a transaction (1 minute)
 OSW 4		        Ending (and flushing caches) (2 minutes)
 		Inserting the data: (23 minutes - 105 minutes so far)
 		    Models, ontologies, and OWL (7 minutes)
-		        Ontologies - basically big models, but useful for biology, and make use of multiple inheritance (2 minutes)
-		        OWL as a format for describing models (3 minutes)
-		        Merging models (2 minutes)
+DL 1, 2, 3		        OWL as a format for describing models (3 minutes)
+DL 4, 5		        Merging models (2 minutes)
+		    Data transformations and why a simple pipe won't work (12 minutes)
+DL 6		        Three steps needed.
+DL 7		        DBConverter stage: must transform M:N collections into ReferenceLists (searching in the source) (2 minutes)
+DL 8		        DataTranslator stage: must follow references in the source to attach attributes to the correct object, also may generate new objects which must be kept in memory until the end, so that they can be searched like the source (3 minutes)
+DL 9		        DataLoader stage: must be able to search in the source to build object graphs, and search in the destination to find equivalent objects
+DL 10		            Searching in the source to build an object graph, using the ObjectStoreTranslatingImpl (2 minutes)
+		            Searching in the destination for any equivalent objects (2 minutes)
+		            Merging together equivalent objects using information from the data tracker, and data source priorities (3 minutes)
 		    Relationship types (4 minutes)
 		        1:1 - must be consistent
 		        1:N - can be ignored by the data loader, as it is never unidirectional
 		        N:1 - very simple - could be unidirectional
 		        M:N - handled by indirection table
-		    Data transformations and why a simple pipe won't work (12 minutes)
-		        DBConverter stage: must transform M:N collections into ReferenceLists (searching in the source) (2 minutes)
-		        DataTranslator stage: must follow references in the source to attach attributes to the correct object, also may generate new objects which must be kept in memory until the end, so that they can be searched like the source (3 minutes)
-		        DataLoader stage: must be able to search in the source to build object graphs, and search in the destination to find equivalent objects
-		            Searching in the source to build an object graph, using the ObjectStoreTranslatingImpl (2 minutes)
-		            Searching in the destination for any equivalent objects (2 minutes)
-		            Merging together equivalent objects using information from the data tracker, and data source priorities (3 minutes)
 		QueryOptimiser (15 minutes - 120 minutes so far)
 		
 		
