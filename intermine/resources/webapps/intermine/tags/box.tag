@@ -15,7 +15,11 @@
     <tr>
       <th class="title" align="left">
         ${title}
+      </th>
       <th class="help" align="right" nowrap="nowrap">
+        <c:if test="${empty helpUrl}">
+          &nbsp;
+        </c:if>
         <c:if test="${!empty helpUrl}">
           [<html:link href="${helpUrl}">
             <fmt:message key="begin.link.help"/>
