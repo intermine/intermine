@@ -81,9 +81,11 @@
 	<itemizedlist>
 		<listitem>Firstly, get a full list of all the object classes involved in the FROM item.
 			ClassDescriptor.getExtentClasses() provides a list of all subclasses/implementations - add the current class to produce the required list.</listitem>
-		<listitem>Iterate through this list, finding the field names of the class.
-			<itemizedlist>
-				<listitem>Add these field names to a Set (allFieldNames).
+		<listitem>Iterate through this list.
+            If the class is an interface (checked with ClassDescriptor.isInterface()), then throw it away and go on to the next class.
+            <itemizedlist>
+				<listitem>Find all the field names of the class.
+                    Add these field names to a Set (allFieldNames).
 					This Set will contain all the field names that need to be included in the SELECT list.
 					One could at this stage put allFieldNames into a instance-global Map (classToFieldNames) with the current ClassDescriptor as the lookup key, so that the code that creates the SELECT list of the main query can use it.</listitem>
 				<listitem>Also find the table name for the class.
