@@ -508,7 +508,9 @@ AT_SIGN: '@';
 OPEN_PAREN: '(';
 CLOSE_PAREN: ')';
 PLUS: '+';
-MINUS: '-';
+MINUS: ( '-' ( '0'..'9' )+ '.' '0'..'9' )=> '-' ( '0'..'9' )+ '.' ( '0'..'9' )+ {_ttype = FLOAT; }
+        | ( '-' '0'..'9' )=> '-' ( '0'..'9' )+ {_ttype = INTEGER; }
+        | '-';
 DIVIDE: '/';
 PERCENT: '%';
 VERTBAR: '|';

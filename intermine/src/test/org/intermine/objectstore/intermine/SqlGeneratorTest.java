@@ -219,9 +219,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/largeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);
         results2.put("LargeBagConstraint", Collections.singleton("Employee"));
-
-        results2.put("LargeBagConstraintUsingTable", Collections.singleton("Employee"));
         results.put("LargeBagConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
+        results2.put("LargeBagConstraintUsingTable", Collections.singleton("Employee"));
+        results.put("NegativeNumbers", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > -51 ORDER BY a1_.id");
+        results2.put("NegativeNumbers", Collections.singleton("Employee"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
