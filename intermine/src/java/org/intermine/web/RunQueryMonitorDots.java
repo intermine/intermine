@@ -30,7 +30,9 @@ public class RunQueryMonitorDots implements RunQueryMonitor
     protected Writer writer;
     
     /**
-     * Construct a new instanceof 
+     * Construct a new instance of RunQueryMonitorDots.
+     *
+     * @param writer the http response output stream writer 
      */
     public RunQueryMonitorDots(Writer writer) {
         this.writer = writer;
@@ -67,6 +69,7 @@ public class RunQueryMonitorDots implements RunQueryMonitor
      * Forward the client to another URL.
      *
      * @param url the URL to forward to
+     * @throws IOException if writing to the response stream fails
      */
     public void forwardClient(String url) throws IOException {
         writer.write("<script language=\"JavaScript\">document.location=\"" + url + "\"</script>");
