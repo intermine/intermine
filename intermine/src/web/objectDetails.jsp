@@ -221,12 +221,13 @@ Summary for selected
 </tr>
 </table>
 
-
-<c:if test="${RESULTS_TABLE != null && RESULTS_TABLE.size > 0}">
-  <html:link action="/changeResults?method=reset">
-    <fmt:message key="results.return"/>
-  </html:link>
-</c:if>
+<div class="body">
+  <c:if test="${RESULTS_TABLE != null && RESULTS_TABLE.size > 0}">
+    <html:link action="/changeResults?method=reset">
+      <fmt:message key="results.return"/>
+    </html:link>
+  </c:if>
+</div>
 
 </im:box>
 
