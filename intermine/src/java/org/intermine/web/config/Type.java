@@ -21,7 +21,9 @@ import java.util.List;
  */
 public class Type
 {
-    private String name;
+    // if fieldName is null it's ignored and the webapp will use 
+    private String fieldName;
+    private String className;
     private List shortDisplayers = new ArrayList();
     private List longDisplayers = new ArrayList();
 
@@ -30,17 +32,35 @@ public class Type
      *
      * @param name the name of the Type
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setClassName(String name) {
+        this.className = className;
     }
 
     /**
-     * Get the name
+     * Get the class name
      *
      * @return the name
      */
-    public String getName() {
-        return this.name;
+    public String getClassName() {
+        return this.className;
+    }
+
+    /**
+     * Set the field name
+     *
+     * @param name the field name of the Type
+     */
+    public void setFieldName(String name) {
+        this.fieldName = fieldName;
+    }
+
+    /**
+     * Get the field name
+     *
+     * @return the field name
+     */
+    public String getFieldName() {
+        return this.fieldName;
     }
 
     /**
@@ -110,7 +130,11 @@ public class Type
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<class name=\"" + name + "\">");
+        sb.append("<class name=\"" + className + "\"");
+        if (fieldName != null) {
+            sb.append(" fieldName=\"" + fieldName + "\"");
+        }
+        sb.append(">");
         sb.append("<shortdisplayers>");
         Iterator iter = shortDisplayers.iterator();
         while (iter.hasNext()) {
