@@ -55,6 +55,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         references.put("InsertionSite", "genes");
         references.put("Intron", "transcripts");
         // release 4.0 gff3 is inconsistent with parents of RNAs
+        // Gene.transcripts collection set in post-processing
         //references.put("MRNA", "gene");
         //references.put("NcRNA", "gene");
         //references.put("SnRNA", "gene");
@@ -106,10 +107,10 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
             // if no name set for gene then use CGxx (FlyBase symbol rules)
             if (feature.getAttribute("name") == null) {
-                // TODO create additional synonym with type "name"??
                 feature.setAttribute("name", feature.getAttribute("identifier").getValue());
+                addItem(createSynonym(feature, "name", feature.getAttribute("name").getValue(),
+                                      "FlyBase"));
             }
-
         }
 
         // release 4.0 GFF3 is incorrect for some insertion_sites - have Parent reference
@@ -170,6 +171,12 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
                     gene.setAttribute("organismDbId", organismDbId);
                     addItem(gene);
                     feature.setReference("gene", gene.getIdentifier());
+
+                    // add SimpleRelation between ?RNA and Gene
+                    Item simpleRelation = getItemFactory().makeItem(null, tgtNs + "SimpleRelation", "");
+                    simpleRelation.setReference("object", gene.getIdentifier());
+                    simpleRelation.setReference("subject", feature.getIdentifier());
+                    addItem(simpleRelation);
                 }
                 addItem(createSynonym(gene, "identifier", organismDbId, "FlyBase"));
 
