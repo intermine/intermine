@@ -98,8 +98,8 @@ public class XmlMetaData
 
         buildRefsMap(schema);
         filterReferenceElements();
-        LOG.info("clsNameMap: " + clsNameMap);
-        LOG.info(toString());
+        LOG.debug("clsNameMap: " + clsNameMap);
+        LOG.debug(toString());
     }
 
     /**
@@ -121,8 +121,8 @@ public class XmlMetaData
 
         buildRefsMap(schema);
         filterReferenceElements();
-        LOG.info("clsNameMap: " + clsNameMap);
-        LOG.info(toString());
+        LOG.debug("clsNameMap: " + clsNameMap);
+        LOG.debug(toString());
     }
 
     /**
