@@ -20,13 +20,11 @@ import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.presentation.DisplayClassDescriptor;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.query.presentation.QueryCreator;
-
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -57,14 +55,7 @@ public class QueryAction extends LookupDispatchAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
-        // Extract attributes we will need
-        MessageResources messages = getResources(request);
         HttpSession session = request.getSession();
-
-        QueryForm queryForm = (QueryForm) form;
-        ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld"))
-            .getClassDescriptor();
 
         Query query = (Query) session.getAttribute("query");
         if (query == null) {
@@ -72,12 +63,15 @@ public class QueryAction extends LookupDispatchAction
         }
 
         QueryCreator qc = new QueryCreator(query);
+        ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld"))
+            .getClassDescriptor();
+        QueryForm queryForm = (QueryForm) form;
         qc.generateConstraints(cld.getName(), queryForm.getFields());
         session.setAttribute("query", query);
+        session.removeAttribute("cld");
 
         return (mapping.findForward("buildquery"));
     }
-
 
     /**
      * Distributes the actions to the necessary methods, by providing a Map from action to
@@ -91,6 +85,5 @@ public class QueryAction extends LookupDispatchAction
         map.put("button.view", "view");
         return map;
     }
-
 }
 
