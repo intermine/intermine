@@ -499,6 +499,8 @@
     <delete dir="${build.src.test}"/>
     <delete dir="${build.resources}"/>
     <delete dir="${build.schema}"/>
+    <delete file="velocity.log" />
+    <delete file="${build}/flymine.log" />
     <antcall target="prepare" />
   </target>
   

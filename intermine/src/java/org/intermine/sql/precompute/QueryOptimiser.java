@@ -1,5 +1,6 @@
 package org.flymine.sql.precompute;
 
+import org.apache.log4j.Logger;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.Query;
 import org.flymine.sql.query.AbstractTable;
@@ -40,6 +41,8 @@ import java.sql.SQLException;
  */
 public class QueryOptimiser
 {
+    protected static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
+
     private static final String ALIAS_PREFIX = "P";
 
     /**
@@ -60,8 +63,8 @@ public class QueryOptimiser
         String cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
                 limitOffsetQuery.getOffset());
         if (cachedQuery != null) {
-            //System//.out.println("Optimising query took " + ((new Date()).getTime() - start)
-            //        + " ms - cache hit: " + query);
+            LOG.info("Optimising query took " + ((new Date()).getTime() - start)
+                    + " ms - cache hit: " + query);
             return cachedQuery;
         }
         try {
@@ -93,18 +96,17 @@ public class QueryOptimiser
             LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
             cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
                     limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
-            //System//.out.println("Optimising " + expectedTime + " ms query took "
-            //        + ((new Date()).getTime() - start)
-            //        + (parseTime == 0 ? " ms without parsing " : " ms including "
-            //            + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
+            LOG.info("Optimising " + expectedTime + " ms query took "
+                    + ((new Date()).getTime() - start)
+                    + (parseTime == 0 ? " ms without parsing " : " ms including "
+                        + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
             return optimisedQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
-            //System//.out.println("Exception: " + e.toString());
-            //e.printStackTrace(System//.out);
+            LOG.info("Exception: " + e.toString());
         }
-        //System//.out.println("Optimising query took " + ((new Date()).getTime() - start)
-        //        + " ms - unparsable query: " + query);
+        LOG.info("Optimising query took " + ((new Date()).getTime() - start)
+                + " ms - unparsable query: " + query);
         return query;
     }
 
