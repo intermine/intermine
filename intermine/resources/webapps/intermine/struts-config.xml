@@ -155,13 +155,13 @@
     <action path="/modifyQueryChange"
             type="org.intermine.web.ModifyQueryChangeAction"
             parameter="method">
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <action path="/loadExampleQuery"
             type="org.intermine.web.LoadQueryAction"
             parameter="method">
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
     <action path="/confirm"
@@ -290,7 +290,7 @@
             name="modifyQueryForm"
             parameter="action"
             input="history">
-      <forward name="history" path="history.page"/>
+      <forward name="history" path="/history.do" redirect="true"/>
     </action>
     
     <action path="/modifyBag"
@@ -298,7 +298,7 @@
             name="modifyBagForm"
             parameter="action"
             input="history">
-      <forward name="history" path="history.page"/>
+      <forward name="history" path="/history.do" redirect="true"/>
     </action>
 
     <action path="/changeResultsSize"
@@ -356,7 +356,7 @@
             input="login"
             parameter="action">
       <forward name="login" path="login.page"/>
-      <forward name="history" path="history.page"/>
+      <forward name="history" path="/history.do" redirect="true"/>
     </action>
 
     <action path="/requestPasswordAction"
