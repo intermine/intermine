@@ -54,6 +54,10 @@ form {
   font-size: 12px;
 }
 
+.boxbody {
+  background-color: white;
+}
+
 .box .buildmenu .body {
   /*padding: 4px;
   margin: 3px;*/
