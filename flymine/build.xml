@@ -507,6 +507,35 @@
 
   <!-- Production build targets (currently uses testmodel) -->
 
+  <target name="load-production" depends="build-db-production,create-indexes-production,load-ensembl-drosophila,load-ensembl-anopheles"/>
+
+  <!-- Load data from chado-items into chado-test -->
+  <target name="load-chado" depends="prepare-build-model">
+    <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado"/>
+  </target>
+
+  <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
+  <target name="load-ensembl-anopheles" depends="prepare-build-model">
+    <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-anoph integrationWriter="integration.production" source="os.anoph-translated" sourceName="ensembl"/>
+  </target>
+
+  <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
+  <target name="load-ensembl-drosophila" depends="prepare-build-model">
+    <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-dros integrationWriter="integration.production" source="os.ensembl-dros-translated" sourceName="ensembl"/>
+  </target>
+
   <!-- convert chado zargo to FlyMine model -->
   <target name="convert-chado" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
@@ -532,7 +561,7 @@
   </target>
 
   <!-- Load data from chado-items into chado-test -->
-  <target name="load-chado" depends="prepare-build-model, convert-chado">
+  <target name="load-chado-test" depends="prepare-build-model, convert-chado">
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -551,7 +580,7 @@
   </target>
 
   <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
-  <target name="load-ensembl-anopheles" depends="prepare-build-model, build-db-anoph-test, create-indexes-anoph-test">
+  <target name="load-ensembl-anopheles-test" depends="prepare-build-model, build-db-anoph-test, create-indexes-anoph-test">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -560,12 +589,30 @@
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
-  <target name="load-ensembl-drosophila" depends="prepare-build-model, build-db-dros-test, create-indexes-dros-test">
+  <target name="load-ensembl-drosophila-test" depends="prepare-build-model, build-db-dros-test, create-indexes-dros-test">
     <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
     <load-dros integrationWriter="integration.ensembl-dros-test" source="os.ensembl-dros-translated" sourceName="ensembl"/>
+  </target>
+
+  <!-- Build flymine database to hold production data -->
+  <target name="build-db-production" depends="create-genomic-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.production"/>
+    </ant>
+  </target>
+
+  <target name="create-indexes-production" depends="build-db-production">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-production"/>
+    </ant>
   </target>
 
   <!-- Build temporary flymine database to hold ensembl anopheles data -->
