@@ -25,7 +25,7 @@
   </c:if>
   <span class="menu-item">
     <html:link action="/examples.do">
-      <fmt:message key="menu.templates"/>
+      <fmt:message key="menu.examples"/>
     </html:link>
   </span>
   <span class="menu-item">
