@@ -30,6 +30,7 @@ import org.intermine.util.TypeUtil;
  */
 public class DisplayObject
 {
+    InterMineObject object;
     int id;
     Set clds;
     Map identifiers = new HashMap();
@@ -39,17 +40,18 @@ public class DisplayObject
     
     /**
      * Constructor
-     * @param o the object to display
+     * @param object the object to display
      * @param model the metadata for the object
      * @throws Exception if an error occurs
      */
-    public DisplayObject(InterMineObject o, Model model) throws Exception {
-        id = o.getId().intValue();
-        clds = ObjectViewController.getLeafClds(o.getClass(), model);
-        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, o.getClass()).iterator();
+    public DisplayObject(InterMineObject object, Model model) throws Exception {
+        this.object = object;
+        id = object.getId().intValue();
+        clds = ObjectViewController.getLeafClds(object.getClass(), model);
+        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
              i.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
-            Object fieldValue = TypeUtil.getFieldValue(o, fd.getName());
+            Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
             if (fieldValue != null) {
                 if (fd.isAttribute() && !fd.getName().equals("id")) {
                     identifiers.put(fd.getName(), fieldValue);
@@ -64,7 +66,7 @@ public class DisplayObject
             ClassDescriptor cld = (ClassDescriptor) i.next();
             for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) j.next();
-                Object fieldValue = TypeUtil.getFieldValue(o, fd.getName());
+                Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                 if (fieldValue != null) {
                     if (fd.isAttribute() && !fd.getName().equals("id")) {
                         attributes.put(fd.getName(), fieldValue);
@@ -83,6 +85,14 @@ public class DisplayObject
                 }
             }
         }
+    }
+    
+    /**
+     * Get the real business object
+     * @return the object
+     */
+    public InterMineObject getObject() {
+        return object;
     }
     
     /**

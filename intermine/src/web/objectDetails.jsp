@@ -11,7 +11,7 @@ Details for
 </c:forEach>
 object<br/><br/>
 
-Identifiers<br/>
+Identifiers:<br/>
 <table style="padding-left: 20px" cellspacing="10">
   <c:forEach items="${object.identifiers}" var="entry">
     <tr>
@@ -23,7 +23,7 @@ Identifiers<br/>
 
 <br/>
 
-Attributes<br/>
+Attributes:<br/>
 <table style="padding-left: 20px" cellspacing="10">
   <c:forEach items="${object.attributes}" var="entry">
     <tr>
@@ -35,7 +35,7 @@ Attributes<br/>
 <br/>
 
 <c:if test="${!empty object.references}">
-  References<br/>
+  References:<br/>
   <table style="padding-left: 20px" cellspacing="10">
     <c:forEach items="${object.references}" var="entry">
       <tr>
@@ -74,7 +74,7 @@ Attributes<br/>
 </c:if>
 
 <c:if test="${!empty object.collections}">
-  Collections<br/>
+  Collections:<br/>
   <table style="padding-left: 20px" cellspacing="10">
     <c:forEach items="${object.collections}" var="entry">
       <c:set var="collection" value="${entry.value}"/>
@@ -118,6 +118,19 @@ Attributes<br/>
   </table>
   <br/>
 </c:if>
+
+<c:forEach items="${object.clds}" var="cld">
+  <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
+    ${cld.unqualifiedName} displayers:<br/>
+    <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
+      <c:set var="object_bak" value="${object}"/>
+      <c:set var="object" value="${object.object}" scope="request"/>
+      <tiles:insert beanName="displayer" beanProperty="src"/><br/>
+      <c:set var="object" value="${object_bak}"/>
+    </c:forEach>
+  </c:if>
+</c:forEach>
+<br/>
 
 <html:link action="/changeResults?method=reset">
   <fmt:message key="results.return"/>
