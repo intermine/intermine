@@ -15,4 +15,25 @@
       <displayer src="/model/organism.jsp"/>
     </longdisplayers>
   </class>
+  <class name="org.flymine.model.genomic.Gene">
+    <shortdisplayers>
+      <displayer src="/oneField.jsp">
+        <param name="field" value="uniquename"/>
+      </displayer>
+      <displayer src="/oneField.jsp">
+        <param name="field" value="name"/>
+      </displayer>
+    </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/oneField.jsp">
+        <param name="field" value="uniquename"/>
+      </displayer>
+      <displayer src="/oneField.jsp">
+        <param name="field" value="name"/>
+      </displayer>
+      <displayer src="/oneField.jsp">
+        <param name="field" value="seqlen"/>
+      </displayer>
+    </longdisplayers>
+  </class>
 </webconfig>
