@@ -43,7 +43,7 @@ import org.flymine.objectstore.webservice.ser.SerializationUtil;
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class ObjectStoreClient extends ObjectStoreAbstractImpl implements ObjectStore
+public class ObjectStoreClient extends ObjectStoreAbstractImpl
 {
     protected static Map instances = new HashMap();
     protected Call call;

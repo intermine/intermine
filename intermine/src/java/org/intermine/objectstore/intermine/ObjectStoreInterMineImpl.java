@@ -50,7 +50,7 @@ import org.apache.log4j.Logger;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements ObjectStore
+public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
 {
     protected static final Logger LOG = Logger.getLogger(ObjectStoreFlyMineImpl.class);
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
