@@ -16,25 +16,25 @@ public class ConstraintTest extends TestCase
         v2 = new Constant("2");
         v3 = new Constant("'Flibble'");
         v4 = new Constant("'Flobble'");
-        a = new Constant("a");
+        a = new Field("a", new Table("table1"));
         c1 = new Constraint(a, Constraint.EQ, v1);
         c2 = new Constraint(a, Constraint.EQ, v2);
         c3 = new Constraint(a, Constraint.LT, v1);
         c4 = new Constraint(a, Constraint.LT, v2);
         c5 = new Constraint(v1, Constraint.LT, a);
         c6 = new Constraint(v3, Constraint.EQ, v4);
-	c7 = new Constraint(a, Constraint.LIKE, v3);
-	c8 = new Constraint(a, Constraint.LIKE, v4);
+        c7 = new Constraint(a, Constraint.LIKE, v3);
+        c8 = new Constraint(a, Constraint.LIKE, v4);
     }
 
     public void testGetSQLString() throws Exception {
-        assertEquals("a = 1", c1.getSQLString());
-        assertEquals("a = 2", c2.getSQLString());
-        assertEquals("a < 1", c3.getSQLString());
-        assertEquals("a < 2", c4.getSQLString());
-        assertEquals("1 < a", c5.getSQLString());
+        assertEquals("table1.a = 1", c1.getSQLString());
+        assertEquals("table1.a = 2", c2.getSQLString());
+        assertEquals("table1.a < 1", c3.getSQLString());
+        assertEquals("table1.a < 2", c4.getSQLString());
+        assertEquals("1 < table1.a", c5.getSQLString());
         assertEquals("'Flibble' = 'Flobble'", c6.getSQLString());
-	assertEquals("a LIKE 'Flibble'", c7.getSQLString());
+        assertEquals("table1.a LIKE 'Flibble'", c7.getSQLString());
     }
 
     public void testCompare() throws Exception {

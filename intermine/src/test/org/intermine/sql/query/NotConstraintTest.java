@@ -17,7 +17,7 @@ public class NotConstraintTest extends TestCase
         v2 = new Constant("2");
         v3 = new Constant("'Flibble'");
         v4 = new Constant("'Flobble'");
-        a = new Constant("a");
+        a = new Field("a", new Table("table1"));
         c1 = new Constraint(a, Constraint.EQ, v1);
         c2 = new Constraint(a, Constraint.EQ, v2);
         c3 = new Constraint(a, Constraint.LT, v1);
@@ -37,13 +37,13 @@ public class NotConstraintTest extends TestCase
     }
 
     public void testGetSQLString() throws Exception {
-        assertEquals("a != 1", nc1.getSQLString());
-        assertEquals("a != 2", nc2.getSQLString());
-        assertEquals("a >= 1", nc3.getSQLString());
-        assertEquals("a >= 2", nc4.getSQLString());
-        assertEquals("1 >= a", nc5.getSQLString());
+        assertEquals("table1.a != 1", nc1.getSQLString());
+        assertEquals("table1.a != 2", nc2.getSQLString());
+        assertEquals("table1.a >= 1", nc3.getSQLString());
+        assertEquals("table1.a >= 2", nc4.getSQLString());
+        assertEquals("1 >= table1.a", nc5.getSQLString());
         assertEquals("'Flibble' != 'Flobble'", nc6.getSQLString());
-        assertEquals("a NOT LIKE 'Flibble'", nc7.getSQLString());
+        assertEquals("table1.a NOT LIKE 'Flibble'", nc7.getSQLString());
     }
 
     public void testCompareNC() throws Exception {
@@ -91,7 +91,7 @@ public class NotConstraintTest extends TestCase
         assertEquals(AbstractConstraint.INDEPENDENT, nc7.compare(c5));
         assertEquals(AbstractConstraint.OPPOSITE, nc7.compare(c7));
     }
-    
+
     public void testCompareCN() throws Exception {
         assertEquals(AbstractConstraint.OPPOSITE, c1.compare(nc1));
         assertEquals(AbstractConstraint.IMPLIES, c1.compare(nc2));

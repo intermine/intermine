@@ -18,7 +18,7 @@ public class ConstraintSetTest extends TestCase
         v2 = new Constant("2");
         v3 = new Constant("'Flibble'");
         v4 = new Constant("'Flobble'");
-        a = new Constant("a");
+        a = new Field("a", new Table("table1"));
         c1 = new Constraint(a, Constraint.EQ, v1);
         c2 = new Constraint(a, Constraint.EQ, v2);
         c3 = new Constraint(a, Constraint.LT, v1);
@@ -46,17 +46,17 @@ public class ConstraintSetTest extends TestCase
     }
 
     public void testGetSQLString() throws Exception {
-        assertEquals("a = 1", cs1.getSQLString());
-        assertTrue("Expected certain string from cs2.getSQLString()", 
-                "(a = 2 OR a < 1 OR a >= 2)".equals(cs2.getSQLString())
-                || "(a = 2 OR a >= 2 OR a < 1)".equals(cs2.getSQLString())
-                || "(a < 1 OR a = 2 OR a >= 2)".equals(cs2.getSQLString())
-                || "(a < 1 OR a >= 2 OR a = 2)".equals(cs2.getSQLString())
-                || "(a >= 2 OR a < 1 OR a = 2)".equals(cs2.getSQLString())
-                || "(a >= 2 OR a = 2 OR a < 1)".equals(cs2.getSQLString()));
-        assertTrue("Expected certain string from cs3.getSQLString()", 
-                "(a = 2 OR 1 >= a)".equals(cs3.getSQLString())
-                || "(1 >= a OR a = 2)".equals(cs3.getSQLString()));
+        assertEquals("table1.a = 1", cs1.getSQLString());
+        assertTrue("Expected certain string from cs2.getSQLString()",
+                "(table1.a = 2 OR table1.a < 1 OR table1.a >= 2)".equals(cs2.getSQLString())
+                || "(table1.a = 2 OR table1.a >= 2 OR table1.a < 1)".equals(cs2.getSQLString())
+                || "(table1.a < 1 OR table1.a = 2 OR table1.a >= 2)".equals(cs2.getSQLString())
+                || "(table1.a < 1 OR table1.a >= 2 OR table1.a = 2)".equals(cs2.getSQLString())
+                || "(table1.a >= 2 OR table1.a < 1 OR table1.a = 2)".equals(cs2.getSQLString())
+                || "(table1.a >= 2 OR table1.a = 2 OR table1.a < 1)".equals(cs2.getSQLString()));
+        assertTrue("Expected certain string from cs3.getSQLString()",
+                "(table1.a = 2 OR 1 >= table1.a)".equals(cs3.getSQLString())
+                || "(1 >= table1.a OR table1.a = 2)".equals(cs3.getSQLString()));
     }
 
     public void testCompareCS() throws Exception {
@@ -152,25 +152,25 @@ public class ConstraintSetTest extends TestCase
 
     public void testCompareSS() throws Exception {
 
-	assertEquals(AbstractConstraint.EQUAL, cs1.compare(cs1));
-	assertEquals(AbstractConstraint.EXCLUDES, cs1.compare(cs2));
-	assertEquals(AbstractConstraint.IMPLIES, cs1.compare(cs3));
-	assertEquals(AbstractConstraint.EXCLUDES, cs1.compare(cs4));
+        assertEquals(AbstractConstraint.EQUAL, cs1.compare(cs1));
+        assertEquals(AbstractConstraint.EXCLUDES, cs1.compare(cs2));
+        assertEquals(AbstractConstraint.IMPLIES, cs1.compare(cs3));
+        assertEquals(AbstractConstraint.EXCLUDES, cs1.compare(cs4));
 
-	assertEquals(AbstractConstraint.EXCLUDES, cs2.compare(cs1));
-	assertEquals(AbstractConstraint.EQUAL, cs2.compare(cs2));
-	assertEquals(AbstractConstraint.INDEPENDENT, cs2.compare(cs3));
-	assertEquals(AbstractConstraint.INDEPENDENT, cs2.compare(cs4));
+        assertEquals(AbstractConstraint.EXCLUDES, cs2.compare(cs1));
+        assertEquals(AbstractConstraint.EQUAL, cs2.compare(cs2));
+        assertEquals(AbstractConstraint.INDEPENDENT, cs2.compare(cs3));
+        assertEquals(AbstractConstraint.INDEPENDENT, cs2.compare(cs4));
 
-	assertEquals(AbstractConstraint.IMPLIED_BY, cs3.compare(cs1));
-	assertEquals(AbstractConstraint.INDEPENDENT, cs3.compare(cs2));
-	assertEquals(AbstractConstraint.EQUAL, cs3.compare(cs3));
-	assertEquals(AbstractConstraint.OR, cs3.compare(cs4));
+        assertEquals(AbstractConstraint.IMPLIED_BY, cs3.compare(cs1));
+        assertEquals(AbstractConstraint.INDEPENDENT, cs3.compare(cs2));
+        assertEquals(AbstractConstraint.EQUAL, cs3.compare(cs3));
+        assertEquals(AbstractConstraint.OR, cs3.compare(cs4));
 
-	assertEquals(AbstractConstraint.EXCLUDES, cs4.compare(cs1));
-	assertEquals(AbstractConstraint.INDEPENDENT, cs4.compare(cs2));
-	assertEquals(AbstractConstraint.OR, cs4.compare(cs3));
-	assertEquals(AbstractConstraint.EQUAL, cs4.compare(cs4));
+        assertEquals(AbstractConstraint.EXCLUDES, cs4.compare(cs1));
+        assertEquals(AbstractConstraint.INDEPENDENT, cs4.compare(cs2));
+        assertEquals(AbstractConstraint.OR, cs4.compare(cs3));
+        assertEquals(AbstractConstraint.EQUAL, cs4.compare(cs4));
 
     }
 
