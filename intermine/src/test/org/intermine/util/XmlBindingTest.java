@@ -103,4 +103,11 @@ public class XmlBindingTest extends XMLTestCase {
             TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
         }
     }
+
+    protected void stripIds(Collection c) throws Exception {
+        Iterator iter = c.iterator();
+        while (iter.hasNext()) {
+            TypeUtil.setFieldValue(iter.next(), "id", null);
+        }
+    }
 }

@@ -10,8 +10,6 @@ package org.flymine.dataloader;
  *
  */
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -63,30 +61,27 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         if (dbObj != null) {
             try {
                 Class cls = obj.getClass();
-                retval.put(TypeUtil.getField(cls, "id"),
-                           cls.getMethod("getId", new Class[] {}).invoke(dbObj, new Object[] {}));
+                retval.put("id",
+                           TypeUtil.getFieldValue(dbObj, "id"));
 
                 if (nonSkeletons.contains(description(dbObj))) {
                     // This data was written by us in the past. Therefore, the database version
                     // overrides everything, except collections.
-                    Map fieldToGetter = TypeUtil.getFieldToGetter(obj.getClass());
-                    Iterator iter = fieldToGetter.entrySet().iterator();
+                    Map infos = TypeUtil.getFieldInfos(obj.getClass());
+                    Iterator iter = infos.entrySet().iterator();
                     while (iter.hasNext()) {
                         Map.Entry entry = (Map.Entry) iter.next();
-                        Field field = (Field) entry.getKey();
-                        Method method = (Method) entry.getValue();
-                        Object value = method.invoke(obj, new Object[] {});
-                        retval.put(field, value);
+                        String fieldname = (String) entry.getKey();
+                        TypeUtil.FieldInfo info = (TypeUtil.FieldInfo) entry.getValue();
+                        Method getter = info.getGetter();
+                        Object value = getter.invoke(obj, new Object[] {});
+                        retval.put(fieldname, value);
                     }
                 }
                 //        } else {
                 // This data was not written for real in the past by us. Therefore, we do not
                 // need to fill in anything (except id) in the return value.
                 //        }
-            } catch (IntrospectionException e) {
-                throw new ObjectStoreException("Something horribly wrong with the model", e);
-            } catch (NoSuchMethodException e) {
-                throw new ObjectStoreException("Something nasty with the model", e);
             } catch (IllegalAccessException e) {
                 throw new ObjectStoreException("Something upset in java", e);
             } catch (InvocationTargetException e) {
@@ -121,8 +116,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         Class c = obj.getClass();
         String retval = c.getName() + ": ";
         try {
-            Method idGetter = c.getMethod("getId", new Class[] {});
-            retval += idGetter.invoke(obj, new Object[] {});
+            retval += TypeUtil.getFieldValue(obj, "id");
         } catch (Exception e) {
             // Do nothing.
         }

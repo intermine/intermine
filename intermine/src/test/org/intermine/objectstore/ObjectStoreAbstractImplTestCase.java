@@ -188,7 +188,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
     }
 
     // example class with a set, for testing promoteProxies()
-    private class Example {
+    public static class Example {
         Set set = new HashSet();
         public void setSet(Set set) {
             this.set = set;

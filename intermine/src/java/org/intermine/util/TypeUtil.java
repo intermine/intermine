@@ -40,6 +40,8 @@ public class TypeUtil
     private static Map classToFieldToGetter = new HashMap();
     private static Map classToFieldToSetter = new HashMap();
 
+    private static Map classToFieldnameToFieldInfo = new HashMap();
+
     /**
      * Returns the package name from a fully qualified class name
      *
@@ -78,9 +80,20 @@ public class TypeUtil
      */
     public static Object getFieldValue(Object o, String fieldName)
         throws IllegalAccessException {
-        Field f  = getField(o.getClass(), fieldName);
-        f.setAccessible(true);
-        return f.get(o);
+        try {
+            return getGetter(o.getClass(), fieldName).invoke(o, new Object[] {});
+        } catch (Exception e) {
+            String type = null;
+            try {
+                type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
+            } catch (Exception e3) {
+            }
+            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't get field \""
+                    + o.getClass().getName() + "." + fieldName + "\""
+                    + (type == null ? "" : " (a " + type + ")"));
+            e2.initCause(e);
+            throw e2;
+        }
     }
 
     /**
@@ -93,37 +106,21 @@ public class TypeUtil
      */
     public static void setFieldValue(Object o, String fieldName, Object fieldValue)
         throws IllegalAccessException {
-        Field f  = getField(o.getClass(), fieldName);
         try {
-            f.setAccessible(true);
-            f.set(o, fieldValue);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Couldn't set field \""
-                    + f.getDeclaringClass().getName() + "." + f.getName() + "\" (a "
-                    + f.getType().getName() + ") to \"" + fieldValue + "\" (a "
-                    + fieldValue.getClass().getName() + ")");
-        }
-    }
-
-    /**
-     * Returns the Field object of a Class given the field name
-     *
-     * @param c the Class
-     * @param fieldName the name of the relevant field
-     * @return the Field, or null if the field is not found
-     */
-    public static Field getField(Class c, String fieldName) {
-        Field f = null;
-        boolean found = false;
-        do {
+            getSetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
+        } catch (Exception e) {
+            String type = null;
             try {
-                f = c.getDeclaredField(fieldName);
-                found = true;
-            } catch (NoSuchFieldException e) {
-                c = c.getSuperclass();
+                type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
+            } catch (Exception e3) {
             }
-        } while(c != null && !found);
-        return f;
+            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't set field \""
+                    + o.getClass().getName() + "." + fieldName + "\""
+                    + (type == null ? "" : " (a " + type + ")")
+                    + " to \"" + fieldValue + "\" (a " + fieldValue.getClass().getName() + ")");
+            e2.initCause(e);
+            throw e2;
+        }
     }
 
     /**
@@ -134,31 +131,87 @@ public class TypeUtil
      * @return the Getter, or null if the field is not found
      */
     public static Method getGetter(Class c, String fieldName) {
-        Method m = null;
-        String getterName = "get" + (fieldName.length() <= 0 ? ""
-                : fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
-        try {
-            m = c.getMethod(getterName, new Class[] {});
-        } catch (NoSuchMethodException e) {
-            m = null;
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            return info.getGetter();
         }
-        return m;
+        return null;
     }
 
     /**
-     * Gets the Fields of a Class
+     * Returns the Method object that is the setter for the field name
      *
      * @param c the Class
-     * @return the fields in this class
+     * @param fieldName the name of the relevant field
+     * @return the setter, or null if the field is not found
      */
-    public static Collection getFields(Class c) {
-        Collection fields = new HashSet();
-        do {
-            fields.addAll(Arrays.asList(c.getDeclaredFields()));
-        } while ((c = c.getSuperclass()) != null);
-        return fields;
+    public static Method getSetter(Class c, String fieldName) {
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            return info.getSetter();
+        }
+        return null;
     }
 
+    /**
+     * Returns the Map from field name to TypeUtil.FieldInfo objects for all the fields in a
+     * given class.
+     *
+     * @param c the Class
+     * @return a Map from field name to FieldInfo object
+     */
+    public static Map getFieldInfos(Class c) {
+        Map infos = null;
+        synchronized (classToFieldnameToFieldInfo) {
+            infos = (Map) classToFieldnameToFieldInfo.get(c);
+            
+            if (infos == null) {
+                infos = new HashMap();
+
+                Map methods = new HashMap();
+                Method methodArray[] = c.getMethods();
+                for (int i = 0; i < methodArray.length; i++) {
+                    String methodName = methodArray[i].getName();
+                    methods.put(methodName, methodArray[i]);
+                }
+
+                Iterator methodIter = methods.keySet().iterator();
+                while (methodIter.hasNext()) {
+                    String getterName = (String) methodIter.next();
+                    if (getterName.startsWith("get")) {
+                        String setterName = "set" + getterName.substring(3);
+                        if (methods.containsKey(setterName)) {
+                            Method getter = (Method) methods.get(getterName);
+                            Method setter = (Method) methods.get(setterName);
+                            String fieldname = (Character.isLowerCase(getterName.charAt(3))
+                                    ? getterName.substring(3, 4).toUpperCase()
+                                    : getterName.substring(3, 4).toLowerCase())
+                                + getterName.substring(4);
+                            if (!getter.getName().equals("getClass")) {
+                                FieldInfo info = new FieldInfo(fieldname, getter, setter);
+                                infos.put(fieldname, info);
+                            }
+                        }
+                    }
+                }
+
+                classToFieldnameToFieldInfo.put(c, infos);
+            }
+        }
+        return infos;
+    }
+
+    /**
+     * Returns a FieldInfo object for the given class and field name.
+     *
+     * @param c the Class
+     * @param fieldname the fieldname
+     * @return a FieldInfo object, or null if the fieldname is not found
+     */
+    public static FieldInfo getFieldInfo(Class c, String fieldname) {
+        return (FieldInfo) getFieldInfos(c).get(fieldname);
+    }
+    
     /**
      * Gets the getter methods for the bean properties of a class
      *
@@ -330,5 +383,58 @@ public class TypeUtil
         } catch (Exception e) {
         }
         return cls;
+    }
+
+    /**
+     * Inner class to hold info on a field.
+     *
+     * @author Matthew Wakeling
+     * @author Andrew Varley
+     */
+    public static class FieldInfo
+    {
+        private String name;
+        private Method getter;
+        private Method setter;
+       
+        /**
+         * Construct a new FieldInfo object.
+         *
+         * @param name the field name
+         * @param getter the getter Method to retrieve the value
+         * @param setter the setter Method to alter the value
+         */
+        public FieldInfo(String name, Method getter, Method setter) {
+            this.name = name;
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        /**
+         * Returns the field name
+         *
+         * @return a String
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Returns the getter Method.
+         *
+         * @return a getter Method
+         */
+        public Method getGetter() {
+            return getter;
+        }
+
+        /**
+         * Returns the setter Method.
+         *
+         * @return a setter Method
+         */
+        public Method getSetter() {
+            return setter;
+        }
     }
 }

@@ -87,23 +87,27 @@ public class ObjectStoreServer
             ObjectStoreException toThrow = new ObjectStoreException(message.toString());
             throw toThrow;
         } catch (RuntimeException e) {
+            StringWriter message = new StringWriter();
+            PrintWriter pMessage = new PrintWriter(message);
+            e.printStackTrace(pMessage);
             try {
-                StringWriter message = new StringWriter();
-                PrintWriter pMessage = new PrintWriter(message);
-                e.printStackTrace(pMessage);
                 Class c = e.getClass();
                 Constructor cons = c.getConstructor(new Class[] {String.class});
                 RuntimeException toThrow = (RuntimeException) cons.newInstance(
                         new Object[] {message.toString()});
                 throw toThrow;
             } catch (NoSuchMethodException e2) {
-                throw e;
+                throw new RuntimeException("NoSuchMethodException thrown while handling "
+                        + message.toString());
             } catch (InstantiationException e2) {
-                throw e;
+                throw new RuntimeException("InstantiationException thrown while handling "
+                        + message.toString());
             } catch (IllegalAccessException e2) {
-                throw e;
+                throw new RuntimeException("IllegalAccessException thrown while handling "
+                        + message.toString());
             } catch (InvocationTargetException e2) {
-                throw e;
+                throw new RuntimeException("InvocationTargetException thrown while handling "
+                        + message.toString());
             }
         }
         return nextQueryId;

@@ -12,7 +12,6 @@ package org.flymine.dataloader;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.reflect.Field;
 
 /**
  * An object that stores field/value pairs from the database that should override the values in an
@@ -33,34 +32,35 @@ public class IntegrationDescriptor
     }
 
     /**
-     * Puts a value into this object, referenced by the field. This indicates that the database
+     * Puts a value into this object, referenced by the fieldname. This indicates that the database
      * version of this particular attribute or object reference takes priority over the value in
      * the object retrieved from the data source.
      *
-     * @param field the Field that the value should be associated with
+     * @param fieldname the fieldname that the value should be associated with
      * @param value the value to store
      */
-    public void put(Field field, Object value) {
-        map.put(field, value);
+    public void put(String fieldname, Object value) {
+        map.put(fieldname, value);
     }
 
     /**
      * Retrieves a value from this object.
      *
-     * @param field the Field that is to be updated in the object retrieved from the data source.
+     * @param fieldname the fieldname that is to be updated in the object retrieved from the data
+     * source.
      * @return the value to replace the data source value
      */
-    public Object get(Field field) {
-        return map.get(field);
+    public Object get(String fieldname) {
+        return map.get(fieldname);
     }
 
     /**
-     * Returns true if this object contains a Field as a key.
+     * Returns true if this object contains a fieldname as a key.
      *
-     * @param field the Field to be looked up
+     * @param fieldname the fieldname to be looked up
      * @return true if the field is present
      */
-    public boolean containsKey(Field field) {
-        return map.containsKey(field);
+    public boolean containsKey(String fieldname) {
+        return map.containsKey(fieldname);
     }
 }

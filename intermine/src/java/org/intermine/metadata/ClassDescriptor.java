@@ -174,7 +174,8 @@ public class ClassDescriptor
     }
 
     /**
-     * Retrieve a FieldDescriptor by name
+     * Retrieve a FieldDescriptor by name. The class and all superclasses are searched.
+     *
      * @param name the name
      * @return the FieldDescriptor
      */

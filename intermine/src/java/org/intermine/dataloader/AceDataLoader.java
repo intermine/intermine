@@ -32,10 +32,11 @@ import org.acedb.staticobj.StaticAceObject;
 import org.flymine.FlyMineException;
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
+import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.modelproduction.acedb.AceModelParser;
 import org.flymine.objectstore.ObjectStoreException;
 
@@ -270,10 +271,17 @@ public class AceDataLoader extends DataLoader
         } else if (!(aceNode instanceof AceObject)) { //node representing a field
             nodeName = aceNode.getName();
             //check whether currentObject has a field of this name (if not, it's a nesting tag)
-            Method nodeField = TypeUtil.getGetter(currentObject.getClass(), nodeName);
-            if (nodeField != null) {
+            ClassDescriptor cld = model.getClassDescriptorByName(currentObject
+                                                                 .getClass().getName());
+            FieldDescriptor fd = null;
+            try {
+                fd = cld.getFieldDescriptorByName(nodeName);
+            } catch (NullPointerException e) {
+            }
+            if (fd != null) {
                  if (!aceNode.iterator().hasNext()) {
-                    if (nodeField.getReturnType().equals(Boolean.TYPE)) {
+                    if ((fd instanceof AttributeDescriptor)
+                            && ((AttributeDescriptor) fd).getType().equals("boolean")) {
                         // there's no boolean value type - if the tag's present, the value is true
                         nodeValue = Boolean.TRUE;
                     } else {
@@ -284,17 +292,14 @@ public class AceDataLoader extends DataLoader
                 } else if (!hasChildValues(aceNode)) {
                     // node has child values, so it's a hash. we create a new object in its place
                     String nodeClass = null;
-                    ClassDescriptor cld = model.getClassDescriptorByName(currentObject
-                                                                         .getClass().getName());
-                    FieldDescriptor fd = cld.getFieldDescriptorByName(nodeName);
                     // the node could be a collection or reference
-                    if (fd instanceof CollectionDescriptor) {
+                    if (fd instanceof ReferenceDescriptor) {
                         // find out the type of the elements
-                        CollectionDescriptor fdCld = (CollectionDescriptor) fd;
+                        ReferenceDescriptor fdCld = (ReferenceDescriptor) fd;
                         ClassDescriptor referencedCld = fdCld.getReferencedClassDescriptor();
                         nodeClass = TypeUtil.unqualifiedName(referencedCld.getName());
                     } else {
-                        nodeClass = TypeUtil.unqualifiedName(nodeField.getReturnType().getName());
+                        nodeClass = TypeUtil.unqualifiedName(((AttributeDescriptor) fd).getType());
                     }
                     StaticAceObject referredToAceObject =
                         new StaticAceObject(StringUtil.uniqueString(), null, nodeClass);

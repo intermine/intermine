@@ -106,16 +106,16 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         // this object has not been stored by the integration writer so expect IntegrationDescriptor
         // to be empty apart from id
         assertNotNull("Expected return from getByExample to be not null", descriptor);
-        Field f = Company.class.getDeclaredField("id");
-        assertNotNull("Expected Id to be not null", descriptor.get(f));
+        assertNotNull("Expected Id to be not null", descriptor.get("id"));
 
         // rest should be empty
-        Map fieldToGetter = TypeUtil.getFieldToGetter(Company.class);
-        Iterator iter = fieldToGetter.entrySet().iterator();
+        Map infos = TypeUtil.getFieldInfos(Company.class);
+        Iterator iter = infos.keySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Field field = (Field) entry.getKey();
-            assertNull(descriptor.get(field));
+            String fieldname = (String) iter.next();
+            if (!"id".equals(fieldname)) {
+                assertNull(descriptor.get(fieldname));
+            }
         }
     }
 
@@ -141,16 +141,16 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         IntegrationDescriptor descriptor = iw.getByExample(company);
 
         assertNotNull("Expected return from getByExample to be not null", descriptor);
-        Field f = Company.class.getDeclaredField("id");
-        assertNotNull("Expected Id to be not null", descriptor.get(f));
+        assertNotNull("Expected Id to be not null", descriptor.get("id"));
 
         // rest should be empty
-        Map fieldToGetter = TypeUtil.getFieldToGetter(Company.class);
-        Iterator iter = fieldToGetter.entrySet().iterator();
+        Map infos = TypeUtil.getFieldInfos(Company.class);
+        Iterator iter = infos.keySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Field field = (Field) entry.getKey();
-            assertNull(descriptor.get(field));
+            String fieldname = (String) iter.next();
+            if (!"id".equals(fieldname)) {
+                assertNull(descriptor.get(fieldname));
+            }
         }
     }
 
@@ -173,22 +173,21 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 
         assertNotNull("Expected return from getByExample to be not null", descriptor);
 
-        Field f = Company.class.getDeclaredField("id");
-        assertNotNull("Expected Id to be not null", descriptor.get(f));
+        assertNotNull("Expected Id to be not null", descriptor.get("id"));
 
         // assert that the fields we set are filled in
-        Address a = (Address) descriptor.get(Company.class.getDeclaredField("address"));
+        Address a = (Address) descriptor.get("address");
         assertEquals(company.getAddress(), a);
-        Integer vat = (Integer) descriptor.get(Company.class.getDeclaredField("vatNumber"));
+        Integer vat = (Integer) descriptor.get("vatNumber");
         assertEquals(company.getVatNumber(), vat.intValue());
-        String name = (String) descriptor.get(Company.class.getDeclaredField("name"));
+        String name = (String) descriptor.get("name");
         assertEquals(company.getName(), name);
 
         // rest should be empty
-        CEO ceo = (CEO) descriptor.get(Company.class.getDeclaredField("cEO"));
+        CEO ceo = (CEO) descriptor.get("cEO");
         assertNull("cEO should not have been filled in", ceo);
 
-        List departments = (List) descriptor.get(Company.class.getDeclaredField("departments"));
+        List departments = (List) descriptor.get("departments");
         assertTrue("departments should have been an empty list", departments.size() == 0);
     }
 

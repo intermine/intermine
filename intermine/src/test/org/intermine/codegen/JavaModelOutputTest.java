@@ -64,7 +64,8 @@ public class JavaModelOutputTest extends TestCase
 
             String expected = "public class Class1" + ENDL + "{" + ENDL
             + INDENT + "protected Integer id;" + ENDL
-            + INDENT + "public Integer getId() { return id; }" + ENDL + ENDL + "}";
+            + INDENT + "public Integer getId() { return id; }" + ENDL
+            + INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL + "}";
 
             assertEquals(expected, (new String(text)).trim());
         } finally {
@@ -86,7 +87,8 @@ public class JavaModelOutputTest extends TestCase
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1" + ENDL + "{" + ENDL
             + INDENT + "protected Integer id;" + ENDL
-            + INDENT + "public Integer getId() { return id; }" + ENDL + ENDL + "}";
+            + INDENT + "public Integer getId() { return id; }" + ENDL 
+            + INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL + "}";
 
         assertEquals(expected, mo.generate(cld1));
     }
@@ -123,7 +125,8 @@ public class JavaModelOutputTest extends TestCase
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1" + ENDL + "{" + ENDL
             + INDENT + "protected Integer id;" + ENDL
-            + INDENT + "public Integer getId() { return id; }" + ENDL + ENDL
+            + INDENT + "public Integer getId() { return id; }" + ENDL 
+            + INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL
             + INDENT + "protected String ojbConcreteClass = \"package.name.Class1\";" + ENDL + ENDL + "}";
 
         assertEquals(expected, mo.generate(cld1));
@@ -138,7 +141,8 @@ public class JavaModelOutputTest extends TestCase
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1 implements Interface1, Interface2" + ENDL + "{" + ENDL
             + INDENT + "protected Integer id;" + ENDL
-            + INDENT + "public Integer getId() { return id; }" + ENDL + ENDL + "}";
+            + INDENT + "public Integer getId() { return id; }" + ENDL 
+            + INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL + "}";
 
         assertEquals(expected, mo.generate(cld3));
     }
@@ -157,7 +161,8 @@ public class JavaModelOutputTest extends TestCase
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1" + ENDL + "{" + ENDL
             + INDENT + "protected Integer id;" + ENDL
-            + INDENT + "public Integer getId() { return id; }" + ENDL + ENDL
+            + INDENT + "public Integer getId() { return id; }" + ENDL 
+            + INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL
             + INDENT + "protected java.lang.String atd1;" + ENDL
             + INDENT + "public java.lang.String getAtd1() { return this.atd1; }" + ENDL
             + INDENT + "public void setAtd1(java.lang.String atd1) { this.atd1=atd1; }" + ENDL + ENDL

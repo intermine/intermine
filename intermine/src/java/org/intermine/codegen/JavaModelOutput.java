@@ -99,7 +99,8 @@ public class JavaModelOutput extends ModelOutput
         if (!cld.isInterface()) {
             if (cld.getSuperclassDescriptor() == null) {
                 sb.append(INDENT + "protected Integer id;" + ENDL)
-                    .append(INDENT + "public Integer getId() { return id; }" + ENDL + ENDL);
+                    .append(INDENT + "public Integer getId() { return id; }" + ENDL)
+                    .append(INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL);
             }
 
             if (cld.getSuperclassDescriptor() != null || !cld.getSubclassDescriptors().isEmpty()) {

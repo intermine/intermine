@@ -10,9 +10,9 @@ package org.flymine.objectstore;
  *
  */
 
-import java.util.Properties;
 import java.util.Iterator;
-import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Properties;
 
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.proxy.LazyCollection;
@@ -224,8 +224,10 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             return;
         }
         Class cls = obj.getClass();
-        for (Iterator fieldIter = TypeUtil.getFields(cls).iterator(); fieldIter.hasNext();) {
-            String fieldName = ((Field) fieldIter.next()).getName();
+        Map infos = TypeUtil.getFieldInfos(cls);
+        Iterator iter = infos.keySet().iterator();
+        while (iter.hasNext()) {
+            String fieldName = (String) iter.next();
             try {
                 Object fieldValue = TypeUtil.getFieldValue(obj, fieldName);
                 if (fieldValue instanceof LazyReference) {

@@ -50,6 +50,15 @@ public class ProxyBean
     }
 
     /**
+     * Sets the type of the underlying object.
+     *
+     * @param type the type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
      * Returns the query to retrieve the object
      * @return the query
      */
@@ -58,11 +67,29 @@ public class ProxyBean
     }
 
     /**
+     * Sets the query to retrieve the object.
+     *
+     * @param fqlQuery the FqlQuery
+     */
+    public void setFqlQuery(FqlQuery fqlQuery) {
+        this.fqlQuery = fqlQuery;
+    }
+    
+    /**
      * Returns the internal id of the underlying object
      * @return the id
      */
     public Integer getId() {
         return id;
+    }
+
+    /**
+     * Sets the internal id of the underlying object.
+     *
+     * @param id the id
+     */
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     /**

@@ -84,8 +84,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
 
-        stripIds(flatList);
-
         Company com = (Company)result.get(0);
         assertEquals(com, p1);
     }
@@ -115,8 +113,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Reader reader = new FileReader(file);
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-
-        stripIds(flat);
 
         Employee e2 = (Employee) result.get(0);
         assertEquals(e1, e2);
@@ -157,8 +153,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Reader reader = new FileReader(file);
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-
-        stripIds(flat);
 
         Types t2 = (Types) result.get(0);
         assertEquals(t1.getIntType(), t2.getIntType());
@@ -204,8 +198,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
 
-        stripIds(flat);
-
         Employee e2 = (Employee) result.get(0);
         assertEquals(e1, e2);
 
@@ -247,8 +239,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Reader reader = new FileReader(file);
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-
-        stripIds(flat);
 
         Company c2 = (Company) result.get(0);
         assertEquals(c1, c2);
@@ -292,8 +282,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Reader reader = new FileReader(file);
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-
-        stripIds(flat);
 
         Department d2 = (Department) result.get(0);
         assertEquals(d1, d2);
@@ -339,8 +327,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Reader reader = new FileReader(file);
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-
-        stripIds(flat);
 
         Company c2 = (Company) result.get(0);
         assertEquals(c1, c2);
@@ -404,8 +390,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
 
-        stripIds(flat);
-
         Company cc1 = (Company) result.get(0);
         assertEquals(c1, cc1);
         List tts1 = cc1.getContractors();
@@ -468,8 +452,6 @@ public class CastorModelOutputFunctionalTest extends TestCase
         Reader reader = new FileReader(file);
         Unmarshaller unmarshaller = new Unmarshaller(map);
         List result = (List)unmarshaller.unmarshal(reader);
-
-        stripIds(flat);
 
         Department dd1 = (Department) result.get(0);
         assertEquals(d1, dd1);

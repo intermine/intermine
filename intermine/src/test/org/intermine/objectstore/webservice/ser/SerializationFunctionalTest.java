@@ -95,10 +95,10 @@ public class SerializationFunctionalTest extends TestCase
         args.add(l);
 
         ResultsInfo ri = new ResultsInfo();
-        TypeUtil.setFieldValue(ri, "rows", new Integer(1));
+        TypeUtil.setFieldValue(ri, "rows", new Integer(4));
         TypeUtil.setFieldValue(ri, "start", new Long(2));
         TypeUtil.setFieldValue(ri, "complete", new Long(3));
-        TypeUtil.setFieldValue(ri, "min", new Integer(4));
+        TypeUtil.setFieldValue(ri, "min", new Integer(1));
         TypeUtil.setFieldValue(ri, "max", new Integer(5));
         args.add(ri);
 

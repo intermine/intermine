@@ -22,27 +22,21 @@ public class LiteRendererTest extends TestCase
     public void testRender() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
-        Field field = TypeUtil.getField(e.getClass(), "id");
-        field.setAccessible(true);
-        field.set(e, new Integer(1234));
+        e.setId(new Integer(1234));
         e.setName("Employee1");
-
-        field = TypeUtil.getField(d.getClass(), "id");
-        field.setAccessible(true);
-        field.set(d, new Integer(5678));
+        d.setId(new Integer(5678));
         e.setDepartment(d);
 
         String expected = "<object id=\"1234\" implements=\"org.flymine.model.testmodel.Employee org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress\">"
+            + "<field name=\"age\" value=\"0\"/>"
             + "<field name=\"fullTime\" value=\"false\"/>"
             + "<field name=\"name\" value=\"Employee1\"/>"
-            // Take the following line out when OJB ditched
-            + "<field name=\"ojbConcreteClass\" value=\"org.flymine.model.testmodel.Employee\"/>"
-            + "<field name=\"department\" value=\"5678\"/>"
-            + "<field name=\"age\" value=\"0\"/>"
+            + "<field name=\"id\" value=\"1234\"/>"
+            + "<reference name=\"department\" value=\"5678\"/>"
             + "</object>";
 
         System.out.println(expected);
-        System.out.println( LiteRenderer.render(e));
+        System.out.println(LiteRenderer.render(e));
 
         assertEquals(expected, LiteRenderer.render(e));
     }

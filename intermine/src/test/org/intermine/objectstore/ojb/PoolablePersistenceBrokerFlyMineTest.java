@@ -12,6 +12,7 @@ package org.flymine.objectstore.ojb;
 
 import junit.framework.TestCase;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,7 +39,9 @@ public class PoolablePersistenceBrokerFlyMineTest extends TestCase
     public void testPooling() throws Exception {
         List pbList = new ArrayList();
         PoolablePersistenceBroker ppb = (PoolablePersistenceBroker) os.getPersistenceBroker();
-        GenericKeyedObjectPool pool = (GenericKeyedObjectPool) TypeUtil.getFieldValue(ppb, "pool");
+        Field poolField = PoolablePersistenceBroker.class.getDeclaredField("pool");
+        poolField.setAccessible(true);
+        GenericKeyedObjectPool pool = (GenericKeyedObjectPool) poolField.get(ppb);
         pool.setMaxActive(10);
         pool.setWhenExhaustedAction(GenericKeyedObjectPool.WHEN_EXHAUSTED_FAIL);
         for (int i=10-pool.getNumActive(); i>0; i--) {

@@ -15,8 +15,11 @@ import junit.framework.TestCase;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.flymine.model.testmodel.*;
@@ -25,21 +28,6 @@ public class TypeUtilTest extends TestCase
 {
     public TypeUtilTest(String arg) {
         super(arg);
-    }
-
-    public void testInvalidGetField() {
-        Field f = TypeUtil.getField(Manager.class, "FullTime");
-        assertNull("Field should be null", f);
-    }
-
-    public void testValidNonInheritedGetField() {
-        Field f = TypeUtil.getField(Manager.class, "title");
-        assertNotNull("Field should not be null", f);
-    }
-
-    public void testValidInheritedGetField() {
-        Field f = TypeUtil.getField(Manager.class, "fullTime");
-        assertNotNull("Field should not be null", f);
     }
 
     public void testGetFieldValue() throws Exception {
@@ -77,48 +65,31 @@ public class TypeUtilTest extends TestCase
         assertEquals(String.class, TypeUtil.getElementType(c));
     }
 
-    public void testGetFieldToGetter() throws Exception {
-        Map expected = new HashMap();
+    public void testGetFieldInfos() throws Exception {
         Class c = Address.class;
-        Field f1 = c.getDeclaredField("address");
-        Method m1 = c.getMethod("getAddress", new Class[] {});
-        expected.put(f1, m1);
 
-        assertEquals(expected, TypeUtil.getFieldToGetter(c));
-        assertEquals(expected, TypeUtil.getFieldToGetter(c));
+        Map got = TypeUtil.getFieldInfos(c);
+        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "address"})), got.keySet());
+
+        TypeUtil.FieldInfo idInfo = (TypeUtil.FieldInfo) got.get("id");
+        assertEquals("id", idInfo.getName());
+        assertEquals(c.getMethod("getId", new Class[] {}), idInfo.getGetter());
+        assertEquals(c.getMethod("setId", new Class[] {Integer.class}), idInfo.getSetter());
+
+        TypeUtil.FieldInfo addressInfo = (TypeUtil.FieldInfo) got.get("address");
+        assertEquals("address", addressInfo.getName());
+        assertEquals(c.getMethod("getAddress", new Class[] {}), addressInfo.getGetter());
+        assertEquals(c.getMethod("setAddress", new Class[] {String.class}), addressInfo.getSetter());
     }
 
-    public void testGetFieldToGetterNoGetters() throws Exception {
+    public void testGetFieldInfosNoGetters() throws Exception {
         Map expected = new HashMap();
         Class c = NoGetSet.class;  // random class with no getters
         try {
-            TypeUtil.getFieldToGetter(c);
+            assertEquals(Collections.EMPTY_MAP, TypeUtil.getFieldInfos(c));
         } catch (NullPointerException e) {
             fail("Should not have thrown a NullPointerException");
         }
-
-    }
-
-    public void testGetFieldToSetter() throws Exception {
-        Map expected = new HashMap();
-        Class c = Address.class;
-        Field f1 = c.getDeclaredField("address");
-        Method m1 = c.getMethod("setAddress", new Class[] {String.class});
-        expected.put(f1, m1);
-
-        assertEquals(expected, TypeUtil.getFieldToSetter(c));
-        assertEquals(expected, TypeUtil.getFieldToSetter(c));
-    }
-
-    public void testGetFieldToSetterNoSetters() throws Exception {
-        Map expected = new HashMap();
-        Class c = NoGetSet.class;  // random class with no setters
-        try {
-            TypeUtil.getFieldToSetter(c);
-        } catch (NullPointerException e) {
-            fail("Should not have thrown a NullPointerException");
-        }
-
     }
 
     public void testPackageName() throws Exception {
@@ -131,10 +102,12 @@ public class TypeUtilTest extends TestCase
         assertEquals("test", TypeUtil.unqualifiedName("package.test"));
     }
 
+    public void testGetGetter() throws Exception {
+        assertEquals(Company.class.getMethod("getName", new Class[] {}), TypeUtil.getGetter(Company.class, "name"));
+    }
+    
     //===========================
 
     private class NoGetSet {
     }
-
-
 }

@@ -11,6 +11,8 @@ package org.flymine.util;
  */
 
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Iterator;
 import org.xml.sax.InputSource;
 
 import org.exolab.castor.mapping.Mapping;
@@ -70,7 +72,16 @@ public class XmlBinding
     public Object unmarshal(InputSource source) throws FlyMineException {
         try {
             Unmarshaller unmarshaller = new Unmarshaller(mapping);
-            return unmarshaller.unmarshal(source);
+            Object retval = unmarshaller.unmarshal(source);
+            if (retval instanceof Collection) {
+                Iterator iter = ((Collection) retval).iterator();
+                while (iter.hasNext()) {
+                    TypeUtil.setFieldValue(iter.next(), "id", null);
+                }
+            } else {
+                TypeUtil.setFieldValue(retval, "id", null);
+            }
+            return retval;
         } catch (Exception e) {
             throw new FlyMineException("Error during unmarshalling: " + e);
         }

@@ -10,8 +10,6 @@ package org.flymine.dataloader;
  *
  */
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -85,54 +83,53 @@ public class DataLoader
             IntegrationDescriptor integ = iw.getByExample(obj);
             
             // if object was in database id needs to be set
-            Field id = TypeUtil.getField(obj.getClass(), "id");
-            if (integ.containsKey(id)) {
-                TypeUtil.setFieldValue(obj, "id", integ.get(id));
+            if (integ.containsKey("id")) {
+                TypeUtil.setFieldValue(obj, "id", integ.get("id"));
             }
             
-            Map fieldToSetter = TypeUtil.getFieldToSetter(obj.getClass());
-            Map fieldToGetter = TypeUtil.getFieldToGetter(obj.getClass());
-            Iterator iter = fieldToSetter.entrySet().iterator();
+            Map infos = TypeUtil.getFieldInfos(obj.getClass());
+            Iterator iter = infos.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                Field field = (Field) entry.getKey();
-                Method setter = (Method) entry.getValue();
-                Method getter = (Method) fieldToGetter.get(field);
-                Object valueInObjectToStore = getter.invoke(obj, new Object[] {});
-                
-                String className = field.getDeclaringClass().getName();
-                ClassDescriptor cld = iw.getObjectStore().getModel()
-                    .getClassDescriptorByName(className);
-                FieldDescriptor fd = cld.getFieldDescriptorByName(field.getName());
-                if (fd instanceof CollectionDescriptor) {
-                    Collection objs = (Collection) valueInObjectToStore;
-                    if (objs != null) {  // if any collection members in new object store them
-                        Iterator objIter = objs.iterator();
-                        while (objIter.hasNext()) {
-                            Object subObj = objIter.next();
-                            store(subObj, set, true);
+                String fieldname = (String) entry.getKey();
+                if (!"id".equals(fieldname)) {
+                    TypeUtil.FieldInfo info = (TypeUtil.FieldInfo) entry.getValue();
+                    Method setter = info.getSetter();
+                    Method getter = info.getGetter();
+                    Object valueInObjectToStore = getter.invoke(obj, new Object[] {});
+                    
+                    String className = obj.getClass().getName();
+                    ClassDescriptor cld = iw.getObjectStore().getModel()
+                        .getClassDescriptorByName(className);
+                    FieldDescriptor fd = cld.getFieldDescriptorByName(fieldname);
+                    if (fd instanceof CollectionDescriptor) {
+                        Collection objs = (Collection) valueInObjectToStore;
+                        if (objs != null) {  // if any collection members in new object store them
+                            Iterator objIter = objs.iterator();
+                            while (objIter.hasNext()) {
+                                Object subObj = objIter.next();
+                                store(subObj, set, true);
+                            }
                         }
-                    }
-                } else {
-                    if (fd instanceof ReferenceDescriptor) {
-                        if (valueInObjectToStore != null) {
-                            store(valueInObjectToStore, set, true);
+                    } else {
+                        if (fd instanceof ReferenceDescriptor) {
+                            if (valueInObjectToStore != null) {
+                                store(valueInObjectToStore, set, true);
+                            }
                         }
-                    }
-                    // A normal attribute, which should be set if the IntegrationDescriptor
-                    // thinks so.
-                    if (integ.containsKey(field)) {
-                        Object oldValue = integ.get(field);
-                        //if (fd.relationType() == FieldDescriptor.ONE_ONE_RELATION) {
-                        // TODO: set the reverse reference to null
-                        //}
-                        setter.invoke(obj, new Object[] {oldValue});
+                        // A normal attribute, which should be set if the IntegrationDescriptor
+                        // thinks so.
+                        if (integ.containsKey(fieldname)) {
+                            Object oldValue = integ.get(fieldname);
+                            //if (fd.relationType() == FieldDescriptor.ONE_ONE_RELATION) {
+                            // TODO: set the reverse reference to null
+                            //}
+                            setter.invoke(obj, new Object[] {oldValue});
+                        }
                     }
                 }
             }
             iw.store(obj, skeleton);
-        } catch (IntrospectionException e) {
-            throw new ObjectStoreException("Something horribly wrong with the model", e);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException("IllegalAccessException was thrown", e);
         } catch (InvocationTargetException e) {

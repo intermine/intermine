@@ -313,12 +313,32 @@ public class FqlQuery
     }
 
     /**
+     * Set the query String
+     * NOTE: this method is merely here to make this a Bean.
+     *
+     * @param queryString the query String
+     */
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+    
+    /**
      * Get the package name
      *
      * @return the package name
      */
     public String getPackageName() {
         return packageName;
+    }
+
+    /**
+     * Set the package name
+     * NOTE: this method is merely here to make this a Bean.
+     *
+     * @param packageName the package name
+     */
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     /**

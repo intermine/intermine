@@ -10,11 +10,11 @@ package org.flymine.xml.lite;
  *
  */
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.flymine.util.TypeUtil;
 
@@ -95,22 +95,17 @@ public class LiteRenderer
     protected static String getFields(Object obj) {
         StringBuffer sb = new StringBuffer();
 
-        Collection fields = TypeUtil.getFields(obj.getClass());
-
-        Iterator fieldIter = fields.iterator();
+        Map infos = TypeUtil.getFieldInfos(obj.getClass());
+        Iterator iter = infos.keySet().iterator();
         try {
-            while (fieldIter.hasNext()) {
+            while (iter.hasNext()) {
                 // If reference, value is id of referred-to object
                 // If field, value is field value
                 // If collection, no element output
                 // Element is not output if the value is null
 
-                Field field = (Field) fieldIter.next();
-                Object value = TypeUtil.getFieldValue(obj, field.getName());
-
-                if (field.getName().equals("id")) {
-                    continue;
-                }
+                String fieldname = (String) iter.next();
+                Object value = TypeUtil.getFieldValue(obj, fieldname);
 
                 if (value == null) {
                     continue;
@@ -124,18 +119,17 @@ public class LiteRenderer
 
                 // Reference
                 try {
-                    Method m = TypeUtil.getGetter(value.getClass(), "id");
-                    if (m != null) {
-                        id = m.invoke(value, null);
-                    }
+                    Method m = value.getClass().getMethod("getId", new Class[] {});
+                    id = m.invoke(value, null);
                 } catch (InvocationTargetException e) {
                 } catch (IllegalAccessException e) {
+                } catch (NoSuchMethodException e) {
                 }
                 if (id != null) {
                     value = id;
                 }
-                sb.append("<field name=\"")
-                    .append(field.getName())
+                sb.append((id == null ? "<field" : "<reference") + " name=\"")
+                    .append(fieldname)
                     .append("\" value=\"")
                     .append(value)
                     .append("\"/>");
@@ -144,7 +138,4 @@ public class LiteRenderer
         }
         return sb.toString().trim();
     }
-
-
-
 }

@@ -89,15 +89,6 @@ public class ResultsInfo
     }
 
     /**
-     * Returns the estimated number of rows in the results.
-     *
-     * @return an int
-     */
-    public int getRows() {
-        return (rows > min ? (rows < max ? rows : max) : min);
-    }
-
-    /**
      * Returns an integer describing the type of estimate getRows() returns.
      *
      * @return SIZE, ESTIMATE, AT_MOST, AT_LEAST
@@ -114,6 +105,25 @@ public class ResultsInfo
     }
 
     /**
+     * Returns the estimated number of rows in the results.
+     *
+     * @return an int
+     */
+    public int getRows() {
+        return (rows > min ? (rows < max ? rows : max) : min);
+    }
+
+    /**
+     * Sets the estimated number of rows in the results.
+     * NOTE: this method is only present to make this class a Bean.
+     *
+     * @param rows the new rows variable
+     */
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+    
+    /**
      * Returns the estimated amount of time taken to produce the first row of the results.
      *
      * @return a long of milliseconds
@@ -122,6 +132,16 @@ public class ResultsInfo
         return start;
     }
 
+    /**
+     * Sets the estimated amount of time taken to produce the first row of the results.
+     * NOTE: this method is only present to make this class a Bean.
+     *
+     * @param start a long
+     */
+    public void setStart(long start) {
+        this.start = start;
+    }
+    
     /**
      * Returns the estimated amount of time taken to produce the entire set of results.
      *
@@ -132,6 +152,16 @@ public class ResultsInfo
     }
 
     /**
+     * Sets the estimated amount of time taken to produce the entire set of results.
+     * NOTE: this method is only present to make this class a Bean.
+     *
+     * @param complete a long
+     */
+    public void setComplete(long complete) {
+        this.complete = complete;
+    }
+    
+    /**
      * Returns the minimum possible number of rows in the results.
      *
      * @return an int
@@ -141,12 +171,32 @@ public class ResultsInfo
     }
 
     /**
+     * Sets the minimum possible number of rows in the results.
+     * NOTE: this method is only present to make this class a Bean.
+     *
+     * @param min an int
+     */
+    public void setMin(int min) {
+        this.min = min;
+    }
+    
+    /**
      * Returns the maximum possible number of rows in the results.
      *
      * @return an int
      */
     public int getMax() {
         return max;
+    }
+
+    /**
+     * Sets the maximum possible number of rows in the results.
+     * NOTE: this method is only present to make this class a Bean.
+     *
+     * @param max an int
+     */
+    public void setMax(int max) {
+        this.max = max;
     }
 
     /**
@@ -173,5 +223,13 @@ public class ResultsInfo
             + 5 * rows
             + 7 * min
             + 9 * max);
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return "ResultsInfo(start=" + start + ", complete=" + complete + ", rows=" + rows
+            + ", min=" + min + ", max=" + max + ")";
     }
 }
