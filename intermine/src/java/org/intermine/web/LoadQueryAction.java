@@ -63,7 +63,5 @@ public class LoadQueryAction extends DispatchAction
         } else {
             return mapping.findForward("error");
         }
-
     }
-
 }
