@@ -4,11 +4,9 @@
 <tiles:importAttribute scope="request"/>
 
 <!-- objectDetails.jsp -->
-<font class="resultsCellTitle">
-  <c:forEach var="cld" items="${leafClds}">
-    <c:out value="${cld.unqualifiedName}"/>
-  </c:forEach>
-</font>
+<c:forEach var="cld" items="${leafClds}">
+  <c:out value="${cld.unqualifiedName}"/>
+</c:forEach>
 <br/>
 <br/>
 <c:forEach var="cld" items="${leafClds}">
