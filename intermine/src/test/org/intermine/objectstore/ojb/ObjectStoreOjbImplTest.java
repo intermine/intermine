@@ -8,18 +8,23 @@ import java.util.Arrays;
 import java.math.BigDecimal;
 
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.ContainsConstraint;
+import org.flymine.sql.query.ExplainResult;
 
 import org.flymine.model.testmodel.*;
 
 public class ObjectStoreOjbImplTest extends QueryTestCase
 {
-    private ObjectStore os;
+    private ObjectStoreOjbImpl os;
 
     public ObjectStoreOjbImplTest(String arg) {
         super(arg);
@@ -44,59 +49,59 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
 
         r = new Object[][] { { "CompanyA" } };
         results.put("WhereSimpleEquals", toList(r));
-        
+
         r = new Object[][] { { "CompanyB" } };
         results.put("WhereSimpleNotEquals", toList(r));
 
         r = new Object[][] { { "CompanyA" },
                              { "CompanyB" } };
         results.put("WhereSimpleLike", toList(r));
-        
+
         r = new Object[][] { { "CompanyA" } };
         results.put("WhereEqualsString", toList(r));
-        
+
         r = new Object[][] { { "CompanyB" } };
         results.put("WhereAndSet", toList(r));
-         
+
         r = new Object[][] { { "CompanyA" },
                              { "CompanyB" } };
         results.put("WhereOrSet", toList(r));
-        
+
         r = new Object[][] { { "CompanyA" } };
         results.put("WhereNotSet", toList(r));
-        
-        r = new Object[][] { { data.get("DepartmentA1") }, 
+
+        r = new Object[][] { { data.get("DepartmentA1") },
                              { data.get("DepartmentB1") },
                              { data.get("DepartmentB2") } };
         results.put("WhereSubQueryField", toList(r));
-        
+
         r = new Object[][] { { data.get("CompanyA") } };
         results.put("WhereSubQueryClass", toList(r));
-        
+
         r = new Object[][] { { data.get("CompanyB") } };
         results.put("WhereNotSubQueryClass", toList(r));
-        
+
         r = new Object[][] { { data.get("CompanyB") } };
         results.put("WhereNegSubQueryClass", toList(r));
-        
-        r = new Object[][] { { data.get("CompanyA"), data.get("CompanyA") }, 
+
+        r = new Object[][] { { data.get("CompanyA"), data.get("CompanyA") },
                              { data.get("CompanyB"), data.get("CompanyB") } };
         results.put("WhereClassClass", toList(r));
-        
+
         r = new Object[][] { { data.get("CompanyA"), data.get("CompanyB") },
                              { data.get("CompanyB"), data.get("CompanyA") } };
         results.put("WhereNotClassClass", toList(r));
-        
+
         r = new Object[][] { { data.get("CompanyA"), data.get("CompanyB") },
                              { data.get("CompanyB"), data.get("CompanyA") } };
         results.put("WhereNegClassClass", toList(r));
-        
+
         r = new Object[][] { { data.get("CompanyA") } };
         results.put("WhereClassObject", toList(r));
-        
+
         r = new Object[][] { { data.get("DepartmentA1"), data.get("EmployeeA1") } };
         results.put("Contains11", toList(r));
-         
+
         r = new Object[][] { { data.get("DepartmentA1"), data.get("EmployeeB1") },
                              { data.get("DepartmentA1"), data.get("EmployeeB3") } };
         results.put("ContainsNot11", toList(r));
@@ -104,11 +109,11 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
 
         r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1") } };
         results.put("Contains1N", toList(r));
-         
+
         r = new Object[][] { { data.get("ContractorA"), data.get("CompanyA") },
                              { data.get("ContractorA"), data.get("CompanyB") } };
-        results.put("ContainsMN", toList(r));        
-         
+        results.put("ContainsMN", toList(r));
+
         r = new Object[][] { { data.get("CompanyA"), new Long(1) },
                              { data.get("CompanyB"), new Long(2) } };
         results.put("SimpleGroupBy", toList(r));
@@ -120,7 +125,7 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
                              { new BigDecimal("3476.0000000000"), "DepartmentB1", data.get("DepartmentB1") },
                              { new BigDecimal("3476.0000000000"), "DepartmentB2", data.get("DepartmentB2") } };
         results.put("SelectComplex", toList(r));
-         
+
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
                              { data.get("EmployeeA3") },
@@ -189,6 +194,79 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         CEO ceo = (CEO) (((ResultsRow) l1.get(0)).get(0));
         //System.out.println(ceo.getSalary());
         assertEquals(45000, ceo.getSalary());
+    }
+
+    public void testLimitTooHigh() throws Exception {
+        // try to run query with limit higher than imposed maximum
+        int before = os.maxLimit;
+        os.maxLimit = 99;
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Manager.class);
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        try{
+            List l1 = os.execute(q1, 10, 120);
+            fail("Expected: ObjectStoreException");
+        }  catch (ObjectStoreException e) {
+            os.maxLimit = before;
+        }
+    }
+
+    public void testOffsetTooHigh() throws Exception {
+        // try to run query with offset higher than imposed maximum
+        int before = os.maxOffset;
+        os.maxOffset = 99;
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Manager.class);
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        try {
+            List l1 = os.execute(q1, 100, 180);
+            fail("Expected: ObjectStoreException");
+        }  catch (ObjectStoreException e) {
+            os.maxOffset = before;
+        }
+    }
+
+    public void testTooManyRows() throws Exception {
+        // try to run a query that returns more than max number of rows
+        int  before = os.maxRows;
+        os.maxRows = 0;
+        Query q1 = new Query();
+        try {
+            List l1 = os.execute((Query)queries.get("WhereClassClass"), 0, 10);
+            fail("Expected: ObjectStoreException");
+        }  catch (ObjectStoreException e) {
+            os.maxRows = before;
+        }
+    }
+
+
+    public void testTooMuchTime()  throws Exception {
+        // try to run a query that takes longer than max amount of time
+        long before = os.maxTime;
+        os.maxTime = 0;
+        try {
+            List l1 = os.execute((Query)queries.get("WhereClassClass"), 0, 50);
+            fail("Expected: ObjectStoreException");
+        }  catch (ObjectStoreException e) {
+            os.maxTime = before;
+        }
+    }
+
+
+    public void testEstimateQueryNotNull1() throws Exception {
+        ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"));
+        if (er == null) {
+            fail("a null ExplainResult was returned");
+        }
+    }
+
+    public void testExtimateStartEndNotNull() throws Exception {
+        ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"), 0, 10);
+        if (er == null) {
+            fail("a null ExplainResult was returned");
+        }
     }
 
 }
