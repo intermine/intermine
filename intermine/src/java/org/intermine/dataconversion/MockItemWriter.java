@@ -21,29 +21,49 @@ import org.intermine.model.fulldata.Item;
 import org.intermine.xml.full.ItemHelper;
 
 /**
- * Mimic behaviour of an ItemWriter but actually store Items in a set rather than
+ * Mimic behaviour of an ItemWriter but actually store Items in a Map rather than
  * an ObjectStoreWriter
+ * @author MarkWoodbridge
  */
-public class MockItemWriter implements ItemWriter {
+public class MockItemWriter implements ItemWriter
+{
     Map storedItems;
 
+    /**
+     * Constructor
+     * @param map Map in which to store Items
+     */
     public MockItemWriter(Map map) {
         storedItems = map;
     }
 
+    /**
+     * @see ItemWriter#store
+     */
     public void store(Item item) throws ObjectStoreException {
         storedItems.put(item.getIdentifier(), item);
     }
 
+    /**
+     * @see ItemWriter#storeAll
+     */
     public void storeAll(Collection items) throws ObjectStoreException {
         for (Iterator i = items.iterator(); i.hasNext();) {
             store((Item) i.next());
         }
     }
-
-    public void close() throws ObjectStoreException {}
     
-    // this method is not part of ItemWriter, and for testing convenience returns xml items
+    /**
+     * @see ItemWriter#close
+     */
+    public void close() throws ObjectStoreException {
+    }
+    
+    /**
+     * Get the items that have been stored
+     * This method is not part of ItemWriter, and for testing convenience returns XML Items
+     * @return the Items stored so far, in "XML" format
+     */
     public Set getItems() {
         Set result = new HashSet();
         for (Iterator i = storedItems.values().iterator(); i.hasNext();) {
@@ -52,4 +72,3 @@ public class MockItemWriter implements ItemWriter {
         return result;
     }
 }
-
