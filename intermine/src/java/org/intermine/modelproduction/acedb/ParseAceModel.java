@@ -233,7 +233,7 @@ public class ParseAceModel
             List refs = new ArrayList();
             List cols = new ArrayList();
             atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-            nodeToLists(node.getChild(), null, true, atts, refs, cols);
+            nodeToLists(node.getChild(), "value", true, atts, refs, cols);
             return new ClassDescriptor(PACKAGE + node.getName().substring(1),
                     null, null, false, atts, refs, cols);
         } else {
