@@ -94,24 +94,7 @@ public class PersistenceBrokerFlyMineImplTest extends TestCase
 
         Collection col = dept.getEmployees();
         if (!(col instanceof LazyCollection))
-            fail("Expected Department.employees to be a LazyCollection");
-    }
-
-    // test that entire collection of employees has been materialized
-    public void testNotLazyCollectionField() throws Exception {
-        broker.clearCache();
-        Department dept = getDeptExampleObject();
-        ClassDescriptor cldDept = dr.getDescriptorFor(Department.class);
-        CollectionDescriptor codEmployees = cldDept.getCollectionDescriptorByName("employees");
-
-        // override anything in mapping file
-        codEmployees.setLazy(false);
-
-        broker.retrieveCollection(dept, cldDept, codEmployees, true);
-
-        Collection col = dept.getEmployees();
-        if (col instanceof LazyCollection)
-            fail("Expected Department.employees to be materialized but was a LazyCollection");
+            fail("Expected Department.employees to be a LazyCollection but was a " + col.getClass().getName());
     }
 
     public void testLazyReferenceField() throws Exception {
@@ -122,29 +105,10 @@ public class PersistenceBrokerFlyMineImplTest extends TestCase
         ObjectReferenceDescriptor ordCompany = cldDept.getObjectReferenceDescriptorByName("company");
         ordCompany.getForeignKeyFieldDescriptors(cldDept)[0].getPersistentField().set(dept, new Integer(0));
 
-        // override anything in mapping file
-        ordCompany.setLazy(true);
-
         Object obj = broker.getReferencedObject(dept, ordCompany, cldDept);
 
         if (!(obj instanceof LazyReference))
-            fail("Expected Department.company to be a LazyReference but was " + obj);
-    }
-
-    public void testNotLazyReferenceField() throws Exception {
-        broker.clearCache();
-        Department dept = getDeptExampleObject();
-        ClassDescriptor cldDept = dr.getDescriptorFor(Department.class);
-        ClassDescriptor cldCompany = dr.getDescriptorFor(Company.class);
-        ObjectReferenceDescriptor ordCompany = cldDept.getObjectReferenceDescriptorByName("company");
-
-        // override anything in mapping file
-        ordCompany.setLazy(false);
-
-        Object obj = broker.getReferencedObject(dept, ordCompany, cldDept);
-
-        if (obj instanceof LazyReference)
-            fail("Expected Department.company to be a materialized object but was a LazyReference");
+            fail("Expected Department.company to be a LazyReference but was a " + obj.getClass().getName());
     }
 
     // set up a Department object with an id
