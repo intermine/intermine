@@ -37,9 +37,10 @@ import org.flymine.io.gff3.GFF3Record;
  */
 public class GFF3RecordHandler
 {
-    private Map items = new HashMap();
+    protected Map items = new HashMap();
     private Item sequence;
     private Item analysis;
+    private Item infoSource;
     private Model tgtModel;
     private ItemFactory itemFactory;
     private Map identifierMap;
@@ -186,7 +187,7 @@ public class GFF3RecordHandler
      * @param infoSource the infoSource item
      */
     public void setInfoSource(Item infoSource) {
-        items.put("_infoSource", infoSource);
+        this.infoSource = infoSource;
     }
 
     /**
@@ -194,7 +195,7 @@ public class GFF3RecordHandler
      * @return the infoSource Item
      */
     protected Item getInfoSource() {
-        return (Item) items.get("_infoSource");
+        return this.infoSource;
     }
 
     /**
@@ -263,7 +264,8 @@ public class GFF3RecordHandler
                 if (parentIter.hasNext()) {
                     throw new RuntimeException("Feature has multiple relations for reference: "
                                                + refName + " for feature: " + feature.getClassName()
-                                               + ", " + feature.getIdentifier());
+                                               + ", " + feature.getIdentifier() + ", "
+                                               + feature.getAttribute("identifier").getValue());
                 }
             } else if (cld.getCollectionDescriptorByName(refName, true) != null
                        && parentIter.hasNext()) {
