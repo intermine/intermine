@@ -53,16 +53,10 @@
               </span>
             </c:if>
             <span class="type">
-              <c:choose>
-                <c:when test="${node.collection}">
-                  <fmt:message key="query.collectionMessage">
-                    <fmt:param value="${node.type}"/>
-                  </fmt:message>
-                </c:when>
-                <c:otherwise>
-                  <c:out value="${node.type}"/>
-                </c:otherwise>
-              </c:choose>
+              <%--c:out value="${node.type}"/><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup--%>
+              <c:if test="${node.collection}">
+                <fmt:message key="query.collection"/>
+              </c:if>
             </span>
             <c:choose>
               <c:when test="{node.indentation > 0">

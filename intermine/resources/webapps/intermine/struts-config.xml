@@ -95,6 +95,9 @@
     <action path="/begin"
             forward="begin.page"/>
 
+    <action path="/classDescription"
+            forward="classDescription.page"/>
+
     <!-- Actions invoked using links -->
     <action path="/modifyQueryChange"
             type="org.intermine.web.ModifyQueryChangeAction"
@@ -238,6 +241,9 @@
 
     <action path="/initTree"
             type="org.intermine.web.TreeController"/>
+
+    <action path="/initClassDescription"
+            type="org.intermine.web.ClassDescriptionController"/>
 
     <action path="/initBagBuild"
             type="org.intermine.web.BuildBagController"

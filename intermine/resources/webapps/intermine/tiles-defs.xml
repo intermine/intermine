@@ -81,7 +81,11 @@
     <put name="body" value="tree.tile"/>
     <put name="pageDescription" value="tree.page.description"/>
   </definition>
+  <definition name="classDescription.page" extends="layout.template">
+    <put name="body" value="classDescription.tile"/>
+  </definition>
   <!--tiles-->
+  <definition name="classDescription.tile" path="/classDescription.jsp" controllerUrl="/initClassDescription.do"/>
   <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
