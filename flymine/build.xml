@@ -2370,10 +2370,8 @@
     <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR"
             value="${gbrowse.database.adaptor}"/>
     <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
-          toFile="${build.gbrowse}/${gbrowse.config.file}"
+          toFile="${build.gbrowse}/${gbrowse.database.source}.conf"
           filtering="true" overwrite="true"/>
-
-    <echo message="file: ${build.gbrowse}/${gbrowse.config.file}"/>
 
     <copy toDir="${build.gbrowse.images}">
       <fileset dir="${model}/genomic/resources/gbrowse/images">
@@ -2395,12 +2393,12 @@
 
     <chmod perm="a+r">
       <fileset dir="${build.gbrowse}">
-        <include name="${gbrowse.config.file}"/>
+        <include name="${gbrowse.database.source}.conf"/>
       </fileset>
     </chmod>
 
     <exec executable="rsync">
-      <arg line="-e ssh -Cavz ${build.gbrowse}/${gbrowse.config.file} ${gbrowse.config.directory}/${gbrowse.config.file}" />
+      <arg line="-e ssh -Cavz ${build.gbrowse}/${gbrowse.database.source}.conf ${gbrowse.config.directory}/" />
     </exec>
 
     <exec executable="rsync">
