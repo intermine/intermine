@@ -186,6 +186,7 @@ public class QueryBuildForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Map queryClasses = (Map) session.getAttribute("queryClasses");
+        Map savedBags = (Map) session.getAttribute("savedBags");
         String editingAlias = (String) session.getAttribute("editingAlias");
         
         if (editingAlias == null) {
@@ -224,7 +225,7 @@ public class QueryBuildForm extends ActionForm
             if (fd.isAttribute()) {
                 ActionError actionError =
                     validateAttribute((AttributeDescriptor) fd, op, fieldName, fieldValue,
-                                      locale);
+                                      locale, savedBags);
 
                 if (actionError != null) {
                     errors.add(fieldName, actionError);
@@ -245,20 +246,25 @@ public class QueryBuildForm extends ActionForm
      * @param fieldName the name of the field from the form
      * @param fieldName the value from the form
      * @param locale the current session Locale
+     * @param savedBags the saved bag Map from the session
      * @return an ActionError describing a parse problem, or null if there are no problems
      */
     private ActionError validateAttribute(AttributeDescriptor attributeDescriptor,
                                           ConstraintOp op, String fieldName, Object fieldValue,
-                                          Locale locale) {
+                                          Locale locale, Map savedBags) {
         Class fieldClass = TypeUtil.instantiate(attributeDescriptor.getType());
 
         parsedFieldOps.put(fieldName, op);
 
         try {
             if (BagConstraint.VALID_OPS.contains(op)) {
-                // the value has to be the name of a saved bag or a saved query.  leave it
-                // as a String for now
-                parsedFieldValues.put(fieldName, fieldValue);
+                if (savedBags.containsKey(fieldValue)) {
+                    // the value has to be the name of a saved bag or a saved query.  leave it
+                    // as a String for now
+                    parsedFieldValues.put(fieldName, fieldValue);
+                } else {
+                    return new ActionError("errors.bagconstraint", fieldValue);
+                }
             } else {
                 String stringFieldValue = (String) fieldValue;
                         
