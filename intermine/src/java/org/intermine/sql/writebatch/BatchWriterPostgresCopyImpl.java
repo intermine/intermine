@@ -10,7 +10,6 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -43,7 +42,6 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
      * @see BatchWriterSimpleImpl#doInserts
      */
     protected void doInserts(String name, TableBatch table) throws SQLException {
-        long start = System.currentTimeMillis();
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
@@ -84,12 +82,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     String sql = sqlBuffer.toString();
                     dos.writeShort(-1);
                     dos.flush();
-                    long beforeFlush = System.currentTimeMillis();
-                    copyManager.copyInQuery(sql, new ByteArrayInputStream(baos.toByteArray()));
-                    long now = System.currentTimeMillis();
-                    LOG.debug("Flushing COPY batch for table " + name + " (size = " + baos.size()
-                            + ", total time = " + (now - start) + " ms, of which "
-                            + (now - beforeFlush) + " for flush)");
+                    retval.add(new FlushJobPostgresCopyImpl(copyManager, sql, baos.toByteArray()));
                     table.getIdsToInsert().clear();
                 }
             } catch (IOException e) {

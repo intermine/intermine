@@ -12,8 +12,10 @@ package org.intermine.sql.writebatch;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -38,6 +40,9 @@ public class Batch
     private BatchWriter batchWriter;
     private int batchSize = 0;
 
+    private List flushJobs = Collections.EMPTY_LIST;
+    private SQLException problem = null;
+    
     /**
      * Constructs an empty Batch, with no tables.
      *
@@ -45,6 +50,11 @@ public class Batch
      */
     public Batch(BatchWriter batchWriter) {
         this.batchWriter = batchWriter;
+        BatchFlusher flusher = new BatchFlusher();
+        Thread thread = new Thread(flusher);
+        thread.setDaemon(true);
+        thread.setName("WriteBatch Flusher");
+        thread.start();
     }
 
     /**
@@ -52,6 +62,10 @@ public class Batch
      * rows. If the batch already shows that row to exist (by idField), then an exception will be
      * thrown. If the table is not set up, then it will be set up using the provided array of field
      * names, but without an idField (which will be set up the first time deleteRow is called).
+     * <br>
+     * Note that the batch may hang on to (and use) the Connection that you provide. It is your
+     * responsibility to call flush(Connection) before using that same Connection with anything
+     * other than this batch.
      *
      * @param con a Connection for writing to the database
      * @param name the name of the table
@@ -69,7 +83,7 @@ public class Batch
         }
         batchSize += table.addRow(idValue, colNames, values);
         if (batchSize > MAX_BATCH_SIZE) {
-            flush(con);
+            backgroundFlush(con);
         }
     }
 
@@ -79,6 +93,10 @@ public class Batch
      * no further action is taken. If the table if not set up, then it will be set up with an
      * idField, but without an array of field names (which will be set up the first time addRow is
      * called.
+     * <br>
+     * Note that the batch may hang on to (and use) the Connection that you provide. It is your
+     * responsibility to call flush(Connection) before using that same Connection with anything
+     * other than this batch.
      *
      * @param con a Connection for writing to the database
      * @param name the name of the table
@@ -95,26 +113,50 @@ public class Batch
         }
         batchSize += table.deleteRow(idField, idValue);
         if (batchSize > MAX_BATCH_SIZE) {
-            flush(con);
+            backgroundFlush(con);
         }
     }
 
     /**
-     * Flushes the batch out to the database server.
+     * Flushes the batch out to the database server. This method guarantees that the Connection
+     * is no longer in use by the batch once it returns.
      *
      * @param con a Connection for writing to the database
      * @throws SQLException if a flush occurs, and an error occurs while flushing
      */
     public void flush(Connection con) throws SQLException {
-        //long start = System.currentTimeMillis();
-        batchWriter.write(con, tables);
-        batchSize = 0;
-        //long end = System.currentTimeMillis();
-        //LOG.error("Flushed batch - took " + (end - start) + " ms");
+        backgroundFlush(con);
+        putFlushJobs(Collections.EMPTY_LIST); // to throw exceptions
     }
 
     /**
-     * Clears the batch without writing it to the database.
+     * Flushes the batch out to the database server, but does not guarantee that the operation
+     * is finished when this method returns. Do not use the Connection until you have called flush()
+     * or clear(). This method also guarantees that any exception thrown by any operations being
+     * completed by this flush will be thrown out of this method.
+     *
+     * @param con a Connection for writing to the database
+     * @throws SQLException if an error occurs while flushing
+     */
+    public void backgroundFlush(Connection con) throws SQLException {
+        long start = System.currentTimeMillis();
+        List jobs = batchWriter.write(con, tables);
+        long middle = System.currentTimeMillis();
+        putFlushJobs(jobs);
+        batchSize = 0;
+        long end = System.currentTimeMillis();
+        if (end > middle + 10) {
+            LOG.info("Enqueued batch to flush - took " + (middle - start) + " + "
+                    + (end - middle) + " ms");
+        }
+    }
+
+    /**
+     * Clears the batch without writing it to the database. NOTE that some data may have already
+     * made it to the database. It is expected that this will be called just before a transaction
+     * is aborted, removing the data anyway. This method guarantees that the Connection is no longer
+     * in use by the batch once it returns. This method also discards any deferred exceptions
+     * waiting to be thrown
      */
     public void clear() {
         Iterator iter = tables.entrySet().iterator();
@@ -125,6 +167,8 @@ public class Batch
             table.getIdsToDelete().clear();
         }
         batchSize = 0;
+        waitForFreeConnection();
+        clearProblem();
     }
 
     /**
@@ -133,6 +177,116 @@ public class Batch
      * @param batchWriter the new BatchWriter
      */
     public void setBatchWriter(BatchWriter batchWriter) {
+        waitForFreeConnection();
         this.batchWriter = batchWriter;
+    }
+
+    /**
+     * Returns a List of flush jobs (each as fully-processed as possible) when one becomes
+     * available.
+     *
+     * @return a List
+     */
+    private synchronized List getFlushJobs() {
+        flushJobs = null;
+        notifyAll();
+        while (flushJobs == null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        // By this point, any problem must necessarily have been picked up, so we can reset it.
+        problem = null;
+        return flushJobs;
+    }
+
+    /**
+     * Waits for the flushJobs variable to be empty, which guarantees that the connection is
+     * currently unused.
+     */
+    private synchronized void waitForFreeConnection() {
+        while (flushJobs != null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
+    /**
+     * Puts a List of flush jobs into the flushJobs variable, and tells the writer thread to write
+     * it.
+     *
+     * @param jobs a List of jobs
+     * @throws SQLException if the last background flush resulted in an error - note that the
+     * operation will go ahead anyway (although it is likely to throw another exception of its own,
+     * because the transaction will be invalid).
+     */
+    private synchronized void putFlushJobs(List jobs) throws SQLException {
+        while (flushJobs != null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        flushJobs = jobs;
+        notifyAll();
+        if (problem != null) {
+            throw problem;
+        }
+    }
+
+    /**
+     * Reports a problem to the Batch - it will be thrown on the next background flush, or discarded
+     * by the clear method.
+     *
+     * @param problem the SQLException
+     */
+    private synchronized void reportProblem(SQLException problem) {
+        this.problem = problem;
+    }
+
+    /**
+     * Clears the problem with the Batch.
+     */
+    public synchronized void clearProblem() {
+        problem = null;
+    }
+    
+    private class BatchFlusher implements Runnable
+    {
+        public BatchFlusher() {
+        }
+
+        public void run() {
+            long flusherStart = System.currentTimeMillis();
+            long totalSpent = 0;
+            while (true) {
+                try {
+                    List jobs = getFlushJobs();
+                    long start = System.currentTimeMillis();
+                    Iterator jobIter = jobs.iterator();
+                    while (jobIter.hasNext()) {
+                        FlushJob job = (FlushJob) jobIter.next();
+                        job.flush();
+                    }
+                    long end = System.currentTimeMillis();
+                    totalSpent += end - start;
+                    if (totalSpent / 10000 > (totalSpent + start - end) / 10000) {
+                        LOG.info("Batch flusher has spent " + totalSpent + " ms waiting for the"
+                                + " database (duty cycle " + ((100 * totalSpent + ((end
+                                                    - flusherStart) / 2))
+                                                      / (end - flusherStart)) + "%)");
+                    }
+                    //LOG.error("Flushed batch at " + end + " - took " + (end - start)
+                    //        + " ms, total " + totalSpent + " of " + (end - flusherStart)
+                    //        + " (duty cycle " + ((100 * totalSpent + ((end - flusherStart) / 2))
+                    //                / (end - flusherStart)) + "%)");
+                } catch (SQLException e) {
+                    reportProblem(e);
+                }
+            }
+        }
     }
 }

@@ -60,17 +60,17 @@ public class ReadAheadDBReader extends BatchingDBReader
         if ((previous != referenceBatch) || (!ready)) {
             referenceBatch = super.getBatch(previous);
         } else {
-            //long start = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
             while ((nextBatch == null) && (nextProblem == null) && ready) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
                 }
             }
-            //long end = System.currentTimeMillis();
-            //if (end - start > 50) {
-            //    LOG.debug("Had to wait for worker thread for " + (end - start) + " ms");
-            //}
+            long end = System.currentTimeMillis();
+            if (end - start > 10) {
+                LOG.debug("Had to wait for worker thread for " + (end - start) + " ms");
+            }
             referenceBatch = nextBatch;
             if (nextProblem != null) {
                 throw nextProblem;

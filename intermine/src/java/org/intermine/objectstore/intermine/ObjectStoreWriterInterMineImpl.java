@@ -41,7 +41,7 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.xml.lite.LiteParser;
+//import org.intermine.xml.lite.LiteParser;
 import org.intermine.xml.lite.LiteRenderer;
 
 import org.apache.log4j.Logger;
@@ -69,7 +69,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Map tableToFieldNameArray;
     protected Map tableToCollections;
 
-    protected static final int SEQUENCE_MULTIPLE = 100;
+    protected static final int SEQUENCE_MULTIPLE = 1000000;
     protected static final int MAX_BATCH_CHARS = 10000000;
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
@@ -106,6 +106,16 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         tableToColNameArray = new HashMap();
         tableToFieldNameArray = new HashMap();
         tableToCollections = new HashMap();
+        Iterator missingTableIter = this.os.missingTables.iterator();
+        while (missingTableIter.hasNext()) {
+            String missingTable = (String) missingTableIter.next();
+            try {
+                Statement s = conn.createStatement();
+                s.execute("DROP TABLE " + missingTable);
+                LOG.error("Dropping table " + missingTable);
+            } catch (SQLException e2) {
+            }
+        }
     }
     
     /**
@@ -300,6 +310,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
             }
             String xml = LiteRenderer.render(o, model);
+            //String xml = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
             Iterator cldIter = classDescriptors.iterator();
@@ -339,21 +350,23 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     tableToCollections.put(tableName, collections);
                 }
                     
-                if (doDeletes) {
-                    batch.deleteRow(c, tableName, "id", o.getId());
-                }
-                Object values[] = new Object[colNames.length];
-                values[0] = xml;
-                for (int colNo = 1; colNo < colNames.length; colNo++) {
-                    Object value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
-                    if (value instanceof Date) {
-                        value = new Long(((Date) value).getTime());
-                    } else if (value instanceof InterMineObject) {
-                        value = ((InterMineObject) value).getId();
+                if (!os.missingTables.contains(tableName)) {
+                    if (doDeletes) {
+                        batch.deleteRow(c, tableName, "id", o.getId());
                     }
-                    values[colNo] = value;
+                    Object values[] = new Object[colNames.length];
+                    values[0] = xml;
+                    for (int colNo = 1; colNo < colNames.length; colNo++) {
+                        Object value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
+                        if (value instanceof Date) {
+                            value = new Long(((Date) value).getTime());
+                        } else if (value instanceof InterMineObject) {
+                            value = ((InterMineObject) value).getId();
+                        }
+                        values[colNo] = value;
+                    }
+                    batch.addRow(c, tableName, o.getId(), colNames, values);
                 }
-                batch.addRow(c, tableName, o.getId(), colNames, values);
 
                 Iterator collectionIter = collections.iterator();
                 while (collectionIter.hasNext()) {
@@ -388,11 +401,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
             }
 
-            try {
-                InterMineObject toCache = LiteParser.parse(xml, this);
-                cacheObjectById(toCache.getId(), toCache);
-            } catch (Exception e) {
-            }
+            //try {
+            //    InterMineObject toCache = LiteParser.parse(xml, this);
+            //    cacheObjectById(toCache.getId(), toCache);
+            //} catch (Exception e) {
+            //}
+            invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
         } catch (IllegalAccessException e) {
@@ -429,6 +443,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     protected Integer getSerialWithConnection(Connection c) throws SQLException {
         if (sequenceOffset >= SEQUENCE_MULTIPLE) {
+            long start = System.currentTimeMillis();
             sequenceOffset = 0;
             Statement s = c.createStatement();
             ResultSet r = s.executeQuery("SELECT nextval('serial');");
@@ -439,6 +454,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
             long nextSequence = r.getLong(1);
             sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
+            long end = System.currentTimeMillis();
+            LOG.error("Got new set of serial numbers - took " + (end - start) + " ms");
         }
         Integer retval = new Integer(sequenceBase + (sequenceOffset++));
         recentSequences.put(retval, retval);
@@ -487,7 +504,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
-                batch.deleteRow(c, tableName, "id", o.getId());
+                if (!os.missingTables.contains(tableName)) {
+                    batch.deleteRow(c, tableName, "id", o.getId());
+                }
             }
             invalidateObjectById(o.getId());
         } catch (SQLException e) {

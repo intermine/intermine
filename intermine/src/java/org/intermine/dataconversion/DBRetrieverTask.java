@@ -77,7 +77,7 @@ public class DBRetrieverTask extends Task
             Model m = Model.getInstanceByName(model);
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             new DBConverter(m, db, new ReadAheadDBReader(db, m),
-                    new BufferedItemWriter(new ObjectStoreItemWriter(osw))).process();
+                    new ObjectStoreItemWriter(osw)).process();
             ObjectStore os = osw.getObjectStore();
             if (os instanceof ObjectStoreInterMineImpl) {
                 Connection c = null;

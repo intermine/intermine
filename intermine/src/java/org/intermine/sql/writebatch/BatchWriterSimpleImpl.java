@@ -13,7 +13,9 @@ package org.intermine.sql.writebatch;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.util.DatabaseUtil;
@@ -33,13 +35,14 @@ public class BatchWriterSimpleImpl implements BatchWriter
     protected Connection con;
     protected Statement simpleBatch;
     protected int simpleBatchSize;
+    protected List retval;
 
     /**
      * @see BatchWriter#write
      */
-    public void write(Connection con, Map tables) throws SQLException {
+    public List write(Connection con, Map tables) throws SQLException {
+        retval = new ArrayList();
         this.con = con;
-        long start = System.currentTimeMillis();
         simpleBatch = con.createStatement();
         simpleBatchSize = 0;
         Iterator tableIter = tables.entrySet().iterator();
@@ -51,13 +54,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
             doInserts(name, table);
         }
         if (simpleBatchSize > 0) {
-            long beforeFlush = System.currentTimeMillis();
-            simpleBatch.executeBatch();
-            long now = System.currentTimeMillis();
-            LOG.debug("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
-                    + (now - start) + " ms, of which " + (now - beforeFlush) + " for flush)");
+            retval.add(new FlushJobStatementBatchImpl(simpleBatch));
         }
         simpleBatch = null;
+        return retval;
     }
 
     /**
@@ -138,12 +138,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
         simpleBatch.addBatch(sql);
         simpleBatchSize += sql.length();
         if (simpleBatchSize > 10000000) {
-            long start = System.currentTimeMillis();
-            simpleBatch.executeBatch();
-            long now = System.currentTimeMillis();
-            LOG.debug("Flushing simpleBatch (size = " + simpleBatchSize + ", time = "
-                + (now - start) + " ms for flush) out-of-band");
-            simpleBatch.clearBatch();
+            retval.add(new FlushJobStatementBatchImpl(simpleBatch));
             simpleBatchSize = 0;
         }
     }

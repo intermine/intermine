@@ -12,6 +12,7 @@ package org.intermine.sql.writebatch;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,11 +23,13 @@ import java.util.Map;
 public interface BatchWriter
 {
     /**
-     * Flushes a few tables to the connection.
+     * Performs all the processing for flushing a few tables to the connection, and returns a List
+     * of jobs to do the actual flushing.
      *
      * @param con the SQL connection
      * @param tables a Map from table name to TableBatch
+     * @return a List of jobs to run to actually do the flushing
      * @throws SQLException if there is an underlying DB problem
      */
-    public void write(Connection con, Map tables) throws SQLException;
+    public List write(Connection con, Map tables) throws SQLException;
 }

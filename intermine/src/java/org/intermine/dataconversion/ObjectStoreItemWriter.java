@@ -28,7 +28,7 @@ public class ObjectStoreItemWriter implements ItemWriter
 {
     private ObjectStoreWriter osw;
     private int transactionCounter = 0;
-    private static final int TRANSACTION_BATCH_SIZE = 10000;
+    private static final int TRANSACTION_BATCH_SIZE = 1000000;
     /**
      * Constructs the ItemWriter with an ObjectStoreWriter.
      *
@@ -84,5 +84,3 @@ public class ObjectStoreItemWriter implements ItemWriter
         osw.close();
     }
 }
-
-

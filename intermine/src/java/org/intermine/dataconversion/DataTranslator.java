@@ -534,7 +534,7 @@ public class DataTranslator
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new BufferedItemWriter(new ObjectStoreItemWriter(oswTgt));
+        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);

@@ -13,7 +13,9 @@ package org.intermine.sql.writebatch;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -31,9 +33,9 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     /**
      * @see BatchWriter#write
      */
-    public void write(Connection con, Map tables) throws SQLException {
+    public List write(Connection con, Map tables) throws SQLException {
+        retval = new ArrayList();
         this.con = con;
-        long start = System.currentTimeMillis();
         simpleBatch = con.createStatement();
         simpleBatchSize = 0;
         Iterator tableIter = tables.entrySet().iterator();
@@ -44,11 +46,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             doDeletes(name, table);
         }
         if (simpleBatchSize > 0) {
-            long beforeFlush = System.currentTimeMillis();
-            simpleBatch.executeBatch();
-            long now = System.currentTimeMillis();
-            LOG.debug("Flushing simpleBatch (size = " + simpleBatchSize + ", total time = "
-                    + (now - start) + " ms, of which " + (now - beforeFlush) + " for flush)");
+            retval.add(new FlushJobStatementBatchImpl(simpleBatch));
         }
         simpleBatch = null;
         tableIter = tables.entrySet().iterator();
@@ -58,13 +56,13 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             TableBatch table = (TableBatch) tableEntry.getValue();
             doInserts(name, table);
         }
+        return retval;
     }
 
     /**
      * @see BatchWriterSimpleImpl#doInserts
      */
     protected void doInserts(String name, TableBatch table) throws SQLException {
-        long start = System.currentTimeMillis();
         String colNames[] = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer sqlBuffer = new StringBuffer("INSERT INTO ").append(name).append(" (");
@@ -95,12 +93,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                 prepS.addBatch();
                 insertCount++;
             }
-            long beforeFlush = System.currentTimeMillis();
-            prepS.executeBatch();
-            long now = System.currentTimeMillis();
-            LOG.debug("Flushing PreparedStatement batch for table " + name + " (" + insertCount
-                    + " inserts, total time = " + (now - start) + " ms, of which "
-                    + (now - beforeFlush) + " for flush)");
+            retval.add(new FlushJobStatementBatchImpl(prepS));
             table.getIdsToInsert().clear();
         }
     }
