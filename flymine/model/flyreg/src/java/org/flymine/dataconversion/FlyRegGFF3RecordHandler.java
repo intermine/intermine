@@ -73,6 +73,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                 gene = getItemFactory().makeItemForClass(geneNs);
                 geneIdMap.put(factorGeneName, gene);
                 gene.setAttribute("name", factorGeneName);
+                gene.setReference("organism", getOrganism().getIdentifier());
                 addItem(gene);
             }
 
@@ -90,6 +91,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                 gene = getItemFactory().makeItemForClass(geneNs);
                 geneIdMap.put(targetGeneName, gene);
                 gene.setAttribute("name", targetGeneName);
+                gene.setReference("organism", getOrganism().getIdentifier());
                 addItem(gene);
             }
 
