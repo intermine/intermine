@@ -51,8 +51,16 @@ public class TemplateAction extends Action
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String queryName = (String) session.getAttribute("queryName");
-        String templateType = (String) session.getAttribute("templateType");
+        String queryName = request.getParameter("queryName");
+        String templateType = request.getParameter("templateType");
+        
+        if (templateType == null) {
+            templateType = (String) session.getAttribute("templateType");
+        }
+        
+        if (queryName == null) {
+            queryName = (String) session.getAttribute("queryName");
+        }
         
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         PathQuery queryCopy = TemplateHelper.templateFormToQuery((TemplateForm) form, template);

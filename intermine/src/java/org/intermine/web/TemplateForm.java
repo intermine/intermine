@@ -126,8 +126,16 @@ public class TemplateForm extends ActionForm
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-        String queryName = (String) session.getAttribute("queryName");
-        String templateType = (String) session.getAttribute("templateType");
+        String queryName = request.getParameter("queryName");
+        String templateType = request.getParameter("templateType");
+        
+        if (templateType == null) {
+            templateType = (String) session.getAttribute("templateType");
+        }
+        
+        if (queryName == null) {
+            queryName = (String) session.getAttribute("queryName");
+        }
         
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         
