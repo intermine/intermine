@@ -167,6 +167,7 @@
     <pathelement location="${build.model}/taxonomy"/>
     <pathelement location="${build.model}/uniprot"/>
     <pathelement location="${build.model}/protein_structure"/>
+    <pathelement location="${build.model}/ucsc"/>
     <fileset dir="${model}">
       <patternset refid="lib.models"/>
     </fileset>
@@ -1409,6 +1410,19 @@
     </ant>
   </target>
 
+ <target name="load-gff3" depends="copy-genomic-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.genomic-test"
+               source="os.gff3-translated-std"
+               sourceName="ucsc"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-gff3-production" depends="retrieve-gff3, load-gff3"/>
+
   
   <!-- LOAD STATIC DATA -->
 
@@ -2456,6 +2470,13 @@
 
   <!-- =============== HUMAN TARGETS ================= -->
 
+ <target name="compile-genomic-human-java" depends="compile-flymine-java, compile-genomic-human-model">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
   <!-- ENSEMBL HUMAN  MODEL GENERATION -->
 
   <!-- convert ensembl human zargo to InterMine model -->
@@ -2478,7 +2499,7 @@
           depends="remove-genomic, prepare-build-model,
                 merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
-                merge-uniprot-model, merge-protein_structure-model, merge-so-model">
+                merge-uniprot-model, merge-protein_structure-model, merge-ucsc-model, merge-so-model">
   </target>
 
   <!-- create java objects for the genomic human model-->
@@ -2672,6 +2693,74 @@
 
   <target name="build-go-human-production"
           depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
+
+<!-- UCSC MODEL GENERATION -->
+
+  <!-- merge ucsc model additions with current genomic model -->
+  <target name="merge-ucsc-model" depends="prepare-genomic-model">
+    <merge-genomic-additions additionsFile="${model}/ucsc/ucsc_additions.xml"/>
+  </target>
+
+  <target name="ucsc-test"
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-human-java">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="ucsc"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+ <!--load TFBS GFF3 data from UCSC-->
+
+  <target name="retrieve-tfbs" depends="prepare-build-model, compile-genomic-human-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="UCSC"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
+      <!--fileset dir ="/shared/data/human/tfbs">        
+        <include name ="*.gff"/>
+      </fileset-->
+      <fileset dir ="/shared/data/gff3">        
+        <include name ="tfbs.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+ <target name="load-tfbs" depends="copy-genomic-config">
+    <taskdef name="load-tfbs" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.genomic-test"
+               source="os.gff3-translated-std"
+               sourceName="ucsc"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-tfbs-production" depends="retrieve-tfbs, load-tfbs"/>
 
 </project>
 
