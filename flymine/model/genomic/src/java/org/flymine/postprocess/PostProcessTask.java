@@ -109,6 +109,10 @@ public class PostProcessTask extends Task
                 LOG.info("Starting update-publications");
                 new UpdatePublications(iw).execute();
                 LOG.info("Finished update-publications");
+            } else if ("add-licences".equals(type)) {
+                LOG.info("Starting add-licences");
+                new AddLicences(osw).execute();
+                LOG.info("Finished add-licences");
             } else {
                 throw new BuildException("unknown type: " + type);
             }
