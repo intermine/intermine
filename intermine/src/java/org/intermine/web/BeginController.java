@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -56,10 +55,10 @@ public class BeginController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
         
         if (properties != null) {
             session.setAttribute("queryName", properties.getProperty("begin.browse.template"));
+            session.setAttribute("templateType", "global");
             // might want to make the operator a model web.properties property
             request.setAttribute("browseOperator", ConstraintOp.MATCHES.getIndex());
         }
