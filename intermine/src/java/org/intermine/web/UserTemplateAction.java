@@ -50,8 +50,7 @@ public class UserTemplateAction extends InterMineDispatchAction
         
         TemplateQuery template = (TemplateQuery) profile.getSavedTemplates().get(templateName);
         if (template != null) {
-            String msg = getResources(request).getMessage("templateList.deleted", templateName);
-            session.setAttribute(Constants.MESSAGE, msg);
+            recordMessage(new ActionMessage("templateList.deleted", templateName), request);
             profile.deleteTemplate(templateName);
             // If superuser then rebuild shared templates
             if (profile.getUsername() != null
