@@ -90,7 +90,9 @@ public class CalculateLocations
      * Fix the Locations that connect objectCls and subjectCls objects.
      */
     private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
-        Iterator resIter = CalculateLocationsUtil.findLocations(os, objectCls, subjectCls, true);
+        Results results = PostProcessUtil.findLocations(os, objectCls, subjectCls, true);
+
+        Iterator resIter = results.iterator();        
 
         Set batch = new HashSet();
 
@@ -264,8 +266,10 @@ public class CalculateLocations
         makeContigLocations();
 
         // 4. For all BioEntities located on Contigs compute other offsets on all parents
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Contig.class, BioEntity.class, true);
+        Results results =
+            PostProcessUtil.findLocations(os, Contig.class, BioEntity.class, true);
+
+        Iterator resIter = results.iterator();        
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -869,8 +873,11 @@ public class CalculateLocations
      * Find and hold locations of ChromosomeBands on Chromsomes
      */
     private void makeChromosomeBandLocations() throws Exception {
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Chromosome.class, ChromosomeBand.class, true);
+        Results results =
+            PostProcessUtil.findLocations(os, Chromosome.class, ChromosomeBand.class, true);
+
+        Iterator resIter = results.iterator();        
+
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
@@ -891,8 +898,10 @@ public class CalculateLocations
      * Create locations of Supercontigs on ChromosomeBands
      */
     private void makeSupercontigLocations() throws Exception {
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Chromosome.class, Supercontig.class, true);
+        Results results =
+            PostProcessUtil.findLocations(os, Chromosome.class, Supercontig.class, true);
+
+        Iterator resIter = results.iterator();        
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -943,8 +952,10 @@ public class CalculateLocations
      * create locations Contig->ChromosomeBand, Contig->Chromosome
      */
     private void makeContigLocations() throws Exception {
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Supercontig.class, Contig.class, true);
+        Results results =
+            PostProcessUtil.findLocations(os, Supercontig.class, Contig.class, true);
+
+        Iterator resIter = results.iterator();        
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
