@@ -24,6 +24,7 @@ import org.flymine.dataconversion.DataTranslator;
 import org.flymine.dataconversion.ItemWriter;
 import org.flymine.dataconversion.MockItemWriter;
 import org.flymine.dataconversion.MockItemReader;
+import org.flymine.modelproduction.xml.FlyMineModelParser;
 import org.flymine.xml.full.Attribute;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Reference;
@@ -97,14 +98,9 @@ public class DefinitiveOwlTest extends XMLTestCase
     }
 
     public void testGenerateFlyMineModel() throws Exception {
-        Model model = generateFlyMineModel();
-//         FileWriter writer = new FileWriter(new File("flymine_model"));
-//         writer.write(model.toString());
-//         writer.close();
-
-        InputStream expected = getClass().getClassLoader().getResourceAsStream("test/DefinitiveOwlTest_model.xml");
-        XMLUnit.setIgnoreWhitespace(true);
-        assertXMLEqual(new InputStreamReader(expected), new StringReader(model.toString()));
+        Model expected  = new FlyMineModelParser().process(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("DefinitiveOwlTest_model.xml")));
+        Model model = new Owl2FlyMine("test", "org.flymine.model.test").process(runMergeOwl(), tgtNs);
+        assertEquals(expected, model);
     }
 
 //     public void testDataTranslatorSrc1() throws Exception {
