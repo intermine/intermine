@@ -10,6 +10,10 @@ package org.flymine.objectstore.query;
  *
  */
 
+//import java.util.HashMap;
+//import java.util.Iterator;
+//import java.util.Map;
+
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.fql.FqlQueryParser;
 
@@ -27,6 +31,23 @@ public class QueryCloner
      * @return a Query object not connected to the original, but identical
      */
     public static Query cloneQuery(Query query) {
-        return FqlQueryParser.parse(new FqlQuery(query.toString(), null));
+        Query newQuery = new Query();
+        /*Map fromElementMap = new HashMap();
+        Iterator fromIter = query.getFrom().iterator();
+        while (fromIter.hasNext()) {
+            FromElement origFrom = (FromElement) fromIter.next();
+            FromElement newFrom = null;
+            if (origFrom instanceof QueryClass) {
+                newFrom = new QueryClass(((QueryClass) origFrom).getType());
+            } else if (origFrom instanceof Query) {
+                newFrom = cloneQuery((Query) origFrom);
+            } else {
+                throw new IllegalArgumentException("Unknown type of FromElement " + origFrom);
+            }
+            newQuery.addFrom(newFrom, (String) query.getAliases().get(origFrom));
+            fromElementMap.put(origFrom, newFrom);
+        }*/
+        //return newQuery;
+        return FqlQueryParser.parse(new FqlQuery(query));
     }
 }

@@ -32,11 +32,21 @@ public class QueryClonerTest extends SetupDataTestCase
         return OneTimeTestCase.buildSuite(QueryClonerTest.class);
     }
 
-    public void executeTest(String type) throws Exception {
-        Query orig = ((Query) queries.get(type));
-        Query cloned = QueryCloner.cloneQuery(orig);
+    public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
 
-        assertEquals(type + " has failed", orig, cloned);
+        results.putAll(queries);
+    }
+
+    public void executeTest(String type) throws Exception {
+        try {
+            Query orig = ((Query) queries.get(type));
+            Query cloned = QueryCloner.cloneQuery(orig);
+
+            assertEquals(type + " has failed", orig, cloned);
+        } catch (IllegalArgumentException e) {
+            fail("IllegalArgumentException thrown for " + type + ": " + queries.get(type));
+        }
     }
 
     public void testAlias() throws Exception {
