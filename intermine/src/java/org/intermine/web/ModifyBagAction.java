@@ -165,28 +165,24 @@ public class ModifyBagAction extends Action
                                 HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
-        try {
-            HttpSession session = request.getSession();
-            ServletContext servletContext = session.getServletContext();
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            Model model = (Model) os.getModel();
-            Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-            String[] selectedBags = ((ModifyBagForm) form).getSelectedBags();
-            
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "Attachment; Filename=\"savedBags\"");
-            
-            ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-            for (int i = 0; i < selectedBags.length; i++) {
-                String bagName = (String) selectedBags[i];
-                InterMineBag bag = (InterMineBag) savedBags.get(bagName);
-                out.writeObject(SerializationUtil.collectionToStrings(bag, model));
-            }
-            out.close();
-        } catch (Exception e) {
-            Logger.log(e);
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        String[] selectedBags = ((ModifyBagForm) form).getSelectedBags();
+        
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "Attachment; Filename=\"savedBags\"");
+        
+        ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
+        for (int i = 0; i < selectedBags.length; i++) {
+            String bagName = (String) selectedBags[i];
+            InterMineBag bag = (InterMineBag) savedBags.get(bagName);
+            out.writeObject(SerializationUtil.collectionToStrings(bag, model));
         }
-
+        out.close();
+        
         return null;
     }
 }
