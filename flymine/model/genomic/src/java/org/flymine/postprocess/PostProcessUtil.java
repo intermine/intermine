@@ -93,7 +93,7 @@ public class PostProcessUtil
         q.setConstraint(cs);
 
         Results res = new Results(q, os, os.getSequence());
-
+        res.setBatchSize(10000);
         return res.iterator();
     }
 
@@ -126,7 +126,7 @@ public class PostProcessUtil
         q.setConstraint(cs);
 
         Results res = new Results(q, os, os.getSequence());
-
+        res.setBatchSize(10000);
         return res.iterator();
     }
 
@@ -145,6 +145,7 @@ public class PostProcessUtil
         q.addToSelect(qc);
         q.addFrom(qc);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        res.setBatchSize(10000);
         return res.iterator();
     }
 }
