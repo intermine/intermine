@@ -179,6 +179,12 @@
     <touch file="${build}/TestModel_.xmi" />
   </target>
 
+  <target name="model-output-prepare" depends="compile-main">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+  </target>
+
   <!-- is our java source older than the model? -->
   <target name="testmodel-java.check" depends="unpack-testmodel">
     <uptodate property="testmodel-java.outofdate" targetfile="${build}/TestModel_.xmi">
@@ -187,15 +193,10 @@
   </target>
   
   <!-- generate java source for model -->
-  <target name="generate-java-testmodel" depends="testmodel-java.check, compile-main"
+  <target name="generate-java-testmodel" depends="testmodel-java.check, model-output-prepare"
           description="generate testmodel classes from xmi"
           if="testmodel-java.outofdate">
-    <java classname="org.flymine.codegen.JavaModelOutput" fork="true">
-      <classpath refid="base.class.path" />
-      <arg value="TestModel" />
-      <arg value="${build}" />
-      <arg value="${build.model}/testmodel" />
-    </java>
+    <model-output type="java" model="testmodel" destdir="${build.model}/testmodel"/>
   </target>
 
   <!-- compile java source for model -->
@@ -214,14 +215,9 @@
   </target>
 
   <!-- generate repository descriptor for model -->
-  <target name="generate-repository-testmodel" depends="testmodel-repository.check, compile-main"
+  <target name="generate-repository-testmodel" depends="testmodel-repository.check, model-output-prepare"
           if="testmodel-repository.outofdate">
-    <java classname="org.flymine.codegen.OJBModelOutput" fork="true">
-      <classpath refid="base.class.path" />
-      <arg value="TestModel" />
-      <arg value="${build}" />
-      <arg value="${build.model}/testmodel" />
-    </java>
+    <model-output type="ojb" model="testmodel" destdir="${build.model}/testmodel"/>
 
     <!-- Copy the default repository files across -->
     <copy todir="${build.model}/testmodel" flatten="true">
@@ -233,14 +229,9 @@
   </target>
 
   <!-- generate mapping file for castor xml binding -->
-  <target name="generate-castor-xml-mapping" depends="testmodel-repository.check, compile-main"
+  <target name="generate-castor-xml-mapping" depends="testmodel-repository.check, model-output-prepare"
           if="testmodel-repository.outofdate">
-    <java classname="org.flymine.codegen.CastorModelOutput" fork="true">
-      <classpath refid="base.class.path" />
-      <arg value="TestModel" />
-      <arg value="${build}" />
-      <arg value="${build.model}/testmodel" />
-    </java>
+    <model-output type="castor" model="testmodel" destdir="${build.model}/testmodel"/>
 
     <copy todir="${build.model}/testmodel" flatten="true">
       <fileset dir="${resources}">
@@ -398,7 +389,6 @@
       <formatter type="xml" tofile="${results.checkstyle}/checkstyle_report.xml" />
       <fileset dir="${src.java}">
         <include name="**/*.java" />
-        <exclude name="**/codegen/*.java" />
       </fileset>
     </checkstyle>
 
