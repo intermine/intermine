@@ -77,7 +77,8 @@ public class XmlDataLoaderTask extends Task
                                              iw.getMainSource(sourceName),
                                              iw.getSkeletonSource(sourceName));
         } catch (Exception e) {
-            throw new BuildException(e);
+            throw new BuildException("Exception while reading from: " + xmlFile + " with source "
+                                     + sourceName, e);
         }
     }
 }
