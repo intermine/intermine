@@ -18,23 +18,20 @@ form {
 .description {
 }
 
-.errors {
-  color: red;
+.topBar {
   background: white;
   padding: 6px;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
-  border: 1px solid black;
   border: 1px dashed #777;
+}
+.errors {
+  color: red;
 }
 .messages {
   color: green;
-  background: white;
-  padding: 6px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-  font-size: 13px;
-  border: 1px solid black;
-  border: 1px dashed #777;
+}
+.contextHelp {
 }
 
 .box .heading {
