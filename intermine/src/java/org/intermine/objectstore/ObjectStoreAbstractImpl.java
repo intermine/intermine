@@ -239,7 +239,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * maximum start allowed or the limit greater than the maximum
      * limit allowed
      */
-    protected void checkStartLimit(int start, int limit, Query query) throws ObjectStoreLimitReachedException {
+    protected void checkStartLimit(int start, int limit, Query query)
+        throws ObjectStoreLimitReachedException {
         if (start > maxOffset) {
             throw (new ObjectStoreLimitReachedException("offset parameter (" + start
                                             + ") is greater than permitted maximum ("
