@@ -10,11 +10,13 @@ package org.intermine.sql.precompute;
  *
  */
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.sql.*;
 import org.intermine.util.DatabaseUtil;
@@ -125,10 +127,25 @@ public class PrecomputedTableManager
      * @throws NullPointerException if pt is null
      */
     public void add(PrecomputedTable pt) throws SQLException {
+        add(pt, null);
+    }
+      
+    /**
+     * Add a precomputed table to the underlying database.
+     *
+     * @param pt the PrecomputedTable to add
+     * @param indexes the extra fields to index - a Collection of Strings. Each String can be a
+     * comma-separated list of fields that will be indexed as a multi-column index. The field
+     * names should be names of columns in the precomputed table - so they are the aliases
+     * specified in the PrecomputedTable
+     * @throws SQLException if an error occurs in the underlying database
+     * @throws NullPointerException if pt is null
+     */
+    public void add(PrecomputedTable pt, Collection indexes) throws SQLException {
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
-        addTableToDatabase(pt);
+        addTableToDatabase(pt, indexes);
         precomputedTables.add(pt);
     }
 
@@ -179,12 +196,16 @@ public class PrecomputedTableManager
      * Add a PrecomputedTable to the database.
      *
      * @param pt the PrecomputedTable to add
+     * @param indexes a Collection of Strings that are indexes to create
      * @throws SQLException if an error occurs in the underlying database
      */
-    protected void addTableToDatabase(PrecomputedTable pt) throws SQLException {
+    protected void addTableToDatabase(PrecomputedTable pt, Collection indexes) throws SQLException {
         Connection con = null;
         try {
             con = (conn == null ? database.getConnection() : conn);
+            if (indexes == null) {
+                indexes = new LinkedHashSet();
+            }
 
             // Create the table
             Statement stmt = con.createStatement();
@@ -194,7 +215,7 @@ public class PrecomputedTableManager
             String orderByField = pt.getOrderByField();
             if (orderByField != null) {
                 LOG.info("Creating orderby_field index on precomputed table " + pt.getName());
-                addIndex(pt.getName(), orderByField, con);
+                indexes.add(orderByField);
             } else {
                 List orderBy = pt.getQuery().getOrderBy();
                 if (!orderBy.isEmpty()) {
@@ -203,9 +224,15 @@ public class PrecomputedTableManager
                             .get(firstOrderBy));
                     if (firstOrderByValue != null) {
                         LOG.info("Creating index on precomputed table " + pt.getName());
-                        addIndex(pt.getName(), firstOrderByValue.getAlias(), con);
+                        indexes.add(firstOrderByValue.getAlias());
                     }
                 }
+            }
+            indexes = canonicaliseIndexes(indexes);
+
+            Iterator indexIter = indexes.iterator();
+            while (indexIter.hasNext()) {
+                addIndex(pt.getName(), (String) indexIter.next(), con);
             }
 
             LOG.info("ANALYSEing precomputed table " + pt.getName());
@@ -226,6 +253,38 @@ public class PrecomputedTableManager
                 con.close();
             }
         }
+    }
+
+    /**
+     * Takes a collection of index strings, and removes redundant entries. An index string is a
+     * list of SQL column names, separated by ", ", where the leftmost column is the most
+     * significant in the btree order.
+     *
+     * @param indexes the Collection of index strings
+     * @return a new Set of index strings
+     */
+    protected static Set canonicaliseIndexes(Collection indexes) {
+        Set retval = new LinkedHashSet();
+        Set indexesCovered = new HashSet();
+        Iterator indexIter = indexes.iterator();
+        while (indexIter.hasNext()) {
+            String index = (String) indexIter.next();
+            if (!indexesCovered.contains(index)) {
+                String tmp = index;
+                while (tmp != null) {
+                    indexesCovered.add(tmp);
+                    retval.remove(tmp);
+                    int pos = tmp.lastIndexOf(", ");
+                    if (pos >= 0) {
+                        tmp = tmp.substring(0, pos);
+                    } else {
+                        tmp = null;
+                    }
+                }
+                retval.add(index);
+            }
+        }
+        return retval;
     }
 
     /**
@@ -269,11 +328,18 @@ public class PrecomputedTableManager
      * @throws SQLException if an error occurs in the underlying database
      */
     protected void addIndex(String table, String field, Connection con) throws SQLException {
-        Statement stmt = con.createStatement();
-        stmt.execute("CREATE INDEX index" + table + "_field_" + field + " ON " + table + " ("
-                + field + ")");
-        if (!con.getAutoCommit()) {
-            con.commit();
+        String sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
+            .replace(' ', '_') + " ON " + table + " (" + field + ")";
+        try {
+            Statement stmt = con.createStatement();
+            stmt.execute(sql);
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
+        } catch (SQLException e) {
+            SQLException f = new SQLException(e.getMessage() + " when executing " + sql);
+            f.setNextException(e);
+            throw f;
         }
     }
     
