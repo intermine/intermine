@@ -783,17 +783,17 @@ public class EnsemblDataTranslator extends DataTranslator
         String orgAbbrev = args[5];
 
         Map paths = new HashMap();
-        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", "identifier"));
-        paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
-                Collections.singleton(desc));
+        //ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
+        //desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", "identifier"));
+        //paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
+        //        Collections.singleton(desc));
 
         HashSet descSet = new HashSet();
         //desc = new ItemPrefetchDescriptor("transcript.display_xref");
         //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", "identifier"));
         //descSet.add(desc);
 
-        desc = new ItemPrefetchDescriptor(
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor(
                 "(transcript.translation");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("translation", "identifier"));
         descSet.add(desc);
