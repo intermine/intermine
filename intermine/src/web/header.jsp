@@ -11,5 +11,9 @@
   <p>
     <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
   </p>
+  <span id="status">
+    <c:out value="${WEB_PROPERTIES['project.status']}" escapeXml="false"/>
+  </span>
 </div>
+
 <!-- /header.jsp -->
