@@ -37,6 +37,10 @@
     <put name="body" value="templates.jsp"/>
     <put name="pageDescription" value="templates.page.description"/>
   </definition>
+  <definition name="bagBuild.page" extends="layout.template">
+    <put name="body" value="bagBuilder.jsp"/>
+    <put name="pageDescription" value="templates.page.description"/>
+  </definition>
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.jsp"/>
     <put name="pageDescription" value="help.page.description"/>
