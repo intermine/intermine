@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -23,6 +25,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 
@@ -49,49 +53,88 @@ public class MainChange extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
-        // ensure removal of any view nodes that depend on a type constraint
-        // eg. Department.employees.salary where salary is only defined in a subclass of Employee
-        // note that we first have to find out what type Department thinks the employees field is
-        // and then check if any of the view nodes assume the field is constrained to a subclass
-        String parentType = ((PathNode) query.getNodes().get(path)).getParentType();
-        if (parentType != null) {
-            ClassDescriptor cld = MainHelper.getClassDescriptor(parentType, model);
-            for (Iterator i = query.getView().iterator(); i.hasNext();) {
-                String viewPath = (String) i.next();
-                if (viewPath.startsWith(path) && !viewPath.equals(path)) {
-                    String fieldName = viewPath.substring(path.length() + 1);
-                    if (fieldName.indexOf(".") != -1) {
-                        fieldName = fieldName.substring(0, fieldName.indexOf("."));
-                    }
-                    if (cld.getFieldDescriptorByName(fieldName) == null) {
-                        i.remove();
-                    }
-                }
-            }
-        }
-
-        // remove any child nodes
-        for (Iterator i = query.getNodes().keySet().iterator(); i.hasNext();) {
-            if (((String) i.next()).startsWith(path)) {
-                i.remove();
-            }
-        }
+        removeNode(pathQuery, path);
 
         String prefix;
         if (path.indexOf(".") == -1) {
             prefix = path;
         } else {
             prefix = path.substring(0, path.lastIndexOf("."));
-            path = ((Node) query.getNodes().get(prefix)).getType();
+            path = ((Node) pathQuery.getNodes().get(prefix)).getType();
         }
+
         session.setAttribute("prefix", prefix);
         session.setAttribute("path", path);
 
         return mapping.findForward("query");
+    }
+
+    protected static void removeNode(PathQuery pathQuery, String path) {
+        // copy because we will be remove paths from the Map as we go
+        Set keys = new HashSet(pathQuery.getNodes().keySet());
+
+        // remove the node and it's children
+        for (Iterator i = keys.iterator(); i.hasNext();) {
+            String testPath = (String) i.next();
+
+
+            if (testPath.startsWith(path)) {
+                removeOneNode(pathQuery, testPath);
+            }
+        }
+    }
+
+    /**
+     * Remove the PathNode specified by the given (constraint) path from the PathQuery.  Also remove
+     * any view nodes would be illegal because they depend on a type constraint that will be
+     * removed.
+     * @param pathQuery the PathQuery
+     * @param path the path of the PathNode that should be removed.
+     */
+    protected static void removeOneNode(PathQuery pathQuery, String path) {
+        // ensure removal of any view nodes that depend on a type constraint
+        // eg. Department.employees.salary where salary is only defined in a subclass of Employee
+        // note that we first have to find out what type Department thinks the employees field is
+        // and then check if any of the view nodes assume the field is constrained to a subclass
+        String parentType = ((PathNode) pathQuery.getNodes().get(path)).getParentType();
+
+        Model model = pathQuery.getModel();
+
+        if (parentType != null) {
+            ClassDescriptor parentCld = MainHelper.getClassDescriptor(parentType, model);
+            String pathLastField = path.substring(path.lastIndexOf(".") + 1);
+            FieldDescriptor fd = parentCld.getFieldDescriptorByName(pathLastField);
+
+            if (fd instanceof ReferenceDescriptor) {
+                ReferenceDescriptor rf = (ReferenceDescriptor) fd;
+                ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
+
+                Iterator viewPathIter = pathQuery.getView().iterator();
+
+                while (viewPathIter.hasNext()) {
+                    String viewPath = (String) viewPathIter.next();
+                    
+                    if (viewPath.startsWith(path) && !viewPath.equals(path)) {
+                        String fieldName = viewPath.substring(path.length() + 1);
+                        
+                        if (fieldName.indexOf(".") != -1) {
+                            fieldName = fieldName.substring(0, fieldName.indexOf("."));
+                        }
+
+                        if (realClassDescriptor.getFieldDescriptorByName(fieldName) == null) {
+                            // the field must be in a sub-class rather than the base class so remove
+                            // the viewPath
+                            viewPathIter.remove();
+                        }
+                    }
+                }
+            }
+        }
+
+        pathQuery.getNodes().remove(path);
     }
 
     /**
@@ -161,6 +204,7 @@ public class MainChange extends DispatchAction
         String path = request.getParameter("path");
 
         path = toPath(prefix, path);
+        
         Node node = query.addNode(path);
         //automatically start editing node
         session.setAttribute("editingNode", node);
