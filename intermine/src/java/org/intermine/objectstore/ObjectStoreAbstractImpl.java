@@ -166,7 +166,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
         synchronized (cache) {
-            cache.put(id, obj);
+            // Create new Integer for the key
+            cache.put(new Integer(id.intValue()), obj);
         }
         return id;
     }
