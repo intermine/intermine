@@ -12,6 +12,7 @@ package org.flymine.objectstore.query.fql;
 
 import junit.framework.Test;
 
+import java.util.Collections;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.testing.OneTimeTestCase;
@@ -33,11 +34,19 @@ public class FqlQueryParserTest extends FqlQueryTestCase
     }
 
     public void executeTest(String type) throws Exception {
-        // Remove this if when Fql parsing updated to recognise '?'
-        if ((!type.equals("WhereClassObject")) && (!type.equals("SelectClassObjectSubquery"))) {
-            FqlQuery fq = (FqlQuery) results.get(type);
-            Query parsed = FqlQueryParser.parse(fq);
-            assertEquals(type + " has failed", (Query) queries.get(type), parsed);
+        FqlQuery fq = (FqlQuery) results.get(type);
+        Query parsed = FqlQueryParser.parse(fq);
+        assertEquals(type + " has failed", (Query) queries.get(type), parsed);
+    }
+
+    public void testNotEnoughParameters() throws Exception {
+        FqlQuery fq = new FqlQuery("select a1_, a2_ from Company as a1_, Department as a2_ where a1_ = ? and a2_ = ?", "org.flymine.model.testmodel");
+        fq.setParameters(Collections.singletonList(data.get("CompanyA")));
+        try {
+            FqlQueryParser.parse(fq);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Not enough parameters in FqlQuery object", e.getMessage());
         }
     }
 
@@ -136,7 +145,7 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select 1 + 2 + 3 as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because an expression may only have two arguments");
         } catch (IllegalArgumentException e) {
-            assertEquals("Exception: line 1:14: expecting \"as\", found '+'", e.getMessage());
+            assertEquals("expecting \"as\", found '+'", e.getCause().getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select 'flibble' + 3 as a from Company", "org.flymine.model.testmodel"));
@@ -162,19 +171,19 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select count(5) as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because count does not take an argument");
         } catch (IllegalArgumentException e) {
-            assertEquals("Exception: line 1:14: expecting ASTERISK, found '5'", e.getMessage());
+            assertEquals("expecting ASTERISK, found '5'", e.getCause().getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select sum(5, 3) as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because sum only takes one argument");
         } catch (IllegalArgumentException e) {
-            assertEquals("Exception: line 1:13: expecting CLOSE_PAREN, found ','", e.getMessage());
+            assertEquals("expecting CLOSE_PAREN, found ','", e.getCause().getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select substr('fdsafds', 3, 4, 5) as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because substr only takes three arguments");
         } catch (IllegalArgumentException e) {
-            assertEquals("Exception: line 1:30: expecting CLOSE_PAREN, found ','", e.getMessage());
+            assertEquals("expecting CLOSE_PAREN, found ','", e.getCause().getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select max(Company) as a from Company", "org.flymine.model.testmodel"));
@@ -186,13 +195,13 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select substr('fdsafds', 3) as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because substr takes three arguments");
         } catch (IllegalArgumentException e) {
-            assertEquals("Exception: line 1:27: expecting COMMA, found ')'", e.getMessage());
+            assertEquals("expecting COMMA, found ')'", e.getCause().getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select min() as a from Company", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because min takes an argument");
         } catch (IllegalArgumentException e) {
-            assertEquals("Exception: line 1:8: unexpected token: min", e.getMessage());
+            assertEquals("unexpected token: min", e.getCause().getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select min(4) as a from Company", "org.flymine.model.testmodel"));
