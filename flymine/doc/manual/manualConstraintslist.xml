@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+
+    <section>
+       <heading>The constraints list</heading>
+       <item>The constraints list is on the right hand side of the query builder page.  In this section you specify the constraints you wish to apply to particular classes and fields.</item>
+       <item>To apply a constraint to a field, navigate to the field in the model browser and click on the -> (constrain) next to it.  This will add the field to the constraints list and bring up a box in which you specify your constraint.</item>  
+       <item>The type of constraint you can add will vary depending on the type of field you selected to constrain (see .....).</item>     
+    </section>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="interface.gif" format="GIF"/>
+	  </entry>
+ 
+  
+
+
+
+
+
+</index>
+
+</article>
+
+
+
+

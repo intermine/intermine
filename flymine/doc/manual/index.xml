@@ -3,54 +3,50 @@
 
 <article>
 
+<index>
 
-    <sect1>
-       <title>User Manual</title>
-
-        <para>
-          <orderedlist>
-             <listitem><ulink url="manualIntroduction.xml">Introduction</ulink></listitem>
-             <listitem><ulink url="manualDataModel.xml">The FlyMine Data Model</ulink></listitem>
-             <listitem><ulink url="manualCOF.xml">Classes, Objects and Fields - the basics</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Selecting data from classes</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Combining data from different classes</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Constraning to subclasses</ulink></listitem>
+    <section>
+      <heading>Introduction</heading>
+      <item><ulink url="manualDataModel.xml">The FlyMine Data Model</ulink></item>
+      <item><ulink url="manualCOF.xml">Classes, Objects and Fields - the basics</ulink></item>
+      <item><ulink url="manualSelectingData.xml">Selecting data from classes</ulink></item>
+      <item><ulink url="manualCombiningData.xml">Combining data from different classes</ulink></item>
+      <item><ulink url="manualConstrainingData.xml">Constraining to subclasses</ulink></item>
+      </section>
 
 
-             <listitem><ulink url="manualSelectingData.xml">The FlyMIne query builder</ulink></listitem> 
-             <listitem><ulink url="manualSelectingData.xml">Starting a FlyMine query</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">The class selection page</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">The query builder page</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">The model browser</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">The constraints list</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">The output fields list</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Show results</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Saving queries</ulink></listitem>
+    <section>
+       <heading>The query interface</heading>
+             <item><ulink url="manualStartingquery.xml">Starting a FlyMine query</ulink></item>
+             <item><ulink url="manualClasschooser.xml">The class selection page</ulink></item>
+             <item><ulink url="manualQuerybuilder.xml">The FlyMine query builder</ulink></item> 
+             <item><ulink url="manualModelbrowser.xml">The model browser</ulink></item>
+             <item><ulink url="manualConstraintslist.xml">The constraints list</ulink></item>
+             <item><ulink url="manualOutputfields.xml">The output fields list</ulink></item>
+             <item><ulink url="manualShowresults.xml">Show results</ulink></item>
+             <item><ulink url="manualSavingqueries.xml">Saving queries</ulink></item>
+             <item><ulink url="manualResultdisplay.xml">The result display</ulink></item>
+             <item><ulink url="manualBrowsingdata.xml">Browsing the results</ulink></item>
+             <item><ulink url="manualSavingdata.xml">Saving results to bags</ulink></item>
+             <item><ulink url="manualExportingdata.xml">Exporting results</ulink></item>
+             <item><ulink url="manualHistory.xml">Query history</ulink></item>
+     </section>
 
 
-             <listitem><ulink url="manualSelectingData.xml">Building Simple queries</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Selecting all the objects from a particular classs</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Constraining objects from one class</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Selecting and constraining objects from 2 classes</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Constraining a class to a subclass</ulink></listitem>
-
-
-             <listitem><ulink url="manualSelectingData.xml">The results output</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">The result display</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Browsing the results</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Saving results to bags</ulink></listitem>
-             <listitem><ulink url="manualSelectingData.xml">Exporting results</ulink></listitem>
-             
-
-            <listitem><ulink url="manualSelectingData.xml">Building more complex queries</ulink></listitem>
-
-
-          </orderedlist>
-        </para>
-
+      <section>
+          <heading>Building a simple query</heading>
+             <item><ulink url="manualSimplequeries.xml">Building Simple queries</ulink></item>
+             <item><ulink url="manualSelectingData.xml">Selecting all the objects from a particular classs</ulink></item>
+             <item><ulink url="manualSelectingData.xml">Constraining objects from one class</ulink></item>
+             <item><ulink url="manualSelectingData.xml">Selecting and constraining objects from 2 classes</ulink></item>
+             <item><ulink url="manualSelectingData.xml">Constraining a class to a subclass</ulink></item>
+      </section>
      
 
-  
+      <section>
+          <heading>Building complex queries</heading>
+      </section>
 
-</sect1>
+</index>
+
 </article>

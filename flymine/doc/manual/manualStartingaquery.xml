@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Start a new query with a particular class</heading>
+      <item>
+      To start a new FlyMine query you must choose the class from which you want to start your query in the <ulink url="manualClasschooser.xml">class selector</ulink>
+       </item>
+    </section>
+           
+</index>
+</article>
+

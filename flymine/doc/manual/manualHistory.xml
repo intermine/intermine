@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Query History</heading>
+      <item>
+       This page displays your list of saved bages and queries
+       </item>
+       <item>
+       A saved query is a copy of the actual query configuration, while a saved bag contains specific data saved from a particular query.
+       </item>
+       <item>
+       All queries run are saved in the query history.  If you do not give your query a particular name (in the 'Save query' box at the bottom of the query interface), it will be saved as query_x (where x increments for each query run) (see <ulink url="manualSelectingData.xml">Saving queries)</ulink>
+        </item>
+        <item>
+         Saved bags are created by saving specific data from the results page, (see <ulink url="manualSavingdata.xml">Saving results to bags).</ulink>
+        </item>
+     </section>
+
+
+      <section>
+        <heading>Using saved queries</heading>
+        <item>
+        Click on the query name to display the query in the query builder interface.  From here you can edit the query or run it again
+        </item>
+      </section>
+
+
+      <section>
+         <heading>Using saved bags</heading>
+         <item>
+         Click on the bag name to view its items in the results page.
+         </item>
+      </section>
+
+       <section>
+          <heading>Deleting saved bags and queries</heading>
+          <item>
+          Select the checkboxes of the bags or queries you wish to delete and press the appropriate Delete button. 
+          </item>
+       </section>
+
+
+
+
+
+
+
+
+
+
+
+  
+
+</index>
+
+</article>
