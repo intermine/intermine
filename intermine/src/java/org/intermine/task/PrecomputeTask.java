@@ -207,7 +207,7 @@ public class PrecomputeTask extends Task
             String key = (String) entry.getKey();
 
             List queries = (List) entry.getValue();
-            LOG.error("queries: " + queries.size());
+            LOG.debug("queries: " + queries.size());
             Iterator queriesIter = queries.iterator();
             while (queriesIter.hasNext()) {
                 Query query = (Query) queriesIter.next();

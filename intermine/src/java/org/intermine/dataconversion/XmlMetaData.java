@@ -400,7 +400,7 @@ public class XmlMetaData
             LOG.debug("processContentModel");
             processContentModelGroup(complexType, false);
             if (complexType.getBaseType() != null && complexType.getBaseType().isComplexType()) {
-                LOG.error("processContentModel(parent)");
+                LOG.debug("processContentModel(parent)");
                 processContentModelGroup((ComplexType) complexType.getBaseType(), false);
             }
         }
