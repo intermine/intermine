@@ -72,7 +72,7 @@
   </im:box>
 </c:if>
 
-<c:if test="${IS_SUPERUSER && empty browseTemplateName}">
+<c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
   <p>
   <div class="altmessage">
     <fmt:message key="begin.noBrowseTemplate">
