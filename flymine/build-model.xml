@@ -136,7 +136,7 @@
       <classpath refid="class.path" />
     </taskdef>
 
-    <model-output type="torque" model="${model.name}" destdir="${build.model}/${model.name}"/>
+    <model-output type="ojbtorque" model="${model.name}" destdir="${build.model}/${model.name}"/>
     <copy todir="${build.model}/${model.name}" flatten="true">
       <fileset dir="${resources}">
         <include name="**/*-schema.xml"/>
