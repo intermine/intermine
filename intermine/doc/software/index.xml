@@ -1,8 +1,8 @@
 <menu>
   <section>
-    <heading>Overall system documentation</heading>
-    <item><ulink url="getting-started">***Getting started</ulink></item>
-    <item><ulink url="overview">***Technical overview</ulink></item>
+    <heading>System documentation</heading>
+    <item><ulink url="overview">Technical overview</ulink></item>
+    <item><!--ulink url="tutorial"-->Getting started - a tutorial<!--/ulink--> (coming soon)</item>
     <item><ulink url="FlyMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
     <item><ulink url="FlyMineArchitecture">System architecture</ulink></item>
   </section>
@@ -15,7 +15,7 @@
 
   <section>
     <heading>Using FlyMine models</heading>
-    <item><ulink url="models/creating">***Creating a FlyMine model</ulink></item>
+    <item>Creating a FlyMine model (coming soon)</item>
   </section>
 
   <section>
@@ -25,13 +25,13 @@
 
   <section>
     <heading>OQL-like query interface</heading>
-    <item><ulink url="fql_query/tutorial">***User tutorial</ulink></item>
+    <item><!--ulink url="fql_query/tutorial"-->User tutorial (coming soon)<!--/ulink--></item>
     <item><ulink url="fql_query/specification">Specification (for developers)</ulink></item>
   </section>
 
   <section>
     <heading>Java query interface</heading>
-    <item><ulink url="java_query/tutorial">***Tutorial</ulink></item>
+    <item><!--ulink url="java_query/tutorial"-->Tutorial (coming soon)<!--/ulink--></item>
   </section>
 
   <section>
@@ -61,8 +61,8 @@
 
   <section>
     <heading>Presentations</heading>
-    <item><ulink url="presentations/BOSC2003.sxi">BOSC 2003</ulink></item>
-    <item><ulink url="presentations/BOSC2003.sxi">ISMB 2003 (poster)</ulink></item>
+    <item><ulink url="../project/presentations/BOSC2003.sxi">BOSC 2003</ulink></item>
+    <item><ulink url="../project/presentations/ISMB2003.sxi">ISMB 2003 (poster)</ulink></item>
   </section>
 
   <section>
