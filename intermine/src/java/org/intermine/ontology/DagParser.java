@@ -171,7 +171,7 @@ public class DagParser
         if (elements.length < 2) {
             throw new Exception("term does not have an id: " + details);
         }
-        String id = elements[1];
+        String id = stripList(elements[1]);
 
         // TODO check that 0 and 1 are name and id, handle broken terms better
 
@@ -224,6 +224,19 @@ public class DagParser
             //    ab.append(s.charAt(i));
         }
         return sb.toString();
+    }
+
+    /**
+     * Return first item in a comma-seperated list
+     * @param s string to process
+     * @return a cleaned-up string
+     */
+    protected String stripList(String s) {
+        int index = s.indexOf(",");
+        if (index > -1) {
+            return s.substring(0, index);
+        }
+        return s;
     }
 
     /**

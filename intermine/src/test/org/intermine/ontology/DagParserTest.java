@@ -50,7 +50,7 @@ public class DagParserTest extends TestCase
             + "$Test Ontology ; id0\n"
             + " <term1 ; id1\n"
             + "  %term2 ; id2\n"
-            + "   %term3 ; id3\n"
+            + "   %term3 ; id3, id4\n" // Multiple IDs, only use first
             + "    <term4 ; id4\n"
             + "  %term5 ; id5\n";
 
