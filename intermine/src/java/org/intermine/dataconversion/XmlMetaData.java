@@ -62,10 +62,10 @@ public class XmlMetaData
     protected Map xpathToRegex;
     /** element path -> field name. */
     protected Map referenceElements;
-    
+
     protected Map keyNames;
     protected Map clsNameMap;
-    
+
     /**
      * Construct with a reader for the XML Schema
      * @param xsdReader reader pointing ant an XML Schema
@@ -82,7 +82,7 @@ public class XmlMetaData
         keyNames = new HashMap();
         xpathToRegex = new HashMap();
         referenceElements = new HashMap();
-        
+
         SchemaUnmarshaller schemaUnmarshaller = null;
         schemaUnmarshaller = new SchemaUnmarshaller();
 
@@ -118,7 +118,7 @@ public class XmlMetaData
         keyNames = new HashMap();
         xpathToRegex = new HashMap();
         referenceElements = new HashMap();
-        
+
         buildRefsMap(schema);
         filterReferenceElements();
         LOG.info("clsNameMap: " + clsNameMap);
@@ -135,7 +135,7 @@ public class XmlMetaData
     public boolean isKeyField(String path, String field) {
         return getKeyFields(path).contains(field);
     }
-    
+
     /**
      * Given a path, return a Set of field names that are keys. If the path
      * has no key fields, an empty Set will be returned.
@@ -149,9 +149,9 @@ public class XmlMetaData
             return new TreeSet();
         } else {
             return set;
-        } 
+        }
     }
-    
+
     /**
      * Return true if the given field on the given element path is a reference.
      *
@@ -162,7 +162,7 @@ public class XmlMetaData
     public boolean isReferenceField(String path, String field) {
         return getReferenceFields(path).contains(field);
     }
-    
+
     /**
      * Given a path, return a List of field names that are references.
      *
@@ -175,9 +175,9 @@ public class XmlMetaData
             return new TreeSet();
         } else {
             return set;
-        } 
+        }
     }
-    
+
     /**
      * Return the name of the key referenced by the given reference field.
      *
@@ -188,7 +188,7 @@ public class XmlMetaData
     public String getReferencingKeyName(String path, String field) {
         return (String) keyrefFieldToKey.get(path + "/" + field);
     }
-    
+
     /**
      * Return the element path associated with the given key.
      *
@@ -199,7 +199,7 @@ public class XmlMetaData
     public String getKeyPath(String key) {
         return (String) keyNameToPath.get(key);
     }
-    
+
     /**
      * Return the field name associated with the given key.
      *
@@ -210,19 +210,19 @@ public class XmlMetaData
     public String getKeyField(String key) {
         return (String) keyNameToField.get(key);
     }
-    
+
     /**
      * Return true if given path refers to an element which contains
      * a single reference attribute. In which case the element as a
      * whole is treated as a reference.
-     * 
+     *
      * @param path  path to element
      * @return  true if element is reference (single reference attribute)
      */
     public boolean isReferenceElement(String path) {
         return referenceElements.containsKey(path);
     }
-    
+
     /**
      * Given a path that refers to a reference element - it has a single
      * reference attribute - return the name of that reference attribute.
@@ -233,7 +233,7 @@ public class XmlMetaData
     public String getReferenceElementField(String path) {
         return (String) referenceElements.get(path);
     }
-    
+
     /**
      * Return a classname for the element ant specified by xpath.
      * Will possible have _EnclosingClass... according to element
@@ -276,7 +276,7 @@ public class XmlMetaData
         LOG.debug("getClsNameFromXPath(\"" + xpath + "\") - returning \"" + name + "\"");
         return name;
     }
-    
+
     /**
      * For a given full element path, return the set of key field names. This method
      * finds the xpath that keys the key field map via <code>getKeyXPathMatchingPath</code>.
@@ -287,12 +287,12 @@ public class XmlMetaData
     public Set getKeyFieldsForPath(String path) {
         String xpath = getKeyXPathMatchingPath(path);
         if (!xpath.equals(path)) {
-            LOG.info("getKeyFieldsForPath() found matching xpath " + xpath
+            LOG.debug("getKeyFieldsForPath() found matching xpath " + xpath
                                  + " for path " + path);
         }
         return this.getKeyFields(xpath);
     }
-    
+
     /**
      * For a given path, return the xpath that keys the key field set associated with
      * this path. Use this method when you have constructed your own path.
@@ -310,7 +310,7 @@ public class XmlMetaData
                 Pattern pattern = Pattern.compile(regex);
                 if (pattern.matcher(path).matches()) {
                     // path matched this key - get keyfields for key
-                    LOG.info("getKeyXPathMatchingPath() found matching xpath " + xpath
+                    LOG.debug("getKeyXPathMatchingPath() found matching xpath " + xpath
                              + " for path " + path);
                     return xpath;
                 }
@@ -345,7 +345,7 @@ public class XmlMetaData
 
         String clsName = null;
         XMLType xmlType = eDecl.getType();
-        
+
         // Record those elements that are actually references
         if (xmlType != null && xmlType.isComplexType()) {
             Enumeration e1 = ((ComplexType) xmlType).getAttributeDecls();
@@ -357,7 +357,7 @@ public class XmlMetaData
                 referenceElements.put(path, attrib.getName());
             }
         }
-        
+
         isCollection = isCollection || (eDecl.getMaxOccurs() < 0) || (eDecl.getMaxOccurs() > 1);
         LOG.debug("Processing path: " + path + ", isCollection = " + isCollection
                 + (xmlType == null ? "" : ", isComplexType = " + xmlType.isComplexType()
@@ -387,7 +387,7 @@ public class XmlMetaData
                 clsName = eDecl.getName();
             }
         }
-        
+
         if (clsName != null) {
             LOG.debug("clsName = " + clsName);
             clsNameMap.put(path, StringUtil.capitalise(clsName));
@@ -435,7 +435,7 @@ public class XmlMetaData
             }
         }
     }
-    
+
     private void filterReferenceElements() {
         Iterator iter = this.referenceElements.entrySet().iterator();
         while (iter.hasNext()) {
@@ -447,7 +447,7 @@ public class XmlMetaData
             }
         }
     }
-    
+
     private void findRefs(ElementDecl eDecl) throws Exception {
         Map keys = new HashMap();
         Map keyrefs = new HashMap();
@@ -462,7 +462,7 @@ public class XmlMetaData
             }
         }
 
-        
+
         Iterator iter = keys.values().iterator();
         while (iter.hasNext()) {
             Key key = (Key) iter.next();
@@ -483,12 +483,12 @@ public class XmlMetaData
                     regex = "^" + paths.peek() + "/" + selectors[i] + "$";
                     path = paths.peek() + "/" + selectors[i];
                 }
-                
+
                 Enumeration keyFieldEnum = key.getFields();
                 String field = ((IdentityField) keyFieldEnum.nextElement()).getXPath();
                 if (keyFieldEnum.hasMoreElements()) {
                     //throw new Exception("Unable to deal with Keys on more than one field");
-                    LOG.info("skipping key " + key.getName() + " on more than one field");
+                    LOG.debug("skipping key " + key.getName() + " on more than one field");
                     continue;
                 }
                 if (field.startsWith("@")) {
@@ -520,7 +520,7 @@ public class XmlMetaData
             } else {
                 path = paths.peek() + "/" + selector;
             }
-            
+
             Enumeration keyrefEnum = keyref.getFields();
             String field = ((IdentityField) keyrefEnum.nextElement()).getXPath();
             if (keyrefEnum.hasMoreElements()) {
