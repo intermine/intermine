@@ -214,15 +214,12 @@ null:MeasuredBioAssayData__propertySets a owl:ObjectProperty;
     rdfs:range xsd:string.
 
 
-null:MicroArraySlideDesign__name a owl:DatatypeProperty;
+null:PhysicalArrayDesign__name a owl:DatatypeProperty;
     owl:equivalentProperty mage:PhysicalArrayDesign__name.
-
-null:MicroArraySlideDesign__version a owl:DatatypeProperty;
+null:PhysicalArrayDesign__version a owl:DatatypeProperty;
     owl:equivalentProperty mage:PhysicalArrayDesign__version.
-
-null:MicroArraySlideDesign__descriptions a owl:ObjectProperty;
+null:PhysicalArrayDesign__descriptions a owl:ObjectProperty;
     owl:equivalentProperty mage:PhysicalArrayDesign__descriptions.
-
 null:PhysicalArrayDesign__surfaceType a owl:ObjectProperty;
     owl:equivalentProperty mage:PhysicalArrayDesign__surfaceType.
 null:PhysicalArrayDesign__featureGroups a owl:ObjectProperty;
@@ -432,9 +429,9 @@ null:LabeledExtract__propertySets a owl:ObjectProperty;
 :Sample__labeledExtract a owl:ObjectProperty;
    owl:inverseOf :LabeledExtract__sample.
 
-null:Sample__name a owl:DatatypeProperty;
+null:BioSource__name a owl:DatatypeProperty;
     owl:equivalentProperty mage:BioSource__name.
-null:Sample__materialType a owl:DatatypeProperty;
+null:BioSource__materialType a owl:DatatypeProperty;
     owl:equivalentProperty mage:BioSource__materialType.
 null:BioSource__sourceContact a owl:ObjectProperty;
     owl:equivalentProperty mage:BioSource__sourceContact.
@@ -470,10 +467,6 @@ null:BioSource__propertySets a owl:ObjectProperty;
 :CDNAClone a owl:Class;
     rdfs:subClassOf :BioEntity.
 
-#:CDNAClone__organismDbId a owl:DatatypePropoerty;
-#   rdfs:domain :CDNAClone;
-#   rdfs:range xsd:string.
-
 :NuclearDNA a owl:Class;
     rdfs:subClassOf :BioEntity.
 
@@ -486,10 +479,6 @@ null:BioSource__propertySets a owl:ObjectProperty;
 
 :Vector a owl:Class;
     rdfs:subClassOf :BioEntity.
-
-#:Vector__organismDbId a owl:DatatypePropoerty;
-#   rdfs:domain :Vector;
-#   rdfs:range xsd:string.
 
 null:BioSequence__name a owl:DatatypeProperty;
     owl:equivalentProperty mage:BioSequence__name.
@@ -522,25 +511,6 @@ null:BioSequence__descriptions a owl:ObjectProperty;
 null:BioSequence__propertySets a owl:ObjectProperty;
     owl:equivalentProperty mage:BioSequence__propertySets.
 
-:Database a owl:Class; 
-    owl:equivalentClass mage:Database.
-:Database__title a owl:DatatypeProperty;
-    owl:equivalentProperty mage:Database__name.
-
-# temporary hack - name is an inherited property and not
-# defined explicitly
-mage:Database__name a owl:DatatypeProperty;
-    rdfs:domain mage:Database;
-    rdfs:range xsd:String.
-
-null:Database__security a owl:ObjectProperty;
-    owl:equivalentProperty mage:Database__security.
-null:Database__auditTrail a owl:ObjectProperty;
-    owl:equivalentProperty mage:Database__auditTrail.
-null:Database__descriptions a owl:ObjectProperty;
-    owl:equivalentProperty mage:Database__descriptions.
-null:Database__propertySets a owl:ObjectProperty;
-    owl:equivalentProperty mage:Database__propertySets.
 
 :Publication a owl:Class;
     owl:equivalentClass mage:BibliographicReference.
@@ -745,6 +715,7 @@ null:NameValueType a owl:Class; owl:equivalentClass mage:NameValueType.
 
 null:DataExternal a owl:Class; owl:equivalentClass mage:DataExternal.
 null:DatabaseEntry a owl:Class; owl:equivalentClass mage:DatabaseEntry.
+null:Database a owl:Class; owl:equivalentClass mage:Database.
 
 
 
