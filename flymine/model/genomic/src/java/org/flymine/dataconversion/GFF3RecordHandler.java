@@ -132,7 +132,7 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Set hte feature item for this record.
+     * Set the feature item for this record.
      * @param feature the feature item
      */
     public void setFeature(Item feature) {
@@ -259,8 +259,8 @@ public class GFF3RecordHandler
 
 
     /**
-     * Given a map from class name to refernece name populate the reference for
-     * a particulare class with the parents of any SimpleRelations.
+     * Given a map from class name to reference name populate the reference for
+     * a particular class with the parents of any SimpleRelations.
      * @param references map from classname to name of reference/collection to populate
      */
     protected void setReferences(Map references) {
