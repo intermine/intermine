@@ -1,42 +1,49 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>The class chooser</title>
 
-<index>
+    <itemizedlist>
+      <listitem>
+        <para>This page contains a list of classes for which objects exist in
+        the database (i.e. classes for which there is data associated)</para>
+      </listitem>
 
-    <section>
-      <heading>The class chooser</heading>
-       <item>
-        This page contains a list of classes for which objects exist in the database (i.e. classes for which there is data associated)
-       </item>
-       <item>
-        Select the class from which you wish to start your query and press the Select button.  This will take you to the <ulink url="manualQuerybuilder.xml">FlyMine query builder page.</ulink>
-        </item>
-     </section>
-        
+      <listitem>
+        <para>Select the class from which you wish to start your query and
+        press the Select button. This will take you to the <ulink
+        url="manualQuerybuilder.xml">FlyMine query builder
+        page.</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
 
-      <section>
-         <heading>Browse the FlyMine model</heading>
-        <item> 
-        The browse button allows you to browse the complete FlyMine object model.  This shows all the classes in FlyMine, some of which do not yet have data associated with them 
-         </item>
-         <item>The number on the right shows the number of objects associated with that class</item>
-         <item>Click on a class name to begin your query with that class</item>
-      </section>
+  <section>
+    <title>Browse the FlyMine model</title>
 
+    <itemizedlist>
+      <listitem>
+        <para>The browse button allows you to browse the complete FlyMine
+        object model. This shows all the classes in FlyMine, some of which do
+        not yet have data associated with them</para>
+      </listitem>
 
+      <listitem>
+        <para>The number on the right shows the number of objects associated
+        with that class</para>
+      </listitem>
 
-	  <entry>
-	      <inlinegraphic fileref="../tutorials/classSelection1"/>
-	  </entry>
+      <listitem>
+        <para>Click on a class name to begin your query with that class</para>
+      </listitem>
+    </itemizedlist>
 
-
-
-
-</index>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="../tutorials/classSelection1.png" />
+      </imageobject>
+    </mediaobject>
+  </section>
 </article>
-
-
-
-

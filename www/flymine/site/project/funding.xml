@@ -1,51 +1,53 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-<sect1>
-<title>FlyMine funding</title>
+  <section>
+    <title>FlyMine funding</title>
 
-<para>
-The FlyMine project has been generously supported by the Wellcome
-Trust (Grant no. 067205) for 5 years, subject to a review in year 3,
-awarded to M. Ashburner, G. Micklem, S. Russell, K. Lilley and
-K. Mizuguchi.
-</para>
+    <para>The FlyMine project has been generously supported by the Wellcome
+    Trust (Grant no. 067205) for 5 years, subject to a review in year 3,
+    awarded to M. Ashburner, G. Micklem, S. Russell, K. Lilley and K.
+    Mizuguchi.</para>
 
-<para>
-Dr. G Micklem was supported by the BBSRC and the Isaac Newton Trust until March 2004.
-</para>
+    <para>Dr. G Micklem was supported by the BBSRC and the Isaac Newton Trust
+    until March 2004.</para>
 
-<para>
-Wenyan Ji is supported by The Cambridge-MIT Institute.
-</para>
+    <para>Wenyan Ji is supported by The Cambridge-MIT Institute.</para>
 
-<table>
-    <tbody>
-        <row>
-	  <entry>
-	    <ulink url="http://www.wellcome.ac.uk">
-	      <inlinegraphic fileref="../images/wellcome_large.gif"/>
-	    </ulink>
-	  </entry>
-	  <entry>
-	    <ulink url="http://www.bbsrc.ac.uk">
-	      <inlinegraphic fileref="../images/bbsrc.gif"/>
-	    </ulink>
-	  </entry>
-	  <entry>
-	    <ulink url="http://www.trin.cam.ac.uk">
-	      <inlinegraphic fileref="../images/trinity.gif"/>
-	    </ulink>
-	  </entry>
-	  <entry>
-	    <ulink url="http://www.cambridge-mit.org">
-	      <inlinegraphic fileref="../images/cmi.gif"/>
-	    </ulink>
-	  </entry>
-	</row>
-    </tbody>
-</table>
+    <table>
+      <title></title>
 
-</sect1>
+      <tgroup cols="4">
+        <tbody>
+          <row>
+            <entry><ulink url="http://www.wellcome.ac.uk"> <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/wellcome_large.gif" />
+                </imageobject>
+              </inlinemediaobject> </ulink></entry>
+
+            <entry><ulink url="http://www.bbsrc.ac.uk"> <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/bbsrc.gif" />
+                </imageobject>
+              </inlinemediaobject> </ulink></entry>
+
+            <entry><ulink url="http://www.trin.cam.ac.uk"> <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/trinity.gif" />
+                </imageobject>
+              </inlinemediaobject> </ulink></entry>
+
+            <entry><ulink url="http://www.cambridge-mit.org">
+            <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/cmi.gif" />
+                </imageobject>
+              </inlinemediaobject> </ulink></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
 </article>

@@ -1,25 +1,25 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-06-20</date>
 
-<artheader>
-<date>2003-06-20</date>
-<title>Contributing code to InterMine</title>
-</artheader>
+    <title>Contributing code to InterMine</title>
+  </articleinfo>
 
-<sect1>
-<title>Contributing code to the InterMine project</title>
+  <section>
+    <title>Contributing code to the InterMine project</title>
 
-<para>We warmly welcome contributions to the project, however big or
-small. If you would like to get involved, the best thing to do is talk
-to existing developers via the flymine-dev mailing list, to prevent
-unnecessary duplication of work.</para>
+    <para>We warmly welcome contributions to the project, however big or
+    small. If you would like to get involved, the best thing to do is talk to
+    existing developers via the flymine-dev mailing list, to prevent
+    unnecessary duplication of work.</para>
 
-<para>We prefer to accept patches against the current CVS
-repository. All code must adhere to the <ulink
-url="coding-standards.xml">InterMine coding standards</ulink> (note
-specifically that every method of every class must have comprehensive
-unit tests), and not cause any existing unit tests to fail.</para>
-
-</sect1>
+    <para>We prefer to accept patches against the current CVS repository. All
+    code must adhere to the <ulink url="coding-standards.xml">InterMine coding
+    standards</ulink> (note specifically that every method of every class must
+    have comprehensive unit tests), and not cause any existing unit tests to
+    fail.</para>
+  </section>
 </article>

@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<!-- NOT VALIDATING (yet!) -->
+<article>
     <section>
-        <heading>2004</heading>
-        <item><presentation name="Temblor-CCPN">Temblor CCPN Workshop 2004</presentation></item>
-        <item><presentation name="DROS2004">Drosophila Conference 2004 (poster)</presentation></item>
+        <title>2004</title><itemizedlist>
+        <listitem><presentation name="Temblor-CCPN">Temblor CCPN Workshop 2004</presentation></listitem>
+        <listitem><presentation name="DROS2004">Drosophila Conference 2004 (poster)</presentation></listitem>
+</itemizedlist>
     </section>
     <section>
-        <heading>2003</heading>
-        <item><presentation name="E-Science2003">Cambridge E-Science forum</presentation></item>
-        <item><presentation name="ISMB2003">ISMB 2003 (poster)</presentation></item>
-        <item><presentation name="BOSC2003">BOSC 2003</presentation></item>
-    </section>
+        <title>2003</title><itemizedlist>
+        <listitem><presentation name="E-Science2003">Cambridge E-Science forum</presentation></listitem>
+        <listitem><presentation name="ISMB2003">ISMB 2003 (poster)</presentation></listitem>
+        <listitem><presentation name="BOSC2003">BOSC 2003</presentation></listitem>
+</itemizedlist>
+</section>
 
-</index>
+</article>

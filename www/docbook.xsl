@@ -4,7 +4,61 @@ version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns="http://www.w3.org/1999/xhtml">
 
-<xsl:template match="artheader/title">
+<xsl:template match="section/title">
+<h3><xsl:apply-templates/></h3>
+</xsl:template>
+
+<xsl:template match="inlinemediaobject/imageobject/imagedata">
+    <img alt="[{@fileref}]">
+    <xsl:attribute name="class">
+        <xsl:text>inlinegraphic</xsl:text>
+        <xsl:if test="@align = 'center'">
+            <xsl:text>-center</xsl:text>
+        </xsl:if>
+    </xsl:attribute>
+
+    <xsl:attribute name="src">
+        <xsl:choose>
+            <xsl:when test="substring(@fileref, 1, 1) = '/'">
+                <xsl:copy-of select="$basedir"/>
+                <xsl:value-of select="@fileref"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@fileref"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:attribute>
+    <xsl:apply-templates/>
+    </img>
+</xsl:template>
+
+<xsl:template match="mediaobject/imageobject/imagedata">
+    <img alt="[{@fileref}]">
+    <xsl:attribute name="class">
+        <xsl:text>inlinegraphic</xsl:text>
+        <xsl:if test="@align = 'center'">
+            <xsl:text>-center</xsl:text>
+        </xsl:if>
+    </xsl:attribute>
+
+    <xsl:attribute name="src">
+        <xsl:choose>
+            <xsl:when test="substring(@fileref, 1, 1) = '/'">
+                <xsl:copy-of select="$basedir"/>
+                <xsl:value-of select="@fileref"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@fileref"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:attribute>
+    <xsl:apply-templates/>
+    </img>
+</xsl:template>
+
+<!-- ******* -->
+
+<xsl:template match="articleinfo/title">
 <h2 class="title"><xsl:apply-templates/></h2>
 </xsl:template>
 
@@ -42,6 +96,9 @@ xmlns="http://www.w3.org/1999/xhtml">
 
 <xsl:template match="table">
 <table><xsl:apply-templates/></table>
+</xsl:template>
+
+<xsl:template match="table/title">
 </xsl:template>
 
 <xsl:template match="tbody">
@@ -185,6 +242,10 @@ xmlns="http://www.w3.org/1999/xhtml">
 </a>
 </xsl:template>
 
+<xsl:template match="listitem/para">
+<xsl:apply-templates/><br />
+</xsl:template>
+
 <xsl:template match="para">
 <p><xsl:apply-templates/></p>
 </xsl:template>
@@ -234,7 +295,7 @@ xmlns="http://www.w3.org/1999/xhtml">
 <blockquote><pre><code><xsl:apply-templates/></code></pre></blockquote>
 </xsl:template>
 
-<xsl:template match="synopsis">
+<xsl:template match="quote">
 <code><xsl:apply-templates/></code>
 </xsl:template>
 

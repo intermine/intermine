@@ -1,32 +1,28 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>Combining data from different classes</title>
 
-<index>
+    <para>Because of the relationships between the objects in the classes you
+    may only need to constrain one class to retrieve a subset of items from
+    another class. eg if you want all the genes from Drosophila, you only need
+    to constrain the organism class to Drosophila to retrieve that subset of
+    genes from the gene class. If you wish to know about the transcripts of a
+    particular gene you would combine information from the Gene class and the
+    Transcript class. By constraining the 'name' field of the gene class to a
+    particular gene, you will only retrieve information from the transcripts
+    class that relates to that gene (ie you do not need to apply the
+    constraint to the transcripts class as well). This is because that
+    particular gene object has a relationship to particular objects
+    (instances) of the transcript class (ie those transcripts that are
+    produced from that particular gene).</para>
 
-
-
-
-
-
-    <section>
-          <heading>Combining data from different classes</heading>
-           <item>Because of the relationships between the objects in the classes you may only need to constrain one class to retrieve a subset of items from another class.  eg if you want all the genes from Drosophila, you only need to constrain the organism class to Drosophila to retrieve that subset of genes from the gene class.   If you wish to know about the transcripts of a particular gene you would combine information from the Gene class and the Transcript class.  By constraining the 'name' field of the gene class to a particular gene, you will only retrieve information from the transcripts class that relates to that gene  (ie you do not need to apply the constraint to the transcripts class as well).  This is because that particular gene object has a relationship to particular objects (instances) of the transcript class  (ie those transcripts that are produced from that particular gene).</item>
-      </section>
-
-
-
-    
-	  <entry>
-	      <inlinegraphic fileref="constrainDiag1.gif"/>
-	  </entry>
-
-
-
-</index>
-
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="constrainDiag1.gif" />
+      </imageobject>
+    </mediaobject>
+  </section>
 </article>
-
-
-

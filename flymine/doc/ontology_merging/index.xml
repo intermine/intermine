@@ -1,23 +1,27 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <title>Building FlyMine Object Model by Merging Ontologies</title>
 
-<artheader>
-<date>2003-09-10</date>
-<title>Building FlyMine Object Model by Merging Ontologies</title>
-<authorgroup>
-<author>
-<firstname>Richard</firstname>
-<surname>Smith</surname>
-</author>
-</authorgroup>
-</artheader>
+    <date>2003-09-10</date>
 
-<sect1>
+    <authorgroup>
+      <author>
+        <firstname>Richard</firstname>
 
-<para>A suggested system for building a FlyMine object model by merging ontologies.</para>
+        <surname>Smith</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-<inlinegraphic fileref="ontology_merging" align="center"/>
+  <para>A suggested system for building a FlyMine object model by merging
+  ontologies.</para>
 
-</sect1>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="ontology_merging.png" />
+    </imageobject>
+  </mediaobject>
 </article>

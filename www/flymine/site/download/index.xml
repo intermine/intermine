@@ -1,15 +1,37 @@
-<index>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
   <section>
-    <heading>Documentation: Obtaining and building InterMine</heading>
-<!--    <item><ulink url="../doc/software/building.xml">Downloading and building InterMine</ulink></item> -->
-    <item><ulink url="../doc/software/cvs-user.xml">Obtaining source code via anonymous CVS</ulink></item>
+    <title>Documentation: Obtaining and building InterMine</title>
+
+    <itemizedlist>
+      <!--    <listitem><para><ulink url="../doc/software/building.xml">Downloading and building InterMine</ulink></para></listitem> -->
+
+      <listitem>
+        <para><ulink url="../doc/software/cvs-user.xml">Obtaining source code
+        via anonymous CVS</ulink></para>
+      </listitem>
+    </itemizedlist>
   </section>
 
   <section>
-    <heading>Download</heading>
-    <item><ulink url="http://download.flymine.org/releases/">Latest release</ulink></item>
-    <item><ulink url="http://download.flymine.org/nightly/">Nightly build</ulink></item>
-    <item><ulink url="http://cvs.flymine.org/">Browse CVS</ulink></item>
-  </section>
+    <title>Download</title>
 
-</index>
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="http://download.flymine.org/releases/">Latest
+        release</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://download.flymine.org/nightly/">Nightly
+        build</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://cvs.flymine.org/">Browse CVS</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

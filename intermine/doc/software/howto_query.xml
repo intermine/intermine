@@ -1,88 +1,230 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  
-  <artheader>
+  <articleinfo>
     <date>2003-10-17</date>
+
     <title>How to query InterMine</title>
+
     <authorgroup>
       <author>
         <firstname>Mark</firstname>
+
         <surname>Woodbridge</surname>
       </author>
     </authorgroup>
-  </artheader>
-  
-  <sect1>
-    <para>This document presents an introduction to the general form of query used in InterMine. Actual queries can be specified using a <ulink url="java_query/spec.xml">Java API</ulink> or as <ulink url="iql_query/spec.xml">IQL strings</ulink> (which are transparently mapped to the equivalent Java representation). The examples below are specified in IQL, which is generally more concise and readable than the equivalent Java. They refer to types in the model used by the <ulink url="start/tutorial.xml">tutorial</ulink>, so that the query strings can be directly substituted in to SimpleQuery.java.</para>
-  </sect1>
-  
-  <sect1>
+  </articleinfo>
+
+  <para>This document presents an introduction to the general form of query
+  used in InterMine. Actual queries can be specified using a <ulink
+  url="java_query/spec.xml">Java API</ulink> or as <ulink
+  url="iql_query/spec.xml">IQL strings</ulink> (which are transparently mapped
+  to the equivalent Java representation). The examples below are specified in
+  IQL, which is generally more concise and readable than the equivalent Java.
+  They refer to types in the model used by the <ulink
+  url="start/tutorial.xml">tutorial</ulink>, so that the query strings can be
+  directly substituted in to SimpleQuery.java.</para>
+
+  <section>
     <title>The components of a query</title>
-    <para>InterMine queries are similar to those formulated in SQL, but object oriented in that they refer to (classes of) objects rather than tables, and simpler because they have a more restricted syntax. A query consists of a Select list (of QueryClasses or QueryEvaluables which form the results of the query), a From list (of SubQueries or QueryClasses involved in the query's Select list or constraints) and a Where list of constraints on the objects involved (including fields of these objects and expressions involving them). In addition the results can be grouped or ordered (by QueryClass or QueryEvaluable).</para>
-    
+
+    <para>InterMine queries are similar to those formulated in SQL, but object
+    oriented in that they refer to (classes of) objects rather than tables,
+    and simpler because they have a more restricted syntax. A query consists
+    of a Select list (of QueryClasses or QueryEvaluables which form the
+    results of the query), a From list (of SubQueries or QueryClasses involved
+    in the query's Select list or constraints) and a Where list of constraints
+    on the objects involved (including fields of these objects and expressions
+    involving them). In addition the results can be grouped or ordered (by
+    QueryClass or QueryEvaluable).</para>
+
     <itemizedlist>
-      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryClass.html">QueryClass</ulink>es are (constrained) sets of objects of a common superclass. A QueryClass corresponds to a type, though there can be many QueryClasses of a single type in a query. In this case the QueryClasses must be aliased to distinguish between them. Otherwise they are imlicitly aliased with the name of their type. Selecting a superclass will select all the objects of its subclasses:
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryClass.html">QueryClass</ulink>es
+        are (constrained) sets of objects of a common superclass. A QueryClass
+        corresponds to a type, though there can be many QueryClasses of a
+        single type in a query. In this case the QueryClasses must be aliased
+        to distinguish between them. Otherwise they are imlicitly aliased with
+        the name of their type. Selecting a superclass will select all the
+        objects of its subclasses:</para>
+
         <programlisting>select Company from Company
-select Employable from Employable</programlisting></listitem>
-      
-      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryEvaluable.html">QueryEvaluable</ulink>s are entities than can be evaluated to a "primitive" type. These include:<itemizedlist><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryField.html">QueryField</ulink>s  - primitive fields of QueryClasses (eg. <synopsis>Employee.name</synopsis>)</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryValue.html">QueryValue</ulink>s  - literal values (eg. <synopsis>'Alice</synopsis>')</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryExpression.html">QueryExpression</ulink>s formed by combinations of other QueryEvaluables (eg. <synopsis>65 - Employee.age</synopsis>)</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryFunction.html">QueryFunction</ulink>s  - aggregates of fields or expressions (eg. <synopsis>select count(*) as employee_count from Employee</synopsis>). Note that SQL GROUP BY rules apply to QueryFunctions (must GROUP BY selected non-aggregate columns), and that count functions in the select list must be aliased.</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryCast.html">QueryCast</ulink>s - typecasts from one QueryEvaluable primitive type to another</listitem></itemizedlist></listitem>
-      
-      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryReference.html">QueryReference</ulink>s correspond to the non-primitive (ie object or collection) fields of queryclasses (eg. <synopsis>Employee.department</synopsis>)</listitem>
-      
-      <listitem>Subqueries are queries that are embedded in the From list of another query. They must be aliased. A path-like syntax is used to refer to elements in their Select list:
+select Employable from Employable</programlisting>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryEvaluable.html">QueryEvaluable</ulink>s
+        are entities than can be evaluated to a "primitive" type. These
+        include:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><ulink
+            url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryField.html">QueryField</ulink>s
+            - primitive fields of QueryClasses (eg.
+            <literal>Employee.name</literal>)</para>
+          </listitem>
+
+          <listitem>
+            <para><ulink
+            url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryValue.html">QueryValue</ulink>s
+            - literal values (eg. <literal>'Alice</literal>')</para>
+          </listitem>
+
+          <listitem>
+            <para><ulink
+            url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryExpression.html">QueryExpression</ulink>s
+            formed by combinations of other QueryEvaluables (eg. <literal>65 -
+            Employee.age</literal>)</para>
+          </listitem>
+
+          <listitem>
+            <para><ulink
+            url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryFunction.html">QueryFunction</ulink>s
+            - aggregates of fields or expressions (eg. <literal>select
+            count(*) as employee_count from Employee</literal>). Note that SQL
+            GROUP BY rules apply to QueryFunctions (must GROUP BY selected
+            non-aggregate columns), and that count functions in the select
+            list must be aliased.</para>
+          </listitem>
+
+          <listitem>
+            <para><ulink
+            url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryCast.html">QueryCast</ulink>s
+            - typecasts from one QueryEvaluable primitive type to
+            another</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/QueryReference.html">QueryReference</ulink>s
+        correspond to the non-primitive (ie object or collection) fields of
+        queryclasses (eg. <literal>Employee.department</literal>)</para>
+      </listitem>
+
+      <listitem>
+        <para>Subqueries are queries that are embedded in the From list of
+        another query. They must be aliased. A path-like syntax is used to
+        refer to elements in their Select list:</para>
+
         <programlisting>select subquery.Company.name as field from (select Company from Company) as subquery</programlisting>
       </listitem>
     </itemizedlist>
-    
-  </sect1>
-  <sect1>
+  </section>
+
+  <section>
     <title>Constraint types</title>
 
-<itemizedlist><listitem><ulink url="../../api/org/intermine/objectstore/query/SimpleConstraint.html">SimpleConstraint</ulink>s involve QueryEvaluables and are basically numeric or string comparisons.
-Available operators (depending on type) are =, !=, &lt;, &lt;=, &gt;, &gt;=, MATCHES and DOES NOT MATCH.
-<programlisting>select Employee from Employee where Employee.age &lt; 65</programlisting></listitem>
+    <itemizedlist>
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/SimpleConstraint.html">SimpleConstraint</ulink>s
+        involve QueryEvaluables and are basically numeric or string
+        comparisons. Available operators (depending on type) are =, !=, &lt;,
+        &lt;=, &gt;, &gt;=, MATCHES and DOES NOT MATCH.</para>
 
-<listitem><ulink url="../../api/org/intermine/objectstore/query/ContainsConstraint.html">ContainsConstraint</ulink>s specify that QueryReferences "contain" other QueryClasses in the sense that a non-primitive field can equal an object (if it represents a reference), or contain an object (if it represents a collection of objects).
-Available operators are CONTAINS and DOES NOT CONTAIN.
-The following two queries are equivalent:
-<programlisting>select Employee from Employee, Department
+        <programlisting>select Employee from Employee where Employee.age &lt; 65</programlisting>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/ContainsConstraint.html">ContainsConstraint</ulink>s
+        specify that QueryReferences "contain" other QueryClasses in the sense
+        that a non-primitive field can equal an object (if it represents a
+        reference), or contain an object (if it represents a collection of
+        objects). Available operators are CONTAINS and DOES NOT CONTAIN. The
+        following two queries are equivalent:</para>
+
+        <programlisting>select Employee from Employee, Department
   where Department.name='DepartmentA1' and Department.employees contains Employee
 
 select Employee from Employee, Department
-  where Department.name='DepartmentA1' and Employee.department contains Department</programlisting></listitem>
+  where Department.name='DepartmentA1' and Employee.department contains Department</programlisting>
+      </listitem>
 
-<listitem><ulink url="../../api/org/intermine/objectstore/query/ClassConstraint.html">ClassConstraint</ulink>s are used to compare QueryClasses to other QueryClasses or example objects.
-Available operators are = and !=.
-<programlisting>select e1, e2 from Employee as e1, Employee as e2, Department
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/ClassConstraint.html">ClassConstraint</ulink>s
+        are used to compare QueryClasses to other QueryClasses or example
+        objects. Available operators are = and !=.</para>
+
+        <programlisting>select e1, e2 from Employee as e1, Employee as e2, Department
   where e1.department contains Department and e2.department contains Department and e1 != e2
 
-select Employee from Employee where Employee = [example object]</programlisting></listitem>
+select Employee from Employee where Employee = [example object]</programlisting>
+      </listitem>
 
-<listitem><ulink url="../../api/org/intermine/objectstore/query/BagConstraint.html">BagConstraint</ulink>s correspond to more general "in" constraints where arbitrary (heterogeneous) collections of objects can be filtered by specifying that they "contain" a specific QueryClass. Alternatively the collection can be of primitive types, in which case the constraint is on a QueryEvaluable. Available operators are IN and NOT IN.
-<programlisting>select Company from Company
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/BagConstraint.html">BagConstraint</ulink>s
+        correspond to more general "in" constraints where arbitrary
+        (heterogeneous) collections of objects can be filtered by specifying
+        that they "contain" a specific QueryClass. Alternatively the
+        collection can be of primitive types, in which case the constraint is
+        on a QueryEvaluable. Available operators are IN and NOT IN.</para>
+
+        <programlisting>select Company from Company
   where Company in [collection of company objects]
 
 select Company from Company
-  where Company.name in [collection of strings]</programlisting></listitem>
+  where Company.name in [collection of strings]</programlisting>
+      </listitem>
 
-<listitem><ulink url="../../api/org/intermine/objectstore/query/SubqueryConstraint.html">SubqueryConstraint</ulink>s are related to ContainsConstraints are are used where a QueryClass or QueryEvaluable should be present in the results (ie the From list) of a subquery. In practice this means that the results of a subquery contain a certain object, or equal a set of objects. Queries can be added to the from list of another query, and fields added to the top-level Select list by using the alias of the subquery.
-Available operators are IN and NOT IN.
-<programlisting>select Company from Company
-  where Company.name in (select Company.name as name from Company)</programlisting></listitem></itemizedlist>
-</sect1>
-<sect1><title>Notes</title>
-<itemizedlist><listitem>Constraints can be arbitrarily combined into (nested) AND or OR sets. Constraint negation can be performed on sets or individual constraints. Note that in some cases it is possible to negate the constraint (DOES NOT CONTAIN), or its condition (NOT CONTAINS), to achieve the same result:
-<programlisting>select Company from Company where not Company.name = 'CompanyA'
-select Company from Company where Company.name != 'CompanyA'</programlisting></listitem>
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/org/intermine/objectstore/query/SubqueryConstraint.html">SubqueryConstraint</ulink>s
+        are related to ContainsConstraints are are used where a QueryClass or
+        QueryEvaluable should be present in the results (ie the From list) of
+        a subquery. In practice this means that the results of a subquery
+        contain a certain object, or equal a set of objects. Queries can be
+        added to the from list of another query, and fields added to the
+        top-level Select list by using the alias of the subquery. Available
+        operators are IN and NOT IN.</para>
 
-<listitem>Queries have a Distinct flag, which, when set, will remove duplicate elements from the results list.
-<programlisting>select distinct Contractor, Company from Contractor, Company
+        <programlisting>select Company from Company
+  where Company.name in (select Company.name as name from Company)</programlisting>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Notes</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>Constraints can be arbitrarily combined into (nested) AND or OR
+        sets. Constraint negation can be performed on sets or individual
+        constraints. Note that in some cases it is possible to negate the
+        constraint (DOES NOT CONTAIN), or its condition (NOT CONTAINS), to
+        achieve the same result:</para>
+
+        <programlisting>select Company from Company where not Company.name = 'CompanyA'
+select Company from Company where Company.name != 'CompanyA'</programlisting>
+      </listitem>
+
+      <listitem>
+        <para>Queries have a Distinct flag, which, when set, will remove
+        duplicate elements from the results list.</para>
+
+        <programlisting>select distinct Contractor, Company from Contractor, Company
   where Contractor.oldComs contains Company</programlisting>
-Note that a subquery is necessary to count the number of expected results rows for a distinct query:
-<programlisting>select count(*) as c from (select distinct Contractor, Company from Contractor, Company
-  where Contractor.oldComs contains Company) as d</programlisting>
-whereas a non-distinct query can be counted by replacing the select list: 
-<programlisting>select count(*) as c from Contractor, Company where Contractor.oldComs contains Company</programlisting></listitem></itemizedlist>
-</sect1>
+
+        <para>Note that a subquery is necessary to count the number of
+        expected results rows for a distinct query:</para>
+
+        <programlisting>select count(*) as c from (select distinct Contractor, Company from Contractor, Company
+ where Contractor.oldComs contains Company) as d</programlisting>
+
+        <para>whereas a non-distinct query can be counted by replacing the
+        select list:</para>
+
+        <programlisting>select count(*) as c from Contractor, Company where Contractor.oldComs contains Company</programlisting>
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>

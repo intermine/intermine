@@ -1,57 +1,87 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  
-  <artheader>
+  <articleinfo>
     <date>2003-10-13</date>
+
     <title>InterMine and Ontologies</title>
+
     <authorgroup>
       <author>
         <firstname>Mark</firstname>
+
         <surname>Woodbridge</surname>
       </author>
     </authorgroup>
-  </artheader>
-  
-  <sect1>
-<para>
-Ontologies are hierarchical structures representing categorisation of entities. <ulink url="http://obo.sourceforge.net">OBO</ulink> is a repository of biological ontologies, including the initial InterMine targets of <ulink url="http://mged.sourceforge.net/ontologies/MGEDontology.php">MGED</ulink>, <ulink url="http://song.sourceforge.net">SO</ulink> and <ulink url="http://www.geneontology.org/">GO</ulink>. We aim to translate these from their native specification languages to <ulink url="http://www.w3.org/TR/owl-features/">OWL</ulink>, the W3C RDF-based standard for ontology representation. <ulink url="http://www.w3.org/TR/rdf-primer/">RDF</ulink> is a formal method for specifying triples such as "Dogs are animals", or "Cars have wheels". It can be serialized to RDF/XML or N3 format, which are just different representations of the same information. The terms such as "have" and "animals" are drawn from a vocabulary, of which OWL is one. OWL includes predicates such as "subclass" and "property" and an OWL document can therefore represent class hierarchies.
-</para>
-<para>
-GO and SO are specified in DAG format. This is parsed to a tree of DagTerms (DagParser), validated (DagValidator), and converted to OWL (Dag2Owl).
-MGED is specified in DAML+OIL format. This is directly translated to OWL (Daml2Owl).
-</para>
-<para>
-Equivalent terms (cross-links) between these ontologies are specified in a file (currently in N3 format) which is translated to OWL (MergeSpec2Owl).
-</para>
-<para>
-The resultant OWL files (4 in this case) are merged to a single OWL file (MergeOwl). This file is then translated to a InterMine Model (Owl2InterMine).
-</para>
-<para>
-Currently classes are only given fields corresponding to part-of relationships specified in the original ontologies. Many other fields will need to be incorporated from the data source "schemas" for the respective ontologies.
-</para>
-<para>
-A persistent issue is whether to regard ontology terms as types (ie. mapping to interfaces) or as tags (ie. instances implementing interfaces).
-</para>
-<para>
-Some ontologies (MGED) specify instances (ie. implementations) as individuals in the OWL document, in addition to classes. It is not clear how to handle these individuals (do they specify a range of class instantiations?) or how they relate to the corresponding information from data sources.
-</para>
-<para>
-To do:
-<itemizedlist>
-<listitem>
-Are primary keys necessary? Should they be present in merge specification? Should they be mapped as InverseFunctionalProperties?
-</listitem>
-<listitem>
-Decide how individuals should be handled.
-</listitem>
-<listitem>
-Incorporate properties from data sources.
-</listitem>
-<listitem>
-Allow specification of how OWL classes are mapped: to classes or interfaces?
-</listitem>
-</itemizedlist>
-</para>
-</sect1>
+  </articleinfo>
+
+  <para>Ontologies are hierarchical structures representing categorisation of
+  entities. <ulink url="http://obo.sourceforge.net">OBO</ulink> is a
+  repository of biological ontologies, including the initial InterMine targets
+  of <ulink
+  url="http://mged.sourceforge.net/ontologies/MGEDontology.php">MGED</ulink>,
+  <ulink url="http://song.sourceforge.net">SO</ulink> and <ulink
+  url="http://www.geneontology.org/">GO</ulink>. We aim to translate these
+  from their native specification languages to <ulink
+  url="http://www.w3.org/TR/owl-features/">OWL</ulink>, the W3C RDF-based
+  standard for ontology representation. <ulink
+  url="http://www.w3.org/TR/rdf-primer/">RDF</ulink> is a formal method for
+  specifying triples such as "Dogs are animals", or "Cars have wheels". It can
+  be serialized to RDF/XML or N3 format, which are just different
+  representations of the same information. The terms such as "have" and
+  "animals" are drawn from a vocabulary, of which OWL is one. OWL includes
+  predicates such as "subclass" and "property" and an OWL document can
+  therefore represent class hierarchies.</para>
+
+  <para>GO and SO are specified in DAG format. This is parsed to a tree of
+  DagTerms (DagParser), validated (DagValidator), and converted to OWL
+  (Dag2Owl). MGED is specified in DAML+OIL format. This is directly translated
+  to OWL (Daml2Owl).</para>
+
+  <para>Equivalent terms (cross-links) between these ontologies are specified
+  in a file (currently in N3 format) which is translated to OWL
+  (MergeSpec2Owl).</para>
+
+  <para>The resultant OWL files (4 in this case) are merged to a single OWL
+  file (MergeOwl). This file is then translated to a InterMine Model
+  (Owl2InterMine).</para>
+
+  <para>Currently classes are only given fields corresponding to part-of
+  relationships specified in the original ontologies. Many other fields will
+  need to be incorporated from the data source "schemas" for the respective
+  ontologies.</para>
+
+  <para>A persistent issue is whether to regard ontology terms as types (ie.
+  mapping to interfaces) or as tags (ie. instances implementing
+  interfaces).</para>
+
+  <para>Some ontologies (MGED) specify instances (ie. implementations) as
+  individuals in the OWL document, in addition to classes. It is not clear how
+  to handle these individuals (do they specify a range of class
+  instantiations?) or how they relate to the corresponding information from
+  data sources.</para>
+
+  <para>To do:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>Are primary keys necessary? Should they be present in merge
+      specification? Should they be mapped as
+      InverseFunctionalProperties?</para>
+    </listitem>
+
+    <listitem>
+      <para>Decide how individuals should be handled.</para>
+    </listitem>
+
+    <listitem>
+      <para>Incorporate properties from data sources.</para>
+    </listitem>
+
+    <listitem>
+      <para>Allow specification of how OWL classes are mapped: to classes or
+      interfaces?</para>
+    </listitem>
+  </itemizedlist>
 </article>

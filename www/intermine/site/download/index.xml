@@ -1,32 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-
-  <artheader>
+  <articleinfo>
     <title>Obtaining the InterMine source code</title>
-  </artheader>
+  </articleinfo>
 
-  <sect1>
+  <section>
     <title>Download</title>
-    <para>
-      <itemizedlist>
-        <listitem><ulink url="http://download.flymine.org/releases/">Latest release</ulink></listitem>
-        <listitem><ulink url="http://download.flymine.org/nightly/">Nightly build</ulink></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
 
-  <sect1>
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="http://download.flymine.org/releases/">Latest
+        release</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://download.flymine.org/nightly/">Nightly
+        build</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
     <title>CVS access</title>
-    <para>
-      <itemizedlist>
-        <listitem><ulink url="http://cvs.flymine.org">Browse CVS</ulink></listitem>
-        <listitem>Download via CVS:</listitem>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="http://cvs.flymine.org">Browse CVS</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para>Download via CVS:</para>
+
         <itemizedlist>
-          <listitem><command>cd</command> to the directory into which you intend to check out the source.</listitem>
-          <listitem>Issue the command <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No password is needed.</listitem>
-          <listitem>Then type <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs co intermine</command>.</listitem>
+          <listitem>
+            <para><command>cd</command> to the directory into which you intend
+            to check out the source.</para>
+          </listitem>
+
+          <listitem>
+            <para>Issue the command <command>cvs -d
+            :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No
+            password is needed.</para>
+          </listitem>
+
+          <listitem>
+            <para>Then type <command>cvs -d
+            :pserver:anonymous@cvs.flymine.org:/cvs co
+            intermine</command>.</para>
+          </listitem>
         </itemizedlist>
-      </itemizedlist>
-    </para>
-  </sect1>    
-  
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>

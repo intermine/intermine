@@ -1,14 +1,38 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  <artheader>
+  <articleinfo>
     <date>2003-06-26</date>
+
     <title>Using InterMine with your own model</title>
-  </artheader>
-  
-  <sect1>
-    <para>InterMine allows you to specify models in XML or UML (ArgoUML XMI) format. Other formats can be added if a corresponding <classname>org.intermine.modelproduction.ModelParser</classname> is produced that can perform translation into a <classname>org.intermine.metadata.Model</classname> (two examples are <classname>InterMineModelParser</classname> and <classname>XmiParser</classname>). This resulting Java object version can in turn be serialized into a canonical XML form using the <command>toString()</command> method.</para>
-    <para>An <classname>org.intermine.codegen.ModelOutput</classname> instance takes the <classname>Model</classname> and produces Java classes, an object-relational mapping file, a database schema and an XML mapping file for serialization. These are necessary for storing the data, which must be in the form of Java objects of the produced classes. These objects may be retrieved from a server, disk or elsewhere. An <classname>org.intermine.dataloader.DataLoader</classname> performs the task of building objects, making them ready for persistence and passing them to an <classname>IntegrationWriter</classname> for storage.  An <classname>XMLDataLoader</classname> is provided which can take data in XML format, unmarshall it to objects. and store it.</para>
-    <para>The InterMine unit tests demonstrate all these processes in action. The test model is specified in UML and is used to produce Java classes, which are instantiated and stored in a database described by an XML database schema, where the mapping to tables is specified by a repository description. Type <command>ant help</command> in the project root directory to see a list of the relevant targets.</para>
-  </sect1>
+  </articleinfo>
+
+  <para>InterMine allows you to specify models in XML or UML (ArgoUML XMI)
+  format. Other formats can be added if a corresponding
+  <literal>org.intermine.modelproduction.ModelParser</literal> is produced
+  that can perform translation into a
+  <literal>org.intermine.metadata.Model</literal> (two examples are
+  <literal>InterMineModelParser</literal> and <literal>XmiParser</literal>).
+  This resulting Java object version can in turn be serialized into a
+  canonical XML form using the <command>toString()</command> method.</para>
+
+  <para>An <literal>org.intermine.codegen.ModelOutput</literal> instance takes
+  the <literal>Model</literal> and produces Java classes, an object-relational
+  mapping file, a database schema and an XML mapping file for serialization.
+  These are necessary for storing the data, which must be in the form of Java
+  objects of the produced classes. These objects may be retrieved from a
+  server, disk or elsewhere. An
+  <literal>org.intermine.dataloader.DataLoader</literal> performs the task of
+  building objects, making them ready for persistence and passing them to an
+  <literal>IntegrationWriter</literal> for storage. An
+  <literal>XMLDataLoader</literal> is provided which can take data in XML
+  format, unmarshall it to objects. and store it.</para>
+
+  <para>The InterMine unit tests demonstrate all these processes in action.
+  The test model is specified in UML and is used to produce Java classes,
+  which are instantiated and stored in a database described by an XML database
+  schema, where the mapping to tables is specified by a repository
+  description. Type <command>ant help</command> in the project root directory
+  to see a list of the relevant targets.</para>
 </article>

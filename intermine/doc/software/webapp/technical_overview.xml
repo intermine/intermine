@@ -1,41 +1,110 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  <artheader>
+  <articleinfo>
     <date>2004-06-14</date>
+
     <title>Webapp technical overview</title>
+
     <authorgroup>
       <author>
         <firstname>Mark</firstname>
+
         <surname>Woodbridge</surname>
       </author>
     </authorgroup>
-  </artheader>
-  
-  <sect1>
-    <para>The three most important "business objects" for the webapp are the PathQuery, the PagedTable and the Profile. These are described below. Other important business logic includes TreeNode, InterMineBag and MetadataNode. Important non-action classes include InitialiserPlugin, SessionListener, InterMineRequestProcessor and InterMineExceptionHandler.</para>
-    <para>The rest of the classes are generally actions (including controllers) for the relevant .jsp files. Helper classes (for actions or business objects) should not generally import any servlet or struts classes.</para>
-    <para>All session (user specific) and servletcontext (non-user specific) data is stored under keys listed in Constants.java. this makes it easier to keep track of what is available, and used, by any particular page. Also note that of the three objects stored in session (PROFILE, QUERY AND RESULTS_TABLE) only PROFILE is not "temporary", ie. not related to the query "in progress". Note that the even more temporary "path" and "prefix" attributes are also currently stored in the session, but this is not ideal.</para>
-    <para>The best way to understand the webapp is to use it, whilst following the struts-config. The tiles-defs are less helpful. tiles are used mainly for including a common element to most pages (eg. the page description) and for configuring controllers.</para>
-  </sect1>
+  </articleinfo>
 
-  <sect1>
-  <title>Queries</title>
-    <para>The webapp does not use InterMine Query objects to represent a query as it is built. It uses a simpler representation, called a PathQuery. It's okay for it to be simple, because the website does not provide for building very complicated queries. An alternative format is necessary because we require a representation that is more easily rendered (on the screen and as XML) and is manipulable in a way that reflects a user's actions on the site. also, the InterMine query object is (quite rightly) strict in ensuring that a query is valid at any point, whereas we want our queries to be (temporarily) invalid if, for example, we are providing a template that needs values filled in by the user. We convert to a "real" query only when we interact with the ObjectStore, eg. to obtain an ResultsInfo or Results object. Note that the Java and XML representations of a PathQuery contain the same information, but the Java version has some redundancy to allow JSTL to "draw" the query more easily. Note also that we cannot currently convert back from a InterMine query to a PathQuery, so we do not remove the PathQuery from the session after we have obtained a Results object.</para>
-  </sect1>
+  <para>The three most important "business objects" for the webapp are the
+  PathQuery, the PagedTable and the Profile. These are described below. Other
+  important business logic includes TreeNode, InterMineBag and MetadataNode.
+  Important non-action classes include InitialiserPlugin, SessionListener,
+  InterMineRequestProcessor and InterMineExceptionHandler.</para>
 
-  <sect1>
+  <para>The rest of the classes are generally actions (including controllers)
+  for the relevant .jsp files. Helper classes (for actions or business
+  objects) should not generally import any servlet or struts classes.</para>
+
+  <para>All session (user specific) and servletcontext (non-user specific)
+  data is stored under keys listed in Constants.java. this makes it easier to
+  keep track of what is available, and used, by any particular page. Also note
+  that of the three objects stored in session (PROFILE, QUERY AND
+  RESULTS_TABLE) only PROFILE is not "temporary", ie. not related to the query
+  "in progress". Note that the even more temporary "path" and "prefix"
+  attributes are also currently stored in the session, but this is not
+  ideal.</para>
+
+  <para>The best way to understand the webapp is to use it, whilst following
+  the struts-config. The tiles-defs are less helpful. tiles are used mainly
+  for including a common element to most pages (eg. the page description) and
+  for configuring controllers.</para>
+
+  <section>
+    <title>Queries</title>
+
+    <para>The webapp does not use InterMine Query objects to represent a query
+    as it is built. It uses a simpler representation, called a PathQuery. It's
+    okay for it to be simple, because the website does not provide for
+    building very complicated queries. An alternative format is necessary
+    because we require a representation that is more easily rendered (on the
+    screen and as XML) and is manipulable in a way that reflects a user's
+    actions on the site. also, the InterMine query object is (quite rightly)
+    strict in ensuring that a query is valid at any point, whereas we want our
+    queries to be (temporarily) invalid if, for example, we are providing a
+    template that needs values filled in by the user. We convert to a "real"
+    query only when we interact with the ObjectStore, eg. to obtain an
+    ResultsInfo or Results object. Note that the Java and XML representations
+    of a PathQuery contain the same information, but the Java version has some
+    redundancy to allow JSTL to "draw" the query more easily. Note also that
+    we cannot currently convert back from a InterMine query to a PathQuery, so
+    we do not remove the PathQuery from the session after we have obtained a
+    Results object.</para>
+  </section>
+
+  <section>
     <title>Results</title>
-    <para>table.jsp is a generic renderer for a PagedTable. Implementations of PagedTable exist to wrap both Results objects and Collections (which may be bags or collection fields of business objects). Note that if the InterMine Query is required later then it is available from the Results object which is obtainable from the PagedResults class.</para>
-  </sect1>
 
-  <sect1>
+    <para>table.jsp is a generic renderer for a PagedTable. Implementations of
+    PagedTable exist to wrap both Results objects and Collections (which may
+    be bags or collection fields of business objects). Note that if the
+    InterMine Query is required later then it is available from the Results
+    object which is obtainable from the PagedResults class.</para>
+  </section>
+
+  <section>
     <title>Sessions</title>
-    <para>Session management is tricky. Basically your (optional) sessionlistener should be called by the container whenever a session is created, and request.isRequestedSessionIdValid() will be false before the session is created, and after it has timed out. the container will try to flush sessions to disk when they are idle but have not timed out. this saves memory, but only works if everything you store on the session is serializable. this is not always realistic, and is only useful for not losing queries that are "in progress" as the data is stored per-cookie, not per-username. the easiest way to handle this properly seems to be to put the important per-user data (ie. saved queries, not temporary session variables) in a container object on the session. this object should know how to persist itself (see Profiles), and should do so whenever it is modified. a user can then logon on a different computer (perhaps accepting that their "in progress" query is lost) and see their saved queries and bags. In practice, the problem is that different containers handle session semantics differently. Also difficult is enumerating the pages to which it is okay to go, even if you don't have a valid session.</para>
-  </sect1>
-  
-  <sect1>
+
+    <para>Session management is tricky. Basically your (optional)
+    sessionlistener should be called by the container whenever a session is
+    created, and request.isRequestedSessionIdValid() will be false before the
+    session is created, and after it has timed out. the container will try to
+    flush sessions to disk when they are idle but have not timed out. this
+    saves memory, but only works if everything you store on the session is
+    serializable. this is not always realistic, and is only useful for not
+    losing queries that are "in progress" as the data is stored per-cookie,
+    not per-username. the easiest way to handle this properly seems to be to
+    put the important per-user data (ie. saved queries, not temporary session
+    variables) in a container object on the session. this object should know
+    how to persist itself (see Profiles), and should do so whenever it is
+    modified. a user can then logon on a different computer (perhaps accepting
+    that their "in progress" query is lost) and see their saved queries and
+    bags. In practice, the problem is that different containers handle session
+    semantics differently. Also difficult is enumerating the pages to which it
+    is okay to go, even if you don't have a valid session.</para>
+  </section>
+
+  <section>
     <title>Profiles</title>
-    <para>All users of the webapp have a Profile created, in which their saved queries and bags are stored. Note that queries may refer to bags. If a "userprofile" database can be found when the webapp is deployed a ProfileManager is created. Whenever a Profile is created it will be passed this manager, if it is present. From then on, a profile will attempt to use its manager, if present, to persist itself whenever it is modified. Ultimately this means that you cannot log in if there is not userprofile database, because there will be no ProfileManager present to retrieve your profile.</para>
-  </sect1>
+
+    <para>All users of the webapp have a Profile created, in which their saved
+    queries and bags are stored. Note that queries may refer to bags. If a
+    "userprofile" database can be found when the webapp is deployed a
+    ProfileManager is created. Whenever a Profile is created it will be passed
+    this manager, if it is present. From then on, a profile will attempt to
+    use its manager, if present, to persist itself whenever it is modified.
+    Ultimately this means that you cannot log in if there is not userprofile
+    database, because there will be no ProfileManager present to retrieve your
+    profile.</para>
+  </section>
 </article>

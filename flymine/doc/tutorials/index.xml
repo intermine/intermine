@@ -1,34 +1,31 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  <sect1>
+  <section>
     <title>Query Tutorials</title>
-    <para>
-      The following tutorials will guide you through gradually more complex
-      queries.  NOTE: It is recommended that you read the <ulink url =
-      "../manual/manualQuickstart.xml">quick start guide</ulink> before you
-      attempt these tutorials.
-    </para>
 
-    <para>
-      <orderedlist>
-        
-        <listitem>
-          <ulink url="tutorial1.xml">Tutorial1</ulink>: Show
-          the names of all genes in FlyMine
-        </listitem> 
-        <listitem>
-          <ulink url="tutorial2.xml">Tutorial2</ulink>: Show
-          the names of all the genes from Drosophila
-          melanogaster
-        </listitem> 
-        <listitem>
-          <ulink url="tutorial3.xml">Tutorial3</ulink>: Show
-          the Orthologues between Drosophila melanogaster and Anopheles
-          gambiae and how these were determined
-        </listitem> 
-      </orderedlist>
-    </para>
-  </sect1>
+    <para>The following tutorials will guide you through gradually more
+    complex queries. NOTE: It is recommended that you read the <ulink
+    url="../manual/manualQuickstart.xml">quick start guide</ulink> before you
+    attempt these tutorials.</para>
+
+    <orderedlist>
+      <listitem>
+        <para><ulink url="tutorial1.xml">Tutorial1</ulink>: Show the names of
+        all genes in FlyMine</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="tutorial2.xml">Tutorial2</ulink>: Show the names of
+        all the genes from Drosophila melanogaster</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="tutorial3.xml">Tutorial3</ulink>: Show the
+        Orthologues between Drosophila melanogaster and Anopheles gambiae and
+        how these were determined</para>
+      </listitem>
+    </orderedlist>
+  </section>
 </article>

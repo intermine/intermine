@@ -1,18 +1,25 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>Browse the FlyMine model</title>
 
-<index>
+    <itemizedlist>
+      <listitem>
+        <para>This page allows you to browse the complete FlyMine object
+        model. This shows all the classes in FlyMine, some of which do not yet
+        have data associated with them</para>
+      </listitem>
 
-   <section>
-      <heading>Browse the FlyMine model</heading>
-      <item>This page allows you to browse the complete FlyMine object model.  This shows all the classes in FlyMine, some of which do not yet have data associated with them</item>
-      <item>The number on the right shows the number of objects associated with that class</item>
-      <item>Click on a class name to begin your query with that class</item>
+      <listitem>
+        <para>The number on the right shows the number of objects associated
+        with that class</para>
+      </listitem>
 
-</section>
-
-</index>
-
+      <listitem>
+        <para>Click on a class name to begin your query with that class</para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>

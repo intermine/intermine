@@ -1,28 +1,22 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>Constraining to subclasses</title>
 
-<index>
+    <para>Some classes are subdivided in to more specialised subclasses. For
+    some queries you may only be interested in data relating to a particular
+    subclass of a class. For example, you may only be interested in the tRNA
+    transcripts. In these cases you need to constrain the class to the
+    subclass that you require. The difference between this and the examples
+    above is that you are constraining the actual class, rather than a field
+    of a class.</para>
 
-
-   <section>
-          <heading>Constraining to subclasses</heading>
-          <item>Some classes are subdivided in to more specialised subclasses.  For some queries you may only be interested in data relating to a particular subclass of a class.  For example, you may only be interested in the tRNA transcripts.  In these cases you need to constrain the class to the subclass that you require.  The difference between this and the examples above is that you are constraining the actual class, rather than a field of a class.</item>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="constrainDiag3.gif" />
+      </imageobject>
+    </mediaobject>
   </section>
-
-
-	  <entry>
-	      <inlinegraphic fileref="constrainDiag3.gif"/>
-	  </entry>
-
-
-
-
-</index>
-
 </article>
-
-
-
-

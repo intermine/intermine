@@ -1,23 +1,23 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>Show results</title>
 
-<index>
+    <itemizedlist>
+      <listitem>
+        <para>Pressing 'Show results' will run your query. When your query is
+        run an estimate is first made of how long it will take to run the
+        query and how many objects should be returned by the query. If your
+        query is going to take a very long time to run, it will be stopped and
+        a message will appear at the top of the screen.</para>
+      </listitem>
 
-    <section>
-      <heading>Show results</heading>
-      <item>
-      Pressing 'Show results' will run your query. When your query is run an estimate is first made of how long it will take to run the query and how many objects should be returned by the query.  If your query is going to take a very long time to run, it will be stopped and a message will appear at the top of the screen.
-      </item>
-      <item>
-       When your query has run, your results will be displayed on the <ulink url= "manualResultdisplay.xml">results page</ulink>
-      </item>
-
-
-        
+      <listitem>
+        <para>When your query has run, your results will be displayed on the
+        <ulink url="manualResultdisplay.xml">results page</ulink></para>
+      </listitem>
+    </itemizedlist>
   </section>
-
-</index>
-
 </article>

@@ -1,26 +1,38 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Starting a FlyMine query</title>
 
-<sect1>
-  <title>Starting a FlyMine query</title>
-  The following options are available to start a FlyMine query:
-  <itemizedlist>
-    <listitem>
-      <ulink url= "manualStartingaquery.xml">Start a new query with a particular class</ulink>
-    </listitem>
-    <listitem>
-      <ulink url= "manualStartpreviousquery.xml">Begin a query using a
+    <para>The following options are available to start a FlyMine query:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="manualStartingaquery.xml">Start a new query with a
+        particular class</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="manualStartpreviousquery.xml">Begin a query using a
         previous query</ulink> (Only available if you have queries stored in
-      your query history) 
-    </listitem>
-    <listitem>
-      <ulink url= "manualStartidentifiers.xml">Search using a list of identifiers</ulink>
-    </listitem>
-    <listitem>
-      <ulink url= "manualStartexample.xml">Use an example query</ulink>
-    </listitem>
-    <listitem>
-      <ulink url= "manualStartIQL.xml">Perform a query using IQL</ulink> (advanced usage.)
-    </listitem>
-  </itemizedlist>
-</sect1>
+        your query history)</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="manualStartidentifiers.xml">Search using a list of
+        identifiers</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="manualStartexample.xml">Use an example
+        query</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="manualStartIQL.xml">Perform a query using
+        IQL</ulink> (advanced usage.)</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>
