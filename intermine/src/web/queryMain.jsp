@@ -4,5 +4,4 @@
 <tiles:get name="queryErrorMessage"/>
 <tiles:get name="querySelectBuild"/>
 <tiles:get name="loadQuery"/>
-<tiles:get name="restartQuery"/>
 <!-- /queryMain.jsp -->
