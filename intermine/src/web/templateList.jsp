@@ -45,6 +45,7 @@
             <html:link action="/confirm" name="deleteParams" title="${linkTitle}">
               <img border="0" src="images/cross.png" alt="x"/>
             </html:link>
+            <c:remove var="deleteParams"/>
           </c:if>
           <c:if test="${showEdit == 1}">
             <html:link action="/editTemplate?name=${templateQuery.key}">
