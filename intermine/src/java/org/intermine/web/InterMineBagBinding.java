@@ -10,9 +10,10 @@ package org.intermine.web;
  *
  */
 
-import java.util.LinkedHashMap;
 import java.io.Reader;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.Iterator;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -29,31 +30,47 @@ import org.intermine.util.TypeUtil;
  *
  * @author Mark Woodbridge
  */
-public class SavedBagParser
+public class InterMineBagBinding
 {
-    protected ObjectStore os;
-    protected Map savedBags = new LinkedHashMap();
-
     /**
-     * Construct a SavedBagParser
-     * @param os the ObjectStore used to reload objects by id
+     * Convert an InterMine bag to XML
+     * @param bag the InterMineBag
+     * @param bagName the name of the bag
+     * @return the corresponding XML String
      */
-    public SavedBagParser(ObjectStore os) {
-        this.os = os;
+    public String marshal(InterMineBag bag, String bagName) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<bag name='" + bagName + "'>");
+        for (Iterator j = bag.iterator(); j.hasNext();) {
+            Object o = j.next();
+            String type, value;
+            if (o instanceof InterMineObject) {
+                type = InterMineObject.class.getName();
+                value = ((InterMineObject) o).getId().toString();
+            } else {
+                type = o.getClass().getName();
+                value = TypeUtil.objectToString(o);
+            }
+            sb.append("<element type='" + type + "' value='" + value + "'/>");
+        }
+        sb.append("</bag>");
+        return sb.toString();
     }
 
     /**
      * Parse saved queries from a Reader
      * @param reader the saved bags
+     * @param os ObjectStore used to resolve object ids
      * @return a Map from bag name to InterMineBag
      */
-    public Map process(Reader reader) {
+    public Map unmarshal(Reader reader, ObjectStore os) {
+        Map bags = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new BagHandler());
+            SAXParser.parse(new InputSource(reader), new BagHandler(os, bags));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return savedBags;
+        return bags;
     }
 
     /**
@@ -61,8 +78,20 @@ public class SavedBagParser
      */
     class BagHandler extends DefaultHandler
     {
+        ObjectStore os;
+        Map bags;
         String bagName;
         InterMineBag bag;
+        
+        /**
+         * Constructor
+         * @param os ObjectStore used to resolve object ids
+         * @param bags Map from bag name to InterMineBag
+         */
+        public BagHandler(ObjectStore os, Map bags) {
+            this.os = os;
+            this.bags = bags;
+        }
 
         /**
          * @see DefaultHandler#startElement
@@ -93,7 +122,7 @@ public class SavedBagParser
          */
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("bag")) {
-                savedBags.put(bagName, bag);
+                bags.put(bagName, bag);
             }
         }
     }

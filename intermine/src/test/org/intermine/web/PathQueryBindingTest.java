@@ -24,19 +24,25 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
- * Tests for the SavedQueryParser class
+ * Tests for the PathQueryBinding class
  *
  * @author Kim Rutherford
  */
-public class SavedQueryParserTest extends TestCase
+public class PathQueryBindingTest extends TestCase
 {
-    public SavedQueryParserTest(String arg) {
+    PathQueryBinding queryBinding;
+
+    public PathQueryBindingTest(String arg) {
         super(arg);
     }
 
+    public void setUp() {
+        queryBinding = new PathQueryBinding();
+    }
+
     public void testProcess() throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/SavedQueryParserTest.xml");
-        Map savedQueries = new SavedQueryParser().process(new InputStreamReader(is));
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test/PathQueryBindingTest.xml");
+        Map savedQueries = queryBinding.unmarshal(new InputStreamReader(is));
         Map expected = new LinkedHashMap();
 
         //allCompanies

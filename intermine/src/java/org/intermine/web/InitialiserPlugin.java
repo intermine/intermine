@@ -169,10 +169,9 @@ public class InitialiserPlugin implements PlugIn
             return;
         }
         Reader exampleQueriesReader = new InputStreamReader(exampleQueriesStream);
-        SavedQueryParser savedQueryParser = new SavedQueryParser();
         Map exampleQueries = null;
         try {
-            exampleQueries = savedQueryParser.process(exampleQueriesReader);
+            exampleQueries = new PathQueryBinding().unmarshal(exampleQueriesReader);
         } catch (Exception e) {
             throw new ServletException("Unable to parse example-queries.xml", e);
         }

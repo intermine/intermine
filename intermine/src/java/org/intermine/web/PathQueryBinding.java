@@ -30,36 +30,70 @@ import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
 
 /**
- * Parse PathQueries in XML format
+ * Convert PathQueries to and from XML
  *
  * @author Mark Woodbridge
  */
-public class SavedQueryParser
+public class PathQueryBinding
 {
-    protected Map savedQueries = new LinkedHashMap();
-
     /**
-     * Parse saved queries from a Reader
-     * @param reader the saved queries
-     * @return a Map from query name to PathQuery
+     * Convert a PathQuery to XML
+     * @param query the PathQuery
+     * @param queryName the name of the query
+     * @param modelName the model name
+     * @return the corresponding XML String
      */
-    public Map process(Reader reader) {
-        try {
-            SAXParser.parse(new InputSource(reader), new QueryHandler());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public String marshal(PathQuery query, String queryName, String modelName) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<query name='" + queryName + "' model='" + modelName
+                  + "' view='" + StringUtil.join(query.getView(), " ") + "'>");
+        for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
+            PathNode node = (PathNode) j.next();
+            if (node.getConstraints().size() > 0) {
+                sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");
+                for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
+                    Constraint c = (Constraint) k.next();
+                    sb.append("<constraint op='" + c.getOp() + "' value='" + c.getValue() + "'/>");
+                }
+                sb.append("</node>");
+            }
         }
-        return savedQueries;
+        sb.append("</query>");
+        return sb.toString();
     }
 
     /**
-     * Extension of DefaultHandler to handle metadata file
+     * Parse PathQueries from XML
+     * @param reader the saved queries
+     * @return a Map from query name to PathQuery
+     */
+    public Map unmarshal(Reader reader) {
+        Map queries = new LinkedHashMap();
+        try {
+            SAXParser.parse(new InputSource(reader), new QueryHandler(queries));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return queries;
+    }
+
+    /**
+     * Extension of DefaultHandler to handle parsing PathQueries
      */
     class QueryHandler extends DefaultHandler
     {
+        Map queries;
         String queryName;
         PathQuery query;
         PathNode node;
+
+        /**
+         * Constructor
+         * @param queries Map from query name to PathQuery
+         */
+        public QueryHandler(Map queries) {
+            this.queries = queries;
+        }
 
         /**
          * @see DefaultHandler#startElement
@@ -104,7 +138,7 @@ public class SavedQueryParser
          */
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("query")) {
-                savedQueries.put(queryName, query);
+                queries.put(queryName, query);
             }
         }
         

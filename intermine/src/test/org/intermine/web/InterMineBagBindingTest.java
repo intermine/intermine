@@ -15,27 +15,28 @@ import junit.framework.TestCase;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
- import java.util.Map;
- import java.util.LinkedHashMap;
-// import java.util.List;
-// import java.util.ArrayList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
-// import org.intermine.metadata.Model;
-// import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 
-import org.intermine.model.testmodel.Department;
-
 /**
- * Tests for the SavedBagParser class
+ * Tests for the InterMineBagBinding class
  *
  * @author Mark Woodbridge
  */
-public class SavedBagParserTest extends TestCase
+public class InterMineBagBindingTest extends TestCase
 {
-    public SavedBagParserTest(String arg) {
+    InterMineBagBinding bagBinding;
+
+    public InterMineBagBindingTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() {
+        bagBinding = new InterMineBagBinding();
     }
 
     public void testProcess() throws Exception {
@@ -43,8 +44,8 @@ public class SavedBagParserTest extends TestCase
         Department d1 = new Department();
         os.cacheObjectById(new Integer(1), d1);
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("test/SavedBagParserTest.xml");
-        Map savedBags = new SavedBagParser(os).process(new InputStreamReader(is));
+        InputStream is = getClass().getClassLoader().getResourceAsStream("test/InterMineBagBindingTest.xml");
+        Map savedBags = bagBinding.unmarshal(new InputStreamReader(is), os);
         Map expected = new LinkedHashMap();
 
         //primitives

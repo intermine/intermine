@@ -25,8 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.StringUtil;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -36,6 +34,8 @@ public class ProfileManager
 {
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
+    protected InterMineBagBinding bagBinding = new InterMineBagBinding();
+    protected PathQueryBinding queryBinding = new PathQueryBinding();
 
     /**
      * Construct a ProfileManager for the webapp
@@ -107,13 +107,12 @@ public class ProfileManager
             Map savedBags = new HashMap();
             for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
                 SavedBag bag = (SavedBag) i.next();
-                savedBags.putAll(new SavedBagParser(os).process(new StringReader(bag.getBag())));
+                savedBags.putAll(bagBinding.unmarshal(new StringReader(bag.getBag()), os));
             }
             Map savedQueries = new HashMap();
             for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                 SavedQuery query = (SavedQuery) i.next();
-                savedQueries.putAll(new SavedQueryParser().
-                                    process(new StringReader(query.getQuery())));
+                savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
             }
             profile = new Profile(this, username, savedQueries, savedBags);
         }
@@ -148,7 +147,7 @@ public class ProfileManager
                     String bagName = (String) entry.getKey();
                     InterMineBag bag = (InterMineBag) entry.getValue();
                     SavedBag savedBag = new SavedBag();
-                    savedBag.setBag(toXml(bag, bagName));
+                    savedBag.setBag(bagBinding.marshal(bag, bagName));
                     savedBag.setUserProfile(userProfile);
                     osw.store(savedBag);
                 }
@@ -158,7 +157,8 @@ public class ProfileManager
                     String queryName = (String) entry.getKey();
                     PathQuery query = (PathQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(toXml(query, queryName, os.getModel().getName()));
+                    savedQuery.setQuery(queryBinding.marshal(query, queryName,
+                                                             os.getModel().getName()));
                     savedQuery.setUserProfile(userProfile);
                     osw.store(savedQuery);
                 }
@@ -186,56 +186,5 @@ public class ProfileManager
             throw new RuntimeException("Unable to load user profile", e);
         }
         return profile;
-    }
-
-    /**
-     * Convert an InterMine bag to XML
-     * @param bag the InterMineBag
-     * @param bagName the name of the bag
-     * @return the corresponding XML String
-     */
-    protected static String toXml(InterMineBag bag, String bagName) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<bag name='" + bagName + "'>");
-        for (Iterator j = bag.iterator(); j.hasNext();) {
-            Object o = j.next();
-            String type, value;
-            if (o instanceof InterMineObject) {
-                type = InterMineObject.class.getName();
-                value = ((InterMineObject) o).getId().toString();
-            } else {
-                type = o.getClass().getName();
-                value = TypeUtil.objectToString(o);
-            }
-            sb.append("<element type='" + type + "' value='" + value + "'/>");
-        }
-        sb.append("</bag>");
-        return sb.toString();
-    }
-
-    /**
-     * Convert a query to XML
-     * @param query the PathQuery
-     * @param queryName the name of the query
-     * @param modelName the model name
-     * @return the corresponding XML String
-     */
-    protected static String toXml(PathQuery query, String queryName, String modelName) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<query name='" + queryName + "' model='" + modelName
-                  + "' view='" + StringUtil.join(query.getView(), " ") + "'>");
-        for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
-            PathNode node = (PathNode) j.next();
-            if (node.getConstraints().size() > 0) {
-                sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");
-                for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
-                    Constraint c = (Constraint) k.next();
-                    sb.append("<constraint op='" + c.getOp() + "' value='" + c.getValue() + "'/>");
-                }
-                sb.append("</node>");
-            }
-        }
-        sb.append("</query>");
-        return sb.toString();
     }
 }
