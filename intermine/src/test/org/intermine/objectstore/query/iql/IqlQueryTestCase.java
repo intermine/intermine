@@ -15,7 +15,6 @@ import junit.framework.Test;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.flymine.objectstore.query.Query;
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.objectstore.SetupDataTestCase;
 

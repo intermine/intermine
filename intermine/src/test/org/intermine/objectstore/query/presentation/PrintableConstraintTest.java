@@ -14,10 +14,8 @@ import junit.framework.TestCase;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ClassConstraint;
-import org.flymine.objectstore.query.Constraint;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.FromElement;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.QueryExpression;
@@ -26,7 +24,6 @@ import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.fql.FqlQuery;
 
 public class PrintableConstraintTest extends TestCase
 {

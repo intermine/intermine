@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.fql.FqlQueryParser;
 import org.flymine.model.testmodel.Company;

@@ -10,15 +10,11 @@ package org.flymine.objectstore.webservice;
  *
  */
 
-import junit.framework.*;
-
-import java.util.List;
+import junit.framework.TestCase;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryTestCase;
 import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.objectstore.ObjectStoreException;
 
 public class ObjectStoreServerTest extends TestCase
 {

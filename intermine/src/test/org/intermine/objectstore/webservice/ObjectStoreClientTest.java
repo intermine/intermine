@@ -12,11 +12,8 @@ package org.flymine.objectstore.webservice;
 
 import junit.framework.*;
 
-import java.util.List;
-
 import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.fql.FqlQuery;

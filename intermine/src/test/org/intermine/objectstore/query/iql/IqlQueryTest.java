@@ -10,11 +10,7 @@ package org.flymine.objectstore.query.fql;
  *
  */
 
-import junit.framework.TestCase;
 import junit.framework.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;

@@ -30,7 +30,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
 
 import org.flymine.util.TypeUtil;
