@@ -15,6 +15,8 @@ import java.beans.PropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -381,6 +383,13 @@ public class TypeUtil
         }
         if (clazz.equals(String.class)) {
             return new String(value);
+        }
+        if (clazz.equals(URL.class)) {
+            try {
+                return new URL(value);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return value;
     }
