@@ -5,7 +5,8 @@
     <title>Basic tutorial</title>
   </artheader>
   <sect1>
-    <para>The tutorial consists of a simple model, some test data for this model and a Java program to query the data. Running the tutorial involves a few simple steps:</para>
+    <para>The tutorial consists of a simple model, some test data for this model and a Java program to query the data. It includes the FlyMine jar, its dependencies, the necessary configuration files and a build script.</para>
+    <para>Running the tutorial involves a few simple steps:</para>
     <para>
       <orderedlist>
         <listitem><ulink url="http://download.flymine.org/tutorial/">Download</ulink> the tutorial</listitem>
