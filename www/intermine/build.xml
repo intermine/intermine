@@ -91,6 +91,7 @@
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="demo.class.path"/>
       <property name="db.name" value="db.demo"/>
+      <property name="objectstore.name" value="os.demo"/>
   </ant>
 
   <taskdef
