@@ -38,7 +38,7 @@ public abstract class TableHelper
      */
     public static PagedResults makeTable(ObjectStore os, Query query)
     throws ObjectStoreException {
-        return new PagedResults(makeResults(os, query));
+        return new PagedResults(makeResults(os, query), os.getModel());
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class TableHelper
      */
     public static PagedResults makeTable(ObjectStore os, Query query, List view)
         throws ObjectStoreException {
-        return new PagedResults(view, makeResults(os, query));
+        return new PagedResults(view, makeResults(os, query), os.getModel());
     }
 
     /**
