@@ -6,15 +6,8 @@
 <tiles:importAttribute scope="request"/>
 
 <!-- objectDetailsPage.jsp -->
-<c:choose>
-  <c:when test="${object != null}">
-    <tiles:insert name="objectDetails.tile"/>
-    <br/>
-  </c:when>
-  <c:otherwise>
-    null
-  </c:otherwise>
-</c:choose>
+<c:set var="viewType" value="detail" scope="request"/>
+<tiles:insert name="objectView.tile"/>
 <br/>
 <html:link action="/results">
   <fmt:message key="results.returnToResults"/>
