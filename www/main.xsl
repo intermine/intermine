@@ -92,7 +92,7 @@
         </xsl:when>
         <xsl:when test="substring(@url, string-length(@url)-2) = '.do'">
           <xsl:attribute name="href">
-            <xsl:value-of select="$webappprefix"/>/<xsl:value-of select="@url"/>
+            <xsl:value-of select="$webappprefix"/><xsl:value-of select="@url"/>
           </xsl:attribute>
         </xsl:when>
         <xsl:when test="substring(@url, string-length(@url)-3) = '.xml'">
