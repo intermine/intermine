@@ -33,8 +33,11 @@ import ru.novosoft.uml.model_management.*;
 import ru.novosoft.uml.foundation.extension_mechanisms.*;
 
 import java.io.File;
+import java.util.StringTokenizer;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.xml.sax.InputSource;
@@ -248,7 +251,7 @@ public class JavaModelOutput extends ModelOutput
     protected void generateFileEnd(File path) {
     }
 
-    // ======= everything private from here ============
+    //=================================================================
 
     private String generateHeader (MClassifier cls) {
         StringBuffer sb = new StringBuffer();
@@ -348,9 +351,86 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
-    private StringBuffer generateClassifierEnd(MClassifier cls) {
+//     private String generateHashCode(MClassifier cls) {
+//         StringBuffer sb = new StringBuffer();
+
+//         Collection keyFields = getKeys(cls);
+//         if (keyFields.size() > 0) {
+//             sb.append(INDENT + "public int hashCode() { ")
+//                 .append("return ");
+//             Iterator iter = keyFields.iterator();
+//             while (iter.hasNext()) {
+//                 String field = (String) iter.next();
+//                 sb.append(field+".hashCode()");
+//                 if (iter.hasNext()) {
+//                     sb.append(" ^ ");
+//                 }
+//             }
+//             sb.append("; }\n");
+//         }
+//         return sb.toString();
+//     }
+
+//     private String generateEquals(MClassifier cls) {
+//         StringBuffer sb = new StringBuffer();
+
+//         Collection keyFields = getKeys(cls);
+//         if (keyFields.size() > 0) {
+//             sb.append(INDENT + "public boolean equals(Object o) { ")
+//                 .append("return o != null && o instanceof " + cls.getName())
+//                 .append(" && o.hashCode() == hashCode(); }\n");
+//         }
+//         return sb.toString();
+//     }
+
+    private String generateEquals(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
-        sb.append("}");
+
+        Collection keyFields = getKeys(cls);
+        if (keyFields.size() > 0) {
+            sb.append(INDENT + "public boolean equals(Object o) { ")
+                .append("return (o instanceof " + cls.getName() + " && ");
+            Iterator iter = keyFields.iterator();
+            while (iter.hasNext()) {
+                String field = (String) iter.next();
+                sb.append("((" + cls.getName() + ")o)." + field + "==" + field);
+                if (iter.hasNext()) {
+                    sb.append(" && ");
+                }
+            }
+            sb.append("); }\n");
+        }
+        return sb.toString();
+    }
+
+    private String generateToString(MClassifier cls) {
+        StringBuffer sb = new StringBuffer();
+
+        Collection keyFields = getKeys(cls);
+        if (keyFields.size() > 0) {
+            sb.append(INDENT + "public String toString() {")
+                .append("return \"" + cls.getName() + " [\"")
+                .append(OJB ? "+id" : "+get" + generateCapitalName(cls.getName()) + "Id()")
+                .append("+\"] \"+");
+            Iterator iter = keyFields.iterator();
+            while (iter.hasNext()) {
+                String field = (String) iter.next();
+                sb.append(field);
+                if (iter.hasNext()) {
+                    sb.append("+\", \"+");
+                }
+            }
+            sb.append("; }\n");
+        }
+        return sb.toString();
+    }
+
+    private StringBuffer generateClassifierEnd(MClassifier cls) {
+        StringBuffer sb = new StringBuffer();        
+        sb.append(generateEquals(cls))
+            .append("\n")
+            .append(generateToString(cls))
+            .append("}");
         return sb;
     }
 
@@ -539,6 +619,28 @@ public class JavaModelOutput extends ModelOutput
             return "synchronized ";
         }
         return "";
+    }
+
+    private Collection getKeys(MClassifier cls) {
+        Set keyFields = new LinkedHashSet();
+        Collection tvs = cls.getTaggedValues();
+        if (tvs != null && tvs.size() > 0) {
+            Iterator iter = tvs.iterator();
+            while (iter.hasNext()) {
+                MTaggedValue tv = (MTaggedValue) iter.next();
+                if (tv.getTag().equals("key")) {
+                    StringTokenizer st = new StringTokenizer(tv.getValue(), ", ");
+                    while (st.hasMoreElements()) {
+                        keyFields.add(st.nextElement());
+                    }
+                }
+            }
+        }
+        Iterator parents = cls.getGeneralizations().iterator();
+        if (parents.hasNext()) {
+            keyFields.addAll(getKeys((MClassifier) ((MGeneralization) parents.next()).getParent()));
+        }
+        return keyFields;
     }
 
     public static void main(String[] args) throws Exception {
