@@ -502,6 +502,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-src-items"/>
+      <property name="objectstore.name" value="os.ensembl-dros-src-items"/>
     </ant>
   </target>
 
@@ -526,6 +527,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-dros-tgt-items"/>
     </ant>
   </target>
 
@@ -573,6 +575,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-src-items"/>
+      <property name="objectstore.name" value="os.ensembl-anoph-src-items"/>
     </ant>
   </target>
 
@@ -597,6 +600,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-anoph-tgt-items"/>
     </ant>
   </target>
 
@@ -644,6 +648,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-src-items"/>
+      <property name="objectstore.name" value="os.chado-src-items"/>
     </ant>
   </target>
 
@@ -668,6 +673,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-tgt-items"/>
+      <property name="objectstore.name" value="os.chado-tgt-items"/>
     </ant>
   </target>
 
@@ -714,6 +720,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.common-tgt-items"/>
     </ant>
 
     <taskdef name="retrieve-orthologue" classname="org.intermine.task.FileConverterTask">
@@ -753,6 +760,7 @@
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.common-tgt-items"/>
     </ant>
     <taskdef name="retrieve-orthologue" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
@@ -945,6 +953,7 @@
       <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.production"/>
+      <property name="objectstore.name" value="os.production"/>
     </ant>
   </target>
 
