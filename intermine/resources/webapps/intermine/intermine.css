@@ -44,13 +44,13 @@ a:hover {
   font-weight: bold;
 }
 table.query, table.results {
-  border-left: solid 1px;
-  border-top: solid 1px;
+  border-left: solid 1px black;
+  border-top: solid 1px black;
 }
 table.query th, table.query td, table.results th, table.results td {
   padding: 4px;
-  border-right: solid 1px;
-  border-bottom: solid 1px;
+  border-right: solid 1px black;
+  border-bottom: solid 1px black;
 }
 table.results td td {
   border:none;
