@@ -45,7 +45,7 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         PersistenceBrokerFlyMineImpl pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         db = pb.getDatabase();
         DescriptorRepository dr = pb.getDescriptorRepository();
-        writer = new ObjectStoreWriterOjbImpl(db, "testmodel");
+        writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         storeData();
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();

@@ -62,7 +62,7 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
         pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         db = pb.getDatabase();
         DescriptorRepository dr = pb.getDescriptorRepository();
-        writer = new ObjectStoreWriterOjbImpl(db, "testmodel");
+        writer = new ObjectStoreWriterOjbImpl(os);
 
         storeData();
         // clear the cache to ensure that objects are materialised later (in case broker reused)
