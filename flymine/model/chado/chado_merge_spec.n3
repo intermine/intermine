@@ -154,6 +154,12 @@ null:feature_dbxref a owl:Class ;
 :ComputationalResult__score a owl:DatatypeProperty ;
     owl:equivalentClass chado:analysisfeature__rawscore .
 
+:ComputationalResult__analysis a owl:ObjectProperty ;
+    rdfs:domain :ComputationalResult ;
+    rdfs:range :Analysis ;
+    rdfs:subPropertyOf :AnalysisResult__analysis ;
+    owl:equivalentClass chado:analysisfeature__analysis .
+
 null:analysisfeature__normscore a owl:DatatypeProperty ;
     owl:equivalentClass chado:analysisfeature__normscore .
 
@@ -278,6 +284,12 @@ null:organism__comment a owl:DatatypeProperty ;
     rdfs:subPropertyOf :BioEntity__synonyms ;
     owl:equivalentProperty chado:feature__dbxref ;
     owl:equivalentProperty chado:feature__feature_synonyms .
+
+:LocatedSequenceFeature__organism a owl:ObjectProperty ;
+    rdfs:domain :LocatedSequenceFeature ;
+    rdfs:range :Organism ;
+    rdfs:subPropertyOf :BioEntity__organism ;
+    owl:equivalentProperty chado:feature__organism .
 
 null:feature__feature_cvterms a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature__feature_cvterms .
