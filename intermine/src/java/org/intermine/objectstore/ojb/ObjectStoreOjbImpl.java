@@ -3,6 +3,7 @@ package org.flymine.objectstore.ojb;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Arrays;
 
 import org.apache.ojb.broker.*;
 import org.apache.ojb.broker.metadata.*;
@@ -11,6 +12,7 @@ import org.flymine.sql.Database;
 import org.flymine.objectstore.*;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsRow;
 
 /**
  * Implementation of ObjectStore that uses OJB as its underlying store.
@@ -120,7 +122,11 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int end) throws ObjectStoreException {
-        return pb.execute(q, start, end - start + 1);
+        List res = pb.execute(q, start, end - start + 1);
+        for (int i = 0; i < res.size(); i++) {
+            res.set(i, new ResultsRow(Arrays.asList((Object[]) res.get(i))));
+        }
+        return res;
     }
 
 }
