@@ -56,7 +56,7 @@ public class MainController extends TilesAction
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
         //set up the path-based query
-        Map qNodes = (Map) session.getAttribute("qNodes");
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         if (qNodes == null) {
             String className = (String) request.getAttribute("class");
             if (className == null) {
@@ -67,11 +67,11 @@ public class MainController extends TilesAction
             RightNode node = new RightNode(className);
             qNodes = new TreeMap();
             qNodes.put(className, node);
-            session.setAttribute("qNodes", qNodes);
+            session.setAttribute(Constants.QUERY, qNodes);
         }
-        List view = (List) session.getAttribute("view");
+        List view = (List) session.getAttribute(Constants.VIEW);
         if (view == null) {
-            session.setAttribute("view", new ArrayList());
+            session.setAttribute(Constants.VIEW, new ArrayList());
         }
 
         //set up the metadata

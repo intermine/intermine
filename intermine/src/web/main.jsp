@@ -54,7 +54,7 @@
       <br/>
       
       
-      <c:forEach var="entry" items="${qNodes}" varStatus="status">
+      <c:forEach var="entry" items="${QUERY}" varStatus="status">
         <c:set var="node" value="${entry.value}"/>
         <c:if test="${node.indentation > 0}">
           <c:forEach begin="1" end="${node.indentation}">

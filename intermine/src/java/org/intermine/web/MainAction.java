@@ -22,7 +22,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.AttributeDescriptor;
@@ -52,7 +51,7 @@ public class MainAction extends Action
         throws Exception {
         MainForm mf = (MainForm) form;
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute("qNodes");
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
@@ -78,10 +77,6 @@ public class MainAction extends Action
             ((Node) qNodes.get(mf.getPath())).setType(mf.getSubclass());
             session.setAttribute("path", mf.getSubclass());
         }
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }

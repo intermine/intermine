@@ -23,7 +23,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import org.intermine.metadata.Model;
 
@@ -48,7 +47,7 @@ public class MainChange extends DispatchAction
                                     HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute("qNodes");
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
         if (path.indexOf(".") != -1) {
@@ -58,10 +57,6 @@ public class MainChange extends DispatchAction
                 }
             }
         }
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }
@@ -81,14 +76,10 @@ public class MainChange extends DispatchAction
                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute("qNodes");
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
         request.setAttribute("editingNode", qNodes.get(path));
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }
@@ -108,15 +99,11 @@ public class MainChange extends DispatchAction
                                           HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map qNodes = (Map) session.getAttribute("qNodes");
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
         ((RightNode) qNodes.get(path)).getConstraints().remove(index);
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }
@@ -138,7 +125,7 @@ public class MainChange extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        Map qNodes = (Map) session.getAttribute("qNodes");
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
@@ -156,10 +143,6 @@ public class MainChange extends DispatchAction
             session.setAttribute("path", path);
         }
         
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
-
         return mapping.findForward("query");
     }
 
@@ -186,10 +169,6 @@ public class MainChange extends DispatchAction
             session.setAttribute("prefix", prefix);
         }
 
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
-
         return mapping.findForward("query");
     }
 
@@ -208,7 +187,7 @@ public class MainChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute("view");
+        List view = (List) session.getAttribute(Constants.VIEW);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
@@ -218,10 +197,6 @@ public class MainChange extends DispatchAction
                              : "." + path.substring(path.indexOf(".") + 1));
         }
         view.add(path);
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }

@@ -15,18 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
-
-import java.util.Map;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -57,40 +57,42 @@ public class SaveQueryAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
         HttpSession session = request.getSession();
-        
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
-        Map savedQueriesInverse =
-            (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
-        
-        Query query = (Query) session.getAttribute(Constants.QUERY);
-        
-        if (query == null) {
-            return mapping.findForward("results");
-        }
-        
-        Query clonedQuery = QueryCloner.cloneQuery(query);
-        
-        SaveQueryForm sqForm = (SaveQueryForm) form;
-        String queryName = sqForm.getQueryName();
-        sqForm.setQueryName("");
-        
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        List view = (List) session.getAttribute(Constants.VIEW);
+        String queryName = ((SaveQueryForm) form).getQueryName();
+        ResultsInfo resultsInfo = ViewHelper.makeEstimate(request);
+        saveQuery(request, queryName, qNodes, view, resultsInfo);
+
+        return mapping.findForward("query");
+    }
+
+    /**
+     * Save a query in the Map on the session, and clone it to allow further editing
+     * @param request The HTTP request we are processing
+     * @param queryName the name to save the query under
+     * @param qNodes the actual query
+     * @param view the paths in the SELECT list
+     * @param resultsInfo the resultsInfo for the query
+     */
+    public static void saveQuery(HttpServletRequest request,
+                                 String queryName,
+                                 Map qNodes,
+                                 List view,
+                                 ResultsInfo resultsInfo) {
+        HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
-        ResultsInfo resultsInfo;
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
-        try {
-            resultsInfo = os.estimate(query);
-        } catch (ObjectStoreException e) {
-            // no estimate to store
-            resultsInfo = null;
+        if (savedQueries == null) {
+            savedQueries = new LinkedHashMap();
+            session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
         }
         
-        SaveQueryHelper.saveQuery(request, queryName, clonedQuery, resultsInfo);
-
-        return mapping.findForward("results");
+        savedQueries.put(queryName, new QueryInfo(qNodes, view, resultsInfo));
+        
+        session.setAttribute(Constants.QUERY, SaveQueryHelper.clone(qNodes, model));
+        session.setAttribute(Constants.VIEW, new ArrayList(view));
     }
 }

@@ -20,7 +20,6 @@ import org.apache.struts.action.ActionForm;
  */
 public class SaveQueryForm extends ActionForm
 {
-
     protected String queryName = "";
 
     /**
@@ -39,5 +38,12 @@ public class SaveQueryForm extends ActionForm
      */
     public String getQueryName() {
         return queryName;
+    }
+
+    /**
+     * @see ActionForm#reset
+     */
+    public void reset() {
+        queryName = "";
     }
 }

@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -124,12 +123,6 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
             session.setAttribute(Constants.SAVED_BAGS, savedBags);
         }
 
-        Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
-        if (savedBagsInverse == null) {
-            savedBagsInverse = new IdentityHashMap();
-            session.setAttribute(Constants.SAVED_BAGS_INVERSE, savedBagsInverse);
-        }
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         String[] selectedObjects = changeResultsForm.getSelectedObjects();
 
@@ -138,7 +131,6 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         if (bag == null) {
             bag = new InterMineBag();
             savedBags.put(bagName, bag);
-            savedBagsInverse.put(bag, bagName);
         }
 
         // Go through the selected items and add to the set

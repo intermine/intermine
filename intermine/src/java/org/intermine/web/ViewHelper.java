@@ -34,54 +34,27 @@ import org.intermine.web.results.PagedResults;
  *
  * @author Kim Rutherford
  */
-
 public abstract class ViewHelper
 {
     /**
-     * Make a Query object from the information on the session and add it as the "QUERY" attribute
-     * to the session.
-     *
-     * @param request The HTTP request we are currently processing
-     */
-    public static void makeQuery(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-
-        Map qNodes = (Map) session.getAttribute("qNodes");
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
-        String newQueryName = SaveQueryHelper.findNewQueryName(savedQueries);
-
-        Query query = MainHelper.makeQuery(qNodes,
-                                           (List) session.getAttribute("view"),
-                                           model,
-                                           (Map) session.getAttribute(Constants.SAVED_BAGS));
-        session.setAttribute("QUERY", query);
-    }
-
-    /**
-     * Create a ResultsInfo object for the current QUERY and add it as the "resultsInfo" attribute
-     * on the request.
+     * Create a ResultsInfo object for a query on the request and add it to the request
      *
      * @param request The HTTP request we are currently processing
      * @return the errors that occured during processing or null if there are no errors
      */
-    public static ActionMessages makeEstimate(HttpServletRequest request) {
+    public static ResultsInfo makeEstimate(HttpServletRequest request) {
         HttpSession session = request.getSession();
-
-        Query query = (Query) session.getAttribute(Constants.QUERY);
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        try {
-            ResultsInfo estimatedResultsInfo = os.estimate(query);
+        ResultsInfo resultsInfo = null;
 
-            request.setAttribute("resultsInfo", estimatedResultsInfo);
+        try {
+            resultsInfo = os.estimate(makeQuery(request));
         } catch (ObjectStoreException e) {
             ActionMessages actionMessages = new ActionMessages();
             ActionError error = new ActionError("errors.query.objectstoreerror");
-            return actionMessages;
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, error);
         } catch (RuntimeException e) {
             if (e.getCause() != null && e.getCause() instanceof ObjectStoreException) {
                 ActionMessages actionMessages = new ActionMessages();
@@ -94,17 +67,16 @@ public abstract class ViewHelper
                 }
 
                 actionMessages.add(ActionMessages.GLOBAL_MESSAGE, error);
-                return actionMessages;
             } else {
                 throw e;
             }
         }
 
-        return null;
+        return resultsInfo;
     }
 
     /**
-     * Retrieve the "QUERY" attribute from the session, run it and save the results by calling
+     * Retrieve the query from the request, run it and save the results by calling
      * TableHelper.makeTable().
      *
      * @param request The HTTP request we are currently processing
@@ -112,23 +84,43 @@ public abstract class ViewHelper
      */
     public static ActionMessages runQuery(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.removeAttribute(Constants.RESULTS_TABLE);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        List view = (List) session.getAttribute(Constants.VIEW);
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
-        Query query = (Query) session.getAttribute(Constants.QUERY);
-
+        PagedResults pr = null;
         try {
-            PagedResults pr = TableHelper.makeTable(session, query);
+            pr = TableHelper.makeTable(os, makeQuery(request), view);
+            String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
             ResultsInfo resultsInfo = pr.getResults().getInfo();
-
-            Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
-            String newQueryName = SaveQueryHelper.findNewQueryName(savedQueries);
-
-            SaveQueryHelper.saveQuery(request, newQueryName, query, resultsInfo);
+            SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
+            request.setAttribute("savedQueryName", queryName);
         } catch (ObjectStoreException e) {
             ActionMessages actionMessages = new ActionMessages();
             ActionError error = new ActionError("errors.query.objectstoreerror");
             return actionMessages;
         }
+        session.setAttribute(Constants.RESULTS_TABLE, pr);
+        
         return null;
+    }
+
+    /**
+     * Invoke MainHelper#makeQuery using parameters from Session and ServletContext
+     * @param request The HTTP request we are currently processing
+     * @return Query the returned Query
+     */
+    public static Query makeQuery(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+
+        Map qNodes = (Map) session.getAttribute(Constants.QUERY);
+        List view = (List) session.getAttribute(Constants.VIEW);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+
+        return MainHelper.makeQuery(qNodes, view, model, savedBags);
     }
 }

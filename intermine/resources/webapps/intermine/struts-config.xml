@@ -155,7 +155,7 @@
     <action path="/saveQuery"
             type="org.intermine.web.SaveQueryAction"
             name="saveQueryForm">
-      <forward name="results" path="results.page"/>
+      <forward name="query" path="query.page"/>
     </action>
 
     <!-- Action to create a new query from the history page -->
@@ -208,9 +208,6 @@
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
             name="iqlQueryForm"/>
-
-    <action path="/initQueryView"
-            type="org.intermine.web.QueryViewController"/>
 
     <action path="/initResultsCell"
             type="org.intermine.web.results.ResultsCellController"/>

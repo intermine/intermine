@@ -13,18 +13,13 @@ package org.intermine.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
-import java.util.Map;
 import java.util.List;
 
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.apache.struts.action.ActionMessages;
-import org.intermine.metadata.Model;
 
 /**
  * Action to handle links on view tile
@@ -47,14 +42,10 @@ public class ViewChange extends DispatchAction
                                         HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute("view");
+        List view = (List) session.getAttribute(Constants.VIEW);
         String path = request.getParameter("path");
 
         view.remove(path);
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }
@@ -74,16 +65,12 @@ public class ViewChange extends DispatchAction
                                   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute("view");
+        List view = (List) session.getAttribute(Constants.VIEW);
         int index = Integer.parseInt(request.getParameter("index"));
 
         Object o = view.get(index - 1);
         view.set(index - 1, view.get(index));
         view.set(index, o);
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }
@@ -103,16 +90,12 @@ public class ViewChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        List view = (List) session.getAttribute("view");
+        List view = (List) session.getAttribute(Constants.VIEW);
         int index = Integer.parseInt(request.getParameter("index"));
 
         Object o = view.get(index + 1);
         view.set(index + 1, view.get(index));
         view.set(index, o);
-
-        ViewHelper.makeQuery(request);
-        ActionMessages actionMessages = ViewHelper.makeEstimate(request);
-        saveMessages(request, actionMessages);
 
         return mapping.findForward("query");
     }
@@ -133,16 +116,8 @@ public class ViewChange extends DispatchAction
                                   HttpServletRequest request,
                                   HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
-        ViewHelper.makeQuery(request);
-
-        ActionMessages actionMessages = ViewHelper.runQuery(request);
-        saveMessages(request, actionMessages);
+        saveMessages(request, ViewHelper.runQuery(request));
 
         return mapping.findForward("results");
     }
@@ -163,16 +138,8 @@ public class ViewChange extends DispatchAction
                                 HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
-        ViewHelper.makeQuery(request);
-
-        ActionMessages actionMessages = ViewHelper.runQuery(request);
-        saveMessages(request, actionMessages);
+        saveMessages(request, ViewHelper.runQuery(request));
 
         return mapping.findForward("export");
     }

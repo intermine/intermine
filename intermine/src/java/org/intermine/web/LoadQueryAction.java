@@ -57,7 +57,9 @@ public class LoadQueryAction extends DispatchAction
         String queryName = (String) request.getParameter("queryName");
 
         if (savedQueries != null && savedQueries.containsKey(queryName)) {
-            session.setAttribute(Constants.QUERY, savedQueries.get(queryName));
+            QueryInfo queryInfo = (QueryInfo) savedQueries.get(queryName);
+            session.setAttribute(Constants.QUERY, queryInfo.getQuery());
+            session.setAttribute(Constants.VIEW, queryInfo.getView());
         }
 
         return mapping.findForward("buildquery");

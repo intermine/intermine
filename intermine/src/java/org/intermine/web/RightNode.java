@@ -42,10 +42,20 @@ public class RightNode extends Node
     }
 
     /**
-     * Return the list of constraints on this field
-     * @return the constraints
+     * Gets the value of constraints
+     *
+     * @return the value of constraints
      */
     public List getConstraints()  {
         return constraints;
+    }
+
+    /**
+     * Sets the value of constraints
+     *
+     * @param constraints value to assign to constraints
+     */
+    public void setConstraints(List constraints) {
+        this.constraints = constraints;
     }
 }

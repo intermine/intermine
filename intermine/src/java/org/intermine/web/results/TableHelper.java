@@ -12,15 +12,9 @@ package org.intermine.web.results;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
-
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.Query;
-
-import org.intermine.web.Constants;
 
 /**
  * Helper methods for the PagedTable object.
@@ -35,24 +29,18 @@ public abstract class TableHelper
      * creating a PagedResults object).  The PagedResults object is stored as RESULTS_TABLE in the
      * session.
      *
-     * @param session the HttpSession to change.
+     * @param os the ObjectStore against which to run the Query
      * @param query the Query to create the PagedTable for
+     * @param view the list of paths to SELECT
      * @return a PagedResults object for the argument Query
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public static PagedResults makeTable(HttpSession session, Query query)
+    public static PagedResults makeTable(ObjectStore os, Query query, List view)
         throws ObjectStoreException {
-
-        ServletContext servletContext = session.getServletContext();
-
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-        Results results = os.execute(query);
-        PagedResults pr = new PagedResults(results, (List) session.getAttribute("view"));
-        session.setAttribute(Constants.RESULTS_TABLE, pr);
+        PagedResults pr = new PagedResults(os.execute(query), view);
 
         // call this so that if an exception occurs we notice now rather than in the JSP code
-        results.size();
+        pr.getResults().size();
 
         return pr;
     }

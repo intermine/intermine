@@ -84,7 +84,6 @@
   <definition name="classChooser.tile" path="/queryClassSelect.jsp"
               controllerUrl="/initQueryClassSelect.do"/>
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
-  <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
   <definition name="queryStatistics.tile" path="/queryStatistics.jsp"/>
   <definition name="resultsView.tile" path="/results.jsp">
     <put name="table" value="table.jsp"/>

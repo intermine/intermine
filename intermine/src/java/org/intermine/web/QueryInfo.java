@@ -10,7 +10,9 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.objectstore.query.Query;
+import java.util.Map;
+import java.util.List;
+
 import org.intermine.objectstore.query.ResultsInfo;
 
 /**
@@ -18,20 +20,22 @@ import org.intermine.objectstore.query.ResultsInfo;
  *
  * @author Kim Rutherford
  */
-
 public class QueryInfo
 {
-    private Query query;
+    private Map query;
+    private List view;
     private ResultsInfo resultsInfo;
 
     /**
      * Create a new QueryInfo object.
      *
      * @param query the Query to store
+     * @param view the paths in the SELECT list for the query
      * @param resultsInfo the ResultsInfo object to store.
      */
-    public QueryInfo (Query query, ResultsInfo resultsInfo) {
+    public QueryInfo(Map query, List view, ResultsInfo resultsInfo) {
         this.query = query;
+        this.view = view;
         this.resultsInfo = resultsInfo;
     }
 
@@ -40,8 +44,16 @@ public class QueryInfo
      *
      * @return the Query
      */
-    public Query getQuery() {
+    public Map getQuery() {
         return query;
+    }
+
+    /**
+     * Return the value of view
+     * @return the value of view
+     */
+    public List getView() {
+        return view;
     }
 
     /**

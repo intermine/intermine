@@ -53,8 +53,7 @@ public class BeginAction extends Action
 
         if (session != null) {
             session.removeAttribute(Constants.QUERY);
-            session.removeAttribute("qNodes");
-            session.removeAttribute("view");
+            session.removeAttribute(Constants.VIEW);
             session.removeAttribute("path");
         }
 

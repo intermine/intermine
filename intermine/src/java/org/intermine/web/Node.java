@@ -18,12 +18,11 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
 
 /**
- * Parent of left and right nodes
+ * Superclass of left and right nodes
  * @author Mark Woodbridge
  */
 public class Node
 {
-    Node parent;
     String fieldName, path, prefix, type;
     boolean attribute = false, reference = false, collection = false;
     int indentation;
@@ -46,7 +45,6 @@ public class Node
      * @param model the model used to resolve paths
      */
     public Node(Node parent, String fieldName, Model model) {
-        this.parent = parent;
         this.fieldName = fieldName;
         path = parent.getPath() + "." + fieldName;
         prefix = path.substring(0, path.lastIndexOf("."));

@@ -11,51 +11,20 @@ package org.intermine.web;
  */
 
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.IdentityHashMap;
+import java.util.TreeMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.metadata.Model;
 
 /**
  * Helper methods for SaveQueryAction.
  *
  * @author Kim Rutherford
  */
-
 public class SaveQueryHelper
 {
-    /**
-     * Save a Query and it's name in session in the SAVED_QUERIES and SAVED_QUERIES_INVERSE Maps.
-     *
-     * @param request The HTTP request we are processing
-     * @param queryName the name to use as the key when saving into the SAVED_QUERIES Map and as the
-     * value when saving into the SAVED_QUERIES_INVERSE Map
-     * @param query the Query to use as the key when saving into the SAVED_QUERIES_INVERSE Map and
-     * as the value when saving into the SAVED_QUERIES Map
-     * @param resultsInfo the ResultsInfo used to save statistics of the query
-     */
-    public static void saveQuery(HttpServletRequest request,
-                                 String queryName, Query query, ResultsInfo resultsInfo) {
-        HttpSession session = request.getSession();
-
-        createSavedQueryMaps(session);
-        
-        Map savedQueriesInverse = (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
-        Map queryInfoMap = (Map) session.getAttribute(Constants.QUERY_INFO_MAP);
-
-        savedQueries.put(queryName, query);
-        savedQueriesInverse.put(query, queryName);
-        queryInfoMap.put(query, new QueryInfo(query, resultsInfo));
-
-        request.setAttribute(Constants.SAVED_QUERY_NAME, queryName);
-    }
-
-
     private static final String QUERY_NAME_PREFIX = "query_";
 
     /**
@@ -79,27 +48,50 @@ public class SaveQueryHelper
     }
 
     /**
-     * Add (if necessary) the session attributes that contain the saved queries.
-     *
-     * @param session the session to add the attributes to
+     * Clone a query Map
+     * @param query the Map
+     * @param model the metadata for the query
+     * @return a new query
      */
-    public static void createSavedQueryMaps(HttpSession session) {
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
-        if (savedQueries == null) {
-            savedQueries = new LinkedHashMap();
-            session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
+    public static Map clone(Map query, Model model) {
+        Map newQuery = new TreeMap();
+        for (Iterator i = query.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            newQuery.put(entry.getKey(), clone((RightNode) entry.getValue(), query, model));
         }
+        return newQuery;
+    }
 
-        Map savedQueriesInverse = (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
-        if (savedQueriesInverse == null) {
-            savedQueriesInverse = new IdentityHashMap();
-            session.setAttribute(Constants.SAVED_QUERIES_INVERSE, savedQueriesInverse);
+    /**
+     * Clone a RightNode
+     * @param node the Node
+     * @param query the current query Map
+     * @param model the metadata for the query
+     * @return a new RightNode
+     */
+    public static RightNode clone(RightNode node, Map query, Model model) {
+        RightNode newNode;
+        RightNode parent = (RightNode) query.get(node.getPrefix());
+        if (parent == null) {
+            newNode = new RightNode(node.getType());
+        } else {
+            newNode = new RightNode(parent, node.getFieldName(), model);
         }
+        newNode.setConstraints(clone(node.getConstraints()));
+        return newNode;
+    }
 
-        Map queryInfoMap = (Map) session.getAttribute(Constants.QUERY_INFO_MAP);
-        if (queryInfoMap == null) {
-            queryInfoMap = new IdentityHashMap();
-            session.setAttribute(Constants.QUERY_INFO_MAP, queryInfoMap);
+    /**
+     * Clone a List of Constraints
+     * @param constraints the Constraints
+     * @return a new List of Constraints
+     */
+    public static List clone(List constraints) {
+        List newConstraints = new ArrayList();
+        for (Iterator i = constraints.iterator(); i.hasNext();) {
+            Constraint constraint = (Constraint) i.next();
+            newConstraints.add(new Constraint(constraint.getOp(), constraint.getValue()));
         }
+        return newConstraints;
     }
 }

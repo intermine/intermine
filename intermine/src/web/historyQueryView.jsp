@@ -8,7 +8,8 @@
     <span class="historyViewTitle">
       <fmt:message key="query.savedqueries.header"/>
     </span>
-    <table>
+    <br/><br/>
+    <table class="results" cellspacing="0">
       <tr>
         <th align="left">
           <fmt:message key="query.savedqueries.namecolumnheader"/>
@@ -16,22 +17,21 @@
         <th align="right">
           <fmt:message key="query.savedqueries.countcolumnheader"/>
         </th>
-      <c:forEach items="${SAVED_QUERIES}" var="queryName">
-        <tr>
-          <td align="left">
-            <html:link action="/loadQuery?queryName=${queryName.key}">
-              <c:out value="${queryName.key}"/>
-            </html:link>
-          </td>
-          <td align="right">
-            <c:set var="queryFromSavedQueries" 
-                   value="${SAVED_QUERIES[queryName.key]}" scope="page"/>
-            <c:if test="${QUERY_INFO_MAP[queryFromSavedQueries].resultsInfo != null}">
-              <c:out value="${QUERY_INFO_MAP[queryFromSavedQueries].resultsInfo.rows}"/>
-            </c:if>
-          </td>
-        </tr>
-      </c:forEach>
+        <c:forEach items="${SAVED_QUERIES}" var="savedQuery">
+          <tr>
+            <td align="left">
+              <html:link action="/loadQuery?queryName=${savedQuery.key}">
+                <c:out value="${savedQuery.key}"/>
+              </html:link>
+            </td>
+            <td align="right">
+              <c:if test="${savedQuery.value.resultsInfo != null}">
+                <c:out value="${savedQuery.value.resultsInfo.rows}"/>
+              </c:if>
+            </td>
+          </tr>
+        </c:forEach>
+      </tr>
     </table>
   </c:if>
 </div>

@@ -6,13 +6,13 @@
 <tiles:importAttribute/>
 
 <!-- view.jsp -->
-<c:if test="${!empty view}">
+<c:if test="${!empty VIEW}">
   <br/>
   Current view:<br/>
   <br/>
   <table class="results" cellspacing="0">
     <tr>
-      <c:forEach var="path" items="${view}" varStatus="status">
+      <c:forEach var="path" items="${VIEW}" varStatus="status">
         <th>
           <c:out value="${path}"/>
           <c:if test="${!status.first}">
@@ -26,37 +26,34 @@
       </c:forEach>
     </tr>
   </table>
-
+  <br/>
   <%--     
-    <hr/>
-    <div>
-      <html:link action="/classChooser">
-        (Broken) Add a class to the query...
-      </html:link>
-    </div>
-    --%>
-  
-  <c:if test="${QUERY != null}">
-    <br>
-      <%--     
-        Need to improved the estimates:
-        <c:if test="${RESULTS_TABLE == null}">
-          <tiles:get name="queryStatistics"/>
-        </c:if>
-        --%>
-      <div>
-        <html:link action="/viewChange?method=runQuery">
-          <fmt:message key="view.showresults"/>
-        </html:link>
-      </div>
-      <div>
-        <html:link action="/viewChange?method=export">
-          <fmt:message key="results.export"/>
-        </html:link>
-      </div>
+    Need to improved the estimates:
+    <c:if test="${RESULTS_TABLE == null}">
+      <tiles:get name="queryStatistics"/>
     </c:if>
-    <br/>
-    <tiles:get name="saveQuery"/>
-  </c:if>
+    --%>
+  <div>
+    <html:link action="/viewChange?method=runQuery">
+      <fmt:message key="view.showresults"/>
+    </html:link>
+  </div>
+  <div>
+    <html:link action="/viewChange?method=export">
+      <fmt:message key="results.export"/>
+    </html:link>
+  </div>
 </c:if>
+
+<br/>
+<tiles:get name="saveQuery"/>
+
+<%--     
+  <hr/>
+  <div>
+    <html:link action="/classChooser">
+      (Broken) Add a class to the query...
+    </html:link>
+  </div>
+  --%>
 <!-- /view.jsp -->
