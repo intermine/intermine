@@ -46,7 +46,6 @@ public class GFF3Converter
 
     private Item organism;
     private Reference orgRef;
-    protected GFF3Parser parser;
     protected ItemWriter writer;
     private String seqClsName;
     private String orgAbbrev;
@@ -67,10 +66,9 @@ public class GFF3Converter
      * @param infoSourceTitle title for infoSource
      * @param targetNameSpace target namesace
      */
-    public GFF3Converter(GFF3Parser parser, ItemWriter writer,
-           String seqClsName, String orgAbbrev, String infoSourceTitle, String targetNameSpace) {
+    public GFF3Converter(ItemWriter writer, String seqClsName, String orgAbbrev,
+                         String infoSourceTitle, String targetNameSpace) {
 
-        this.parser = parser;
         this.writer = writer;
         this.seqClsName = seqClsName;
         this.orgAbbrev = orgAbbrev;
@@ -97,7 +95,7 @@ public class GFF3Converter
 
         opCount = 0;
         start = System.currentTimeMillis();
-        for (Iterator i = parser.parse(bReader); i.hasNext();) {
+        for (Iterator i = GFF3Parser.parse(bReader); i.hasNext();) {
             record = (GFF3Record) i.next();
             process(record);
             opCount++;
