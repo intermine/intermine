@@ -1,0 +1,12 @@
+Gadfly protein domain extents. Provide DAS server that allows gadfly
+to show extents of protein domain predictions (and PDB entries).
+
+Gadfly:
+
+have a column that would mark genes which had big expression
+changes observed under some conditions.  i.e.  A list of experiments
+sorted by significance of expression change.
+
+A similar link-in would sort the list of mutations that affect the
+expression of a given gene.  This would be a subset of the above list
+but one that many people would find useful.
