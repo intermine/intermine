@@ -10,9 +10,14 @@ package org.intermine.web;
  *
  */
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
@@ -42,7 +47,7 @@ import org.intermine.web.results.TableHelper;
 public class SessionMethods
 {
     protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
-
+    
     /**
      * Executes current query and sets session attributes QUERY_RESULTS and RESULTS_TABLE. If the
      * query fails for some reason, this method returns false and ActionErrors are set on the
@@ -50,13 +55,16 @@ public class SessionMethods
      * automatically saved in the user's query history and a message is added to the
      * request.
      *
+     * @param action    the current action
      * @param session   the http session
      * @param request   the current http request
      * @param saveQuery if true, query will be saved automatically
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */
-    public static boolean runQuery(HttpSession session, HttpServletRequest request,
+    public static boolean runQuery(InterMineAction action,
+                                   HttpSession session,
+                                   HttpServletRequest request,
                                    boolean saveQuery)
         throws Exception {
         ServletContext servletContext = session.getServletContext();
@@ -94,13 +102,7 @@ public class SessionMethods
             String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
             query.setInfo(pr.getResultsInfo());
             saveQuery(request, queryName, query);
-
-            ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
-            if (messages == null) {
-                messages = new ActionMessages();
-            }
-            messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
-            request.setAttribute(Globals.MESSAGE_KEY, messages);
+            action.recordMessage(new ActionMessage("saveQuery.message", queryName), request);
         }
         
         return true;
@@ -137,5 +139,54 @@ public class SessionMethods
 
         profile.saveQuery(queryName, query);
         session.setAttribute(Constants.QUERY, query.clone());
+    }
+    
+    /**
+     * Record a message that will be stored in the session until it is displayed to
+     * the user. This allows actions that result in a redirect to display
+     * messages to the user after the redirect. Messages are stored in a Collection
+     * session attribute so you may call this method multiple times to display
+     * multiple messages.<p>
+     *
+     * <code>recordMessage</code> and <code>recordError</code> are used by
+     * <code>InterMineRequestProcessor.processForwardConfig</code> to store errors
+     * and messages in the session when a redirecting forward is about to occur.
+     *
+     * @param session The Session object in which to store the message
+     * @param message The message to store
+     * @see InterMineRequestProcessor#processForwardConfig
+     */
+    public static void recordMessage(String message, HttpSession session) {
+        recordMessage(message, Constants.MESSAGES, session);
+    }
+    
+    /**
+     * @see SessionMethods#recordMessage
+     */
+    public static void recordError(String error, HttpSession session) {
+        recordMessage(error, Constants.ERRORS, session);
+    }
+    
+    /**
+     * Record a message that will be stored in the session until it is displayed to
+     * the user. This allows actions that result in a redirect to display
+     * message to the user after the redirect. Messages are stored in a Set
+     * session attribute so you may call this method multiple times to display
+     * multiple errors. Identical errors will be ignored.<p>
+     *
+     * The <code>attrib</code> parameter specifies the name of the session attribute
+     * used to store the set of messages.
+     *
+     * @param session The Session object in which to store the message
+     * @param attrib The name of the session attribute in which to store message
+     * @param message The message to store
+     */
+    private static void recordMessage(String message, String attrib, HttpSession session) {
+        Set set = (Set) session.getAttribute(attrib);
+        if (set == null) {
+            set = Collections.synchronizedSet(new HashSet());
+            session.setAttribute(attrib, set);
+        }
+        set.add(message);
     }
 }
