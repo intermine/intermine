@@ -148,6 +148,17 @@ public class MainHelper
      * @return an InterMine Query
      */
     public static Query makeQuery(PathQuery query, Map savedBags) {
+        return makeQuery(query, savedBags, null);
+    }
+    
+    /**
+     * Make an InterMine query from a path query
+     * @param query the PathQuery
+     * @param savedBags the current saved bags map
+     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
+     * @return an InterMine Query
+     */
+    public static Query makeQuery(PathQuery query, Map savedBags, Map pathToQueryNode) {
         query = (PathQuery) query.clone();
         Map qNodes = query.getNodes();
         List view = query.getView();
@@ -233,6 +244,11 @@ public class MainHelper
             q.addToSelect((QueryNode) queryBits.get((String) i.next()));
         }
 
+        //caller might want path to query node map (e.g. PrecomputeTask)
+        if (pathToQueryNode != null) {
+            pathToQueryNode.putAll(queryBits);
+        }
+        
         return q;
     }
 
