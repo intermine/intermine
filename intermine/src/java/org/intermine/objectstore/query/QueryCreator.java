@@ -320,4 +320,71 @@ public class QueryCreator
          }
 
     }
+
+    /**
+     * Create a query that will list the options for a particular
+     * field or class in a query, given the existing constraints
+     * <p>
+     * For example:
+     * <pre>
+     * Original query:
+     * SELECT c, d
+     * FROM Company AS c, Department AS d
+     * WHERE c.departments CONTAINS d
+     * AND c.name LIKE 'A%'
+     *
+     * We want to know the possible department names are that we might
+     * want to constrain
+     *
+     * Returned query:
+     * SELECT DISTINCT d.name
+     * FROM Company AS c, Department AS d
+     * WHERE c.departments CONTAINS d
+     * AND c.name LIKE 'A%'
+     * </pre>
+     *
+     * @param q the original query
+     * @param qn the QueryNode that we want to know the values for
+     * @return the Query that will return the requested values
+     */
+    public static Query createQueryForQueryNodeValues(Query q, QueryNode qn) {
+
+        Query ret = QueryCloner.cloneQuery(q);
+
+        // Clear the SELECT part
+        ret.clearSelect();
+
+        QueryNode qnNew;
+        if (qn instanceof QueryClass) {
+            // Add the equivalent QueryNode for the cloned query
+            String origAlias = (String) q.getAliases().get(qn);
+            qnNew = (QueryNode) ret.getReverseAliases().get(origAlias);
+        } else if (qn instanceof QueryField) {
+            QueryField qf = (QueryField) qn;
+            String origAlias = (String) q.getAliases().get(qf.getFromElement());
+            try {
+                qnNew = new QueryField((QueryClass) ret.getReverseAliases().get(origAlias),
+                                       qf.getFieldName());
+            } catch (NoSuchFieldException e) {
+                // We are using another QueryNode so this this should
+                // be OK, but throw IllegalArgumentException anyway
+                IllegalArgumentException ex = new IllegalArgumentException();
+                ex.initCause(e);
+                throw ex;
+            }
+        } else {
+            throw new IllegalArgumentException("Method can only deal with QueryClass "
+                                               + "and QueryField");
+        }
+
+        ret.addToSelect(qnNew);
+        ret.setDistinct(true);
+
+        ret.clearOrderBy();
+        ret.addToOrderBy(qnNew);
+        return ret;
+
+    }
+
+
 }
