@@ -14,7 +14,7 @@
        Building a simple query using the FlyMine query builder involves the following steps:  (These are descibed in more detail below).
       </item> 
         <item>
-          1. To start a new FlyMine query select <ulink url= "/query/classChooser.do">start a new query with a particular class</ulink> from the main page.  This will take you to the class chooser page.  
+          1. To start a new FlyMine query select <ulink url= "/classChooser.do">start a new query with a particular class</ulink> from the main page.  This will take you to the class chooser page.  
      </item>
        <item> 
           2. Select the class with which to start your query and press "select".  This will take you to the main query builder page.
