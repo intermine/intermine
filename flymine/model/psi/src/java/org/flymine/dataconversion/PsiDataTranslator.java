@@ -100,7 +100,11 @@ public class PsiDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, getDb(), "source", false, "", false);
 
                     // ExperimentalResult need to reference ProteinInteractionExperiment
-                    promoteField(tgtItem, srcItem, "analysis", "experimentList", "experimentRef");
+                    Item experimentList = ItemHelper.convert(srcItemReader
+                             .getItemById(srcItem.getReference("experimentList").getRefId()));
+                    String exptId = getFirstId(experimentList.getCollection("experimentRefs"));
+                    Item exptType = ItemHelper.convert(srcItemReader.getItemById(exptId));
+                    addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
 
                     // set confidence from attributeList
                     if (srcItem.getReference("attributeList") != null) {
@@ -180,9 +184,8 @@ public class PsiDataTranslator extends DataTranslator
 
         Item experimentList = ItemHelper.convert(srcItemReader
                                  .getItemById(intElType.getReference("experimentList").getRefId()));
-        String experimentId = experimentList.getReference("experimentRef").getRefId();
-        Item exptType = ItemHelper.convert(srcItemReader
-                            .getItemById(experimentList.getReference("experimentRef").getRefId()));
+        String experimentId = getFirstId(experimentList.getCollection("experimentRefs"));
+        Item exptType = ItemHelper.convert(srcItemReader.getItemById(experimentId));
         Item pub = getPub(exptType);
         if (pub != null) {
             addReferencedItem(interaction, pub, "evidence", true, "", false);
