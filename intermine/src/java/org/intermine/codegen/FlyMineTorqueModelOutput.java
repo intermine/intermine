@@ -171,7 +171,7 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         return sb.toString();
     }
 
-    private String generateIndirectionTable(CollectionDescriptor col) {
+    protected String generateIndirectionTable(CollectionDescriptor col) {
         StringBuffer sb = new StringBuffer();
         String table = DatabaseUtil.getIndirectionTableName(col);
         String column1 = DatabaseUtil.getInwardIndirectionColumnName(col);
