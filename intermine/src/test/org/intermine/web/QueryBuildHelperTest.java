@@ -92,6 +92,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         q.addToSelect(qc);
         SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.NOT_EQUALS, new QueryValue("Frank"));
         q.setConstraint(sc);
+        q.setDistinct(false);
 
         Map queryClasses = new HashMap();
         queryClasses.put("Department_0", d);
@@ -126,6 +127,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         BagConstraint sc =
             new BagConstraint(new QueryField(qc, "age"), ConstraintOp.IN, myBag);
         q.setConstraint(sc);
+        q.setDistinct(false);
 
         Map queryClasses = new HashMap();
         queryClasses.put("Employee_0", d);
