@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 /**

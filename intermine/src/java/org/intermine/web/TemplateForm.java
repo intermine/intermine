@@ -137,9 +137,10 @@ public class TemplateForm extends ActionForm
             String j = (String) i.next();
             PathNode node = (PathNode) template.getNodes().get(Integer.parseInt(j) - 1);
             Class fieldClass = MainHelper.getClass(node.getType());
-            ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf((String) getAttributeOps(j)));
+            ConstraintOp constraintOp =
+                     ConstraintOp.getOpForIndex(Integer.valueOf((String) getAttributeOps(j)));
             parsedAttributeValues.put(j, MainForm.parseValue((String) attributeValues.get(j),
-                                                             fieldClass, constraintOp, locale, errors));
+                                                 fieldClass, constraintOp, locale, errors));
         }
 
         return errors;

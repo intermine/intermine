@@ -178,12 +178,14 @@ public class MainForm extends ActionForm
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
         ActionErrors errors = new ActionErrors();
-        ConstraintOp constraintOp = (getAttributeOp() == null) ? null : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
+        ConstraintOp constraintOp = (getAttributeOp() == null) ? null
+                    : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
         
         if (request.getParameter("attribute") != null) {
             PathNode node = (PathNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
-            parsedAttributeValue = parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
+            parsedAttributeValue =
+                    parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
         }
 
         if (errors.size() > 0) {
@@ -197,11 +199,13 @@ public class MainForm extends ActionForm
      * Parse an attribute value
      * @param value the value as a String
      * @param type the type of the parsed value
+     * @param constraintOp the constraint operator for which value is an intended argument
      * @param locale the user's locale
      * @param errors ActionErrors to which any parse errors are added
      * @return the parsed value
      */
-    public static Object parseValue(String value, Class type, ConstraintOp constraintOp, Locale locale, ActionErrors errors) {
+    public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
+                                    Locale locale, ActionErrors errors) {
         Object parsedValue = null;
         
         if (Date.class.equals(type)) {
@@ -212,12 +216,14 @@ public class MainForm extends ActionForm
                 errors.add(ActionErrors.GLOBAL_ERROR,
                            new ActionError("errors.date", value, df.format(new Date())));
             }
-        } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
+        } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES
+                   || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
             // Is the expression valid? We need a non-zero length string at least 
-            if (value.length() == 0)
+            if (value.length() == 0) {
                 errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.like"));
-            else
-                parsedValue = wildcardUserToSql(value);            
+            } else {
+                parsedValue = wildcardUserToSql(value);
+            }
         } else {
             try {
                 parsedValue = TypeUtil.stringToObject(type, value);
@@ -230,26 +236,44 @@ public class MainForm extends ActionForm
         return parsedValue;
     }
     
+    /**
+     * Convert an SQL LIKE/NOT LIKE expression to a * wildcard expression.
+     *
+     * @param exp  the wildcard expression
+     * @return     the SQL LIKE parameter
+     */
     public static String wildcardSqlToUser(String exp) {
-        if (exp.charAt(0) == '%' && exp.charAt(exp.length()-1) == '%')
-            return exp.substring(1, exp.length()-1);
-        else if (exp.charAt(0) == '%')
-            return "*"+exp.substring(1);
-        else if (exp.charAt(exp.length()-1) == '%')
-            return exp.substring(0, exp.length()-1)+"*";
-        else
+        if (exp.charAt(0) == '%' && exp.charAt(exp.length() - 1) == '%') {
+            return exp.substring(1, exp.length() - 1);
+        } else if (exp.charAt(0) == '%') {
+            return "*" + exp.substring(1);
+        } else if (exp.charAt(exp.length() - 1) == '%') {
+            return exp.substring(0, exp.length() - 1) + "*";
+        } else {
             return exp;
+        }
     }
     
+    /**
+     * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
+     * expression with %'s.
+     *
+     * @param exp  the SQL LIKE parameter
+     * @return     the equivalent wildcard expression
+     */
     public static String wildcardUserToSql(String exp) {
-        if (exp.length() == 0)
+        if (exp.length() == 0) {
             throw new IllegalArgumentException(exp);
-        if (exp.charAt(0) == '*')
-            exp = '%'+exp.substring(1);
-        if (exp.charAt(exp.length()-1) == '*')
-            exp = exp.substring(0, exp.length()-1)+'%';
-        if (exp.charAt(0) != '%' && exp.charAt(exp.length()-1) != '%')
-            exp = '%'+exp+'%';
+        }
+        if (exp.charAt(0) == '*') {
+            exp = '%' + exp.substring(1);
+        }
+        if (exp.charAt(exp.length() - 1) == '*') {
+            exp = exp.substring(0, exp.length() - 1) + '%';
+        }
+        if (exp.charAt(0) != '%' && exp.charAt(exp.length() - 1) != '%') {
+            exp = '%' + exp + '%';
+        }
         return exp;
     }
 
