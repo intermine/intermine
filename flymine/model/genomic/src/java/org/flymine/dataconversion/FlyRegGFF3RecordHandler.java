@@ -27,8 +27,8 @@ import org.flymine.io.gff3.GFF3Record;
 
 public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 {
-    final private Map pubmedIdMap = new HashMap();
-    final private Map geneIdMap = new HashMap();
+    private final Map pubmedIdMap = new HashMap();
+    private final Map geneIdMap = new HashMap();
 
     /**
      * Create a new FlyRegGFF3RecordHandler for the given target model.

@@ -33,7 +33,7 @@ import org.intermine.metadata.Model;
  */
 public class DataTranslatorTask extends Task
 {
-    protected String translator, source, target, srcModel, tgtModel, organism,
+    protected String translator, source, targetAlias, srcModel, tgtModel, organism,
         dataLocation, mapping;
 
     /**
@@ -53,11 +53,11 @@ public class DataTranslatorTask extends Task
     }
 
     /**
-     * Set the target
-     * @param target the target
+     * Set the targetAlias
+     * @param targetAlias the targetAlias
      */
-    public void setTarget(String target) {
-        this.target = target;
+    public void setTarget(String targetAlias) {
+        this.targetAlias = targetAlias;
     }
 
     /**
@@ -102,7 +102,7 @@ public class DataTranslatorTask extends Task
         if (source == null) {
             throw new BuildException("source attribute not set");
         }
-        if (target == null) {
+        if (targetAlias == null) {
             throw new BuildException("target attribute not set");
         }
         if (tgtModel == null) {
@@ -160,7 +160,7 @@ public class DataTranslatorTask extends Task
             }
             DataTranslator dt = (DataTranslator) cls.getConstructor(types).newInstance(args);
             ItemWriter writer = new ObjectStoreItemWriter(ObjectStoreWriterFactory
-                                                          .getObjectStoreWriter(target));
+                                                          .getObjectStoreWriter(targetAlias));
             dt.translate(writer);
             writer.close();
         } catch (BuildException e) {
