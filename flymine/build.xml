@@ -82,6 +82,11 @@
     <include name="biojava*.jar"/>
   </patternset>
 
+  <!-- The FlyMine jar file -->
+  <patternset id="lib.flymine">
+    <include name="flymine.jar"/>
+  </patternset>
+
   <patternset id="flymine.jar.patternset">
     <include name="flymine.jar"/>
   </patternset>
@@ -1370,6 +1375,12 @@
       <property name="war" value="${dist.webapp}/flymine.war"/>
       <property name="file.dir" value="${lib}"/>
       <reference torefid="file.names" refid="lib.webapp"/>
+    </ant>
+
+    <ant antfile="${build}/build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/flymine.war"/>
+      <property name="file.dir" value="${dist}"/>
+      <reference torefid="file.names" refid="lib.flymine"/>
     </ant>
 
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
