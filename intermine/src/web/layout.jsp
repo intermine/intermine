@@ -4,7 +4,7 @@
 <!-- layout.jsp -->
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <html:html locale="true" xhtml="true">
@@ -13,7 +13,7 @@
 
   <head>
     <html:base/>
-    <link rel="stylesheet" type="text/css" href="${WEB_PROPERTIES['project.sitePrefix']}/style/flymine2.css"/>
+    <link rel="stylesheet" type="text/css" href="http://flymine.org/style/flymine2.css"/>
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
