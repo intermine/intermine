@@ -59,7 +59,7 @@
       <fmt:param value="${templateQuery.name}"/>
     </fmt:message>
     <html:link action="/editTemplate?name=${templateQuery.name}" title="${linkTitle}">
-      <img border="0" class="arrow" src="images/edit.gif" alt="->"/>
+      <img border="0" class="arrow" src="images/edit.gif" alt="[edit]"/>
     </html:link>
   </c:if>
   <c:if test="${!status.last}">
