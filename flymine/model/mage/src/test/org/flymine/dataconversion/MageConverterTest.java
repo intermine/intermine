@@ -37,6 +37,9 @@ import org.biomage.BioAssayData.QuantitationTypeDimension;
 import org.biomage.BioAssayData.MeasuredBioAssayData;
 import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.DataExternal;
+import org.biomage.Common.MAGEJava;
+import org.biomage.BioSequence.BioSequence_package;
+import org.biomage.BioSequence.BioSequence;
 
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -49,7 +52,7 @@ import org.intermine.dataconversion.MockItemWriter;
 public class MageConverterTest extends TestCase
 {
     MageConverter converter;
-    String ns = "http://www.biomage.org#";
+    String ns = "http://www.flymine.org/model/mage#";
     File f = null;
 
     public void setUp() {
@@ -76,6 +79,7 @@ public class MageConverterTest extends TestCase
 
         BioSequence bio = new BioSequence();
         bio.setSequence("GATTACA");
+        bio.setIdentifier("bio_identifier");
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
@@ -171,7 +175,7 @@ public class MageConverterTest extends TestCase
         assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
     }
 
-    public void testMeasurdBioAssayData() throws Exception{
+    public void testBioAssayData() throws Exception{
         converter.seenMap = new LinkedHashMap();
         converter.dataItems = new LinkedHashSet();
 
@@ -237,6 +241,7 @@ public class MageConverterTest extends TestCase
         d1.addReference(createReference("designElement", "2_2"));
         d1.addReference(createReference("quantitationType", "7_9"));
         d1.addAttribute(createAttribute("value", "1.006"));
+        d1.addAttribute(createAttribute("normalised", "false"));
         rl.addRefId(d1.getIdentifier());
 
 
@@ -244,18 +249,21 @@ public class MageConverterTest extends TestCase
         d2.addReference(createReference("designElement", "2_2"));
         d2.addReference(createReference("quantitationType", "7_11"));
         d2.addAttribute(createAttribute("value", "3.456"));
+        d2.addAttribute(createAttribute("normalised", "false"));
         rl.addRefId(d2.getIdentifier());
 
         Item d3=createItems(ns+"BioAssayDatum", "0_15","" );
         d3.addReference(createReference("designElement", "2_4"));
         d3.addReference(createReference("quantitationType", "7_9"));
         d3.addAttribute(createAttribute("value", "435.223"));
+        d3.addAttribute(createAttribute("normalised", "false"));
         rl.addRefId(d3.getIdentifier());
 
         Item d4=createItems(ns+"BioAssayDatum", "0_16","" );
         d4.addReference(createReference("designElement", "2_4"));
         d4.addReference(createReference("quantitationType", "7_11"));
         d4.addAttribute(createAttribute("value", "1.004"));
+        d4.addAttribute(createAttribute("normalised", "false"));
         rl.addRefId(d4.getIdentifier());
         d.addCollection(rl);
 
@@ -267,6 +275,41 @@ public class MageConverterTest extends TestCase
             results.add(ItemHelper.convert((org.intermine.model.fulldata.Item)i.next()));
         }
         assertEquals(expSet, results);
+
+    }
+
+    public void testIgnoreClass() throws Exception {
+        converter.seenMap=new LinkedHashMap();
+
+        MAGEJava m1=new MAGEJava();
+        BioSequence bs=new BioSequence();
+        bs.setName("bsName");
+        BioSequence_package bsp=new BioSequence_package();
+        bsp.addToBioSequence_list(bs);
+        m1.setBioSequence_package(bsp);
+
+        OntologyEntry o1 = new OntologyEntry();
+        o1.setValue("Term");
+        bs.setPolymerType(o1);
+
+        Item expected1=createItems(ns+"BioSequence", "0_0", "");
+        expected1.addReference(createReference("polymerType", "1_1"));
+        expected1.addAttribute(createAttribute("name","bsName"));
+        Item expected2=createItems(ns+"OntologyEntry","1_1", "");
+        expected2.addAttribute(createAttribute("value", "Term"));
+
+        Set expSet = new HashSet(Arrays.asList(new Object[] {expected1, expected2}));
+
+        Set results = new HashSet();
+
+        converter.createItem(m1);
+        Iterator i = converter.seenMap.values().iterator();
+        while(i.hasNext()){
+            results.add(ItemHelper.convert((org.intermine.model.fulldata.Item)i.next()));
+        }
+
+        assertEquals(expSet, results);
+
     }
 
 
@@ -289,6 +332,8 @@ public class MageConverterTest extends TestCase
         item.setImplementations(implementation);
         return item;
     }
+
+
     public void testDuplicateQuotes() throws Exception {
         String s1 = "something \"quoted\"";
         String s2 = converter.escapeQuotes(s1);
