@@ -161,7 +161,7 @@
                           <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
                         </c:when>
                         <c:otherwise>
-                          <c:out value=" ${constraint.value}"/>
+                          <c:out value=" ${constraint.displayValue}"/>
                         </c:otherwise>
                       </c:choose>
                     </span>

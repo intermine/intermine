@@ -48,6 +48,19 @@ public class Constraint
     public Object getValue()  {
         return value;
     }
+    
+    /**
+     * Return value in display format. This performs conversion between SQL
+     * wildcard % symbols and user wildcard * symbols.
+     *
+     * @return  constraint value translated for the user as a string
+     */
+    public String getDisplayValue() {
+        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH)
+            return MainForm.wildcardSqlToUser((String) getValue());
+        else
+            return (String) getValue();
+    }
 
     /**
      * @see Object#toString
