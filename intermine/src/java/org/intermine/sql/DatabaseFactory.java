@@ -48,7 +48,11 @@ public class DatabaseFactory
                 database = (Database) databases.get(instance);
             } else {
                 Properties props = PropertiesUtil.getPropertiesStartingWith(instance);
-                database = new Database(PropertiesUtil.stripStart(instance, props));
+                try {
+                    database = new Database(PropertiesUtil.stripStart(instance, props));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to initialise " + instance, e);
+                }
             }
         }
         databases.put(instance, database);
