@@ -8,7 +8,7 @@ class SqlParser extends Parser;
 
 options {
     exportVocab = Sql;
-    k = 4;
+    k = 6;
     buildAST = true;
 }
 
@@ -30,6 +30,12 @@ tokens {
     CONSTANT;
     FIELD;
     FIELD_NAME;
+    SAFE_FUNCTION;
+    UNSAFE_FUNCTION;
+    CONSTRAINT;
+    NOT_CONSTRAINT;
+    CONSTRAINT_SET;
+    SUBQUERY_CONSTRAINT;
 }
 
 start_rule: sql_statement (SEMI)? EOF;
@@ -40,11 +46,11 @@ sql_statement: select_command
 
 select_command:
         ( "explain" )? "select" ( "all" | "distinct" )? select_list
-        from_list
-        ( where_clause )?
-        ( group_clause ( having_clause )? )?
-        ( order_clause )?
-        ( limit_clause )?
+        ( from_list
+            ( where_clause )?
+            ( group_clause ( having_clause )? )?
+            ( order_clause )?
+            ( limit_clause )? )?
     ;
 
 select_list:
@@ -58,7 +64,7 @@ from_list:
     ;
 
 where_clause:
-        "where" condition
+        "where" abstract_constraint
         { #where_clause = #([WHERE_CLAUSE, "where_clause"], #where_clause); }
     ;
 
@@ -68,7 +74,7 @@ group_clause:
     ;
 
 having_clause:
-        "having" condition
+        "having" abstract_constraint
         { #having_clause = #([HAVING_CLAUSE, "having_clause"], #having_clause); }
     ;
 
@@ -83,7 +89,12 @@ limit_clause:
     ;
 
 select_value:
-        abstract_value ( "as" field_alias )?
+        ( (unsafe_function)=> unsafe_function "as" field_alias
+            | field ( "as" field_alias )?
+            | constant "as" field_alias
+            | safe_function "as" field_alias
+            | paren_value "as" field_alias
+        )
         { #select_value = #([SELECT_VALUE, "select_value"], #select_value); }
     ;
 
@@ -91,12 +102,15 @@ abstract_table:
         ( table | subquery )
     ;
 
-condition:
-TODO
+abstract_value:
+        ( (unsafe_function)=> unsafe_function | constant | field | safe_function | paren_value )
     ;
 
-abstract_value:
-        ( constant | field | function )
+safe_abstract_value:
+        ( constant | field | safe_function | paren_value)
+    ;
+
+paren_value: ( OPEN_PAREN abstract_value CLOSE_PAREN )
     ;
 
 field_alias:
@@ -126,7 +140,7 @@ subquery:
 
 constant:
 //TODO: properly
-        ( IDENTIFIER | QUOTED_STRING | INTEGER )
+        ( QUOTED_STRING | INTEGER )
         { #constant = #([CONSTANT, "constant"], #constant); }
     ;
 
@@ -135,15 +149,68 @@ field:
         { #field = #([FIELD, "field"], #field); }
     ;
 
-function: "fliblkajhdfkashfasdfkjhgble";
-//TODO: properly
+safe_function:
+        (
+            "count" OPEN_PAREN ASTERISK CLOSE_PAREN
+            | "max" OPEN_PAREN abstract_value CLOSE_PAREN
+            | "min" OPEN_PAREN abstract_value CLOSE_PAREN
+            | "sum" OPEN_PAREN abstract_value CLOSE_PAREN
+            | "avg" OPEN_PAREN abstract_value CLOSE_PAREN
+        )
+        { #safe_function = #([SAFE_FUNCTION, "safe_function"], #safe_function); }
+    ;
+
+unsafe_function:
+        (
+            (safe_abstract_value PLUS)=> safe_abstract_value ( PLUS safe_abstract_value )+
+            | (safe_abstract_value PERCENT)=> safe_abstract_value PERCENT safe_abstract_value
+            | (safe_abstract_value ASTERISK)=> safe_abstract_value ( ASTERISK safe_abstract_value )+
+            | (safe_abstract_value DIVIDE)=> safe_abstract_value DIVIDE safe_abstract_value
+            | (safe_abstract_value POWER)=> safe_abstract_value POWER safe_abstract_value
+            | (safe_abstract_value MINUS)=> safe_abstract_value MINUS safe_abstract_value
+        )
+        { #unsafe_function = #([UNSAFE_FUNCTION, "unsafe_function"], #unsafe_function); }
+    ;
 
 field_name:
         IDENTIFIER
         { #field_name = #([FIELD_NAME, "field_name"], #field_name); }
     ;
 
-comparison_op: EQ | LT | GT | NOT_EQ | LE | GE ;
+abstract_constraint: (constraint_set)=> constraint_set | safe_abstract_constraint ;
+
+safe_abstract_constraint: (paren_constraint)=> paren_constraint
+            | (subquery_constraint)=> subquery_constraint
+            | constraint
+            | not_constraint
+    ;
+
+constraint: abstract_value comparison_op abstract_value
+        { #constraint = #([CONSTRAINT, "constraint"], #constraint); }
+    ;
+
+not_constraint: "not" safe_abstract_constraint
+        { #not_constraint = #([NOT_CONSTRAINT, "not_constraint"], #not_constraint); }
+    ;
+
+paren_constraint: OPEN_PAREN abstract_constraint CLOSE_PAREN ;
+
+constraint_set: 
+        (
+            (safe_abstract_constraint "or")=> safe_abstract_constraint
+                ("or" safe_abstract_constraint)+
+            | (safe_abstract_constraint "and")=> safe_abstract_constraint
+                ("and" safe_abstract_constraint)+
+        )
+        { #constraint_set = #([CONSTRAINT_SET, "constraint_set"], #constraint_set); }
+    ;
+
+subquery_constraint: abstract_value "in" OPEN_PAREN sql_statement CLOSE_PAREN
+        { #subquery_constraint = #([SUBQUERY_CONSTRAINT, "subquery_constraint"],
+                #subquery_constraint); }
+    ;
+
+comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
 
 
 
@@ -188,7 +255,7 @@ NOT_EQ:
     ;
 GT: '>' ( '=' { _ttype = GE; } )? ;
 
-INTEGER: '0'..'9' ( '0'..'9' )* ;
+INTEGER: ( '0'..'9' )+ ;
 
 WS: ( ' ' | '\t' | '\r' '\n' { newline(); } | '\n' { newline(); } | '\r' { newline(); } )
         {$setType(Token.SKIP);} // Ignore this token

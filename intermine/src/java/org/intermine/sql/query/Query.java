@@ -284,7 +284,6 @@ public class Query implements SQLStringable
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
             SQLStringable o = (SQLStringable) iter.next();
-            // TODO: Should we have an interface for classes that implement getSQLString()?
             if (needComma) {
                 retval += comma;
             }
@@ -478,10 +477,10 @@ public class Query implements SQLStringable
                     alias = ast.getFirstChild().getText();
                     break;
                 case SqlTokenTypes.FIELD:
-                    v = processNewField(ast.getFirstChild());
-                    break;
                 case SqlTokenTypes.CONSTANT:
-                    v = new Constant(ast.getFirstChild().getText());
+                case SqlTokenTypes.UNSAFE_FUNCTION:
+                case SqlTokenTypes.SAFE_FUNCTION:
+                    v = processNewAbstractValue(ast);
                     break;
                 default:
                     throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -491,6 +490,28 @@ public class Query implements SQLStringable
         } while (ast != null);
         SelectValue sv = new SelectValue(v, alias);
         addSelect(sv);
+    }
+
+    /**
+     * Processes a single AST node that describes an AbstractValue.
+     *
+     * @param ast as AST node to process
+     * @return an AbstractValue object corresponding to the input
+     */
+    public AbstractValue processNewAbstractValue(AST ast) {
+        switch (ast.getType()) {
+            case SqlTokenTypes.FIELD:
+                return processNewField(ast.getFirstChild());
+            case SqlTokenTypes.CONSTANT:
+                return new Constant(ast.getFirstChild().getText());
+            case SqlTokenTypes.UNSAFE_FUNCTION:
+                return processNewUnsafeFunction(ast.getFirstChild());
+            case SqlTokenTypes.SAFE_FUNCTION:
+                return processNewSafeFunction(ast.getFirstChild());
+            default:
+                throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                            + ast.getType() + "]"));
+        }
     }
 
     /**
@@ -523,6 +544,142 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Processes an AST node that describes an unsafe function.
+     *
+     * @param ast an AST node to process
+     * @return a Function object corresponding to the input
+     */
+    public Function processNewUnsafeFunction(AST ast) {
+        AbstractValue firstObj = null;
+        Function retval = null;
+        boolean gotType = false;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.OPEN_PAREN:
+                case SqlTokenTypes.CLOSE_PAREN:
+                    break;
+                case SqlTokenTypes.FIELD:
+                case SqlTokenTypes.CONSTANT:
+                case SqlTokenTypes.UNSAFE_FUNCTION:
+                case SqlTokenTypes.SAFE_FUNCTION:
+                    if (!gotType) {
+                        firstObj = processNewAbstractValue(ast);
+                    } else {
+                        retval.add(processNewAbstractValue(ast));
+                    }
+                    break;
+                case SqlTokenTypes.PLUS:
+                    if (!gotType) {
+                        retval = new Function(Function.PLUS);
+                        retval.add(firstObj);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.MINUS:
+                    if (!gotType) {
+                        retval = new Function(Function.MINUS);
+                        retval.add(firstObj);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.ASTERISK:
+                    if (!gotType) {
+                        retval = new Function(Function.MULTIPLY);
+                        retval.add(firstObj);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.DIVIDE:
+                    if (!gotType) {
+                        retval = new Function(Function.DIVIDE);
+                        retval.add(firstObj);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.POWER:
+                    if (!gotType) {
+                        retval = new Function(Function.POWER);
+                        retval.add(firstObj);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.PERCENT:
+                    if (!gotType) {
+                        retval = new Function(Function.MODULO);
+                        retval.add(firstObj);
+                        gotType = true;
+                    }
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        return retval;
+    }
+
+    /**
+     * Processes an AST node that describes an unsafe function.
+     *
+     * @param ast an AST node to process
+     * @return a Function object corresponding to the input
+     */
+    public Function processNewSafeFunction(AST ast) {
+        Function retval = null;
+        boolean gotType = false;
+        do {
+            switch (ast.getType()) {
+                case SqlTokenTypes.OPEN_PAREN:
+                case SqlTokenTypes.CLOSE_PAREN:
+                case SqlTokenTypes.ASTERISK:
+                    break;
+                case SqlTokenTypes.FIELD:
+                case SqlTokenTypes.CONSTANT:
+                case SqlTokenTypes.UNSAFE_FUNCTION:
+                case SqlTokenTypes.SAFE_FUNCTION:
+                    retval.add(processNewAbstractValue(ast));
+                    break;
+                case SqlTokenTypes.LITERAL_count:
+                    if (!gotType) {
+                        retval = new Function(Function.COUNT);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_max:
+                    if (!gotType) {
+                        retval = new Function(Function.MAX);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_min:
+                    if (!gotType) {
+                        retval = new Function(Function.MIN);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_sum:
+                    if (!gotType) {
+                        retval = new Function(Function.SUM);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_avg:
+                    if (!gotType) {
+                        retval = new Function(Function.AVG);
+                        gotType = true;
+                    }
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                                + ast.getType() + "]"));
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        return retval;
+    }
+
+    /**
      * A testing method - converts the argument into a Query object, and then converts it back to
      * a String again.
      *
@@ -530,8 +687,24 @@ public class Query implements SQLStringable
      * @throws Exception anytime
      */
     public static void main(String args[]) throws Exception {
-        Query q = new Query(args[0]);
         PrintStream out = System.out;
-        out.println(q.getSQLString());
+
+        InputStream is = new ByteArrayInputStream(args[0].getBytes());
+        SqlLexer lexer = new SqlLexer(is);
+        SqlParser parser = new SqlParser(lexer);
+        parser.start_rule();
+        AST ast = parser.getAST();
+        
+        out.println("\n==> Dump of AST <==");
+        antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+        visitor.visit(ast);
+
+        if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
+            throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
+        }
+        Query q = new Query();
+        q.processAST(ast.getFirstChild());
+
+        out.println("\n" + q.getSQLString());
     }
 }
