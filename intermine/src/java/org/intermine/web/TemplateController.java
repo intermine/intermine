@@ -15,51 +15,47 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
-
-import org.intermine.objectstore.query.SimpleConstraint;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+
+import org.intermine.objectstore.query.SimpleConstraint;
 
 /**
  * Controller for the template page
  * @author Mark Woodbridge
  */
-public class TemplateController extends TilesAction
+public class TemplateController extends Action
 {
     /**
      * @see TilesAction#execute
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        org.intermine.Logger.log("controller");
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
 
+        boolean populate = true;
+        TemplateForm templateForm = null;
         String queryName = request.getParameter("name");
         if (queryName == null) {
-            //validation failed last time
+            //have been directed to this page as a result of validation failure
             queryName = (String) session.getAttribute("queryName");
-        }
-
-        //this to work around struts crappiness - the controller should be configured to expect
-        //a templateForm, but when it is the controller isn't called on page redisplay if validation
-        //fails. so we retrieve it manually, creating it if necessary.
-        boolean populate = true;//false;
-        TemplateForm templateForm = (TemplateForm) session.getAttribute("templateForm");
-        if (templateForm == null) {
+            templateForm = (TemplateForm) session.getAttribute("templateForm");
+            populate = false;
+        } else {
             templateForm = new TemplateForm();
             session.setAttribute("templateForm", templateForm);
-            populate = true;
         }
 
         TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
