@@ -233,6 +233,60 @@ version="1.0">
   </a>
 </xsl:template>
 
+<xsl:template match="presentation">
+
+  <!-- the text -->
+  <xsl:apply-templates/>
+
+  <!-- openoffice image -->
+
+  <a>
+    <xsl:attribute name="href">
+      <xsl:choose>
+        <xsl:when test="substring(@url, 1, 1) = '/'">
+          <xsl:copy-of select="$basedir"/>
+          <xsl:value-of select="@url"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@url"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:text>.sxi</xsl:text>
+    </xsl:attribute>
+
+    <img>
+      <xsl:attribute name="border">0</xsl:attribute>
+      <xsl:attribute name="hspace">5</xsl:attribute>
+      <xsl:attribute name="src"><xsl:copy-of select="$basedir"/>/images/openoffice</xsl:attribute>
+    </img>
+  </a>
+
+
+  <!-- pdf image -->
+  <a>
+    <xsl:attribute name="href">
+      <xsl:choose>
+        <xsl:when test="substring(@url, 1, 1) = '/'">
+          <xsl:copy-of select="$basedir"/>
+          <xsl:value-of select="@url"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@url"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:text>.pdf</xsl:text>
+    </xsl:attribute>
+
+    <img>
+      <xsl:attribute name="border">0</xsl:attribute>
+      <xsl:attribute name="hspace">5</xsl:attribute>
+      <xsl:attribute name="src"><xsl:copy-of select="$basedir"/>/images/pdf</xsl:attribute>
+    </img>
+  </a>
+
+</xsl:template>
+
+
 <xsl:template match="url">
 <a target="_blank">
 <xsl:attribute name="href">
