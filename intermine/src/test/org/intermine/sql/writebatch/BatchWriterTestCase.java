@@ -548,6 +548,7 @@ public abstract class BatchWriterTestCase extends TestCase
                 con.rollback();
             }
             s.addBatch("CREATE TABLE table1(a int, b int)");
+            s.addBatch("CREATE INDEX table1_key on table1(a, b)");
             s.executeBatch();
             con.commit();
             s = null;
@@ -559,6 +560,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
             batch.flush(con);
             con.commit();
+            con.createStatement().execute("ANALYSE");
             for (int i = 0; i < 10000; i++) {
                 batch.deleteRow(con, "table1", "a", new Integer(i));
             }
@@ -602,6 +604,7 @@ public abstract class BatchWriterTestCase extends TestCase
                 con.rollback();
             }
             s.addBatch("CREATE TABLE table1(a int, b int)");
+            s.addBatch("CREATE INDEX table1_key on table1(a, b)");
             s.executeBatch();
             con.commit();
             s = null;
@@ -612,6 +615,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
             batch.flush(con);
             con.commit();
+            con.createStatement().execute("ANALYSE");
             for (int i = 0; i < 10000; i++) {
                 batch.deleteRow(con, "table1", "a", "b", i, i * 2876123);
             }
