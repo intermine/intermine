@@ -25,7 +25,7 @@ public class RestartQueryActionTest extends MockStrutsTestCase
 
     public void testRestart() throws Exception {
         HttpSession session = getSession();
-        setRequestPathInfo("/query");
+        setRequestPathInfo("/restartQuery");
         addRequestParameter("action", "Reset query");
 
         String anAlias = "ClassAlias_0";
@@ -41,7 +41,7 @@ public class RestartQueryActionTest extends MockStrutsTestCase
         session.setAttribute(Constants.EDITING_ALIAS, anAlias);
 
         actionPerform();
-        
+
         verifyForward("buildquery");
         assertNull(session.getAttribute(Constants.QUERY_CLASSES));
         assertNull(session.getAttribute(Constants.EDITING_ALIAS));
