@@ -469,7 +469,7 @@
 
   <!-- generate schema from repository descriptor and use to create acedb database tables -->
   <target name="build-db-acedb" depends="generate-repository-acedb">
-    <model-output-testmodel type="torque" model="acedb" destdir="${build.model}/acedb"/>
+    <model-output type="torque" model="acedb" destdir="${build.model}/acedb"/>
     <copy todir="${build.model}/acedb">
       <fileset dir="${src.schema}">
         <include name="**/*-schema.xml"/>
