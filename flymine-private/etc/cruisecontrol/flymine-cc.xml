@@ -26,8 +26,5 @@
   <target name="cleanbuild" depends="clean,masterbuild"
     description="Cruise control clean build"/>
 
-  <target name="nightlybuild" depends="clean,masterbuild,release"
-    description="Official nightly build and release"/>
-
 </project>
 
