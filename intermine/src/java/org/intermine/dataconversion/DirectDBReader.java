@@ -112,7 +112,8 @@ public class DirectDBReader implements DBReader
             rows.add(row);
         }
         c.close();
-        return new DBBatch(previous.getOffset() + previous.getRows().size(), rows, null, idField);
+        return new DBBatch((previous == null ? 0 : previous.getOffset()
+                    + previous.getRows().size()), rows, null, idField);
     }
 
     /**

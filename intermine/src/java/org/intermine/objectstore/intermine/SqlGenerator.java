@@ -10,9 +10,7 @@ package org.flymine.objectstore.flymine;
  *
  */
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -463,29 +461,21 @@ public class SqlGenerator
      */
     public static void objectToString(StringBuffer buffer, Object value)
             throws ObjectStoreException {
-        if (value instanceof Date) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            buffer.append("'" + format.format((Date) value) + "'");
-        } else if (value instanceof Float) {
-            buffer.append(value.toString() + "::REAL");
-        } else if (value instanceof Number) {
-            buffer.append(value.toString());
-        } else if (value instanceof String) {
-            buffer.append("'" + value + "'");
-        } else if (value instanceof Boolean) {
-            buffer.append(((Boolean) value).booleanValue() ? "'true'" : "'false'");
-        } else if (value instanceof UnknownTypeValue) {
-            buffer.append(value.toString());
-        } else if (value instanceof FlyMineBusinessObject) {
-            Integer id = ((FlyMineBusinessObject) value).getId();
-            if (id == null) {
-                throw new ObjectStoreException("FlyMineBusinessObject found"
-                        + " without an ID set");
+        try {
+            buffer.append(DatabaseUtil.objectToString(value));
+        } catch (IllegalArgumentException e) {
+            if (value instanceof UnknownTypeValue) {
+                buffer.append(value.toString());
+            } else if (value instanceof FlyMineBusinessObject) {
+                Integer id = ((FlyMineBusinessObject) value).getId();
+                if (id == null) {
+                    throw new ObjectStoreException("FlyMineBusinessObject found"
+                            + " without an ID set");
+                }
+                buffer.append(id.toString());
+            } else {
+                throw (new IllegalArgumentException("Invalid Object in QueryValue: " + value));
             }
-            buffer.append(id.toString());
-        } else {
-            throw (new IllegalArgumentException("Invalid Object in QueryValue: "
-                                                + value));
         }
     }
 

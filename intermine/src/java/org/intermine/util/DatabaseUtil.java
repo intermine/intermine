@@ -13,6 +13,8 @@ package org.flymine.util;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.FieldDescriptor;
@@ -24,6 +26,7 @@ import org.flymine.metadata.CollectionDescriptor;
  * Collection of commonly used Database utilities
  *
  * @author Andrew Varley
+ * @author Matthew Wakeling
  */
 public class DatabaseUtil
 {
@@ -161,5 +164,29 @@ public class DatabaseUtil
             return StringUtil.toSameInitialCase("refs", n);
         }
         return n;
+    }
+
+    /**
+     * Generate an SQL compatible representation of an object.
+     *
+     * @param o the Object
+     * @return a valid SQL String
+     * @throws IllegalArgumentException if the object is not representable
+     */
+    public static String objectToString(Object o) throws IllegalArgumentException {
+        if (o instanceof Date) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            return "'" + format.format((Date) o) + "'";
+        } else if (o instanceof Float) {
+            return o.toString() + "::REAL";
+        } else if (o instanceof Number) {
+            return o.toString();
+        } else if (o instanceof String) {
+            return "'" + o + "'";
+        } else if (o instanceof Boolean) {
+            return ((Boolean) o).booleanValue() ? "'true'" : "'false'";
+        } else {
+            throw new IllegalArgumentException("Can't convert " + o + " into an SQL String");
+        }
     }
 }

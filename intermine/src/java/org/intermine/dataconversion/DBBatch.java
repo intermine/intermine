@@ -13,6 +13,8 @@ package org.flymine.dataconversion;
 import java.util.Map;
 import java.util.List;
 
+import org.flymine.util.DatabaseUtil;
+
 /**
  * An object designed to represent a batch of a read from an SQL database.
  *
@@ -74,7 +76,7 @@ public class DBBatch
      * @return a String
      */
     public String getFirstId() {
-        return (String) ((Map) rows.get(0)).get(idField);
+        return DatabaseUtil.objectToString(((Map) rows.get(0)).get(idField));
     }
 
     /**
@@ -83,6 +85,6 @@ public class DBBatch
      * @return a String
      */
     public String getLastId() {
-        return (String) ((Map) rows.get(rows.size() - 1)).get(idField);
+        return DatabaseUtil.objectToString(((Map) rows.get(rows.size() - 1)).get(idField));
     }
 }
