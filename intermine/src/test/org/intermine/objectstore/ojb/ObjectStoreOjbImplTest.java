@@ -113,21 +113,29 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
 
     // select department from department where department.name="DepartmentA1"
     public void testLazyReference() throws Exception {
-        QueryClass c1 = new QueryClass(Department.class);
+        QueryClass qc1 = new QueryClass(Department.class);
         Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryField f1 = new QueryField(c1, "name");
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        QueryField f1 = new QueryField(qc1, "name");
         QueryValue v1 = new QueryValue("DepartmentA1");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
         q1.setConstraint(sc1);
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
         Department d = (Department) rr.get(0);
-        Company c = d.getCompany();
-        assertTrue(c instanceof LazyReference);
-        assertTrue(c.equals(data.get("CompanyA")));
-        assertTrue(data.get("CompanyA").equals(c));
+        Company c1 = d.getCompany();
+        Company c2 = (Company) data.get("CompanyA");
+        assertTrue(c1 instanceof LazyReference);
+        assertFalse(((LazyReference) c1).isMaterialised());
+        assertTrue(c1.equals(c2));
+        assertFalse(((LazyReference) c1).isMaterialised());
+        assertTrue(c2.equals(c1));
+        assertFalse(((LazyReference) c1).isMaterialised());
+        assertEquals(c1.getId(), c2.getId());
+        assertFalse(((LazyReference) c1).isMaterialised());
+        assertEquals(c1.getName(), c2.getName());
+        assertTrue(((LazyReference) c1).isMaterialised());
     }
 
     public void testLazyCollectionRef() throws Exception {
