@@ -1,7 +1,7 @@
 package org.intermine.web.config;
 
 /*
- * Copyright (C) 2002-2004 FlyMine
+ * Copyright (C) 2002-2003 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,9 @@ package org.intermine.web.config;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration object describing details of a displayer
@@ -18,6 +21,8 @@ package org.intermine.web.config;
 public class Displayer
 {
     private String src;
+
+    private Map params = new HashMap();
 
     /**
      * Set the source of this displayer
@@ -35,6 +40,14 @@ public class Displayer
      */
     public String getSrc() {
         return this.src;
+    }
+
+    public void addParam(String name, String value) {
+        params.put(name, value);
+    }
+
+    public Map getParams() {
+        return params;
     }
 
     /**
