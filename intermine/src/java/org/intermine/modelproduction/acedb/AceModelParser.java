@@ -90,7 +90,6 @@ public class AceModelParser implements ModelParser
             ModelNode c = (ModelNode) classIter.next();
             classDescriptors.add(nodeClassToDescriptor(c));
         }
-        LOG.info(classDescriptors);
         return new Model(modelName, classDescriptors);
     }
 

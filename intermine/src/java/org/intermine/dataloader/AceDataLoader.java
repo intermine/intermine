@@ -13,7 +13,6 @@ package org.flymine.dataloader;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.acedb.Ace;
 import org.acedb.AceException;
@@ -100,49 +99,38 @@ public class AceDataLoader extends DataLoader
             // Go through each class in the model and get a dump of the objects of
             // that class
 
-            Collection clsNames = model.getClassNames();
-            Iterator clazzIter = clsNames.iterator();
-            while (clazzIter.hasNext()) {
-                String clsName = (String) clazzIter.next();
+            Iterator clsIter = model.getClassNames().iterator();
+            while (clsIter.hasNext()) {
+                String clsName = (String) clsIter.next();
                 if (true) {
-                    LOG.warn("CLASS: " + clsName);
                     String aceClazzName = AceModelParser
                         .unformatAceName(TypeUtil.unqualifiedName(clsName));
                     AceURL objURL = source.relativeURL(aceClazzName);
                     AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
                     if (fetchedAceObjects != null) {
-                        LOG.debug("Fetched " + fetchedAceObjects.size() + " "
-                                  + aceClazzName + " objects");
+                        LOG.info("Processing " + fetchedAceObjects.size() + " "
+                                  + aceClazzName + " objects...");
                         Iterator aceObjIter = fetchedAceObjects.iterator();
                         while (aceObjIter.hasNext()) {
-                            AceObject aceObj = null;
                             try {
-                                aceObj = (AceObject) aceObjIter.next();
-                                LOG.debug("Processing object: " + aceObj.getName());
-                                Object obj = processAceObject(aceObj);
-                                // Now store that object
-                                store(obj);
-                            } catch (NoSuchElementException e) {
-                                LOG.error("Object not retrievable: " + e.getMessage());
-                            } catch (StringIndexOutOfBoundsException e) {
+                                AceObject aceObj = (AceObject) aceObjIter.next();
+                                store(processAceObject(aceObj));
+                            } catch (Exception e) {
                                 LOG.error("Object not retrievable: " + e.getMessage());
                             }
                         }
-                        LOG.debug("Stored " + fetchedAceObjects.size() + " "
-                                + aceClazzName + " objects");
                     } else {
-                        LOG.debug("No " + aceClazzName + " objects found");
+                        LOG.info("No " + aceClazzName + " objects found");
                     }
                 } else {
-                    LOG.error("Not bothering with class " + clsName);
+                    LOG.info("Not bothering with class " + clsName);
                 }
             }
-
         } catch (Exception e) {
             throw new FlyMineException(e);
         }
     }
-
+    
     /**
      * Process an AceObject. This will create a new instance of the
      * object and set the identifier.
@@ -158,17 +146,11 @@ public class AceDataLoader extends DataLoader
         if (aceObject == null) {
             throw new NullPointerException("aceObject must not be null");
         }
-        LOG.debug("Processing Ace Object: " + aceObject.getClassName() + ", "
-                + aceObject.getName());
+        LOG.info("Processing " + aceObject.getClassName() + " " + aceObject.getName());
 
         String clsName = pkgName
             + AceModelParser.formatAceName(((AceObject) aceObject).getClassName());
-        Object currentObject = null;
-        try {
-            currentObject = Class.forName(clsName).newInstance();
-        } catch (Exception e) {
-            LOG.error(e.toString());
-        }
+        Object currentObject = instantiate(clsName);
         Object identifier = aceObject.getName();
 //         if ("".equals(identifier)) {
 //             identifier = null;
@@ -282,7 +264,7 @@ public class AceDataLoader extends DataLoader
                     setField(currentObject, nodeName, nodeValue);
                 }
             } else {
-                LOG.debug(currentObject.getClass() + " has no field named " + nodeName);
+                LOG.warn(currentObject.getClass() + " has no field named " + nodeName);
             }
         }
         // Now iterate through all the child nodes
@@ -309,10 +291,8 @@ public class AceDataLoader extends DataLoader
             Field field = TypeUtil.getField(target.getClass(), fieldName);
             if (field != null) {
                 if (Collection.class.isAssignableFrom(field.getType()) && fieldValue != null) {
-                    LOG.debug("Adding to Collection");
                     ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
                 } else {
-                    LOG.debug("Setting value");
                     try {
                         if (fieldValue != null && isBuiltIn(fieldValue.getClass())) {
                             fieldValue = TypeUtil.getFieldValue(fieldValue, "identifier");
@@ -320,17 +300,14 @@ public class AceDataLoader extends DataLoader
                     } catch (Exception e) {
                         throw new FlyMineException(e);
                     }
-                    LOG.debug("Setting field: obj=" + target.getClass().getName() + " field="
-                             + fieldName + " type=" + field.getType().getName()
-                             + " value=" + fieldValue);
                     TypeUtil.setFieldValue(target, fieldName, fieldValue);
                 }
             } else {
                 // else the field cannot be found -- do nothing
                 if (!"Quoted_in".equals(fieldName)) {
-                    LOG.error("Field \"" + fieldName + "\" not found in object \""
-                            + target.toString() + "\" (a " + target.getClass().getName()
-                            + ") - would have set to \"" + fieldValue + "\"");
+                    LOG.error("Field \"" + fieldName + "\" not found in object of type \""
+                              + target.getClass().getName() + "\" - would have set to \"" 
+                              + fieldValue + "\"");
                 }
             }
         } catch (IllegalAccessException e) {

@@ -100,9 +100,6 @@ public class DataLoader
                 Method getter = (Method) fieldToGetter.get(field);
                 Object valueInObjectToStore = getter.invoke(obj, new Object[] {});
                 
-                LOG.warn(obj.getClass() + ": " + field.getName() + " = "
-                         + valueInObjectToStore);
-                
                 String className = field.getDeclaringClass().getName();
                 ClassDescriptor cld = iw.getObjectStore().getModel()
                     .getClassDescriptorByName(className);
@@ -133,7 +130,6 @@ public class DataLoader
                     }
                 }
             }
-            LOG.info("Storing object: " + obj);
             iw.store(obj);
         } catch (IntrospectionException e) {
             throw new ObjectStoreException("Something horribly wrong with the model", e);
