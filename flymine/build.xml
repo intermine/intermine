@@ -1718,7 +1718,7 @@
 
   <!-- WEBAPP TARGETS -->
 
-  <target name="build-production-webapp" depends="jar-genomic">
+  <target name="build-production-webapp" depends="create-genomic-model">
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
