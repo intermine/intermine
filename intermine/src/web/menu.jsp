@@ -36,7 +36,7 @@
     </span>
   </c:if>
   <span class="menu-item">
-    <html:link action="/help.do">
+    <html:link href="/manual/manualIndex.html">
       <fmt:message key="menu.help"/>
     </html:link>
   </span>
