@@ -30,7 +30,7 @@
   <!-- distributable directories -->
   <property name="dist"  location="dist"/>
   <property name="dist.www"  location="${dist}/www"/>
-  <property name="dist.javadoc"  location="${dist.www}/api"/>
+  <property name="dist.javadoc"  location="${dist.www}/internal/api"/>
 
 
 
