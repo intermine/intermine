@@ -19,5 +19,10 @@
       <fmt:message key="index.query"/>
     </html:link>
   </li>
+  <li>
+    <html:link page="/buildfqlquery.do">
+      <fmt:message key="index.fqlquery"/>
+    </html:link>
+  </li>
 </ul>
 <!-- /index.jsp -->
