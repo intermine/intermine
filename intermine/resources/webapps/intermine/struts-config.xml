@@ -64,6 +64,9 @@
     <!-- Actions that just forward elsewhere - only used by jsps -->
     <action path="/query"
             forward="query.page"/>
+
+    <action path="/results"
+            forward="results.page"/>
     
     <action path="/iqlQuery"
             forward="iqlQuery.page"/>
