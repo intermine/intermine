@@ -14,7 +14,7 @@ public interface ObjectStoreWriter
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
     public void store(Object o) throws ObjectStoreException;
-    
+
     /**
      * Delete an object from this ObjectStore
      *
@@ -51,4 +51,16 @@ public interface ObjectStoreWriter
      * @throws ObjectStoreException if a transaction is not in progress
      */
     public void abortTransaction() throws ObjectStoreException;
+
+    /**
+     * Get an object from the ObjectStore by giving an example. The returned object
+     * (if present) will have the same primary keys as the example object.
+     *
+     * @param obj an example object
+     * @return the equivalent object from the ObjectStore, or null if none exists
+     * @throws ObjectStoreException if an error occurs during retrieval of the object
+     * @throws IllegalArgumentException if obj does not have all its primary key fields set
+     */
+    public Object getObjectByExample(Object obj) throws ObjectStoreException ;
+
 }
