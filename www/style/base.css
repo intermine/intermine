@@ -69,20 +69,18 @@ p
 
 #sidebar {
   float: right;
-  top: 150px;
-  right: 0px;
   width: 200px;
   background-color: white;
   padding: 0px 0px 5px 0px;
-  margin: 0px 0px 20px 20px;
+  margin: 10px 0px 20px 20px;
   border-left: 1px solid #888;
   border-bottom: 1px solid #888;
-  border-top: none;
+  border-top: 1px solid #888;
 }
 
 #sidebar ul {
     list-style-type: none;
-    padding: 2px 0px 2px 4px;
+    padding: 0px 0px 5px 5px;
     margin: 10px 0px 5px 5px;
 }
 
@@ -91,26 +89,23 @@ p
   border-bottom: 1px solid #888;
   border-left: 1px solid #888;
   background-color: #f5f5f5;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  padding-left: 3px;
-  margin: 1px;
-  margin-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 5px;
+  margin: 0px;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: black;
 }
 
 #sidebar ul ul {
-    margin: 5px 0px 5px 20px;
+    margin: 0px 0px 5px 20px;
 }
 
 #sidebar ul ul li {
     font-family: "verdana", "helvetica", "arial", sans-serif;
     font-size: 13px;
     text-transform: none;
-    padding-left: 5px;
-    padding-right: 5px;
     list-style-type: circle;
     border: none;
     background-color: white;
@@ -325,9 +320,9 @@ A.bred            { color: #FFFFFF;
 .box .heading {
   border: 1px solid #888;
   background-color: #f5f5f5;
-  padding: 1px;
-  padding-left: 3px;
-  margin: 3px;
+  padding: 0px;
+  padding-left: 5px;
+  margin: 5px;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: black;
