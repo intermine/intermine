@@ -63,7 +63,8 @@ public abstract class ViewHelper
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
-        PagedResults pr = TableHelper.makeTable(os, makeQuery(request), view);
+        Query q = makeQuery(request);
+        PagedResults pr = TableHelper.makeTable(os, q, view);
         String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
         ResultsInfo resultsInfo = pr.getResults().getInfo();
         SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
