@@ -110,8 +110,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
     
     
     public void testNoTrailParameter() {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
@@ -122,8 +122,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
     }
     
     public void testEmptyTrailParameter() {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
@@ -135,8 +135,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
     }
     
     public void testJunkTrailParameter() {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
@@ -148,8 +148,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
     }
     
     public void testBadIdsTrailParameter() {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
