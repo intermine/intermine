@@ -41,16 +41,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * Given a new object from a data source find whether corresponding object exists in
-     * ObjectStore and if so which fields the current data source has permission to write to.
-     *
-     * @param obj new object from datasource
-     * @return details of object in database and which fields can be overridden
-     * @throws ObjectStoreException if anything goes wrong retrieving object
-     */
-    public abstract IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException;
-
-    /**
      * Store an object in this ObjectStore, abstract.
      *
      * @param o the object to store
