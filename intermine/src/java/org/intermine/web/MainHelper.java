@@ -410,7 +410,8 @@ public class MainHelper
      */
     public static boolean isPathAttribute(String path, PathQuery pathQuery) {
         String classname = getTypeForPath(path, pathQuery);
-        return !classname.startsWith(pathQuery.getModel().getPackageName());
+        return !(classname.startsWith(pathQuery.getModel().getPackageName())
+                || classname.endsWith("InterMineObject"));
     }
     
     /**
