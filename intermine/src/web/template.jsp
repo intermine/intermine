@@ -5,6 +5,51 @@
 
 <tiles:importAttribute/>
 
+<script type="text/javascript">
+  <!--
+
+  var fixedOps = new Array();
+
+  /***********************************************************
+   * Called when user chooses a constraint operator. If the
+   * user picks an operator contained in fixedOptionsOps then
+   * the input box is hidden and the user can only choose
+   **********************************************************/
+  function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
+  {
+    if (attrOptsElement == null)
+      return;
+
+    for (var i=0 ; i<fixedOps[index].length ; i++)
+    {
+      if (attrOpElement.value == fixedOps[index][i])
+      {
+        document.getElementById("operandEditSpan" + index).style.display = "none";
+        attrValElement.value = attrOptsElement.value; // constrain value
+        return;
+      }
+    }
+
+    document.getElementById("operandEditSpan" + index).style.display = "";
+  }
+
+  /***********************************************************
+   * Init attribute value with selected item and hide input box if
+   * required
+   **********************************************************/
+  function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
+  {
+    if (attrOptsElement == null)
+      return;
+
+    attrValElement.value = attrOptsElement.value;
+    updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
+  }
+
+  //-->
+</script>
+
+
 <div class="body">
   <html:form action="/templateAction">
     <c:out value="${templateQuery.description}"/><br/><br/>
@@ -13,6 +58,16 @@
       <c:forEach items="${templateQuery.nodes}" var="node">
         <c:forEach items="${constraints[node]}" var="con">
           <c:set var="index" value="${index+1}"/>
+          
+          <script type="text/javascript">
+            <!--
+              fixedOps[${index-1}] = new Array();
+              <c:forEach items="${fixedOps[con]}" var="op" varStatus="oi">
+                fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
+              </c:forEach>
+            //-->
+          </script>
+          
           <c:if test="${!empty con.description}">
             <tr>
               <td align="right" valign="top" rowspan="2">
@@ -32,8 +87,8 @@
             <td>
               <c:out value="${names[con]}"/>
             </td>
-            <td>
-              <html:select property="attributeOps(${index})">
+            <td valign="top">
+              <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
                 <c:forEach items="${ops[con]}" var="op">
                   <html:option value="${op.key}">
                     <c:out value="${op.value}"/>
@@ -41,8 +96,30 @@
                 </c:forEach>
               </html:select>
             </td>
-            <td>
-              <html:text property="attributeValues(${index})"/>
+            <td valign="top" align="center">
+              <span id="operandEditSpan${index-1}">
+               <html:text property="attributeValues(${index})"/>
+                <%-- might want to show up arrow --%>
+                <c:if test="${!empty options[con]}">
+                  <im:vspacer width="5"/>
+                  <img src="images/left-arrow.gif" alt="&lt;-" border="0" height="13" width="13"/>
+                  <im:vspacer width="5"/>
+                </c:if>
+              </span>
+              <c:if test="${!empty options[con]}">
+                <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
+                <c:forEach items="${options[con]}" var="option">
+                  <option value="${option}">
+                    <c:out value="${option}"/>
+                  </option>
+                </c:forEach>
+                </select>
+              </c:if>
+              <script type="text/javascript">
+                <!--
+                initConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"], document.templateForm["attributeOptions(${index})"], document.templateForm["attributeValues(${index})"]);
+                //-->
+              </script>
             </td>
           </tr>
         </c:forEach>
