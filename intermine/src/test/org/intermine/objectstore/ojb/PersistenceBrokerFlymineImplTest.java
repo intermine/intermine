@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.lang.reflect.Field;
 
-
 import junit.framework.TestCase;
 
 import org.apache.ojb.broker.*;
 import org.apache.ojb.broker.metadata.*;
+import org.apache.ojb.broker.singlevm.*;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
@@ -27,17 +27,22 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
 {
     PersistenceBrokerFlyMineImpl broker;
     DescriptorRepository dr;
+    ObjectStoreOjbImpl os;
 
     public PersistenceBrokerFlymineImplTest(String arg1) {
         super(arg1);
     }
 
     public void setUp() throws Exception {
-        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        broker = (PersistenceBrokerFlyMineImpl) os.getPersistenceBroker();
+        os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        PersistenceBrokerFlyMine pb = (PersistenceBrokerFlyMine) os.getPersistenceBroker();
+        if (pb instanceof PersistenceBrokerFlyMineImpl) {
+            broker = (PersistenceBrokerFlyMineImpl) pb;
+        } else {
+            broker = (PersistenceBrokerFlyMineImpl) ((DelegatingPersistenceBroker) pb).getDelegate();
+        }
         dr = broker.getDescriptorRepository();
     }
-
 
     // check that query to retrieve collection is correctly formed
     public void testGetCollectionQuery() throws Exception {
@@ -75,7 +80,6 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
 
     }
 
-
     // test that field of materialized object is set to a LazyCollection
     public void testLazyCollectionField() throws Exception {
         broker.clearCache();
@@ -93,7 +97,6 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
             fail("Expected Department.employees to be a LazyCollection");
     }
 
-
     // test that entire collection of employees has been materialized
     public void testNotLazyCollectionField() throws Exception {
         broker.clearCache();
@@ -109,7 +112,6 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         Collection col = dept.getEmployees();
         if (col instanceof LazyCollection)
             fail("Expected Department.employees to be materialized but was a LazyCollection");
-
     }
 
     public void testLazyReferenceField() throws Exception {
@@ -201,7 +203,6 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
         return dept;
     }
 
-
     // set up a Company object with an id
     private Company getCompExampleObject() throws Exception {
         Company comp = new Company();
@@ -213,7 +214,4 @@ public class PersistenceBrokerFlymineImplTest extends TestCase
 
         return comp;
     }
-
-
-
 }
