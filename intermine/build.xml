@@ -13,7 +13,9 @@
   <property name="bin" location="bin"/>
 
   <!-- source directories -->
-  <property name="src.java" location="src"/>
+  <property name="src" location="src"/>
+  <property name="src.java" location="${src}/java"/>
+  <property name="src.test" location="${src}/test"/>
   <property name="src.www" location="doc"/>
   <property name="src.www-internal" location="../flymine-private/doc"/>
 
@@ -101,7 +103,7 @@
 
     <!-- Check if the tests have been run after the Java file last updated -->
     <uptodate property="test-main.uptodate">
-      <srcfiles dir="${src.java}" includes="*/tests/**/*Test.java"/>
+      <srcfiles dir="${src.test}" includes="**/*.java"/>
       <mapper type="package" from="*Test.java" to="${results.junit}/TEST-*Test.xml" />
     </uptodate>
 
@@ -110,7 +112,7 @@
       <formatter type="xml" />
       <batchtest fork="yes" todir="${results.junit}" unless="test-main.uptodate">
 	<fileset dir="${build.java}">
-	  <include name="**/tests/*Test.class" />
+	  <include name="**/*Test.class" />
 	</fileset>
       </batchtest>
     </junit>
