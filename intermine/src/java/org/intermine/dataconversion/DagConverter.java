@@ -21,7 +21,6 @@ import java.util.Set;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.ontology.DagParser;
 import org.intermine.ontology.DagTerm;
-import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
@@ -50,7 +49,8 @@ public class DagConverter extends DataConverter
      * @param termClass the class of the Term
      * @param relationClass the class of the relation
      */
-    public DagConverter(ItemWriter writer, String dagFilename, String termClass, String relationClass) {
+    public DagConverter(ItemWriter writer, String dagFilename, String termClass,
+                        String relationClass) {
         super(writer);
         this.dagFilename = dagFilename;
         this.termClass = termClass;
@@ -83,8 +83,6 @@ public class DagConverter extends DataConverter
             Iterator termIter = terms.iterator();
             while (termIter.hasNext()) {
                 DagTerm term = (DagTerm) termIter.next();
-                System.out.println("Root term: " + term + ", children = " + term.getChildren()
-                        + ", components = " + term.getComponents());
                 process(term);
             }
             Iterator itemIter = nameToTerm.values().iterator();
