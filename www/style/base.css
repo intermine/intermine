@@ -6,16 +6,13 @@ html, body
     padding: 0;
 }
 
-a
-{
-    text-decoration: none;
-/*  font-family: sans-serif; */
-}
+a:link { color:#049; text-decoration:none }
 
-a:hover
-{
-    text-decoration: underline
-}
+a:visited { color:#049; text-decoration:none }
+
+a:hover { color:#CF4D23; text-decoration:underline }
+
+a:active { color:#58e; text-decoration:none }
 
 .openoffice
 {
