@@ -17,7 +17,6 @@ import java.util.Collections;
 public class Query implements FromElement
 {
     private boolean distinct = true;
-    private int maxResults = -1;
     private Constraint constraint = null;
     private Set queryClasses = new HashSet(); // @element-type FromElement
     private List select = new ArrayList(); // @element-type QueryNode
@@ -38,9 +37,7 @@ public class Query implements FromElement
             throw new NullPointerException("cls must not be null");
         }
         queryClasses.add(cls);
-        if (!aliases.containsKey(cls)) {
-            aliases.put(cls, "a" + (alias++) + "_");
-        }
+        alias(cls);
         return this;
     }
 
@@ -55,7 +52,6 @@ public class Query implements FromElement
         return this;
     }
 
-
     /**
      * Returns all FromElements in the FROM clause
      *
@@ -64,7 +60,6 @@ public class Query implements FromElement
     public Set getFrom() {
         return Collections.unmodifiableSet(queryClasses);
     }
-
 
     /**
        * Constrain this Query using either a single constraint or a set of constraints
@@ -138,9 +133,7 @@ public class Query implements FromElement
      */
     public Query addToSelect(QueryNode node) {
         select.add(node);
-        if (!aliases.containsKey(node)) {
-            aliases.put(node, "a" + (alias++) + "_");
-        }
+        alias(node);
         return this;
     }
 
@@ -163,24 +156,6 @@ public class Query implements FromElement
      */
     public List getSelect() {
         return Collections.unmodifiableList(select);
-    }
-
-    /**
-     * Get the number of results returned by this Query
-     *
-     * @return the number of results
-     */
-    public int getMaxResults() {
-        return maxResults;
-    }
-
-    /**
-     * Set the maximum number of results this Query should return
-     *
-     * @param maxResults the number of results
-     */
-    public void setMaxResults(int maxResults) {
-        this.maxResults = maxResults;
     }
 
     /**
@@ -218,5 +193,11 @@ public class Query implements FromElement
      */
     public String toString() {
         return null;
+    }
+
+    private void alias(Object obj) {
+        if (!aliases.containsKey(obj)) {
+            aliases.put(obj, "a" + (alias++) + "_");
+        }
     }
 }
