@@ -20,7 +20,7 @@
 <item id="0_3" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="2097274"/>
 <attribute name="start" value="2096705"/>
-<attribute name="strand" value="+"/>
+<attribute name="strand" value="1"/>
 <reference name="object" ref_id="0_1"/>
 <reference name="subject" ref_id="0_2"/>
 <collection name="evidence">
@@ -52,7 +52,7 @@
 <item id="0_9" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="2097419"/>
 <attribute name="start" value="2096850"/>
-<attribute name="strand" value="-"/>
+<attribute name="strand" value="-1"/>
 <reference name="object" ref_id="0_7"/>
 <reference name="subject" ref_id="0_8"/>
 <collection name="evidence">
@@ -84,7 +84,7 @@
 <item id="0_15" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="2097289"/>
 <attribute name="start" value="2097064"/>
-<attribute name="strand" value="-"/>
+<attribute name="strand" value="-1"/>
 <reference name="object" ref_id="0_13"/>
 <reference name="subject" ref_id="0_14"/>
 <collection name="evidence">
