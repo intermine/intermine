@@ -7,7 +7,7 @@
 
     <section>
       <heading>Introduction</heading>
-       <item><ulink url="manualIntroduction.xml">The FlyMine project</ulink></item>
+       <item><ulink url="../introduction.xml">The FlyMine project</ulink></item>
        <item><ulink url="manualQuickstart.xml">Quick start guide</ulink></item>
       </section>
 
@@ -34,16 +34,8 @@
       <section>
           <heading>Building a simple query</heading>
              <item><ulink url="manualSimplequeries.xml">Building Simple queries</ulink></item>
-             <item><ulink url="manualSelectingData.xml">Selecting all the objects from a particular classs</ulink></item>
-             <item><ulink url="manualSelectingData.xml">Constraining objects from one class</ulink></item>
-             <item><ulink url="manualSelectingData.xml">Selecting and constraining objects from 2 classes</ulink></item>
-             <item><ulink url="manualSelectingData.xml">Constraining a class to a subclass</ulink></item>
       </section>
      
-
-      <section>
-          <heading>Building complex queries</heading>
-      </section>
 
 
       <section>
