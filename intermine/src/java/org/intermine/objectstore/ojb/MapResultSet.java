@@ -51,7 +51,6 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#wasNull
      */    
     public boolean wasNull() throws SQLException {
-        unsupported();
         return false;
     }
 
@@ -1203,10 +1202,12 @@ public class MapResultSet implements ResultSet
     }
 
     private Object get(String s) throws SQLException {
-        if (!row.containsKey(s)) {
-            throw new SQLException("Column " + s + " not found");
+        if (row.containsKey(s)) {
+            return row.get(s);
+        } else if (row.containsKey(s.toLowerCase())) {
+            return row.get(s.toLowerCase());
         }
-        return row.get(s);
+        throw new SQLException("Column " + s + " not found");
     }
     
     private void unsupported() throws SQLException {
