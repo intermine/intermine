@@ -70,9 +70,6 @@
   <property name="dist.webapp"  location="${dist}/webapp"/>
   <property name="dist.javadoc"  location="${dist.www}/api"/>
 
-  <!-- deafult setting for create-indexes in build-model.xml -->
-  <property name="create.attribute.indexes" value="false"/>
-
   <!-- set up library filesets -->
 
   <!-- Ant tasks and unit testing stuff -->
@@ -1489,6 +1486,49 @@
 
   <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation"/>
 
+
+ <!-- GFF3 PIPELINE -->
+  <!--load GFF3 data-->
+  <target name="convert-gff3" depends="prepare-build-model, compile-genomic-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <convert-file converter ="org.flymine.dataconversion.GFF3Converter"
+                    target="osw.gff3-tgt-items"
+                    seqClsName = "Chromosome"
+                    orgAbbrev ="HS"
+                    infoSourceTitle = "UCSC"
+                    targetNameSpace ="http://www.flymine.org/model/genomic#">
+      <fileset dir ="/shared/data/human">
+        <!--include name ="firstEF/*.gff"/--> 
+        <include name ="tfbs/*.gff"/>       
+      </fileset>
+      <!--fileset dir ="/shared/data/gff3">
+        <include name ="test.gff"/>       
+      </fileset-->
+
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
@@ -2000,7 +2040,7 @@
   </target>
 
   <target name="genomic-test" 
-          depends="prepare-build-model, prepare-test">
+          depends="prepare-build-model, prepare-test, compile-flymine-java">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -2064,7 +2104,7 @@
 
   <!-- WEBAPP TARGETS -->
 
-  <target name="build-production-webapp" depends="prepare-build-model, compile-flymine-java">
+  <target name="build-production-webapp" depends="prepare-build-model">
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
