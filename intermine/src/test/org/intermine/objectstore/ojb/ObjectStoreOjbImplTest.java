@@ -127,12 +127,10 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         Company c1 = d.getCompany();
         Company c2 = (Company) data.get("CompanyA");
         assertTrue(c1 instanceof LazyReference);
-        assertFalse(((LazyReference) c1).isMaterialised());
         assertTrue(c1.equals(c2));
-        assertFalse(((LazyReference) c1).isMaterialised());
         assertTrue(c2.equals(c1));
-        assertFalse(((LazyReference) c1).isMaterialised());
         assertEquals(c1.getId(), c2.getId());
+        assertEquals(c1.hashCode(), c2.hashCode());
         assertFalse(((LazyReference) c1).isMaterialised());
         assertEquals(c1.getName(), c2.getName());
         assertTrue(((LazyReference) c1).isMaterialised());

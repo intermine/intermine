@@ -64,6 +64,9 @@ public class LazyInitializer implements MethodInterceptor
             Integer otherId = (Integer) TypeUtil.getFieldValue(args[0], "id");
             return otherId == null ? new Boolean(false) : new Boolean(id.equals(otherId));
         }
+        if (method.getName().equals("hashCode")) {
+            return new Integer(id.hashCode());
+        }
         if (method.getName().equals("finalize")) {
             return null;
         }
