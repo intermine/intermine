@@ -749,7 +749,8 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-       merge-ensembl-model, merge-phenotype-model, merge-go-model, merge-uniprot-model,
+       merge-ensembl-model, merge-ensembl-human-model,  merge-phenotype-model, merge-go-model,
+       merge-uniprot-model,
        merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
@@ -955,6 +956,19 @@
       <property name="db.name" value="db.ensembl-human-src-items"/>
     </ant>
   </target>
+
+  <!--target name= "debug">
+    <java classname = "${ant.project.name}" fork = "yes">
+       <sysproperty
+          key = "java.library.path"
+          value = "${lib}"/>
+          <classpath refid = "project-classpath"/>
+          <jvmarg value = "-Xdebug"/>
+          <jvmarg value = "-Xrunjdwp:transport=dt_socket, address = jdbconn, server=y,suspend = y"/>
+          
+     </java>
+   </target-->
+          
 
   <!-- build ensembl human tgt items database -->
   <target name="build-db-ensembl-human-tgt-items" depends="convert-ensembl-human">
