@@ -10,51 +10,82 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.Map;
 
 /**
- * A template query, which consists of a PathQuery and its (templated) description string
+ * A template query, which consists of a PathQuery, description, category,
+ * short name.
+ * 
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class TemplateQuery
 {
-    protected static final String PATTERN = "\\[(.*?)\\]";
-
-    protected String identifier, description, indexedDescription, category;
+    /** Template query name. */
+    protected String name;
+    /** Template query description. */
+    protected String description;
+    /** Template query category. */
+    protected String category;
+    /** Entire query */
     protected PathQuery query;
+    /** Nodes with templated constraints */
     protected List nodes = new ArrayList();
+    /** Map from node to editable constraint list */
+    protected Map constraints = new HashMap();
 
     /**
-     * Constructor
-     * @param identifier unique name for query
+     * Construct a new instance of TemplateQuery.
+     *
+     * @param name the name of the template
      * @param category name of category that this query falls under
-     * @param description the description, containing references to paths in the query
+     * @param description the template description
      * @param query the query itself
      */
-    public TemplateQuery(String identifier, String description, String category, PathQuery query) {
+    public TemplateQuery(String name, String description, String category, PathQuery query) {
         this.description = description;
         this.query = query;
         this.category = category;
-        this.identifier = identifier;
+        this.name = name;
         
-        if (description != null) {
-            int i = 1;
-            StringBuffer sb = new StringBuffer();
-            Matcher m = Pattern.compile(PATTERN).matcher(description);
-            while (m.find()) {
-                nodes.add(query.getNodes().get(m.group(1)));
-                m.appendReplacement(sb, "[" + (i++) + "]");
+        // Find the editable constraints in the query.
+        Iterator iter = query.getNodes().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            PathNode node = (PathNode) entry.getValue();
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint c = (Constraint) citer.next();
+                if (c.isEditable()) {
+                    List ecs = (List) constraints.get(node);
+                    if (ecs == null) {
+                        ecs = new ArrayList();
+                        nodes.add(node);
+                        constraints.put(node, ecs);
+                    }
+                    ecs.add(c);
+                }
             }
-            m.appendTail(sb);
-            indexedDescription = sb.toString();
         }
+    }
+    
+    /**
+     * For a PathNode with editable constraints, get all the editable
+     * constraints as a List.
+     *
+     * @param node  a PathNode with editable constraints
+     * @return      List of Constraints for Node
+     */
+    public List getConstraints(PathNode node) {
+        return (List) constraints.get(node);
     }
 
     /**
-     * Get the description (eg. "For a given company [Company.name]")
+     * Get the tempalte description.
      * @return the description
      */
     public String getDescription() {
@@ -78,27 +109,11 @@ public class TemplateQuery
     }
     
     /**
-     * Get the query identifier/short name.
+     * Get the query short name.
      * @return the query identifier string
      */
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * Get the indexed description (eg. "For a given company [1]")
-     * @return the indexed description
-     */
-    public String getIndexedDescription() {
-        return indexedDescription;
-    }
-
-    /**
-     * Get the "clean" description (eg. "For a given company")
-     * @return the clean description
-     */
-    public String getCleanDescription() {
-        return description.replaceAll(" " + PATTERN, "");
+    public String getName() {
+        return name;
     }
     
     /**
