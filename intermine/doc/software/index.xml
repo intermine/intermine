@@ -57,6 +57,7 @@
   <section>
     <heading>SQL query optimiser</heading>
     <item><ulink url="sql_optimisation/using-query-optimiser">Using the SQL query optimiser in other projects</ulink></item>
+	<item><ulink url="sql_optimisation/cache">Implementation of the Optimiser cache</ulink></item>
   </section>
 
   <section>
