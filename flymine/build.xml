@@ -1329,9 +1329,8 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.protein-structure-src-items-std"/>
+      <property name="os.alias" value="os.protein_structure-src-items-std"/>
     </ant>
-
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
       <property name="db.name" value="db.common-src-items"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1357,7 +1356,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.protein-structure-tgt-items-std"/>
+      <property name="os.alias" value="os.protein_structure-tgt-items-std"/>
     </ant>
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
       <property name="db.name" value="db.common-tgt-items"/>
