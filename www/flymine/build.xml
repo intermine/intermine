@@ -1,16 +1,21 @@
 <project name="flymine-www" default="www-flymine" basedir=".">
   <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
-  
+
   <property file="${build.properties.local}"/>
   <property name="src.www" location="site"/>
   <property name="src.doc" location="../../flymine/doc"/>
   <property name="src.internal" location="../../flymine-private/doc"/>
   <property name="common.style" location="../style"/>
   <property name="build.www" location="build"/>
+  <property name="build.webapp.manual.html" location="dist/doc/manual"/>
   <property name="dist.www" location="dist"/>
-  
+  <property name="flymine.main.stylesheet" location="../main.xsl"/>
+  <property name="flymine.frontpage.stylesheet" location="../front_page.xsl"/>
+
+  <property name="output.extension" value="html"/>
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
-  
+  <property name="branding" value="flymine"/>
+
   <target name="prepare">
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
@@ -22,38 +27,50 @@
     <copy todir="${build.www}/style">
       <fileset dir="${common.style}" includes="**/*"/>
     </copy>
-    
+
     <copy todir="${build.www}/doc">
       <fileset dir="${src.doc}">
         <include name="**/*"/>
+        <exclude name="manual/webapp_manual_params.xsl"/>
       </fileset>
     </copy>
-    
+
+    <filter token="BASEDIR" value="${www.location}"/>
+    <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}${webapp.path}"/>
+    <filter token="OUTPUT_EXTENSION" value="${output.extension}"/>
+    <filter token="BRANDING" value="${branding}"/>
+    <filter token="SOURCEREF" value="${build.www}"/>
+
+    <copy todir="${build.www}/tmp" filtering="true">
+      <fileset dir="style">
+        <include name="webapp_manual_params.xsl"/>
+      </fileset>
+    </copy>
+
     <copy todir="${build.www}/internal">
       <fileset dir="${src.internal}">
         <include name="**/*"/>
       </fileset>
     </copy>
-    
+
     <copy todir="${dist.www}">
-      <fileset dir="${build.www}" excludes="**/*.xml"/>
-    </copy>
-  </target>
-    
-  <target name="www-flymine" depends="prepare">
-    <xmlvalidate>
-      <fileset dir="${build.www}" includes="**/*.xml">
-        <exclude name="internal/**"/>
-        <!-- necessary until we can accommodate "presentation" within docbook -->
-        <exclude name="doc/presentations/index.xml"/>
+      <fileset dir="${build.www}">
+        <exclude name="**/*.xml"/>
+        <exclude name="**/*.xsl"/>
       </fileset>
-    </xmlvalidate>
-    <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
-           style="../main.xsl" includes="**/*.xml" force="false">
+    </copy>
+
+    <mkdir dir="${build.www}/tmp"/>
+  </target>
+
+  <target name="style-site" depends="prepare">
+    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
+           style="${flymine.main.stylesheet}" includes="**/*.xml"
+           excludes="index.xml" force="false">
       <param name="branding" expression="flymine" />
       <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.prefix}"/>
-      <param name="outputext" expression="html" />
+      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
+      <param name="outputext" expression="${output.extension}" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
       <factory>
@@ -62,7 +79,36 @@
     </style>
   </target>
 
-  <target name="release-www" depends="www-flymine"
+  <target name="style-front-page" depends="prepare">
+    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
+           style="${flymine.frontpage.stylesheet}" includes="index.xml" force="false">
+      <param name="branding" expression="flymine" />
+      <param name="basedir" expression="${www.location}" />
+      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
+      <param name="outputext" expression="${output.extension}" />
+      <param name="file" expression="systemId()" />
+      <param name="sourceref" expression="${build.www}" />
+      <factory>
+        <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
+      </factory>
+    </style>
+  </target>
+
+  <target name="validate-site-xml" depends="prepare">
+<!--    <xmlvalidate>
+      <fileset dir="${build.www}" includes="**/*.xml">
+        <exclude name="internal/**"/>-->
+        <!-- necessary until we can accommodate "presentation" within docbook -->
+<!--        <exclude name="doc/presentations/index.xml"/>
+      </fileset>
+    </xmlvalidate>-->
+  </target>
+
+  <target name="transform-site"
+          depends="validate-site-xml, style-front-page, style-site, webapp-manual-html"
+          description="Transform the website contents from XML to HTML"/>
+
+  <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">
     <chmod perm="a+r" type="file">
       <fileset dir="${dist.www}">
@@ -75,14 +121,14 @@
       </fileset>
     </chmod>
     <exec executable="rsync">
-      <arg line="-e ssh -Cavz --exclude api --exclude gbrowse --delete ${dist.www}/ ${www.serverlocation}/" />
+      <arg line="-e ssh -Cavz --exclude api --exclude tmp --exclude gbrowse --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
   </target>
 
   <target name="remove-production-webapp">
     <ant dir="../../flymine-www" target="remove-webapp" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine-www/dist"/>
-    </ant> 
+    </ant>
   </target>
 
   <target name="release-production-webapp">
@@ -125,7 +171,30 @@
     </ant>
   </target>
 
+  <target name="webapp-manual-process" depends="prepare">
+<!--    <style basedir="${build.webapp.manual.src}"
+           style="/usr/share/xml/docbook/stylesheet/nwalsh/html/chunk.xsl"
+           destdir="${build.webapp.manual.html}"
+           includes="webapp_manual.xml"/>
+-->
 
+    <exec executable="xmlto">
+      <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m style/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
+    </exec>
+
+  </target>
+
+  <target name="webapp-manual-pdf" depends="prepare">
+    <antcall target="webapp-manual-process">
+      <param name="output.type" value="pdf"/>
+    </antcall>
+  </target>
+
+  <target name="webapp-manual-html" depends="prepare">
+    <antcall target="webapp-manual-process">
+      <param name="output.type" value="html"/>
+    </antcall>
+  </target>
 
   <target name="clean">
     <delete dir="${build.www}"/>
