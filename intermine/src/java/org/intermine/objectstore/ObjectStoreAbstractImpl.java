@@ -21,7 +21,6 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCreator;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.SingletonResults;
-import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.CacheMap;
 import org.flymine.util.PropertiesUtil;
 import org.flymine.util.TypeUtil;
