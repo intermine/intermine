@@ -10,6 +10,8 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -42,18 +44,30 @@ public class ObjectDetailsController extends Action
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        Map displayObjects = (Map) session.getAttribute("displayObjects");
+        // Build map from object id to DisplayObject
+        if (displayObjects == null) {
+            displayObjects = new HashMap();
+            session.setAttribute("displayObjects", displayObjects);
+        }
         String idString = (String) request.getParameter("id");
-        if (idString != null && !"".equals(idString)
+        if (idString != null && !idString.equals("")
             && (session.getAttribute("object") == null
-            || ((DisplayObject) session.getAttribute("object")).getId()
-                                                != Integer.parseInt(idString))) {
-            InterMineObject object = os.getObjectById(new Integer(idString));
+                || ((DisplayObject) session.getAttribute("object")).getId()
+                != Integer.parseInt(idString))) {
+            // Move to a different object
+            Integer key = new Integer(idString);
+            InterMineObject object = os.getObjectById(key);
             String field = request.getParameter("field");
             if (field != null) {
                 object = (InterMineObject) TypeUtil.getFieldValue(object, field);
             }
-            session.setAttribute("object", new DisplayObject(object, os.getModel()));
+            DisplayObject dobj = (DisplayObject) displayObjects.get(key);
+            if (dobj == null) {
+                dobj = new DisplayObject(object, os.getModel());
+                displayObjects.put(key, dobj);
+            }
+            session.setAttribute("object", dobj);
         }
         
         return null;
