@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.FileWriter;
+import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -38,6 +39,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.DynamicUtil;
+import org.intermine.objectstore.proxy.ProxyCollection;
 
 import org.flymine.postprocess.PostProcessUtil;
 
@@ -191,6 +193,13 @@ public class WriteGFFTask extends Task
             writeFeature(gffWriter, chr, transcript, transcriptLocation, null, gene);
 
             List exons = transcript.getExons();
+
+            ProxyCollection exonsResults = (ProxyCollection) exons;
+
+            // exon collections are small enough that optimisation just slows things down
+            exonsResults.setNoOptimise();
+            exonsResults.setNoExplain();
+
             Iterator exonIter = exons.iterator();
             while (exonIter.hasNext()) {
                 Exon exon = (Exon) exonIter.next();
@@ -349,22 +358,41 @@ public class WriteGFFTask extends Task
 
     private void writeChromosomeFasta(File destinationDirectory, Chromosome chr)
         throws IOException, IllegalArgumentException, IllegalSymbolException {
-        FileOutputStream outputStream =
+        FileOutputStream fileStream =
             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
-     
-        FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-     
-        if (sequence != null) {
-            try {
-                sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                     chromosomeFileNamePrefix(chr));
-            } catch (ChangeVetoException e) {
-                throw new RuntimeException("failed to set a property", e);
-            }
-           SeqIOTools.writeFasta(outputStream, sequence);
-        }
 
-        outputStream.close();
+        PrintStream printStream = new PrintStream(fileStream);
+        
+        Sequence chromosomeSequence = chr.getSequence();
+
+// Too slow!
+//         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
+  
+//         if (sequence != null) {
+//             try {
+//                 sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+//                                                      chromosomeFileNamePrefix(chr));
+//             } catch (ChangeVetoException e) {
+//                 throw new RuntimeException("failed to set a property", e);
+//             }
+//            SeqIOTools.writeFasta(outputStream, sequence);
+//         }
+
+        printStream.println(">" + chromosomeFileNamePrefix(chr));
+
+        String residues = chromosomeSequence.getResidues();
+
+        // code from BioJava's FastaFormat class:
+
+        int length = residues.length();
+
+	for (int pos = 0; pos < length; pos += 60) {
+	    int end = Math.min(pos + 60, length);
+	    printStream.println(residues.substring(pos, end));
+	}
+
+        printStream.close();
+        fileStream.close();
     }
     
 
