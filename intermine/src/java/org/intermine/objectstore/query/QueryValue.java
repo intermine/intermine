@@ -20,10 +20,10 @@ public class QueryValue implements QueryEvaluable
      * @throws IllegalArgumentException if value is not a Number, String, Boolean or Date
      */
     public QueryValue(Object value) {
-        if (!((value instanceof Number) ||
-              (value instanceof String) ||
-              (value instanceof Boolean) ||
-              (value instanceof Date))) {
+        if (!((value instanceof Number)
+              || (value instanceof String)
+              || (value instanceof Boolean)
+              || (value instanceof Date))) {
             throw new IllegalArgumentException("value must be a Number, String, Boolean or Date");
         }
         this.value = value;
