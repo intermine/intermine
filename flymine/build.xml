@@ -178,6 +178,14 @@
     </copy>
   </target>
 
+  <target name="prepare-compile-java" depends="prepare">
+    <copy todir="${build.src.java}">
+      <fileset dir="${src.java}">
+        <include name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+
   <target name="prepare-test" depends="prepare">
     <mkdir dir="${build.resources.test}" />
 
@@ -1270,7 +1278,7 @@
   </target>
 
   <target name="compile-flymine-java" 
-          depends="prepare-build-model, jar-genomic">
+          depends="prepare-compile-java, prepare-build-model, jar-genomic">
     <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
@@ -1351,7 +1359,8 @@
   <!-- WEBAPP TARGETS -->
 
   <target name="build-production-webapp"
-          depends="create-genomic-model, prepare-build-webapp, compile-genomic-web-java">
+          depends="create-genomic-model, prepare-build-webapp,
+                   jar-flymine-java, compile-genomic-web-java"> 
     <ant antfile="${build}/build-webapp.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/> 
       <property name="model.name" value="genomic"/>
