@@ -1429,13 +1429,13 @@
   <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
                                            load-static,
+                                           build-ensembl-drosophila-production,
+                                           build-ensembl-anopheles-production,
                                            build-psi-production,
                                            build-orthologues-production,
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
-                                           build-ensembl-drosophila-production,
-                                           build-ensembl-anopheles-production,
                                            analyse-db-production,
                                            grant-db-production"/>
 
