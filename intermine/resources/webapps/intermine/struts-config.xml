@@ -162,7 +162,6 @@
             type="org.intermine.web.BuildBagAction"
             name="buildBagForm"
             parameter="action">
-      <forward name="bagDetails" path="bagDetails.page"/>
       <forward name="buildBag" path="bagBuild.page"/>
     </action>
   
