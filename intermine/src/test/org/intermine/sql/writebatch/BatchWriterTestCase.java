@@ -61,10 +61,11 @@ public abstract class BatchWriterTestCase extends TestCase
             s = null;
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
-            batch.addRow(con, "table1", new Integer(14), new String[] {"col1", "col2"}, new Object[] {new Integer(14), new Integer(104)});
-            batch.addRow(con, "table1", new Integer(15), new String[] {"col1", "col2"}, new Object[] {new Integer(15), new Integer(105)});
-            batch.addRow(con, "table1", new Integer(25), new String[] {"col1", "col2"}, new Object[] {new Integer(25), new Integer(205)});
-            batch.addRow(con, "table1", new Integer(35), new String[] {"col1", "col2"}, new Object[] {new Integer(35), new Integer(305)});
+            String colNames[] = new String[] {"col1", "col2"};
+            batch.addRow(con, "table1", new Integer(14), colNames, new Object[] {new Integer(14), new Integer(104)});
+            batch.addRow(con, "table1", new Integer(15), colNames, new Object[] {new Integer(15), new Integer(105)});
+            batch.addRow(con, "table1", new Integer(25), colNames, new Object[] {new Integer(25), new Integer(205)});
+            batch.addRow(con, "table1", new Integer(35), colNames, new Object[] {new Integer(35), new Integer(305)});
             batch.deleteRow(con, "table1", "col1", new Integer(11));
             batch.deleteRow(con, "table1", "col1", new Integer(12));
             batch.deleteRow(con, "table1", "col1", new Integer(22));
@@ -72,9 +73,9 @@ public abstract class BatchWriterTestCase extends TestCase
             batch.deleteRow(con, "table1", "col1", new Integer(14));
             batch.deleteRow(con, "table1", "col1", new Integer(24));
             batch.deleteRow(con, "table1", "col1", new Integer(34));
-            batch.addRow(con, "table1", new Integer(12), new String[] {"col1", "col2"}, new Object[] {new Integer(12), new Integer(112)});
-            batch.addRow(con, "table1", new Integer(22), new String[] {"col1", "col2"}, new Object[] {new Integer(22), new Integer(212)});
-            batch.addRow(con, "table1", new Integer(32), new String[] {"col1", "col2"}, new Object[] {new Integer(32), new Integer(312)});
+            batch.addRow(con, "table1", new Integer(12), colNames, new Object[] {new Integer(12), new Integer(112)});
+            batch.addRow(con, "table1", new Integer(22), colNames, new Object[] {new Integer(22), new Integer(212)});
+            batch.addRow(con, "table1", new Integer(32), colNames, new Object[] {new Integer(32), new Integer(312)});
             batch.flush(con);
             con.commit();
             s = con.createStatement();
@@ -94,10 +95,10 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(25), new Integer(205));
             expected.put(new Integer(35), new Integer(305));
             assertEquals(expected, got);
-            batch.addRow(con, "table1", new Integer(42), new String[] {"col1", "col2"}, new Object[] {new Integer(42), new Integer(402)});
-            batch.addRow(con, "table1", new Integer(52), new String[] {"col1", "col2"}, new Object[] {new Integer(52), new Integer(502)});
-            batch.addRow(con, "table1", new Integer(53), new String[] {"col1", "col2"}, new Object[] {new Integer(53), new Integer(503)});
-            batch.addRow(con, "table1", new Integer(55), new String[] {"col1", "col2"}, new Object[] {new Integer(55), new Integer(505)});
+            batch.addRow(con, "table1", new Integer(42), colNames, new Object[] {new Integer(42), new Integer(402)});
+            batch.addRow(con, "table1", new Integer(52), colNames, new Object[] {new Integer(52), new Integer(502)});
+            batch.addRow(con, "table1", new Integer(53), colNames, new Object[] {new Integer(53), new Integer(503)});
+            batch.addRow(con, "table1", new Integer(55), colNames, new Object[] {new Integer(55), new Integer(505)});
             batch.deleteRow(con, "table1", "col1", new Integer(12));
             batch.deleteRow(con, "table1", "col1", new Integer(13));
             batch.deleteRow(con, "table1", "col1", new Integer(15));
@@ -107,9 +108,9 @@ public abstract class BatchWriterTestCase extends TestCase
             batch.deleteRow(con, "table1", "col1", new Integer(42));
             batch.deleteRow(con, "table1", "col1", new Integer(43));
             batch.deleteRow(con, "table1", "col1", new Integer(45));
-            batch.addRow(con, "table1", new Integer(22), new String[] {"col1", "col2"}, new Object[] {new Integer(22), new Integer(222)});
-            batch.addRow(con, "table1", new Integer(23), new String[] {"col1", "col2"}, new Object[] {new Integer(23), new Integer(223)});
-            batch.addRow(con, "table1", new Integer(25), new String[] {"col1", "col2"}, new Object[] {new Integer(25), new Integer(225)});
+            batch.addRow(con, "table1", new Integer(22), colNames, new Object[] {new Integer(22), new Integer(222)});
+            batch.addRow(con, "table1", new Integer(23), colNames, new Object[] {new Integer(23), new Integer(223)});
+            batch.addRow(con, "table1", new Integer(25), colNames, new Object[] {new Integer(25), new Integer(225)});
             batch.flush(con);
             con.commit();
             s = con.createStatement();
@@ -180,9 +181,10 @@ public abstract class BatchWriterTestCase extends TestCase
             s = null;
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
-            batch.addRow(con, "table1", null, new String[] {"col1", "col2"}, new Object[] {new Integer(2), new Integer(202)});
-            batch.addRow(con, "table1", null, new String[] {"col1", "col2"}, new Object[] {new Integer(3), new Integer(203)});
-            batch.addRow(con, "table1", null, new String[] {"col1", "col2"}, new Object[] {new Integer(4), new Integer(204)});
+            String colNames[] = new String[] {"col1", "col2"};
+            batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(2), new Integer(202)});
+            batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(3), new Integer(203)});
+            batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(4), new Integer(204)});
             batch.flush(con);
             con.commit();
             s = con.createStatement();
@@ -370,8 +372,9 @@ public abstract class BatchWriterTestCase extends TestCase
             s = null;
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
+            String[] colNames = new String[] {"key", "int4"};
             for (int i = 0; i < 100000; i++) {
-                batch.addRow(con, "table1", new Integer(i), new String[] {"key", "int4"}, new Object[] {new Integer(i), new Integer(765234 * i)});
+                batch.addRow(con, "table1", new Integer(i), colNames, new Object[] {new Integer(i), new Integer(765234 * i)});
             }
             batch.flush(con);
             con.commit();
