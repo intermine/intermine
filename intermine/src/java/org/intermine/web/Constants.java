@@ -79,4 +79,9 @@ public interface Constants
      * The name of the attribute that is used to indicate advanced mode.
      */
     public static final String ADVANCED_MODE = "ADVANCED_MODE";
+
+    /**
+     * The name of the attribute that is used to store the Properties from web.properties.
+     */
+    public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
 }
