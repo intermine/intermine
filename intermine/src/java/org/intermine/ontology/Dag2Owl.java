@@ -186,7 +186,7 @@ public class Dag2Owl
             System.out .println("Starting Dag2Owl conversion from " + dagFilename + " to "
                     + owlFilename);
             DagParser parser = new DagParser();
-            Set rootTerms = parser.process(new FileReader(dagFile));
+            Set rootTerms = parser.processForClassHeirarchy(new FileReader(dagFile));
 
             DagValidator validator = new DagValidator();
             if (!validator.validate(rootTerms) && !errorFilename.equals("")) {
