@@ -12,13 +12,22 @@ package org.intermine.web.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.digester.*;
 
 import org.xml.sax.SAXException;
+
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+
 /**
  * Configuration object for web site
  *
@@ -33,12 +42,15 @@ public class WebConfig
      * Parse a WebConfig XML file
      *
      * @param is the InputStream to parse
+     * @param model the Model to use when reading - used for checking class names and for finding
+     * sub and super classes
      * @return a WebConfig object
      * @throws SAXException if there is an error in the XML file
      * @throws IOException if there is an error reading the XML file
+     * @throws ClassNotFoundException if a class is mentioned in the XML that isn't in the model
      */
-    public static WebConfig parse(InputStream is)
-        throws IOException, SAXException {
+    public static WebConfig parse(InputStream is, Model model)
+        throws IOException, SAXException, ClassNotFoundException {
 
         if (is == null) {
             throw new NullPointerException("Parameter 'is' cannot be null");
@@ -74,9 +86,12 @@ public class WebConfig
 
         digester.addSetNext("webconfig/exporter", "addExporter");
 
-        return (WebConfig) digester.parse(is);
+        WebConfig webConfig = (WebConfig) digester.parse(is);
 
-   }
+        webConfig.setSubClassConfig(model);
+
+        return webConfig;
+    }
 
     /**
      * Add a type to the WebConfig Map.  Use className as the key of the Map if fieldName of the
@@ -85,11 +100,7 @@ public class WebConfig
      * @param type the Type to add
      */
     public void addType(Type type) {
-        if (type.getFieldName() == null) {
-            types.put(type.getClassName(), type);
-        } else {
-            types.put(type.getClassName() + " " + type.getFieldName(), type);
-        }
+        types.put(type.getClassName(), type);
     }
 
     /**
@@ -140,6 +151,64 @@ public class WebConfig
      */
     public int hashCode() {
         return types.hashCode();
+    }
+
+    /**
+     * For each class/Type mentioned in XML files, copy it's displayers and FieldConfigs to all
+     * subclasses that don't already have any configuration.
+     * This method has package scope so that it can be called from the tests.
+     * @param model the Model to use to find sub-classes
+     * @throws ClassNotFoundException if any of the classes mentioned in the XML file aren't in the
+     * Model
+     */
+    void setSubClassConfig(Model model) throws ClassNotFoundException {
+        for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
+             modelIter.hasNext();) {
+            String className = (String) modelIter.next();
+            
+            Type thisClassType = (Type) types.get(className);
+
+            if (thisClassType == null) {
+                thisClassType = new Type();
+                thisClassType.setClassName(className);
+                types.put(className, thisClassType);
+            }
+
+            Set cds = model.getClassDescriptorsForClass(Class.forName(className));
+            List cdList = new ArrayList(cds);
+
+            for (Iterator cdIter = cdList.iterator(); cdIter.hasNext(); ) {
+                ClassDescriptor cd = (ClassDescriptor) cdIter.next();
+
+                if (className.equals(cd.getName())) {
+                    continue;
+                }
+
+                Type superClassType = (Type) types.get(cd.getName());
+
+                if (superClassType != null) {
+                    if (thisClassType.getFieldConfigs().size() == 0) {
+                        // copy any FieldConfigs from the super class
+                        Iterator fieldConfigIter = superClassType.getFieldConfigs().iterator();
+
+                        while (fieldConfigIter.hasNext()) {
+                            FieldConfig fc = (FieldConfig) fieldConfigIter.next();
+
+                            thisClassType.addFieldConfig(fc);
+                        }
+                    }
+
+                    if (thisClassType.getLongDisplayers().size() == 0) {
+                        Iterator longDisplayerIter = superClassType.getLongDisplayers().iterator();
+
+                        while (longDisplayerIter.hasNext()) {
+                            Displayer ld = (Displayer) longDisplayerIter.next();
+                            thisClassType.addLongDisplayer(ld);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
