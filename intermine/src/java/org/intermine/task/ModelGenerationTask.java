@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileWriter;
 
-import org.flymine.modelproduction.AbstractModelParser;
+import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.uml.XmiParser;
 import org.flymine.modelproduction.acedb.AceModelParser;
 import org.flymine.metadata.Model;
@@ -82,7 +82,7 @@ public class ModelGenerationTask extends Task
             throw new BuildException("source file (" + source + ") does not exist.");
         }
 
-        AbstractModelParser parser = null;
+        ModelParser parser = null;
         Model model = null;
 
         if (type.equals("xmi")) {
