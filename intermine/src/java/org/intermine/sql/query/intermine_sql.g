@@ -39,7 +39,9 @@ tokens {
     SUBQUERY_CONSTRAINT;
 }
 
-start_rule: sql_statement ;
+start_rule: sql ;
+
+sql: sql_statement ( sql_statement )*;
 
 sql_statement: #( SQL_STATEMENT 
             ( "explain" )?
@@ -99,15 +101,15 @@ field_alias: #( FIELD_ALIAS IDENTIFIER ) ;
 
 table: #( TABLE table_name ( table_alias )? ) ;
 
-subquery: #( SUBQUERY sql_statement table_alias ) ;
+subquery: #( SUBQUERY sql table_alias ) ;
 
 table_name: #( TABLE_NAME IDENTIFIER ) ;
 
 table_alias: #( TABLE_ALIAS IDENTIFIER ) ;
 
-constant: #( CONSTANT ( QUOTED_STRING | INTEGER ) ) ;
+constant: #( CONSTANT ( QUOTED_STRING | INTEGER | "null" ) ) ;
 
-field: #( FIELD table_alias field_name );
+field: #( FIELD (table_alias)? field_name );
 
 safe_function: #( SAFE_FUNCTION (
                 "count"
@@ -253,7 +255,7 @@ and_constraint_set:
         | ! #( tf:AND_CONSTRAINT_SET z:n_abstract_constraint )
             { #and_constraint_set = #z; } ;
 
-subquery_constraint: #( SUBQUERY_CONSTRAINT abstract_value sql_statement ) ;
+subquery_constraint: #( SUBQUERY_CONSTRAINT abstract_value sql ) ;
 
 comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
 
@@ -298,7 +300,9 @@ options {
     buildAST = true;
 }
 
-start_rule: sql_statement (SEMI!)?;
+start_rule: sql (SEMI!)?;
+
+sql: sql_statement ( "union"! sql_statement )*;
 
 sql_statement: select_command
         { #sql_statement = #([SQL_STATEMENT, "SQL_STATEMENT"], #sql_statement); }
@@ -393,18 +397,18 @@ table_name:
     ;
 
 subquery:
-        OPEN_PAREN! sql_statement CLOSE_PAREN! ( "as"! )? table_alias
+        OPEN_PAREN! sql CLOSE_PAREN! ( "as"! )? table_alias
         { #subquery = #([SUBQUERY, "SUBQUERY"], #subquery); }
     ;
 
 constant:
 //TODO: properly
-        ( QUOTED_STRING | INTEGER )
+        ( QUOTED_STRING | INTEGER | "null" )
         { #constant = #([CONSTANT, "CONSTANT"], #constant); }
     ;
 
 field:
-        table_alias DOT! field_name
+        ( table_alias DOT! )? field_name
         { #field = #([FIELD, "FIELD"], #field); }
     ;
 
@@ -466,7 +470,7 @@ and_constraint_set:
         { #and_constraint_set = #([AND_CONSTRAINT_SET, "AND_CONSTRAINT_SET"], #and_constraint_set); }
     ;
 
-subquery_constraint: abstract_value "in"! OPEN_PAREN! sql_statement CLOSE_PAREN!
+subquery_constraint: abstract_value "in"! OPEN_PAREN! sql CLOSE_PAREN!
         { #subquery_constraint = #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"],
                 #subquery_constraint); }
     ;

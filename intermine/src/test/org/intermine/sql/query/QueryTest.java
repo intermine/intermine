@@ -962,4 +962,45 @@ public class QueryTest extends TestCase
         Query q1 = new Query("select (5 - (6 + 7)) as a from t");
         assertEquals("SELECT (5 - (6 + 7)) AS a FROM t", q1.getSQLString());
     }
+
+    public void testAnonymousTableFields() throws Exception {
+        Query q1 = new Query("select field from table");
+        Query q2 = new Query();
+        Table t1 = new Table("table");
+        Field f1 = new Field("field", t1);
+        q2.addSelect(new SelectValue(f1, null));
+        q2.addFrom(t1);
+        assertEquals(q2, q1);
+        assertEquals("SELECT table.field FROM table", q1.getSQLString());
+    }
+
+    public void testUnion() throws Exception {
+        Query q1 = new Query("select table.field from table union select table2.field2 from table2");
+        Query q2 = new Query();
+        Query q3 = new Query();
+        Table t1 = new Table("table");
+        Table t2 = new Table("table2");
+        Field f1 = new Field("field", t1);
+        Field f2 = new Field("field2", t2);
+        q2.addSelect(new SelectValue(f1, null));
+        q2.addFrom(t1);
+        q3.addSelect(new SelectValue(f2, null));
+        q3.addFrom(t2);
+        q2.addToUnion(q3);
+        Query q4 = new Query("select table2.field2 from table2 union select table.field from table");
+        Query q5 = new Query("select table.field from table union select table.field from table");
+        Query q6 = new Query("select table.field from table");
+        Query q7 = new Query("select table.field from table union select table.field from table union select table2.field2 from table2");
+        assertEquals(q2, q1);
+        assertEquals(q2.hashCode(), q1.hashCode());
+        assertEquals("SELECT table.field FROM table UNION SELECT table2.field2 FROM table2", q1.getSQLString());
+        assertEquals(q1, q4);
+        assertEquals(q1.hashCode(), q4.hashCode());
+        assertTrue("Expected q1 and q5 to be not equal.", !q1.equals(q5));
+        assertTrue("Expected q1.hashCode to not equal q5.hashCode.", q1.hashCode() != q5.hashCode());
+        assertTrue("Expected q1 and q6 to be not equal.", !q1.equals(q6));
+        assertTrue("Expected q1.hashCode to not equal q6.hashCode.", q1.hashCode() != q6.hashCode());
+        assertTrue("Expected q1 and q7 to be not equal.", !q1.equals(q7));
+        assertTrue("Expected q1.hashCode to not equal q7.hashCode.", q1.hashCode() != q7.hashCode());
+    }
 }

@@ -35,8 +35,11 @@ public class Query implements SQLStringable
     protected int offset;
     protected boolean explain;
     protected boolean distinct;
+    protected List queriesInUnion;
 
     private Map aliasToTable;
+    private Map originalAliasToTable;
+    private AbstractTable onlyTable;
 
     /**
      * Construct a new Query.
@@ -52,7 +55,11 @@ public class Query implements SQLStringable
         offset = 0;
         explain = false;
         distinct = false;
+        queriesInUnion = new ArrayList();
+        queriesInUnion.add(this);
+        onlyTable = null;
         aliasToTable = new HashMap();
+        originalAliasToTable = new HashMap();
     }
 
     /**
@@ -65,6 +72,25 @@ public class Query implements SQLStringable
         this();
 
         this.aliasToTable.putAll(aliasToTable);
+        this.originalAliasToTable = aliasToTable;
+    }
+
+    /**
+     * Construct a new Query.
+     *
+     * @param aliasToTable a Map of tables in a surrounding query, which are in the scope of this
+     * query
+     * @param queriesInUnion a List of Queries which are in the currently-being-created UNION of
+     * queries, to which this constructor should add this
+     */
+    public Query(Map aliasToTable, List queriesInUnion) {
+        this();
+
+        this.aliasToTable.putAll(aliasToTable);
+        this.originalAliasToTable = aliasToTable;
+
+        queriesInUnion.add(this);
+        this.queriesInUnion = queriesInUnion;
     }
 
     /**
@@ -98,10 +124,7 @@ public class Query implements SQLStringable
                 }
             } while (!oldAst.equalsList(ast));
 
-            if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
-                throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
-            }
-            processAST(ast.getFirstChild());
+            processSqlStatementAST(ast);
         } catch (antlr.RecognitionException e) {
             throw (new IllegalArgumentException("Exception: " + e));
         } catch (antlr.TokenStreamException e) {
@@ -181,6 +204,7 @@ public class Query implements SQLStringable
     public void addFrom(AbstractTable obj) {
         from.add(obj);
         aliasToTable.put(obj.getAlias(), obj);
+        onlyTable = obj;
     }
 
     /**
@@ -288,11 +312,40 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Adds another Query to the UNION set of this query.
+     *
+     * @param query the Query to UNION with this Query
+     */
+    public void addToUnion(Query query) {
+        queriesInUnion.addAll(query.queriesInUnion);
+    }
+
+    /**
      * Convert this Query into a SQL String query.
      *
      * @return this Query in String form
      */
     public String getSQLString() {
+        boolean needComma = false;
+        String retval = "";
+        Iterator queryIter = queriesInUnion.iterator();
+        while (queryIter.hasNext()) {
+            Query q = (Query) queryIter.next();
+            if (needComma) {
+                retval += " UNION ";
+            }
+            needComma = true;
+            retval += q.getSQLStringNoUnion();
+        }
+        return retval;
+    }
+
+    /** Convert this Query into a SQL String query, without regard to the other members of the
+     * UNION.
+     *
+     * @return this Query in String form
+     */
+    public String getSQLStringNoUnion() {
         return (explain ? "EXPLAIN " : "") + "SELECT " + (distinct ? "DISTINCT " : "")
             + collectionToSQLString(select, ", ")
             + (from.isEmpty() ? "" : " FROM " + collectionToSQLString(from, ", "))
@@ -336,6 +389,43 @@ public class Query implements SQLStringable
     public boolean equals(Object obj) {
         if (obj instanceof Query) {
             Query q = (Query) obj;
+            // Now, we need to check that the two queriesInUnion Lists are equivalent, without ever
+            // calling the .equals() method of the Query objects in the List.
+            if (queriesInUnion.size() != q.queriesInUnion.size()) {
+                return false;
+            }
+            boolean used[] = new boolean[queriesInUnion.size()];
+            for (int i = 0; i < queriesInUnion.size(); i++) {
+                used[i] = false;
+            }
+            for (int i = 0; i < queriesInUnion.size(); i++) {
+                Query thisQ = (Query) queriesInUnion.get(i);
+                boolean notFound = true;
+                for (int o = 0; (o < queriesInUnion.size()) && notFound; o++) {
+                    Query thatQ = (Query) q.queriesInUnion.get(o);
+                    if (thisQ.equalsNoUnion(thatQ) && (!used[o])) {
+                        notFound = false;
+                        used[o] = true;
+                    }
+                }
+                if (notFound) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if this Query is equivalent to obj, disregarding other queries in the UNION.
+     *
+     * @param obj the object to compare to
+     * @return true if equal
+     */
+    public boolean equalsNoUnion(Object obj) {
+        if (obj instanceof Query) {
+            Query q = (Query) obj;
             return select.equals(q.select) && from.equals(q.from) && where.equals(q.where)
                 && groupBy.equals(q.groupBy) && having.equals(q.having) && orderBy.equals(q.orderBy)
                 && (limit == q.limit) && (offset == q.offset) && (explain == q.explain)
@@ -350,12 +440,41 @@ public class Query implements SQLStringable
      * @return an arbitrary integer created from the contents of the Query
      */
     public int hashCode() {
+        int retval = 0;
+        for (int i = 0; i < queriesInUnion.size(); i++) {
+            retval += ((Query) queriesInUnion.get(i)).hashCodeNoUnion();
+        }
+        return retval;
+    }
+
+    /**
+     * Returns a partial hashcode, ignoring other queries in the union.
+     *
+     * @return an integer
+     */
+    public int hashCodeNoUnion() {
         return (3 * select.hashCode()) + (5 * from.hashCode())
             + (7 * where.hashCode()) + (11 * groupBy.hashCode())
             + (13 * having.hashCode()) + (17 * orderBy.hashCode()) + (19 * limit) + (23 * offset)
             + (explain ? 29 : 0) + (distinct ? 31 : 0);
     }
 
+    /**
+     * Processes a SQL_STATEMENT AST node produced by antlr.
+     *
+     * @param ast an AST node to process
+     */
+    private void processSqlStatementAST(AST ast) {
+        if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
+            throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
+        }
+        processAST(ast.getFirstChild());
+        ast = ast.getNextSibling();
+        if ((ast != null) && (ast.getType() == SqlTokenTypes.SQL_STATEMENT)) {
+            (new Query(originalAliasToTable, queriesInUnion)).processSqlStatementAST(ast);
+        }
+    }
+    
     /**
      * Processes an AST node produced by antlr, at the top level of the SQL query.
      *
@@ -467,7 +586,9 @@ public class Query implements SQLStringable
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.SQL_STATEMENT:
-                    subquery = ast.getFirstChild();
+                    if (subquery == null) {
+                        subquery = ast;
+                    }
                     break;
                 case SqlTokenTypes.TABLE_ALIAS:
                     alias = ast.getFirstChild().getText();
@@ -479,7 +600,7 @@ public class Query implements SQLStringable
             ast = ast.getNextSibling();
         } while (ast != null);
         Query q = new Query(aliasToTable);
-        q.processAST(subquery);
+        q.processSqlStatementAST(subquery);
         addFrom(new SubQuery(q, alias));
     }
 
@@ -600,7 +721,12 @@ public class Query implements SQLStringable
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        AbstractTable t = (AbstractTable) aliasToTable.get(table);
+        AbstractTable t = null;
+        if (table == null) {
+            t = onlyTable;
+        } else {
+            t = (AbstractTable) aliasToTable.get(table);
+        }
         return new Field(field, t);
     }
 
@@ -837,7 +963,7 @@ public class Query implements SQLStringable
                     throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
                 }
                 Query rightb = new Query(aliasToTable);
-                rightb.processAST(subAST.getFirstChild());
+                rightb.processSqlStatementAST(subAST);
                 return new SubQueryConstraint(leftb, rightb);
             default:
                 throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -898,7 +1024,7 @@ public class Query implements SQLStringable
             throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
         }
         Query q = new Query();
-        q.processAST(ast.getFirstChild());
+        q.processSqlStatementAST(ast);
 
         out.println("\n" + q.getSQLString());
         out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
