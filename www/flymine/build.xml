@@ -19,7 +19,7 @@
         </fileset>
     </copy>
 
-    <copy todir="${build.www}">
+    <copy todir="${build.www}" overwrite="true">
         <fileset dir="${src.www}">
             <include name="**/*"/>
         </fileset>
