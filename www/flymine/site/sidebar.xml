@@ -6,6 +6,18 @@
         <item><ulink url="/funding">Funding</ulink></item>
     </section>
     <section>
+        <heading>Documentation</heading>
+        <item><ulink url="/system">System</ulink></item>
+        <item><ulink url="/user">User</ulink></item>
+        <item><ulink url="/developer">Developer</ulink></item>
+    </section>
+    <section>
+        <heading><ulink url="/user/building">Download</ulink></heading>
+        <item><ulink url="http://download.flymine.org/releases/">Latest<nbsp/>release</ulink></item>
+        <item><ulink url="http://download.flymine.org/nightly/">Nightly<nbsp/>build</ulink></item>
+        <item><ulink url="/user/cvs">CVS</ulink></item>
+    </section>
+    <section>
         <heading><ulink url="http://mailman.flymine.org/listinfo/">Mailing<nbsp/>lists</ulink></heading>
     </section>
     <section>
