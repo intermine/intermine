@@ -568,6 +568,7 @@
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
+          <exclude name="org/flymine/dataloader/**" />
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
         </fileset>
