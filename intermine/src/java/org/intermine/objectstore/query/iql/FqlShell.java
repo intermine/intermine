@@ -119,7 +119,10 @@ public class FqlShell
         out.println("End your query with \";\" then a newline. Other newlines are ignored");
         out.flush();
         String currentQuery = "";
-        String lastQuery = Readline.getHistoryLine(Readline.getHistorySize() - 1);
+        String lastQuery = null;
+        if (Readline.getHistorySize() > 0) {
+            lastQuery = Readline.getHistoryLine(Readline.getHistorySize() - 1);
+        }
         //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         do {
             //currentQuery += in.readLine();
