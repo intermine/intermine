@@ -32,8 +32,12 @@
     <tiles:get name="header"/>
     <tiles:get name="menu"/>
     <div id="pagecontent">
+    
       <%-- Render messages --%>
       <tiles:get name="errorMessages"/>
+      <%-- Context help bar --%>
+      <tiles:insert page="/contextHelp.jsp"/>
+      
       <%-- Construct help page key --%>
       <fmt:message key="${pageName}.help" var="help"/>
       <c:if test="${!empty help}">
