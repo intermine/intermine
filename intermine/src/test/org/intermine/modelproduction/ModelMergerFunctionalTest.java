@@ -11,13 +11,10 @@ package org.intermine.modelproduction;
  */
 
 import java.io.StringReader;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
