@@ -179,7 +179,7 @@ public class UpdatePublications
                     publication.setAttribute("year", year);
                 } catch (NumberFormatException e) {
                     LOG.warn("Publication: " + publication + " has a year that cannot be parsed"
-                             " to an Integer: " + year);
+                             + " to an Integer: " + year);
                 }
             } else if ("Source".equals(name)) {
                 publication.setAttribute("journal", characters.toString());
