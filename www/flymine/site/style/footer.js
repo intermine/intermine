@@ -51,8 +51,14 @@ window.onresize = function() {
 
 // Change of font size
 window.onmouseover = function() {
-    if (_footerHeight!=document.getElementById('footer').offsetHeight) {
-        setFooter();
+    if (document.getElementById) {
+        if (_footerHeight!=document.getElementById('footer').offsetHeight) {
+            // Not needed for Opera
+            if (navigator.userAgent.indexOf('Opera') == -1)
+                setFooter();
+            else
+                _footerHeight=document.getElementById('footer').offsetHeight;
+        }
     }
 }
 
