@@ -66,15 +66,15 @@
             <c:choose>
               <c:when test="${column.visible}">
                 <c:choose>
-                  <c:when test="${(status.count == 1) || (row[column.index] != prevrow[column.index])}">
+                  <c:when test="${(status.count == 1) || (row[status2.index] != prevrow[status2.index])}">
                     <%-- the checkbox to select this object --%>
                     <td align="center" width="1">
                       <html:multibox property="selectedObjects">
-                        <c:out value="${column.index},${status.index}"/>
+                        <c:out value="${status2.index},${status.index}"/>
                       </html:multibox>
                     </td>
                     <td>
-                      <c:set var="object" value="${row[column.index]}" scope="request"/>
+                      <c:set var="object" value="${row[status2.index]}" scope="request"/>
                       <tiles:get name="resultsCell.tile" />
                     </td>
                   </c:when>
@@ -93,6 +93,7 @@
       </c:forEach>
     </c:if>
   </table>
+  <br/>
 
   <%-- "Displaying xxx to xxx of xxx rows" messages --%>
   <c:choose>
