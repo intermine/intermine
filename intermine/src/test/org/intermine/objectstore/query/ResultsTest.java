@@ -52,10 +52,20 @@ public class ResultsTest extends TestCase
     }
 
     public void testGetOutOfBounds() throws Exception {
-
         Results res = os.execute(new Query());
         try {
             res.get(10);
+            fail("Expected IndexOutOfBoundsException");
+        }
+        catch (IndexOutOfBoundsException e) {
+        }
+    }
+
+    public void testRangeOutOfBounds() throws Exception {
+        Results res = os.execute(new Query());
+        res.setBatchSize(5);
+        try {
+            res.range(6,11);
             fail("Expected IndexOutOfBoundsException");
         }
         catch (IndexOutOfBoundsException e) {
@@ -68,9 +78,9 @@ public class ResultsTest extends TestCase
         ResultsRow row = (ResultsRow) res.get(6);
         assertEquals(1, os.getExecuteCalls());
         assertEquals("6", (String) row.get(0));
-         row = (ResultsRow) res.get(3);
-         assertEquals(2, os.getExecuteCalls());
-         assertEquals("3", (String) row.get(0));
+        row = (ResultsRow) res.get(3);
+        assertEquals(2, os.getExecuteCalls());
+        assertEquals("3", (String) row.get(0));
     }
 
     public void testInvalidRange() throws Exception {
@@ -139,6 +149,10 @@ public class ResultsTest extends TestCase
         }
     }
 
+    public void testSize() throws Exception {
+        Results res = os.execute(new Query());
+        assertEquals(10, res.size());
+    }
 
     public void testSetBatchSize() throws Exception {
         Results res = os.execute(new Query());
@@ -158,6 +172,29 @@ public class ResultsTest extends TestCase
 
     }
 
+    public void testFetchBatchFromObjectStore() throws Exception {
+        Results res = os.execute(new Query());
+        res.setBatchSize(7);
+
+        // Fetch the first batch - will be a full batch
+        res.fetchBatchFromObjectStore(0);
+        assertEquals(1, os.getExecuteCalls());
+        assertTrue(res.batches.containsKey(new Integer(0)));
+
+        // Fetch the second batch - will be partial, but will now know size
+        res.fetchBatchFromObjectStore(1);
+        assertEquals(10, res.size);
+        assertEquals(2, os.getExecuteCalls());
+        assertTrue(res.batches.containsKey(new Integer(1)));
+
+        try {
+            res.fetchBatchFromObjectStore(2);
+            fail("Expected IndexOutOfBoundsException");
+        } catch (IndexOutOfBoundsException e) {
+        }
+    }
+
+
     public void testSetBatchSizeWhenInitialised() throws Exception {
         Results res = os.execute(new Query());
         res.setBatchSize(10);
@@ -176,7 +213,7 @@ public class ResultsTest extends TestCase
         // Create a Department object with a LazyCollection
         Department dept = getDeptExampleObject();
 
-        // build a List of ResultsRows to simulate call to promotProxies
+        // build a List of ResultsRows to simulate call to promoteProxies
         ResultsRow rr = new ResultsRow();
         rr.add(dept);
         List list = new ArrayList(1);
