@@ -34,7 +34,7 @@ public class PrefetchManager
     protected static final Logger LOG = Logger.getLogger(PrefetchManager.class);
 
     protected static final int LOADING = 3;
-        
+
     /**
      * Adds a request to the Set of pending requests, and wakes up a Thread to handle it.
      *
@@ -58,6 +58,7 @@ public class PrefetchManager
                         if ((pending.size() + serviced.size()) > (serviceThreads * LOADING)) {
                             // There are too many requests for the servicing threads.
                             Thread newThread = new ServiceThread();
+                            newThread.setDaemon(true);
                             newThread.start();
                             serviceThreads++;
                             LOG.info("addRequest - creating new ServiceThread. We now have "
@@ -150,7 +151,7 @@ public class PrefetchManager
         // 2. We need to do the request ourselves. In this case, we set the PrefetchManager state
         //     so that anything else to do with this request waits for us rather than changing the
         //     state while we were in the synchronised block.
-        
+
         if (needToWait) {
             synchronized (request.result) {
                 // We are synchronised. Now, no thread can report that the request is finished until
