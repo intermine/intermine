@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.flymine.objectstore.*;
 import org.flymine.objectstore.query.*;
-import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
 
 /**
@@ -203,29 +202,14 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * Returns an empty ExplainResult object
+     * Returns an empty ResultsInfo object
      *
      * @param q the query to estimate rows for
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q) throws ObjectStoreException {
-        return new ExplainResult();
-    }
-
-    /**
-     * returns an empty ExplainResult object
-     *
-     * @param q the query to explain
-     * @param start first row required, numbered from zero
-     * @param limit the maximum number of rows to be returned
-     * @param optimise true if the query should be optimised
-     * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explaining the query
-     */
-    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
-        throws ObjectStoreException {
-        return new ExplainResult();
+    public ResultsInfo estimate(Query q) throws ObjectStoreException {
+        return new ResultsInfo(0, 0, 0);
     }
 
     /**

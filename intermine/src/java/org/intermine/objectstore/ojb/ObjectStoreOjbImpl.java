@@ -27,6 +27,7 @@ import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.metadata.Model;
 
@@ -138,18 +139,16 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * gives estimated time for a single 'page' of the query.
      *
      * @param q the query to explain
-     * @param start first row required, numbered from zero
-     * @param limit the maximum number of rows to return
-     * @param optimise true if the query should be optimised
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
+    public ResultsInfo estimate(Query q)
             throws ObjectStoreException {
         PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
-        ExplainResult result = pb.explain(q, start, limit, optimise);
+        ExplainResult result = pb.explain(q, 0, Integer.MAX_VALUE - 1, true);
         pb.close();
-        return result;
+        return new ResultsInfo(result.getStart(), result.getComplete(),
+                (int) result.getEstimatedRows());
     }
 
     /**

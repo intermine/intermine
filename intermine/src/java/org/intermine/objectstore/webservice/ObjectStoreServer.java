@@ -20,9 +20,9 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
-import org.flymine.sql.query.ExplainResult;
+import org.flymine.objectstore.query.ResultsInfo;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.metadata.Model;
 import org.flymine.util.PropertiesUtil;
 
@@ -156,24 +156,8 @@ public class ObjectStoreServer
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(int queryId) throws ObjectStoreException {
+    public ResultsInfo estimate(int queryId) throws ObjectStoreException {
         return os.estimate(lookupResults(queryId).getQuery());
-    }
-
-    /**
-     * Explain a Query with specified start and limit parameters.
-     * This gives estimated time for a single 'page' of the query.
-     *
-     * @param queryId the query to explain
-     * @param start first row required, numbered from zero
-     * @param limit the maximum number og rows to return
-     * @param optimise whether to optimise
-     * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explaining the query
-     */
-    public ExplainResult estimate(int queryId, int start, int limit, boolean optimise)
-            throws ObjectStoreException {
-        return os.estimate(lookupResults(queryId).getQuery(), start, limit, optimise);
     }
 
     /**

@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
-import org.flymine.sql.query.ExplainResult;
+import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.metadata.Model;
 
 /**
@@ -111,21 +111,7 @@ public interface ObjectStore
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q) throws ObjectStoreException;
-
-    /**
-     * Explain a Query with specified start and limit parameters.
-     * This gives estimated time for a single 'page' of the query.
-     *
-     * @param q the query to explain
-     * @param start first row required, numbered from zero
-     * @param limit the maximum number og rows to return
-     * @param optimise true if it is expected that optimising the query will improve performance
-     * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explaining the query
-     */
-    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
-        throws ObjectStoreException;
+    public ResultsInfo estimate(Query q) throws ObjectStoreException;
 
     /**
      * Counts the number of rows the query will produce

@@ -18,12 +18,12 @@ import java.math.BigDecimal;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.sql.query.ExplainResult;
 
 import org.flymine.model.testmodel.*;
 
@@ -201,16 +201,9 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     // estimate tests
 
     public void testEstimateQueryNotNull() throws Exception {
-        ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"));
+        ResultsInfo er = os.estimate((Query)queries.get("WhereClassClass"));
         if (er == null) {
-            fail("a null ExplainResult was returned");
-        }
-    }
-
-    public void testEstimateStartEndNotNull() throws Exception {
-        ExplainResult er = os.estimate((Query)queries.get("WhereClassClass"), 0, 10, true);
-        if (er == null) {
-            fail("a null ExplainResult was returned");
+            fail("a null ResultsInfo was returned");
         }
     }
 

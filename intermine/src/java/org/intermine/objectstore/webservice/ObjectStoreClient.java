@@ -24,8 +24,8 @@ import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 
@@ -175,19 +175,12 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      * This gives estimated time for a single 'page' of the query.
      *
      * @param q the query to explain
-     * @param start first row required, numbered from zero
-     * @param limit the maximum number og rows to return
-     * @param optimise true if the query should be optimised
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ExplainResult estimate(Query q, int start, int limit, boolean optimise)
-        throws ObjectStoreException {
+    public ResultsInfo estimate(Query q) throws ObjectStoreException {
         int queryId = getQueryId(q);
-        return (ExplainResult) remoteMethod("estimate", new Object [] {new Integer(queryId),
-                                                                       new Integer(start),
-                                                                       new Integer(limit),
-                                                                       new Boolean(optimise)});
+        return (ResultsInfo) remoteMethod("estimate", new Object [] {new Integer(queryId)});
     }
 
     /**

@@ -17,7 +17,6 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.sql.query.ExplainResult;
 import org.flymine.util.CacheMap;
 import org.flymine.util.PropertiesUtil;
 
@@ -172,17 +171,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         synchronized (cache) {
             cache.clear();
         }
-    }
-
-    /**
-     * Runs an EXPLAIN on the query without and LIMIT or OFFSET.
-     *
-     * @param q the query to estimate rows for
-     * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explining the query
-     */
-    public ExplainResult estimate(Query q) throws ObjectStoreException {
-        return estimate(q, 0, Integer.MAX_VALUE - 1, true);
     }
 
     /**

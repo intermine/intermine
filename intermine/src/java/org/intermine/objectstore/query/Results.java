@@ -46,6 +46,8 @@ public class Results extends AbstractList
     protected int minSize = 0;
     // TODO: update this to use ObjectStore.getMaxRows().
     protected int maxSize = Integer.MAX_VALUE;
+    // -1 stands for "not estimated yet"
+    protected int estimatedSize = -1;
     protected int originalMaxSize = maxSize;
     protected int batchSize = 100;
     protected boolean initialised = false;
@@ -116,7 +118,7 @@ public class Results extends AbstractList
 
         // If we know the size of the results (ie. have had a last partial batch), check that
         // the end is within range
-        if ((minSize == maxSize) && (end >= maxSize)) {
+        if (end >= maxSize) {
             throw new IndexOutOfBoundsException("End = " + end + ", size = " + maxSize);
         }
 
