@@ -86,6 +86,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
         PathQuery query = new PathQuery(os.getModel());
         session.setAttribute(Constants.QUERY, query);
         session.setAttribute("path", TypeUtil.unqualifiedName(className));
+        session.removeAttribute("prefix");
     }
     
     /**
