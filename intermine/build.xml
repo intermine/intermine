@@ -952,7 +952,7 @@
   <!-- Releasing targets -->
 
   <!-- website -->
-  <target name="release-www" depends="dist-javadoc, dist-www"
+  <target name="release-www" depends="dist-www, dist-javadoc"
     description="releases the static website to the webserver">
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
