@@ -64,7 +64,7 @@ public abstract class InterMineLookupDispatchAction extends LookupDispatchAction
      * Add the given ActionMessage as an error for this Action and log the error
      * @param actionMessage the message to save
      * @param request the HTTP request we are processing
-     * @param e the Exception that caused this error
+     * @param exception the Exception that caused this error
      * @param logger the Logger to write the error message to
      */
     public void recordError(ActionMessage actionMessage, HttpServletRequest request,
