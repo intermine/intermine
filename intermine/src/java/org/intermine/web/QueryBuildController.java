@@ -34,7 +34,6 @@ import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
-import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.objectstore.query.*;
 import org.flymine.util.TypeUtil;
 
@@ -53,142 +52,80 @@ public class QueryBuildController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        // this method sets up things used by queryBuild.jsp to render the query.
-        // these include constraint names, valid ops and suitable values for each type of
-        // constraint, queryclass aliases and the cld (metadata for the active queryclass)
         HttpSession session = request.getSession();
-        QueryBuildForm qbf = (QueryBuildForm) form;
 
-        QueryClass qc = (QueryClass) session.getAttribute("queryClass");
-        if (qc != null) {
-            Model model = ((DisplayModel) session.getAttribute("model")).getModel();
-            ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
-            if (cld == null) {
-                throw new Exception("ClassDescriptor (" + qc.getType().getName()
-                                    + ") not found in model (" + model.getName() + ")");
-            }
+        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        String editingAlias = (String) session.getAttribute("editingAlias");
+        Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
+        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+        Query q = (Query) session.getAttribute("query");
 
-            Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
-            Map constraints = (Map) session.getAttribute("constraints");
-            Map aliases = null;
-            Query q = (Query) session.getAttribute("query");
-            if (q != null) {
-                populateForm(qbf, ConstraintHelper.createList(q, qc), q.getAliases(),
-                             savedBagsInverse);
-                if (constraints == null) {
-                    constraints = mapConstraints(qbf.getFieldValues().keySet());
+        if (queryClasses == null) {
+            session.setAttribute("queryClasses", new LinkedHashMap());
+        }
+        
+        //there's a query on the session but it hasn't been rendered yet
+        if (q != null) {
+            queryClasses = new HashMap();
+            for (Iterator i = q.getFrom().iterator(); i.hasNext();) {
+                FromElement fe = (FromElement) i.next();
+                if (!(fe instanceof QueryClass)) {
+                    continue;
                 }
-                aliases = getAliases(cld, q);
-                request.setAttribute("aliasStr", q.getAliases().get(qc));
+                QueryClass qc = (QueryClass) fe;
+                
+                queryClasses.put((String) q.getAliases().get(qc),
+                                 toDisplayable(qc, q, savedBagsInverse));
             }
+
+            session.setAttribute("queryClasses", queryClasses);
+            session.setAttribute("query", null);
+        }
+
+        //we are editing a QueryClass - render it as a form
+        if (editingAlias != null) {
+            String type = ((DisplayQueryClass) queryClasses.get(editingAlias)).getType();
+            ClassDescriptor cld = model.getClassDescriptorByName(type);
             
-            session.setAttribute("constraints", constraints != null ? constraints : new HashMap());
-            request.setAttribute("aliases", aliases != null ? aliases : new HashMap());
-            request.setAttribute("ops", getOps(cld, savedBagsInverse != null
-                                               && savedBagsInverse.size() > 0));
-            request.setAttribute("cld", cld);
+            DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
+            QueryBuildForm qbf = (QueryBuildForm) form;
+            qbf.setFieldOps(toStrings(d.getFieldOps()));
+            qbf.setFieldValues(toStrings(d.getFieldValues()));
+            
+            session.setAttribute("validOps", getValidOps(cld, false));
+            session.setAttribute("allFieldNames", getAllFieldNames(cld));
         }
 
         return null;
     }
-
+    
     /**
-     * Take a collection of constraintNames and return a Map from constraintName to fieldName
-     * @param keys a collection of constraintNames
-     * @return the Map
+     * Take a Map and convert all its values to Strings using toString()
+     * @param input the input Map
+     * @return the output Map
      */
-    protected static Map mapConstraints(Collection keys) {
-        Map constraints = new HashMap();
-        for (Iterator i = keys.iterator(); i.hasNext();) {
-            String constraintName = (String) i.next();
-            String fieldName = constraintName.substring(0, constraintName.lastIndexOf("_"));
-            constraints.put(constraintName, fieldName);
+    protected static Map toStrings(Map input) {
+        Map output = new HashMap();
+        for (Iterator i = input.keySet().iterator(); i.hasNext();) {
+            Object key = i.next();
+            output.put(key, input.get(key).toString());
         }
-        return constraints;
+        return output;
     }
 
     /**
-     * Iterate through a list of Constraints, inserting the op and value of each into the form
-     * keyed by constraintName
-     * @param form the ActionForm used in building the query
-     * @param constraints a List of Contraints on this QueryClass
-     * @param aliasMap Map of QueryClass to alias in the query
-     * @param savedBagsInverse an identity Map from bag to bag name
+     * Take a ClassDescriptor and return a List of the names of all its fields
+     * @param cld the ClassDescriptor
+     * @return the relevant List
      */
-    protected static void populateForm(QueryBuildForm form, List constraints, Map aliasMap,
-                                      Map savedBagsInverse) {
-        //map from fieldName to number of constraints on that field so far
-        Map fieldNums = new HashMap();
-
-        for (Iterator iter = constraints.iterator(); iter.hasNext();) {
-            Constraint c = (Constraint) iter.next();
-            String fieldName = null;
-            String fieldValue = null;
-            if (c instanceof SimpleConstraint) {
-                SimpleConstraint sc = (SimpleConstraint) c;
-                if ((sc.getArg1() instanceof QueryField)  && (sc.getArg2() instanceof QueryValue)) {
-                    fieldName = ((QueryField) sc.getArg1()).getFieldName();
-                    fieldValue = ((QueryValue) sc.getArg2()).getValue().toString();
-                }
-             } else if (c instanceof ContainsConstraint) {
-                 ContainsConstraint cc = (ContainsConstraint) c;
-                 fieldName = cc.getReference().getFieldName();
-                 fieldValue = (String) aliasMap.get(cc.getQueryClass());
-             } else if (c instanceof BagConstraint) {
-                 BagConstraint bc = (BagConstraint) c;
-                 if (bc.getQueryNode() instanceof QueryField) {
-                     fieldName = ((QueryField) bc.getQueryNode()).getFieldName();
-                     fieldValue = (String) savedBagsInverse.get(bc.getBag());
-                 }
-            }
-
-            if (fieldName != null) {
-                Integer num = (Integer) fieldNums.get(fieldName);
-                if (num == null) {
-                    num = new Integer(0);
-                } else {
-                    num = new Integer(num.intValue() + 1);
-                }
-                fieldNums.put(fieldName, num);
-                String constraintName = fieldName + "_" + num;
-                form.setFieldOp(constraintName, c.getOp().getIndex());
-                form.setFieldValue(constraintName, fieldValue);
-            }
+    protected static List getAllFieldNames(ClassDescriptor cld) {
+        List allFieldNames = new ArrayList();
+        for (Iterator i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
+            allFieldNames.add(((FieldDescriptor) i.next()).getName());
         }
+        return allFieldNames;
     }
-
-    /**
-     * Iterate through each reference field of a class, building up a map from field name to a list
-     * of class aliases in the query that could be part of a contains constraint on that field
-     * @param cld metadata for the active QueryClass
-     * @param q the active Query
-     * @return the revelant Map
-     */
-    protected static Map getAliases(ClassDescriptor cld, Query q) {
-        Map values = new HashMap();
-
-        for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext();) {
-            FieldDescriptor fd = (FieldDescriptor) iter.next();
-            if (fd.isReference() || fd.isCollection()) {
-                List aliases = (List) values.get(fd.getName());
-                if (aliases == null) {
-                    aliases = new ArrayList();
-                    values.put(fd.getName(), aliases);
-                }
-                Class type = ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getType();
-                for (Iterator i = q.getFrom().iterator(); i.hasNext();) {
-                    FromElement e = (FromElement) i.next();
-                    if (e instanceof QueryClass
-                        && type.isAssignableFrom(((QueryClass) e).getType())) {
-                        aliases.add(q.getAliases().get((QueryClass) e));
-                    }
-                }
-            }
-        }
-
-        return values;
-    }
-
+    
     /**
      * This method returns a map from field names to a map of operation codes to operation strings
      * For example 'name' -> 0 -> 'EQUALS'
@@ -196,10 +133,10 @@ public class QueryBuildController extends TilesAction
      * @param bagsPresent true if there are bags in the session, meaning extra valid ConstraintOps
      * @return the map
      */
-    protected static Map getOps(ClassDescriptor cld, boolean bagsPresent) {
+    protected static Map getValidOps(ClassDescriptor cld, boolean bagsPresent) {
         Map fieldOps = new HashMap();
 
-        //attributes
+        //attributes - allow valid ops for simpleconstraints plus IN/NOT IN if bags present
         for (Iterator iter = cld.getAllAttributeDescriptors().iterator(); iter.hasNext();) {
             AttributeDescriptor attr = (AttributeDescriptor) iter.next();
             List validOps = SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType()));
@@ -210,7 +147,7 @@ public class QueryBuildController extends TilesAction
             fieldOps.put(attr.getName(), mapOps(ops));
         }
 
-        //references and collections
+        //references and collections - allow valid ops for containsconstraints
         Map opString = mapOps(ContainsConstraint.VALID_OPS);
         for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) iter.next();
@@ -235,5 +172,103 @@ public class QueryBuildController extends TilesAction
             opString.put(op.getIndex(), op.toString());
         }
         return opString;
-    } 
+    }
+
+    /**
+     * Convert a QueryClass to a DisplayableQueryClass
+     * @param qc the QueryClass
+     * @param q the Query the QueryClass is a part of
+     * @param savedBagsInverse a map from bag to bag name for name resolution
+     * @return a DisplayQueryClass
+     */
+    protected static DisplayQueryClass toDisplayable(QueryClass qc, Query q, Map savedBagsInverse) {
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(qc.getType().getName());
+
+        //fieldNames and constraintNames
+        Map fieldNums = new HashMap();
+        
+        for (Iterator i = ConstraintHelper.createList(q, qc).iterator(); i.hasNext();) {
+            String fieldName = null;
+            Object fieldValue = null;
+            Constraint c = (Constraint) i.next();
+            if (c instanceof SimpleConstraint) {
+                SimpleConstraint sc = (SimpleConstraint) c;
+                if ((sc.getArg1() instanceof QueryField)  && (sc.getArg2() instanceof QueryValue)) {
+                    fieldName = ((QueryField) sc.getArg1()).getFieldName();
+                    fieldValue = ((QueryValue) sc.getArg2()).getValue();
+                }
+            } else if (c instanceof ContainsConstraint) {
+                ContainsConstraint cc = (ContainsConstraint) c;
+                fieldName = cc.getReference().getFieldName();
+                fieldValue = (String) q.getAliases().get(cc.getQueryClass());
+            } else if (c instanceof BagConstraint) {
+                BagConstraint bc = (BagConstraint) c;
+                if (bc.getQueryNode() instanceof QueryField) {
+                    fieldName = ((QueryField) bc.getQueryNode()).getFieldName();
+                    fieldValue = (String) savedBagsInverse.get(bc.getBag());
+                }
+            }
+            
+            Integer num = (Integer) fieldNums.get(fieldName);
+            if (num == null) {
+                num = new Integer(0);
+            } else {
+                num = new Integer(num.intValue() + 1);
+            }
+            fieldNums.put(fieldName, num);
+            String constraintName = fieldName + "_" + num;
+            d.getConstraintNames().add(constraintName);
+            d.setFieldName(constraintName, fieldName);
+            d.setFieldOp(constraintName, c.getOp());
+            d.setFieldValue(constraintName, fieldValue);
+        }
+
+        return d;
+    }
+
+    /**
+     * Give a class name a unique alias given the existing aliases (eg Company -> Company_3)
+     * @param existingAliases the Collection of existing aliases
+     * @param type the class name
+     * @return a new alias
+     */
+    protected static String aliasClass(Collection existingAliases, String type) {
+        String prefix = toAlias(type);
+        int max = 0;
+        for (Iterator i = existingAliases.iterator(); i.hasNext();) {
+            String alias = (String) i.next();
+            if (alias.substring(0, alias.lastIndexOf("_")).equals(prefix)) {
+                int suffix = Integer.valueOf(alias.substring(alias.lastIndexOf("_") + 1))
+                    .intValue();
+                if (suffix >= max) {
+                    max = suffix + 1;
+                }
+            }
+        }
+        return prefix + "_" + max;
+    }
+
+    /**
+     * Convert a class name to a alias prefix
+     * @param type the class name
+     * @return a suitable prefix for an alias
+     */
+    protected static String toAlias(String type) {
+        return TypeUtil.unqualifiedName(type);
+    }
+
+    /**
+     * Add a new DisplayQueryClass of type className to the current query
+     * @param queryClasses the exiting queryClasses
+     * @param className the class name
+     */
+    protected static void addClass(Map queryClasses, String className) {
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(className);
+
+        String alias = aliasClass(queryClasses.keySet(), className);
+        queryClasses.put(alias, d);
+    }
 }
+

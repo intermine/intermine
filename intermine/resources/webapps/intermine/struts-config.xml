@@ -4,11 +4,6 @@
           "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
           "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
-<!--
-     This is the Struts configuration file for the example application,
-     using the proposed new syntax.
--->
-
 <struts-config>
 
   <!-- ========== Form Bean Definitions =================================== -->
@@ -16,36 +11,37 @@
   <form-beans>
 
     <!-- QueryBuild form bean -->
-    <form-bean      name="queryBuildForm"
-                    type="org.flymine.web.QueryBuildForm"/>
+    <form-bean name="queryBuildForm"
+               type="org.flymine.web.QueryBuildForm"/>
 
     <!-- FQL Query form bean -->
-    <form-bean      name="fqlQueryForm"
-                    type="org.flymine.web.FqlQueryForm"/>
+    <form-bean name="fqlQueryForm"
+               type="org.flymine.web.FqlQueryForm"/>
 
     <!-- QueryClassSelect form bean -->
-    <form-bean      name="queryClassSelectForm"
-                    type="org.flymine.web.QueryClassSelectForm"/>
+    <form-bean name="queryClassSelectForm"
+               type="org.flymine.web.QueryClassSelectForm"/>
 
     <!-- ChangeResults form bean -->
-    <form-bean      name="changeResultsForm"
-                    type="org.flymine.web.results.ChangeResultsForm"/>
+    <form-bean name="changeResultsForm"
+               type="org.flymine.web.results.ChangeResultsForm"/>
 
     <!-- run query has no properties, uses an DynaActionForm -->
-    <form-bean      name="runQueryForm"
-                    type="org.apache.struts.action.DynaActionForm"/>
+    <form-bean name="runQueryForm"
+               type="org.apache.struts.action.DynaActionForm"/>
 
     <!-- restart query -->
-    <form-bean      name="restartQueryForm"
-                    type="org.apache.struts.action.DynaActionForm"/>
+    <form-bean name="restartQueryForm"
+               type="org.apache.struts.action.DynaActionForm"/>
 
     <!-- load query -->
-    <form-bean      name="loadQueryForm"
-                    type="org.flymine.web.LoadQueryForm"/>
+    <form-bean name="loadQueryForm"
+               type="org.flymine.web.LoadQueryForm"/>
 
     <!-- save query -->
-    <form-bean      name="saveQueryForm"
-                    type="org.flymine.web.SaveQueryForm"/>
+    <form-bean name="saveQueryForm"
+               type="org.flymine.web.SaveQueryForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -60,145 +56,147 @@
   <!-- ========== Global Forward Definitions ============================== -->
 
   <global-forwards>
-    <forward   name="error"              path="error.page"/>
+    <forward name="error"
+             path="error.page"/>
   </global-forwards>
 
   <!-- ========== Action Mapping Definitions ============================== -->
   <action-mappings>
 
     <!-- Input a query -->
+    <action path="/buildquery"
+            forward="query.page"/>
+
     <action path="/query"
-                   type="org.flymine.web.QueryBuildAction"
-                   name="queryBuildForm"
-                   parameter="action">
+            input="buildquery"
+            type="org.flymine.web.QueryBuildAction"
+            name="queryBuildForm"
+            parameter="action">
       <forward name="buildquery" path="query.page"/>
+      <forward name="runquery" path="/runQuery.do"/>
     </action>
 
     <action path="/changequery"
-                   type="org.flymine.web.QueryBuildChangeAction"
-                   parameter="method">
+            type="org.flymine.web.QueryBuildChangeAction"
+            parameter="method">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <action path="/changealias"
-                   type="org.flymine.web.QueryAliasChangeAction"
-                   parameter="method">
+            type="org.flymine.web.QueryAliasChangeAction"
+            parameter="method">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Input an fql query -->
-    <action    path="/fqlquery"
-               type="org.flymine.web.FqlQueryAction"
-               name="fqlQueryForm"
-              scope="request"
-              input="query"
-              parameter="action">
-      <forward name="runquery"              path="/runQuery.do"/>
-      <forward name="buildquery"           path="query.page"/>
+    <action path="/fqlquery"
+            type="org.flymine.web.FqlQueryAction"
+            name="fqlQueryForm"
+            scope="request"
+            input="query"
+            parameter="action">
+      <forward name="runquery" path="/runQuery.do"/>
+      <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Select a QueryClass -->
-    <action    path="/queryClassSelect"
-               type="org.flymine.web.QueryClassSelectAction"
-               name="queryClassSelectForm"
-              scope="request"
-              input="query"
-              parameter="action">
-      <forward name="buildquery"           path="query.page"/>
-      <forward name="tree"           path="tree.page"/>
+    <action path="/queryClassSelect"
+            type="org.flymine.web.QueryClassSelectAction"
+            name="queryClassSelectForm"
+            scope="request"
+            input="query"
+            parameter="action">
+      <forward name="buildquery" path="query.page"/>
+      <forward name="tree" path="tree.page"/>
     </action>
 
     <!-- Change an existing alias -->
-    <action    path="/queryAliasChange"
-               type="org.flymine.web.QueryAliasChangeAction"
-               parameter="method">
-      <forward name="buildquery"           path="query.page"/>
-    </action>
-
-    <action    path="/buildquery"
-            forward="query.page">
+    <action path="/queryAliasChange"
+            type="org.flymine.web.QueryAliasChangeAction"
+            parameter="method">
+      <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to run a query for a Query object on the session -->
-    <action    path="/runQuery"
-               type="org.flymine.web.RunQueryAction"
-               name="runQueryForm">
+    <action path="/runQuery"
+            type="org.flymine.web.RunQueryAction"
+            name="runQueryForm">
       <forward name="buildquery" path="query.page"/>
       <forward name="results" path="results.page"/>
     </action>
 
     <!-- Action to reset the current query -->
-    <action    path="/restartQuery"
-               type="org.flymine.web.RestartQueryAction"
-               name="restartQueryForm">
+    <action path="/restartQuery"
+            type="org.flymine.web.RestartQueryAction"
+            name="restartQueryForm">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to load a Query from the saved queries -->
-    <action    path="/loadQuery"
-               type="org.flymine.web.LoadQueryAction"
-               name="loadQueryForm">
+    <action path="/loadQuery"
+            type="org.flymine.web.LoadQueryAction"
+            name="loadQueryForm">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to save the current query -->
-    <action    path="/saveQuery"
-               type="org.flymine.web.SaveQueryAction"
-               name="saveQueryForm">
+    <action path="/saveQuery"
+            type="org.flymine.web.SaveQueryAction"
+            name="saveQueryForm">
       <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
-    <action    path="/changeResults"
-               type="org.flymine.web.results.ChangeResultsAction"
-               parameter="method">
+    <action path="/changeResults"
+            type="org.flymine.web.results.ChangeResultsAction"
+            parameter="method">
       <forward name="runquery" path="/runQuery.do"/>
       <forward name="results" path="results.page"/>
       <forward name="details" path="details.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
-    <action    path="/changeResultsSize"
-               type="org.flymine.web.results.ChangeResultsSizeAction"
-               name="changeResultsForm"
-               parameter="action">
+    <action path="/changeResultsSize"
+            type="org.flymine.web.results.ChangeResultsSizeAction"
+            name="changeResultsForm"
+            parameter="action">
       <forward name="results" path="results.page"/>
     </action>
 
     <!-- Action to change the displayed results in some way -->
-    <action    path="/changeTree"
-               type="org.flymine.web.TreeAction"
-               parameter="method">
+    <action path="/changeTree"
+            type="org.flymine.web.TreeAction"
+            parameter="method">
       <forward name="renderTree" path="tree.page"/>
       <forward name="buildquery" path="query.page"/>
     </action>
 
-    <action    path="/documentation"
-            forward="documentation.page">
-    </action>
+    <!-- Controllers -->
 
-    <action path="/renderTree" forward="tree.page"/>
+    <action path="/initQuery"
+            type="org.flymine.web.QueryController"/> 
 
-    <action path="/initQuery" type="org.flymine.web.QueryController"/> 
+    <action path="/initQueryBuild"
+            type="org.flymine.web.QueryBuildController"
+            name="queryBuildForm"/>
 
-    <action path="/initQueryBuild" type="org.flymine.web.QueryBuildController"
-            name="queryBuildForm"> 
-    </action>
+    <action path="/initQueryView"
+            type="org.flymine.web.QueryViewController"/>
 
-    <action path="/initQueryView" type="org.flymine.web.QueryViewController"/>
+    <action path="/initResultsView"
+            type="org.flymine.web.results.ResultsViewController"/>
 
-    <action path="/initResultsView" type="org.flymine.web.results.ResultsViewController">
-    </action>
+    <action path="/initResultsCell"
+            type="org.flymine.web.results.ResultsCellController"/>
 
-    <action path="/initResultsCell" type="org.flymine.web.results.ResultsCellController">
-    </action>
+    <action path="/initObjectDetails"
+            type="org.flymine.web.results.ObjectDetailsController"/>
 
-    <action path="/initObjectDetails" type="org.flymine.web.results.ObjectDetailsController">
-    </action>
+    <action path="/initTree"
+            type="org.flymine.web.TreeController"/>
 
-    <action path="/initTree" type="org.flymine.web.TreeController"/>
-
-    <action path="/initSaveQuery" type="org.flymine.web.SaveQueryController"/>
+    <action path="/initSaveQuery"
+            type="org.flymine.web.SaveQueryController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
@@ -223,19 +221,17 @@
   <!-- ========== Plug Ins Configuration ================================== -->
 
   <plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
+
   <plug-in className="org.flymine.web.InitialiserPlugin"/>
 
   <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
     <set-property property="pathnames"
-                     value="/WEB-INF/validator-rules.xml,
-                            /WEB-INF/validation.xml"/>
+                  value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
   </plug-in>
 
-  <plug-in 
-    className="org.apache.struts.tiles.TilesPlugin">
-    <set-property 
-        property="definitions-config" 
-        value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
+  <plug-in className="org.apache.struts.tiles.TilesPlugin">
+    <set-property property="definitions-config" 
+                  value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
   </plug-in>
 
 </struts-config>

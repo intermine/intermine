@@ -1,87 +1,71 @@
- <!DOCTYPE tiles-definitions PUBLIC
-  "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
-  "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+"http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
 
 <tiles-definitions>
-<definition 
-    name="layout.template" 
-    path="/layout.jsp">
+  <definition name="layout.template" path="/layout.jsp">
     <put name="title" value="FlyMine" />
     <put name="header" value="/header.jsp"/>
     <put name="menu" value="/menu.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
-</definition>
-<definition name="index.page" extends="layout.template">
+  </definition>
+  <definition name="index.page" extends="layout.template">
     <put name="body" value="/index.jsp"/>
-</definition>
-<definition name="query.page" extends="layout.template">
+  </definition>
+  <definition name="query.page" extends="layout.template">
     <put name="body" value="queryMain.tile"/>
-</definition>
-<definition name="results.page" extends="layout.template">
+  </definition>
+  <definition name="results.page" extends="layout.template">
     <put name="body" value="resultsView.tile"/>
-</definition>
-<definition name="error.page" extends="layout.template">
+  </definition>
+  <definition name="error.page" extends="layout.template">
     <put name="body" value="/error.jsp"/>
-</definition>
-<definition name="details.page" extends="layout.template">
+  </definition>
+  <definition name="details.page" extends="layout.template">
     <put name="body" value="objectDetails.tile"/>
-</definition>
-<definition name="documentation.page" extends="layout.template">
+  </definition>
+  <definition name="documentation.page" extends="layout.template">
     <put name="body" value="/docbook.jsp"/>
-</definition>
-<definition name="tree.page" extends="layout.template">
+  </definition>
+  <definition name="tree.page" extends="layout.template">
     <put name="body" value="tree.tile"/>
-</definition>
-<definition name="querybody.template" path="/queryMain.jsp">
-</definition>
-
-
-<definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
+  </definition>
+  
+  <definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="querySelectBuild" value="querySelectBuild.tile"/>
-    <put name="aliasChange" value="aliasChange.tile"/>
     <put name="runQuery" value="runQuery.jsp"/>
     <put name="loadQuery" value="loadQuery.jsp"/>
     <put name="restartQuery" value="restartQuery.jsp"/>
-    <put name="queryView" value="queryView.tile"/>
-</definition>
-
-<definition name="querySelectBuild.tile" path="querySelectBuild.jsp">
+  </definition>
+  
+  <definition name="querySelectBuild.tile" path="querySelectBuild.jsp">
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
     <put name="queryBuild" value="queryBuild.tile"/>
-</definition>
-
-<definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
-
-<definition name="queryClassSelect.tile" path="/queryClassSelect.jsp"
-            controllerUrl="/initQueryBuild.do">
-</definition>
-
-<definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do">
-</definition>
-
-<definition name="aliasChange.tile" path="/queryAliasChange.jsp" controllerUrl="/initQueryView.do">
-</definition>
-
-<definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do">
-</definition>
-
-<definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
+  </definition>
+  
+  <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
+  
+  <definition name="queryClassSelect.tile" path="/queryClassSelect.jsp"/>
+  
+  <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
+  
+  <definition name="aliasChange.tile" path="/queryAliasChange.jsp" controllerUrl="/initQueryView.do"/>
+  
+  <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
+  
+  <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
     <put name="saveQuery" value="saveQuery.tile"/>
-</definition>
+  </definition>
 
-<definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do">
-</definition>
+  <definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do"/>
 
-<definition name="objectDetails.tile" path="/details.jsp" controllerUrl="/initObjectDetails.do">
-</definition>
+  <definition name="objectDetails.tile" path="/details.jsp" controllerUrl="/initObjectDetails.do"/>
 
-<definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do">
-</definition>
+  <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
 
-<definition name="saveQuery.tile" path="/saveQuery.jsp" controllerUrl="/initSaveQuery.do">
-</definition>
-
+  <definition name="saveQuery.tile" path="/saveQuery.jsp" controllerUrl="/initSaveQuery.do"/>
 </tiles-definitions>
-

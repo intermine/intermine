@@ -22,8 +22,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.flymine.objectstore.query.QueryClass;
-
 /**
  * Implementation of <strong>Action</strong> that processes
  * QueryClass selection form.
@@ -55,20 +53,15 @@ public class QueryClassSelectAction extends LookupDispatchAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
-        // Extract attributes we will need
+        //duplication: see TreeAction#select
         HttpSession session = request.getSession();
 
-        QueryClassSelectForm queryClassSelectForm = (QueryClassSelectForm) form;
+        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        String className = (String) request.getParameter("className");
 
-        String className = queryClassSelectForm.getClassName();
+        QueryBuildController.addClass(queryClasses, className);
 
-        if (className != null) {
-            QueryClass qc = new QueryClass(Class.forName(className));
-            session.setAttribute("queryClass", qc);
-        }
-
-        return (mapping.findForward("buildquery"));
+        return mapping.findForward("buildquery");
     }
 
     /**

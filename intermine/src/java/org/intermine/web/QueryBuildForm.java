@@ -176,12 +176,12 @@ public class QueryBuildForm extends ActionForm
         HttpSession session = request.getSession();
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         String editingAlias = (String) session.getAttribute("editingAlias");
-
+        
         if (editingAlias == null) {
             // all is well - nothing has happened yet
             return null;
         }
-
+        
         DisplayQueryClass displayQueryClass = (DisplayQueryClass) queryClasses.get(editingAlias);
         ActionErrors errors = new ActionErrors();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
@@ -194,6 +194,7 @@ public class QueryBuildForm extends ActionForm
 
             Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
             ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
+            parsedFieldOps.put(fieldName, op);
             String realFieldName = getRealFieldName(fieldName);
 
             ClassDescriptor cd = model.getClassDescriptorByName(displayQueryClass.getType());
@@ -227,11 +228,10 @@ public class QueryBuildForm extends ActionForm
                     DateFormat df =
                         DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
                     Date dateExample = new GregorianCalendar().getTime();
-
+                    
                     errors.add(fieldName, new ActionError("error.date", fieldValue, dateExample));
                 } catch (NumberFormatException e) {
-                    errors.add(fieldName,
-                               new ActionError("error." + fieldClass, fieldValue));
+                    errors.add(fieldName, new ActionError("error." + fieldClass, fieldValue));
                 }
             }
         }

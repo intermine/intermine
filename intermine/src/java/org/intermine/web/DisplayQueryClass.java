@@ -12,6 +12,8 @@ package org.flymine.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Bean to represent a QueryClass during Query construction in the webapp
@@ -21,9 +23,9 @@ public class DisplayQueryClass
 {
     String type;
     List constraintNames = new ArrayList();
-    List fieldNames = new ArrayList();
-    List fieldOps = new ArrayList();
-    List fieldValues = new ArrayList();
+    Map fieldNames = new HashMap();
+    Map fieldOps = new HashMap();
+    Map fieldValues = new HashMap();
 
     /**
      * Gets the value of type
@@ -66,7 +68,7 @@ public class DisplayQueryClass
      *
      * @return the value of fieldNames
      */
-    public List getFieldNames()  {
+    public Map getFieldNames()  {
         return this.fieldNames;
     }
 
@@ -75,8 +77,26 @@ public class DisplayQueryClass
      *
      * @param argFieldNames Value to assign to this.fieldNames
      */
-    public void setFieldNames(List argFieldNames) {
+    public void setFieldNames(Map argFieldNames) {
         this.fieldNames = argFieldNames;
+    }
+
+    /**
+     * Set a value in the fieldNames map
+     * @param key the key
+     * @param value the value
+     */
+    public void setFieldName(String key, Object value) {
+        fieldNames.put(key, value);
+    }
+
+    /**
+     * Get a value from the fieldNames map
+     * @param key the key
+     * @return the value
+     */
+    public Object getFieldName(String key) {
+        return fieldNames.get(key);
     }
 
     /**
@@ -84,7 +104,7 @@ public class DisplayQueryClass
      *
      * @return the value of fieldOps
      */
-    public List getFieldOps()  {
+    public Map getFieldOps()  {
         return this.fieldOps;
     }
 
@@ -93,8 +113,26 @@ public class DisplayQueryClass
      *
      * @param argFieldOps Value to assign to this.fieldOps
      */
-    public void setFieldOps(List argFieldOps) {
+    public void setFieldOps(Map argFieldOps) {
         this.fieldOps = argFieldOps;
+    }
+
+    /**
+     * Set a value in the fieldOps map
+     * @param key the key
+     * @param value the value
+     */
+    public void setFieldOp(String key, Object value) {
+        fieldOps.put(key, value);
+    }
+
+    /**
+     * Get a value from the fieldOps map
+     * @param key the key
+     * @return the value
+     */
+    public Object getFieldOp(String key) {
+        return fieldOps.get(key);
     }
 
     /**
@@ -102,7 +140,7 @@ public class DisplayQueryClass
      *
      * @return the value of fieldValues
      */
-    public List getFieldValues()  {
+    public Map getFieldValues()  {
         return this.fieldValues;
     }
 
@@ -111,8 +149,26 @@ public class DisplayQueryClass
      *
      * @param argFieldValues Value to assign to this.fieldValues
      */
-    public void setFieldValues(List argFieldValues) {
+    public void setFieldValues(Map argFieldValues) {
         this.fieldValues = argFieldValues;
+    }
+
+    /**
+     * Set a value in the fieldValues map
+     * @param key the key
+     * @param value the value
+     */
+    public void setFieldValue(String key, Object value) {
+        fieldValues.put(key, value);
+    }
+
+    /**
+     * Get a value from the fieldValues map
+     * @param key the key
+     * @return the value
+     */
+    public Object getFieldValue(String key) {
+        return fieldValues.get(key);
     }
 
     /**

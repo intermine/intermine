@@ -12,14 +12,15 @@ package org.flymine.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.util.Set;
+import java.util.Map;
 
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.flymine.objectstore.query.QueryClass;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a tree
@@ -77,7 +78,6 @@ public class TreeAction extends DispatchAction
                                        HttpServletRequest request,
                                        HttpServletResponse response)
         throws Exception {
-
         Set openClasses = (Set) request.getSession().getAttribute("openClasses");
         openClasses.remove(request.getParameter("node"));
 
@@ -105,12 +105,14 @@ public class TreeAction extends DispatchAction
                                        HttpServletRequest request,
                                        HttpServletResponse response)
         throws Exception {
+        //duplication: see QueryClassSelectAction#select
+        HttpSession session = request.getSession();
 
-        String node = (String) request.getParameter("node");
-        QueryClass qc = new QueryClass(Class.forName(node));
-        request.getSession().setAttribute("queryClass", qc);
+        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        String className = (String) request.getParameter("node");
+
+        QueryBuildController.addClass(queryClasses, className);
 
         return mapping.findForward("buildquery");
     }
 }
-

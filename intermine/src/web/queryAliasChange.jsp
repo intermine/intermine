@@ -40,12 +40,12 @@
                 </td>
                 <td align="top">
                     <html:link action="/changealias.do?method=remove&alias=${perFromAlias[fromElement]}">
-                        [<bean:message key="queryclass.removelink"/>]
+                        [<bean:message key="button.remove"/>]
                     </html:link>
                 </td>
                 <td align="top">
                     <html:link action="/changealias.do?method=edit&alias=${perFromAlias[fromElement]}">
-                        [<bean:message key="queryclass.editlink"/>]
+                        [<bean:message key="button.edit"/>]
                     </html:link>
                 </td>
             </tr>

@@ -12,6 +12,8 @@ package org.flymine.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.util.Map;
 
 import org.apache.struts.actions.DispatchAction;
@@ -43,13 +45,44 @@ public class QueryBuildChangeAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward removeConstraint(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward removeClass(ActionMapping mapping,
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
         throws Exception {
-        Map constraints = (Map) request.getSession().getAttribute("constraints");
-        constraints.remove(request.getParameter("constraintName"));
+        HttpSession session = request.getSession();
+        
+        Map queryClasses = (Map) session.getAttribute("queryClasses");
+        queryClasses.remove(request.getParameter("alias"));
+        
+        return mapping.findForward("buildquery");
+    }
+
+    /**
+     * Process the specified HTTP request, and create the corresponding HTTP
+     * response (or forward to another web component that will create it).
+     * Return an <code>ActionForward</code> instance describing where and how
+     * control should be forwarded, or <code>null</code> if the response has
+     * already been completed.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward editClass(ActionMapping mapping,
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+
+        session.setAttribute("editingAlias", request.getParameter("alias"));
+        
         return mapping.findForward("buildquery");
     }
 }

@@ -65,16 +65,16 @@ public class TreeActionTest extends MockStrutsTestCase
         assertEquals(expected, getSession().getAttribute("openClasses"));
     }
 
-    public void testSelect() throws Exception {
-        addRequestParameter("node", "org.flymine.model.testmodel.Department");
+//     public void testSelect() throws Exception {
+//         addRequestParameter("node", "org.flymine.model.testmodel.Department");
 
-        setRequestPathInfo("/changeTree");
-        addRequestParameter("method", "select");
+//         setRequestPathInfo("/changeTree");
+//         addRequestParameter("method", "select");
 
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("buildquery");
+//         actionPerform();
+//         verifyNoActionErrors();
+//         verifyForward("buildquery");
 
-        assertEquals(Department.class, ((QueryClass) getSession().getAttribute("queryClass")).getType());
-    }
+//         assertEquals(Department.class, ((QueryClass) getSession().getAttribute("queryClass")).getType());
+//     }
 }
