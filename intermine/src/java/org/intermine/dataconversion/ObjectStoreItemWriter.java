@@ -82,8 +82,8 @@ public class ObjectStoreItemWriter implements ItemWriter
             item = (Item) i.next();
             store(item);
             count++;
-            if (count % 1000 ==0) {
-                LOG.info("transactionCounter has size of "+ transactionCounter
+            if (count % 1000 == 0) {
+                LOG.info("transactionCounter has size of " + transactionCounter
                          + " is now on storing " + item.getClassName());
             }
             //i.remove(); ?
