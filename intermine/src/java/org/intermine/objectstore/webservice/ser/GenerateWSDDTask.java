@@ -63,7 +63,9 @@ public class GenerateWSDDTask extends Task
             LOG.error(e);
         } finally {
             try {
-                fos.close();
+                if (fos != null) {
+                    fos.close();
+                }
             } catch (IOException e) {
                 LOG.error(e);
             }

@@ -12,12 +12,9 @@ package org.intermine.dataloader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.Method;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
-
-import org.intermine.model.datatracking.Source;
 
 /**
  * Uses an IntegrationWriter to load data from XML format
@@ -76,7 +73,9 @@ public class XmlDataLoaderTask extends Task
 
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
-            new XmlDataLoader(iw).processXml(new FileInputStream(xmlFile), iw.getMainSource(sourceName), iw.getSkeletonSource(sourceName));
+            new XmlDataLoader(iw).processXml(new FileInputStream(xmlFile),
+                                             iw.getMainSource(sourceName),
+                                             iw.getSkeletonSource(sourceName));
         } catch (Exception e) {
             throw new BuildException(e);
         }

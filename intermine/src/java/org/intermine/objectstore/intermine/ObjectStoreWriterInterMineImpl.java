@@ -237,7 +237,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * Overrides Object.finalize - release the connection back to the objectstore.
      */
-    public void finalize() {
+    protected void finalize() {
         if (conn != null) {
             LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
                     + sequence + " createSituation: " + createSituation);

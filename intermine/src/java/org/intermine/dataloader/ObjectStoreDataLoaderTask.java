@@ -10,8 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.lang.reflect.Method;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 

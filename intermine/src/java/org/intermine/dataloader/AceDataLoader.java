@@ -62,7 +62,7 @@ public class AceDataLoader extends DataLoader
     protected String dateType, floatType, intType, textType;
 
     private static final int COMMIT_INTERVAL = 5000;
-    private int commitCount = COMMIT_INTERVAL - 1;
+//     private int commitCount = COMMIT_INTERVAL - 1;
 
     /**
      * Constructor for testing purposes

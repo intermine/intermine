@@ -434,7 +434,7 @@ public class TypeUtil
             return new BigDecimal(value);
         }
         if (clazz.equals(String.class)) {
-            return new String(value);
+            return value;
         }
         if (clazz.equals(URL.class)) {
             try {
