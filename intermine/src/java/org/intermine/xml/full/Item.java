@@ -183,7 +183,7 @@ public class Item
      * @return true if the attribute exists
      */
     public boolean hasAttribute(String attributeName) {
-        checkAttribute(attributeName);
+        //checkAttribute(attributeName);
         return attributes.containsKey(attributeName);
     }
 
