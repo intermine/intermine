@@ -57,6 +57,8 @@ form {
   margin: 3px;
   border: 1px solid #999;
   height: 10;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 12px;
 }
 
 table.templateForm td {
