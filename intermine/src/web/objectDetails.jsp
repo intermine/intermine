@@ -78,7 +78,6 @@ Summary for selected
     <c:forEach items="${object.attributes}" var="entry">
       <tr>
         <td>
-          <img border="0" src="images/blank.gif" alt=" "/>
           <span class="attributeField">${entry.key}</span>
         </td>
         <td>
