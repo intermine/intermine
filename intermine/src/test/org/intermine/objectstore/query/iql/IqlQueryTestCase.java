@@ -156,6 +156,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("FailDistinctOrder", new IqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.age", null));
         results.put("LargeBagConstraint", NO_RESULT);
         results.put("LargeBagConstraintUsingTable", NO_RESULT);
+        results.put("LargeBagNotConstraint", NO_RESULT);
+        results.put("LargeBagNotConstraintUsingTable", NO_RESULT);
         results.put("NegativeNumbers", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.age > -51", null));
     }
 }

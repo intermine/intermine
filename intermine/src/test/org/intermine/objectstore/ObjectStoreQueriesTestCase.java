@@ -199,11 +199,18 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Substring2", substring2());
         queries.put("OrderByReference", orderByReference());
         queries.put("FailDistinctOrder", failDistinctOrder());
-        queries.put("LargeBagConstraint", largeBagConstraint());
         queries.put("NegativeNumbers", negativeNumbers());
 
-        // tests using a temporary table for the bag
-        queries.put("LargeBagConstraintUsingTable", largeBagConstraint());
+        // test 'foo' IN bag
+        queries.put("LargeBagConstraint", largeBagConstraint(false));
+        // test 'foo' NOT IN bag
+        queries.put("LargeBagNotConstraint", largeBagConstraint(true));
+
+        // tests using a temporary table for the bag - 'foo' IN bag
+        queries.put("LargeBagConstraintUsingTable", largeBagConstraint(false));
+
+        // tests using a temporary table for the bag - 'foo' NOT IN bag
+        queries.put("LargeBagNotConstraintUsingTable", largeBagConstraint(true));
     }
 
     /*
@@ -1287,7 +1294,15 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
      * SELECT a1_ FROM Employee AS a1_ WHERE a1_.name IN (...)
      */
-    public static Query largeBagConstraint() throws Exception {
+    public static Query largeBagConstraint(boolean makeNotConstraint) throws Exception {
+        ConstraintOp constraintOp;
+
+        if (makeNotConstraint) {
+            constraintOp = ConstraintOp.NOT_IN;
+        } else {
+            constraintOp = ConstraintOp.IN;
+        }
+
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
@@ -1298,6 +1313,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         for (int i = 0; i < 20000; i++) {
             bag.add("a" + i);
         }
+        bag.add("a string with quotes: '\"");
 
         bag.add(new Short((short) 1000));
         bag.add(new Short((short) 1000));
@@ -1319,7 +1335,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setId(new Integer(6000));
         bag.add(company);
-        q.setConstraint(new BagConstraint(new QueryField(qc, "name"), ConstraintOp.IN, bag));
+        q.setConstraint(new BagConstraint(new QueryField(qc, "name"), constraintOp, bag));
         return q;
     }
 

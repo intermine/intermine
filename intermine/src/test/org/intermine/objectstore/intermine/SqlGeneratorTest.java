@@ -219,8 +219,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
         String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/largeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);
         results2.put("LargeBagConstraint", Collections.singleton("Employee"));
+
+        String largeNotBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/largeNotBag.sql"))).readLine();
+        results.put("LargeBagNotConstraint", largeNotBagConstraintText);
+        results2.put("LargeBagNotConstraint", Collections.singleton("Employee"));
+
         results.put("LargeBagConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
         results2.put("LargeBagConstraintUsingTable", Collections.singleton("Employee"));
+
+        results.put("LargeBagNotConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE NOT (a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ")) ORDER BY a1_.id");
+        results2.put("LargeBagNotConstraintUsingTable", Collections.singleton("Employee"));
+
         results.put("NegativeNumbers", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > -51 ORDER BY a1_.id");
         results2.put("NegativeNumbers", Collections.singleton("Employee"));
     }
@@ -240,10 +249,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         } else {
             Map bagTableNames = new HashMap();
 
-            if (type.equals("LargeBagConstraintUsingTable")) {
+            if (type.matches("LargeBag.*UsingTable")) {
                 // special case - the Map will tell generate() what table to use to find the values
                 // of large bags
-                Query largeBagQuery = (Query) queries.get("LargeBagConstraintUsingTable");
+                Query largeBagQuery = (Query) queries.get(type);
                 BagConstraint largeBagConstraint = (BagConstraint) largeBagQuery.getConstraint();
                 bagTableNames.put(largeBagConstraint, "large_string_bag_table");
             }
@@ -267,8 +276,9 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
 
             // TODO: extend sql so that it can represent these
-            if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty") || type.startsWith("BagConstraint") || "LargeBagConstraint".equals(type))) {
-                // And check that the SQL generated is high enough quality to be parsed by the optimiser.
+            if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty") || type.startsWith("BagConstraint") || type.startsWith("LargeBag"))) {
+                // And check that the SQL generated is high enough quality to be parsed by the
+                // optimiser. 
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
             }
         }

@@ -189,11 +189,21 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("Substring2", Collections.singleton("InterMineObject"));
         results.put("OrderByReference", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", Collections.singleton("InterMineObject"));
+
         String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/truncatedLargeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);
         results2.put("LargeBagConstraint", Collections.singleton("InterMineObject"));
+
+        String largeBagNotConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/truncatedLargeNotBag.sql"))).readLine();
+        results.put("LargeBagNotConstraint", largeBagNotConstraintText);
+        results2.put("LargeBagNotConstraint", Collections.singleton("InterMineObject"));
+
         results.put("LargeBagConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.name IN (SELECT value FROM " + SqlGeneratorTest.LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
         results2.put("LargeBagConstraintUsingTable", Collections.singleton("InterMineObject"));
+
+        results.put("LargeBagNotConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND NOT (a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ")) ORDER BY a1_.id");
+        results2.put("LargeBagNotConstraintUsingTable", Collections.singleton("InterMineObject"));
+
         results.put("NegativeNumbers", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.age > -51 ORDER BY a1_.id");
         results2.put("NegativeNumbers", Collections.singleton("InterMineObject"));
     }
