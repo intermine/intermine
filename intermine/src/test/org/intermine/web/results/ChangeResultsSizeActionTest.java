@@ -56,16 +56,22 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         // Set up some known objects in the first 3 results rows
         company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company1");
+        company1.setId(new Integer(1));
         company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company2.setName("Company2");
+        company2.setId(new Integer(2));
         company3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company3.setName("Company3");
+        company3.setId(new Integer(3));
         department1 = new Department();
         department1.setName("Department1");
+        department1.setId(new Integer(4));
         department2 = new Department();
         department2.setName("Department2");
+        department2.setId(new Integer(5));
         department3 = new Department();
         department3.setName("Department3");
+        department3.setId(new Integer(6));
 
         ResultsRow row = new ResultsRow();
         row.add(company1);

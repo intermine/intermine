@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.testing.OneTimeTestCase;
 
 public class QueryTestCase extends OneTimeTestCase
@@ -231,9 +232,9 @@ public class QueryTestCase extends OneTimeTestCase
     }
 
     protected void checkToString(String msg, Query q1, Query q2) {
-        String s1 = q1.toString();
-        String s2 = q2.toString();
-        assertEquals(msg, s1, s2);
+        FqlQuery fq1 = new FqlQuery(q1);
+        FqlQuery fq2 = new FqlQuery(q2);
+        assertEquals(msg, fq1.getQueryString(), fq2.getQueryString());
+        assertEquals(msg, fq1.getParameters(), fq2.getParameters());
     }
-
 }

@@ -22,8 +22,7 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 
-import org.flymine.model.testmodel.Company;
-import org.flymine.util.DynamicUtil;
+import org.flymine.model.testmodel.Department;
 
 public class ObjectDetailsControllerTest extends MockStrutsTestCase
 {
@@ -36,7 +35,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initObjectDetails");
 
-        getRequest().setAttribute("object", (Company) DynamicUtil.createObject(Collections.singleton(Company.class)));
+        getRequest().setAttribute("object", new Department());
         actionPerform();
         assertNotNull(context.getAttribute("cld"));
     }

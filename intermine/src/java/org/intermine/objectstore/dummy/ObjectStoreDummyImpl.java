@@ -10,12 +10,14 @@ package org.flymine.objectstore.dummy;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import org.flymine.objectstore.*;
 import org.flymine.objectstore.query.*;
 import org.flymine.metadata.Model;
+import org.flymine.util.DynamicUtil;
 
 /**
  * Generate dummy Results from a query. Used for testing purposes.
@@ -190,7 +192,12 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
             Object obj = null;
             if (qn instanceof QueryClass) {
                 try {
-                    obj = ((QueryClass) qn).getType().newInstance();
+                    Class cls = ((QueryClass) qn).getType();
+                    if (cls.isInterface()) {
+                        obj = DynamicUtil.createObject(Collections.singleton(cls));
+                    } else {
+                        obj = ((QueryClass) qn).getType().newInstance();
+                    }
                 } catch (Exception e) {
                     throw new ObjectStoreException("Cannot instantiate class "
                                                    + ((QueryClass) qn).getType().getName(), e);

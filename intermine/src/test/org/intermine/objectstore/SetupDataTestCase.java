@@ -428,7 +428,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.alias(c1, "Company");
         q1.addFrom(c1);
         q1.addToSelect(c1);
-        HashSet set = new LinkedHashSet();
+        Set set = new LinkedHashSet();
         set.add("hello");
         set.add("goodbye");
         set.add("CompanyA");
