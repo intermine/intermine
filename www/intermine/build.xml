@@ -1,0 +1,49 @@
+<project name="intermine" default="www-intermine" basedir=".">
+    <property name="src.www" location="site"/>
+    <property name="src.doc" location="../../intermine/doc"/>
+    <property name="build.www" location="build"/>
+    <property name="dist.www" location="dist"/>
+    <property name="intermine.basedir" location="/preview2"/>
+
+<copy todir="${build.www}">
+    <fileset dir="${src.www}">
+        <include name="**/*"/>
+    </fileset>
+</copy>
+
+<copy todir="${build.www}/doc">
+    <fileset dir="${src.doc}">
+        <include name="**/*"/>
+    </fileset>
+</copy>
+
+<copy todir="${dist.www}/style/">
+    <fileset dir="${build.www}/style/">
+        <include name="*"/>
+    </fileset>
+</copy>
+
+<copy todir="${dist.www}/doc/">
+    <fileset dir="${build.www}/doc/">
+        <include name="**/*.pdf"/>
+        <include name="**/*.sxi"/>
+        <include name="**/*.png"/>
+        <include name="**/*.gif"/>
+        <include name="**/*.zargo"/>
+    </fileset>
+</copy>
+
+<target name="www-intermine"> 
+    <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
+        style="../main.xsl" includes="**/*.xml" force="false">
+        <param name="branding" expression="intermine" />
+        <param name="basedir" expression="${intermine.basedir}" />
+        <param name="outputext" expression="html" />
+        <param name="file" expression="systemId()" />
+        <param name="sourceref" expression="${build.www}" />
+        <factory>
+            <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
+        </factory>
+    </style>
+</target>
+</project>
