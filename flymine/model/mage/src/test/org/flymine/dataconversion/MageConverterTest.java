@@ -31,6 +31,7 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.dataconversion.MockItemWriter;
 
 public class MageConverterTest extends TestCase
 {

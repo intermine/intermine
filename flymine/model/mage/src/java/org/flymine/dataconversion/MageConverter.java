@@ -28,6 +28,7 @@ import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.FileConverter;
 
 /**
  * Convert MAGE-ML to InterMine Full Data Xml via MAGE-OM objects.

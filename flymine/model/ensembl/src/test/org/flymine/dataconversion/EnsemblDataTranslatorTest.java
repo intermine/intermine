@@ -51,6 +51,12 @@ import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.dataloader.DataLoader;
 import org.intermine.dataloader.ObjectStoreDataLoader;
 import org.intermine.metadata.Model;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemReader;
+import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.ObjectStoreItemWriter;
+import org.intermine.dataconversion.ItemToObjectTranslator;
 
 public class EnsemblDataTranslatorTest extends TestCase {
     private String srcNs = "http://www.flymine.org/model/ensembl#";
