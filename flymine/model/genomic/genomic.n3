@@ -176,9 +176,12 @@
 :ComputationalResult a owl:Class ;
     rdfs:subClassOf :AnalysisResult .
 
+:ComputationalResult__score a owl:DatatypeProperty ;
+    rdfs:domain :ComputationalResult ;
+    rdfs:range xsd:float .
+
 :ExperimentalResult a owl:Class ;
     rdfs:subClassOf :AnalysisResult .
-
 
 :Analysis a owl:Class ;
     rdfs:subClassOf
