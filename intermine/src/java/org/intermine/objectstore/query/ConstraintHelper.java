@@ -338,6 +338,8 @@ public class ConstraintHelper
             left = ((ContainsConstraint) constraint).getReference();
         } else if (constraint instanceof SimpleConstraint) {
             left = ((SimpleConstraint) constraint).getArg1();
+        } else if (constraint instanceof BagConstraint) {
+            left = ((BagConstraint) constraint).getQueryNode();
         } else if (constraint instanceof SubqueryConstraint) {
             left = ((SubqueryConstraint) constraint).getQueryEvaluable();
             if (left == null) {
@@ -372,6 +374,8 @@ public class ConstraintHelper
             right = ((SimpleConstraint) constraint).getArg2();
         } else if (constraint instanceof SubqueryConstraint) {
             right = ((SubqueryConstraint) constraint).getQuery();
+        } else if (constraint instanceof BagConstraint) {
+            right = ((BagConstraint) constraint).getBag();
         } else {
             throw new IllegalArgumentException("Unknown Constraint type: "
                                                + constraint.getClass().getName());
