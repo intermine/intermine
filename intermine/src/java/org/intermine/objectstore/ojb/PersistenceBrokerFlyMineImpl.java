@@ -33,21 +33,20 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
     }   
 
     /**
-     * Executes a query with start and end result indices
+     * Executes a query with start and limit result indices
      *
      * @param query the ObjectStore query
      * @param start start index
-     * @param end end index
+     * @param limit maximum number of rows to return
      * @return a list of ResultsRows
      */
-    public List execute(Query query, int start, int end) {
+    public List execute(Query query, int start, int limit) {
         List results = new ArrayList();
-        //TODO pass start and end thru somehow
-        Iterator iter = new MultiObjectRsIterator(query, this);
+        Iterator iter = new MultiObjectRsIterator(query, this, start, limit);
         while (iter.hasNext()) { // if iterator is of the right length...
-            //TODO uncomment this
-            //results.add(iter.next());
-            results.add(new Object[] {});
+            //?TODO uncomment this
+            results.add(iter.next());
+            //results.add(new Object[] {});
         }
         return results;
     }

@@ -92,11 +92,12 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      * and ResultSet
      *
      * @param query should be a Flymine Query
-     *
+     * @param start the number of the first row to return, starting from zero
+     * @param limit the maximum number of rows to return
      * @return the JDBC ResultSet and Statement
      * @throws PersistenceBrokerException if anything goes worong
      */
-    public ResultSetAndStatement executeQuery(Query query)
+    public ResultSetAndStatement executeQuery(Query query, int start, int limit)
         throws PersistenceBrokerException {
         if (logger.isDebugEnabled()) {
             logger.safeDebug("executeQuery", query);
@@ -109,7 +110,7 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
             SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
                 this.broker.serviceSqlGenerator();
             DescriptorRepository dr = this.broker.getDescriptorRepository();
-            String sql = gen.getPreparedSelectStatement(query, dr);
+            String sql = gen.getPreparedSelectStatement(query, dr, start, limit);
 
             // statementManager is used to serve statements and cache statements related to a
             // partcular class (wraps a ConnectionManager).  We only want something to get a

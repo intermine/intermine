@@ -84,15 +84,17 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      * generate a select-Statement according to query
      * @param query the Query
      * @param dr DescriptorRepository for the database
-     *
+     * @param start the number of the first row to return, numbered from zero
+     * @param limit the maximum number of rows to return
      * @return sql statement as String
      */
-    public String getPreparedSelectStatement(Query query, DescriptorRepository dr) {
+    public String getPreparedSelectStatement(Query query, DescriptorRepository dr, int start,
+            int limit) {
         // TODO: check for statement in cache...
 
         // get the flymine query.  Currently ignores StatementManager, should it be changed?
 
-        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr);
+        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr, start, limit);
         String result = sql.getStatement();
 
         return result;

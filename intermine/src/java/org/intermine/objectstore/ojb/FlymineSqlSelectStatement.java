@@ -55,7 +55,6 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
-//import java.util.Set;
 //import java.util.HashSet;
 import java.util.Date;
 import java.util.Iterator;
@@ -73,6 +72,12 @@ import org.flymine.objectstore.query.QueryExpression;
 import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.FromElement;
+import org.flymine.objectstore.query.Constraint;
+import org.flymine.objectstore.query.ConstraintSet;
+import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.SubqueryConstraint;
+import org.flymine.objectstore.query.ClassConstraint;
+
 
 import org.apache.ojb.broker.accesslayer.sql.SqlStatement;
 import org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion;
@@ -92,6 +97,27 @@ public class FlymineSqlSelectStatement implements SqlStatement
 {
     private Query query;
     private DescriptorRepository dr;
+    private int start;
+    private int limit;
+    private boolean isSubQuery;
+    private boolean isAConstraint;
+
+    /**
+     * Constructor requires a FlyMine Query and associated array of ClassDescriptors.
+     * Should be a ClassDescriptor for each class in FROM clause of query.
+     *
+     * @param query a flymine query
+     * @param dr DescriptorRepository for the database
+     * @param start the number of rows to skip at the beginning
+     * @param limit the maximum number of rows to return
+     */
+    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, int start, int limit) {
+        this.query = query;
+        this.dr = dr;
+        this.start = start;
+        this.limit = limit;
+        this.isSubQuery = false;
+    }
 
     /**
      * Constructor requires a FlyMine Query and associated array of ClassDescriptors.
@@ -101,8 +127,24 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @param dr DescriptorRepository for the database
      */
     public FlymineSqlSelectStatement(Query query, DescriptorRepository dr) {
+        this(query, dr, false);
+    }
+
+    /**
+     * Constructor requires a FlyMine Query and associated array of ClassDescriptors.
+     * Should be a ClassDescriptor for each class in FROM clause of query.
+     *
+     * @param query a flymine query
+     * @param dr DescriptorRepository for the database
+     * @param isAConstraint true if this is a query that is part of a subquery constraint
+     */
+    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint) {
         this.query = query;
         this.dr = dr;
+        this.start = 0;
+        this.limit = 0;
+        this.isSubQuery = true;
+        this.isAConstraint = isAConstraint;
     }
 
     /**
@@ -122,7 +164,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
             }
             needComma = true;
             if (node instanceof QueryClass) {
-                retval += queryClassToString((QueryClass) node);
+                retval += queryClassToString((QueryClass) node, true, isAConstraint);
             } else {
                 retval += queryEvaluableToString((QueryEvaluable) node) + " AS "
                     + query.getAliases().get(node);
@@ -135,9 +177,11 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * Converts a QueryClass into the SELECT list fields required to represent it in the SQL query.
      *
      * @param node the QueryClass
+     * @param aliases whether to include aliases in the field list
+     * @param primaryOnly whether to only list primary keys
      * @return the String representation
      */
-    protected String queryClassToString(QueryClass node) {
+    protected String queryClassToString(QueryClass node, boolean aliases, boolean primaryOnly) {
         String retval = "";
         boolean needComma = false;
         // It's a class - find its class descriptor, then iterate through its fields.
@@ -150,7 +194,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
                         + node.getType()));
         }
         // Now cld is the ClassDescriptor of the node, and alias is the alias
-        FieldDescriptor fields[] = cld.getFieldDescriptions();
+        FieldDescriptor fields[] = (primaryOnly ? cld.getPkFields() : cld.getFieldDescriptions());
         TreeSet fieldnames = new TreeSet();
         for (int i = 0; i < fields.length; i++) {
             FieldDescriptor field = fields[i];
@@ -163,7 +207,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
                 retval += ", ";
             }
             needComma = true;
-            retval += alias + "." + fieldname + " AS " + alias + fieldname;
+            retval += alias + "." + fieldname + (aliases ? " AS " + alias + fieldname : "");
         }
         return retval;
     }
@@ -250,22 +294,31 @@ public class FlymineSqlSelectStatement implements SqlStatement
         } else if (node instanceof QueryValue) {
             QueryValue nodeV = (QueryValue) node;
             Object value = nodeV.getValue();
-            if (value instanceof Date) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                return "'" + format.format((Date) value) + "'";
-            } else if (value instanceof Number) {
-                return value.toString();
-            } else if (value instanceof String) {
-                return "'" + value + "'";
-            } else if (value instanceof Boolean) {
-                return (new Boolean2IntFieldConversion()).javaToSql(value).toString();
-            } else {
-                throw (new IllegalArgumentException("Invalid Object in QueryValue: "
-                            + value.toString()));
-            }
+            return objectToString(value);
         } else {
             throw (new IllegalArgumentException("Invalid QueryEvaluable: " + node.toString()));
         }
+    }
+
+    /**
+     * Converts an Object into a SQL String.
+     *
+     * @param value the object to convert
+     * @return the String representation
+     */
+    public static String objectToString(Object value) {
+        if (value instanceof Date) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            return "'" + format.format((Date) value) + "'";
+        } else if (value instanceof Number) {
+            return value.toString();
+        } else if (value instanceof String) {
+            return "'" + value + "'";
+        } else if (value instanceof Boolean) {
+            return (new Boolean2IntFieldConversion()).javaToSql(value).toString();
+        }
+        throw (new IllegalArgumentException("Invalid Object in QueryValue: "
+                    + value.toString()));
     }
 
     /**
@@ -292,8 +345,163 @@ public class FlymineSqlSelectStatement implements SqlStatement
             } else {
                 Query q = (Query) fromElement;
                 String alias = (String) query.getAliases().get(q);
-                retval += "(" + (new FlymineSqlSelectStatement(q, dr)).getStatement() + ") AS "
-                    + alias;
+                retval += "(" + (new FlymineSqlSelectStatement(q, dr, false)).getStatement()
+                    + ") AS " + alias;
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * Returns the WHERE clause for the SQL query.
+     *
+     * @return the SQL WHERE clause
+     */
+    protected String buildWhereClause() {
+        // TODO:
+        Constraint c = query.getConstraint();
+        if (c != null) {
+            return " WHERE " + constraintToString(c);
+        }
+        return "";
+    }
+
+    /**
+     * Converts a Constraint object into a String suitable for putting in an SQL query.
+     *
+     * @param c the Constraint object
+     * @return the converted String
+     */
+    protected String constraintToString(Constraint c) {
+        if (c instanceof ConstraintSet) {
+            ConstraintSet cs = (ConstraintSet) c;
+            String retval = (cs.isNegated() ? "( NOT (" : "(");
+            boolean needComma = false;
+            Set constraints = cs.getConstraints();
+            Iterator constraintIter = constraints.iterator();
+            while (constraintIter.hasNext()) {
+                Constraint subC = (Constraint) constraintIter.next();
+                if (needComma) {
+                    retval +=  (cs.getDisjunctive() ? " OR " : " AND ");
+                }
+                needComma = true;
+                retval += constraintToString(subC);
+            }
+            return retval + (cs.isNegated() ? "))" : ")");
+        } else if (c instanceof SimpleConstraint) {
+            SimpleConstraint sc = (SimpleConstraint) c;
+            if ((sc.getType() == SimpleConstraint.IS_NULL)
+                    || (sc.getType() == SimpleConstraint.IS_NOT_NULL)) {
+                return queryEvaluableToString(sc.getArg1()) + sc.getOpString();
+            } else {
+                return queryEvaluableToString(sc.getArg1()) + sc.getOpString()
+                    + queryEvaluableToString(sc.getArg2());
+            }
+        } else if (c instanceof SubqueryConstraint) {
+            SubqueryConstraint sc = (SubqueryConstraint) c;
+            Query q = sc.getQuery();
+            QueryEvaluable qe = sc.getQueryEvaluable();
+            QueryClass cls = sc.getQueryClass();
+            if (qe != null) {
+                return queryEvaluableToString(qe) + (sc.isNotIn() ? " NOT IN (" : " IN (")
+                    + (new FlymineSqlSelectStatement(q, dr, true)).getStatement() + ")";
+            } else {
+                return queryClassToString(cls, false, true) + (sc.isNotIn() ? " NOT IN (" : " IN (")
+                    + (new FlymineSqlSelectStatement(q, dr, true)).getStatement() + ")";
+            }
+        } else if (c instanceof ClassConstraint) {
+            ClassConstraint cc = (ClassConstraint) c;
+            QueryClass arg1 = cc.getArg1();
+            String alias1 = ((String) query.getAliases().get(arg1)) + ".";
+            QueryClass arg2QC = cc.getArg2QueryClass();
+            String alias2 = null;
+            if (arg2QC != null) {
+                alias2 = ((String) query.getAliases().get(arg2QC)) + ".";
+            }
+            Object arg2O = cc.getArg2Object();
+            ClassDescriptor cld = dr.getDescriptorFor(arg1.getType());
+            if (cld == null) {
+                throw (new IllegalArgumentException("Couldn't find class descriptor for class "
+                            + arg1.getType()));
+            }
+            FieldDescriptor fields[] = cld.getPkFields();
+            String retval = (cc.isNotEqual() ? "( NOT (" : "(");
+            boolean needComma = false;
+            for (int i = 0; i < fields.length; i++) {
+                FieldDescriptor field = fields[i];
+                String columnname = field.getColumnName();
+                if (needComma) {
+                    retval += " AND ";
+                }
+                needComma = true;
+                if (arg2QC != null) {
+                    retval += alias1 + columnname + " = " + alias2 + columnname;
+                } else {
+                    retval += alias1 + columnname + " = "
+                        + objectToString(field.getPersistentField().get(arg2O));
+                }
+            }
+            return retval + (cc.isNotEqual() ? "))" : ")");
+        }
+        return "";
+    }
+    
+    /**
+     * Returns the GROUP BY clause for the SQL query.
+     *
+     * @return the SQL GROUP BY clause
+     */
+    protected String buildGroupBy() {
+        String retval = "";
+        boolean needComma = false;
+        Set groupBy = query.getGroupBy();
+        Iterator groupByIter = groupBy.iterator();
+        while (groupByIter.hasNext()) {
+            QueryNode node = (QueryNode) groupByIter.next();
+            retval += (needComma ? ", " : " GROUP BY ");
+            needComma = true;
+            if (node instanceof QueryClass) {
+                retval += queryClassToString((QueryClass) node, false, false);
+            } else {
+                retval += queryEvaluableToString((QueryEvaluable) node);
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * Returns the ORDER BY clause for the SQL query.
+     *
+     * @return the SQL ORDER BY clause
+     */
+    protected String buildOrderBy() {
+        String retval = "";
+        boolean needComma = false;
+        List orderBy = query.getOrderBy();
+        Iterator orderByIter = orderBy.iterator();
+        while (orderByIter.hasNext()) {
+            QueryNode node = (QueryNode) orderByIter.next();
+            retval += (needComma ? ", " : " ORDER BY ");
+            needComma = true;
+            if (node instanceof QueryClass) {
+                retval += queryClassToString((QueryClass) node, false, true);
+            } else {
+                retval += queryEvaluableToString((QueryEvaluable) node);
+            }
+        }
+        List select = query.getSelect();
+        Iterator selectIter = select.iterator();
+        while (selectIter.hasNext()) {
+            QueryNode node = (QueryNode) selectIter.next();
+            retval += (needComma ? ", " : " ORDER BY ");
+            needComma = true;
+            if (node instanceof QueryClass) {
+                retval += queryClassToString((QueryClass) node, false, true);
+            } else if (node instanceof QueryValue) {
+                // Do nothing
+                retval = retval;
+            } else {
+                retval += queryEvaluableToString((QueryEvaluable) node);
             }
         }
         return retval;
@@ -305,7 +513,10 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @return sql statement as a string
      */
     public String getStatement() {
-        return "SELECT " + buildSelectComponent() + " FROM " + buildFromComponent();
+        return "SELECT " + (query.getDistinct() ? "DISTINCT " : "") + buildSelectComponent()
+            + " FROM " + buildFromComponent()
+            + buildWhereClause() + buildGroupBy()
+            + (isSubQuery ? "" : buildOrderBy() + " LIMIT " + limit + " OFFSET " + start);
     }
 
 }

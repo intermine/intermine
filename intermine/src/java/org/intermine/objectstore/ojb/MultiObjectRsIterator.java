@@ -93,10 +93,13 @@ public class MultiObjectRsIterator extends RsIterator
      * MultiObjectRsIterator constructor
      * @param query the ObjectStore query we should use
      * @param broker the broker we should use.
+     * @param start the number of the first row to return, numbered from zero
+     * @param limit the maximum number of rows to return
      */
-    public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker) {
-        //TODO uncomment this
-        //m_rsAndStmt = broker.serviceJdbcAccess().executeQuery(query);
+    public MultiObjectRsIterator(Query query, PersistenceBrokerImpl broker, int start, int limit) {
+        //?TODO uncomment this
+        m_rsAndStmt = ((JdbcAccessFlymineImpl) broker.serviceJdbcAccess()).executeQuery(query,
+                start, limit);
         m_row = new HashMap();
         this.query = query;
         m_broker = broker;

@@ -114,13 +114,13 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * <code>execute(Query q)</code>.
      *
      * @param q the Query to execute
-     * @param start the start row
-     * @param end the end row
+     * @param start the first row to return, numbered from zero
+     * @param end the number of the last row to return, numbered from zero
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int end) throws ObjectStoreException {
-        return pb.execute(q, start, end);
+        return pb.execute(q, start, end - start + 1);
     }
 
 }
