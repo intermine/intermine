@@ -121,16 +121,14 @@ public class SessionMethods
                     recordError(resources.getMessage(key), session);
 
                     // put stack trace in the log
-                    StringWriter sw = new StringWriter();
-                    e.printStackTrace(new PrintWriter(sw));
-                    LOG.error(sw.toString());
+                    LOG.error("Exception", e);
                     
                     error = true;
                 } catch (Throwable err) {
                     StringWriter sw = new StringWriter();
                     err.printStackTrace(new PrintWriter(sw));
                     recordError(sw.toString(), session);
-                    LOG.error(sw.toString());
+                    LOG.error("Exception", err);
                     error = true;
                 } finally {
                     if (r != null) {
@@ -138,9 +136,7 @@ public class SessionMethods
                             LOG.debug("Deregistering request id " + this);
                             ((ObjectStoreInterMineImpl) os).deregisterRequestId(this);
                         } catch (ObjectStoreException e1) {
-                            StringWriter sw = new StringWriter();
-                            e1.printStackTrace(new PrintWriter(sw));
-                            LOG.error(sw.toString());
+                            LOG.error("Exception", e1);
                             error = true;
                         }
                     }

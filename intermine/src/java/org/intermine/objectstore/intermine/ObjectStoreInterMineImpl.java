@@ -13,8 +13,6 @@ package org.intermine.objectstore.intermine;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -184,22 +182,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (!c.getAutoCommit()) {
                     Exception e = new Exception();
                     e.fillInStackTrace();
-                    StringWriter message = new StringWriter();
-                    PrintWriter pw = new PrintWriter(message);
-                    e.printStackTrace(pw);
-                    pw.close();
                     LOG.error("releaseConnection called while in transaction - rolling back."
-                              + System.getProperty("line.separator") + message.toString());
+                              + System.getProperty("line.separator"), e);
                     c.rollback();
                     c.setAutoCommit(true);
                 }
                 c.close();
             } catch (SQLException e) {
-                StringWriter message = new StringWriter();
-                PrintWriter pw = new PrintWriter(message);
-                e.printStackTrace(pw);
-                pw.flush();
-                LOG.error("Could not release SQL connection " + c + ": " + message.toString());
+                LOG.error("Could not release SQL connection " + c, e);
             }
         }
     }

@@ -10,8 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-//import java.io.PrintWriter;
-//import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
@@ -151,13 +149,8 @@ public class AceDataLoader extends DataLoader
                         // TODO: fix this:  store(obj);
                     } catch (Exception e) {
                         commitCount = 0;
-                        StringWriter sw = new StringWriter();
-                        PrintWriter pw = new PrintWriter(sw);
-                        e.printStackTrace(pw);
-                        pw.flush();
-                        sw.flush();
                         LOG.error("Object " + todo.getName() + " not storable: "
-                                + e.getMessage() + "\n" + sw);
+                                + e.getMessage(), e);
                     } finally {
                         if (commitCount <= 0) {
                             LOG.error("Committing transaction");

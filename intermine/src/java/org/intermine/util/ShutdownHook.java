@@ -11,10 +11,7 @@ package org.intermine.util;
  */
 
 import java.lang.ref.WeakReference;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Stack;
 
@@ -81,15 +78,7 @@ public class ShutdownHook extends Thread
                     LOG.error("Do not know how to shut down " + o);
                 }
             } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                try {
-                    pw.close();
-                    sw.close();
-                } catch (IOException e2) {
-                }
-                LOG.error("Exception while shutting down " + o + ": " + sw.toString());
+                LOG.error("Exception while shutting down " + o, e);
             }
         }
     }

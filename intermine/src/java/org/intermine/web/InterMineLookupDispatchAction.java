@@ -10,9 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.io.StringWriter;
-import java.io.PrintWriter;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionMessage;
@@ -74,11 +71,6 @@ public abstract class InterMineLookupDispatchAction extends LookupDispatchAction
         saveErrors(request, actionMessages);
 
         if (exception != null && logger != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            pw.println("Error from webapp with key: " + actionMessage.getKey());
-            exception.printStackTrace(pw);
-            
             logger.error(exception);
         }
     }

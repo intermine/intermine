@@ -10,8 +10,6 @@ package org.intermine.sql.precompute;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -238,11 +236,7 @@ public class QueryOptimiser
             return bestQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.close();
-            LOG.warn("Exception: " + sw.toString());
+            LOG.warn("Exception", e);
         }
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
