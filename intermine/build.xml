@@ -734,6 +734,15 @@
       </fileset>
     </copy>
 
+    <taskdef name="generate-wsdd"
+             classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <generate-wsdd destfile="${build.tmp}/deploy-ObjectStore.wsdd.fragment"/>
+    <loadfile srcFile="${build.tmp}/deploy-ObjectStore.wsdd.fragment" property="generated.wsdd"/>
+    <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
+    <copy todir="${build.webapp}/webservice/WEB-INF" filtering="true" overwrite="true" file="${resources}/webapps/webservice/deploy-ObjectStore.wsdd"/>
+
     <copy todir="${build.webapp}/webservice/WEB-INF/lib">
       <fileset dir="${lib}">
         <patternset refid="lib.webapp.common"/>
@@ -858,7 +867,7 @@
     <delete dir="${build.tmp}/jars"/>
   </target>
 
-  <target name="jar-demo-webservice-client" depends="jar-webservice-client, compile-testmodel">
+  <target name="build-demo-webservice-client" depends="jar-webservice-client, compile-testmodel">
     <jar destfile="${dist}/intermine-webservice-client.jar">
       <zipfileset src="${dist}/webservice-client.jar"/>
       <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
@@ -923,7 +932,7 @@
   
   <!-- webapp -->
   <target name="release-webapp"
-          description="releases the InterMine web application to the server">
+          description="release the webapp to the server">
     <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <reference torefid="class.path" refid="project.class.path"/>
@@ -931,7 +940,7 @@
   </target>
   
   <target name="remove-webapp"
-          description="remove the web application from the server">
+          description="remove the webapp from the server">
     <ant antfile="build-webapp.xml" target="remove-webapp" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
     </ant>    
@@ -939,44 +948,21 @@
   
   <!-- webservice -->
   <target name="release-webservice"
-          description="releases the webservice application to the webserver">
-    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    <tomcat-deploy url="${webservice.baseurl}/manager" 
-                   username="${webservice.manager}"
-                   password="${webservice.password}" 
-                   path="${webservice.path}"
-                   war="file://${dist.webapp}/webservice.war"/> 
-    
-    <taskdef name="generate-wsdd"
-             classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <generate-wsdd destfile="${build.tmp}/deploy-ObjectStore.wsdd.fragment"/>
-    <loadfile srcFile="${build.tmp}/deploy-ObjectStore.wsdd.fragment" property="generated.wsdd"/>
-    <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
-    <copy todir="${build.tmp}" filtering="true" overwrite="true" file="${resources}/webapps/webservice/deploy-ObjectStore.wsdd"/>
-    
-    <!-- This should probably be a waitfor task -->
-    <java classname="org.apache.axis.client.AdminClient" fork="true">
-      <classpath refid="webservice.class.path" />
-      <arg value="-l ${webservice.baseurl}/${webservice.path}/servlet/AxisServlet" />
-      <arg value="${build.tmp}/deploy-ObjectStore.wsdd" />
-    </java>
+          description="release the webservice to the server">
+    <ant antfile="build-webapp.xml" target="release-webservice" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/webservice.war"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>    
   </target>
-  
+
   <target name="remove-webservice"
-          description="remove the webservice application from the server">
-    <taskdef name="tomcat-undeploy" 
-             classname="org.apache.catalina.ant.UndeployTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    <tomcat-undeploy url="${webservice.baseurl}/manager"
-                     username="${webservice.manager}"
-                     password="${webservice.password}"
-                     path="${webservice.path}"/>
+          description="remove the webservice from the server">
+    <ant antfile="build-webapp.xml" target="remove-webservice" inheritRefs="true">
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>    
   </target>
+
+  <!-- Model diagrams -->
   
   <target name="dot-main" depends="compile-main">
     <taskdef name="dot"
