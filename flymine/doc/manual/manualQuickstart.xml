@@ -13,13 +13,13 @@
        
        <orderedlist>
          <listitem>
-           <para>The FlyMine Query Builder</para>
+           <para>The FlyMine Query Builder : Building Complex Queries</para>
          </listitem>
          <listitem>
-           <para>Browsing</para>
+           <para>Browsing : Quick Search</para>
          </listitem>
           <listitem>
-           <para>Template queries</para>
+           <para>Template Queries : Predefined Queries</para>
          </listitem>
        </orderedlist>
      
@@ -35,35 +35,59 @@
    </section>
 
    <section>
-     <title>1. The FlyMine Query Builder: building complex queries</title>
+     <title>1. The FlyMine Query Builder : Building Complex Queries</title>
    
       <itemizedlist>
         <listitem>
-         <para>FlyMine allows you to construct complex queries across
-        multiple integrated data sources using a web interface</para>
+         <para>The FlyMine query builder allows you to construct complex queries across the 
+        multiple integrated data sources in the database</para>
       </listitem>
 
       <listitem>
-        <para>Building a query using the FlyMine query builder involves
-        the following steps, which are described in more detail below.</para>
+        <para>The FlyMine query builder consists of 3 main sections:</para> 
+ 
+       <orderedlist> 
+
+       <listitem>     
+         <para>A. The class chooser</para>
+       </listitem>
+
+       <listitem>
+         <para>B. The main query builder</para>
+       </listitem>
+
+       <listitem>
+         <para>C. The results display</para>
+      </listitem>
+
+     </orderedlist>
+
+   </listitem>
+</itemizedlist>
+  
+<itemizedlist>
+
+      <listitem>
+        <para>Each of these is described in more detail below.  The
+        following list provides a basic overview of the steps involved
+        in building a FlyMine query. For a walk-through a simple query see the <ulink
+        url="../tutorials/index.xml">tutorials.</ulink></para>
+       </listitem>
+
+</itemizedlist>
 
         <orderedlist>
           <listitem>
-            <para>To start a new FlyMine query, choose the starting
-            point for your query either from the classes displayed
-            (which have been divided into biologically meaniful
-            categories) or by selecting the 'List all classes'
-            link</para>
+            <para>Choose the starting point for your query either from
+            the classes displayed (which have been divided into
+            biologically meaniful categories) or by selecting the
+            'List all classes' link.  This will take you to the main
+            query builder page.</para>
           </listitem>
 
           <listitem>
-            <para>Selecting the class with which to start your query
-            will take you to the main query builder page.</para>
-          </listitem>
-
-          <listitem>
-            <para>In the model browser, browse to the classes and fields you
-            are interested in.</para>
+            <para>In the model browser of the query builder, browse to
+            the classes and fields you are interested in.</para>
           </listitem>
 
           <listitem>
@@ -83,37 +107,8 @@
             page.</para>
           </listitem>
         </orderedlist>
-      </listitem>
-
-      <listitem>
-        <para>For a walk-through a simple query see the <ulink
-        url="../tutorials/index.xml">tutorials.</ulink></para>
-      </listitem>
-    </itemizedlist>
- 
-    <itemizedlist>
-      <listitem>
-        <para>The FlyMine query builder consists of 3 main sections:</para> 
-      
-
-       <orderedlist> 
-
-       <listitem>     
-         <para>A. The class chooser</para>
-       </listitem>
-
-       <listitem>
-         <para>B. The main query builder page</para>
-       </listitem>
-
-       <listitem>
-         <para>C. The results display</para>
-      </listitem>
-
-     </orderedlist>
-   </listitem>
-</itemizedlist>
-   
+  
+  
  </section>
 
   <section>
@@ -160,7 +155,7 @@
 
         <itemizedlist>
          <listitem>
-            <para>The browse button (accessed from the initial class
+            <para>The browse model button (accessed from the initial class
             selection point)allows you to browse the complete FlyMine
             object model. This shows all the classes in FlyMine, some
             of which do not yet have data associated with them.</para>
@@ -207,7 +202,7 @@
           </imageobject>
         </mediaobject>
 
-         <orderedlist>
+        <itemizedlist>
           <listitem>
             <para>The model browser</para>
 
@@ -306,7 +301,7 @@
             </mediaobject>
 
           </listitem>
-        </orderedlist>
+       </itemizedlist>
      
 </section>
 
@@ -316,27 +311,31 @@
 
         <itemizedlist>
           <listitem>
-            <para>The results page displays the first 10 objects returned by
-            your query.</para>
+            <para>The results page displays the first 10 objects
+            returned by your query.</para>
 
-            <para>The number of objects displayed can be changed by changing
-            the number in the Page size box and pressing Change.</para>
+            <para>The number of objects displayed can be changed by
+            changing the number in the Page size box and pressing
+            Change.</para>
 
-            <para>You can scroll though the objects using Next, or go to the
-            last 10 objects using Last.</para>
+            <para>You can scroll though the objects using Next, or go
+            to the last 10 objects using Last.</para>
 
-            <para>The total number of objects returned by your query is
-            estimated. An estimate is given because, for large queries, only a
-            subset of the total number of objects is initially returned by the
-            query. This is to improve query run time for large queries.</para>
+            <para>The total number of objects returned by your query
+            is estimated. An estimate is given because, for large
+            queries, only a subset of the total number of objects is
+            initially returned by the query. This is to improve query
+            run time for large queries.</para>
 
-            <para>From the results page you can save your data to a bag (see
-            <ulink url="manualSavingdata.xml">Saving bags of data</ulink>) and
-            export your data in various formats (see <ulink
-            url="manualExportingdata.xml">Exporting data</ulink>).</para>
+            <para>From the results page you can save your data to a
+            bag (see <ulink url="manualSavingdata.xml">Saving bags of
+            data</ulink>) and export your data in various formats (see
+            <ulink url="manualExportingdata.xml">Exporting
+            data</ulink>).</para>
 
-            <para>If there are any objects in your results (rather than
-            fields) you can click on an object to view it in detail.</para>
+            <para>If there are any objects in your results (rather
+            than fields) you can click on an object to view it in
+            detail.</para>
           </listitem>
         </itemizedlist>
 
@@ -347,4 +346,135 @@
         </mediaobject>
      
   </section>
+
+
+<section>
+   
+        <title>D. Attribute List vs Browse Mode: 2 modes of result display</title>
+
+        <itemizedlist>
+          <listitem>
+            <para>There are two modes of result display in FlyMine
+            depending on whether you select attributes of classes to
+            show or an entire Class.  This is illustrated in the
+            screenshot below.  It is also possible to show a mix of
+            attributes and objects in the result display.</para>
+          </listitem>
+        </itemizedlist>
+
+
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="modelBrowser_browsing1.png" />
+          </imageobject>
+        </mediaobject>
+
+
+
+        <itemizedlist>
+          <listitem>
+            <para>Selecting attributes results in a table-style
+            results output as shown in the results displayed in the
+            screenshot above.  Selecting a class to 'show' in the
+            results output means that each object required from that
+            class will be returned. For each object in the database
+            there is a detailed results view which shows all the
+            attributes of the objects and the classes referenced by
+            that object.  From this detailed results view it is
+            possible to browse the information contained in the
+            referenced classes.</para>
+          </listitem>
+        </itemizedlist>
+
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="resultsDetails1.png" />
+          </imageobject>
+        </mediaobject>
+
+</section>
+
+
+
+   <section>
+     <title>2. Browsing : Quick Search</title>
+   
+      <itemizedlist>
+        <listitem>
+         <para>The FlyMine Browse search allows you to quickly and
+         directly access the data in FlyMine. Entering any object
+         identifier (such as a gene name or identifier) will take you
+         straight to the details page for that object.  Wildcards are
+         automatically attached to any text entered and so your search
+         may match more than one object identifier in the database.
+         In such a case a list of all matching objects is shown, from
+         where you can access the object details pages.</para>
+
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="Browsing1.png" />
+          </imageobject>
+        </mediaobject>
+
+      </listitem>
+     </itemizedlist>
+   </section>
+
+
+   <section>
+     <title>3. Template Queries : Predefined Queries</title>
+
+       <itemizedlist>
+          <listitem>
+            <para>Template queries provide an easier route to accessing the data in FlyMine. A template query is like a form with various boxes for you to fill in.  A number of template queries have been predefined.  These range from simple queries to more complex queries covering a wide range of data. To run a template query:</para>
+
+       <orderedlist>
+         <listitem>
+           <para>Select the query you wish to run either from the lists on the main Query page or by selecting 'view all template queries'.  Pressing the -&gt; next to the query description will take you to the template form.</para>
+
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="templates1.png" />
+          </imageobject>
+        </mediaobject>
+
+</listitem>
+
+
+
+         <listitem>
+           <para>Fill in the boxes with the appropriate values or leave them with the default values shown.</para>
+         </listitem>
+          <listitem>
+           <para>Pressing the 'Submit' button will display the template query in the FlyMine Query Builder page.  Here you can either use the template as a starting point for building a more complex query, edit the query or simply run the query as it is.  Press 'Show results' to run your query.</para>
+        
+
+
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="templates2.png" />
+          </imageobject>
+        </mediaobject>
+
+ </listitem>
+
+
+
+
+       </orderedlist>
+
+
+  </listitem>
+</itemizedlist>
+</section>
+
+
+
+    
+
+
+
 </article>
