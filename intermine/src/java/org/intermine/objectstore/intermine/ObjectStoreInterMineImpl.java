@@ -1037,26 +1037,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws SQLException if something goes wrong
      */
     public int getUniqueInteger(Connection c) throws SQLException {
-        int returnInteger;
-
-        try {
-            Statement s = c.createStatement();
-            ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
-            if (!r.next()) {
-                throw new RuntimeException("No result while attempting to get a unique"
-                                           + " integer from " + SEQUENCE_NAME);
-            }
-            returnInteger = r.getInt(1);
-        } catch (SQLException e) {
-            Statement s = c.createStatement();
-            s.execute("CREATE SEQUENCE " + SEQUENCE_NAME);
-            ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
-            if (!r.next()) {
-                throw new RuntimeException("No result while attempting to get a unique"
-                                           + " integer from " + SEQUENCE_NAME);
-            }
-            returnInteger = r.getInt(1);
+        Statement s = c.createStatement();
+        ResultSet r = s.executeQuery("SELECT nextval('" + SEQUENCE_NAME + "')");
+        if (!r.next()) {
+            throw new RuntimeException("No result while attempting to get a unique"
+                                       + " integer from " + SEQUENCE_NAME);
         }
-        return returnInteger;
+        return r.getInt(1);
     }
 }
