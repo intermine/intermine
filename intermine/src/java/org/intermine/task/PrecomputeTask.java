@@ -268,8 +268,6 @@ public class PrecomputeTask extends Task
         ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcSub);
         q.setConstraint(cc);
 
-        org.intermine.web.LogMe.log("pre", "created: " + q);
-
         return q;
     }
 
