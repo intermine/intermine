@@ -340,8 +340,7 @@
     </taskdef>
     <precompute-queries alias="${objectstore.name}"
                         summaryPropertiesFile="${summarise.output.properties.filename}"
-                        minRows="${precompute.minRows}"
-                        operation="model"/>
+                        minRows="${precompute.minRows}"/>
   </target>
 
   <target name="precompute-model-test" depends="compile-java, summarise-objectstore">
@@ -350,19 +349,17 @@
     </taskdef>
     <precompute-queries alias="${objectstore.name}" testMode="true"
                         summaryPropertiesFile="${summarise.output.properties.filename}"
-                        minRows="${precompute.minRows}"
-                        operation="model"/>
+                        minRows="${precompute.minRows}"/>
   </target>
 
   <target name="precompute-templates" depends="compile-java, summarise-objectstore">
     <copy file="${model.web.template.queries}" toDir="${build.model.dir}"/>
-    <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
+    <taskdef name="precompute-templates" classname="org.intermine.web.task.PrecomputeTemplatesTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-queries alias="${objectstore.name}"
-                        summaryPropertiesFile="${summarise.output.properties.filename}"
-                        minRows="${precompute.minRows}"
-                        operation="template"/>
+    <precompute-templates alias="${objectstore.name}"
+                          summaryPropertiesFile="${summarise.output.properties.filename}"
+                          minRows="${precompute.minRows}"/>
   </target>
 
   <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"

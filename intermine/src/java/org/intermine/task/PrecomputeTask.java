@@ -79,7 +79,6 @@ public class PrecomputeTask extends Task
     protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
     private static final String TEST_QUERY_PREFIX = "test.query.";
-    private String operation;
 
     /**
      * Set the ObjectStore alias
@@ -87,15 +86,6 @@ public class PrecomputeTask extends Task
      */
     public void setAlias(String alias) {
         this.alias = alias;
-    }
-
-    /**
-     * Set the mode of operation - if true run and time a set of test queries after each
-     * call to precompute().
-     * @param testMode set test mode on if and only if this is true
-     */
-    public void setTestMode(Boolean testMode) {
-        this.testMode = testMode.booleanValue();
     }
 
     /**
@@ -116,17 +106,6 @@ public class PrecomputeTask extends Task
     }
 
     /**
-     * Set the type of pre-compute:
-     * model - read configuration file for model and pre-compute appropriate tables.
-     * template - create pre-computed tables for all template queries defined for model.
-     * all - both template and model
-     * @param operation 'model', 'template' or 'all'
-     */
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    /**
      * @see Task#execute
      */
     public void execute() throws BuildException {
@@ -140,10 +119,6 @@ public class PrecomputeTask extends Task
 
         if (minRows == -1) {
             throw new BuildException("minRows attribute is not set");
-        }
-
-        if (operation == null) {
-            throw new BuildException("operation attribte was not set");
         }
 
         ObjectStore objectStore;
@@ -160,16 +135,7 @@ public class PrecomputeTask extends Task
 
         oss = createObjectStoreSummary();
 
-        if (operation.equals("all")) {
-            precomputeModel(objectStore, oss);
-            precomputeTemplates(objectStore, oss);
-        } else if (operation.equals("model")) {
-            precomputeModel(objectStore, oss);
-        } else if (operation.equals("template")) {
-            precomputeTemplates(objectStore, oss);
-        } else {
-            throw new BuildException("invalied operation specified: " + operation);
-        }
+        precomputeModel(objectStore, oss);
     }
 
     /**
@@ -250,173 +216,6 @@ public class PrecomputeTask extends Task
                                  + " seconds");
         }
     }
-
-
-    /**
-     * Create precomputed tables for all template queries in the given ObjectStore.
-     * @param os the ObjectStore to precompute in
-     * @param oss the ObjectStoreSummary for os
-     */
-    protected void precomputeTemplates(ObjectStore os, ObjectStoreSummary oss) {
-        Iterator iter = getPrecomputeTemplateQueries().entrySet().iterator();
-
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            HashMap pathToQueryNode = new HashMap();
-            TemplateQuery template = (TemplateQuery) entry.getValue();
-
-            QueryAndIndexes qai = processTemplate(template);
-
-            ResultsInfo resultsInfo;
-            try {
-                resultsInfo = os.estimate(qai.getQuery());
-            } catch (ObjectStoreException e) {
-                throw new BuildException("Exception while calling ObjectStore.estimate()", e);
-            }
-
-            if (resultsInfo.getRows() >= minRows) {
-                LOG.info("precomputing template " + entry.getKey());
-                precompute(os, qai.getQuery(), qai.getIndexes());
-            }
-        }
-    }
-
-
-    /**
-     * For a template alter the query ready to pre-compute: remove editable constraints
-     * and add editable fields to the select list.  Generate list of additional indexes
-     * to create.
-     * @param template the template query to alter
-     * @return altered query and a list of indexes
-     */
-    protected QueryAndIndexes processTemplate(TemplateQuery template) {
-        QueryAndIndexes qai = new QueryAndIndexes();
-        HashMap pathToQueryNode = new HashMap();
-        List indexes = new ArrayList();
-        Query tmp = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
-
-        // find nodes with editable constraints to index and possibly add to select list
-        Iterator niter = template.getNodes().iterator();
-        while (niter.hasNext()) {
-            PathNode node = (PathNode) niter.next();
-            List ecs = template.getConstraints(node);
-            if (ecs != null && ecs.size() > 0) {
-                // node has editable constraints
-                QueryNode qn = (QueryNode) pathToQueryNode.get(node.getPath());
-                if (qn == null) {
-                    throw new BuildException("no QueryNode for path " + node.getPath());
-                }
-                // this seems to exhibit a bug with repeated aliases in generated query
-                // so add QueryField to select after creating new query
-                //template.getQuery().getView().add(node.getPath());
-                indexes.add(qn);
-            }
-        }
-
-        // now generate query with editable constraints removed
-        template.removeEditableConstraints();
-        Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap());
-        qai.setQuery(query);
-
-        // list of indexes needs to be QueryFields from generated query but list created from temp
-        // query -> find equivalents from select list
-        Iterator indexIter = indexes.iterator();
-        while (indexIter.hasNext()) {
-            QueryField oldQf = (QueryField) indexIter.next();
-            QueryClass oldQc = (QueryClass) oldQf.getFromElement();
-            QueryClass newQc = getQueryClassFromSet(query.getFrom(), oldQc);
-
-            // we now have corresponding QueryClass from new query -> create QueryField
-            QueryField newQf = new QueryField(newQc, oldQf.getFieldName());
-            query.addToSelect(newQf);
-            qai.addIndex(newQf);
-        }
-        return qai;
-    }
-
-    private QueryClass getQueryClassFromSet(Set set, QueryClass qc) {
-        Iterator i = set.iterator();
-        while (i.hasNext()) {
-            QueryClass candidate = (QueryClass) i.next();
-            if (sameQueryClass(candidate, qc)) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private boolean sameQueryClass(QueryClass a, QueryClass b) {
-        return a.getType().equals(b.getType());
-    }
-
-
-    /**
-     * Class to associate a query with a list of query nodes that will need to have
-     * indexes created for them
-     */
-    protected class QueryAndIndexes
-    {
-        Query query = null;
-        List indexes = new ArrayList();
-
-        /**
-         * add to the list of indexes
-         * @param qn to add to list of indexes
-         */
-        public void addIndex(QueryNode qn) {
-            this.indexes.add(qn);
-        }
-
-        /**
-         * Return the list if indexes
-         * @return list of indexes
-         */
-        public List getIndexes() {
-            return this.indexes;
-        }
-
-        /**
-         * set the query object
-         * @param q the query object
-         */
-        public void setQuery(Query q) {
-            this.query = q;
-        }
-
-        /**
-         * get the query object
-         * @return the query object
-         */
-        public Query getQuery() {
-            return this.query;
-        }
-
-        /**
-         * @see Object#equals
-         */
-        public boolean equals(Object o) {
-            if (o instanceof QueryAndIndexes) {
-                return query.equals(((QueryAndIndexes) o).query)
-                    && indexes.equals(((QueryAndIndexes) o).indexes);
-            }
-            return false;
-        }
-
-        /**
-         * @see Object#hashCode
-         */
-        public int hashCode() {
-            return 3 * query.hashCode() + 7 * indexes.hashCode();
-        }
-
-        /**
-         * @see Object#toString
-         */
-        public String toString() {
-            return "query: " + query.toString() + ", indexes: " + indexes.toString();
-        }
-    }
-
 
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
