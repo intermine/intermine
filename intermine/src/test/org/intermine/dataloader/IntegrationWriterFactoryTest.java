@@ -20,18 +20,16 @@ public class IntegrationWriterFactoryTest extends TestCase
     }
 
     public void testWorks() throws Exception {
-        iw = IntegrationWriterFactory.getIntegrationWriter("dataloader.unittest", "source1", os);
+        iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest", "source1");
         assertNotNull(iw);
 
     }
 
     public void testWrongProps() throws Exception {
         try {
-            iw = IntegrationWriterFactory.getIntegrationWriter("dataloader.wrong", "source1", os);
+            iw = IntegrationWriterFactory.getIntegrationWriter("integration.wrong", "source1");
             fail("Expected ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
     }
-
-
 }

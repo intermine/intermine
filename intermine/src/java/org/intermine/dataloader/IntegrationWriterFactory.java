@@ -3,8 +3,8 @@ package org.flymine.dataloader;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.PropertiesUtil;
 
@@ -20,27 +20,25 @@ public class IntegrationWriterFactory
      * Return an IntegrationWriter configured using properties file
      * @param alias identifier for properties defining integration/writer parameters
      * @param dataSource name of data source being loaded
-     * @param os the ObjectStore being written to
      * @return instance of a concrete IntegrationWriter according to property
      * @throws ObjectStoreException if anything goes wrong
      */
 
-    public static IntegrationWriter getIntegrationWriter(String alias, String dataSource,
-                                                         ObjectStore os)
+    public static IntegrationWriter getIntegrationWriter(String alias, String dataSource)
         throws ObjectStoreException {
         if (alias == null) {
-            throw new NullPointerException("Dataloader alias cannot be null");
+            throw new NullPointerException("Integration alias cannot be null");
         }
         if (alias.equals("")) {
-            throw new IllegalArgumentException("Dataloader alias cannot be empty");
+            throw new IllegalArgumentException("Integration alias cannot be empty");
         }
         Properties props = PropertiesUtil.getPropertiesStartingWith(alias);
         if (props.size() == 0) {
-            throw new ObjectStoreException("No Dataloader properties were found for '"
+            throw new ObjectStoreException("No Integration properties were found for '"
                                            + alias + "'");
         }
         props = PropertiesUtil.stripStart(alias, props);
-        String integrationWriterClassName = props.getProperty("integration");
+        String integrationWriterClassName = props.getProperty("class");
         if (integrationWriterClassName == null) {
             throw new ObjectStoreException(alias + " does not have an integration class specified"
                                            + " (check properties file)");
@@ -50,29 +48,8 @@ public class IntegrationWriterFactory
             throw new ObjectStoreException(alias + " does not have an osw alias specified"
                                            + " (check properties file)");
         }
-        Properties oswProps = PropertiesUtil.getPropertiesStartingWith(writerAlias);
-        String writerClassName = oswProps.getProperty(writerAlias + ".class");
 
-        // first build ObjectStoreWriter
-
-        ObjectStoreWriter writer = null;
-        try {
-            Class writerClass = Class.forName(writerClassName);
-            Constructor c = writerClass.getConstructor(new Class[] {ObjectStore.class});
-            writer = (ObjectStoreWriter) c.newInstance(new Object[] {os});
-        } catch (ClassNotFoundException e) {
-            throw new ObjectStoreException("Cannot find specified ObjectStoreWriter class '"
-                                           + writerClassName + "' for " + alias
-                                           + " (check properties file) " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            throw new ObjectStoreException("Cannot find appropriate constructor for "
-                                           + "ObjectStoreWriter: " + writerClassName
-                                           + " (ObjectStore.class)"
-                                           + " - check properties file, " + e.getMessage());
-        } catch (Exception e) {
-            throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
-                                           + writerClassName + ", " + e.toString());
-        }
+        ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
 
         // now build IntegrationWriter using datasource name and ObjectStoreWriter
 
