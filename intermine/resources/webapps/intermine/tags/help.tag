@@ -2,6 +2,7 @@
 <%@ attribute name="text" required="true" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <%--
   Expects a div called ctxHelpDiv that will be shown/hidden and a div
@@ -13,7 +14,8 @@
 </jsp:useBean>
 
 <html:link action="/contextHelp" name="linkParams"
-   onclick="document.getElementById('ctxHelpTxt').innerHTML='${text}';document.getElementById('ctxHelpDiv').style.display='';return false"
+   
+onclick="document.getElementById('ctxHelpTxt').innerHTML='${fn:replace(text,'\"','&quo;')}';document.getElementById('ctxHelpDiv').style.display='';return false"
    title="${text}">
   <jsp:doBody/>
 </html:link>
