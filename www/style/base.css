@@ -24,14 +24,15 @@ a:hover
 
 }
 
-span.fly
-{
-   font-style: oblique;
-}
-
 p
 {
     text-align: justify;
+}
+
+
+span.organism-name
+{
+  font-style: oblique;
 }
 
 /**************************************/
@@ -68,41 +69,39 @@ p
 /**************************************/
 
 #sidebar {
-  float: right;
-  width: 200px;
-  background-color: white;
-  padding: 0px 0px 5px 0px;
-  margin: 10px 0px 20px 20px;
-  border-left: 1px solid #888;
-  border-bottom: 1px solid #888;
-  border-top: 1px solid #888;
-}
-
-#sidebar ul {
-    list-style-type: none;
-    padding: 0px 0px 5px 5px;
-    margin: 10px 0px 5px 5px;
-}
-
-#sidebar ul li {
-  border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
-  border-left: 1px solid #888;
-  background-color: #f5f5f5;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 5px;
+vertical-align: top;
+  width: 15%
   margin: 0px;
+  padding: 5px;
+  border: 1px solid #888;
+
+  background-color: white;
+}
+
+#sidebar .heading {
+  margin: 5px;
+  padding: px;
+  padding-left: 5px;
+  border: 1px solid #888;
+
+  background-color: #f5f5f5;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: black;
+  white-space: nowrap;
 }
 
-#sidebar ul ul {
-    margin: 0px 0px 5px 20px;
+#sidebar .body {
+  padding: 0x;
+  margin: 0px;
+  margin-bottom: 10px;
 }
 
-#sidebar ul ul li {
+#sidebar .body ul {
+    margin: 0px 0px 0px 0px;
+}
+
+#sidebar .body ul li {
     font-family: "verdana", "helvetica", "arial", sans-serif;
     font-size: 13px;
     text-transform: none;
@@ -114,21 +113,32 @@ p
 
 /**************************************/
 
-#pagecontent
-{
-    margin-left: 10px;
-    margin-top: 10px;
-    margin-right: 210px;
-
+#static-table {
+  width: 100%;
 }
 
-#pagecontent ul li
-{
-    margin: 10px  0 0 0;
-    padding: 0;
+#static-content-td {
 }
 
-#pagecontent ul li span
+#static-content
+{
+  vertical-align: top;
+  width: 85%
+  margin: 0px;
+  padding: 5px;
+  border: solid #888 1px;
+
+  
+  background-color: white;
+}
+
+#static-content ul li
+{
+  margin: 0px;
+  padding: 0px;
+}
+
+#static-content ul li span
 {
     font-weight: bold;
 //    letter-spacing: 0.2em;
@@ -136,14 +146,14 @@ p
     padding: 5px;
 }
 
-#pagecontent ul ul
+#static-content ul ul
 {
     margin-bottom: 35px;
     list-style-image: none;
     list-style-type: disc;
 }
 
-#pagecontent ul ul li
+#static-content ul ul li
 {
 //    font-family: times, serif;
     font-size: 1em;
@@ -151,12 +161,12 @@ p
     margin: 5px 0 0 0;
 }
 
-#pagecontent h2.title
+#static-content h2.title
 {
     text-align: center;
 }
 
-#pagecontent p.author
+#static-content p.author
 {
     text-align: center;
 }
@@ -188,18 +198,18 @@ p
 
 /**************************************/
 
-#pagecontent ul.fileformat
+#static-content ul.fileformat
 {
     list-style-type: none;
 }
 
-#pagecontent .fileformat li
+#static-content .fileformat li
 {
     display: inline;
     margin-right: 10px;
 }
 
-#pagecontent .fileformat img
+#static-content .fileformat img
 {
     border: none;
 }
@@ -330,8 +340,8 @@ A.bred            { color: #FFFFFF;
 }
 
 .box .body {
-  padding: 4px;
-  margin: 3px;
+  padding: 0px;
+  margin: 0px 10px 0px 10px;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
@@ -351,8 +361,6 @@ A.bred            { color: #FFFFFF;
 }
 
 .box .buildmenu .body {
-  /*padding: 4px;
-  margin: 3px;*/
   border: 1px solid #888;
   height: 10;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
@@ -396,10 +404,4 @@ table.box th.title {
   font-size: 14px;
   font-weight: bold;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-}
-
-div.docbook-page {
-  background-color: white;
-  border: solid #888 1px;
-  padding: 5px;
 }
