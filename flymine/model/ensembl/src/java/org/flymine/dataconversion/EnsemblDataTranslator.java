@@ -73,7 +73,7 @@ public class EnsemblDataTranslator extends DataTranslator
     private Map scLocs = new HashMap();
     private Map exonLocs = new HashMap();
     private Map exons = new HashMap();
-    private Set flybaseIds = new HashSet();
+    private Map flybaseIds = new HashMap();
     private String orgAbbrev;
     private Item organism;
     private Reference orgRef;
@@ -505,15 +505,20 @@ public class EnsemblDataTranslator extends DataTranslator
                     synonym.addAttribute(new Attribute("value", accession));
                     if (dbname.equals("flybase_symbol")) {
                         synonym.addAttribute(new Attribute("type", "name"));
-                        // set FlyBase symbol to be gene name
                         tgtItem.addAttribute(new Attribute("name", accession));
                     } else { // flybase_gene
                         synonym.addAttribute(new Attribute("type", "accession"));
                         // temporary fix to deal with broken FlyBase identfiers in ensembl
-                        if (!flybaseIds.contains(accession)) {
-                            tgtItem.addAttribute(new Attribute("organismDbId", accession));
-                            flybaseIds.add(accession);
+                        String value = accession;
+                        Set idSet = (Set) flybaseIds.get(accession);
+                        if (idSet == null) {
+                            idSet = new HashSet();
+                        } else {
+                            value += "_flymine_" + idSet.size();
                         }
+                        idSet.add(value);
+                        flybaseIds.put(accession, idSet);
+                        tgtItem.addAttribute(new Attribute("organismDbId", value));
                     }
                     synonym.addReference(getFlyBaseRef());
                     synonyms.add(synonym);
