@@ -81,12 +81,60 @@ version="1.0">
 <h4><xsl:apply-templates/></h4>
 </xsl:template>
 
+<xsl:template match="firstterm">
+<i><xsl:apply-templates/></i>
+</xsl:template>
+
 <xsl:template match="itemizedlist">
 <ul><xsl:apply-templates/></ul>
 </xsl:template>
 
 <xsl:template match="listitem">
 <li><xsl:apply-templates/></li>
+</xsl:template>
+
+<xsl:template match="table">
+<table><xsl:apply-templates/></table>
+</xsl:template>
+
+<xsl:template match="tbody">
+<xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match="row">
+<tr><xsl:apply-templates/></tr>
+</xsl:template>
+
+<xsl:template match="entry">
+<td><xsl:apply-templates/></td>
+</xsl:template>
+
+<xsl:template match="email">
+<a>
+<xsl:attribute name="href">mailto:<xsl:value-of select="@url"/></xsl:attribute>
+    <xsl:choose>
+      <xsl:when test="count(child::node())=0">
+        <xsl:value-of select="@url"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+</a>
+</xsl:template>
+
+<xsl:template match="ulink">
+<a>
+<xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
+    <xsl:choose>
+      <xsl:when test="count(child::node())=0">
+        <xsl:value-of select="@url"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+</a>
 </xsl:template>
 
 <xsl:template match="url">
