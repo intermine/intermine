@@ -369,9 +369,11 @@ public class UniprotDataTranslator extends DataTranslator
                 } else if (taxonId == 180454) { // A. gambiae str. PEST
                     // no organismDbId and no specific dbxref to enembl - assume that geneIdentifier
                     // is always ensembl gene stable id and set organismDbId to be identifier
-                    createGene = true;
-                    geneOrganismDbId = geneIdentifier;
-                    dbId = getDbId("ensembl");
+                    if (geneIdentifier != null) {
+                        createGene = true;
+                        geneOrganismDbId = geneIdentifier;
+                        dbId = getDbId("ensembl");
+                    }
                 }
 
                 // output gene identifier details
