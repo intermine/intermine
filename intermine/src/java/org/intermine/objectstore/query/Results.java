@@ -285,7 +285,7 @@ public class Results extends AbstractList
                         Object field = fields[i].get(obj);
                         if (field instanceof LazyCollection) {
                             Query query = ((LazyCollection) field).getQuery();
-                            fields[i].set(obj, new Results(query, os));
+                            fields[i].set(obj, new SingletonResults(query, os));
                         } else if (field instanceof LazyReference) {
                             ((LazyReference) field).setObjectStore(os);
                         }
