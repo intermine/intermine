@@ -78,4 +78,14 @@ public class AttributeDescriptor extends FieldDescriptor
     public String toString() {
         return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
     }
+
+    /**
+     * Returns true if the type of the attribute is a primitive type (rather than object).
+     *
+     * @return true or false
+     */
+    public boolean isPrimitive() {
+        return "short".equals(type) || "int".equals(type) || "long".equals(type)
+            || "float".equals(type) || "double".equals(type) || "boolean".equals(type);
+    }
 }
