@@ -2,35 +2,47 @@
 <intermine-sources>
   <sources version="1.0">
     <source>
+      <name>D. melanogaster genome annotation.</name>
       <description>
-        Genome Annotation for D. melanogaster and A. gambiae from
-        &lt;a href="http://www.ensembl.org/">Ensembl&lt;/a>
+        Genome Annotation for D. melanogaster from &lt;a
+        href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
-      <version>1.0</version>
+      <version>Release 3.1</version>
     </source>
    <source>
+      <name>A. gambiae genome annotation.</name>
       <description>
-        Orthologues between D. melanogaster and A. gambiae from
-        &lt;a href="http://www.ensembl.org/">Ensembl&lt;/a>
+        Genome Annotation for A. gambiae from &lt;a
+        href="http://www.ensembl.org/">Ensembl&lt;/a>
+      </description>
+      <version>Release 2b</version>
+    </source>
+   <source>
+      <name>D. melanogaster : A. gambiae orthologues.</name>
+      <description>
+         Orthologues between D. melanogaster and A. gambiae from &lt;a
+        href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version></version>
     </source>
     <source>
-      <description>
+       <name>D. melanogaster : C. elegans orthologues and paralogues.</name>
+      <description> 
         Orthologues and Paralogues between D. melanogaster and C. elegans
         from &lt;a href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
-      <version></version>
+      <version>3.0</version>
     </source>
     <source>
+     <name>D. melanogaster protein-protein interactions.</name>
       <description>
         2-hybrid protein-protein interactions for D. melanogaster:
-        Curagen set (Giot et al (2003) Science 302 1727-1736) and
-        &lt;a href="http://pim.hybrigenics.com/">Hybrigenics&lt;/a> set
+        Curagen set (Giot et al (2003) Science 302 1727-1736). 
       </description>
       <version></version>
     </source>
     <source>
+      <name>C. elegans protein-protein interactions.</name> 
       <description>
         2-hybrid protein-protein interactions for C. elegans (Li et al
         (2004) Science 303 540-543)
@@ -38,6 +50,7 @@
       <version></version>
     </source>
     <source>
+      <name>C. elegans RNAi phenotypes.</name>
       <description>
         RNAi phenotypes for C. elegans from
         &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
@@ -45,10 +58,20 @@
       <version></version>
     </source>
     <source>
+      <name>Gene Ontology</name>
       <description>
         &lt;a href="http://www.geneontology.org/">The Gene Ontology&lt;/a>
       </description>
-      <version></version>
+      <version>Revision 3.185</version>
+    </source>
+    <source>
+      <name>GO annotations</name>
+      <description>
+        &lt;a
+        href="http://www.geneontology.org/GO.current.annotations.shtml/">Uniprot
+        Gene Ontology assignments&lt;/a>
+      </description>
+      <version>Dec 22nd 2004</version>
     </source>
   </sources>
 </intermine-sources>
