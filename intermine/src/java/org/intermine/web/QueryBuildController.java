@@ -76,9 +76,9 @@ public class QueryBuildController extends TilesAction
             
             ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;
-            session.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
+            request.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
             
-            session.setAttribute("allFieldNames", QueryBuildHelper.getAllFieldNames(cld));
+            request.setAttribute("allFieldNames", QueryBuildHelper.getAllFieldNames(cld));
             
             Collection savedBagNames = (savedBagsInverse == null
                                         ? new HashSet()
@@ -86,7 +86,7 @@ public class QueryBuildController extends TilesAction
             Collection savedQueryNames = (savedQueriesInverse == null
                                           ? new HashSet()
                                           : savedQueriesInverse.values());
-            session.setAttribute("validAliases", QueryBuildHelper.getValidAliases(cld,
+            request.setAttribute("validAliases", QueryBuildHelper.getValidAliases(cld,
                                                                                   queryClasses,
                                                                                   savedBagNames,
                                                                                   savedQueryNames));
