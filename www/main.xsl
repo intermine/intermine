@@ -119,10 +119,13 @@ doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
             <xsl:when test="starts-with($url,'http')">
                 <xsl:value-of select="$url"/>
             </xsl:when>
-            <xsl:otherwise>
+            <xsl:when test="substring(@url, string-length(@url)-3) = '.xml'">
                 <xsl:value-of select="$basedir"/>
                 <xsl:value-of select="substring(@url,1,string-length(@url)-3)"/>
                 <xsl:value-of select="$outputext"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$url"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:attribute>
