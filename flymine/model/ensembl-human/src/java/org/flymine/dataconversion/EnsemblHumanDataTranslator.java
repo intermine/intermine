@@ -57,12 +57,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Reference ensemblRef;
     private Item emblDb;
     private Reference emblRef;
-    private Item tremblDb;
-    private Reference tremblRef;
-    private Item swissprotDb;
-    private Reference swissprotRef;
-    private Item flybaseDb;
-    private Reference flybaseRef;
+    private Item uniprotDb;
+    private Reference uniprotRef;
     private Item refSeqDb;
     private Reference refSeqRef;
     private Item hugoDb;
@@ -108,8 +104,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         tgtItemWriter.store(ItemHelper.convert(getOrganism()));
         tgtItemWriter.store(ItemHelper.convert(getEnsemblDb()));
         tgtItemWriter.store(ItemHelper.convert(getEmblDb()));
-        tgtItemWriter.store(ItemHelper.convert(getTremblDb()));
-        tgtItemWriter.store(ItemHelper.convert(getSwissprotDb()));
+        tgtItemWriter.store(ItemHelper.convert(getUniprotDb()));
         tgtItemWriter.store(ItemHelper.convert(getHugoDb()));
         tgtItemWriter.store(ItemHelper.convert(getRefSeqDb()));
         tgtItemWriter.store(ItemHelper.convert(getGenbankDb()));
@@ -126,9 +121,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
-        if (flybaseDb != null) {
-            tgtItemWriter.store(ItemHelper.convert(flybaseDb));
-        }
+
     }
 
     /**
@@ -540,8 +533,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         Item protein = createItem(tgtNs + "Protein", "");
         Set synonyms = new HashSet();
         String value = srcItem.getIdentifier();
-        String swissProtId = null;
-        String tremblId = null;
+        String uniprotId = null;
         String identifier = null;
         if (srcItem.hasReference("transcript")) {
             Item transcript = ItemHelper.convert(srcItemReader.getItemById(
@@ -561,10 +553,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 }
                 if (accession != null && !accession.equals("")
                     && dbname != null && !dbname.equals("")) {
-                    if (dbname.equals("Uniprot/SWISSPROT")) { //Uniprot/SWISSPROT
-                        swissProtId = accession;
+                    if (dbname.equals("Uniprot/SWISSPROT")  //Uniprot/SWISSPROT
+                        || dbname.equals("Uniprot/SPTREMBL")) { // Uniprot/SPTREMBL
+                        uniprotId = accession;
                         Item synonym = createSynonym(srcItem.getIdentifier(),
-                                                     "accession", accession, getSwissprotRef());
+                                                     "accession", accession, getUniprotRef());
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonyms.add(synonym);
 
@@ -572,35 +565,17 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                             && !xref.getAttribute("display_label").getValue().equals("")) {
                             identifier = xref.getAttribute("display_label").getValue();
                             synonym = createSynonym(srcItem.getIdentifier(),
-                                                   "identifier", identifier, getSwissprotRef());
+                                                   "identifier", identifier, getUniprotRef());
                             addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                             synonyms.add(synonym);
                         }
-                    } else if (dbname.equals("Uniprot/SPTREMBL")) { // Uniprot/SPTREMBL
-                        tremblId = accession;
-                        Item synonym =  createSynonym(srcItem.getIdentifier(),
-                                                     "accession", accession, getTremblRef());
-                        addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                        synonyms.add(synonym);
-
-                         if (xref.hasAttribute("display_label")
-                            && !xref.getAttribute("display_label").getValue().equals("")) {
-                             identifier = xref.getAttribute("display_label").getValue();
-                             synonym = createSynonym(srcItem.getIdentifier(),
-                                                     "identifier", identifier, getTremblRef());
-                             addReferencedItem(protein, synonym, "synonyms",
-                                               true, "subject", false);
-                             synonyms.add(synonym);
-                         }
                     }
                 }
             }
         }
         String primaryAcc = null;
-        if (swissProtId != null) {
-            primaryAcc = swissProtId;
-        } else if (tremblId != null) {
-            primaryAcc = tremblId;
+        if (uniprotId != null) {
+            primaryAcc = uniprotId;
         } else {
             // there was no protein accession so use ensembl stable id
             Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
@@ -806,80 +781,33 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return emblRef;
     }
 
-    /**
-     * set database object
-     * @return db item
-     */
-    private Item getSwissprotDb() {
-        if (swissprotDb == null) {
-            swissprotDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "Swiss-Prot");
-            Attribute url = new Attribute("url", "http://ca.expasy.org/sprot/");
-            swissprotDb.addAttribute(title);
-            swissprotDb.addAttribute(url);
-        }
-        return swissprotDb;
-    }
 
-    /**
-     * @return db reference
-     */
-    private Reference getSwissprotRef() {
-        if (swissprotRef == null) {
-            swissprotRef = new Reference("source", getSwissprotDb().getIdentifier());
-        }
-        return swissprotRef;
-    }
 
     /**
      * set database object
      * @return db item
      */
-    private Item getTremblDb() {
-        if (tremblDb == null) {
-            tremblDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "TrEMBL");
-            Attribute url = new Attribute("url", "http://ca.expasy.org/sprot/");
-            tremblDb.addAttribute(title);
-            tremblDb.addAttribute(url);
+    private Item getUniprotDb() {
+        if (uniprotDb == null) {
+            uniprotDb = createItem(tgtNs + "Database", "");
+            Attribute title = new Attribute("title", "UniProt");
+            Attribute url = new Attribute("url", "http://www.uniprot.org/");
+            uniprotDb.addAttribute(title);
+            uniprotDb.addAttribute(url);
         }
-        return tremblDb;
+        return uniprotDb;
     }
 
     /**
      * @return db reference
      */
-    private Reference getTremblRef() {
-        if (tremblRef == null) {
-            tremblRef = new Reference("source", getTremblDb().getIdentifier());
+    private Reference getUniprotRef() {
+        if (uniprotRef == null) {
+            uniprotRef = new Reference("source", getUniprotDb().getIdentifier());
         }
-        return tremblRef;
+        return uniprotRef;
     }
 
-    /**
-     * set database object
-     * @return db item
-     */
-    private Item getFlyBaseDb() {
-        if (flybaseDb == null) {
-            flybaseDb = createItem(tgtNs + "Database", "");
-            Attribute title = new Attribute("title", "FlyBase");
-            Attribute url = new Attribute("url", "http://www.flybase.org");
-            flybaseDb.addAttribute(title);
-            flybaseDb.addAttribute(url);
-        }
-        return flybaseDb;
-    }
-
-    /**
-     * @return db reference
-     */
-    private Reference getFlyBaseRef() {
-        if (flybaseRef == null) {
-            flybaseRef = new Reference("source", getFlyBaseDb().getIdentifier());
-        }
-        return flybaseRef;
-    }
 
     /**
      * @return db reference
