@@ -46,16 +46,11 @@ public class TemplateController extends Action
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
 
         boolean populate = true;
-        TemplateForm templateForm = null;
         String queryName = request.getParameter("name");
         if (queryName == null) {
             //have been directed to this page as a result of validation failure
             queryName = (String) session.getAttribute("queryName");
-            templateForm = (TemplateForm) session.getAttribute("templateForm");
             populate = false;
-        } else {
-            templateForm = new TemplateForm();
-            session.setAttribute("templateForm", templateForm);
         }
 
         TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
@@ -79,8 +74,9 @@ public class TemplateController extends Action
             if (populate) {
                 Constraint c = (Constraint) node.getConstraints().get(0);
                 int j = template.getNodes().indexOf(node);
-                templateForm.setAttributeValues("" + (j + 1), "" + c.getValue());
-                templateForm.setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
+                
+                ((TemplateForm) form).setAttributeValues("" + (j + 1), "" + c.getValue());
+                ((TemplateForm) form).setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
             }
         }
 

@@ -298,7 +298,9 @@
             name="buildBagForm"/>
 
     <action path="/initTemplate"
-            type="org.intermine.web.TemplateController"/>
+            type="org.intermine.web.TemplateController"
+            validate="false"
+            name="templateForm"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
