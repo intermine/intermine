@@ -1,0 +1,119 @@
+package org.flymine.ontology;
+
+/*
+ * Copyright (C) 2002-2003 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import junit.framework.*;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
+
+
+import org.flymine.metadata.*;
+import org.flymine.util.TypeUtil;
+
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntClass;
+
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+public class OwlFunctionalTest extends TestCase
+{
+
+    public void testRoundTrip() throws Exception {
+        Model original = Model.getInstanceByName("testmodel");
+        FlyMine2Owl f2o = new FlyMine2Owl();
+        Model newModel = primitivesToObjectsModel(original);
+        OntModel ont = f2o.process(newModel);
+        File file = new File("/home/rns/ont.owl");
+        ont.write(new FileWriter(file), "N3");
+
+        OntModel fromFile = ModelFactory.createOntologyModel();
+        fromFile.read(new FileReader(file), null, "N3");
+
+        OntClass c1 = fromFile.getOntClass(original.getNameSpace() + "Company");
+        assertNotNull(c1);
+        assertNotNull(c1.getNameSpace());
+        //assertEquals(original.getNameSpace(), c1.getNameSpace());
+        Owl2FlyMine o2f = new Owl2FlyMine(original.getName(), original.getPackageName());
+        assertEquals(newModel, o2f.process(ont, original.getNameSpace().toString()));
+    }
+
+
+    /**
+     * converts primitives to corresponding java.lang objects
+     * removes all primary key information
+     * makes all classes interfaces
+     */
+    private Model primitivesToObjectsModel(Model model) throws Exception {
+        Set classes = new HashSet();
+
+        Iterator i = model.getClassDescriptors().iterator();
+        while (i.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) i.next();
+            Set atds = new HashSet();
+            Set rfds = new HashSet();
+            Set cods = new HashSet();
+
+            Iterator j = cld.getAttributeDescriptors().iterator();
+            while (j.hasNext()) {
+                AttributeDescriptor atd = (AttributeDescriptor) j.next();
+
+                AttributeDescriptor newAtd = new AttributeDescriptor(atd.getName(),
+                                                                     false,
+                                                                     TypeUtil.instantiate(atd.getType()).getName());
+                atds.add(newAtd);
+            }
+            j = cld.getReferenceDescriptors().iterator();
+            while (j.hasNext()) {
+                ReferenceDescriptor rfd = (ReferenceDescriptor) j.next();
+
+                String reverseRef = null;
+                if (rfd.getReverseReferenceDescriptor() != null) {
+                    reverseRef = rfd.getReverseReferenceDescriptor().getName();
+                }
+                ReferenceDescriptor newRfd = new ReferenceDescriptor(rfd.getName(),
+                                                                     false,
+                                                                     rfd.getReferencedClassDescriptor().getName(),
+                                                                     reverseRef);
+                rfds.add(newRfd);
+            }
+            j = cld.getCollectionDescriptors().iterator();
+            while (j.hasNext()) {
+                CollectionDescriptor cod = (CollectionDescriptor) j.next();
+
+                String reverseRef = null;
+                if (cod.getReverseReferenceDescriptor() != null) {
+                    reverseRef = cod.getReverseReferenceDescriptor().getName();
+                }
+                CollectionDescriptor newCod = new CollectionDescriptor(cod.getName(),
+                                                                       false,
+                                                                       cod.getReferencedClassDescriptor().getName(),
+                                                                       reverseRef,
+                                                                       false);
+                cods.add(newCod);
+            }
+
+            String supers = "";
+            Iterator k = cld.getSuperDescriptors().iterator();
+            while (k.hasNext()) {
+                supers = supers + ((ClassDescriptor) k.next()).getName() + " ";
+            }
+            ClassDescriptor newCld = new ClassDescriptor(cld.getName(), supers.equals("") ? null : supers.trim(), true, atds, rfds, cods);
+            classes.add(newCld);
+        }
+        Model newModel = new Model(model.getName(), model.getNameSpace().toString(), classes);
+        return newModel;
+    }
+}

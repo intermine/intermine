@@ -37,18 +37,6 @@ public class MergeOwl
 {
     protected OntModel tgtModel = null;
     private final String tgtNamespace;
-    /**
-     * OWL namespace.
-     */
-    public static final String OWL_NAMESPACE = "http://www.w3.org/2002/07/owl#";
-    /**
-     * RDF namespace.
-     */
-    public static final String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    /**
-     * RDFS namespace
-     */
-    public static final String RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
     protected Map equiv;
 
     /**
@@ -125,7 +113,7 @@ public class MergeOwl
             Statement stmt = (Statement) stmtIter.next();
             Resource subject = stmt.getSubject();
             if (subject.getNameSpace().equals(srcNamespace)) {
-                if (stmt.getPredicate().getNameSpace().equals(RDF_NAMESPACE)
+                if (stmt.getPredicate().getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
                     && stmt.getPredicate().getLocalName().equals("type")) {
                     if (!equiv.containsKey(subject.getURI())) {
                         Resource target = tgtModel.createResource(tgtNamespace
@@ -175,23 +163,20 @@ public class MergeOwl
      */
     protected void addEquivalenceStatement(Resource target, Resource obj, Resource original,
                                            List statements) {
-        if (obj.getNameSpace().equals(OWL_NAMESPACE) && obj.getLocalName().equals("Class")) {
+        if (obj.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE) && obj.getLocalName()
+            .equals("Class")) {
             statements.add(tgtModel.createStatement(target,
-                                                    tgtModel.createProperty(OWL_NAMESPACE,
-                                                                            "equivalentClass"),
+                tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "equivalentClass"),
                                                     original));
-        } else if (obj.getNameSpace().equals(RDF_NAMESPACE)
+        } else if (obj.getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
                    && obj.getLocalName().equals("Property")) {
             statements.add(tgtModel.createStatement(target,
-                                                    tgtModel.createProperty(OWL_NAMESPACE,
-                                                                            "equivalentProperty"),
+                tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "equivalentProperty"),
                                                     original));
-        } else if (obj.getNameSpace().equals(OWL_NAMESPACE)
+        } else if (obj.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE)
                    && obj.getLocalName().equals("Individual")) {
             statements.add(tgtModel.createStatement(target,
-                                                    tgtModel.createProperty(OWL_NAMESPACE,
-                                                                            "sameAs"),
-                                                    original));
+                tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE, "sameAs"), original));
         }
     }
 }

@@ -76,7 +76,7 @@ public class FullRenderer
 
         StringBuffer sb = new StringBuffer();
         sb.append("<object xml_id=\"" + obj.getId() + "\" class=\"")
-            .append(className == "" ? "" : model.getNameSpace() + "#"
+            .append(className == "" ? "" : model.getNameSpace()
                      + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)))
             .append("\" implements=\"")
             .append(getImplements(obj, model))
@@ -103,7 +103,7 @@ public class FullRenderer
         for (int i = 0; i < interfaces.length; i++) {
             ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
             if (cld != null && cld.isInterface()) {
-                sb.append(model.getNameSpace().toString() + "#"
+                sb.append(model.getNameSpace().toString()
                           + TypeUtil.unqualifiedName(interfaces[i].getName()))
                     .append(" ");
             }

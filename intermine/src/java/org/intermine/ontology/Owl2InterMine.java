@@ -20,7 +20,9 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Restriction;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import org.flymine.metadata.*;
 
@@ -33,16 +35,11 @@ import org.flymine.metadata.*;
 
 public class Owl2FlyMine
 {
-    /**
-     * the XML namespace
-     */
-    public static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
-
     private String pkg;
     private String modelName;
-
-    protected Map clds = new HashMap(); // class name -> cld
-
+    private Map attributes;
+    private Map references;
+    private Map collections;
 
     /**
      * Construct with a model name and the name of the package within model.
@@ -68,94 +65,37 @@ public class Owl2FlyMine
      * @throws Exception if anything goes wrong
      */
     public Model process(OntModel ontModel, String tgtNamespace) throws Exception {
-        Map attributes = new HashMap();
-        Map references = new HashMap();
-        Map collections = new HashMap();
+        attributes = new HashMap();
+        references = new HashMap();
+        collections = new HashMap();
 
-        // TODO if we want primary keys examine functionalProperties
+        // TODO if we want primary keys examine inverseFunctionalProperties
 
         // Deal with properties, place in maps of class_name:set_of fields
         for (Iterator i = ontModel.listOntProperties(); i.hasNext(); ) {
             OntProperty prop = (OntProperty) i.next();
-            if (!prop.getNameSpace().equals(tgtNamespace)
-                || prop.getDomain() == null) {
-                continue;
+            if (!prop.getNameSpace().equals(tgtNamespace)) {
+                 continue;
             }
-            Iterator r = prop.listRange();
-            if (!r.hasNext()) {
-                throw new Exception("Property: " + prop.getURI().toString()
-                                    + " does not have a defined range.");
-            }
-            OntResource range = (OntResource) r.next();
-            // we don't want heterogeneous collections/enumerations in our java
-            if (r.hasNext()) {
-                throw new Exception("Property: " + prop.getURI().toString()
-                                    + " has more than one defined range.");
-            }
-            if (prop.isDatatypeProperty()) {
-                // TODO method to read xml datatype and give back appropriate java type
-                String javaType;
-                if (range.getNameSpace().equals(MergeOwl.RDFS_NAMESPACE)
-                    && range.getLocalName().equals("Literal")) {
-                    javaType = "java.lang.String";
-                } else if (range.getNameSpace().equals(XSD_NAMESPACE)) {
-                    javaType = xmlToJavaType(range.getLocalName());
-                } else {
-                    throw new Exception("DatatypeProperty: " + prop.getURI().toString()
-                                        + " has a range that is not an datataye ("
-                                        + range.getURI().toString() + ")");
-                }
-                AttributeDescriptor atd = new AttributeDescriptor(prop.getLocalName(),
-                                                                  false,   // primary key
-                                                                  javaType);
-                for (Iterator j = prop.listDomain(); j.hasNext(); ) {
-                    OntResource domain = (OntResource) j.next();
-                    if (domain.getNameSpace().equals(tgtNamespace)) {
-                        HashSet atds = getFieldSetForClass(attributes, domain.getLocalName());
-                        atds.add(atd);
-                    }
-                }
-            } else {  // some refs/cols may be ObjectProperties but the may not -> look at subject
-                // TODO set package correctly if java type not business object in collection
-                String referencedType = pkg + "." + range.getLocalName();
-                for (Iterator j = prop.listDomain(); j.hasNext(); ) {
 
-                    OntResource domain = (OntResource) j.next();
-                    if (domain.getNameSpace().equals(tgtNamespace)) {
-                        if (hasMaxCardinalityOne(ontModel, prop, domain)) {
-                            // reference - cannot handle reverse references yet - how?
-                            ReferenceDescriptor rfd = new ReferenceDescriptor(prop.getLocalName(),
-                                                                              false,
-                                                                              referencedType,
-                                                                              null);
-                            HashSet rfds = getFieldSetForClass(references, domain.getLocalName());
-                            rfds.add(rfd);
-                        } else {
-                            // collection - cannot handle reverese references or ordered
-                            CollectionDescriptor cod = new CollectionDescriptor(prop.getLocalName(),
-                                                                                false,
-                                                                                referencedType,
-                                                                                null,
-                                                                                false);
-
-                            HashSet cods = getFieldSetForClass(collections, domain.getLocalName());
-                            cods.add(cod);
-                        }
-                    }
-                }
+            processProperty(ontModel, prop, false);
+            if (prop.hasInverse()) {
+                processProperty(ontModel, (OntProperty) prop.listInverse().next(), true);
             }
         }
 
         // Deal with  classes
         Set classes = new HashSet();
-        for (Iterator i = ontModel.listClasses(); i.hasNext(); ) {
+        Iterator i = ontModel.listClasses();
+        while (i.hasNext()) {
             OntClass cls = (OntClass) i.next();
-            if (cls.getNameSpace().equals(tgtNamespace)) {
+            if (cls.getNameSpace() != null && cls.getNameSpace().equals(tgtNamespace)) {
                 String clsName = pkg + "." + cls.getLocalName();
                 StringBuffer superClasses = new StringBuffer();
                 for (Iterator j = cls.listSuperClasses(true); j.hasNext(); ) {
                     OntClass superCls = (OntClass) j.next();
-                    if (superCls.getNameSpace().equals(tgtNamespace)) {
+                    if (superCls.getNameSpace() != null
+                        && superCls.getNameSpace().equals(tgtNamespace)) {
                         superClasses.append(pkg + "." + superCls.getLocalName());
                         if (j.hasNext()) {
                             superClasses.append(" ");
@@ -177,6 +117,121 @@ public class Owl2FlyMine
     }
 
 
+
+    /**
+     * Builds a FieldDescriptor for the given OntProperty and adds to the appropriate
+     * field map.  isInverse should be true if this property is defined as owl:inversOf
+     * to prevent isDatatypeProperty being called and attempting to examine a null domain.
+     * @param ontModel the Jena ontology model
+     * @param prop the OntProperty to convert to a FieldDescriptor
+     * @param isInverse true if this property is an inverse
+     * @throws Exception if error occurs processing property
+     */
+    protected void processProperty(OntModel ontModel, OntProperty prop, boolean isInverse)
+        throws Exception {
+
+        Iterator r = prop.listRange();
+        Iterator d = prop.listDomain();
+        String reverseRef = null;
+        OntProperty invProp = null;
+
+        Iterator inverse = prop.listInverse();
+        if   (inverse.hasNext()) {
+            invProp = (OntProperty) inverse.next();
+            if (inverse.hasNext()) {
+                throw new Exception("Property: " + prop.getURI().toString()
+                                    + " has more than one inverse property.");
+            }
+        }
+        Iterator inverseOf = prop.listInverseOf();
+        if (inverseOf.hasNext()) {
+            invProp = (OntProperty) inverseOf.next();
+            if (inverseOf.hasNext()) {
+                throw new Exception("Property: " + prop.getURI().toString()
+                                    + " has more than one inverse property.");
+            }
+            r = invProp.listDomain();
+            d = invProp.listRange();
+        }
+
+        // we want properties to have exactly one domain
+        if (!d.hasNext()) {
+            throw new Exception("Property: " + prop.getURI().toString()
+                                + " does not have a defined domain.");
+        }
+        OntResource domain = (OntResource) d.next();
+        if (d.hasNext()) {
+            throw new Exception("Property: " + prop.getURI().toString()
+                                + " has more than one defined domain.");
+        }
+
+        //if (!domain.getNameSpace().equals(tgtNamespace)) {
+        //    continue;
+        //}
+
+        // we don't want heterogeneous collections/enumerations in our java
+        if (!r.hasNext()) {
+            throw new Exception("Property: " + prop.getURI().toString()
+                                + " does not have a defined range.");
+        }
+        OntResource range = (OntResource) r.next();
+        if (r.hasNext()) {
+            throw new Exception("Property: " + prop.getURI().toString()
+                                + " has more than one defined range.");
+        }
+
+        if (invProp != null) {
+            reverseRef = OntologyUtil.generateFieldName(invProp, range);
+        }
+
+        if (!isInverse && isDatatypeProperty(prop)) {
+            String javaType;
+            if (range.getNameSpace().equals(OntologyUtil.RDFS_NAMESPACE)
+                && range.getLocalName().equals("Literal")) {
+                javaType = "java.lang.String";
+            } else if (range.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
+                javaType = OntologyUtil.xmlToJavaType(range.getLocalName());
+            } else {
+                throw new Exception("DatatypeProperty: " + prop.getURI().toString()
+                                    + " has a range that is not a datatype ("
+                                    + range.getURI().toString() + ")");
+            }
+            AttributeDescriptor atd
+                = new AttributeDescriptor(OntologyUtil.generateFieldName(prop, domain),
+                                          false,   // primary key
+                                          javaType);
+            HashSet atds = getFieldSetForClass(attributes, domain.getLocalName());
+            atds.add(atd);
+        } else if (isInverse || isObjectProperty(prop)) {
+            // TODO set package correctly if java type not business object in collection
+            String referencedType = pkg + "." + range.getLocalName();
+
+            if (OntologyUtil.hasMaxCardinalityOne(ontModel, prop, domain)) {
+                ReferenceDescriptor rfd
+                    = new ReferenceDescriptor(OntologyUtil.generateFieldName(prop, domain),
+                                              false,
+                                              referencedType,
+                                              reverseRef);
+                HashSet rfds = getFieldSetForClass(references, domain.getLocalName());
+                rfds.add(rfd);
+            } else {
+                // TODO collection - cannot handle ordered
+                CollectionDescriptor cod
+                    = new CollectionDescriptor(OntologyUtil.generateFieldName(prop, domain),
+                                               false,
+                                               referencedType,
+                                               reverseRef,
+                                               false);
+                HashSet cods = getFieldSetForClass(collections, domain.getLocalName());
+                cods.add(cod);
+            }
+        } else {
+            throw new Exception("Was neither datatype or object property");
+        }
+    }
+
+
+
     /**
      * Get or create a set of FieldsDescriptors in the given map for a class.
      * @param fieldMap the map to search/create field set in
@@ -194,59 +249,40 @@ public class Owl2FlyMine
 
 
     /**
-     * Return true if there is a maxCardinalityRestriction of 1 on this property for
-     * given domain (note that properties can have more than one domain).
-     * @param model the Ontolgoy model
-     * @param prop the property to check for cardinality restriction
-     * @param domain the specific domain of the restriction
-     * @return true if maxCardinality restriction 1 exists
+     * Test whether a OntProperty is a datatype property - if type of property
+     * is not owl:DatatypeProperty checks if object is a literal or a Resource
+     * that is an xml datatype.
+     * @param prop the property in question
+     * @return true if is a DatatypeProperty
      */
-    protected boolean hasMaxCardinalityOne(OntModel model, OntProperty prop, OntResource domain) {
-        Iterator iter = model.listRestrictions();
-        while (iter.hasNext()) {
-            Restriction res = (Restriction) iter.next();
-            if (res.hasSubClass(domain) && res.onProperty(prop)
-                && res.isMaxCardinalityRestriction()) {
+    protected boolean isDatatypeProperty(OntProperty prop) {
+        if (prop.isDatatypeProperty()) {
+            return true;
+        }
+        Statement stmt = (Statement) OntologyUtil.getStatementsFor((OntModel) prop.getModel(), prop,
+            OntologyUtil.RDFS_NAMESPACE + "range").iterator().next();
+        if (stmt.getObject() instanceof Literal) {
+            return true;
+        } else if (stmt.getObject() instanceof Resource) {
+            Resource res = (Resource) stmt.getObject();
+            if (res.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
                 return true;
             }
         }
         return false;
     }
 
+
     /**
-     * Convert an XML xsd: type to a fully qualified class name of a java type.
-     * @param xmlType the local name of an XML type
-     * @return a string representing a java class name
-     * @throws Exception if XML datatype unrecognised
+     * Test whether a given property is an object property.  If type of property
+     * is not owl:ObjectProperty establishes whether it is a DatatypeProperty.
+     * @param prop the property in question
+     * @return true if this is an ObejctProperty
      */
-    protected String xmlToJavaType(String xmlType) throws Exception {
-        if (xmlType.equals("string") || xmlType.equals("normalizedString")
-            || xmlType.equals("language") || xmlType.equals("Name") || xmlType.equals("NCName")) {
-            return "java.lang.String";
-        } else if (xmlType.equals("positiveInteger") || xmlType.equals("negativeInteger")
-                   || xmlType.equals("int") || xmlType.equals("nonNegativeInteger")
-                   || xmlType.equals("unsignedInt") || xmlType.equals("integer")
-                   || xmlType.equals("nonPositiveInteger")) {
-            return "java.lang.Integer";
-        } else if (xmlType.equals("short") || xmlType.equals("unsignedShort")) {
-            return "java.lang.Short";
-        } else if (xmlType.equals("long") || xmlType.equals("unsignedLong")) {
-            return "java.lang.Long";
-        } else if (xmlType.equals("byte") || xmlType.equals("unsignedByte")) {
-            return "java.lang.Byte";
-        } else if (xmlType.equals("float") || xmlType.equals("decimal")) {
-            return "java.lang.Float";
-        }  else if (xmlType.equals("double")) {
-            return "java.lang.Double";
-        } else if (xmlType.equals("boolean")) {
-            return "java.lang.Boolean";
-        } else if (xmlType.equals("anyURI")) {
-            return "java.net.URI";
-        } else {
-            throw new Exception("Unrecognised XML data type");
+    protected boolean isObjectProperty(OntProperty prop) {
+        if (prop.isObjectProperty()) {
+            return true;
         }
-
-
+        return !isDatatypeProperty(prop);
     }
-
 }

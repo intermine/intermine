@@ -91,9 +91,9 @@ public class MergeOwlTest extends TestCase
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Test a owl:Class ." + ENDL;
 
@@ -120,9 +120,9 @@ public class MergeOwlTest extends TestCase
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Test a owl:Class ." + ENDL;
 
@@ -146,9 +146,9 @@ public class MergeOwlTest extends TestCase
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
             + ":Address a owl:Class ." + ENDL
@@ -182,9 +182,9 @@ public class MergeOwlTest extends TestCase
 
         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-            + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-            + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":TestClass rdf:type owl:Class ." + ENDL
             + ":testProperty a rdf:Property ;" + ENDL
@@ -198,7 +198,7 @@ public class MergeOwlTest extends TestCase
         // test equivalentClass statement added
         Resource subject = src1.getOntClass(src1Namespace + "TestClass");
         Resource target = merger.tgtModel.createClass(tgtNamespace + "TestClass");
-        Resource object = src1.getResource(MergeOwl.OWL_NAMESPACE + "Class");
+        Resource object = src1.getResource(OntologyUtil.OWL_NAMESPACE + "Class");
 
         ArrayList statements = new ArrayList();
 
@@ -206,34 +206,34 @@ public class MergeOwlTest extends TestCase
         assertTrue(statements.size() == 1);
         Statement s = (Statement) statements.get(0);
         assertTrue(s.getSubject().equals(target));
-        assertTrue(s.getPredicate().getURI().equals(MergeOwl.OWL_NAMESPACE + "equivalentClass"));
+        assertTrue(s.getPredicate().getURI().equals(OntologyUtil.OWL_NAMESPACE + "equivalentClass"));
         assertTrue(s.getResource().equals(subject));
 
 
         // test equivalentProperty statement added
         subject = src1.getProperty(src1Namespace + "testProperty");
         target = merger.tgtModel.createProperty(tgtNamespace + "testProperty");
-        object = src1.getResource(MergeOwl.RDF_NAMESPACE + "Property");
+        object = src1.getResource(OntologyUtil.RDF_NAMESPACE + "Property");
         statements = new ArrayList();
 
         merger.addEquivalenceStatement(target, object, subject, statements);
         assertTrue(statements.size() == 1);
         s = (Statement) statements.get(0);
         assertTrue(s.getSubject().equals(target));
-        assertTrue(s.getPredicate().getURI().equals(MergeOwl.OWL_NAMESPACE + "equivalentProperty"));
+        assertTrue(s.getPredicate().getURI().equals(OntologyUtil.OWL_NAMESPACE + "equivalentProperty"));
         assertTrue(s.getResource().equals(subject));
 
         // test sameAs statement added
         subject = src1.getProperty(src1Namespace + "testIndicidual");
         target = merger.tgtModel.createProperty(tgtNamespace + "testIndividual");
-        object = src1.getResource(MergeOwl.OWL_NAMESPACE + "Individual");
+        object = src1.getResource(OntologyUtil.OWL_NAMESPACE + "Individual");
         statements = new ArrayList();
 
         merger.addEquivalenceStatement(target, object, subject, statements);
         assertTrue(statements.size() == 1);
         s = (Statement) statements.get(0);
         assertTrue(s.getSubject().equals(target));
-        assertTrue(s.getPredicate().getURI().equals(MergeOwl.OWL_NAMESPACE + "sameAs"));
+        assertTrue(s.getPredicate().getURI().equals(OntologyUtil.OWL_NAMESPACE + "sameAs"));
         assertTrue(s.getResource().equals(subject));
     }
 
@@ -244,9 +244,9 @@ public class MergeOwlTest extends TestCase
 
 //         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
 //             + ENDL
-//             + "@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." + ENDL
-//             + "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." + ENDL
-//             + "@prefix owl:  <http://www.w3.org/2002/07/owl#> ." + ENDL
+//             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+//             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+//            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
 //             + ENDL
 //             + ":LtdCompany rdf:type owl:Class ." + ENDL
 //             + ":Address rdf:type owl:Class ." + ENDL
@@ -312,9 +312,9 @@ public class MergeOwlTest extends TestCase
             + "@prefix src1: <" + src1Namespace + "> ." + ENDL
             + "@prefix src2: <" + src2Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <" + MergeOwl.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + MergeOwl.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + MergeOwl.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "           owl:equivalentClass src1:LtdCompany ;" + ENDL
@@ -330,9 +330,9 @@ public class MergeOwlTest extends TestCase
     private String getSrc1() {
         return "@prefix : <" + src1Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <" + MergeOwl.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + MergeOwl.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + MergeOwl.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
             + ":companyName a rdf:Property ;" + ENDL
@@ -345,9 +345,9 @@ public class MergeOwlTest extends TestCase
     private String getSrc2() {
         return "@prefix : <" + src2Namespace + "> ." + ENDL
             + ENDL
-            + "@prefix rdf:  <" + MergeOwl.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + MergeOwl.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + MergeOwl.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Corporation a owl:Class ." + ENDL
             + ":corpName a rdf:Property ;" + ENDL
