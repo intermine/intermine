@@ -10,7 +10,7 @@ import org.apache.ojb.broker.ta.PersistenceBrokerFactoryDefaultImpl;
 import org.apache.ojb.broker.metadata.MetadataManager;
 import org.apache.ojb.broker.metadata.ConnectionRepository;
 import org.apache.ojb.broker.metadata.JdbcConnectionDescriptor;
-//import org.apache.ojb.broker.metadata.DescriptorRepository;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import org.flymine.sql.Database;
 
@@ -34,16 +34,11 @@ public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactor
     /**
      * Create a FlyMine persistence broker from a database object
      *
+     * @param model the name of the model
      * @param db the database object
      * @return a FlyMine PersistenceBroker
-     * @throws PBFactoryException if there is a problem creating the broker
      */
-    public PersistenceBrokerFlyMineImpl createPersistenceBroker(Database db)
-        throws PBFactoryException {
-        if (db == null) {
-            throw new PBFactoryException("Database is null");
-        }
-
+    public PersistenceBrokerFlyMineImpl createPersistenceBroker(Database db, String model) {
         PBKey key = (PBKey) pbKeys.get(db);
         if (key == null) {
             MetadataManager mdm = MetadataManager.getInstance();
@@ -64,9 +59,9 @@ public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactor
             
             cr.addDescriptor(jcd);
 
-//         String repositoryFile = "repository_" + db.getModel() + ".xml";
-//         DescriptorRepository dr = mdm.readDescriptorRepository(repositoryFile);
-//         mdm.mergeDescriptorRepository(dr);
+            String repositoryFile = "repository_" + model + ".xml";
+            DescriptorRepository dr = mdm.readDescriptorRepository(repositoryFile);
+            mdm.mergeDescriptorRepository(dr);
 
             key = new PBKey(alias, db.getUser(), db.getPassword());
             pbKeys.put(db, key);
