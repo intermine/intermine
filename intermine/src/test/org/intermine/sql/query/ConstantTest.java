@@ -13,9 +13,9 @@ public class ConstantTest extends TestCase
     public void setUp() {
         c1 = new Constant("'value1'");
         c2 = new Constant("'value1'");
-        c3 = new Constant("'value2'");
+        c3 = new Constant("'value22'");
         c4 = new Constant("5");
-        c5 = new Constant("6");
+        c5 = new Constant("66");
         c6 = new Constant("flibble");
     }
         
@@ -36,9 +36,13 @@ public class ConstantTest extends TestCase
     public void testEquals() throws Exception {
         assertEquals(c1, c1);
         assertEquals(c1, c2);
+        assertEquals(c2, c1);
         assertTrue("Expected c1 not to equal c3", !c1.equals(c3));
+        assertTrue("Expected c3 not to equal c1", !c3.equals(c1));
         assertTrue("Expected c1 not to equal c4", !c1.equals(c4));
+        assertTrue("Expected c4 not to equal c1", !c4.equals(c1));
         assertTrue("Expected c1 not to equal c5", !c1.equals(c5));
+        assertTrue("Expected c5 not to equal c1", !c5.equals(c1));
         assertTrue("Expected c1 not to equal null", !c1.equals(null));
     }
 

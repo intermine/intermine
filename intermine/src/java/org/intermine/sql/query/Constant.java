@@ -71,7 +71,7 @@ public class Constant extends AbstractValue
             Constant objC = (Constant) obj;
             if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'')
                     && (objC.value.charAt(0) == '\'')
-                    && (objC.value.charAt(value.length() - 1) == '\'')) {
+                    && (objC.value.charAt(objC.value.length() - 1) == '\'')) {
                 // Both this and obj are string constants.
                 return (value.compareTo(objC.value) < 0 ? LESS : GREATER);
             }
