@@ -3,7 +3,8 @@
 
 <!-- companiesHouse.jsp -->
 <%-- Display an icon linked to companys house --%>
-<html:link href="http://ws3info.companieshouse.gov.uk/info/do_search.cgi?cname=${object.name}">
+<%-- WEB_PROPERTIES is a Map created from web.properties --%>
+<html:link href="${WEB_PROPERTIES['companieshouse.url.prefix']}${object.name}">
   <html:img src="model/companiesHouse.png"/>
 </html:link>
 <!-- /companiesHouse.jsp -->
