@@ -16,7 +16,7 @@
         <img class="arrow" src="images/right-arrow.png" alt="->"/>
       </html:link>
     </span>
-    <br/>
+    <br/><br/>
   </c:forEach>
 </c:if>
 <!-- /examples.jsp -->
