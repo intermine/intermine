@@ -39,7 +39,9 @@
         FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>, 
         incorporating the following data sources:
       
-      <itemizedlist>
+        <sources sources="/sources.xml" version="1.0"/>
+      
+      <!--<itemizedlist>
         <listitem>
           <para>
             Genome Annotation for D. melanogaster and A. gambiae from
@@ -85,7 +87,7 @@
             <ulink url="http://www.geneontology.org">The Gene Ontology</ulink>
           </para>
         </listitem>
-      </itemizedlist>
+      </itemizedlist> -->
       </para>
     </section>
   </column>
