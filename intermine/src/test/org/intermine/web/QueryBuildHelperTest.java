@@ -110,6 +110,7 @@ public class QueryBuildHelperTest extends QueryTestCase
         d.getFieldOps().put("age_0", ConstraintOp.IN);
 
         Map savedBags = new HashMap();
+        
         List myBag = new ArrayList();
         myBag.add(new Integer(20));
         myBag.add(new Integer(30));
@@ -209,7 +210,9 @@ public class QueryBuildHelperTest extends QueryTestCase
         q.alias(qc, "Department_0");
         q.addFrom(qc);
         q.addToSelect(qc);
-        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.NOT_EQUALS, new QueryValue("Frank"));
+        SimpleConstraint sc =
+            new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.NOT_EQUALS,
+                                 new QueryValue("Frank"));
         q.setConstraint(sc);
 
         DisplayQueryClass d = new DisplayQueryClass();
@@ -220,5 +223,42 @@ public class QueryBuildHelperTest extends QueryTestCase
         d.getFieldValues().put("name_0", "Frank");
 
         assertEquals(d, QueryBuildHelper.toDisplayable(qc, q, new HashMap()));
+    }
+
+    public void testToDisplayableWithBag() throws Exception {
+        Class cls = Employee.class;
+        
+        Map savedBagsInverse = new HashMap();
+        
+        List myBag = new ArrayList();
+        myBag.add(new Integer(30));
+        myBag.add(new Integer(20));
+
+        savedBagsInverse.put(myBag, "my_saved_bag");
+        
+        Query q = new Query();
+        QueryClass qc = new QueryClass(cls);
+        q.alias(qc, "Employee_0");
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        BagConstraint sc =
+            new BagConstraint(new QueryField(qc, "age"), ConstraintOp.IN, myBag);
+        q.setConstraint(sc);
+
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(cls.getName());
+        d.getConstraintNames().add("age_0");
+        d.getFieldNames().put("age_0", "age");
+        d.getFieldOps().put("age_0", ConstraintOp.IN);
+        d.getFieldValues().put("age_0", "my_saved_bag");
+
+        LogMe.log("log", "1: " + myBag);
+
+        DisplayQueryClass resultDisplayQueryClass =
+            QueryBuildHelper.toDisplayable(qc, q, savedBagsInverse);
+
+        LogMe.log("log", "3: " + myBag);
+
+        assertEquals(d, resultDisplayQueryClass);
     }
 }
