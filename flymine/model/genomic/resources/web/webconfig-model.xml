@@ -37,12 +37,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.LocatedSequenceFeature" fieldExpr="residues">
-    <longdisplayers>
-      <displayer src="/hiddenField.jsp"/>
-    </longdisplayers>
-  </class>
-
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -58,9 +52,6 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="gene.identifier"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Gene">
@@ -117,13 +108,12 @@
       <fieldconfig fieldExpr="organism.shortName"/>
       <fieldconfig fieldExpr="exonCount"/>
     </fields>
-    <longdisplayers>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.MicroarrayOligo">
     <longdisplayers>
+      <!-- disable the LocatedSequenceFeature displayer (GBrowse) because
+           MicroarrayOligos aren't located at the moment -->
     </longdisplayers>
   </class>
 
