@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -26,6 +27,7 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
+import org.flymine.util.PropertiesUtil;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -65,11 +67,14 @@ public class FqlQueryAction extends LookupDispatchAction
         FqlQueryForm queryform = (FqlQueryForm) form;
 
         try {
-            ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+         Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
+         props = PropertiesUtil.stripStart("objectstoreserver", props);
+         String osAlias = props.getProperty("os");
+         ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-            Results results = os.execute(new FqlQuery(queryform.getQuerystring(),
-                                                  "org.flymine.model.testmodel").toQuery());
-            request.setAttribute("results", results);
+         Results results = os.execute(new FqlQuery(queryform.getQuerystring(),
+                                                   "org.flymine.model.testmodel").toQuery());
+         request.setAttribute("results", results);
         } catch (Throwable e) {
             e.printStackTrace(System.err);
             return (mapping.findForward("error"));
