@@ -31,7 +31,6 @@ import org.intermine.objectstore.query.*;
 public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
 {
     private List rows = new ArrayList();
-    private Model model = null;
     private int resultsSize = 0;
     private int estimatedResultsSize = 0;
     private int executeTime = 10;
@@ -269,13 +268,6 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      */
     public void setModel(Model model) {
         this.model = model;
-    }
-
-    /**
-     * @see ObjectStore#getModel
-     */
-    public Model getModel() {
-        return this.model;
     }
 
     /**
