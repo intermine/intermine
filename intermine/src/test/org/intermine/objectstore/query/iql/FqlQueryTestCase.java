@@ -111,6 +111,13 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         fq = new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.HasSecretarys AS a1_, org.flymine.model.testmodel.Secretary AS a2_ WHERE (a1_.secretarys CONTAINS a2_ AND a2_ = ?)", null);
         fq.setParameters(Collections.singletonList(data.get("Secretary1")));
         results.put("InterfaceCollection", fq);
+        Set res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.flymine.model.testmodel.Company, org.flymine.model.testmodel.Broke) AS a1_ WHERE a1_.debt > 0 AND a1_.vatNumber > 0", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Company) AS a1_ WHERE a1_.debt > 0 AND a1_.vatNumber > 0", null));
+        results.put("DynamicClass", res);
+        res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Employable, org.flymine.model.testmodel.Broke) AS a1_", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Employable) AS a1_", null));
+        results.put("DynamicClass2", res);
     }
-
 }

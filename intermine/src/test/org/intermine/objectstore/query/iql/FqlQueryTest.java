@@ -10,6 +10,9 @@ package org.flymine.objectstore.query.fql;
  *
  */
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import junit.framework.Test;
 
 import org.flymine.objectstore.query.Query;
@@ -42,21 +45,24 @@ public class FqlQueryTest extends FqlQueryTestCase
 
     public void executeTest(String type) throws Exception {
         Query orig = ((Query) queries.get(type));
-        FqlQuery fq = (FqlQuery) results.get(type);
-
-        if (fq == null) {
-            fail("No results set up for test " + type);
-        }
-
-        // This is testing whether new FqlQuery(Query) gives the FqlQueries above
+        Object res = results.get(type);
         FqlQuery fqGenerated = new FqlQuery(orig);
-        assertEquals(type + " has failed", fq.getQueryString(), fqGenerated.getQueryString());;
-        assertEquals(type + " has failed", fq.getParameters(), fqGenerated.getParameters());;
+        if (res instanceof FqlQuery) {
+            FqlQuery fq = (FqlQuery) res;
 
-        // This is testing whether the FqlQueries above are parsed into the correct query
-        // This really duplicates FqlQueryParserTest but here we call the FqlQuery.toQuery() method
-        //Query parsed = fq.toQuery();
-        //assertEquals(type + " has failed", orig, parsed);
+            // This is testing whether new FqlQuery(Query) gives the FqlQueries above
+            assertEquals(type + " has failed", fq.getQueryString(), fqGenerated.getQueryString());
+            assertEquals(type + " has failed", fq.getParameters(), fqGenerated.getParameters());
+        } else {
+            Iterator resIter = ((Collection) res).iterator();
+            boolean passed = false;
+            while (resIter.hasNext()) {
+                FqlQuery fq = (FqlQuery) resIter.next();
+                passed = passed || (fq.getQueryString().equals(fqGenerated.getQueryString()));
+                passed = passed || (fq.getParameters().equals(fqGenerated.getParameters()));
+            }
+            assertTrue(type + " has failed: " + fqGenerated.toString(), passed);
+        }
     }
 
     public void testConstructNullQuery() throws Exception {

@@ -92,7 +92,7 @@ select_value:
     ;
 
 abstract_table:
-        table | subquery
+        table | subquery | multitable
     ;
 
 abstract_value:
@@ -118,6 +118,11 @@ table_alias:
 table:
         table_name ( ( "as"! )? table_alias )?
         { #table = #([TABLE, "TABLE"], #table); }
+    ;
+
+multitable:
+        OPEN_PAREN! table_name ( COMMA! table_name )* CLOSE_PAREN! ( "as"! )? table_alias
+        { #multitable = #([TABLE, "TABLE"], #multitable); }
     ;
 
 table_name:

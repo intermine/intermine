@@ -12,7 +12,9 @@ package org.flymine.objectstore.query.fql;
 
 import junit.framework.Test;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.testing.OneTimeTestCase;
@@ -45,15 +47,25 @@ public class FqlQueryParserTest extends FqlQueryTestCase
     }
 
     public void executeTest(String type) throws Exception {
-        FqlQuery fq = (FqlQuery) results.get(type);
-        Query parsed = FqlQueryParser.parse(fq);
-        if (type.equals("SubQuery") || type.equals("OrderByAnomaly")) {
-            // These two queries CANNOT be generated properly by FQL (as they contain 5 in the SELECT list).
-            // Therefore, we must merely check that they are regenerated back into FQL properly.
-            FqlQuery fqNew = new FqlQuery(parsed);
-            assertEquals(type + " has failed", fq, fqNew);
+        Object res = results.get(type);
+        if (res instanceof FqlQuery) {
+            FqlQuery fq = (FqlQuery) res;
+            Query parsed = FqlQueryParser.parse(fq);
+            if (type.equals("SubQuery") || type.equals("OrderByAnomaly")) {
+                // These two queries CANNOT be generated properly by FQL (as they contain 5 in the SELECT list).
+                // Therefore, we must merely check that they are regenerated back into FQL properly.
+                FqlQuery fqNew = new FqlQuery(parsed);
+                assertEquals(type + " has failed", fq, fqNew);
+            } else {
+                assertEquals(type + " has failed", (Query) queries.get(type), parsed);
+            }
         } else {
-            assertEquals(type + " has failed", (Query) queries.get(type), parsed);
+            Iterator resIter = ((Collection) res).iterator();
+            while (resIter.hasNext()) {
+                FqlQuery fq = (FqlQuery) resIter.next();
+                Query parsed = FqlQueryParser.parse(fq);
+                assertEquals(type + " has failed: " + fq.toString(), (Query) queries.get(type), parsed);
+            }
         }
     }
 

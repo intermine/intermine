@@ -10,6 +10,7 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.flymine.util.DynamicUtil;
@@ -43,7 +44,11 @@ public class QueryClass implements QueryNode, FromElement
      * @param types the Set of classes
      */
     public QueryClass(Set types) {
-        this.type = DynamicUtil.composeClass(types);
+        if (types.size() == 1) {
+            this.type = (Class) types.iterator().next();
+        } else {
+            this.type = DynamicUtil.composeClass(types);
+        }
     }
 
     /**
@@ -61,6 +66,20 @@ public class QueryClass implements QueryNode, FromElement
      * @return a String representation
      */
     public String toString() {
-        return type.getName();
+        Set classes = DynamicUtil.decomposeClass(type);
+        if (classes.size() == 1) {
+            return type.getName();
+        } else {
+            boolean needComma = false;
+            StringBuffer retval = new StringBuffer();
+            Iterator classIter = classes.iterator();
+            while (classIter.hasNext()) {
+                retval.append(needComma ? ", " : "(");
+                needComma = true;
+                Class cls = (Class) classIter.next();
+                retval.append(cls.getName());
+            }
+            return retval.toString() + ")";
+        }
     }
 }

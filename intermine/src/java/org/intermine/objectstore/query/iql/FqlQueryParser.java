@@ -13,8 +13,10 @@ package org.flymine.objectstore.query.fql;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import antlr.collections.AST;
 
@@ -182,17 +184,35 @@ public class FqlQueryParser
      * @param modelPackage the package for unqualified class names
      */
     private static void processNewTable(AST ast, Query q, String modelPackage) {
-        String tableName = null;
         String tableAlias = null;
+        String tableName = null;
+        Set classes = new HashSet();
         do {
             switch (ast.getType()) {
                 case FqlTokenTypes.TABLE_NAME:
+                    tableName = null;
                     AST tableNameAst = ast.getFirstChild();
                     do {
                         String temp = tableNameAst.getText();
                         tableName = (tableName == null ? temp : tableName + "." + temp);
                         tableNameAst = tableNameAst.getNextSibling();
                     } while (tableNameAst != null);
+                    Class c = null;
+                    try {
+                        c = Class.forName(tableName);
+                    } catch (ClassNotFoundException e) {
+                        if (modelPackage != null) {
+                            try {
+                                c = Class.forName(modelPackage + "." + tableName);
+                            } catch (ClassNotFoundException e2) {
+                                throw new IllegalArgumentException("Unknown class name " + tableName
+                                        + " in package " + modelPackage);
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Unknown class name " + tableName);
+                        }
+                    }
+                    classes.add(c);
                     break;
                 case FqlTokenTypes.TABLE_ALIAS:
                     tableAlias = ast.getFirstChild().getText();
@@ -203,24 +223,14 @@ public class FqlQueryParser
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        Class c = null;
-        try {
-            c = Class.forName(tableName);
-        } catch (ClassNotFoundException e) {
-            if (modelPackage != null) {
-                try {
-                    c = Class.forName(modelPackage + "." + tableName);
-                } catch (ClassNotFoundException e2) {
-                    throw new IllegalArgumentException("Unknown class name " + tableName
-                            + " in package " + modelPackage);
-                }
-            } else {
-                throw new IllegalArgumentException("Unknown class name " + tableName);
-            }
-        }
-        QueryClass qc = new QueryClass(c);
+        QueryClass qc = new QueryClass(classes);
         if (tableAlias == null) {
-            tableAlias = tableName;
+            if (classes.size() == 1) {
+                tableAlias = tableName;
+            } else {
+                throw new IllegalArgumentException("Dynamic classes in the FROM clause must have"
+                        + " an alias");
+            }
         }
         q.addFrom(qc, tableAlias);
     }

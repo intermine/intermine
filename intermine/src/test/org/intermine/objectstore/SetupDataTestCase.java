@@ -60,7 +60,9 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     public static void oneTimeSetUp() throws Exception {
         try {
             ObjectStoreQueriesTestCase.oneTimeSetUp();
-            writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            if (writer == null) {
+                writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            }
             setUpData();
             storeData();
             // These queries are here because they require objects with IDs
@@ -81,6 +83,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         ObjectStoreQueriesTestCase.oneTimeTearDown();
         removeDataFromStore();
         writer.close();
+        writer = null;
     }
 
     /**
