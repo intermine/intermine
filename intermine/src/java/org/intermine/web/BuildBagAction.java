@@ -100,7 +100,7 @@ public class BuildBagAction extends LookupDispatchAction
         saveMessages(request, actionMessages);
 
         request.setAttribute("bagName", newBagName);
-        return mapping.findForward("bagDetails");
+        return mapping.findForward("buildBag");
     }
 
     /**
