@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Swiss-Prot (EMBL OUTSTATION THE EBI WELLCOME TRUST GENOME CAMPUS) -->
-<xs:schema targetNamespace="http://www.flymine.org/model/psi#" xmlns="http://www.flymine.org/model/psi#" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema targetNamespace="net:sf:psidev:mi" xmlns="net:sf:psidev:mi" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
  <xs:element name="entrySet">
   <xs:annotation>
    <xs:documentation>Root element of the Molecular Interaction Format</xs:documentation>
