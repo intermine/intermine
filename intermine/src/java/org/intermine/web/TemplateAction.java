@@ -59,6 +59,10 @@ public class TemplateAction extends Action
         
         LoadQueryAction.loadQuery(template.getQuery(), request.getSession());
 
+        if (request.getParameter("skipBuilder") != null) {
+            return mapping.findForward("results");
+        }
+        
         return mapping.findForward("query");
     }
 }
