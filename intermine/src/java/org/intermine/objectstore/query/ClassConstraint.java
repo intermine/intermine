@@ -166,6 +166,6 @@ public class ClassConstraint extends Constraint
             + 7 * Util.hashCode(obj);
     }
 
-    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EQUALS,
+    public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS});
 }
