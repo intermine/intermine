@@ -10,9 +10,9 @@ package org.flymine.web.results;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStoreException;
@@ -27,7 +27,7 @@ import org.flymine.objectstore.query.ResultsInfo;
  */
 public class DisplayableResults
 {
-    protected List columns = new ArrayList();
+    protected Map columns = new LinkedHashMap();
     protected int start = 0;
     protected int pageSize = 10;
 
@@ -43,30 +43,33 @@ public class DisplayableResults
 
         // Add some blank column configurations
         Iterator columnIter = results.getColumnAliases().iterator();
+        int i = 0;
         while (columnIter.hasNext()) {
             String alias = (String) columnIter.next();
             Column column = new Column();
             column.setAlias(alias);
-            columns.add(column);
+            column.setIndex(i++);
+            columns.put(alias, column);
         }
     }
 
     /**
      * Get the list of column configurations
      *
-     * @return the list of columns
+     * @return the Map of column aliases to Columns
      */
-    public List getColumns() {
+    public Map getColumns() {
         return this.columns;
     }
 
     /**
-     * Set the list of column configurations
+     * Get the list of column configurations
      *
-     * @param columns the list of column configurations
+     * @param alias the alias of the column to get
+     * @return the column for the given alias
      */
-    public void setColumns(List columns) {
-        this.columns = columns;
+    public Column getColumn(String alias) {
+        return (Column) this.columns.get(alias);
     }
 
     /**
