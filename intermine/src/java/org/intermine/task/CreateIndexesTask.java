@@ -15,10 +15,12 @@ import org.apache.tools.ant.Task;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.dataloader.DataLoaderHelper;
@@ -101,7 +103,10 @@ public class CreateIndexesTask extends Task
      * @throws MetaDataException if a field os not found in model
      */
     protected void processClassDescriptor(ClassDescriptor cld) throws SQLException,
-                                                                      MetaDataException {
+    MetaDataException {
+        // Set of fieldnames that already are the first element of an index.
+        Set doneFieldNames = new HashSet();
+
         //add an index for each primary key
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
         for (Iterator j = primaryKeys.entrySet().iterator(); j.hasNext();) {
@@ -123,7 +128,9 @@ public class CreateIndexesTask extends Task
             dropIndex(tableName + "__" + keyName);
             createIndex(tableName + "__" + keyName, tableName,
                         StringUtil.join(fieldNames, ", "));
+            doneFieldNames.add(fieldNames.get(0));
         }
+
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
         //for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
@@ -132,9 +139,12 @@ public class CreateIndexesTask extends Task
             if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
                     && (ref.getReverseReferenceDescriptor() != null)) {
                 String tableName = DatabaseUtil.getTableName(cld);
-                dropIndex(tableName + "__"  + ref.getName());
-                createIndex(tableName + "__"  + ref.getName(), tableName,
-                            DatabaseUtil.getColumnName(ref));
+                String fieldName = DatabaseUtil.getColumnName(ref);
+                if (!doneFieldNames.contains(fieldName)) {
+                    dropIndex(tableName + "__"  + ref.getName());
+                    createIndex(tableName + "__"  + ref.getName(), tableName,
+                                fieldName);
+                }
             }
         }
         //finally add an index to all M-to-N indirection table columns
