@@ -10,6 +10,7 @@
   </global>
   
   <formset>
+  
     <form name="feedbackForm">
       <field
         property="name"
@@ -32,6 +33,20 @@
         <arg key="feedback.message"/>
       </field>
     </form>
+    
+    <form name="buildTemplateForm">
+      <field
+        property="description"
+        depends="required">
+        <arg key="templateBuilder.templateDescription"/>
+      </field>
+      <field
+        property="shortName"
+        depends="required">
+        <arg key="templateBuilder.shortName"/>
+      </field>
+    </form>
+    
   </formset>
   
 </form-validation>
