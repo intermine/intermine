@@ -926,6 +926,10 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         a1.setAddress("Company Street, AVille");
         Address a2 = new Address();
         a2.setAddress("Employee Street, AVille");
+        Company p = new Company();
+        p.setName("CompanyA");
+        p.setVatNumber(1234);
+        p.setAddress(a1);
         Employee e1 = new Manager();
         e1.setName("EmployeeA1");
         e1.setFullTime(true);
@@ -945,10 +949,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         d1.setName("DepartmentA1");
         d1.setManager((Manager) e1);
         d1.setEmployees(Arrays.asList(new Object[] { e1, e2, e3 }));
-        Company p = new Company();
-        p.setName("CompanyA");
-        p.setVatNumber(1234);
-        p.setAddress(a1);
+        d1.setCompany(p);
         p.setDepartments(Arrays.asList(new Object[] { d1 }));
         return p;
     }
@@ -958,6 +959,10 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         a1.setAddress("Company Street, BVille");
         Address a2 = new Address();
         a2.setAddress("Employee Street, BVille");
+        Company p = new Company();
+        p.setName("CompanyB");
+        p.setVatNumber(5678);
+        p.setAddress(a1);
         CEO e1 = new CEO();
         e1.setName("EmployeeB1");
         e1.setFullTime(true);
@@ -979,14 +984,12 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         d1.setName("DepartmentB1");
         d1.setManager(e1);
         d1.setEmployees(Arrays.asList(new Object[] { e1, e2 }));
+        d1.setCompany(p);
          Department d2 = new Department();
         d2.setName("DepartmentB2");
         d2.setManager((Manager) e3);
         d2.setEmployees(Arrays.asList(new Object[] { e3 }));
-        Company p = new Company();
-        p.setName("CompanyB");
-        p.setVatNumber(5678);
-        p.setAddress(a1);
+        d2.setCompany(p);
         p.setDepartments(Arrays.asList(new Object[] { d1, d2 }));
         return p;
     }
