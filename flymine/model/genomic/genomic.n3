@@ -37,12 +37,10 @@
     rdfs:range :Organism .
 
 :BioEntity__subjects a owl:ObjectProperty;
-    rdfs:domain :BioEntity;
-    rdfs:range :Relation.  
+    owl:inverseOf :Relation__object .
 
 :BioEntity__objects a owl:ObjectProperty;
-    rdfs:domain :BioEntity;
-    rdfs:range :Relation.
+    owl:inverseOf :Relation__subject .
 
 # ------------ BioProperty represents any property of a BioEntity ------------
 
@@ -124,7 +122,7 @@
 
 :Evidence a owl:Class .
 
-:Evidence__relation a owl:ObjectProperty ;
+:Evidence__relations a owl:ObjectProperty ;
     owl:inverseOf :Relation__evidence .
 
 
@@ -141,8 +139,7 @@
         owl:onProperty :Synonym__source ] .
 
 :Synonym__subject a owl:ObjectProperty ;
-    rdfs:domain :Synonym ;
-    rdfs:range :BioEntity .
+    owl:inverseOf :BioEntity__synonyms .
 
 :Synonym__source a owl:ObjectProperty ;
     rdfs:domain :Synonym ;
@@ -157,6 +154,7 @@
 
 :AnalysisResult a owl:Class ;
     rdfs:subClassOf :Evidence ;
+
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
