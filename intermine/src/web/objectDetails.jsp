@@ -12,219 +12,230 @@
 <im:box helpUrl="${helpUrl}"
         titleKey="objectDetails.heading.details">
 
-<table width="100%">
-<tr>
-  <td valign="top" width="30%">
-<im:heading id="summary">
-Summary for selected
-<c:forEach items="${object.clds}" var="cld">
-  ${cld.unqualifiedName}
-</c:forEach>
-</im:heading>
-
-<im:body id="summary">
-<table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
-  <c:forEach items="${object.keyAttributes}" var="attributeName">
+<c:if test="${!empty object}">
+        
+  <table width="100%">
     <tr>
-      <td>
-        <span class="attributeField">${attributeName}</span>
-      </td>
-      <td colspan="2"><span class="value">${object.attributes[attributeName]}</span></td>
-    </tr>
-  </c:forEach>
-  <c:forEach items="${object.keyReferences}" var="referenceName">
-    <c:set var="reference" value="${object.references[referenceName]}"/>
-    <c:forEach items="${object.references[referenceName].keyAttributes}" var="attributeEntry" varStatus="status">
-      <tr>
-        <c:if test="${status.first}">
-          <td rowspan="${fn:length(object.references[referenceName].keyAttributes)}">
-            <html:link action="/objectDetails?id=${object.references[referenceName].id}">
-              <span class="referenceField">${referenceName}</span>
-            </html:link>
-          </td>
-        </c:if>
-        <td>
-          <span class="attributeField">${attributeEntry.key}</span>
-        </td>
-        <td>
-          <span class="value">${attributeEntry.value}</span>
-        </td>
-      </tr>
-    </c:forEach>
-  </c:forEach>
-</table>
-</im:body>
+      <td valign="top" width="30%">
 
+        <im:heading id="summary">
+          Summary for selected
+          <c:forEach items="${object.clds}" var="cld">
+            ${cld.unqualifiedName}
+          </c:forEach>
+        </im:heading>
 
-<c:if test="${!empty object.attributes}">
-  <im:heading id="fields">Fields</im:heading>
-  <im:body id="fields">
-    <table>
-    <c:forEach items="${object.attributes}" var="entry">
-      <tr>
-        <td>
-          <span class="attributeField">${entry.key}</span>
-        </td>
-        <td>
-          <c:set var="maxLength" value="60"/>
-          <c:choose>
-            <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
-              <nobr>
-                <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
-                <html:link action="/getAttributeAsFile?object=${object.id}&field=${entry.key}">...</html:link>
-              </nobr>
-            </c:when>
-            <c:otherwise>
-              <span class="value">${entry.value}</span>
-            </c:otherwise>
-          </c:choose>
-        </td>
-      </tr>
-    </c:forEach>
-    </table>
-  </im:body>
-</c:if>
-
-<c:forEach items="${object.clds}" var="cld">
-  <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
-    <im:heading id="further">
-      <nobr>Further information for this ${cld.unqualifiedName}</nobr>
-    </im:heading>
-    <im:body id="further">
-      <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
-        <c:set var="object_bak" value="${object}"/>
-        <c:set var="object" value="${object.object}" scope="request"/>
-        <c:set var="cld" value="${cld}" scope="request"/>
-        <tiles:insert beanName="displayer" beanProperty="src"/><br/>
-        <c:set var="object" value="${object_bak}"/>
-      </c:forEach>
-    </im:body>
-  </c:if>
-</c:forEach>
-
-</td>
-
-<td valign="top" width="66%">
-<im:heading id="other">Other Information<im:helplink key="objectDetails.help.otherInfo"/></im:heading>
-<im:body id="other">
-<table border="0">
-  <c:if test="${!empty object.refsAndCollections}">
-    <c:forEach items="${object.refsAndCollections}" var="entry">
-      <c:set var="collection" value="${entry.value}"/>
-      <c:set var="verbose" value="${!empty object.verbosity[entry.key]}"/>
-      <c:set var="fieldName" value="${entry.key}"/>
-      <tr>
-        <td width="10px">
-          <nobr>
-            <c:choose>
-              <c:when test="${verbose}">
-                <html:link action="/modifyDetails?method=unverbosify&field=${fieldName}">
-                  <img border="0" src="images/minus.gif" alt="-"/>
-                  <span class="collectionField">${fieldName}</span>
-                </html:link>
-              </c:when>
-              <c:when test="${collection.size > 0}">
-                <html:link action="/modifyDetails?method=verbosify&field=${fieldName}">
-                  <img border="0" src="images/plus.gif" alt="+"/>
-                  <span class="collectionField">${fieldName}</span>
-                </html:link>
-              </c:when>
-              <c:otherwise>
-                <img border="0" src="images/blank.gif" alt=" "/>
-              </c:otherwise>
-            </c:choose>
-          </nobr>
-        </td>
-        <td>
-          <span class="collectionDescription">
-            ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
-          </span>
-          <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
-            [<html:link action="/objectDetails?id=${collection.table.ids[0]}">
-              <fmt:message key="results.details"/>
-            </html:link>]
-          </c:if>
-        </td>
-      </tr>
-      <c:if test="${verbose}">
-        <tr>
-          <td colspan="2">
-            <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <im:body id="summary">
+          <table cellpadding="5" rules="all" border="0" cellspacing="0" class="objSummary">
+            <c:forEach items="${object.keyAttributes}" var="attributeName">
               <tr>
-                <td width="15"><img border="0" src="images/blank.gif" alt="" width="15"/></td><td>
-                <table border="0" cellspacing="0" class="refSummary" align="right">
-                  <thead style="text-align: center">
-                    <tr>
-                      <td width="10px">
-                        <fmt:message key="objectDetails.class"/>
-                      </td>
-                      <c:forEach items="${collection.table.columnNames}" var="fd">
-                        <td><span class="attributeField">${fd}</span></td>
-                      </c:forEach>
-                      <td width="10px">
-                        &nbsp;<%--for IE--%>
-                      </td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <c:forEach items="${collection.table.rows}" var="row" varStatus="status">
-                      <%-- request scope for im:eval --%>
-                      <c:set var="thisRowObject" value="${collection.table.rowObjects[status.index]}"
-                             scope="request"/>
-                      <tr>
-                        <td width="10px">
-                          <c:forEach items="${collection.table.types[status.index]}" var="cld">
-                            <span class="type">${cld.unqualifiedName}</span>
-                          </c:forEach>
-                        </td>
-                        <c:forEach items="${row}" var="expr">
-                          <td>
-                             <c:choose>
+                <td>
+                  <span class="attributeField">${attributeName}</span>
+                </td>
+                <td colspan="2"><span class="value">${object.attributes[attributeName]}</span></td>
+              </tr>
+            </c:forEach>
+            <c:forEach items="${object.keyReferences}" var="referenceName">
+              <c:set var="reference" value="${object.references[referenceName]}"/>
+              <c:forEach items="${object.references[referenceName].keyAttributes}" var="attributeEntry" varStatus="status">
+                <tr>
+                  <c:if test="${status.first}">
+                    <td rowspan="${fn:length(object.references[referenceName].keyAttributes)}">
+                      <html:link action="/objectDetails?id=${object.references[referenceName].id}">
+                        <span class="referenceField">${referenceName}</span>
+                      </html:link>
+                    </td>
+                  </c:if>
+                  <td>
+                    <span class="attributeField">${attributeEntry.key}</span>
+                  </td>
+                  <td>
+                    <span class="value">${attributeEntry.value}</span>
+                  </td>
+                </tr>
+              </c:forEach>
+            </c:forEach>
+          </table>
+        </im:body>
 
-                              <c:when test="${!empty expr}">
 
-                                <im:eval evalExpression="thisRowObject.${expr}" evalVariable="outVal"/>
-                                <span class="value">${outVal}</span>
-
-                                <c:if test="${empty outVal}">
-                                  &nbsp;<%--for IE--%>
-                                </c:if>
-                              </c:when>
-                              <c:otherwise>
-                                &nbsp;<%--for IE--%>
-                              </c:otherwise>                            
-                            </c:choose>
-                          </td>
-                        </c:forEach>
-                        <td width="10px">
-                          [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}">
-                            <fmt:message key="results.details"/>
-                          </html:link>]
-                        </td>
-                      </tr>
-                    </c:forEach>
-                  </tbody>
-                </table>
-              </td></tr>
+        <c:if test="${!empty object.attributes}">
+          <im:heading id="fields">Fields</im:heading>
+          <im:body id="fields">
+            <table border="0">
+              <c:forEach items="${object.attributes}" var="entry">
+                <tr>
+                  <td>
+                    <span class="attributeField">${entry.key}</span>
+                  </td>
+                  <td>
+                    <c:set var="maxLength" value="60"/>
+                    <c:choose>
+                      <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
+                        <nobr>
+                          <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
+                          <html:link action="/getAttributeAsFile?object=${object.id}&field=${entry.key}">...</html:link>
+                        </nobr>
+                      </c:when>
+                      <c:otherwise>
+                        <span class="value">${entry.value}</span>
+                      </c:otherwise>
+                    </c:choose>
+                  </td>
+                </tr>
+              </c:forEach>
             </table>
-            <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-              <div class="refSummary">
-                [<html:link action="/collectionDetails?id=${object.id}&field=${fieldName}&pageSize=25">
-                  <fmt:message key="results.showall"/>
-                </html:link>]
-              </div>
-            </c:if>
-          </td>
-        </tr>
-      </c:if>
-    </c:forEach>
-  </c:if>
-</table>
-</im:body>
+          </im:body>
+        </c:if>
 
-</td>
-</tr>
-</table>
+        <c:forEach items="${object.clds}" var="cld">
+          <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
+            <im:heading id="further">
+              <nobr>Further information for this ${cld.unqualifiedName}</nobr>
+            </im:heading>
+            <im:body id="further">
+              <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
+                <c:set var="object_bak" value="${object}"/>
+                <c:set var="object" value="${object.object}" scope="request"/>
+                <c:set var="cld" value="${cld}" scope="request"/>
+                <tiles:insert beanName="displayer" beanProperty="src"/><br/>
+                <c:set var="object" value="${object_bak}"/>
+              </c:forEach>
+            </im:body>
+          </c:if>
+        </c:forEach>
+
+      </td>
+
+      <td valign="top" width="66%">
+        <im:heading id="other">Other Information<im:helplink key="objectDetails.help.otherInfo"/></im:heading>
+        <im:body id="other">
+          <table border="0">
+            <c:if test="${!empty object.refsAndCollections}">
+              <c:forEach items="${object.refsAndCollections}" var="entry">
+                <c:set var="collection" value="${entry.value}"/>
+                <c:set var="verbose" value="${!empty object.verbosity[entry.key]}"/>
+                <c:set var="fieldName" value="${entry.key}"/>
+                <tr>
+                  <td width="10px">
+                    <nobr>
+                      <c:choose>
+                        <c:when test="${verbose}">
+                          <html:link action="/modifyDetails?method=unverbosify&field=${fieldName}">
+                            <img border="0" src="images/minus.gif" alt="-"/>
+                            <span class="collectionField">${fieldName}</span>
+                          </html:link>
+                        </c:when>
+                        <c:when test="${collection.size > 0}">
+                          <html:link action="/modifyDetails?method=verbosify&field=${fieldName}">
+                            <img border="0" src="images/plus.gif" alt="+"/>
+                            <span class="collectionField">${fieldName}</span>
+                          </html:link>
+                        </c:when>
+                        <c:otherwise>
+                          <img border="0" src="images/blank.gif" alt=" "/>
+                        </c:otherwise>
+                      </c:choose>
+                    </nobr>
+                  </td>
+                  <td>
+                    <span class="collectionDescription">
+                      ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
+                    </span>
+                    <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
+                      [<html:link action="/objectDetails?id=${collection.table.ids[0]}">
+                        <fmt:message key="results.details"/>
+                      </html:link>]
+                    </c:if>
+                  </td>
+                </tr>
+                <c:if test="${verbose}">
+                  <tr>
+                    <td colspan="2">
+                      <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <tr>
+                          <td width="15"><img border="0" src="images/blank.gif" alt="" width="15"/></td><td>
+                          <table border="0" cellspacing="0" class="refSummary" align="right">
+                            <thead style="text-align: center">
+                              <tr>
+                                <td width="10px">
+                                  <fmt:message key="objectDetails.class"/>
+                                </td>
+                                <c:forEach items="${collection.table.columnNames}" var="fd">
+                                  <td><span class="attributeField">${fd}</span></td>
+                                </c:forEach>
+                                <td width="10px">
+                                  &nbsp;<%--for IE--%>
+                                </td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <c:forEach items="${collection.table.rows}" var="row" varStatus="status">
+                                <%-- request scope for im:eval --%>
+                                <c:set var="thisRowObject" value="${collection.table.rowObjects[status.index]}"
+                                       scope="request"/>
+                                <tr>
+                                  <td width="10px">
+                                    <c:forEach items="${collection.table.types[status.index]}" var="cld">
+                                      <span class="type">${cld.unqualifiedName}</span>
+                                    </c:forEach>
+                                  </td>
+                                  <c:forEach items="${row}" var="expr">
+                                    <td>
+                                       <c:choose>
+
+                                        <c:when test="${!empty expr}">
+
+                                          <im:eval evalExpression="thisRowObject.${expr}" evalVariable="outVal"/>
+                                          <span class="value">${outVal}</span>
+
+                                          <c:if test="${empty outVal}">
+                                            &nbsp;<%--for IE--%>
+                                          </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                          &nbsp;<%--for IE--%>
+                                        </c:otherwise>                            
+                                      </c:choose>
+                                    </td>
+                                  </c:forEach>
+                                  <td width="10px">
+                                    [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}">
+                                      <fmt:message key="results.details"/>
+                                    </html:link>]
+                                  </td>
+                                </tr>
+                              </c:forEach>
+                            </tbody>
+                          </table>
+                        </td></tr>
+                      </table>
+                      <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
+                        <div class="refSummary">
+                          [<html:link action="/collectionDetails?id=${object.id}&field=${fieldName}&pageSize=25">
+                            <fmt:message key="results.showall"/>
+                          </html:link>]
+                        </div>
+                      </c:if>
+                    </td>
+                  </tr>
+                </c:if>
+              </c:forEach>
+            </c:if>
+          </table>
+        </im:body>
+      </td>
+
+    </tr>
+  </table>
+  
+</c:if>
+<c:if test="${empty object}">
+  <%-- Display message if object not found --%>
+  <div class="altmessage">
+    <fmt:message key="objectDetails.noSuchObject"/>
+  </div>
+</c:if>
 
 <div class="body">
   <c:if test="${RESULTS_TABLE != null && RESULTS_TABLE.size > 0}">
