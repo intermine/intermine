@@ -168,8 +168,15 @@ public class ChangeResultsForm extends ActionForm
         HttpSession session = request.getSession();
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
 
+        ActionErrors errors = null;
+
+        if (selectedObjects.length == 0) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                       new ActionError("errors.savebag.nothingSelected", newBagName));
+        }
+
         if ("saveNewBag".equals(getButton())) {
-            ActionErrors errors = null;
             if (newBagName.equals("")) {
                 errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
@@ -180,9 +187,9 @@ public class ChangeResultsForm extends ActionForm
                            new ActionError("errors.savebag.existing", newBagName));
             }
             return errors;
-        } else {
-            return null;
         }
+
+        return errors;
     }
 
     /**
