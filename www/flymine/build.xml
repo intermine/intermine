@@ -94,6 +94,21 @@
     </exec>
 </target>
 
+
+<target name="release-production-webapp">
+  <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+  <ant dir="../../intermine" target="jar" inheritRefs="true"/>
+  <ant dir="../../intermine" target="build-webapp" inheritRefs="true"/>
+
+  <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
+  <ant dir="../../flymine" target="create-production-model" inheritRefs="true"/>
+  <ant dir="../../flymine" target="jar-genomic" inheritRefs="true"/>
+  <ant dir="../../flymine" target="build-production-webapp" inheritRefs="true"/>
+  <ant dir="../../flymine" target="remove-webapp" inheritRefs="true"/>
+  <ant dir="../../flymine" target="release-webapp" inheritRefs="true"/>
+</target>
+
+
 <target name="clean">
     <delete dir="${build.www}"/>
     <delete dir="${dist.www}"/>
