@@ -66,7 +66,7 @@ public class ObjectTrailController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         String trail = request.getParameter("trail");
-        String ids[] = StringUtils.split(trail.substring(1), '_');
+        String ids[] = (trail != null) ? StringUtils.split(trail.substring(1), '_') : new String[0];
         ArrayList elements = new ArrayList();
         String elementTrail = "";
         
