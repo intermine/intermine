@@ -168,7 +168,9 @@ public abstract class PagedTable
      * Go to the previous page
      */
     public void previousPage() {
-        startRow -= pageSize;
+        if (startRow >= pageSize) {
+            startRow -= pageSize;
+        }
         updateRows();
     }
 
