@@ -23,8 +23,10 @@ import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
@@ -47,10 +49,10 @@ public class XmlDataLoaderTest extends TestCase
     public XmlDataLoaderTest(String arg) {
         super(arg);
     }
-/*
+
     public void setUp() throws Exception {
         writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        iw = new IntegrationWriterSingleSourceImpl("test", writer);
+        iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
 
         binding = new XmlBinding(writer.getModel());
         toDelete = new ArrayList();
@@ -69,6 +71,7 @@ public class XmlDataLoaderTest extends TestCase
 
 
     // marshal an object, set up as an InputSource and store to DB
+    /*  - doesn't work due to TypeUtil.flatten not handling DYnamic classes correctly -
     public void testSimpleObject() throws Exception {
         Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
@@ -85,7 +88,9 @@ public class XmlDataLoaderTest extends TestCase
         InputStream is = new FileInputStream(file);
 
         XmlDataLoader dl = new XmlDataLoader(iw);
-        dl.processXml(is);
+        Source source = iw.getMainSource("test");
+        Source skelSource = iw.getSkeletonSource("test");
+        dl.processXml(is, source, skelSource);
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1, Collections.singleton("address"));
@@ -100,7 +105,7 @@ public class XmlDataLoaderTest extends TestCase
         toDelete.add(a2);
         toDelete.add(c2);
     }
-
+    */
     // marshal an object, set up as an InputSource and store to DB
     public void testSubclassedObject() throws Exception {
         Manager m1 = new Manager();
@@ -119,7 +124,9 @@ public class XmlDataLoaderTest extends TestCase
         InputStream is = new FileInputStream(file);
 
         XmlDataLoader dl = new XmlDataLoader(iw);
-        dl.processXml(is);
+        Source source = iw.getMainSource("test");
+        Source skelSource = iw.getSkeletonSource("test");
+        dl.processXml(is, source, skelSource);
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1, Collections.singleton("address"));
@@ -134,7 +141,7 @@ public class XmlDataLoaderTest extends TestCase
         toDelete.add(a2);
         toDelete.add(m2);
     }
-
+    /*
     public void testStoreFromFile() throws Exception {
         XmlDataLoader dl = new XmlDataLoader(iw);
         InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
@@ -164,10 +171,12 @@ public class XmlDataLoaderTest extends TestCase
             toDelete.add(obj);
         }
     }
-
+    */
     private void marshalList(List list, File file) throws Exception {
         List flat = TypeUtil.flatten(list);
+        System.out.println("flat = " + flat);
         setIds(flat);
+        System.out.println("setIds: " + flat);
         binding.marshal(flat, new BufferedWriter(new FileWriter(file)));
         stripIds(flat);
     }
@@ -178,14 +187,19 @@ public class XmlDataLoaderTest extends TestCase
          while (iter.hasNext()) {
              fakeId++;
              Object obj = iter.next();
-             Class cls = obj.getClass();
-             Field f = getIdField(cls);
-             if (f != null) {
-                 f.setAccessible(true);
-                 f.set(obj, new Integer(fakeId));
-             }
+             Method setter = TypeUtil.getSetter(obj.getClass(), "id");
+             setter.invoke(obj, new Object[] {new Integer(fakeId)});
          }
      }
+
+ //             Class cls = obj.getClass();
+//              Field f = getIdField(cls);
+//              if (f != null) {
+//                  f.setAccessible(true);
+//                  f.set(obj, new Integer(fakeId));
+//              }
+//          }
+//      }
 
     // remove fake ids for a collection of business objects
      void stripIds(Collection c) throws Exception {
@@ -216,5 +230,4 @@ public class XmlDataLoaderTest extends TestCase
         }
         return null;
     }
-    */
 }

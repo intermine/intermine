@@ -391,11 +391,11 @@
   <target name="insert-data-testmodel" depends="build-db-testmodel">
     <taskdef
       name="insert-xml-data"
-      classname="org.intermine.dataloader.InsertXmlDataTask">
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
 
-    <insert-xml-data integrationWriter="integration.unittestsingle" file="${build.resources.test}/testmodel_data.xml">
+    <insert-xml-data integrationWriter="integration.unittestsingle" xmlFile="${build.resources.test}/testmodel_data.xml" source="test">
       <classpath refid="test.class.path"/>
     </insert-xml-data>
   </target>
@@ -434,8 +434,8 @@
 
   <!-- copy original .xsd file to model directory for XmlSchemaParserFunctionalTest -->
   <target name="copy-model-xmlschematest">
-    <copy todir="${build.model}/xmitest" file="${model}/xmlschematest/xmlschematest.xsd"/>
-    <copy todir="${build.model}/xmitest" file="${model}/xmlschematest/xmlschematest.xml"/>
+    <copy todir="${build.model}/xmlschematest" file="${model}/xmlschematest/xmlschematest.xsd"/>
+    <copy todir="${build.model}/xmlschematest" file="${model}/xmlschematest/xmlschematest.xml"/>
   </target>
 
   <!-- Test XML Schema -->
@@ -485,7 +485,6 @@
           </depend>
           <exclude name="org/intermine/web/**" />
           <exclude name="org/intermine/objectstore/webservice/**" />
-          <exclude name="org/intermine/dataloader/XmlDataLoaderTest.class" />
           <exclude name="org/intermine/dataconversion/ItemToObject*" />
           <exclude name="org/intermine/util/CacheMapTest.class" />
         </fileset>

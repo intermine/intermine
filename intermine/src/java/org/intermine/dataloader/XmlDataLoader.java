@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
 
@@ -41,9 +42,12 @@ public class XmlDataLoader extends DataLoader
      * store on each.
      *
      * @param is access to xml file
+     * @param source the main source
+     * @param skelSource the skeleton source
      * @throws InterMineException if anything goes wrong with xml or storing
      */
-    public void processXml(InputStream is) throws InterMineException {
+    public void processXml(InputStream is, Source source, Source skelSource)
+        throws InterMineException {
         try {
             XmlBinding binding = new XmlBinding(iw.getObjectStore().getModel());
 

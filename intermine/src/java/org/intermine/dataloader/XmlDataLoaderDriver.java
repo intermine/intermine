@@ -13,6 +13,8 @@ package org.intermine.dataloader;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.intermine.model.datatracking.Source;
+
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -27,15 +29,18 @@ public class XmlDataLoaderDriver
      *
      * @param iwAlias the name of the IntegrationWriter to use
      * @param file the file to load
+     * @param sourceName name of data source
      * @throws BuildException if any error occurs
      */
-    public void loadData(String iwAlias, File file)
+    public void loadData(String iwAlias, File file, String sourceName)
         throws BuildException {
 
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias);
             XmlDataLoader dl = new XmlDataLoader(iw);
-            dl.processXml(new FileInputStream(file));
+            Source source = iw.getMainSource(sourceName);
+            Source skelSource = iw.getSkeletonSource(sourceName);
+            dl.processXml(new FileInputStream(file), source, skelSource);
         } catch (Exception e) {
             throw new BuildException(e);
         }
