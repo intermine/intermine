@@ -63,8 +63,10 @@ public class QueryBuildController extends TilesAction
             request.getSession().setAttribute("ops", getOps(cld));
         }
 
+        form.reset(mapping, request);
         if (session.getAttribute("alias") != null) {
             populateQueryBuildForm((QueryBuildForm) form, session);
+            request.setAttribute("aliasStr", session.getAttribute("alias"));  // used for display in view
             session.removeAttribute("alias");
         }
         return null;
@@ -96,8 +98,8 @@ public class QueryBuildController extends TilesAction
                     form.setFieldValue(((QueryField) sc.getArg1()).getFieldName(),
                                        ((QueryValue) sc.getArg2()).getValue());
 
-                    //form.setOpValue(((QueryField)sc.getArg1()).getFieldName(),
-                    //                sc.getOp());
+                    form.setFieldOp(((QueryField)sc.getArg1()).getFieldName(),
+                                    new Integer(sc.getType()));
                 }
             }
         }
