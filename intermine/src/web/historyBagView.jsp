@@ -36,7 +36,7 @@
             </html:link>
           </td>
           <td align="right">
-            <c:out value="${savedBag.value.size}"/>
+            <c:out value="${savedBag.value.size}"/>&nbsp;
           </td>
         </tr>
       </c:forEach>

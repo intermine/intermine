@@ -38,6 +38,7 @@
             <c:if test="${savedQuery.value.info != null}">
               <c:out value="${savedQuery.value.info.rows}"/>
             </c:if>
+            &nbsp;
           </td>
         </tr>
       </c:forEach>
