@@ -10,12 +10,19 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
@@ -132,5 +139,34 @@ public class TemplateHelper
                                                    tf.getDescription(),
                                                    tf.getCategory(), query);
         return template;
+    }
+    
+    /**
+     * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
+     * return a string containing each template seriaised as XML. The root element
+     * will be a <code>template-list</code> element.
+     *
+     * @param templates  map from template name to TemplateQuery
+     * @return  all template queries serialised as XML
+     * @see  TemplateQuery
+     */
+    public static String templateMapToXML(Map templates) {
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        TemplateQueryBinding binding = new TemplateQueryBinding();
+        Iterator iter = templates.values().iterator();
+        
+        while (iter.hasNext()) {
+            try {
+                XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+                writer.writeStartElement("template-list");
+                binding.marshal((TemplateQuery) iter.next(), writer);
+                writer.writeEndElement();
+            } catch (XMLStreamException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        return sw.toString();
     }
 }
