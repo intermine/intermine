@@ -781,7 +781,8 @@
     </java> 
 
     <!-- merge chado model with target genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true">
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="1200m" >
       <classpath refid="test.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
