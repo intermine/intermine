@@ -244,7 +244,7 @@ and_constraint_set:
 
 subquery_constraint: #( SUBQUERY_CONSTRAINT abstract_value sql ) ;
 
-comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
+comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | GORNULL | "like";
 
 abstract_constraint_list: ( abstract_constraint )+ ;
 
@@ -432,7 +432,8 @@ field_name:
 
 abstract_constraint: (constraint_set)=> constraint_set | safe_abstract_constraint ;
 
-safe_abstract_constraint: (paren_constraint)=> paren_constraint
+safe_abstract_constraint: (gornull_constraint)=> gornull_constraint
+            | (paren_constraint)=> paren_constraint
             | (subquery_constraint)=> subquery_constraint
             | constraint
             | not_constraint
@@ -442,6 +443,12 @@ constraint: (abstract_value comparison_op)=> abstract_value comparison_op abstra
         { #constraint = #([CONSTRAINT, "CONSTRAINT"], #constraint); }
             | abstract_value null_comparison
         { #constraint = #([NULL_CONSTRAINT, "NULL_CONSTRAINT"], #constraint); }
+    ;
+
+gornull_constraint: a:IDENTIFIER DOT! b:IDENTIFIER GT! c:constant "or"! d:IDENTIFIER DOT! e:IDENTIFIER "is"! "null"!
+//        { String message = "gornull constraint: " + a_AST + "." + b_AST + " > " + c_AST + " OR " + d_AST + "." + e_AST + " IS NULL"; if (!(a_AST.getText().equals(d_AST.getText()) && b_AST.getText().equals(e_AST.getText()))) { System.out.println("Not a " + message); throw new RecognitionException("Not a " + message); } else { System.out.println("Found a " + message); }; }?
+        { a_AST.getText().equals(d_AST.getText()) && b_AST.getText().equals(e_AST.getText()) }?
+        { #gornull_constraint = #([CONSTRAINT, "CONSTRAINT"], #([FIELD, "FIELD"], #([TABLE_ALIAS, "TABLE_ALIAS"], #a), #([FIELD_NAME, "FIELD_NAME"], #b)), #([GORNULL, "n>"]), #c); }
     ;
 
 not_constraint: "not"! safe_abstract_constraint
@@ -469,7 +476,7 @@ subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! s
         { #subquery_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"], #subquery_constraint)); }
     ;
 
-comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
+comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | GORNULL | "like";
 
 null_comparison: "is"! "null"! | "is"! "not" "null"!;
 
@@ -522,6 +529,7 @@ NOT_EQ:
         | "!=" | "^="
     ;
 GT: '>' ( '=' { _ttype = GE; } )? ;
+GORNULL: "n>";
 
 FLOAT: (( '0'..'9' )+ '.' '0'..'9' )=> ( '0'..'9' )+ '.' ( '0'..'9' )+ ("::real")? 
         | ( '0'..'9' )+ {_ttype = INTEGER; } ;

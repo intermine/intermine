@@ -144,15 +144,16 @@ public class PrecomputedTable implements SQLStringable, Comparable
             List orderBy = q.getOrderBy();
             StringBuffer extraBuffer = new StringBuffer();
             for (int i = orderBy.size() - 1; i > 0; i--) {
-                extraBuffer.append("((" + ((SQLStringable) orderBy.get(orderBy.size() - 1 - i))
-                        .getSQLString() + "::numeric) * 1");
+                extraBuffer.append("(COALESCE(" + ((SQLStringable) orderBy.get(orderBy.size() - 1
+                                        - i)).getSQLString()
+                        + "::numeric, 49999999999999999999) * 1");
                 for (int o = 0; o < i; o++) {
                     extraBuffer.append("00000000000000000000");
                 }
                 extraBuffer.append(") + ");
             }
-            extraBuffer.append("(" + ((SQLStringable) orderBy.get(orderBy.size() - 1))
-                    .getSQLString() + "::numeric) AS " + ORDERBY_FIELD);
+            extraBuffer.append("COALESCE(" + ((SQLStringable) orderBy.get(orderBy.size() - 1))
+                    .getSQLString() + "::numeric, 49999999999999999999) AS " + ORDERBY_FIELD);
             generationSqlString = "CREATE TABLE " + name + " AS "
                 + q.getSQLStringForPrecomputedTable(extraBuffer.toString());
         } else {

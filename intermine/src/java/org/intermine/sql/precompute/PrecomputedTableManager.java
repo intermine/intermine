@@ -145,9 +145,7 @@ public class PrecomputedTableManager
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
-        if (addTableToDatabase(pt, indexes)) {
-            return;
-        }
+        addTableToDatabase(pt, indexes);
         precomputedTables.add(pt);
     }
 
@@ -199,10 +197,9 @@ public class PrecomputedTableManager
      *
      * @param pt the PrecomputedTable to add
      * @param indexes a Collection of Strings that are indexes to create
-     * @return true if the table was not created
      * @throws SQLException if an error occurs in the underlying database
      */
-    protected boolean addTableToDatabase(PrecomputedTable pt,
+    protected void addTableToDatabase(PrecomputedTable pt,
             Collection indexes) throws SQLException {
         Connection con = null;
         try {
@@ -217,17 +214,8 @@ public class PrecomputedTableManager
             String sql = pt.getSQLString();
             stmt.execute(sql);
 
-            boolean dropEverything = false;
-
             String orderByField = pt.getOrderByField();
             if (orderByField != null) {
-                ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM " + pt.getName()
-                        + " WHERE " + orderByField + " IS NULL");
-                r.next();
-                if (r.getInt(1) > 0) {
-                    // We should now drop the table and pretend it didn't happen
-                    dropEverything = true;
-                }
                 LOG.info("Creating orderby_field index on precomputed table " + pt.getName());
                 indexes.add(orderByField);
             } else {
@@ -241,12 +229,6 @@ public class PrecomputedTableManager
                         indexes.add(firstOrderByValue.getAlias());
                     }
                 }
-            }
-            if (dropEverything) {
-                LOG.error("Dropping precomputed table " + pt.getName() + " because the orderby"
-                        + " field has nulls");
-                stmt.execute("DROP TABLE " + pt.getName());
-                return true;
             }
             indexes = canonicaliseIndexes(indexes);
 
@@ -275,7 +257,6 @@ public class PrecomputedTableManager
                 con.close();
             }
         }
-        return false;
     }
 
     /**
