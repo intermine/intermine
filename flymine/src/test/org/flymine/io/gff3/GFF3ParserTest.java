@@ -62,12 +62,6 @@ public class GFF3ParserTest extends TestCase
 
         assertEquals(expected.length, records.size());
 
-        for (int i = 0; i < 22; i++) {
-            
-            org.intermine.web.LogMe.log("i", "record: " + records.get(i));
-            //            assertEquals(expected[i], ((GFF3Record) records.get(i)).toString());
-        }
-
         GFF3Record record0 = (GFF3Record) records.get(0);
 
         List names = (List) record0.getAttributes().get("Name");
@@ -87,9 +81,6 @@ public class GFF3ParserTest extends TestCase
         assertNull(record1.getOntologyTerm());
 
         for (int i = 0; i < 22; i++) {
-            
-            org.intermine.web.LogMe.log("i", "record: " + records.get(i));
-            org.intermine.web.LogMe.log("i", "expect: " + expected[i]);
             assertEquals(expected[i], ((GFF3Record) records.get(i)).toString());
         }
     }
