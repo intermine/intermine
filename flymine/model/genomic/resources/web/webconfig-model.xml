@@ -11,7 +11,7 @@
 
   <class className="org.flymine.model.genomic.Publication">
     <fields>
-      <fieldconfig fieldExpr="authors[0].name"/>
+      <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
     </fields>
 
