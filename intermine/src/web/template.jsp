@@ -37,14 +37,14 @@
    * Init attribute value with selected item and hide input box if
    * required
    **********************************************************/
-  function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
+  /*function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
   {
     if (attrOptsElement == null)
       return;
 
     attrValElement.value = attrOptsElement.value;
     updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
-  }
+  }*/
 
   //-->
 </script>
@@ -113,16 +113,19 @@
                 <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
                 <c:forEach items="${options}" var="option">
                   <option value="${option}">
-                    <c:out value="${option}"
-                    />
+                    <c:out value="${option}"/>
                   </option>
                 </c:forEach>
                 </select>
               </c:if>
               <script type="text/javascript">
                 <!--
-                document.templateForm["attributeOptions(${index})"].value = document.templateForm["attributeValues(${index})"].value;
-                initConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"], document.templateForm["attributeOptions(${index})"], document.templateForm["attributeValues(${index})"]);
+                /* setting options popup value to correct initial state. */
+                if (document.templateForm["attributeOptions(${index})"] != null)
+                {
+                  document.templateForm["attributeOptions(${index})"].value = document.templateForm["attributeValues(${index})"].value;
+                  updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"], document.templateForm["attributeOptions(${index})"], document.templateForm["attributeValues(${index})"]);
+                }
                 //-->
               </script>
             </td>
