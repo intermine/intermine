@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.util.StringUtil;
+import org.intermine.util.TextTable;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -561,5 +562,81 @@ public class ClassDescriptor
         }
         sb.append("</class>");
         return sb.toString();
+    }
+
+    /**
+     * Returns a String that contains a multi-line human-readable description of the
+     * ClassDescriptor.
+     *
+     * @return a String
+     */
+    public String getHumanReadableText() {
+        StringBuffer retval = new StringBuffer(isInterface ? "Interface " : "Class ")
+            .append(terseClass(name));
+        if (supers != null) {
+            retval.append(" extends ").append(terseClasses(supers));
+        }
+        retval.append("\n");
+        TextTable table = new TextTable(true, true, true);
+        table.addRow(TextTable.ROW_SEPARATOR);
+        Iterator iter = getAllAttributeDescriptors().iterator();
+        while (iter.hasNext()) {
+            AttributeDescriptor desc = (AttributeDescriptor) iter.next();
+            ClassDescriptor cld = desc.getClassDescriptor();
+            table.addRow(new String[] {desc.getName(), terseClass(desc.getType()),
+                (cld == this ? "" : "from " + terseClass(cld.getName()))});
+        }
+        table.addRow(TextTable.ROW_SEPARATOR);
+        iter = getAllReferenceDescriptors().iterator();
+        while (iter.hasNext()) {
+            ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
+            ClassDescriptor cld = desc.getClassDescriptor();
+            table.addRow(new String[] {desc.getName(), terseClass(desc.getReferencedClassName()),
+                (cld == this ? "" : "from " + terseClass(cld.getName()))});
+        }
+        table.addRow(TextTable.ROW_SEPARATOR);
+        iter = getAllCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            CollectionDescriptor desc = (CollectionDescriptor) iter.next();
+            ClassDescriptor cld = desc.getClassDescriptor();
+            table.addRow(new String[] {desc.getName(), "collection of "
+                + terseClass(desc.getReferencedClassName()),
+                (cld == this ? "" : "from " + terseClass(cld.getName()))});
+        }
+        table.addRow(TextTable.ROW_SEPARATOR);
+        retval.append(table.toString());
+        return retval.toString();
+    }
+
+    /**
+     * Strips everything before the last dot out of a String.
+     *
+     * @param c a String
+     * @return a String
+     */
+    public String terseClass(String c) {
+        int p = c.lastIndexOf('.');
+        if (p != -1) {
+            return c.substring(p + 1);
+        }
+        return c;
+    }
+
+    /**
+     * For each element in a ", " separated list, strips everything before the last dot out.
+     *
+     * @param c a String
+     * @return a String
+     */
+    public String terseClasses(String c) {
+        StringBuffer retval = new StringBuffer(c.length());
+        String elements[] = StringUtil.split(c, ", ");
+        for (int i = 0; i < elements.length; i++) {
+            if (i > 0) {
+                retval.append(", ");
+            }
+            retval.append(terseClass(elements[i]));
+        }
+        return retval.toString();
     }
 }

@@ -96,7 +96,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
                                                     || (columnType == Types.INTEGER)
                                                     || (columnType == Types.BIGINT))) {
                                             useOrderByField = false;
-                                            LOG.info("Cannot generate order field for precomputed"
+                                            LOG.debug("Cannot generate order field for precomputed"
                                                     + " table - column " + column.getSQLString()
                                                     + " is type " + columnType);
                                         }
@@ -117,18 +117,18 @@ public class PrecomputedTable implements SQLStringable, Comparable
                                 }
                             } else {
                                 useOrderByField = false;
-                                LOG.info("Cannot generate order field for precomputed table -"
+                                LOG.debug("Cannot generate order field for precomputed table -"
                                         + "column " + column.getSQLString()
                                         + " does not belong to a Table");
                             }
                         } else {
                             useOrderByField = false;
-                            LOG.info("Cannot generate order field for precomputed table - column "
+                            LOG.debug("Cannot generate order field for precomputed table - column "
                                     + column.getSQLString() + " is not a Field");
                         }
                     } else {
                         useOrderByField = false;
-                        LOG.info("Cannot generate order field for precomputed table - column "
+                        LOG.debug("Cannot generate order field for precomputed table - column "
                                 + column.getSQLString() + " is not present in the precomputed"
                                 + " table");
                     }

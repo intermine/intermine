@@ -377,6 +377,7 @@ public class PrecomputedTableManager
         if (!DatabaseUtil.tableExists(con, TABLE_INDEX)) {
             setupDatabase(con);
         }
+        long start = System.currentTimeMillis();
         Statement stmt = con.createStatement();
         ResultSet res = stmt.executeQuery("SELECT * FROM " + TABLE_INDEX);
 
@@ -389,6 +390,8 @@ public class PrecomputedTableManager
                 // This would be a poor query string in the TABLE_INDEX
             }
         }
+        LOG.info("Loaded " + precomputedTables.size() + " precomputed table descriptions in "
+                + (System.currentTimeMillis() - start) + " ms");
     }
 
     /**

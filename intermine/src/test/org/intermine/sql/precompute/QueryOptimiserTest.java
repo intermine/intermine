@@ -385,7 +385,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq1);
 
         StringUtil.setNextUniqueNumber(42);
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -396,7 +396,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
         Set eSet = new HashSet();
 
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -407,7 +407,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
         Set eSet = new HashSet();
 
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -418,7 +418,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
         Set eSet = new HashSet();
 
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -429,7 +429,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
         Set eSet = new HashSet();
 
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -440,7 +440,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
         Set eSet = new HashSet();
 
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -451,7 +451,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
         Set eSet = new HashSet();
 
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }
@@ -465,7 +465,7 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(eq1);
 
         StringUtil.setNextUniqueNumber(42);
-        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1, q1);
 
         assertEquals(eSet, newSet);
     }

@@ -28,6 +28,7 @@ import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -123,7 +124,7 @@ public class IqlShell
         //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         do {
             //currentQuery += in.readLine();
-            String line = Readline.readline(currentQuery.equals("") ? "> " : "", false);
+            String line = Readline.readline(currentQuery.equals("") ? "> " : ": ", false);
             currentQuery += (line == null ? "" : line);
             if (!(currentQuery.equals("") || currentQuery.equals("quit;"))) {
                 if (currentQuery.endsWith(";")) {
@@ -133,8 +134,36 @@ public class IqlShell
                     }
                     currentQuery = currentQuery.substring(0, currentQuery.length() - 1);
                     try {
-                        runQuery(currentQuery, os);
-                    } catch (Exception e) {
+                        if (currentQuery.toUpperCase().startsWith("DESCRIBE ")) {
+                            currentQuery = currentQuery.substring(9);
+                            Class c = null;
+                            try {
+                                c = Class.forName(currentQuery);
+                            } catch (ClassNotFoundException e) {
+                                // The following will only work when there is one package in the
+                                // model
+                                String modelPackage = TypeUtil.packageName(((ClassDescriptor) os
+                                            .getModel().getClassDescriptors().iterator().next())
+                                        .getName());
+                                if (modelPackage != null) {
+                                    try {
+                                        c = Class.forName(modelPackage + "." + currentQuery);
+                                    } catch (ClassNotFoundException e2) {
+                                        throw new IllegalArgumentException("Unknown class name "
+                                                + currentQuery + " in package " + modelPackage);
+                                    }
+                                } else {
+                                    throw new IllegalArgumentException("Unknown class name "
+                                            + currentQuery);
+                                }
+                            }
+                            ClassDescriptor cld = (ClassDescriptor) os.getModel()
+                                .getClassDescriptorsForClass(c).iterator().next();
+                            System.out .println(cld.getHumanReadableText());
+                        } else {
+                            runQuery(currentQuery, os);
+                        }
+                    } catch (Throwable e) {
                         e.printStackTrace(out);
                     }
                     currentQuery = "";
@@ -163,6 +192,28 @@ public class IqlShell
                                                    .getName());
         
         boolean doDots = false;
+        boolean noExplain = false;
+        String optimiseMode = QueryOptimiser.MODE_NORMAL;
+
+        if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE ")) {
+            iql = iql.substring(17);
+            optimiseMode = QueryOptimiser.MODE_VERBOSE;
+        }
+
+        if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE_LIST ")) {
+            iql = iql.substring(22);
+            optimiseMode = QueryOptimiser.MODE_VERBOSE_LIST;
+        }
+
+        if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE_SUMMARY ")) {
+            iql = iql.substring(25);
+            optimiseMode = QueryOptimiser.MODE_VERBOSE_SUMMARY;
+        }
+
+        if (iql.toUpperCase().startsWith("NOEXPLAIN ")) {
+            iql = iql.substring(10);
+            noExplain = true;
+        }
 
         if (iql.toUpperCase().startsWith("DOT ")) {
             iql = iql.substring(4);
@@ -172,38 +223,52 @@ public class IqlShell
         Query q = iq.toQuery();
 
         out.println("Query to run: " + q.toString());
+        QueryOptimiser.setMode(optimiseMode);
         if (os instanceof ObjectStoreInterMineImpl) {
             String sqlString =
                 SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
                                       ((ObjectStoreInterMineImpl) os).getSchema(),
                                       ((ObjectStoreInterMineImpl) os).getDatabase(), (Map) null);
-                out.println("SQL: " + sqlString);
+            out.println("SQL: " + sqlString);
+            if ((optimiseMode == QueryOptimiser.MODE_VERBOSE_LIST)
+                    || (optimiseMode == QueryOptimiser.MODE_VERBOSE_SUMMARY)) {
+                sqlString = QueryOptimiser.optimise(sqlString,
+                        ((ObjectStoreInterMineImpl) os).getDatabase());
+                out.println("Optimised SQL: " + sqlString);
+            }
         }
 
-        Results res = os.execute(q);
-        res.setBatchSize(5000);
-        out.print("Column headings: ");
-        outputList(QueryHelper.getColumnAliases(q));
-        out.print("Column types: ");
-        outputList(QueryHelper.getColumnTypes(q));
-        int rowNo = 0;
-        Iterator rowIter = res.iterator();
-        while (rowIter.hasNext()) {
-            List row = (List) rowIter.next();
-            if (doDots) {
-                if (rowNo % 100 == 0) {
-                    err.print(rowNo + " ");
-                }
-                err.print(".");
-                if (rowNo % 100 == 99) {
-                    err.print("\n");
-                }
-                err.flush();
-            } else {
-                outputList(row);
+        if ((optimiseMode == QueryOptimiser.MODE_NORMAL)
+                || (optimiseMode == QueryOptimiser.MODE_VERBOSE)) {
+            Results res = os.execute(q);
+            res.setBatchSize(5000);
+            if (noExplain) {
+                res.setNoExplain();
             }
-            rowNo++;
+            out.print("Column headings: ");
+            outputList(QueryHelper.getColumnAliases(q));
+            out.print("Column types: ");
+            outputList(QueryHelper.getColumnTypes(q));
+            int rowNo = 0;
+            Iterator rowIter = res.iterator();
+            while (rowIter.hasNext()) {
+                List row = (List) rowIter.next();
+                if (doDots) {
+                    if (rowNo % 100 == 0) {
+                        err.print(rowNo + " ");
+                    }
+                    err.print(".");
+                    if (rowNo % 100 == 99) {
+                        err.print("\n");
+                    }
+                    err.flush();
+                } else {
+                    outputList(row);
+                }
+                rowNo++;
+            }
         }
+        QueryOptimiser.setMode(QueryOptimiser.MODE_NORMAL);
     }
 
     private static void outputList(List l) {

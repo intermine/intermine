@@ -57,6 +57,7 @@ public class BestQueryExplainerTest extends TestCase
     public void testNullBestQueryForNoneAdded() throws Exception {
         BestQueryExplainer bq = new BestQueryExplainer();
         assertNull(bq.getBestQuery());
+        assertNull(bq.getBestQueryString());
         assertNull(bq.getBestExplainResult());
     }
 
