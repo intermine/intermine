@@ -144,13 +144,17 @@ public class PrecomputeTask extends Task
 
             while (queriesIter.hasNext()) {
                 Query query = (Query) queriesIter.next();
+
+                ResultsInfo resultsInfo;
+
                 try {
-                    ResultsInfo resultsInfo = os.estimate(query);
-                    if (resultsInfo.getRows() >= minRows) {
-                        ((ObjectStoreInterMineImpl) os).precompute(query);
-                    }
+                    resultsInfo = os.estimate(query);
                 } catch (ObjectStoreException e) {
-                    throw new BuildException("Exception while precomputing query: " + query, e);
+                    throw new BuildException("Exception while calling ObjectStore.estimate()", e);
+                }
+
+                if (resultsInfo.getRows() >= minRows) {
+                    precompute(os, query);
                 }
 
                 if (testMode) {
@@ -169,10 +173,23 @@ public class PrecomputeTask extends Task
     private static final String TEST_QUERY_PREFIX = "test.query.";
 
     /**
+     * Call ObjectStoreInterMineImpl.precompute() with the given Query.
+     * @param os the ObjectStore to call precompute() on
+     * @param query the query to precompute
+     */
+    protected void precompute(ObjectStore os, Query query) throws BuildException {
+        try {
+            ((ObjectStoreInterMineImpl) os).precompute(query);
+        } catch (ObjectStoreException e) {
+            throw new BuildException("Exception while precomputing query: " + query, e);
+        }
+    }
+
+    /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
      * @return a Map of keys to Query objects
      * @throws BuildException if the query cannot be constructed (for example when a class or the
-     * collection doesn't exist.
+     * collection doesn't exist
      */
     protected Map getPrecomputeQueries() throws BuildException {
         Map returnMap = new TreeMap();
