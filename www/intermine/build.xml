@@ -52,7 +52,7 @@
            force="false">
       <param name="branding" expression="intermine" />
       <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
+      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
@@ -79,6 +79,9 @@
 
   <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">
+    <fixcrlf srcdir="${dist.www}"
+       eol="crlf"
+       includes="**/*.css"/>
     <chmod perm="a+r" type="file">
       <fileset dir="${dist.www}">
         <include name="**/**" />
@@ -89,9 +92,6 @@
         <include name="**/**" />
       </fileset>
     </chmod>
-    <fixcrlf srcdir="${dist.www}"
-       eol="crlf"
-       includes="**/*.css"/>
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --exclude api --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
