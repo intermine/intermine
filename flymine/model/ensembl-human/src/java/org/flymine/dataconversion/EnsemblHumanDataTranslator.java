@@ -91,6 +91,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Set scSet = new HashSet();
     private Set contigSet = new HashSet();
     private Set cloneSet = new HashSet();
+    private Map seqIdMap = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -114,20 +115,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         tgtItemWriter.store(ItemHelper.convert(getSwissprotDb()));
 
         super.translate(tgtItemWriter);
-        Iterator i = processChromosome().iterator();
-        while (i.hasNext()) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
-       //   i = processSupercontig().iterator();
-//          while (i.hasNext()) {
-//              tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-//          }
 
-        //Iterator i = createSuperContigs().iterator();
-        //while (i.hasNext()) {
-        //    tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        //}
-        i = exons.values().iterator();
+        Iterator i = exons.values().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
@@ -176,18 +165,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item location = createLocation(srcItem, tgtItem, true);
                     result.add(location);
-                    if (srcItem.hasReference("seq_region")){
-                        String refid = srcItem.getReference("seq_region").getRefId();
-                        Item seq =  ItemHelper.convert(srcItemReader.getItemById(refid));
-                        if (getSeqProperty(seq).equals("chromosome")) {
-                            tgtItem.addReference(new Reference("chromosome", refid));
-                        }
-                    }
+
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
-
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
-
                     Item location = createLocation(srcItem, tgtItem, true);
                     result.add(location);
 
@@ -195,7 +176,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     result.add(anaResult);
 
                     List comments = getCommentIds(srcItem.getIdentifier(), srcNs);
-
                     if (!comments.isEmpty()) {
                         tgtItem.addCollection(new ReferenceList("comments", comments));
                     }
@@ -225,16 +205,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     moveField(srcItem, geneRelation, "gene", "object");
                     result.add(geneRelation);
 
-//                      String translationId = srcItem.getReference("translation").getRefId();//??
-//                      String proteinId = getChosenProteinId(translationId, srcNs);
-//                      tgtItem.addReference(new Reference("protein", proteinId));
-//                      Item transRelation = createItem(tgtNs + "SimpleRelation", "");
-//                      transRelation.addReference(new Reference("subject", proteinId));
-//                      addReferencedItem(tgtItem, transRelation, "subjects", true, "object", false);
-//                      result.add(transRelation);
-//                      // display_labels are not unique
-//                      //promoteField(tgtItem, srcItem, "identifie", "display_xref", "display_label");
-//                      // if no identifier set the identifier as name (primary key)
+                    // if no identifier set the identifier as name (primary key)
                     if (!tgtItem.hasAttribute("identifier")) {
                         Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
                         if (stableId != null) {
@@ -246,24 +217,20 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     }
 
                 } else if ("translation".equals(className)) {
-                    // no UNIPROT id is available so id will be ensembl stable id
-                    //  Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
-//                      if (stableId != null) {
-//                          moveField(stableId, tgtItem, "stable_id", "identifier");
-//                      }
-                    getProteinByPrimaryAccession(srcItem, srcNs);
+                    Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
                     //transcript translation subject object?
                     if (srcItem.hasReference("transcript")) {
                         String transcriptId = srcItem.getReference("transcript").getRefId();
                         Item transRelation = createItem(tgtNs + "SimpleRelation", "");
                         transRelation.addReference(new Reference("subject",  transcriptId));
-                        addReferencedItem(tgtItem, transRelation, "subjects", true, "object", false);
+                        addReferencedItem(protein, transRelation, "subjects", true,
+                                         "object", false);
                         result.add(transRelation);
                     }
 
                     storeTgtItem = false;
-                }  // stable_ids become syonyms, need ensembl Database as source
-                else if (className.endsWith("_stable_id")) {
+                // stable_ids become syonyms, need ensembl Database as source
+                } else if (className.endsWith("_stable_id")) {
                     if (className.endsWith("translation_stable_id")) {
                         storeTgtItem = false;
                     } else {
@@ -271,7 +238,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         tgtItem.addAttribute(new Attribute("type", "accession"));
                     }
                 } else if ("simple_feature".equals(className)) {
-                    System.out.println("seq_region "+ className);
                     tgtItem.addReference(getOrgRef());
                     tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
                     result.add(createAnalysisResult(srcItem, tgtItem));
@@ -296,126 +262,34 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             }
         // assembly maps to null but want to create location on a supercontig
         } else if ("assembly".equals(className)) {
-           //   Item sc = getSuperContig(srcItem.getAttribute("superctg_name").getValue(),
-//                                       srcItem.getReference("chromosome").getRefId(),
-//                                       Integer.parseInt(srcItem.getAttribute("chr_start").getValue()),
-//                                       Integer.parseInt(srcItem.getAttribute("chr_end").getValue()),
-//                                       srcItem.getAttribute("superctg_ori").getValue());
-
-//              // locate contig on supercontig
-//              Item location = createLocation(srcItem, sc, false);
-//              result.add(location);
-
-            Item location = createAssemblyLocatin(srcItem);
+            Item location = createAssemblyLocation(srcItem);
             result.add(location);
+        // seq_region map to null, become Chromosome, Supercontig, Clone and Contig respectively
         } else if ("seq_region".equals(className)) {
-            String property = getSeqProperty(srcItem);//chromosome supercontig clone contig
-            Item newItem = null;
-            if (property != null && property != "" && property != "clone") {
-                String s = (property.substring(0,1)).toUpperCase().concat(property.substring(1));
-                newItem = createItem(tgtNs + s, "");
-                newItem.setIdentifier(srcItem.getIdentifier());
-                newItem.addAttribute(new Attribute("identifier",
-                                                   srcItem.getAttribute("name").getValue()));
-                newItem.addAttribute(new Attribute("length",
-                                                   srcItem.getAttribute("length").getValue()));
-                result.add(newItem);
-            }
-
+            Item seq = getSeqItem(srcItem.getIdentifier());
+            result.add(seq);
         }
 
         return result;
-    }
 
-    protected String getSeqProperty(Item srcItem) throws ObjectStoreException {
-        String prop = null;
-        if (srcItem.hasReference("coord_system")) {
-            Item coord = ItemHelper.convert(srcItemReader.getItemById(
-                                     srcItem.getReference("coord_system").getRefId()));
-            prop = coord.getAttribute("name").getValue();
-
-        }
-        return prop;
-    }
-
-    protected Item createAssemblyLocatin(Item srcItem) throws ObjectStoreException {
-
-        int start, end, asmStart, cmpStart, asmEnd, cmpEnd, contigLength;
-        String ori,contigId, bioEntityId;
-
-        //if (srcItem.hasReference("cmp_seq_region") && srcItem.hasReference("asm_seq_region")) {
-            contigId = srcItem.getReference("cmp_seq_region").getRefId();
-            bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
-            Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
-            contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
-            // }
-
-        asmStart = Integer.parseInt(srcItem.getAttribute("asm_start").getValue());
-        cmpStart = Integer.parseInt(srcItem.getAttribute("cmp_start").getValue());
-        asmEnd = Integer.parseInt(srcItem.getAttribute("asm_end").getValue());
-        cmpEnd = Integer.parseInt(srcItem.getAttribute("cmp_end").getValue());
-        ori = srcItem.getAttribute("ori").getValue();
-
-        if (ori.equals("1")) {
-            start = asmStart - cmpStart + 1;
-            end = start + contigLength ;
-        } else {
-            if (cmpEnd == contigLength) {
-                start = asmStart;
-                end = start + contigLength -1;
-            } else {
-                start = asmStart - (contigLength - cmpEnd);
-                end = start + contigLength -1;
-            }
-        }
-
-        Item location = createItem(tgtNs + "Location", "");
-        System.out.println("assLoc "+ location.getIdentifier()+ " "+start+" "+end);
-        location.addAttribute(new Attribute("start", Integer.toString(start)));
-        location.addAttribute(new Attribute("end",Integer.toString(end)));
-        location.addAttribute(new Attribute("startIsPartial", "false"));
-        location.addAttribute(new Attribute("endIsPartial", "false"));
-        location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
-        location.addReference(new Reference("subject", contigId));
-        location.addReference(new Reference("object", bioEntityId));
-
-        return location;
-
-    }
-
-     protected Set processChromosome() {
-        Set results = new HashSet();
-        for (Iterator i = chrSet.iterator(); i.hasNext();) {
-            Item chrItem = (Item) i.next();
-            String id = chrItem.getIdentifier();
-            List contigs = new ArrayList();
-            contigs = (ArrayList) chr2Contig.get(id);
-            if (contigs != null && !contigs.isEmpty()) {
-                System.out.println("contig for "+ id + " " +contigs.toString());
-                chrItem.addCollection(new ReferenceList("contigs", contigs));
-            }
-            //chrItem.addCollection(new ReferenceList("contigs", (ArrayList) chr2Contig.get(id)));
-            results.add(chrItem);
-        }
-        return results;
     }
 
     /**
      * Translate a "located" Item into an Item and a location
      * @param srcItem the source Item
      * @param tgtItem the target Item (after translation)
-     * @param idPrefix the id prefix for this class
-     * @param locPrefix the start, end and strand prefix for this class
      * @param srcItemIsChild true if srcItem should be subject of Location
-     * @return the location
+     * @return the location item
      */
     protected Item createLocation(Item srcItem, Item tgtItem, boolean srcItemIsChild) {
+
         String namespace = XmlUtil.getNamespaceFromURI(tgtItem.getClassName());
 
         Item location = createItem(namespace + "Location", "");
+        Item seq = new Item();
 
-        moveField(srcItem, location,"seq_region_start", "start");
-        moveField(srcItem, location,"seq_region_end", "end");
+        moveField(srcItem, location, "seq_region_start", "start");
+        moveField(srcItem, location, "seq_region_end", "end");
         location.addAttribute(new Attribute("startIsPartial", "false"));
         location.addAttribute(new Attribute("endIsPartial", "false"));
 
@@ -431,16 +305,102 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         if (srcItem.hasAttribute("ori")) {
             moveField(srcItem, location, "ori", "strand");
         }
+        if (srcItem.hasReference("seq_region")) {
+            String refId = srcItem.getReference("seq_region").getRefId();
+            seq = (Item) getSeqItem(refId);
+        }
+
         if (srcItemIsChild) {
             addReferencedItem(tgtItem, location, "objects", true, "subject", false);
-            moveField(srcItem, location, "seq_region", "object");
+            location.addReference(new Reference("object", seq.getIdentifier()));
+            //moveField(srcItem, location, "seq_region", "object");
         } else {
             addReferencedItem(tgtItem, location, "subjects", true, "object", false);
-            moveField(srcItem, location, "seq_region", "subject");
+            location.addReference(new Reference("subject", seq.getIdentifier()));
+            //moveField(srcItem, location, "seq_region", "subject");
         }
         return location;
     }
 
+   /**
+     * @param srcItem = assembly
+     * @return location item which reflects the relations between chromosome and contig,
+     * supercontig and contig, clone and contig
+     */
+    protected Item createAssemblyLocation(Item srcItem) {
+
+        int start, end, asmStart, cmpStart, asmEnd, cmpEnd, contigLength;
+        String ori, contigId, bioEntityId;
+
+        contigId = srcItem.getReference("cmp_seq_region").getRefId();
+        bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
+        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
+        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
+
+        contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
+        asmStart = Integer.parseInt(srcItem.getAttribute("asm_start").getValue());
+        cmpStart = Integer.parseInt(srcItem.getAttribute("cmp_start").getValue());
+        asmEnd = Integer.parseInt(srcItem.getAttribute("asm_end").getValue());
+        cmpEnd = Integer.parseInt(srcItem.getAttribute("cmp_end").getValue());
+        ori = srcItem.getAttribute("ori").getValue();
+
+        if (ori.equals("1")) {
+            start = asmStart - cmpStart + 1;
+            end = start + contigLength;
+        } else {
+            if (cmpEnd == contigLength) {
+                start = asmStart;
+                end = start + contigLength - 1;
+            } else {
+                start = asmStart - (contigLength - cmpEnd);
+                end = start + contigLength - 1;
+            }
+        }
+
+        Item location = createItem(tgtNs + "Location", "");
+        location.addAttribute(new Attribute("start", Integer.toString(start)));
+        location.addAttribute(new Attribute("end", Integer.toString(end)));
+        location.addAttribute(new Attribute("startIsPartial", "false"));
+        location.addAttribute(new Attribute("endIsPartial", "false"));
+        location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
+        Item seq = new Item();
+        seq = (Item) getSeqItem(contigId);
+        location.addReference(new Reference("subject", seq.getIdentifier()));
+        seq = (Item) getSeqItem(bioEntityId);
+        location.addReference(new Reference("object", seq.getIdentifier()));
+
+        return location;
+    }
+
+    /**
+     * @param refId = refId for the seq_region
+     * @return seq item it could be  chromosome, supercontig, clone or contig
+     */
+    protected Item getSeqItem(String refId) {
+        Item seq = new Item();
+        Item seqRegion = ItemHelper.convert(srcItemReader.getItemById(refId));
+        if (seqIdMap.containsKey(refId)) {
+            seq = (Item) seqIdMap.get(refId);
+        } else {
+            String property = null;
+            if (seqRegion.hasReference("coord_system")) {
+                Item coord = ItemHelper.convert(srcItemReader.getItemById(
+                                     seqRegion.getReference("coord_system").getRefId()));
+                property = coord.getAttribute("name").getValue();
+            }
+            if (property != null && property != "") {
+                String s = (property.substring(0, 1)).toUpperCase().concat(property.substring(1));
+                seq = createItem(tgtNs + s, "");
+                seq.addAttribute(new Attribute("identifier",
+                                          seqRegion.getAttribute("name").getValue()));
+                seq.addAttribute(new Attribute("length",
+                                          seqRegion.getAttribute("length").getValue()));
+
+                seqIdMap.put(refId, seq);
+            }
+        }
+        return seq;
+    }
 
     /**
      * Create an AnalysisResult pointed to by tgtItem evidence reference.  Move srcItem
@@ -455,62 +415,22 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             moveField(srcItem, result, "analysis", "analysis");
         }
         if (srcItem.hasAttribute("score")) {
-            moveField(srcItem, result, "score", "score");//gene
+            moveField(srcItem, result, "score", "score"); //gene
         }
         result.addReference(getEnsemblRef());
-        ReferenceList evidence = new ReferenceList("evidence",Arrays.asList(new Object[]
+        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
                       {result.getIdentifier(), getEnsemblDb().getIdentifier()}));
         tgtItem.addCollection(evidence);
         return result;
     }
 
 
-    private Item getSuperContig(String name, String chrId, int start, int end, String strand) {
-        Item supercontig = (Item) supercontigs.get(name);
-        if (supercontig == null) {
-            supercontig = createItem(tgtNs + "Supercontig", "");
-            Item chrLoc = createItem(tgtNs + "Location", "");
-            chrLoc.addAttribute(new Attribute("start", "" + Integer.MAX_VALUE));
-            chrLoc.addAttribute(new Attribute("end", "" + Integer.MIN_VALUE));
-            chrLoc.addAttribute(new Attribute("startIsPartial", "false"));
-            chrLoc.addAttribute(new Attribute("endIsPartial", "false"));
-            chrLoc.addAttribute(new Attribute("strand", strand));
-            chrLoc.addReference(new Reference("subject", supercontig.getIdentifier()));
-            chrLoc.addReference(new Reference("object", chrId));
-
-            supercontig.addAttribute(new Attribute("identifier", name));
-            ReferenceList subjects = new ReferenceList();
-            subjects.setName("subjects");
-            supercontig.addCollection(subjects);
-            supercontig.addCollection(new ReferenceList("objects",
-                           new ArrayList(Collections.singletonList(chrLoc.getIdentifier()))));
-            supercontig.addReference(getOrgRef());
-            supercontigs.put(name, supercontig);
-            scLocs.put(name, chrLoc);
-        }
-
-        Item chrLoc = (Item) scLocs.get(name);
-        if (Integer.parseInt(chrLoc.getAttribute("start").getValue()) > start) {
-            chrLoc.getAttribute("start").setValue("" + start);
-        }
-        if (Integer.parseInt(chrLoc.getAttribute("end").getValue()) < end) {
-            chrLoc.getAttribute("end").setValue("" + end);
-        }
-
-        return supercontig;
-    }
-
-    private Collection createSuperContigs() {
-        Set results = new HashSet();
-        Iterator i = supercontigs.values().iterator();
-        while (i.hasNext()) {
-            Item sc = (Item) i.next();
-            results.add(sc);
-            results.add((Item) scLocs.get(sc.getAttribute("identifier").getValue()));
-        }
-        return results;
-    }
-
+    /**
+     * @param String id = translation id
+     * @param String srcNs sourceNamespace
+     * @return String chosenProteinId
+     * throws exceptions if anything goes wrong
+     */
     private String getChosenProteinId(String id, String srcNs) throws ObjectStoreException {
         String chosenId = (String) proteinIds.get(id);
         if (chosenId == null) {
@@ -521,27 +441,21 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return chosenId;
     }
 
+    /**
+     * @param Item srcItem = e:translation
+     * @param String srcNs sourceNamespace
+     * @return Item for :Protein
+     * @throws exceptions if anything goes wrong
+     */
     private Item getProteinByPrimaryAccession(Item srcItem, String srcNs)
         throws ObjectStoreException {
         Item protein = createItem(tgtNs + "Protein", "");
 
         Set synonyms = new HashSet();
         String value = srcItem.getIdentifier();
-       //   Set constraints = new HashSet();
-//          constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-//                      srcNs + "object_xref", false));
-//          constraints.add(new FieldNameAndValue("ensembl", value, true));
-//          Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
-
-        // set specific ids and add synonyms
         String swissProtId = null;
         String tremblId = null;
         String emblId = null;
-        //  while (objectXrefs.hasNext()) {
-//              Item objectXref = ItemHelper.convert(
-//                                    (org.intermine.model.fulldata.Item) objectXrefs.next());
-//              Item xref = ItemHelper.convert(srcItemReader
-//                          .getItemById(objectXref.getReference("xref").getRefId()));
 
         if (srcItem.hasReference("transcript")) {
             Item transcript = ItemHelper.convert(srcItemReader.getItemById(
@@ -564,7 +478,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
 
                 if (accession != null && !accession.equals("")
                     && dbname != null && !dbname.equals("")) {
-                    if (dbname.equals("Uniprot/SWISSPROT")) {//Uniprot/SWISSPROT
+                    if (dbname.equals("Uniprot/SWISSPROT")) { //Uniprot/SWISSPROT
                         swissProtId = accession;
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
@@ -572,7 +486,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         synonym.addAttribute(new Attribute("type", "accession"));
                         synonym.addReference(getSwissprotRef());
                         synonyms.add(synonym);
-                    } else if (dbname.equals("Uniprot/SPTREMBL")) {// Uniprot/SPTREMBL
+                    } else if (dbname.equals("Uniprot/SPTREMBL")) { // Uniprot/SPTREMBL
                         tremblId = accession;
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
@@ -612,7 +526,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             // there was no protein accession so use ensembl stable id
             Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
             if (stableId != null) {
-                // moveField(stableId, protein, "stable_id", "primaryAccession");
                 primaryAcc = stableId.getAttribute("stable_id").getValue();
             }
         }
@@ -659,30 +572,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         throws ObjectStoreException {
         // additional gene information is in xref table only accessible via translation
         Set synonyms = new HashSet();
-   //       // get transcript
-//          Set constraints = new HashSet();
-//          constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-//                      srcNs + "transcript", false));
-//          constraints.add(new FieldNameAndValue("gene", srcItem.getIdentifier(), true));
-//          Item transcript = ItemHelper.convert((org.intermine.model.fulldata.Item) srcItemReader
-//                                          .getItemsByDescription(constraints).iterator().next());
-
-//          String translationId = transcript.getReference("translation").getRefId();//?
-//          // find xrefs
-
-//          constraints = new HashSet();
-//          constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-//                      srcNs + "object_xref", false));
-//          constraints.add(new FieldNameAndValue("ensembl", translationId, true));
-//          Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
-//          while (objectXrefs.hasNext()) {
-//              Item objectXref = ItemHelper.convert(
-//                                  (org.intermine.model.fulldata.Item) objectXrefs.next());
-//              Item xref = ItemHelper.convert(srcItemReader
-//                                 .getItemById(objectXref.getReference("xref").getRefId()));
-
-        if (srcItem.hasReference("display_xref")){
-
+        if (srcItem.hasReference("display_xref")) {
             Item xref = ItemHelper.convert(srcItemReader
                         .getItemById(srcItem.getReference("display_xref").getRefId()));
             String accession = null;
@@ -700,7 +590,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             }
             if (accession != null && !accession.equals("")
                 && dbname != null && !dbname.equals("")) {
-                if (dbname.equals("flybase_gene") || dbname.equals("flybase_symbol")) {//?
+                if (dbname.equals("flybase_gene") || dbname.equals("flybase_symbol")) { //?
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonym.addAttribute(new Attribute("value", accession));
@@ -729,8 +619,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return synonyms;
     }
 
-
-    // ensemblType should be part of name before _stable_id
+    /**
+     * Find stable_id for various ensembl type
+     * @param ensemblType could be gene, exon, transcript or translation
+     * it should be part of name before _stable_id
+     * @param identifier  srcItem identifier, srcItem could be gene, exon, transcript/translation
+     * @param srcNs namespace of source model
+     * @return a set of Synonyms
+     * @throws ObjectStoreException if problem retrieving items
+     */
     private Item getStableId(String ensemblType, String identifier, String srcNs) throws
         ObjectStoreException {
         //String value = identifier.substring(identifier.indexOf("_") + 1);
@@ -748,8 +645,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         }
     }
 
-
-   private List getCommentIds(String identifier, String srcNs) throws
+    /**
+     * change description class to comments
+     * @param identifier  ensembl:gene srcItem identifier
+     * @param tgtItem translate item flymine:Gene
+     * @param srcNs namespace of source model
+     * @return a list of commentIds
+     * @throws ObjectStoreException if problem retrieving items
+     */
+    private List getCommentIds(String identifier, String srcNs) throws
         ObjectStoreException {
         String value = identifier;
         Set constraints = new HashSet();
@@ -758,13 +662,17 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         constraints.add(new FieldNameAndValue("gene", value, true));
         List commentIds = new ArrayList();
         for (Iterator i = srcItemReader.getItemsByDescription(constraints).iterator();
-                i.hasNext(); ){
+                i.hasNext(); ) {
             Item comment = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
             commentIds.add((String) comment.getIdentifier());
         }
         return commentIds;
     }
 
+    /**
+     * set database object
+     * @return db item
+     */
     private Item getEnsemblDb() {
         if (ensemblDb == null) {
             ensemblDb = createItem(tgtNs + "Database", "");
@@ -783,6 +691,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return ensemblRef;
     }
 
+    /**
+     * set database object
+     * @return db item
+     */
     private Item getEmblDb() {
         if (emblDb == null) {
             emblDb = createItem(tgtNs + "Database", "");
@@ -794,6 +706,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return emblDb;
     }
 
+    /**
+     * @return db reference
+     */
     private Reference getEmblRef() {
         if (emblRef == null) {
             emblRef = new Reference("source", getEmblDb().getIdentifier());
@@ -801,7 +716,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return emblRef;
     }
 
-
+    /**
+     * set database object
+     * @return db item
+     */
     private Item getSwissprotDb() {
         if (swissprotDb == null) {
             swissprotDb = createItem(tgtNs + "Database", "");
@@ -813,6 +731,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return swissprotDb;
     }
 
+    /**
+     * @return db reference
+     */
     private Reference getSwissprotRef() {
         if (swissprotRef == null) {
             swissprotRef = new Reference("source", getSwissprotDb().getIdentifier());
@@ -820,6 +741,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return swissprotRef;
     }
 
+    /**
+     * set database object
+     * @return db item
+     */
     private Item getTremblDb() {
         if (tremblDb == null) {
             tremblDb = createItem(tgtNs + "Database", "");
@@ -831,6 +756,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return tremblDb;
     }
 
+    /**
+     * @return db reference
+     */
     private Reference getTremblRef() {
         if (tremblRef == null) {
             tremblRef = new Reference("source", getTremblDb().getIdentifier());
@@ -838,6 +766,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return tremblRef;
     }
 
+    /**
+     * set database object
+     * @return db item
+     */
     private Item getFlyBaseDb() {
         if (flybaseDb == null) {
             flybaseDb = createItem(tgtNs + "Database", "");
@@ -849,6 +781,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return flybaseDb;
     }
 
+    /**
+     * @return db reference
+     */
     private Reference getFlyBaseRef() {
         if (flybaseRef == null) {
             flybaseRef = new Reference("source", getFlyBaseDb().getIdentifier());
@@ -856,6 +791,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return flybaseRef;
     }
 
+    /**
+     * @return organism item, for homo_sapiens, abbreviation is HS
+     */
     private Item getOrganism() {
         if (organism == null) {
             organism = createItem(tgtNs + "Organism", "");
@@ -865,6 +803,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return organism;
     }
 
+    /**
+     * @return organism reference
+     */
     private Reference getOrgRef() {
         if (orgRef == null) {
             orgRef = new Reference("organism", getOrganism().getIdentifier());
@@ -886,127 +827,160 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         String orgAbbrev = args[5];
 
         Map paths = new HashMap();
-        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
-               Collections.singleton(desc));
 
-        HashSet descSet = new HashSet();
-        //desc = new ItemPrefetchDescriptor("transcript.display_xref");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref",
-        //ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        //descSet.add(desc);
-
-        desc = new ItemPrefetchDescriptor(
-                "(transcript.translation");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("translation",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        descSet.add(desc);
-        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl)");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
-        desc2.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#object_xref", false));
-        desc.addPath(desc2);
-        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2.addPath(desc3);
-        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
-        desc4.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3.addPath(desc4);
-
-        desc = new ItemPrefetchDescriptor("(transcript <- transcript_stable_id.transcript)");
+        //karyotype
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("karyotype.seq_region");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "transcript"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#transcript_stable_id", false));
-        descSet.add(desc);
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "seq_region"));
+        paths.put("http://www.flymine.org/model/ensembl-human#karyotype",
+                    Collections.singleton(desc));
 
-        paths.put("http://www.flymine.org/model/ensembl#transcript", descSet);
-
-
-        descSet = new HashSet();
-        //desc = new ItemPrefetchDescriptor("gene.display_xref");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref",
-        //ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        //descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("(gene <- gene_stable_id.gene)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#gene_stable_id", false));
-        descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("(gene <- transcript.gene)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#transcript", false));
-        desc2 = new ItemPrefetchDescriptor(
-                "(gene <- transcript.gene).translation");
-        descSet.add(desc);
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("translation",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
-        desc3 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl)");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
-        desc3.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#object_xref", false));
-        desc2.addPath(desc3);
-        desc4 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
-        desc4.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3.addPath(desc4);
-        ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
-        desc5.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc4.addPath(desc5);
-        paths.put("http://www.flymine.org/model/ensembl#gene", descSet);
-
-        desc = new ItemPrefetchDescriptor("contig.dna");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("dna",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/ensembl#contig", Collections.singleton(desc));
-
-        descSet = new HashSet();
-        desc = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#object_xref", false));
-        desc2 = new ItemPrefetchDescriptor(
-                "(translation <- object_xref.ensembl).xref");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3 = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl).xref.external_db");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2.addPath(desc3);
-        desc.addPath(desc2);
-        descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("(translation <- translation_stable_id.translation)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "translation"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#translation_stable_id", false));
-        descSet.add(desc);
-        paths.put("http://www.flymine.org/model/ensembl#translation", descSet);
-
-        desc = new ItemPrefetchDescriptor("(exon <- exon_stable_id.exon)");
+        //exon
+        Set descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("exon <- exon_stable_id.exon");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER, "exon"));
         desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#exon_stable_id", false));
-        paths.put("http://www.flymine.org/model/ensembl#exon", Collections.singleton(desc));
+                    "http://www.flymine.org/model/ensembl-human#exon_stable_id", false));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("exon.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "seq_region"));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#exon", descSet);
+
+        //gene
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("gene <- gene_stable_id.gene");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
+        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#gene_stable_id", false));
+        descSet.add(desc);
+
+        desc = new ItemPrefetchDescriptor("gene.analysis");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "analysis"));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("gene.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "seq_region"));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
+        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#gene_description", false));
+        descSet.add(desc);
+
+        desc = new ItemPrefetchDescriptor("gene.display_xref");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "display_xref"));
+        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor(
+                               "gene.display_xref <- xref.external_db");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "external_db"));
+        desc1.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#xref", false));
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#gene", descSet);
+
+         //transcript
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("transcript <- transcript_stable_id.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "transcript"));
+        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#transcript_stable_id", false));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("transcript.gene");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("transcript.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "seq_region"));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#transcript", descSet);
+
+        //translation
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("translation <- translation_stable_id.translation");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "translation"));
+        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#translation_stable_id", false));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("translation.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "transcript"));
+        descSet.add(desc);
+        desc1 = new ItemPrefetchDescriptor("(translation.transcript).display_xref");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "display_xref"));
+        desc1.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#transcript", false));
+        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
+                               "transcript.display_xref <- xref.external_db");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "external_db"));
+        desc2.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#xref", false));
+        desc1.addPath(desc2);
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#translation", descSet);
+
+
+        //simple_feature seq_region analysis
+
+        //repeat_feature
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "repeat_consensus"));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("repeat_feature.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "seq_region"));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#repeat_feature",  descSet);
+
+
+        //assembly
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("assembly.asm_seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "asm_seq_region"));
+        desc2 = new ItemPrefetchDescriptor(
+                               "assembly.asm_seq_region <- seq_region.coord_system");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "coord_system"));
+        desc2.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#coord_system", false));
+        desc.addPath(desc2);
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("assembly.cmp_seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "cmp_seq_region"));
+        desc2 = new ItemPrefetchDescriptor(
+                               "assembly.cmp_seq_region <- seq_region.coord_system");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "coord_system"));
+        desc2.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                    "http://www.flymine.org/model/ensembl-human#coord_system", false));
+        desc.addPath(desc2);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl-human#assembly", descSet);
+
+        //seq_region
+        desc = new ItemPrefetchDescriptor("seq_region.coord_system");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(
+               ObjectStoreItemPathFollowingImpl.IDENTIFIER, "coord_system"));
+        paths.put("http://www.flymine.org/model/ensembl-human#seq_region",
+                  Collections.singleton(desc));
+
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
@@ -1015,7 +989,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new EnsemblHumanDataTranslator(srcItemReader, model, namespace, orgAbbrev);
+        DataTranslator dt = new EnsemblHumanDataTranslator(srcItemReader, model, namespace,
+                                                           orgAbbrev);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();
