@@ -279,7 +279,7 @@ public class TransferSequencesTest extends TestCase
 
         storedContigs[0] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[0].setName("contig0");
+        storedContigs[0].setIdentifier("contig0");
         storedContigs[0].setLength(new Integer(1000));
         String contigResidues0 =
             "tatatataatttaataaatacattccgacgatactgcctctatggcttagtggtacagca" +
@@ -304,7 +304,7 @@ public class TransferSequencesTest extends TestCase
 
         storedContigs[1] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[1].setName("contig1");
+        storedContigs[1].setIdentifier("contig1");
         storedContigs[1].setLength(new Integer(1500));
         String contigResidues1 =
             "ggcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtct" +
@@ -337,7 +337,7 @@ public class TransferSequencesTest extends TestCase
 
         storedContigs[2] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[2].setName("contig2");
+        storedContigs[2].setIdentifier("contig2");
         storedContigs[2].setLength(new Integer(1000));
         String contigResidues2 =
             "gttaacagctaaaaacataactcgattacttacaattgttgattctttactcccagaacg" +
@@ -363,14 +363,14 @@ public class TransferSequencesTest extends TestCase
         storedExons = new Exon [8];
         for (int i = 0 ; i < 8 ; i++) {
             storedExons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-            storedExons[i].setName("exon" + i);
+            storedExons[i].setIdentifier("exon" + i);
         }
 
         storedRepeatRegions = new RepeatRegion [4];
         for (int i = 0 ; i < 4 ; i++) {
             storedRepeatRegions[i] =
                 (RepeatRegion) DynamicUtil.createObject(Collections.singleton(RepeatRegion.class));
-            storedRepeatRegions[i].setName("repeat_region" + i);
+            storedRepeatRegions[i].setIdentifier("repeat_region" + i);
         }
 
         toStore.add(createLocation(storedContigs[0], storedExons[0], 1,   173,  259));
