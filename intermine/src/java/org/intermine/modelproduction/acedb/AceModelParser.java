@@ -364,17 +364,49 @@ public class AceModelParser extends AbstractModelParser
         }
     }
 
-    private String formatAceName(String name) {
 
+    /**
+     * Convert Ace field/Class names into valid java names.  Some Ace names
+     * begin with digits or use java keywords.
+     *
+     * @param name the Ace object name
+     * @return a valid java name
+     */
+    public static String formatAceName(String name) {
         if (name == null) {
             return null;
         }
+
         // cannot have digits as first character of field/Class names in java
         if (Character.isDigit(name.charAt(0))) {
             return "x" + name;
         }
         if (name.equals("Class") || name.equals("Id")) {
             return "Ace" + name;
+        }
+        return name;
+    }
+
+    /**
+     * Undo conversion from Ace names to valid java names.  Conversion follows
+     * simple rules, unformatting is not fool proof but currently works.
+     * @param name the java name of an ace equivalent
+     * @return the original Ace name
+     */
+    public static String unformatAceName(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        // strip off x for names beginning with digits
+        if (name.substring(0, 1).equals("x") && Character.isDigit(name.charAt(1))) {
+            return name.substring(1);
+        }
+        if (name.equals("AceClass")) {
+            return "Class";
+        }
+        if (name.equals("AceId")) {
+            return "Id";
         }
         return name;
     }
