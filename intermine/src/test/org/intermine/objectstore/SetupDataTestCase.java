@@ -75,7 +75,11 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static void main(String[] args) throws Exception {
-        XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
+        Model testModel = Model.getInstanceByName("testmodel");
+        if (testModel == null) {
+            throw new Exception("Cannot find testmodel");
+        }
+        XmlBinding binding = new XmlBinding(testModel);
         Collection col = setUpDataObjects();
         setIds(col);
         binding.marshal(col, new FileWriter(File.createTempFile("testmodel_data", "xml")));
@@ -98,6 +102,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         Contractor contractorA = (Contractor) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Contractor.class, Broke.class})));
         contractorA.setName("ContractorA");
+        contractorA.setSeniority(new Integer(128764));
         ((Broke) contractorA).setDebt(7634);
 
         Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));;
@@ -106,6 +111,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         Contractor contractorB = new Contractor();
         contractorB.setName("ContractorB");
+        contractorB.setSeniority(new Integer(62341));
 
         Address address1 = new Address();
         address1.setAddress("Contractor Business Street, BVille");
@@ -125,6 +131,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         employeeB1.setAge(40);
         employeeB1.setTitle("Mr.");
         employeeB1.setSalary(45000);
+        employeeB1.setSeniority(new Integer(76321));
         ((Broke) employeeB1).setDebt(340);
 
         Address address4 = new Address();
@@ -142,6 +149,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         employeeB3.setName("EmployeeB3");
         employeeB3.setFullTime(true);
         employeeB3.setAge(60);
+        employeeB3.setSeniority(new Integer(761231));
 
         Address address5 = new Address();
         address5.setAddress("Contractor Business Street, AVille");
@@ -159,6 +167,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         employeeA1.setName("EmployeeA1");
         employeeA1.setFullTime(true);
         employeeA1.setAge(10);
+        employeeA1.setSeniority(new Integer(876123));
 
         Address address8 = new Address();
         address8.setAddress("Employee Street, AVille");
@@ -229,6 +238,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         employeeB1.setDepartment(departmentB1);
         employeeB1.setAddress(null);
+        employeeB1.setCompany(companyB);
 
         employeeB2.setDepartment(departmentB1);
         employeeB2.setAddress(address4);

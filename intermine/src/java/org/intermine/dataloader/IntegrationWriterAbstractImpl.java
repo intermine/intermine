@@ -58,6 +58,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public Set getEquivalentObjects(FlyMineBusinessObject obj, Source source)
             throws ObjectStoreException {
+        if (obj == null) {
+            throw new NullPointerException("obj should not be null");
+        }
         Query q = null;
         try {
             q = DataLoaderHelper.createPKQuery(getModel(), obj, source);

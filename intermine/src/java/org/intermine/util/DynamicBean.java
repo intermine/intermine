@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import net.sf.cglib.*;
 
 import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.objectstore.proxy.ProxyReference;
 
 /**
  * Class which represents a generic bean
@@ -96,12 +97,35 @@ public class DynamicBean implements MethodInterceptor
                 Class clazz = (Class) classIter.next();
                 className.append(TypeUtil.unqualifiedName(clazz.getName()));
             }
-            return className.toString() + " [" + map.get("Id") + "]";
+            StringBuffer retval = new StringBuffer(className.toString() + " [");
+            Iterator mapIter = map.entrySet().iterator();
+            needComma = false;
+            while (mapIter.hasNext()) {
+                Map.Entry mapEntry = (Map.Entry) mapIter.next();
+                String fieldName = (String) mapEntry.getKey();
+                Object fieldValue = mapEntry.getValue();
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
+                if (fieldValue instanceof ProxyReference) {
+                    retval.append(fieldName + "=" + ((ProxyReference) fieldValue).getId());
+                } else if (fieldValue instanceof FlyMineBusinessObject) {
+                    retval.append(fieldName + "=" + ((FlyMineBusinessObject) fieldValue).getId());
+                } else if (fieldValue instanceof Collection) {
+                    retval.append(fieldName + ":Collection");
+                } else {
+                    retval.append(fieldName + "=\"" + fieldValue + "\"");
+                }
+            }
+            return retval.toString() + "]";
         }
         // Bean methods
-        if (method.getName().startsWith("get")
-            && (args.length == 0)) {
+        if (method.getName().startsWith("get") && (args.length == 0)) {
             Object retval = map.get(method.getName().substring(3));
+            if (retval instanceof ProxyReference) {
+                retval = ((ProxyReference) retval).getObject();
+            }
             if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
                 retval = new ArrayList();
                 map.put(method.getName().substring(3), retval);
@@ -112,12 +136,35 @@ public class DynamicBean implements MethodInterceptor
             && (args.length == 0)) {
             return map.get(method.getName().substring(2));
         }
-        if (method.getName().startsWith("set")
-            && (args.length == 1)
-            && (method.getReturnType() == Void.TYPE)) {
+        if (method.getName().startsWith("set") && (args.length == 1)
+                && (method.getReturnType() == Void.TYPE)) {
             map.put(method.getName().substring(3), args[0]);
             return null;
         }
-        return null;
+        if (method.getName().startsWith("proxy") && (args.length == 1)
+                && (method.getReturnType() == Void.TYPE)) {
+            map.put(method.getName().substring(5), args[0]);
+            return null;
+        }
+        if (method.getName().startsWith("add") && (args.length == 1)
+                && (method.getReturnType() == Void.TYPE)) {
+            Collection col = (Collection) map.get(method.getName().substring(3));
+            if (col == null) {
+                col = new ArrayList();
+                map.put(method.getName().substring(3), col);
+            }
+            col.add(args[0]);
+            return null;
+        }
+        throw new IllegalArgumentException("No definition for method " + method);
+    }
+
+    /**
+     * Getter for the map, for testing purposes
+     *
+     * @return a map of data for this object
+     */
+    public Map getMap() {
+        return map;
     }
 }

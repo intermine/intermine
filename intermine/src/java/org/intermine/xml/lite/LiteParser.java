@@ -142,8 +142,6 @@ public class LiteParser
             Iterator refIter = item.getReferences().iterator();
             while (refIter.hasNext()) {
                 Field field = (Field) refIter.next();
-                Class fieldClass = TypeUtil.getFieldInfo(obj.getClass(), field.getName()).getType();
-                Query query = new Query();
                 Integer id = new Integer(Integer.parseInt(field.getValue()));
                 TypeUtil.setFieldValue(obj, field.getName(),
                                        new ProxyReference(os, id));

@@ -28,6 +28,7 @@ import java.io.File;
 
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.ClassConstraint;
@@ -39,6 +40,7 @@ import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
 import org.flymine.util.DynamicUtil;
@@ -58,10 +60,11 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
     }
 
     public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
         try {
-            SetupDataTestCase.oneTimeSetUp();
             if (writer == null) {
-                writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+                writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+                    .getObjectStoreWriter("osw.unittest");
             }
             storeData();
         } catch (Exception e) {
@@ -116,20 +119,27 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
 
     public static void removeDataFromStore() throws Exception {
         System.out.println("Removing data");
+        long start = new Date().getTime();
         if (writer == null) {
-            throw new NullPointerException("writer must be set before trying to store data");
+            throw new NullPointerException("writer must be set before trying to remove data");
         }
         try {
             writer.beginTransaction();
-            Iterator iter = data.keySet().iterator();
+            Query q = new Query();
+            QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            Set dataToRemove = new SingletonResults(q, writer);
+            Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
-                writer.delete((FlyMineBusinessObject) data.get(iter.next()));
+                writer.delete((FlyMineBusinessObject) iter.next());
             }
             writer.commitTransaction();
         } catch (Exception e) {
             writer.abortTransaction();
-            throw new Exception(e);
+            throw e;
         }
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data");
     }
 
 }

@@ -144,12 +144,12 @@ public interface ObjectStore
      * Return an object from the objectstore that has the fields mentioned in the list set to the
      * same values as the fields in the provided example object. If there are no objects in the
      * objectstore like that, then this method returns null. If there are more than one object, then
-     * this method throws an exception.
+     * this method throws an IllegalArgumentException.
      *
      * @param o an example object
      * @param fieldNames a Set of fieldnames
      * @return a FlyMineBusinessObject from the objectstore, or null if none fits
-     * @throws ObjectStoreException if there are too many matches, or some other error occurs
+     * @throws ObjectStoreException if an underlying error occurs
      */
     public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
         throws ObjectStoreException;

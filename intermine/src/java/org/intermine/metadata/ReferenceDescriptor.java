@@ -111,7 +111,8 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @see FieldDescriptor#relationType
      */
     public int relationType() {
-        if (getReverseReferenceDescriptor() instanceof CollectionDescriptor) {
+        ReferenceDescriptor rd = getReverseReferenceDescriptor();
+        if ((rd == null) || (rd instanceof CollectionDescriptor)) {
             return N_ONE_RELATION;
         } else {
             return ONE_ONE_RELATION;

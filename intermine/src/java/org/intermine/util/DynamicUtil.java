@@ -72,11 +72,11 @@ public class DynamicUtil
                 Class cls = (Class) classIter.next();
                 if (cls.isInterface()) {
                     interfaces.add(cls);
-                } else if (clazz == null) {
+                } else if ((clazz == null) || clazz.isAssignableFrom(cls)) {
                     clazz = cls;
-                } else {
+                } else if (!cls.isAssignableFrom(clazz)) {
                     throw new IllegalArgumentException("Cannot create a class from multiple"
-                            + " classes");
+                            + " classes: " + classes);
                 }
             }
             if (clazz != null) {

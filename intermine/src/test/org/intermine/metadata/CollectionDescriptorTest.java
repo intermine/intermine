@@ -119,7 +119,7 @@ public class CollectionDescriptorTest extends TestCase
         }
     }
 
-    public void testRevereseReferenceInvalid() throws Exception {
+    public void testReverseReferenceInvalid() throws Exception {
         // cod1 points to Class2 but has reverse reference (codDummy) that is not a field of Class1
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", "codDummy", true);
         CollectionDescriptor cod2 = new CollectionDescriptor("cod2", "Class1", "cod1", true);
@@ -152,6 +152,14 @@ public class CollectionDescriptorTest extends TestCase
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, EMPTY_SET, cols);
         Model model = new Model("model1", uri, Collections.singleton(cld));
         assertEquals(FieldDescriptor.M_N_RELATION, col1.relationType());
+    }
+
+    public void testRelationTypeUnidirectional() throws Exception {
+        CollectionDescriptor col = new CollectionDescriptor("col1", "Class1", null, false);
+        Set cols = Collections.singleton(col);
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, EMPTY_SET, cols);
+        Model model = new Model("model1", uri, Collections.singleton(cld));
+        assertEquals(FieldDescriptor.M_N_RELATION, col.relationType());
     }
 
     public void testEquals() throws Exception {

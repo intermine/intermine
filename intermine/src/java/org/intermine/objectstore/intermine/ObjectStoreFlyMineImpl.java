@@ -160,7 +160,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             if (explain.getTime() > maxTime) {
                 throw (new ObjectStoreException("Estimated time to run query(" + explain.getTime()
                                                 + ") greater than permitted maximum ("
-                                                + maxTime + ")"));
+                                                + maxTime + "): FQL query: " + q + ", SQL query: "
+                                                + sql));
             }
 
             ResultSet sqlResults = c.createStatement().executeQuery(sql);

@@ -57,6 +57,9 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @see IntegrationWriter#store
      */
     public void store(FlyMineBusinessObject o, Source source) throws ObjectStoreException {
+        if (o == null) {
+            throw new NullPointerException("Object o should not be null");
+        }
         store(o, source, false);
     }
 
@@ -70,6 +73,9 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      */
     private FlyMineBusinessObject store(FlyMineBusinessObject o, Source source,
             boolean skeleton) throws ObjectStoreException {
+        if (o == null) {
+            return null;
+        }
         Set equivalentObjects = getEquivalentObjects(o, source);
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();
@@ -125,32 +131,62 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
                             if ((type == FROM_DB) || (type == SOURCE)
                                     || DataLoaderHelper.fieldIsPrimaryKey(getModel(),
                                         dest.getClass(), fieldName, source)) {
-                                FlyMineBusinessObject target = store((FlyMineBusinessObject)
-                                        TypeUtil.getFieldValue(srcObj, fieldName), source, true);
-                                TypeUtil.setFieldValue(dest, fieldName, target);
+                                if (type == FROM_DB) {
+                                    TypeUtil.setFieldValue(dest, fieldName,
+                                            TypeUtil.getFieldValue(srcObj, fieldName));
+                                } else {
+                                    FlyMineBusinessObject target = store((FlyMineBusinessObject)
+                                            TypeUtil.getFieldValue(srcObj, fieldName), source,
+                                            true);
+                                    TypeUtil.setFieldValue(dest, fieldName, target);
+                                }
                             }
                             break;
                         case FieldDescriptor.ONE_ONE_RELATION:
                             if ((type == FROM_DB) || (type == SOURCE)) {
-                                // TODO: This algorithm assumes that non-skeletons are copied in
-                                // AFTER every from-database version of the object. This may not
-                                // be true in the multi-source implementation.
                                 FlyMineBusinessObject loser = (FlyMineBusinessObject)
                                     TypeUtil.getFieldValue(dest, fieldName);
-                                FlyMineBusinessObject target = store((FlyMineBusinessObject)
-                                        TypeUtil.getFieldValue(srcObj, fieldName), source, true);
-                                TypeUtil.setFieldValue(dest, fieldName, target);
+                                ReferenceDescriptor reverseRef = ((ReferenceDescriptor) field)
+                                    .getReverseReferenceDescriptor();
                                 if (loser != null) {
-                                    ReferenceDescriptor reverseRef = ((ReferenceDescriptor) field)
-                                        .getReverseReferenceDescriptor();
                                     invalidateObjectById(loser.getId());
-                                    TypeUtil.setFieldValue(loser, reverseRef.getName(), null);
+                                    try {
+                                        TypeUtil.setFieldValue(loser, reverseRef.getName(), null);
+                                    } catch (NullPointerException e) {
+                                        throw new NullPointerException("reverseRef must be null: "
+                                                + reverseRef + ", forward ref is "
+                                                + field.getClassDescriptor().getName() + "."
+                                                + field.getName() + ", type is "
+                                                + field.relationType());
+                                    }
                                     store(loser);
                                 }
+                                FlyMineBusinessObject target = null;
+                                if (type == SOURCE) {
+                                    target = store((FlyMineBusinessObject)
+                                            TypeUtil.getFieldValue(srcObj, fieldName), source,
+                                            true);
+                                } else {
+                                    target = (FlyMineBusinessObject) TypeUtil.getFieldValue(srcObj,
+                                            fieldName);
+                                }
+                                if (target != null) {
+                                    FlyMineBusinessObject targetsReferent = (FlyMineBusinessObject)
+                                        TypeUtil.getFieldValue(target, reverseRef.getName());
+                                    if (targetsReferent != null) {
+                                        invalidateObjectById(targetsReferent.getId());
+                                        TypeUtil.setFieldValue(targetsReferent, fieldName, null);
+                                        store(targetsReferent);
+                                    }
+                                    TypeUtil.setFieldValue(target, reverseRef.getName(), dest);
+                                    store(target);
+                                }
+                                TypeUtil.setFieldValue(dest, fieldName, target);
                             }
                             break;
                         case FieldDescriptor.ONE_N_RELATION:
-                            if ((type == FROM_DB) && (!srcObj.getId().equals(dest.getId()))) {
+                            if ((type == FROM_DB) && ((dest.getId() == null)
+                                        || (!dest.getId().equals(srcObj.getId())))) {
                                 Collection col = (Collection) TypeUtil.getFieldValue(srcObj,
                                         fieldName);
                                 Iterator colIter = col.iterator();
@@ -166,8 +202,8 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
                             }
                             break;
                         case FieldDescriptor.M_N_RELATION:
-                            if (((type == FROM_DB) || (type == SOURCE))
-                                    && (!srcObj.getId().equals(dest.getId()))) {
+                            if ((type == SOURCE) || ((type == FROM_DB) && ((dest.getId() == null)
+                                        || (!dest.getId().equals(srcObj.getId()))))) {
                                 Collection destCol = (Collection) TypeUtil.getFieldValue(dest,
                                         fieldName);
                                 Collection col = (Collection) TypeUtil.getFieldValue(srcObj,
@@ -180,8 +216,12 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
                                     ReferenceDescriptor reverseRef = ((CollectionDescriptor) field)
                                         .getReverseReferenceDescriptor();
                                     TypeUtil.setFieldValue(colObj, reverseRef.getName(),
-                                            Collections.singleton(dest));
-                                    destCol.add(store(colObj, source, true));
+                                            Collections.singletonList(dest));
+                                    if (type == FROM_DB) {
+                                        destCol.add(colObj);
+                                    } else {
+                                        destCol.add(store(colObj, source, true));
+                                    }
                                 }
                             }
                             break;

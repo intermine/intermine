@@ -150,6 +150,14 @@ public class ReferenceDescriptorTest extends TestCase
         assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
     }
 
+    public void testRelationTypeUnidirectional() throws Exception {
+        ReferenceDescriptor ref = new ReferenceDescriptor("ref1", "Class1", null);
+        Set refs = Collections.singleton(ref);
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, refs, EMPTY_SET);
+        Model model = new Model("model1", uri, Collections.singleton(cld));
+        assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
+    }
+
     public void testEquals() throws Exception {
         ReferenceDescriptor ref1 = new ReferenceDescriptor("rfd1", "Class2", "rfd1");
         ReferenceDescriptor ref2 = new ReferenceDescriptor("rfd1", "Class2", "rfd1");
