@@ -111,15 +111,8 @@ version="1.0">
 
 <xsl:template match="email">
 <a>
-<xsl:attribute name="href">mailto:<xsl:value-of select="@url"/></xsl:attribute>
-    <xsl:choose>
-      <xsl:when test="count(child::node())=0">
-        <xsl:value-of select="@url"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates/>
-      </xsl:otherwise>
-    </xsl:choose>
+<xsl:attribute name="href">mailto:<xsl:apply-templates/></xsl:attribute>
+    <xsl:apply-templates/>
 </a>
 </xsl:template>
 
