@@ -57,7 +57,7 @@
           <xsl:call-template name="sidebar"/>
         </div>
         
-        <div id="content">
+        <div id="pagecontent">
           <xsl:apply-templates/>
         </div>
         
