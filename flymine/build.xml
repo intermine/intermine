@@ -2895,6 +2895,7 @@
 <!-- UCSC MODEL GENERATION -->
 
   <!-- merge ucsc model additions with current genomic model -->
+  <!-- ucsc data including tfbs, firstEF, encodeRegions from ucsc database -->
   <target name="merge-ucsc-model" depends="prepare-genomic-model">
     <merge-genomic-additions additionsFile="${model}/ucsc/ucsc_additions.xml"/>
   </target>
@@ -2939,9 +2940,6 @@
       <fileset dir ="/shared/data/human/tfbs">        
         <include name ="tfbsConsSites_withFactors.gff"/>
       </fileset>
-      <!--fileset dir ="/shared/data/gff3">
-        <include name ="tfbs.gff"/>
-      </fileset-->
     </retrieve-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -2957,17 +2955,174 @@
   </target>
 
  <target name="load-tfbs" depends="copy-genomic-config">
-    <taskdef name="load-tfbs" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-tfbs integrationWriter="integration.genomic-test"
+    <load-gff3 integrationWriter="integration.production"
                source="os.gff3-translated-std"
                sourceName="ucsc"
                ignoreDuplicates="false"/>
   </target>
 
   <target name="build-tfbs-production" depends="retrieve-tfbs, load-tfbs"/>
+
+
+<!--load firstEF GFF3 data from UCSC-->
+
+  <target name="retrieve-firstef" depends="prepare-build-model, compile-ucsc-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="UCSC"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
+      <fileset dir ="/shared/data/human/firstEF">        
+        <include name ="*.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+ <target name="load-firstef" depends="copy-genomic-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.production"
+               source="os.gff3-translated-std"
+               sourceName="ucsc"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-firstef-production" depends="retrieve-firstef, load-firstef"/>
+
+
+<!--load encodeRegions GFF3 data from UCSC-->
+
+  <target name="retrieve-regions" depends="prepare-build-model, compile-ucsc-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="UCSC"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
+      <fileset dir ="/shared/data/human/encodeRegions/">        
+        <include name ="*.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+ <target name="load-regions" depends="copy-genomic-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.production"
+               source="os.gff3-translated-std"
+               sourceName="ucsc"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-regions-production" depends="retrieve-regions, load-regions"/>
+
+<!--load diseaseRegions GFF3 data from T1DBase-->
+
+  <target name="retrieve-disease-regions" depends="prepare-build-model, compile-ucsc-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
+                   target="osw.gff3-tgt-items"
+                   seqClsName="Chromosome"
+                   orgAbbrev="HS"
+                   infoSourceTitle="T1DBase"
+                   model="genomic"
+                   handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
+      <fileset dir ="/shared/data/human/diseaseRegions/">        
+        <include name ="*.gff"/>
+      </fileset>
+    </retrieve-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.gff3-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+ <target name="load-disease-regions" depends="copy-genomic-config">
+    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-gff3 integrationWriter="integration.production"
+               source="os.gff3-translated-std"
+               sourceName="ucsc"
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-disease-regions-production" depends="retrieve-disease-regions, load-disease-regions"/>
+
+
 
 </project>
 
