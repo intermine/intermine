@@ -2166,7 +2166,7 @@
             value="${gbrowse.database.adaptor}"/>
     <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
           toFile="${build.gbrowse}/${gbrowse.config.file}"
-          filtering="true"/>
+          filtering="true" overwrite="true"/>
 
     <echo message="file: ${build.gbrowse}/${gbrowse.config.file}"/>
 
