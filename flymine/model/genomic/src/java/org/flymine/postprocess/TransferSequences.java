@@ -122,7 +122,6 @@ public class TransferSequences
         Results results = PostProcessUtil.findLocations(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
 
-        results.setBatchSize(50000);
         Iterator resIter = results.iterator();        
 
         while (resIter.hasNext()) {
