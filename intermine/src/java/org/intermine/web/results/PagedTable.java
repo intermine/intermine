@@ -189,6 +189,13 @@ public abstract class PagedTable
     public abstract List getRows();
 
     /**
+     * Return all the rows of the table as a List of Lists.
+     *
+     * @return all the rows of the table
+     */
+    public abstract List getAllRows();
+
+    /**
      * Get the (possibly estimated) number of rows of this table
      * @return the number of rows
      */

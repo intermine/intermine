@@ -55,6 +55,13 @@ public class PagedResults extends PagedTable
     }
 
     /**
+     * @see PagedTable#getAllRows
+     */
+    public List getAllRows() {
+        return results;
+    }
+
+    /**
      * @see PagedTable#getSize
      */
     public int getSize() {
