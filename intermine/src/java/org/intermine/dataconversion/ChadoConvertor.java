@@ -16,7 +16,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +43,7 @@ import org.apache.log4j.Logger;
 public class ChadoConvertor 
 {
     protected static final Logger LOG = Logger.getLogger(ChadoConvertor.class);
-    protected final String ENDL = System.getProperty("line.separator");
+    protected static final String ENDL = System.getProperty("line.separator");
     protected Connection c = null;
     protected Writer writer;
     protected Model model;
@@ -66,6 +65,8 @@ public class ChadoConvertor
      * database to a Writer
      *
      * @param writer the Writer
+     * @throws SQLException if an error occurs when accessing the Database
+     * @throws IOException if an error occurs when writing to the Writer
      */
     public void process(Writer writer) throws SQLException, IOException  {
         this.writer = writer;
@@ -78,6 +79,7 @@ public class ChadoConvertor
      * Produce all the instances of all the classes in the model present in a database
      *
      * @throws SQLException if an error occurs when accessing the Database
+     * @throws IOException if an error occurs when writing to the Writer
      */
     protected void process() throws SQLException, IOException {
         try {
@@ -97,6 +99,7 @@ public class ChadoConvertor
      *
      * @param cld the ClassDescriptor
      * @throws SQLException if an error occurs in accessing the database
+     * @throws IOException if an error occurs when writing to the Writer
      */
     protected void processClassDescriptor(ClassDescriptor cld) throws SQLException, IOException {
         List items = new ArrayList();
@@ -162,6 +165,7 @@ public class ChadoConvertor
      * Process an item
      *
      * @param item the Item
+     * @throws IOException if an error occurs when writing to the Writer
      */
     protected void processItem(Item item) throws IOException {
         writer.write(FullRenderer.render(item));

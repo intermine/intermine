@@ -14,9 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Collection;
 
-import org.flymine.xml.full.FullRenderer;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.metadata.Model;

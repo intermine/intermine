@@ -40,10 +40,20 @@ public class FullRenderer
     private FullRenderer() {
     }
 
+    /**
+     * Return the Full XML file header
+     *
+     * @return the header
+     */
     public static String getHeader() {
         return "<items>";
     }
 
+    /**
+     * Return the Full XML file footer
+     *
+     * @return the footer
+     */
     public static String getFooter() {
         return "</items>";
     }
