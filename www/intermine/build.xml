@@ -83,7 +83,7 @@
 
   <path id="demo.class.path">
     <fileset dir="../../intermine/dist" includes="*.jar"/>
-    <fileset dir="../../intermine/resources/test" includes="*.properties"/>
+    <pathelement path="../../intermine/resources/test"/>
   </path>
 
   <property name="build.model" location="../../intermine/build/model" />
