@@ -33,7 +33,7 @@ version="1.0">
     </tr>
 
     <tr>
-        <td class="sidebar" height="10%" width="15%" align="left" valign="top">
+        <td class="sidebar" height="10%" width="5%" align="left" valign="top">
             <xsl:apply-templates select="document('sidebar.xml')/*" />
         </td>
         <td class="main" align="left" valign="top" rowspan="2">
@@ -312,5 +312,7 @@ version="1.0">
 </p>
 </xsl:template>
 -->
+
+<xsl:template match="nbsp">&#160;</xsl:template>
 </xsl:stylesheet>
 
