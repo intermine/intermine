@@ -11,7 +11,7 @@
    
    <item>The output fields list is located at the bottom of the query builder (underneath the <ulink url= "manualModelbrowser.xml">Model browser</ulink>). Initially the output fields list will say 'No fields selected for output'.</item>
    <item>The output fields list shows all fields that you have selected to show in the results output.  To select a field to show in the results output you press 'show' next to the field.</item>
-   <item>The order of fields in the output fields list can be changed using the arrows.  Fields can be deleted from the output fields list using the x. </item>
+   <item>The order of fields in the output fields list can be changed using the &lt; and &gt; arrows.  Fields can be deleted from the output fields list using the x. </item>
    
 </section>
 

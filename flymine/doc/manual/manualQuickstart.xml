@@ -7,28 +7,175 @@
 
     <section>
       <heading>Quick start guide</heading>
+<<<<<<< manualQuickstart.xml
+      <item>FlyMine allows you to construct complex queries across multiple integrated data sources using a web interface.  </item>
+      
+=======
       <item>FlyMine allows you to construct complex queries across multiple integrated data sources using a web interface</item>
 
       <item>The FlyMine query builder consists of 3 main pages: <ulink url="manualClasschooser.xml">The class chooser page</ulink>, the main <ulink url="manualQuerybuilder.xml">query builder</ulink> page and the <ulink url="manualResultdisplay.xml">result display.</ulink></item>
       <item>To start a new FlyMine query select "<ulink url= "/classChooser.do">start a new query with a particular class</ulink>" from the main page.  This will take you to the <ulink url="manualClasschooser.xml">class chooser page</ulink>.  Select the class with which to start your query and press "select".  This will take you to the main <ulink url="manualQuerybuilder.xml">query builder</ulink> page.</item>
 
       <item>The main query builder page is composed of 3 sections: a <ulink url="manualModelbrowser.xml">model browser</ulink>, a <ulink url="manualConstraintslist.xml">constraints list</ulink> and an <ulink url="manualOutputfields.xml">output fields list</ulink>.  The output fields list will initially just say: No fields selected for output.  </item>
+>>>>>>> 1.5
      <item>
-       Building a simple query using the FlyMine query builder involves the following steps:
-      </item>      
+       Building a simple query using the FlyMine query builder involves the following steps:  (These are descibed in more detail below).
+      </item> 
+        <item>
+          1. To start a new FlyMine query select <ulink url= "/query/classChooser.do">start a new query with a particular class</ulink> from the main page.  This will take you to the class chooser page.  
+     </item>
+       <item> 
+          2. Select the class with which to start your query and press "select".  This will take you to the main query builder page.
+       </item>
       <item>
-       Select the classes and/or fields you wish to constrain using the -> constrain arrows. Specify your constraints in the right hand <ulink url= "manualConstraintslist.xml">constraints list.</ulink>   
+       3. In the model browser, browse to the classes and fields you are interested in. 
+       </item>   
+      <item>
+       4. Select the classes and/or fields you wish to constrain using the -> constrain arrows. Specify your constraints in the right hand constraints list.  
       </item>
       <item>
-       Select the classes and/or fields you wish to show in the results output using the "show" buttons.  The classes/fields selected will appear in the <ulink url= "manualOutputfields.xml">output fields list.</ulink>
+       5. Select the classes and/or fields you wish to show in the results output using the "show" buttons.  The classes/fields selected will appear in the output fields list.
       </item>
       <item>
-       Press <ulink url= "manualShowresults.xml">show results</ulink> to view your results in the <ulink url= "manualResultdisplay.xml">results page</ulink>
+       6. Press 'show results' to view your results in the results page.
       </item>
       <item>For a walk-through a simple query see the <ulink url= "../tutorials/tutorialIndex.xml">tutorials.</ulink></item>
-      
-
+  
   </section>
+
+     <section>
+           <heading>The FlyMine query builder</heading>
+
+
+      <item>The FlyMine query builder consists of 3 main pages: The class chooser page, the main query builder page and the result display:
+      </item>
+    </section>
+
+    <section>
+       <heading>The class chooser page</heading>
+  <item>
+        The screen shot below shows the class chooser page. This page contains a list of classes for which objects exist in the database (i.e. classes for which there is data associated)
+       </item>
+       <item>
+        Selecting the class from which you wish to start your query and pressing the 'Select' button will take you to the FlyMine query builder page.
+        </item>
+       <item> 
+        The browse button allows you to browse the complete FlyMine object model.  This shows all the classes in FlyMine, some of which do not yet have data associated with them.
+        </item>
+        <item>
+        In browse mode, the number on the right shows the number of objects associated with that class.
+        </item>
+        <item>
+        Clicking on a class name within the browser will take you to the FlyMine query builder page.
+        </item>
+ 
+     </section>
+     
+	  <entry>
+	      <inlinegraphic fileref="../tutorials/classSelection1" format="PNG"/>
+	  </entry>
+
+
+      <section>
+          <heading>The main query builder page</heading>
+       <item>
+       The main FlyMine query builder page is composed of 3 sections (shown in the screen shot below): 
+       </item>
+       <item>
+       1. a model browser (left)
+       </item>
+       <item>
+       2. a constraints list (right)
+       </item>
+       <item>
+       3. an output fields list (bottom).
+       </item>
+         
+   </section>
+          
+
+
+	  <entry>
+	      <inlinegraphic fileref="queryBuilder1" format="PNG"/>
+	  </entry>
+ 
+
+
+     <section>
+       <heading>The model browser</heading>
+          <item>The model browser allows you to select the classes that contain the objects you require. Depending on the starting class you will be able to navigate to other classes as defined by the references between the classes (see <ulink url= "manualCOF.xml">Classes, objects and fields</ulink> for an explanation of these concepts).  In other words, to combine classes containing the objects you require, you find a path through the classes that link together the information you require. Within the model browser classes that can be accessed from a parent class (ie are linked to the parent class through a reference) are shown as fields within that class.</item>
+           <item>For each class and field within the model browser there is a 'show' and a 'constrain' (->) option.  These are used to either select a field to show in the results output or to constrain in the constraints list.  </item>
+       <item>
+       See <ulink url= "manualModelBrowser.xml">The model browser</ulink> for more information about classes and fields.
+      </item>
+ 
+  </section>
+
+
+	  <entry>
+	      <inlinegraphic fileref="modelBrowser2" format="PNG"/>
+	  </entry>
+
+
+ 
+     <section>
+        <heading>The constraints list</heading>
+       <item>The constraints list is on the right hand side of the query builder page.  In this section you specify the constraints you wish to apply to particular classes and fields.</item>
+       <item>To apply a constraint to a field, navigate to the field in the model browser and click on the -> (constrain) next to it.  This will add the field to the constraints list and bring up a box in which you specify your constraint.</item>  
+       <item>The type of constraint you can add will vary depending on the type of field you selected to constrain.</item>     
+    </section>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="constraintsList1" format="PNG"/>
+	  </entry>
+         
+
+  <section>
+       <heading>The output fields list</heading>
+   
+   <item>The output fields list is located at the bottom of the query builder (underneath the Model browser). Initially the output fields list will say 'No fields selected for output'.</item>
+   <item>The output fields list shows all fields or classes that you have selected to show in the results output.  To select a field to show in the results output you press 'show' next to the field or class.</item>
+   <item>The order of fields and classes in the output fields list can be changed using the &lt; and &gt; arrows.  Fields can be deleted from the output fields list using the x. </item>
+   
+</section>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="fieldsSelected1" format="PNG"/>
+	  </entry>
+ 
+
+
+   <section>
+      <heading>The Results page</heading>
+      <item>
+        The results page displays the first 10 objects returned by your query.
+</item>
+     <item>
+       The number of objects displayed can be changed by changing the number in the Page size box and pressing Change.
+</item>
+      <item>
+      You can scroll though the objects using Next, or go to the last 10 objects using Last.
+</item>
+      <item>
+      The total number of objects returned by your query is estimated. An estimate is given because, for large queries, only a subset of the total number of objects is initially returned by the query.  This is to improve query run time for large queries.
+      </item>
+      <item>From the results page you can save your data to a bag (see <ulink url= "manualSavingdata.xml">Saving bags of data</ulink>) and export your data in various formats (see <ulink url= "manualExportingdata.xml">Exporting data</ulink>).
+      </item>
+      <item>If there are any objects in your results (rather than fields) you can click on an object to view it in detail.</item>
+        
+  </section>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="../tutorials/resultsQuery1" format="PNG"/>
+	  </entry>
+
+ 
 
 
 
