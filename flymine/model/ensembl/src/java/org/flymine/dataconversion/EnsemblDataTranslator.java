@@ -56,7 +56,9 @@ public class EnsemblDataTranslator extends DataTranslator
     private Map scLocs = new HashMap();
     private Map exonLocs = new LinkedHashMap();
     private Map exons = new HashMap();
-    private String organismName;
+    private String orgName;
+    private String orgShortName;
+    private String orgTaxonId;
     private Item organism;
     private Reference orgRef;
 
@@ -64,9 +66,11 @@ public class EnsemblDataTranslator extends DataTranslator
      * @see DataTranslator#DataTranslator
      */
     public EnsemblDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
-                                 String organismName) {
+                                 String orgName, String orgShortName, String orgTaxonId) {
         super(srcItemReader, model, ns);
-        this.organismName = organismName;
+        this.orgName = orgName;
+        this.orgShortName = orgShortName;
+        this.orgTaxonId = orgTaxonId;
     }
 
     /**
@@ -415,8 +419,12 @@ public class EnsemblDataTranslator extends DataTranslator
     private Item getOrganism() {
         if (organism == null) {
             organism = createItem(tgtNs + "Organism", "");
-            Attribute a = new Attribute("name", organismName);
-            organism.addAttribute(a);
+            Attribute a1 = new Attribute("name", orgName);
+            organism.addAttribute(a1);
+            Attribute a2 = new Attribute("shortName", orgShortName);
+            organism.addAttribute(a2);
+            Attribute a3 = new Attribute("taxonId", orgTaxonId);
+            organism.addAttribute(a3);
         }
         return organism;
     }
@@ -439,7 +447,9 @@ public class EnsemblDataTranslator extends DataTranslator
         String modelName = args[2];
         String format = args[3];
         String namespace = args[4];
-        String organism = args[5];
+        String orgName = args[5];
+        String orgShortName = args[6];
+        String orgTaxonId = args[7];
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
@@ -448,7 +458,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new EnsemblDataTranslator(srcItemReader, model, namespace, organism);
+        DataTranslator dt = new EnsemblDataTranslator(srcItemReader, model, namespace, orgName,
+                                                      orgShortName, orgTaxonId);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();

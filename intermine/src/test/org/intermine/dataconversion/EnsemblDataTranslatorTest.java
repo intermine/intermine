@@ -56,7 +56,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
             iw.store(ItemHelper.convert((Item) i.next()));
         }
         OntModel model = getFlyMineOwl();
-        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs, "wildebeast");
+        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs, "wildebeast", "W. beast", "1001");
         MockItemWriter tgtIw = new MockItemWriter(new HashMap());
         translator.translate(tgtIw);
 
