@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
@@ -279,19 +280,21 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
 
     public void testLazyCollection() throws Exception {
         List r = os.execute((Query) queries.get("ContainsN1"));
-        ResultsRow rr = (ResultsRow) r.get(0);
-        Department d = (Department) rr.get(0);
-        Collection e = d.getEmployees();
+        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
+        List e = d.getEmployees();
         assertTrue(e instanceof Results);
 
         List expected = new ArrayList();
         expected.add(data.get("EmployeeA1"));
         expected.add(data.get("EmployeeA2"));
         expected.add(data.get("EmployeeA3"));
-
         assertEquals(expected, e);
-    }
 
+        // navigate from a lazy collection to a field that is a lazy reference
+        Address a = ((Employee) e.get(0)).getAddress();
+        assertTrue(a instanceof LazyReference);
+        assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
+    }
 
     public void testLazyReference() throws Exception {
         QueryClass c1 = new QueryClass(Department.class);
@@ -302,70 +305,16 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         QueryValue v1 = new QueryValue("DepartmentA1");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
         q1.setConstraint(sc1);
-        Results r  = os.execute(q1);
-        ResultsRow rr = (ResultsRow) r.get(0);
-        Department d = (Department) rr.get(0);
+        List r  = os.execute(q1);
+        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
+
         Company c = d.getCompany();
-        assertTrue(c instanceof org.flymine.objectstore.proxy.LazyReference);
-        assertTrue(c.equals(data.get("CompanyA")));
-        assertTrue(data.get("CompanyA").equals(c));
-    }
+        assertTrue(c instanceof LazyReference);
+        assertEquals(data.get("CompanyA"), c);
 
-
-    public void testLazyCollectionRef() throws Exception {
-        QueryClass c1 = new QueryClass(Department.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
-        q1.setConstraint(sc1);
-        Results r  = os.execute(q1);
-        ResultsRow rr = (ResultsRow) r.get(0);
-        Department d = (Department) rr.get(0);
-        List e = d.getEmployees();
-        assertTrue(e instanceof Results);
-
-        List expected = new ArrayList();
-        expected.add(data.get("EmployeeA1"));
-        expected.add(data.get("EmployeeA2"));
-        expected.add(data.get("EmployeeA3"));
-
-        // test that we can navigate from member of lazy collection to one of its lazy references
-        assertEquals(expected, e);
-        Employee e1 = (Employee) e.get(0);
-        Address a = e1.getAddress();
-        assertTrue(a instanceof org.flymine.objectstore.proxy.LazyReference);
-        assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
-    }
-
-    /**
-    public void testLazyReferenceRef() throws Exception {
-        QueryClass c1 = new QueryClass(Department.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
-        q1.setConstraint(sc1);
-        Results r  = os.execute(q1);
-        ResultsRow rr = (ResultsRow) r.get(0);
-        Department d = (Department) rr.get(0);
-
-        // navigate from a lazy referenced object into a field that is a lazy reference
-        Company c = d.getCompany();
-        assertTrue(c instanceof org.flymine.objectstore.proxy.LazyReference);
-        assertTrue(c.equals(data.get("CompanyA")));
-        assertTrue(data.get("CompanyA").equals(c));
-
+        // navigate from a lazy reference to a field that is a lazy reference
         Address a = c.getAddress();
-        assertTrue(a instanceof org.flymine.objectstore.proxy.LazyReference);
-        if (1==1)
-            throw new Exception("address string: " + a.getAddress());
-        assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
+        assertTrue(a instanceof LazyReference);
+        assertEquals(a, ((Company) data.get("CompanyA")).getAddress());
     }
-    **/
-
 }
