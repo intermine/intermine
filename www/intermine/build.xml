@@ -1,5 +1,5 @@
 <project name="intermine-www" default="www-intermine" basedir=".">
-  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+  <property name="build.properties.local" value="${user.home}/build.properties.intermine" />
 
   <property file="${build.properties.local}"/>
   <property name="src.www" location="site"/>
@@ -32,6 +32,7 @@
            style="../main.xsl" includes="**/*.xml" force="false">
       <param name="branding" expression="intermine" />
       <param name="basedir" expression="${www.location}" />
+      <param name="webappprefix" expression="${webapp.prefix}"/>
       <param name="outputext" expression="html" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
