@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.DatabaseUtil;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 import org.apache.log4j.Logger;
 
@@ -44,7 +45,6 @@ public class BuildDbTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(BuildDbTask.class);
     protected static final String SERIAL_SEQUENCE_NAME = "serial";
-    protected static final String OS_SEQUENCE_NAME = "objectstore_unique_integer";
     protected File tempDir;
     protected Database database;
     protected String schemaFile;
@@ -175,7 +175,8 @@ public class BuildDbTask extends Task
             c = database.getConnection();
             c.setAutoCommit(true);
             c.createStatement().execute("CREATE SEQUENCE " + SERIAL_SEQUENCE_NAME);
-            c.createStatement().execute("CREATE SEQUENCE " + OS_SEQUENCE_NAME);
+            c.createStatement().execute("CREATE SEQUENCE "
+                                        + ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
         } catch (SQLException e) {
         } finally {
             if (c != null) {
