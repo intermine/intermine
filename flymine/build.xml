@@ -1239,7 +1239,28 @@
   </target>
 
 
+  <!-- ========== POST PROCESSING TARGETS ========== -->
+
+  <target name="compute-mappings" depends="prepare, compile-genomic-java">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <mappings alias="osw.production" type="mappings"/>
+  </target>
+
+
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
+
+  <!-- build genomic test database -->
+    <target name="build-db-genomic-test" depends="prepare-build-model, prepare-test">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.genomic-test"/>
+      <property name="objectstore.name" value="os.genomic-test"/>
+    </ant>
+  </target>
 
   <target name="compile-ensembl-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
