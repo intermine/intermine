@@ -99,7 +99,6 @@ public class PortalQuery extends TemplateAction
         SessionMethods.loadQuery(queryCopy, request.getSession());
         // Add a message to welcome the user
         SessionMethods.recordMessage(properties.getProperty("portal.welcome" + origin), session);
-        System.out.println("portal.welcome" + origin + " = " + properties.getProperty("portal.welcome" + origin));
         
         // Set collapsed/uncollapsed state of object details UI
         Map collapsed = (Map) session.getAttribute("COLLAPSED");

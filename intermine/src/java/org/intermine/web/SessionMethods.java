@@ -16,7 +16,6 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.StringWriter;
@@ -47,7 +46,7 @@ public class SessionMethods
 {
     protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
     
-    private static abstract class RunQueryThread implements Runnable
+    private abstract static class RunQueryThread implements Runnable
     {
         protected Results r;
         protected PagedResults pr;
