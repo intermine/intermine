@@ -40,7 +40,7 @@ public class ReferenceDescriptor extends FieldDescriptor
                                String reverseRefName)
         throws IllegalArgumentException {
         super(name);
-        if (referencedType == null || referencedType == "") {
+        if (referencedType == null || referencedType.equals("")) {
             throw new IllegalArgumentException("A value must be provided for "
                                                + "the referenced type");
         }

@@ -154,7 +154,7 @@ public class Dag2Owl
             Set rootTerms = parser.process(new FileReader(dagFile));
 
             DagValidator validator = new DagValidator();
-            if (!validator.validate(rootTerms) && errorFilename != "") {
+            if (!validator.validate(rootTerms) && !errorFilename.equals("")) {
                 BufferedWriter out = new BufferedWriter(new FileWriter(new File(errorFilename)));
                 out.write(validator.getOutput());
                 out.flush();

@@ -30,7 +30,7 @@ public class AttributeDescriptor extends FieldDescriptor
     public AttributeDescriptor(String name, String type)
         throws IllegalArgumentException {
         super(name);
-        if (type == null || type == "") {
+        if (type == null || type.equals("")) {
             throw new IllegalArgumentException("name cannot be null or empty");
         }
         this.type = type;

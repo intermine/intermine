@@ -114,7 +114,7 @@ public class FullRenderer
 
         Item item = new Item();
         item.setIdentifier(obj.getId().toString());
-        item.setClassName(className == "" ? "" : model.getNameSpace()
+        item.setClassName(className.equals("") ? "" : model.getNameSpace()
                           + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)));
         item.setImplementations(getImplements(obj, model));
 
