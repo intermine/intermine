@@ -1166,7 +1166,7 @@
     <mkdir dir="${build.webapp}/intermine"/>
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine"/>
     <move file="${build.webapp}/intermine/WEB-INF/web.xml" todir="${build.tmp}"/>
-    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes" overwrite="true">
       <fileset dir="${resources}/webapp" includes="*.properties"/>
     </copy>
 
