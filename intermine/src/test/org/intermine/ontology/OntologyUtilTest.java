@@ -106,7 +106,7 @@ public class OntologyUtilTest extends TestCase
         assertEquals("java.lang.Float", OntologyUtil.xmlToJavaType("decimal"));
         assertEquals("java.lang.Double", OntologyUtil.xmlToJavaType("double"));
         assertEquals("java.lang.Boolean", OntologyUtil.xmlToJavaType("boolean"));
-        assertEquals("java.net.URI", OntologyUtil.xmlToJavaType("anyURI"));
+        assertEquals("java.net.URL", OntologyUtil.xmlToJavaType("anyURI"));
         assertEquals("java.util.Date", OntologyUtil.xmlToJavaType("dateTime"));
 
         try {
@@ -133,7 +133,7 @@ public class OntologyUtilTest extends TestCase
         assertEquals(OntologyUtil.XSD_NAMESPACE + "boolean", OntologyUtil.javaToXmlType("boolean"));
         assertEquals(OntologyUtil.XSD_NAMESPACE + "byte", OntologyUtil.javaToXmlType("java.lang.Byte"));
         assertEquals(OntologyUtil.XSD_NAMESPACE + "byte", OntologyUtil.javaToXmlType("byte"));
-        assertEquals(OntologyUtil.XSD_NAMESPACE + "anyURI", OntologyUtil.javaToXmlType("java.net.URI"));
+        assertEquals(OntologyUtil.XSD_NAMESPACE + "anyURI", OntologyUtil.javaToXmlType("java.net.URL"));
         assertEquals(OntologyUtil.XSD_NAMESPACE + "dateTime", OntologyUtil.javaToXmlType("java.util.Date"));
         try {
             OntologyUtil.javaToXmlType("rubbish");
