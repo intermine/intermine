@@ -193,10 +193,8 @@ or_constraint_set:
             { AST te2_AST = astFactory.create(te);
                 AST k2_AST = astFactory.dupList(k_AST);
                 AST tf2_AST = astFactory.create(tf);
-                System.out.println("Excercising or_constraint_set rule 4 to convert:\n" + te.toStringList());
                 #or_constraint_set = #(#tf, #(#te, #i, #k), #(te2_AST, #(tf2_AST, #j), k2_AST));
-                System.out.println("to:\n" + #or_constraint_set.toStringList());
-                System.out.flush(); }
+        }
 
         // l..OR.. OR (m AND n..AND..) OR o..OR.. becomes
         //                      (l..OR.. OR m OR o..OR..) AND (l..OR.. OR (n..AND..) OR o..OR..)
@@ -249,15 +247,11 @@ and_constraint_set:
 
         | ( #( AND_CONSTRAINT_SET n_abstract_constraint n_abstract_constraint ))=>
             #( te:AND_CONSTRAINT_SET (abstract_constraint )+ )
-            { System.out.println("Excercising and_constraint_set rule 4 to copy:\n" + te.toStringList());
-                System.out.flush(); }
+            { }
 
         // (AND z) becomes z
         | ! #( tf:AND_CONSTRAINT_SET z:n_abstract_constraint )
-            { System.out.println("Excercising and_constraint_set rule 5 to convert:\n" + tf.toStringList());
-                #and_constraint_set = #z;
-                System.out.println("to:\n" + #and_constraint_set.toStringList());
-                System.out.flush(); } ;
+            { #and_constraint_set = #z; } ;
 
 subquery_constraint: #( SUBQUERY_CONSTRAINT abstract_value sql_statement ) ;
 
