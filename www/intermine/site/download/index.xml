@@ -1,0 +1,32 @@
+<article>
+
+  <artheader>
+    <title>Obtaining the InterMine source code</title>
+  </artheader>
+
+  <sect1>
+    <title>Download</title>
+    <para>
+      <itemizedlist>
+        <listitem><ulink url="http://download.flymine.org/releases/">Latest release</ulink></listitem>
+        <listitem><ulink url="http://download.flymine.org/nightly/">Nightly build</ulink></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>CVS access</title>
+    <para>
+      <itemizedlist>
+        <listitem><ulink url="http://cvs.flymine.org">Browse CVS</ulink></listitem>
+        <listitem>Download via CVS:</listitem>
+        <itemizedlist>
+          <listitem><command>cd</command> to the directory into which you intend to check out the source.</listitem>
+          <listitem>Issue the command <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No password is needed.</listitem>
+          <listitem>Then type <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs co intermine</command>.</listitem>
+        </itemizedlist>
+      </itemizedlist>
+    </para>
+  </sect1>    
+  
+</article>

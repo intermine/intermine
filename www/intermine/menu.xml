@@ -8,7 +8,7 @@
         <item url="/doc/contribute/index.xml" title="Contribute"/>
     </item>
 
-    <item url="/software/index.xml" title="Download&#160;software">
+    <item url="/download/index.xml" title="Download&#160;software">
         <item url="http://download.flymine.org/releases/" title="Latest&#160;release"/>
         <item url="http://download.flymine.org/nightly/" title="Nightly&#160;build"/>
         <item url="http://cvs.flymine.org/" title="Browse CVS"/>

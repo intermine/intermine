@@ -31,6 +31,10 @@ span.fly
    font-style: oblique;
 }
 
+ul { 
+  margin-left: 10px;
+}
+
 /**************************************/
 
 #header
@@ -139,66 +143,25 @@ span.fly
     background: #E5E5E5 url(side2.gif) center left no-repeat;
 }
 
-ul ul li#current a
-{
-    background: #F5F5F5 url(side2.gif) center left no-repeat;
-}
-
 /**************************************/
 
-#content
-{
-    background: #F0F2FF;
-	padding: 10px;
-	margin-left: 200px;
-    margin-right: 20px;
+#content {
+  background: #F0F2FF;
+  padding: 10px;
+  margin-left: 200px;
+  margin-right: 20px;
 }
 
-#content ul
-{
- 	list-style-type:none;
- 	list-style-image: url(blkpearl.gif);
+#content ul li {
+  margin: 10px 0 0 0;
 }
 
-
-#content ul li
-{
-    margin: 10px  0 0 0;
-    padding: 0;
-    text-align: justify;
+#content h2.title {
+  text-align: center;
 }
 
-#content ul li span
-{
-    font: bold 100% sans-serif; letter-spacing: 0.2em;
-    margin: 10px 0;
-    padding: 5px;
-
-}
-
-#content ul ul
-{
-    margin-bottom: 35px;
- 	list-style-image: none;
- 	list-style-type: disc;
-}
-
-#content ul ul li
-{
- 	font-family: times, serif;
-    font-size: 1em;
-    font-weight: normal;
-    margin: 5px 0 0 0;
-}
-
-#content h2.title
-{
-    text-align: center;
-}
-
-#content p.author
-{
-    text-align: center;
+#content p.author {
+  text-align: center;
 }
 
 /**************************************/
