@@ -89,6 +89,9 @@ public class PostProcessTask extends Task
                 cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
                 LOG.info("Finished calculate-locations");
+            } else if ("update-publications".equals(type)) {
+                LOG.info("Starting UpdatePublications.execute()");
+                new UpdatePublications(osw).execute();
             } else {
                 throw new BuildException("unknown type: " + type);
             }
