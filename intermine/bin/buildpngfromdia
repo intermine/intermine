@@ -4,4 +4,5 @@ echo "Building PNG picture $2"
 
 export PATH=$PATH:$PWD/bin
 
-diatopng -r 100 -x 1000 -a 12 -A $1 >$2
+#diatopng -r 100 -x 1000 -a 12 -A $1 >$2
+diatopng -r 100 -x 1000 -a 12 $1 >$2
