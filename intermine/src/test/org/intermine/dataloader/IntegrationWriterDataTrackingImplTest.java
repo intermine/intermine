@@ -29,6 +29,7 @@ import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.objectstore.StoreDataTestCase;
 import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
 import org.flymine.objectstore.query.Query;
@@ -54,18 +55,20 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
     public void setUp() throws Exception {
         super.setUp();
         strictTestQueries = false;
-        removeDataFromStore();
         storeData();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
         removeDataFromTracker();
+        removeDataFromStore();
     }
 
     public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
+        SetupDataTestCase.oneTimeSetUp();
         //iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.unittest");
         iw = new IntegrationWriterDataTrackingImpl(writer, ObjectStoreWriterFactory.getObjectStoreWriter("osw.datatrackingtest"));
         os = iw.getObjectStore();
     }
@@ -76,6 +79,11 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
             throw new NullPointerException("iw must be set before trying to store data");
         }
         long start = new Date().getTime();
+        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
+        java.sql.Statement s = con.createStatement();
+        s.execute("vacuum analyze");
+        ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
+
         Source source = new Source();
         source.setName("storedata");
         source.setSkeleton(false);
@@ -87,12 +95,14 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
         try {
             iw.beginTransaction();
             iw.getDataTracker().beginTransaction();
+            //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
                 FlyMineBusinessObject o = (FlyMineBusinessObject) ((Map.Entry) iter.next())
                     .getValue();
                 iw.store(o, source, skelSource);
             }
+            //DataTracking.releasePrecached(iw.getDataTracker());
             iw.commitTransaction();
             iw.getDataTracker().commitTransaction();
         } catch (Exception e) {
@@ -101,8 +111,8 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
             throw new Exception(e);
         }
 
-        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
-        java.sql.Statement s = con.createStatement();
+        con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
+        s = con.createStatement();
         s.execute("vacuum analyze");
         ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");

@@ -133,7 +133,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         sortedEquivalentObjects = new HashSet();
                     } else {
                         Comparator compare = new SourcePriorityComparator(dataTracker, field,
-                                (type == SOURCE ? source : skelSource));
+                                (type == SOURCE ? source : skelSource), o);
                         sortedEquivalentObjects = new TreeSet(compare);
                     }
 
@@ -170,6 +170,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             throw new ObjectStoreException(e);
         }
         store(newObj);
+        
+        // We have called store() on an object, and we are about to write all of its data tracking
+        // data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS NEW, so that
+        // the data tracker can cache the writes without having to ask the db if records for that
+        // objectid already exist - we know there aren't.
+        if (newId == null) {
+            DataTracking.clearObj(newObj, dataTracker);
+        }
 
         Iterator trackIter = trackingMap.entrySet().iterator();
         while (trackIter.hasNext()) {

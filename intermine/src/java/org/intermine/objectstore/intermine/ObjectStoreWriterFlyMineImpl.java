@@ -72,8 +72,13 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             throw new ObjectStoreException("Could not obtain connection to database", e);
         }
         this.os.writers.add(this);
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                outputLog();
+            }
+        });
     }
-
+    
     /**
      * @see ObjectStoreFlyMineImpl#getConnection
      */
@@ -522,33 +527,25 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         }
     }
 
-    private static int logOps = 0;
-    private static int logBatch = 1;
-    
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                outputLog();
-            }
-        });
-    }
+    private int logOps = 0;
+    private int logBatch = 1;
 
-    private synchronized static void logAddBatch() {
+    private synchronized void logAddBatch() {
         logOps++;
         if ((logOps % 5000) == 0) {
             outputLog();
         }
     }
 
-    private synchronized static void logFlushBatch() {
-        logOps++;
+    private synchronized void logFlushBatch() {
+        if ((logOps % 5000) == 0) {
+            outputLog();
+        }
         logBatch++;
-        if ((logOps % 5000) == 0) {
-            outputLog();
-        }
     }
 
-    private synchronized static void outputLog() {
-        LOG.error("Performed " + logOps + " write statements so far in " + logBatch + " batches. Average batch size: " + (logOps / logBatch));
+    private synchronized void outputLog() {
+        LOG.error(getModel().getName() + ": Performed " + logOps + " write statements so far in "
+                + logBatch + " batches. Average batch size: " + (logOps / logBatch));
     }
 }

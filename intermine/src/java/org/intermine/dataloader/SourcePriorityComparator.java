@@ -30,6 +30,7 @@ public class SourcePriorityComparator implements Comparator
     private ObjectStore dataTracker;
     private FieldDescriptor field;
     private Source def;
+    private FlyMineBusinessObject defObj;
 
     /**
      * Constructs a new Comparator for comparing objects for priority for a given field.
@@ -37,11 +38,15 @@ public class SourcePriorityComparator implements Comparator
      * @param dataTracker the data tracking objectstore
      * @param field the FieldDescriptor the comparison is for
      * @param def the default Source
+     * @param defObj a FlyMineBusinessObject that came from a data source, not from the destination
+     * objectstore, and should be associated with the default source
      */
-    public SourcePriorityComparator(ObjectStore dataTracker, FieldDescriptor field, Source def) {
+    public SourcePriorityComparator(ObjectStore dataTracker, FieldDescriptor field, Source def,
+            FlyMineBusinessObject defObj) {
         this.dataTracker = dataTracker;
         this.field = field;
         this.def = def;
+        this.defObj = defObj;
     }
 
     /**
@@ -59,20 +64,27 @@ public class SourcePriorityComparator implements Comparator
             if ((o1 instanceof FlyMineBusinessObject) && (o2 instanceof FlyMineBusinessObject)) {
                 FlyMineBusinessObject f1 = (FlyMineBusinessObject) o1;
                 FlyMineBusinessObject f2 = (FlyMineBusinessObject) o2;
-                Source source1 = def;
-                Source source2 = def;
-                source1 = DataTracking.getSource(f1, field.getName(), dataTracker);
-                source2 = DataTracking.getSource(f2, field.getName(), dataTracker);
-                if ((source1 == null) && (source2 == null)) {
-                    throw new IllegalArgumentException("Neither comparable object is in the data"
+                Source source1 = null;
+                Source source2 = null;
+                if (o1 == defObj) {
+                    source1 = def;
+                } else {
+                    source1 = DataTracking.getSource(f1, field.getName(), dataTracker);
+                }
+                if (o2 == defObj) {
+                    source2 = def;
+                } else {
+                    source2 = DataTracking.getSource(f2, field.getName(), dataTracker);
+                }
+                if (source1 == null) {
+                    throw new IllegalArgumentException("Object o1 is not in the data"
                             + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
                             + "\" for field \"" + field.getName() + "\"");
                 }
-                if (source1 == null) {
-                    source1 = def;
-                }
                 if (source2 == null) {
-                    source2 = def;
+                    throw new IllegalArgumentException("Object o2 is not in the data"
+                            + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
+                            + "\" for field \"" + field.getName() + "\"");
                 }
                 int retval = DataLoaderHelper.comparePriority(field, source1, source2);
                 if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
