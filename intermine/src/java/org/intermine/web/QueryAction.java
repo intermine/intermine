@@ -1,8 +1,5 @@
 package org.flymine.web;
 
-
-import java.lang.reflect.InvocationTargetException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +22,12 @@ import org.flymine.sql.DatabaseFactory;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
+ *
+ * @author Andrew Varley
  */
 
-public class QueryAction extends Action {
-
+public class QueryAction extends Action
+{
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -38,9 +37,10 @@ public class QueryAction extends Action {
      * already been completed.
      *
      * @param mapping The ActionMapping used to select this instance
-     * @param actionForm The optional ActionForm bean for this request (if any)
+     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
      *
      * @exception Exception if the application business logic throws
      *  an exception
