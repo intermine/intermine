@@ -15,6 +15,8 @@ import java.io.FileReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -46,6 +48,7 @@ public class PsiDataTranslator extends DataTranslator
 {
     private Item db = null;
     private Item swissProt = null;
+    private Map pubs = new HashMap();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -53,7 +56,6 @@ public class PsiDataTranslator extends DataTranslator
     public PsiDataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
         super(srcItemReader, model, ns);
     }
-
 
     /**
      * @see DataTranslator#translate
@@ -164,7 +166,7 @@ public class PsiDataTranslator extends DataTranslator
 
         Item pub = null;
         if (dbrefType != null && dbrefType.getAttribute("db").getValue().equals("pubmed")) {
-            pub = createItem(tgtNs + "Publication", "");
+            pub = getPub(exptType.getIdentifier());
             pub.addAttribute(new Attribute("pubMedId", dbrefType.getAttribute("id").getValue()));
         }
         return pub;
@@ -173,6 +175,11 @@ public class PsiDataTranslator extends DataTranslator
     private Item createProteinInteraction(Item intElType, Item tgtItem)
         throws ObjectStoreException {
         Item interaction = createItem(tgtNs + "ProteinInteraction", "");
+
+        Item experimentList = ItemHelper.convert(srcItemReader
+                                              .getItemById(intElType.getReference("experimentList").getRefId()));
+        String experimentId = experimentList.getReference("experimentRef").getRefId();
+        addReferencedItem(interaction, getPub(experimentId), "evidence", true, "", false);
 
         Item participants = ItemHelper.convert(srcItemReader
                               .getItemById(intElType.getReference("participantList").getRefId()));
@@ -193,8 +200,17 @@ public class PsiDataTranslator extends DataTranslator
         return interaction;
     }
 
+    private Item getPub(String experimentId) {
+        Item pub = (Item) pubs.get(experimentId);
+        if (pub == null) {
+            pub = createItem(tgtNs + "Publication", "");
+            pubs.put(experimentId, pub);
+        }
+        return pub;
+    }
+    
     private Item getDb() {
-        if (this.db == null) {
+        if (db == null) {
             db = createItem(tgtNs + "Database", "");
         }
         return db;
@@ -221,13 +237,12 @@ public class PsiDataTranslator extends DataTranslator
         String namespace = args[4];
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
         ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        PsiDataTranslator dt = new PsiDataTranslator(srcItemReader, model, namespace);
+        PsiDataTranslator dt = new PsiDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();
