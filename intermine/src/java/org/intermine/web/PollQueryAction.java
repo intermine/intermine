@@ -66,8 +66,14 @@ public class PollQueryAction extends InterMineAction
         QueryMonitorTimeout controller = (QueryMonitorTimeout)
                 SessionMethods.getRunningQueryController(qid, session);
         if (controller == null) {
-            recordError(new ActionMessage("errors.pollquery.badqid", qid), request);
-            return mapping.findForward("error");
+            if (session.getAttribute (Constants.QUERY_RESULTS) != null) {
+                LOG.debug("stale qid " + qid + " redirect to results");
+                return mapping.findForward("results");
+            } else {
+                LOG.debug("stale qid " + qid + " redirect to error");
+                recordError(new ActionMessage("errors.pollquery.badqid", qid), request);
+                return mapping.findForward("error");
+            }
         }
         
         // First tickle the controller to avoid timeout
@@ -105,6 +111,9 @@ public class PollQueryAction extends InterMineAction
             }
             int numdots = (controller.getTickleCount() % 3) + 1;
             request.setAttribute("dots", StringUtils.repeat(".", numdots));
+            // there are different action mappings for different kinds of
+            // query (portal, template, query builder) so we have to refresh
+            // to the correct path
             request.setAttribute("POLL_ACTION_NAME", mapping.getPath());
             return mapping.findForward("waiting");
         }
