@@ -2,16 +2,16 @@
     <section>
         <heading>System information</heading>
         <item><ulink url="http://www.flymine.org/usage">Web server usage</ulink></item>
-        <item><ulink url="http://cvs.flymine.org/cgi/viewcvs.cgi/">CVS server</ulink></item>
         <item><ulink url="http://www1.flymine.org:8080/cruisecontrol/buildresults">Automated build daemon</ulink></item>
     </section>
     <section>
         <heading>Documentation</heading>
-        <item><ulink url="/system/">System</ulink></item>
-        <item><ulink url="/developer/">Developer</ulink></item>
-        <item><ulink url="/user/">User</ulink></item>
         <item><ulink url="sysadmin/">Le coin du sysadmin</ulink></item>
         <item><ulink url="dba/">DBA</ulink></item>
+    </section>
+    <section>
+        <heading>Presentations</heading>
+        <item><ulink url="techtalks/">Technology talks</ulink></item>
     </section>
     <section>
         <heading>Design documents</heading>
