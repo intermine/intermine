@@ -362,6 +362,13 @@
       <forward name="login" path="login.page"/>
       <forward name="history" path="history.page"/>
     </action>
+    
+    <action path="/portalQuery"
+	        type="org.intermine.web.PortalQuery">
+	  <forward name="failure" path="begin.page"/>
+	  <forward name="results" path="results.page"/>
+	</action>
+          
 
     <!-- Controllers -->
     <action path="/initMain"
