@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Iterator;
 import java.util.WeakHashMap;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
@@ -355,8 +356,8 @@ public class Results extends AbstractList
     /**
      * Iterate through a list of ResultsRows converting any objects' LazyCollection fields
      * to Results objects.  The LazyCollection wraps a Query, these need to be converted to
-     * Results so that they have an ObjectStore reference and are able to run themselves.
-     *
+     * SingletonResults so that they have an ObjectStore reference and are able to run themselves.
+     * Instances of LazyReference have an ObjectStore set.
      * @param rows a list of rows (Lists) to search through
      * @throws FlyMineException if errors occur accessing object fields
      */
@@ -369,14 +370,20 @@ public class Results extends AbstractList
                 while (rowIter.hasNext()) {
                     Object obj = (Object) rowIter.next();
                     Class objClass = obj.getClass();
-                    Iterator fields = TypeUtil.getFields(objClass).iterator();
+
+                    Map fieldToGetter = TypeUtil.getFieldToGetter(objClass);
+                    Map fieldToSetter = TypeUtil.getFieldToSetter(objClass);
+                    Iterator fields = fieldToGetter.entrySet().iterator();
                     while (fields.hasNext()) {
-                        Field field = (Field) fields.next();
-                        field.setAccessible(true);
-                        Object fieldVal = field.get(obj);
+                        Map.Entry entry = (Map.Entry) fields.next();
+                        Field field = (Field) entry.getKey();
+                        Method getter = (Method) entry.getValue();
+                        Object fieldVal = getter.invoke(obj, new Object[] {});
+
                         if (fieldVal instanceof LazyCollection) {
                             Query query = ((LazyCollection) fieldVal).getQuery();
-                            field.set(obj, new SingletonResults(query, os));
+                            Method setter = (Method) fieldToSetter.get(field);
+                            setter.invoke(obj, new Object[] {new SingletonResults(query, os)});
                         } else if (fieldVal instanceof LazyReference) {
                             ((LazyReference) fieldVal).setObjectStore(os);
                         }
@@ -449,7 +456,7 @@ public class Results extends AbstractList
 
     private List columnAliases = null;
     private List columnTypes = null;
-    
+
     /**
      * Returns a list of aliases, where each alias corresponds to each element of the SELECT list
      * of the Query object. This is effectively a list of column headings for the results object.
