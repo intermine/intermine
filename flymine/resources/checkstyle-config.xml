@@ -31,7 +31,6 @@
     <module name="JavadocType">
       <property name="scope" value="package" />
       <property name="authorFormat" value="" />
-      <property name="versionFormat" value="" />
       <property name="tokens" value="INTERFACE_DEF,CLASS_DEF" />
     </module>
 
