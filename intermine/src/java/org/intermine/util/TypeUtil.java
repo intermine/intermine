@@ -135,9 +135,7 @@ public class TypeUtil
     public static Collection getFields(Class c) {
         Collection fields = new HashSet();
         do {
-            for (int i = 0; i < c.getDeclaredFields().length; i++) {
-                fields.addAll(Arrays.asList(c.getDeclaredFields()));
-            }
+            fields.addAll(Arrays.asList(c.getDeclaredFields()));
         } while ((c = c.getSuperclass()) != null);
         return fields;
     }
