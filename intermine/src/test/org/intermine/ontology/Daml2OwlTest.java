@@ -31,7 +31,7 @@ public class Daml2OwlTest extends TestCase{
             + "  </rdf:Description>\n"
             + "</rdf:RDF>\n";
         StringWriter owl = new StringWriter();
-        Daml2Owl.process(new BufferedReader(new StringReader(daml))).write(owl);
+        new Daml2Owl().process(new BufferedReader(new StringReader(daml))).write(owl);
         assertEquals(expectedOwl, owl.toString());
     }
 }

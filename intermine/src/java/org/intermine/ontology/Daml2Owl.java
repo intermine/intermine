@@ -11,10 +11,8 @@ package org.flymine.ontology;
  */
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URL;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -27,7 +25,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * The output should therefore probably be validated using an owl validator
  * @author Mark Woodbridge
 */
-public class Daml2Owl
+public class Daml2Owl extends URL2Model
 {
     protected static final String DAML_NS_PATTERN = "http://www.daml.org/2001/03/daml[+]oil#";
     protected static final String OWL_NS = "http://www.w3.org/2002/07/owl#";
@@ -35,21 +33,11 @@ public class Daml2Owl
 
     /**
      * Convert a DAML document to the corresponding OWL OntModel
-     * @param daml the input document
-     * @return the corresponding OntModel
-     * @throws IOException if something goes wrong in accessing the input
-     */
-    public static OntModel process(URL daml) throws IOException {
-        return process(new BufferedReader(new InputStreamReader(daml.openStream())));
-    }
-
-    /**
-     * Convert a DAML document to the corresponding OWL OntModel
      * @param in the input document reader
      * @return the corresponding OntModel
      * @throws IOException if something goes wrong in accessing the input
      */
-    protected static OntModel process(BufferedReader in) throws IOException {
+    protected OntModel process(BufferedReader in) throws IOException {
         StringBuffer sb = new StringBuffer();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             line = line.replaceAll("xmlns:daml=\"" + DAML_NS_PATTERN + "\"",
