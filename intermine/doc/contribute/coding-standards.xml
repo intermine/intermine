@@ -16,13 +16,17 @@
 <sect1>
 <title>FlyMine coding standards</title>
 
-<para>This document presents the standards to which all code in the
-FlyMine project should adhere. These coding standards are intended to
-ensure that all code is understandable and maintainable by everyone,
-and that the whole project remains robust and buildable by anyone. All
-code should follow the <ulink
+<para>This document presents the standards to which all Java code in
+the FlyMine project should adhere. These coding standards are intended
+to ensure that all code is understandable and maintainable by
+everyone, and that the whole project remains robust and buildable by
+anyone. All code should follow the <ulink
 url="http://java.sun.com/docs/codeconv/">Sun Java coding
 guidelines</ulink>, but with the following taking precedence.</para>
+
+<para>Many of these standards are enforced using the <ulink
+url="http://checkstyle.sourceforge.net">Checkstyle</ulink>
+software.</para>
 
 <sect2>
 <title>Variable, method and class names</title>
@@ -85,17 +89,16 @@ method.</listitem>
 indent of 4 spaces.</listitem>
 
 <listitem>Open curly braces to appear on same line as preceding code,
-with a gap of one space. The exception to this is after a class
-definition, where the open curly brace should be on the next
-line.</listitem>
+with a gap of one space.</listitem>
 
-<listitem>Close curly braces to appear on new line by
-themselves.</listitem>
+<listitem>Close curly braces to appear on new line, by themselves
+unless follwed by <function>else</function>,
+<function>catch</function>, <function>finally</function> etc.</listitem>
 
 <listitem>Leave one space around operators (eg. <synopsis>if (a ==
 16)</synopsis> and not <synopsis>if (a==16)</synopsis>).</listitem>
 
-<listitem>No line should be longer than 80 characters. Split onto
+<listitem>No line should be longer than 100 characters. Split onto
 multiple lines if necessary.</listitem>
 
 <listitem>Make liberal use of brackets in expressions, even when not
