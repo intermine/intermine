@@ -26,8 +26,6 @@ public class QueryBuildForm extends ActionForm
 {
     // field to which a constraint is to be added
     protected String newFieldName;
-    // map from constraint 'name' (fieldname#index) to field name
-    protected Map fieldNames = new HashMap();
     // map from constraint name to constaintOp index
     protected Map fieldOps = new HashMap();
     // map from constraint name to constraint value (a string)
@@ -47,44 +45,6 @@ public class QueryBuildForm extends ActionForm
      */
     public String getNewFieldName() {
         return newFieldName;
-    }
-
-    /**
-     * Set the fieldNames map
-     *
-     * @param fieldNames the map
-     */
-    public void setFieldNames(Map fieldNames) {
-        this.fieldNames = fieldNames;
-    }
-
-    /**
-     * Get the fieldNames map
-     *
-     * @return the fieldNames map
-     */
-    public Map getFieldNames() {
-        return fieldNames;
-    }
-
-    /**
-     * Set a value in the fieldNames map
-     *
-     * @param key the constraint name
-     * @param value value to set
-     */
-    public void setFieldName(String key, Object value) {
-        fieldNames.put(key, value);
-    }
-
-    /**
-     * Get the value from the fieldNames map
-     *
-     * @param key the constraint name
-     * @return the field value
-     */
-    public Object getFieldName(String key) {
-        return fieldNames.get(key);
     }
 
     /**
