@@ -579,6 +579,7 @@ public class PrecomputeTask extends Task
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
 
+        // fields should be added straight after the corresponding class for performance reasons
         if (selectAllFields) {
             List fieldNames = getAttributeFieldNames(subjectClass);
             addFieldsToQuery(q, qcSub, fieldNames);
