@@ -63,7 +63,7 @@ public class SaveQueryAction extends Action
         Query query = (Query) session.getAttribute(Constants.QUERY);
 
         if (query == null) {
-            return mapping.findForward("buildquery");
+            return mapping.findForward("results");
         }
 
         Query clonedQuery = QueryCloner.cloneQuery(query);
@@ -88,7 +88,7 @@ public class SaveQueryAction extends Action
         session.removeAttribute("ops");
         session.removeAttribute("constraints");
 
-        return mapping.findForward("buildquery");
+        return mapping.findForward("results");
     }
 }
 

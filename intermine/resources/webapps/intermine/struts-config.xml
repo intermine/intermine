@@ -134,7 +134,7 @@
     <action path="/saveQuery"
             type="org.flymine.web.SaveQueryAction"
             name="saveQueryForm">
-      <forward name="buildquery" path="query.page"/>
+      <forward name="results" path="results.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
