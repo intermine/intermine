@@ -13,6 +13,7 @@ package org.intermine.web.results;
 import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
@@ -30,7 +31,7 @@ public class PagedResults implements PagedTable
     private Results results;
 
     private List columns = new LinkedList();
-    private int start = 0;
+    private int startIndex = 0;
     private int pageSize = 10;
 
     /**
@@ -61,44 +62,34 @@ public class PagedResults implements PagedTable
     }
 
     /**
-     * Get the list of column configurations
-     *
-     * @return the List of columns in the order they are to be displayed
+     * @see PagedTable#getColumns
      */
     public List getColumns() {
         return Collections.unmodifiableList(columns);
     }
 
     /**
-     * Return the number of visible columns.  Used by JSP pages.
-     * @return the number of visible columns.
+     * @see PagedTable#getVisibleColumnCount
      */
     public int getVisibleColumnCount() {
         int count = 0;
-
-        for (int i = 0; i < columns.size(); i++) {
-            Column thisColumn = (Column) columns.get(i);
-            if (thisColumn.isVisible())  {
+        for (Iterator i = columns.iterator(); i.hasNext();) {
+            if (((Column) i.next()).isVisible())  {
                 count++;
             }
         }
-
         return count;
     }
 
     /**
-     * Return the width (number of columns) of the table.  Used by the JSP because
-     * getColumns().size() isn't possible in JSTL.
-     * @return the table width
+     * @see PagedTable#getColumnCount
      */
-    public int getTableWidth() {
-        return getColumns().size();
+    public int getColumnCount() {
+        return columns.size();
     }
 
     /**
-     * Move a column left
-     *
-     * @param index the index of the column to move
+     * @see PagedTable#moveColumnLeft
      */
     public void moveColumnLeft(int index) {
         if (index > 0 && index <= columns.size() - 1) {
@@ -107,9 +98,7 @@ public class PagedResults implements PagedTable
     }
 
     /**
-     * Move a column right
-     *
-     * @param index the index of the column to move
+     * @see PagedTable#moveColumnRight
      */
     public void moveColumnRight(int index) {
         if (index >= 0 && index < columns.size() - 1) {
@@ -118,119 +107,94 @@ public class PagedResults implements PagedTable
     }
 
     /**
-     * Get the start row of this table
-     *
-     * @return the start row
+     * @see PagedTable#getStartIndex
      */
-    public int getStart() {
-        return this.start;
+    public int getStartIndex() {
+        return this.startIndex;
     }
 
     /**
-     * Set the start row of this table
-     *
-     * @param start the start row
+     * @see PagedTable#setStartIndex
      */
-    public void setStart(int start) {
-        this.start = start;
+    public void setStartIndex(int startIndex) {
+        this.startIndex = startIndex;
     }
 
     /**
-     * Get the page size of this table
-     *
-     * @return the page size
+     * @see PagedTable#getPageSize
      */
     public int getPageSize() {
-        return this.pageSize;
+        return pageSize;
     }
 
     /**
-     * Set the page size of this table
-     *
-     * @param pageSize the page size
+     * @see PagedTable#setPageSize
      */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
 
     /**
-     * Get the end row of this table
-     *
-     * @return the end row
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @see PagedTable#getEnd
      */
-    public int getEnd() throws ObjectStoreException {
-        int size = getExactSize();
-        int end = this.start + this.pageSize - 1;
-        if ((end + 1) > size) {
-            end = size - 1;
+    public int getEndIndex() {
+        int end = startIndex + pageSize - 1;
+        if (!isSizeEstimate() && (end + 1 > getSize())) {
+            return getSize() - 1;
+        } else {
+            return end;
         }
-        return end;
     }
 
-
     /**
-     * Get the exact size of the underlying object.
-     *
-     * @return the exact size of the underlying Results object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @see PagedTable#isPreviousRows
      */
-    public int getExactSize() throws ObjectStoreException {
-        return results.size();
+    public boolean isFirstPage() {
+        return (startIndex == 0);
     }
 
     /**
-     * Get the approximate size of the underlying Results object
-     *
-     * @return the approximate size of the underlying Results object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @see PagedTable#isMoreRows
      */
-    public int getEstimatedSize() throws ObjectStoreException {
-        // Force the underlying results to check that the end is not
-        // within this page, or at the end of this page. If it is, the
-        // results object will now know the exact size.
-        try {
-            results.range(start, start + pageSize);
-        } catch (IndexOutOfBoundsException e) {
-        }
-
-        return results.getInfo().getRows();
+    public boolean isLastPage() {
+        return (!isSizeEstimate() && getEndIndex() == getSize() - 1);
     }
 
     /**
-     * Gets whether or not there could be any previous rows
-     *
-     * @return true if the "previous" button should be shown
-     */
-    public boolean isPreviousRows() {
-        return (start > 0);
-    }
-
-    /**
-     * Gets whether or not there could be more rows
-     *
-     * @return true if the "next" button should be shown
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public boolean isMoreRows() throws ObjectStoreException {
-        int size = getEstimatedSize();
-        if (!(results.getInfo().getStatus() == ResultsInfo.SIZE)) {
-            // If we were on the end, size would not be an estimate
-            return true;
-        }
-        if (size == (getEnd() + 1)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Return the rows of the table as a List of Lists.
-     *
-     * @return the rows of the table
+     * @see PagedTable#getList
      */
     public List getList() {
         return results;
+    }
+
+    /**
+     * @see PagedTable#getSize
+     */
+    public int getSize() {
+        //this ensures that if we're on the last page then we get an exact count
+        try {
+            results.range(startIndex, startIndex + pageSize);
+        } catch (IndexOutOfBoundsException e) {
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            return results.getInfo().getRows();
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @see PagedTable#isSizeEstimate
+     */
+    public boolean isSizeEstimate() {
+        try {
+            return results.getInfo().getStatus() != ResultsInfo.SIZE;
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

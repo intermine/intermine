@@ -20,7 +20,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.Constants;
 
 /**
@@ -48,10 +47,7 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int prevStart = pt.getStart();
-        int pageSize = pt.getPageSize();
-
-        pt.setStart(prevStart + pageSize);
+        pt.setStartIndex(pt.getStartIndex() + pt.getPageSize());
 
         return mapping.findForward("results");
     }
@@ -73,15 +69,7 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int prevStart = pt.getStart();
-        int pageSize = pt.getPageSize();
-
-        int newStart = prevStart - pageSize;
-        if (newStart < 0) {
-            newStart = 0;
-        }
-
-        pt.setStart(newStart);
+        pt.setStartIndex(pt.getStartIndex() - pt.getPageSize());
 
         return mapping.findForward("results");
     }
@@ -98,12 +86,12 @@ public class ChangeResultsAction extends DispatchAction
      * @exception ServletException if a servlet error occurs
      */
     public ActionForward first(ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request, HttpServletResponse response)
+                               HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        pt.setStart(0);
+        pt.setStartIndex(0);
 
         return mapping.findForward("results");
     }
@@ -126,19 +114,7 @@ public class ChangeResultsAction extends DispatchAction
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         int pageSize = pt.getPageSize();
-
-        try {
-            // Here we have to force the results to give us an exact size
-            int size = pt.getExactSize();
-            int start = ((size - 1) / pageSize) * pageSize;
-
-            if (start < 0) {
-                start = 0;
-            }
-            pt.setStart(start);
-        } catch (ObjectStoreException e) {
-            throw new ServletException("exception while getting results size", e);
-        }
+        pt.setStartIndex(((pt.getSize() - 1) / pageSize) * pageSize);
 
         return mapping.findForward("results");
     }

@@ -10,8 +10,6 @@ package org.intermine.web.results;
  *
  */
 
-import org.intermine.objectstore.ObjectStoreException;
-
 import java.util.List;
 
 /**
@@ -40,7 +38,7 @@ public interface PagedTable
      * getColumns().size() isn't possible in JSTL.
      * @return the table width
      */
-    public int getTableWidth();
+    public int getColumnCount();
 
     /**
      * Move a column left
@@ -57,73 +55,53 @@ public interface PagedTable
     public void moveColumnRight(int index);
 
     /**
-     * Get the start row of this table
+     * Get the start row of the current page
      *
      * @return the start row
      */
-    public int getStart();
+    public int getStartIndex();
 
     /**
-     * Set the start row of this table
+     * Set the start row of the current page
      *
-     * @param start the start row
+     * @param startIndex the start row
      */
-    public void setStart(int start);
+    public void setStartIndex(int startIndex);
 
     /**
-     * Get the page size of this table
+     * Get the end row of the current page
+     *
+     * @return the end row
+     */
+    public int getEndIndex();
+
+    /**
+     * Get the page size of the current page
      *
      * @return the page size
      */
     public int getPageSize();
 
     /**
-     * Set the page size of this table
+     * Set the page size of the table
      *
      * @param pageSize the page size
      */
     public void setPageSize(int pageSize);
 
     /**
-     * Get the end row of this table
-     *
-     * @return the end row
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getEnd() throws ObjectStoreException;
-
-    /**
-     * Get the exact size of the underlying object
-     * NOTE: this may take a long time
-     *
-     * @return the size of the underlying object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getExactSize() throws ObjectStoreException;
-
-    /**
-     * Get the approximate size of the underlying object.
-     * NOTE: should be fast.
-     *
-     * @return the size of the underlying object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getEstimatedSize() throws ObjectStoreException;
-
-    /**
      * Gets whether or not there could be any previous rows
      *
      * @return true if the "previous" button should be shown
      */
-    public boolean isPreviousRows();
+    public boolean isFirstPage();
 
     /**
      * Gets whether or not there could be more rows
      *
      * @return true if the "next" button should be shown
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public boolean isMoreRows() throws ObjectStoreException;
+    public boolean isLastPage();
 
     /**
      * Return the rows of the table as a List of Lists.
@@ -131,4 +109,16 @@ public interface PagedTable
      * @return the rows of the table
      */
     public List getList();
+
+    /**
+     * Get the (possibly estimated) number of rows of this table
+     * @return the number of rows
+     */
+    public int getSize();
+
+    /**
+     * Check whether the result of getSize is an estimate
+     * @return true if the size is an estimate
+     */
+    public boolean isSizeEstimate();
 }

@@ -94,14 +94,14 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         form.setPageSize("25");
         setActionForm(form);
 
-        pr.setStart(0);
+        pr.setStartIndex(0);
         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(0, pr.getStart());
+        assertEquals(0, pr.getStartIndex());
         assertEquals(25, pr.getPageSize());
     }
 
@@ -113,14 +113,14 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         form.setPageSize("10");
         setActionForm(form);
 
-        pr.setStart(12);
+        pr.setStartIndex(12);
         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(10, pr.getStart());
+        assertEquals(10, pr.getStartIndex());
         assertEquals(10, pr.getPageSize());
     }
 

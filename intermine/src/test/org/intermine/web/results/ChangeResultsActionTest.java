@@ -57,13 +57,13 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
-        pr.setStart(0);
+        pr.setStartIndex(0);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(10, pr.getStart());
+        assertEquals(10, pr.getStartIndex());
     }
 
     public void testPrevious() throws Exception {
@@ -72,13 +72,13 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
-        pr.setStart(10);
+        pr.setStartIndex(10);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(0, pr.getStart());
+        assertEquals(0, pr.getStartIndex());
     }
 
     public void testFirst() throws Exception {
@@ -87,13 +87,13 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
-        pr.setStart(10);
+        pr.setStartIndex(10);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(0, pr.getStart());
+        assertEquals(0, pr.getStartIndex());
     }
 
     public void testLast() throws Exception {
@@ -102,13 +102,13 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, pr);
-        pr.setStart(0);
+        pr.setStartIndex(0);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(10, pr.getStart());
+        assertEquals(10, pr.getStartIndex());
     }
 
     public void testHide() throws Exception {

@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.intermine.objectstore.ObjectStoreException;
-
 /**
  * A pageable and configurable table created from a Collection.
  *
@@ -25,9 +23,9 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class PagedCollection implements PagedTable
 {
-    private List columns;
+    private List columns = new ArrayList();
     private Column column;
-    private int start = 0;
+    private int startIndex = 0;
     private int pageSize = 10;
 
     private Collection collection;
@@ -55,22 +53,18 @@ public class PagedCollection implements PagedTable
         column.setVisible(true);
         column.setName(name);
 
-        columns = new ArrayList();
         columns.add(column);
     }
 
     /**
-     * Get the list of column configurations
-     *
-     * @return the List of columns in the order they are to be displayed
+     * @see PagedTable#getColumns
      */
     public List getColumns() {
         return columns;
     }
 
     /**
-     * Return the number of visible columns.  Used by JSP pages.
-     * @return the number of visible columns.
+     * @see PagedTable#getVisibleColumnCount
      */
     public int getVisibleColumnCount() {
         if (column.isVisible()) {
@@ -79,13 +73,11 @@ public class PagedCollection implements PagedTable
             return 0;
         }
     }
-    
+
     /**
-     * Return the width (number of columns) of the table.  Used by the JSP because
-     * getColumns().size() isn't possible in JSTL.
-     * @return the table width
+     * @see PagedTable#getColumnCount
      */
-    public int getTableWidth() {
+    public int getColumnCount() {
         return 1;
     }
 
@@ -98,112 +90,83 @@ public class PagedCollection implements PagedTable
 
     /**
      * @see PagedTable#moveColumnRight
-     */
+     */   
     public void moveColumnRight(int index) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Get the start row of this table
-     *
-     * @return the start row
+     * @see PagedTable#getStartIndex
      */
-    public int getStart() {
-        return this.start;
+    public int getStartIndex() {
+        return startIndex;
     }
 
     /**
-     * Set the start row of this table
-     *
-     * @param start the start row
+     * @see PagedTable#setStartIndex
      */
-    public void setStart(int start) {
-        this.start = start;
+    public void setStartIndex(int startIndex) {
+        this.startIndex = startIndex;
     }
 
     /**
-     * Get the page size of this table
-     *
-     * @return the page size
+     * @see PagedTable#getEndIndex
+     */
+    public int getEndIndex() {
+        int end = startIndex + pageSize - 1;
+        if (end + 1 > getSize()) {
+            return getSize() - 1;
+        } else {
+            return end;
+        }
+    }
+
+    /**
+     * @see PagedTable#getPageSize
      */
     public int getPageSize() {
-        return this.pageSize;
+        return pageSize;
     }
 
     /**
-     * Set the page size of this table
-     *
-     * @param pageSize the page size
+     * @see PagedTable#setPageSize
      */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
 
     /**
-     * Get the end row of this table
-     *
-     * @return the end row
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getEnd() throws ObjectStoreException {
-        int size = getExactSize();
-        int end = this.start + this.pageSize - 1;
-        if ((end + 1) > size) {
-            end = size - 1;
-        }
-        return end;
+     * @see PagedTable#isFirstPage
+     */  
+    public boolean isFirstPage() {
+        return (startIndex == 0);
     }
 
     /**
-     * Get the exact size of the underlying object.
-     *
-     * @return the size of the underlying object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getExactSize() throws ObjectStoreException {
-        return collection.size();
+     * @see PagedTable#isLastPage
+     */ 
+    public boolean isLastPage() {
+        return (getEndIndex() == getSize() - 1);
     }
 
     /**
-     * Get the approximate size of the underlying collection object (returns the same as
-     * getExactSize() for this implementation of PagedTable)
-     *
-     * @return the size of the underlying collection object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getEstimatedSize() throws ObjectStoreException {
-        return collection.size();
-    }
-
-    /**
-     * Gets whether or not there could be any previous rows
-     *
-     * @return true if the "previous" button should be shown
-     */
-    public boolean isPreviousRows() {
-        return (start > 0);
-    }
-
-    /**
-     * Gets whether or not there could be more rows
-     *
-     * @return true if the "next" button should be shown
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public boolean isMoreRows() throws ObjectStoreException {
-        int size = getExactSize();
-        if (size == (getEnd() + 1)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Return the rows of the table as a List of Lists.
-     *
-     * @return the rows of the table
+     * @see PagedTable#getList
      */
     public List getList() {
         return collectionAsList;
+    }
+
+    /**
+     * @see PagedTable#getSize
+     */
+    public int getSize() {
+        return collection.size();
+    }
+
+    /**
+     * @see PagedTable#isSizeEstimate
+     */
+    public boolean isSizeEstimate() {
+        return false;
     }
 }

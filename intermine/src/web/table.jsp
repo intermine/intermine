@@ -24,9 +24,19 @@ function unselectColumnCheckbox(column) {
 }
 </script>
 
+<c:out value="columns: ${RESULTS_TABLE.columns}"/><br/>
+<c:out value="visibleColumnCount: ${RESULTS_TABLE.visibleColumnCount}"/><br/>
+<c:out value="columnCount: ${RESULTS_TABLE.columnCount}"/><br/>
+<c:out value="startIndex: ${RESULTS_TABLE.startIndex}"/><br/>
+<c:out value="endIndex: ${RESULTS_TABLE.endIndex}"/><br/>
+<c:out value="pageSize: ${RESULTS_TABLE.pageSize}"/><br/>
+<c:out value="firstPage: ${RESULTS_TABLE.firstPage}"/><br/>
+<c:out value="lastPage: ${RESULTS_TABLE.lastPage}"/><br/>
+<c:out value="size: ${RESULTS_TABLE.size}"/><br/>
+<c:out value="sizeEstimate: ${RESULTS_TABLE.sizeEstimate}"/><br/><br/>
+
 <html:form action="/changeResultsSize" styleId="changeResultsForm">
 
-  <%-- The following should probably be turned into a tag at some stage --%>
   <table class="results" cellspacing="0" width="1%">
     <%-- The headers --%>
     <tr>
@@ -82,9 +92,9 @@ function unselectColumnCheckbox(column) {
     <%-- The data --%>
 
     <%-- Row --%>
-    <c:if test="${RESULTS_TABLE.estimatedSize > 0}">
+    <c:if test="${RESULTS_TABLE.size > 0}">
       <c:forEach var="row" items="${RESULTS_TABLE.list}" varStatus="status"
-                 begin="${RESULTS_TABLE.start}" end="${RESULTS_TABLE.end}">
+                 begin="${RESULTS_TABLE.startIndex}" end="${RESULTS_TABLE.endIndex}">
 
         <c:set var="rowClass">
           <c:choose>
@@ -102,7 +112,7 @@ function unselectColumnCheckbox(column) {
                        column will only have the same type if we are showing a
                        collection.  Collections will have only one column so
                        don't do the check if there is only one column --%>
-                  <c:when test="${RESULTS_TABLE.tableWidth == 1 ||
+                  <c:when test="${RESULTS_TABLE.columnCount == 1 ||
                                   ((status.count == 1) ||
                                    (row[status2.index] != prevrow[status2.index]))}">
                     <%-- the checkbox to select this object --%>
@@ -138,43 +148,43 @@ function unselectColumnCheckbox(column) {
 
   <%-- "Displaying xxx to xxx of xxx rows" messages --%>
   <c:choose>
-    <c:when test="${RESULTS_TABLE.estimatedSize == 0}">
+    <c:when test="${RESULTS_TABLE.size == 0}">
       <fmt:message key="results.pageinfo.empty"/>
     </c:when>
     <c:when test="${RESULTS_TABLE.sizeEstimate}">
       <fmt:message key="results.pageinfo.estimate">
-        <fmt:param value="${RESULTS_TABLE.start+1}"/>
-        <fmt:param value="${RESULTS_TABLE.end+1}"/>
-        <fmt:param value="${RESULTS_TABLE.estimatedSize}"/>
+        <fmt:param value="${RESULTS_TABLE.startIndex+1}"/>
+        <fmt:param value="${RESULTS_TABLE.endIndex+1}"/>
+        <fmt:param value="${RESULTS_TABLE.size}"/>
       </fmt:message>
     </c:when>
     <c:otherwise>
       <fmt:message key="results.pageinfo.exact">
-        <fmt:param value="${RESULTS_TABLE.start+1}"/>
-        <fmt:param value="${RESULTS_TABLE.end+1}"/>
-        <fmt:param value="${RESULTS_TABLE.exactSize}"/>
+        <fmt:param value="${RESULTS_TABLE.startIndex+1}"/>
+        <fmt:param value="${RESULTS_TABLE.endIndex+1}"/>
+        <fmt:param value="${RESULTS_TABLE.size}"/>
       </fmt:message>
     </c:otherwise>
   </c:choose>
   <br/>
 
   <%-- Paging controls --%>
-  <c:if test="${RESULTS_TABLE.start > 0}">
+  <c:if test="${RESULTS_TABLE.startIndex > 0}">
     <html:link action="/changeResults?method=first">
       <fmt:message key="results.first"/>
     </html:link>
   </c:if>
-  <c:if test="${RESULTS_TABLE.previousRows}">
+  <c:if test="${!RESULTS_TABLE.firstPage}">
     <html:link action="/changeResults?method=previous">
       <fmt:message key="results.previous"/>
     </html:link>
   </c:if>
-  <c:if test="${RESULTS_TABLE.moreRows}">
+  <c:if test="${!RESULTS_TABLE.lastPage}">
     <html:link action="/changeResults?method=next">
       <fmt:message key="results.next"/>
     </html:link>
   </c:if>
-  <c:if test="${RESULTS_TABLE.sizeEstimate || (RESULTS_TABLE.end != RESULTS_TABLE.exactSize - 1)}">
+  <c:if test="${!RESULTS_TABLE.sizeEstimate && !RESULTS_TABLE.lastPage}">
     <html:link action="/changeResults?method=last">
       <fmt:message key="results.last"/>
     </html:link>
@@ -197,7 +207,7 @@ function unselectColumnCheckbox(column) {
 
   <%-- Save bag controls --%>
   <br/>
-  <c:if test="${RESULTS_TABLE.estimatedSize > 0}">
+  <c:if test="${RESULTS_TABLE.size > 0}">
     <c:if test="${!empty SAVED_BAGS}">
       <html:select property="bagName">
 

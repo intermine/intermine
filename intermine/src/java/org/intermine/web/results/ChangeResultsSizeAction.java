@@ -90,7 +90,7 @@ public class ChangeResultsSizeAction extends Action
         pt.setPageSize(Integer.parseInt(changeResultsForm.getPageSize()));
 
         // Need to set the start so that we are on the page containing the current start item
-        pt.setStart((pt.getStart() / pt.getPageSize()) * pt.getPageSize());
+        pt.setStartIndex((pt.getStartIndex() / pt.getPageSize()) * pt.getPageSize());
 
         return mapping.findForward("results");
     }
