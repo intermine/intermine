@@ -3,7 +3,10 @@ package org.flymine.objectstore.ojb;
 import org.apache.ojb.broker.PBKey;
 import org.apache.ojb.broker.ta.PersistenceBrokerFactoryIF;
 import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
+
+import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.flymine.objectstore.query.Query;
 
@@ -35,9 +38,17 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
      * @param query the ObjectStore query
      * @param start start index
      * @param end end index
-     * @return a collection of ResultsRows
+     * @return a list of ResultsRows
      */
     public List execute(Query query, int start, int end) {
-        return new java.util.ArrayList();
+        List results = new ArrayList();
+        //TODO pass start and end thru somehow
+        Iterator iter = new MultiObjectRsIterator(query, this);
+        while (iter.hasNext()) { // if iterator is of the right length...
+            //TODO uncomment this
+            //results.add(iter.next());
+            results.add(new Object[] {});
+        }
+        return results;
     }
 }
