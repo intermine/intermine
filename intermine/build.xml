@@ -1015,7 +1015,20 @@
     </ant>
 
     <copy todir="${build.tmp}" file="${build.model}/testmodel/objectstoresummary.properties"/>
+
+    <filter token="SITE_PREFIX" value="${www.location}"/>
+    <filter token="HELP_LOCATION" value="${www.help.location}"/>
+    <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
+    <copy todir="${build.tmp}" filtering="true"
+          file="${resources}/webapps/intermine/global.web.properties"
+          overwrite="true" verbose="true"/>
+    <concat destfile="${build.tmp}/web.properties">
+      <fileset file="${model}/testmodel/resources/web/web.properties" />
+      <fileset file="${build.properties.local}" />
+    </concat>
     <patternset id="objectstore-summary-properties">
+      <include name="global.web.properties"/>
+      <include name="web.properties"/>
       <include name="objectstoresummary.properties"/>
     </patternset>
     <ant antfile="build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
