@@ -27,21 +27,21 @@ public class ItemHelper
     */
     public static org.intermine.model.fulldata.Item convert(Item item) {
         org.intermine.model.fulldata.Item newItem = new org.intermine.model.fulldata.Item();
-        
+
         newItem.setIdentifier(item.getIdentifier());
         newItem.setClassName(item.getClassName());
         newItem.setImplementations(item.getImplementations());
-        
+
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
             Attribute attr = (Attribute) i.next();
-            org.intermine.model.fulldata.Attribute newAttr 
+            org.intermine.model.fulldata.Attribute newAttr
                 = new org.intermine.model.fulldata.Attribute();
             newAttr.setName(attr.getName());
             newAttr.setValue(attr.getValue());
             newItem.getAttributes().add(newAttr);
             newAttr.setItem(newItem);
         }
-        
+
         for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
             org.intermine.model.fulldata.Reference newRef
@@ -64,7 +64,7 @@ public class ItemHelper
 
         return newItem;
     }
-    
+
     /**
     * Convert a data model item to an XML one
     * @param item the data model Item
@@ -75,7 +75,7 @@ public class ItemHelper
         newItem.setIdentifier(item.getIdentifier());
         newItem.setClassName(item.getClassName());
         newItem.setImplementations(item.getImplementations());
-        
+
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
             org.intermine.model.fulldata.Attribute attr =
                 (org.intermine.model.fulldata.Attribute) i.next();
@@ -103,5 +103,72 @@ public class ItemHelper
         }
 
         return newItem;
+    }
+
+
+    /**
+     * org.intermine.model.fulldata.Item is auto-generated code and does not have a sensible
+     * constructor.  Define one here.
+     * @param identifier identifier of Item
+     * @param className classname of Item
+     * @param implementations space separated string of fully qualified class/interface names
+     * @return the new Item
+     */
+    public static org.intermine.model.fulldata.Item createFulldataItem(String identifier,
+                                                                       String className,
+                                                                       String implementations) {
+        org.intermine.model.fulldata.Item item = new org.intermine.model.fulldata.Item();
+        item.setIdentifier(identifier);
+        item.setClassName(className);
+        item.setImplementations(implementations);
+        return item;
+    }
+
+    /**
+     * org.intermine.model.fulldata.Attribute is auto-generated code and does not have a sensible
+     * constructor.  Define one here.
+     * @param name field name of the attribute
+     * @param value the attribute value
+     * @return the new Attribute
+     */
+    public static org.intermine.model.fulldata.Attribute createFulldataAttribute(String name,
+                                                                                 String value) {
+        org.intermine.model.fulldata.Attribute att =
+            new org.intermine.model.fulldata.Attribute();
+        att.setName(name);
+        att.setValue(value);
+        return att;
+    }
+
+    /**
+     * org.intermine.model.fulldata.Reference is auto-generated code and does not have a sensible
+     * constructor.  Define one here.
+     * @param name field name of the reference
+     * @param refid identifer of referenced Item
+     * @return the new Reference
+     */
+    public static org.intermine.model.fulldata.Reference createFulldataReference(String name,
+                                                                                 String refid) {
+        org.intermine.model.fulldata.Reference ref =
+            new org.intermine.model.fulldata.Reference();
+        ref.setName(name);
+        ref.setRefId(refid);
+        return ref;
+    }
+
+    /**
+     * org.intermine.model.fulldata.ReferenceList is auto-generated code and does not have a
+     * sensible constructor.  Define one here.
+     * @param name field name of the collection
+     * @param refids space separated string of identifiers in collection
+     * @return the new ReferenceList
+     */
+    public static org.intermine.model.fulldata.ReferenceList createFulldataReferenceList(
+                                                                String name, String refids) {
+        org.intermine.model.fulldata.ReferenceList col =
+            new org.intermine.model.fulldata.ReferenceList();
+        col.setName(name);
+        col.setRefIds(refids);
+        return col;
     }
 }
