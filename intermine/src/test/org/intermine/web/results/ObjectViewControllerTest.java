@@ -47,6 +47,10 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         ((ObjectStoreDummyImpl) os).setModel(Model.getInstanceByName("testmodel"));
     }
 
+    public void tearDown() throws Exception {
+        getActionServlet().destroy();
+    }
+
     public ObjectViewControllerTest(String arg) {
         super(arg);
     }

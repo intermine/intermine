@@ -25,6 +25,10 @@ public class TreeControllerTest extends MockStrutsTestCase
         super(arg1);
     }
 
+    public void tearDown() throws Exception {
+         getActionServlet().destroy();
+    }
+
     public void testExecute() throws Exception {
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());

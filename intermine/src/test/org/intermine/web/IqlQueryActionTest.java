@@ -25,7 +25,7 @@ public class IqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void tearDown() throws Exception {
-        super.tearDown();
+         getActionServlet().destroy();
     }
 
     public void testSubmitSuccessfulQuery() {

@@ -26,6 +26,11 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         super(arg);
     }
 
+
+    public void tearDown() throws Exception {
+         getActionServlet().destroy();
+    }
+
     public void testLoad() throws Exception {
         addRequestParameter("method", "load");
         addRequestParameter("name", "employeesWithOldManagers");

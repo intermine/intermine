@@ -21,6 +21,10 @@ public class TreeActionTest extends MockStrutsTestCase
         super(arg1);
     }
 
+    public void tearDown() throws Exception {
+         getActionServlet().destroy();
+    }
+
     public void testExpand() throws Exception {
         Set openClasses = new HashSet();
         openClasses.add("org.intermine.model.testmodel.Thing");

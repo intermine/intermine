@@ -48,6 +48,13 @@ public class ProfileManager
     }
 
     /**
+     * Close this ProfileManager
+     */
+    public void close() {
+        osw.close();
+    }
+    
+    /**
      * Check whether a user already has a Profile
      * @param username the username
      * @return true if a profile exists
