@@ -20,7 +20,7 @@ import java.util.HashSet;
  * Static methods to create Lists of Constraint objects in a query and
  * Constraints in a query relating to a given QueryClass, plus helper methods
  * for dealing with Constraints.
- *
+ * <br>
  * 'left' and 'right' arguments for each constraint type are defined as follows:
  * SimpleConstraint: left = arg1, right = arg2 (both QueryEvaluables)
  * ClassConstraint: left = QueryClass arg1, right = a QueryClass or example object arg2
@@ -30,7 +30,8 @@ import java.util.HashSet;
  *                            the subquery
  *                     right = the query
  * ConstraintSet: N/A
- *
+ * <br>
+ * 
  * @author Matthew Wakeling
  * @author Richard Smith
  */
