@@ -83,10 +83,6 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
         task.precomputeAll(os, oss);
         
-        for ( int i = 0 ; i < task.queries.size ()  ; ++i ) {
-            System.err.println (task.queries.get(i));
-        }
-
         assertEquals(118, task.queries.size());
 
         String[] expectedQueries = new String[] {
