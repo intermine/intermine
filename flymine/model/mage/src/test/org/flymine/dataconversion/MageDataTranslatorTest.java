@@ -290,6 +290,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem.addAttribute(new Attribute("type","Signal st dev Cy3"));
         expectedItem.addAttribute(new Attribute("scale","linear_scale"));
         expectedItem.addAttribute(new Attribute("isBackground","false"));
+        expectedItem.addReference(new Reference("analysis","-1_1"));
+
 
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
 
@@ -391,35 +393,38 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expectedItem2 = createItem(tgtNs+"Synonym", "2_15", "");
         expectedItem2.addAttribute(new Attribute("type", "accession"));
         expectedItem2.addAttribute(new Attribute("value", "AY069331"));
-        expectedItem2.addReference(new Reference("source", "-1_2"));//"3_9"));
+        expectedItem2.addReference(new Reference("source", "-1_3"));
         expectedItem2.addReference(new Reference("subject", "0_11"));
 
         Item expectedItem3 = createItem(tgtNs+"Synonym", "2_16", "");
         expectedItem3.addAttribute(new Attribute("type", "accession"));
         expectedItem3.addAttribute(new Attribute("value", "AA201663"));
-        expectedItem3.addReference(new Reference("source",  "-1_2"));
+        expectedItem3.addReference(new Reference("source",  "-1_3"));
         expectedItem3.addReference(new Reference("subject", "0_11"));
 
         Item expectedItem4 = createItem(tgtNs+"Synonym", "2_17", "");
         expectedItem4.addAttribute(new Attribute("type", "accession"));
         expectedItem4.addAttribute(new Attribute("value", "AW941561"));
-        expectedItem4.addReference(new Reference("source",  "-1_2"));
+        expectedItem4.addReference(new Reference("source",  "-1_3"));
         expectedItem4.addReference(new Reference("subject", "0_11"));
 
         Item expectedItem5 = createItem(tgtNs+"DagTerm", "1_13", "");
         expectedItem5.addAttribute(new Attribute("name", "cDNA_clone"));
 
-        Item expectedItem7 = createItem(tgtNs+"Database",  "-1_2", "");
+        Item expectedItem7 = createItem(tgtNs+"Database",  "-1_3", "");
         expectedItem7.addAttribute(new Attribute("title", "embl"));
 
         Item expectedItem10 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_821", "");
         expectedItem10.addAttribute(new Attribute("normalised", "false"));
+        expectedItem10.addReference(new Reference("analysis","-1_1"));
 
         Item expectedItem11 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_823", "");
         expectedItem11.addAttribute(new Attribute("normalised", "false"));
+        expectedItem11.addReference(new Reference("analysis","-1_1"));
 
         Item expectedItem12 = createItem(tgtNs+"MicroArrayExperimentalResult", "58_828", "");
         expectedItem12.addAttribute(new Attribute("normalised", "false"));
+        expectedItem12.addReference(new Reference("analysis","-1_1"));
 
         Item expectedItem13 = createItem(tgtNs+"Reporter", "12_50", "");
         expectedItem13.addReference(new Reference("material", "0_11"));
