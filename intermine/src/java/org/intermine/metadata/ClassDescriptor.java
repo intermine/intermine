@@ -3,9 +3,10 @@ package org.flymine.metadata;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.flymine.util.StringUtil;
 
 
 /**
@@ -21,6 +22,7 @@ public class ClassDescriptor
 
     private String name;        // name of this class
     private String superclassName;
+    private String interfaces;
     private ClassDescriptor superclassDescriptor;
     private List interfaceNames = new ArrayList();
     private List interfaceDescriptors = new ArrayList(); // names of interfaces
@@ -32,9 +34,7 @@ public class ClassDescriptor
     private List attDescriptors;
     private List refDescriptors;
     private List colDescriptors;
-    private Map attDescriptorsNameMap = new HashMap();
-    private Map refDescriptorsNameMap = new HashMap();
-    private Map colDescriptorsNameMap = new HashMap();
+    private Map fieldDescriptors = new HashMap();
 
     private List pkFields = new ArrayList();
     private Model model;  // set when ClassDesriptor added to DescriptorRespository
@@ -65,13 +65,11 @@ public class ClassDescriptor
         }
         this.name = name;
         this.superclassName = superclassName;
+        this.interfaces = interfaces;
 
         // split interface string into a Set
         if (interfaces != null && interfaces != "") {
-            StringTokenizer st = new StringTokenizer(interfaces);
-            while (st.hasMoreTokens()) {
-                this.interfaceNames.add(st.nextToken());
-            }
+            interfaceNames = StringUtil.tokenize(interfaces);
         }
 
         this.isInterface = isInterface;
@@ -90,7 +88,7 @@ public class ClassDescriptor
                 throw new IllegalArgumentException("AttributeDescriptor: " + attDesc.getName()
                                                    + "already has ClassDescriptor set.");
             }
-            attDescriptorsNameMap.put(attDesc.getName(), attDesc);
+            fieldDescriptors.put(attDesc.getName(), attDesc);
             if (attDesc.isPrimaryKey()) {
                 this.pkFields.add(attDesc);
             }
@@ -105,7 +103,7 @@ public class ClassDescriptor
                 throw new IllegalArgumentException("ReferenceDescriptor: " + refDesc.getName()
                                                    + "already has ClassDescriptor set.");
             }
-            refDescriptorsNameMap.put(refDesc.getName(), refDesc);
+            fieldDescriptors.put(refDesc.getName(), refDesc);
             if (refDesc.isPrimaryKey()) {
                 this.pkFields.add(refDesc);
             }
@@ -120,7 +118,7 @@ public class ClassDescriptor
                 throw new IllegalArgumentException("CollectionDescriptor: " + colDesc.getName()
                                                    + "already has ClassDescriptor set.");
             }
-            colDescriptorsNameMap.put(colDesc.getName(), colDesc);
+            fieldDescriptors.put(colDesc.getName(), colDesc);
             if (colDesc.isPrimaryKey()) {
                 this.pkFields.add(colDesc);
             }
@@ -159,6 +157,15 @@ public class ClassDescriptor
     }
 
     /**
+     * Retrieve a FieldDescriptor by name
+     * @param name the name
+     * @return the FieldDescriptor
+     */
+    public FieldDescriptor getFieldDescriptorByName(String name) {
+        return (FieldDescriptor) fieldDescriptors.get(name);
+    }
+
+    /**
      * Gets all AttributeDescriptors for this class - i.e. fields that are not references or
      * collections.
      * @return list of attributes for this Class
@@ -177,8 +184,9 @@ public class ClassDescriptor
         if (name == null) {
             return null;
         }
-        if (attDescriptorsNameMap.containsKey(name)) {
-            return (AttributeDescriptor) attDescriptorsNameMap.get(name);
+        if (fieldDescriptors.containsKey(name)
+            && fieldDescriptors.get(name) instanceof AttributeDescriptor) {
+            return (AttributeDescriptor) fieldDescriptors.get(name);
         } else {
             return null;
         }
@@ -202,8 +210,9 @@ public class ClassDescriptor
         if (name == null) {
             return null;
         }
-        if (refDescriptorsNameMap.containsKey(name)) {
-            return (ReferenceDescriptor) refDescriptorsNameMap.get(name);
+        if (fieldDescriptors.containsKey(name)
+            && fieldDescriptors.get(name) instanceof ReferenceDescriptor) {
+            return (ReferenceDescriptor) fieldDescriptors.get(name);
         } else {
             return null;
         }
@@ -227,8 +236,9 @@ public class ClassDescriptor
         if (name == null) {
             return null;
         }
-        if (colDescriptorsNameMap.containsKey(name)) {
-            return (CollectionDescriptor) colDescriptorsNameMap.get(name);
+        if (fieldDescriptors.containsKey(name)
+            && fieldDescriptors.get(name) instanceof CollectionDescriptor) {
+            return (CollectionDescriptor) fieldDescriptors.get(name);
         } else {
             return null;
         }
@@ -456,4 +466,23 @@ public class ClassDescriptor
         return supers;
     }
 
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<class name=\"" + name + "\"")
+            .append(superclassName != null ?  " extends=\"" + superclassName + "\"" : "")
+            .append(interfaces != null ? " implements=\"" + interfaces + "\"" : "")
+            .append(" is-interface=\"" + isInterface + "\">");
+        List l = new ArrayList();
+        l.addAll(getAttributeDescriptors());
+        l.addAll(getReferenceDescriptors());
+        l.addAll(getCollectionDescriptors());
+        for (Iterator iter = l.iterator(); iter.hasNext();) {
+            sb.append(iter.next().toString());
+        }
+        sb.append("</class>");
+        return sb.toString();
+    }
 }

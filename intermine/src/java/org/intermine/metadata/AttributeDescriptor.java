@@ -38,4 +38,11 @@ public class AttributeDescriptor extends FieldDescriptor
         return this.type;
     }
 
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return "<attribute name=\"" + name + "\" type=\"" + type + "\" primary-key=\""
+            + primaryKey + "\"/>";
+    }
 }

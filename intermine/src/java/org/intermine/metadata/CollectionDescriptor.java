@@ -74,5 +74,12 @@ public class CollectionDescriptor extends ReferenceDescriptor
         return this.isOrdered();
     }
 
-
+   /**
+    * @see Object#toString
+    */
+    public String toString() {
+        return "<collection name=\"" + name + "\" referenced-type=\"" + refName + "\" ordered=\"" 
+            + ordered + "\" reverseReference=\"" + reverseRefName + "\" primarykey=\"" 
+            + primaryKey + "\"/>";
+    }
 }

@@ -103,4 +103,14 @@ public class ReferenceDescriptor extends FieldDescriptor
         modelSet = true;
     }
 
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<reference name=\"" + name + "\" referenced-type=\"" + refName + "\"")
+            .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
+            .append(" primary-key=\"" + primaryKey + "\"/>");
+        return sb.toString();
+    }
 }

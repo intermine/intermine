@@ -114,7 +114,7 @@ public class Model
      * @return a list of all ClassDescriptors in the model
      */
     public List getClassDescriptors() {
-        return (List) cldMap.values();
+        return new ArrayList(cldMap.values());
     }
 
     /**
@@ -155,5 +155,18 @@ public class Model
             fullNames.add(name + (String) namesIter.next());
         }
         return (Collection) fullNames;
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<model name=\"" + name + "\">");
+        for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
+            sb.append(iter.next().toString());
+        }
+        sb.append("</model>");
+        return sb.toString();
     }
 }
