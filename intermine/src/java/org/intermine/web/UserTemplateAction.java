@@ -54,12 +54,13 @@ public class UserTemplateAction extends DispatchAction
         
         TemplateQuery template = (TemplateQuery) profile.getSavedTemplates().get(queryName);
         if (template != null) {
+            /* This action redirects to begin.do - not sure how to get a message to show
             profile.deleteTemplate(template.getName());
             ActionMessages actionMessages = new ActionMessages();
             actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                        new ActionMessage("usertemplate.deleted", template.getName()));
+                        new ActionMessage("templateList.deleted", template.getName()));
             saveMessages(request, actionMessages);
-            
+            */
             // If superuser then rebuild shared templates
             if (profile.getUsername() != null
                 && profile.getUsername().equals
