@@ -51,7 +51,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         if (dbObj != null) {
             try {
                 Class cls = obj.getClass();
-                retval.put(cls.getDeclaredField("id"),
+                retval.put(TypeUtil.getField(cls, "id"),
                            cls.getMethod("getId", new Class[] {}).invoke(dbObj, new Object[] {}));
 
                 if (nonSkeletons.contains(dbObj)) {
@@ -73,8 +73,6 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
                 //        }
             } catch (IntrospectionException e) {
                 throw new ObjectStoreException("Something horribly wrong with the model", e);
-            } catch (NoSuchFieldException e) {
-                throw new ObjectStoreException("Something even worse wrong with the model", e);
             } catch (NoSuchMethodException e) {
                 throw new ObjectStoreException("Something nasty with the model", e);
             } catch (IllegalAccessException e) {
