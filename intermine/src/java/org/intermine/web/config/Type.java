@@ -30,7 +30,7 @@ public class Type
     /**
      * Set the fully-qualified class name for this Type
      *
-     * @param name the name of the Type
+     * @param className the name of the Type
      */
     public void setClassName(String className) {
         this.className = className;
@@ -48,7 +48,7 @@ public class Type
     /**
      * Set the field name
      *
-     * @param name the field name of the Type
+     * @param fieldName the field name of the Type
      */
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
