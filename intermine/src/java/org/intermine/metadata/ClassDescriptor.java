@@ -164,7 +164,7 @@ public class ClassDescriptor
     protected void setAllFieldDescriptors() throws MetaDataException {
         allFieldDescriptors = findAllFieldDescriptors();
     }
-    
+
     private Set findAllFieldDescriptors() throws MetaDataException {
         Set set = new LinkedHashSet(getFieldDescriptors());
         Map map = new HashMap();
@@ -281,6 +281,25 @@ public class ClassDescriptor
         if (fieldDescriptors.containsKey(name)
             && fieldDescriptors.get(name) instanceof ReferenceDescriptor) {
             return (ReferenceDescriptor) fieldDescriptors.get(name);
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Gets an AttributeDescriptor for a field of the given name.  Returns null if
+     * not found. Does NOT look in any superclasses or interfaces.
+     * @param name the name of an AttributeDescriptor to find
+     * @return an AttributeDescriptor
+     */
+    public AttributeDescriptor getAttributeDescriptorByName(String name) {
+        if (name == null) {
+            throw new NullPointerException("Argument 'name' cannot be null");
+        }
+        if (fieldDescriptors.containsKey(name)
+            && fieldDescriptors.get(name) instanceof AttributeDescriptor) {
+            return (AttributeDescriptor) fieldDescriptors.get(name);
         } else {
             return null;
         }
