@@ -693,8 +693,8 @@
 
     <filter-chado tgtDir="${build.tmp}">
       <fileset dir="/shared/data/flybase/release_4_0/gff">
-        <include name="dmel-4-r4.0.gff"/>
-        <!--include name="*.gff"/-->
+        <!--include name="dmel-2L-r4.0.gff"/-->
+        <include name="*.gff"/>
       </fileset>
     </filter-chado>
   </target>
@@ -720,8 +720,8 @@
                     model ="genomic"
                     handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
       <fileset dir="${build.tmp}">
-        <include name ="dmel-4-r4.0.gff"/>
-        <!--include name ="*.gff"/-->
+        <!--include name ="dmel-2L-r4.0.gff"/-->       
+        <include name ="*.gff"/>
       </fileset>
     </convert-file>
 
@@ -744,7 +744,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado"/>
+    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="true"/>
   </target>
 
   <target name="build-flybase-production" depends="filter-chado,retrieve-chado,load-chado"/>
