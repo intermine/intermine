@@ -60,6 +60,7 @@ public class MageConverter extends FileConverter
     protected HashMap seenMap;
     protected HashSet dataItems;
     protected HashMap padIdentifiers = new HashMap();
+    protected HashMap featureIdentifiers = new HashMap();
     protected int id = 0;
 
     /**
@@ -93,6 +94,7 @@ public class MageConverter extends FileConverter
         writer.storeAll(seenMap.values());
         writer.storeAll(dataItems);
         writer.storeAll(padIdentifiers.values());
+        writer.storeAll(featureIdentifiers.values());
     }
 
 
@@ -111,14 +113,14 @@ public class MageConverter extends FileConverter
         Class cls = obj.getClass();
         String className = TypeUtil.unqualifiedName(cls.getName());
 
-
         Item item = new Item();
         item.setClassName(MAGE_NS + className);
         item.setImplementations("");
 
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")
             && !className.endsWith("_package")) {
-            if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")) {
+            if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign") &&
+                !cls.getName().equals("org.biomage.DesignElement.Feature")) {
                 item.setIdentifier(alias(className) + "_" + (id++));
                 seenMap.put(obj, item);
             }
@@ -176,7 +178,41 @@ public class MageConverter extends FileConverter
         }
 
 
-        if (className.equals("MeasuredBioAssayData")
+
+        if (className.equals("PhysicalArrayDesign")) {
+            // if item does not have name set it is a placeholder
+            // do not want to store
+            PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
+            String padId = pad.getIdentifier();
+            Item padItem = (Item) padIdentifiers.get(padId);
+
+            if (padItem == null) {
+                item.setIdentifier(alias(className) + "_" + (id++));
+                padIdentifiers.put(padId, item);
+            } else if (pad.getName() != null) {
+                item.setIdentifier(padItem.getIdentifier());
+                padIdentifiers.put(padId, item);
+            } else {
+                item = padItem;
+            }
+
+        } else if (className.equals("Feature")) {
+            // as above but where check pad.getName() check
+            // if feature.getZone()... from mage object
+            Feature feature = (Feature) obj;
+            String fid = feature.getIdentifier();
+            Item fItem = (Item) featureIdentifiers.get(fid);
+
+            if (fItem == null) {
+                item.setIdentifier(alias(className) + "_" + (id++));
+                featureIdentifiers.put(fid, item);
+            } else if ( feature.getZone() != null) {
+                item.setIdentifier(fItem.getIdentifier());
+                featureIdentifiers.put(fid, item);
+            } else {
+                item = fItem;
+            }
+        } else if (className.equals("MeasuredBioAssayData")
             || className.equals("DerivedBioAssayData")) {
             boolean normalised = false;
             if (className.equals("DerivedBioAssayData")) {
@@ -220,7 +256,8 @@ public class MageConverter extends FileConverter
 
                     ref = new Reference();
                     ref.setName("designElement");
-                    ref.setRefId(createItem(f).getIdentifier());
+                    ref.setRefId(f.getIdentifier());
+                    // ref.setRefId(createItem(f).getIdentifier());
                     data.addReferences(ref);
 
                     Attribute attr = new Attribute();
@@ -263,23 +300,6 @@ public class MageConverter extends FileConverter
             }
             newRefs.add(bdtRef);
             item.setReferences(newRefs);
-        } else if (className.equals("PhysicalArrayDesign")) {
-            // if item does not have name set it is a placeholder
-            // do not want to store
-            PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
-            String padId = pad.getIdentifier();
-            Item padItem = (Item) padIdentifiers.get(padId);
-
-            if (padItem == null) {
-                item.setIdentifier(alias(className) + "_" + (id++));
-                padIdentifiers.put(padId, item);
-            } else if (pad.getName() != null) {
-                item.setIdentifier(padItem.getIdentifier());
-                padIdentifiers.put(padId, item);
-            } else {
-                item = padItem;
-            }
-
         }
         return item;
     }
