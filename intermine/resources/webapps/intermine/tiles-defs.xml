@@ -37,14 +37,13 @@
   <definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="querySelectBuild" value="querySelectBuild.tile"/>
-    <put name="runQuery" value="runQuery.jsp"/>
     <put name="loadQuery" value="loadQuery.jsp"/>
     <put name="restartQuery" value="restartQuery.jsp"/>
   </definition>
   
   <definition name="querySelectBuild.tile" path="querySelectBuild.jsp">
-    <put name="queryClassSelect" value="queryClassSelect.tile"/>
     <put name="queryBuild" value="queryBuild.tile"/>
+    <put name="queryClassSelect" value="queryClassSelect.tile"/>
   </definition>
   
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
