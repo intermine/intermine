@@ -48,10 +48,11 @@
   <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
+  <property name="build.webapp.model" location="${build.webapp}/model"/>
   <property name="build.tmp" location="${build}/tmp"/>
   <property name="build.gbrowse" location="${build}/gbrowse"/>
   <property name="build.gbrowse.data" location="${build.gbrowse}/data"/>
-  <property name="build.webapp.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
+  <property name="build.webapp.intermine.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
   <property name="build.webservice.lib" location="${build.webapp}/webservice/WEB-INF/lib"/>
 
   <!-- results directories -->
@@ -105,7 +106,7 @@
 
   <path id="webapp.class.path">
     <path refid="base.class.path"/>
-    <fileset dir="${build.webapp.lib}">
+    <fileset dir="${build.webapp.intermine.lib}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -172,6 +173,8 @@
     <mkdir dir="${build.tmp}"/>
     <mkdir dir="${build.gbrowse}"/>
     <mkdir dir="${build.gbrowse.data}"/>
+    <mkdir dir="${build.webapp}"/>
+    <mkdir dir="${build.webapp.model}"/>
     <mkdir dir="${build.webapp}/intermine"/>
 
     <mkdir dir="${results}"/>
@@ -1833,8 +1836,13 @@
     <copy todir="${build.tmp}" filtering="true"
           file="${resources}/webapp/flymine/global.web.properties" 
           overwrite="true" verbose="true"/>
+    <concat destfile="${build.tmp}/web.properties">
+      <fileset file="${model}/genomic/resources/web/web.properties" />
+      <fileset file="${build.properties.local}" />
+    </concat>
     <patternset id="flymine-global-web-properties-patternset">
       <include name="global.web.properties"/>
+      <include name="web.properties"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
@@ -1912,12 +1920,25 @@
   <target name="install-gbrowse-conf" 
           description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory"
           depends="prepare-gbrowse-conf">
-    <replace file="${build.gbrowse}/${gbrowse.config.file}" 
-             token="@@@FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX@@@" 
-             value="${webapp.prefix}/${webapp.viewByID.prefix}"/>
+    <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX" 
+            value="${webapp.prefix}/${webapp.viewByID.prefix}"/>
+    <filter token="FLYMINE_SITE_PREFIX" 
+            value="${www.location}"/>
     <copy file="${build.gbrowse}/${gbrowse.config.file}"
-          toFile="${gbrowse.config.directory}/${gbrowse.config.file}"/>
+          toFile="${gbrowse.config.directory}/${gbrowse.config.file}"
+          filtering="true"/>
     <chmod file="${gbrowse.config.directory}/${gbrowse.config.file}" perm="a+r"/>
+
+    <copy todir="${gbrowse.www.directory}/images/buttons">
+      <fileset dir="${model}/genomic/resources/gbrowse/images">
+        <include name="*.gif"/>
+      </fileset>
+    </copy>
+    <chmod perm="a+r">
+      <fileset dir="${gbrowse.www.directory}/images/buttons">
+        <include name="*.gif"/>
+      </fileset>
+    </chmod>
   </target>
 
   <target name="load-gbrowse-data" 
