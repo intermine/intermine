@@ -32,10 +32,8 @@ import org.flymine.util.PropertiesUtil;
  *
  * @author Andrew Varley
  */
-
 public class ObjectStoreServer
 {
-
     private int nextQueryId = 0;
     private Map registeredResults = new HashMap();
     private ObjectStore os;
@@ -67,7 +65,6 @@ public class ObjectStoreServer
     public ObjectStoreServer(ObjectStore os) {
         this.os = os;
     }
-
 
     /**
      * Register a query with this class. This is useful to avoid
@@ -126,16 +123,7 @@ public class ObjectStoreServer
         // end of the results set. Here we will catch it and then call range again
         // with size() (which is now known to the results set).
 
-        List ret = null;
-        Results results = lookupResults(queryId);
-
-        try {
-            ret = results.range(start, start + limit - 1);
-        } catch (IndexOutOfBoundsException e) {
-            ret = results.range(start, results.size() - start + 1);
-        }
-
-        return ret;
+        return lookupResults(queryId).subList(start, start + limit);
     }
 
     /**
