@@ -10,6 +10,7 @@ package org.flymine.web;
  *
  */
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
 
 /**
@@ -222,15 +224,19 @@ public class QueryBuildForm extends ActionForm
             Map fieldDescriptors = model.getFieldDescriptorsForClass(selectClass);
             FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(realFieldName);
 
+            ActionError actionError = null;
             if (fd.isAttribute()) {
-                ActionError actionError =
-                    validateAttribute((AttributeDescriptor) fd, op, fieldName, fieldValue,
-                                      locale, savedBags);
-
-                if (actionError != null) {
-                    errors.add(fieldName, actionError);
-                }
+                actionError = validateAttribute((AttributeDescriptor) fd, op, fieldName,
+                                                fieldValue, locale, savedBags);
+            } else if (fd.isReference() || fd.isCollection()) {
+                actionError = validateReference((ReferenceDescriptor) fd, op, fieldName,
+                                                fieldValue, queryClasses.keySet());
             }
+
+            if (actionError != null) {
+                errors.add(fieldName, actionError);
+            }
+
         }
         //this is necessary because the controller needs to know if there were any errors
         this.errors = errors;
@@ -291,6 +297,17 @@ public class QueryBuildForm extends ActionForm
 
         return null;
     }
+
+    private ActionError validateReference(ReferenceDescriptor ref, ConstraintOp op,
+                                          String fieldName, Object fieldValue, Collection aliases) {
+        //TODO check that the reference is of the right type too
+        if (!aliases.contains((String) fieldValue)) {
+            return new ActionError("error.title");
+        }
+        parsedFieldValues.put(fieldName, fieldValue);
+        return null;
+    }
+            
 
     private Map parsedFieldValues = new HashMap();
     private Map parsedFieldOps = new HashMap();

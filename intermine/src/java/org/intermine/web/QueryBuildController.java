@@ -67,25 +67,27 @@ public class QueryBuildController extends TilesAction
     
         //we are editing a QueryClass - render it as a form
         if (editingAlias != null) {
-            String type = ((DisplayQueryClass) queryClasses.get(editingAlias)).getType();
-            ClassDescriptor cld = model.getClassDescriptorByName(type);
-            
             DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
             QueryBuildForm qbf = (QueryBuildForm) form;
+
             //if validation failed we don't want to wipe out the invalid values
             if (qbf.getErrors().isEmpty()) {
-                qbf.setFieldOps(QueryBuildHelper.toStrings(d.getFieldOps()));
-                qbf.setFieldValues(QueryBuildHelper.toStrings(d.getFieldValues()));
+                QueryBuildHelper.populateForm(qbf, d);
             }
 
+            ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;
             session.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
+
             List allFieldNames = QueryBuildHelper.getAllFieldNames(cld);
             if (allFieldNames.size() == 0) {
                 session.setAttribute("allFieldNames", null);
             } else {
                 session.setAttribute("allFieldNames", allFieldNames);
             }
+
+            Map validAliases = QueryBuildHelper.getValidAliases(cld, queryClasses);
+            session.setAttribute("validAliases", validAliases);
         }
 
         return null;

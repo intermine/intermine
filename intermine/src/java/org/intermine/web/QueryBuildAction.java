@@ -119,8 +119,8 @@ public class QueryBuildAction extends LookupDispatchAction
         constraintNames.add(constraintName);
         d.setFieldName(constraintName, fieldName);
 
-        d.setFieldOps(qbf.getFieldOps());
-        d.setFieldValues(qbf.getFieldValues());
+        d.setFieldOps(qbf.getParsedFieldOps());
+        d.setFieldValues(qbf.getParsedFieldValues());
 
         return mapping.findForward("buildquery");
     }

@@ -35,15 +35,14 @@
           <div class="queryBuildQueryClasses">
             <table>
             <c:forEach items="${queryClass.constraintNames}" var="constraintName">
+              <c:set var="fieldName" value="${queryClass.fieldNames[constraintName]}"/>
               <tr>
-                <td class="queryBuildFirstCell">
-                </td>
                 <td>
-              <c:out value="${queryClass.fieldNames[constraintName]}"/>
+              <c:out value="${fieldName}"/>
                 </td>
                 <td>
               <html:select property="fieldOps(${constraintName})">
-                <c:forEach items="${validOps[queryClass.fieldNames[constraintName]]}" var="validOp">
+                <c:forEach items="${validOps[fieldName]}" var="validOp">
                   <html:option value="${validOp.key}">
                     <c:out value="${validOp.value}"/>
                   </html:option>
@@ -51,12 +50,20 @@
               </html:select> 
                 </td>
                 <td>
-              <html:text property="fieldValues(${constraintName})"/>
-              <c:if test="${constraintErrors != null}">
-                <c:if test="${null != constraintErrors[constraintName]}">
-                  <c:out value="${constraintErrors[constraintName]}"/>
-                </c:if>
-              </c:if>
+                  <c:choose>
+                    <c:when test="${validAliases[fieldName] != null}">
+                      <html:select property="fieldValue(${constraintName})">
+                        <c:forEach items="${validAliases[fieldName]}" var="validAlias">
+                          <html:option value="${validAlias}">
+                            <c:out value="${validAlias}"/>
+                          </html:option>
+                        </c:forEach>
+                      </html:select>
+                    </c:when>
+                    <c:otherwise>
+                      <html:text property="fieldValues(${constraintName})"/>
+                    </c:otherwise>
+                  </c:choose>
                 </td>
               </tr>
             </c:forEach>
@@ -70,16 +77,12 @@
             </html:select>
             <html:submit property="action"><fmt:message key="button.add"/></html:submit>
           </c:when>
-
           <c:otherwise>
             <fmt:message key="query.nofield"/>
           </c:otherwise>
         </c:choose>
-
         <br/>
-
         <html:submit property="action"><fmt:message key="button.update"/></html:submit>
-
         <br/>
 
       </c:when>

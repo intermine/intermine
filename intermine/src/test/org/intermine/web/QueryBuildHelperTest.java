@@ -133,18 +133,6 @@ public class QueryBuildHelperTest extends QueryTestCase
         assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, savedBags));
     }
 
-    public void testToStrings() throws Exception {
-        Map input = new HashMap();
-        input.put("key1", new Integer(42));
-        input.put("key2", "dave");
-        
-        Map expected = new HashMap();
-        expected.put("key1", "42");
-        expected.put("key2", "dave");
-
-        assertEquals(expected, QueryBuildHelper.toStrings(input));
-    }
-
     public void testGetAllFieldNames() throws Exception {
         ClassDescriptor cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Department");
         

@@ -23,7 +23,11 @@ import java.util.ArrayList;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.Model;
+import org.flymine.objectstore.query.QueryReference;
+import org.flymine.objectstore.query.QueryObjectReference;
+import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.ContainsConstraint;
@@ -130,11 +134,12 @@ public class QueryBuildHelper
             for (Iterator j = d.getConstraintNames().iterator(); j.hasNext();) {
                 String constraintName = (String) j.next();
                 String fieldName = (String) d.getFieldName(constraintName);
-                FieldDescriptor fd = (FieldDescriptor) cld.getFieldDescriptorByName(fieldName);
                 ConstraintOp fieldOp = (ConstraintOp) d.getFieldOp(constraintName);
                 Object fieldValue = d.getFieldValue(constraintName);
-                if (fd instanceof AttributeDescriptor) {
-                    if (savedBags.containsKey(fieldValue)
+                FieldDescriptor fd = (FieldDescriptor) cld.getFieldDescriptorByName(fieldName);
+                if (fd.isAttribute()) {
+                    if (savedBags != null
+                        && savedBags.containsKey(fieldValue)
                         && BagConstraint.VALID_OPS.contains(fieldOp)) {
                         Collection bag = (Collection) savedBags.get(fieldValue);
                         QueryHelper.addConstraint(q, fieldName, qc, fieldOp, bag);
@@ -142,27 +147,34 @@ public class QueryBuildHelper
                         QueryHelper.addConstraint(q, fieldName, qc,
                                                   fieldOp, new QueryValue(fieldValue));
                     }
+                } else if (fd.isReference()) {
+                    QueryReference qr = new QueryObjectReference(qc, fieldName);
+                    QueryClass qc2 = (QueryClass) q.getReverseAliases().get(fieldValue);
+                    QueryHelper.addConstraint(q, qc, new ContainsConstraint(qr, fieldOp, qc2));
+                } else if (fd.isCollection()) {
+                    QueryReference qr = new QueryCollectionReference(qc, fieldName);
+                    QueryClass qc2 = (QueryClass) q.getReverseAliases().get(fieldValue);
+                    QueryHelper.addConstraint(q, qc, new ContainsConstraint(qr, fieldOp, qc2));
                 }
             }
         }
         return q;
     }
 
-    
     /**
-     * Take a Map and convert all its values to Strings using toString()
-     * @param input the input Map
-     * @return the output Map
+     * Populate a QueryBuildForm given an active DisplayQueryClass
+     * @param qbf the form
+     * @param d the class being edited
      */
-    protected static Map toStrings(Map input) {
-        Map output = new HashMap();
-        for (Iterator i = input.keySet().iterator(); i.hasNext();) {
-            Object key = i.next();
-            output.put(key, input.get(key).toString());
+    protected static void populateForm(QueryBuildForm qbf, DisplayQueryClass d) {
+        for (Iterator i = d.getFieldOps().keySet().iterator(); i.hasNext();) {
+            String constraintName = (String) i.next();
+            qbf.setFieldOp(constraintName, ((ConstraintOp) d.getFieldOps().get(constraintName))
+                           .getIndex());
+            qbf.setFieldValue(constraintName, d.getFieldValues().get(constraintName).toString());
         }
-        return output;
     }
-
+    
     /**
      * Take a ClassDescriptor and return a List of the names of all its fields
      * @param cld the ClassDescriptor
@@ -299,5 +311,39 @@ public class QueryBuildHelper
         }
 
         return d;
+    }
+
+    /**
+     * Iterate through each reference field of a class, building up a map from field name to a list
+     * of class aliases in the query that could be part of a contains constraint on that field
+     * @param cld metadata for the active QueryClass
+     * @param queryClasses the DisplayQueryClass map
+     * @return the revelant Map
+     * @throws Exception if an error occurs
+     */
+    protected static Map getValidAliases(ClassDescriptor cld, Map queryClasses) throws Exception {
+        Map values = new HashMap();
+
+        for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext();) {
+            FieldDescriptor fd = (FieldDescriptor) iter.next();
+            if (fd.isReference() || fd.isCollection()) {
+                List aliases = (List) values.get(fd.getName());
+                if (aliases == null) {
+                    aliases = new ArrayList();
+                    values.put(fd.getName(), aliases);
+                }
+                Class type = ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getType();
+                for (Iterator i = queryClasses.keySet().iterator(); i.hasNext();) {
+                    String alias = (String) i.next();
+                    DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(alias);
+                    Class thisType = Class.forName(d.getType());
+                    if (type.isAssignableFrom(thisType)) {
+                        aliases.add(alias);
+                    }
+                }
+            }
+        }
+
+        return values;
     }
 }
