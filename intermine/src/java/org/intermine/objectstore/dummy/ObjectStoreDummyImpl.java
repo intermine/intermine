@@ -52,7 +52,12 @@ public class ObjectStoreDummyImpl implements ObjectStore
 
         List results = new ArrayList();
 
-        for (int i = start; i <= end; i++) {
+        // If we are asking for rows completely outside resultsSize, throw ObjectStoreException
+        if (start > resultsSize) {
+            throw new ObjectStoreException("Start row outside results size");
+        }
+
+        for (int i = start; ((i <= end) && (i < resultsSize)); i++) {
             if (i < rows.size()) {
                 results.add(rows.get(i));
             } else {
