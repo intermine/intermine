@@ -12,6 +12,8 @@ package org.flymine.sql.precompute;
 
 import junit.framework.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class OptimiserCacheLineTest extends TestCase
 {
@@ -20,7 +22,7 @@ public class OptimiserCacheLineTest extends TestCase
     }
 
     public void test1() throws Exception {
-        OptimiserCacheLine l1 = new OptimiserCacheLine("optimised query", 1000, 0, 1000);
+        OptimiserCacheLine l1 = new OptimiserCacheLine("optimised query", 1000, 0, 1000, new HashSet(), "hello");
         assertTrue(!l1.isExpired());
         l1.expires = new Date();
         assertTrue("Score is " + l1.score(1000,0), 0.0 == l1.score(1000, 0));
@@ -33,7 +35,7 @@ public class OptimiserCacheLineTest extends TestCase
     }
 
     public void test2() throws Exception {
-        OptimiserCacheLine l1 = new OptimiserCacheLine("optimised query", 10000, 5000, 10000);
+        OptimiserCacheLine l1 = new OptimiserCacheLine("optimised query", 10000, 5000, 10000, new HashSet(), "hello");
         assertTrue("Score is " + l1.score(10000,0), 3.2 == l1.score(10000, 0));
         assertTrue(2.4 == l1.score(10000, 1000));
     }

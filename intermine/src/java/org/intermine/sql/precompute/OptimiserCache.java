@@ -144,7 +144,8 @@ public class OptimiserCache
      */
     private void expire() {
         while (cacheLines.size() > MAX_LINESETS) {
-            LOG.info("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = " + evictionQueue.size());
+            LOG.info("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = "
+                    + evictionQueue.size());
             DateAndSequence d = (DateAndSequence) evictionQueue.firstKey();
             OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(d);
             expire(line);
