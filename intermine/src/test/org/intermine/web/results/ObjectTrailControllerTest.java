@@ -74,8 +74,8 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
     }
     
     public void testPopulateTrailElements() throws Exception {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
