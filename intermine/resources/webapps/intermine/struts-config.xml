@@ -143,7 +143,9 @@
     
     <action path="/exportAction"
             type="org.intermine.web.ExportAction"
-            parameter="method"/>
+            parameter="method">
+      <forward name="results" path="results.page"/>
+    </action>
     
     <action path="/changeResults"
             type="org.intermine.web.results.ChangeResultsAction"
