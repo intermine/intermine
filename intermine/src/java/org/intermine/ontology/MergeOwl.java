@@ -182,7 +182,7 @@ public class MergeOwl
      */
     protected Resource getTargetResource(Resource res, String srcNs) {
         if (equiv.containsKey(res.getURI())) {
-            return (Resource) equiv.get(res.getURI());
+            return tgtModel.getResource((String) equiv.get(res.getURI()));
         } else if (!res.isAnon() && res.getNameSpace().equals(srcNs)) {
             return tgtModel.createResource(tgtNs + res.getLocalName());
         }

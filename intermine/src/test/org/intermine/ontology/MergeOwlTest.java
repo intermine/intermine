@@ -142,8 +142,8 @@ public class MergeOwlTest extends TestCase
         src1.read(new StringReader(src1Str), null, "N3");
 
         merger.equiv = new HashMap();
-        merger.equiv.put(src1.getOntClass(src1Namespace + "Test").getURI(),
-                            merger.tgtModel.createClass(tgtNamespace + "Test"));
+        OntClass cls = merger.tgtModel.createClass(tgtNamespace + "Test");
+        merger.equiv.put(src1.getOntClass(src1Namespace + "Test").getURI(), cls.getURI());
         // create tgtNamesapce:Test in src1 to compare, has same URI as desired target
         // Resource so will be .equals()
         src1.createClass(tgtNamespace + "Test");

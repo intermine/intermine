@@ -100,15 +100,25 @@ public class Item
         return attributes.values();
     }
 
-    // /**
-     // * Get a named attribute
-     // *
-     // * @param attributeName the attribute name
-     // * @return the Attribute with the given name
-     // */
-    // public Attribute getAttribute(String attributeName) {
-        // return (Attribute) attributes.get(attributeName);
-    // }
+    /**
+     * Get a named attribute
+     *
+     * @param attributeName the attribute name
+     * @return the Attribute with the given name
+     */
+    public Attribute getAttribute(String attributeName) {
+        return (Attribute) attributes.get(attributeName);
+    }
+
+    /**
+     * Return true if named attribute exists
+     *
+     * @param attributeName the attribute name
+     * @return true if the attribute exists
+     */
+    public boolean hasAttribute(String attributeName) {
+        return attributes.containsKey(attributeName);
+    }
 
     /**
      * Add a reference
@@ -128,15 +138,25 @@ public class Item
         return references.values();
     }
 
-    // /**
-     // * Get a named reference
-     // *
-     // * @param referenceName the reference name
-     // * @return the Reference with the given name
-     // */
-    // public Field getReference(String referenceName) {
-        // return (Field) references.get(referenceName);
-    // }
+    /**
+     * Get a named reference
+     *
+     * @param referenceName the reference name
+     * @return the Reference with the given name
+     */
+    public Reference getReference(String referenceName) {
+        return (Reference) references.get(referenceName);
+    }
+
+    /**
+     * Return true if named reference exists
+     *
+     * @param referenceName the attribute name
+     * @return true if the reference exists
+     */
+    public boolean hasReference(String referenceName) {
+        return references.containsKey(referenceName);
+    }
 
     /**
      * Add a collection
@@ -146,7 +166,7 @@ public class Item
     public void addCollection(ReferenceList collection) {
         collections.put(collection.getName(), collection);
     }
-    
+
     /**
      * Get all the collections
      *
@@ -176,7 +196,7 @@ public class Item
             && className.equals(i.className)
             && implementations.equals(i.implementations)
             && attributes.equals(i.attributes)
-            && references.equals(i.references) 
+            && references.equals(i.references)
             && collections.equals(i.collections);
         }
         return false;
@@ -189,11 +209,11 @@ public class Item
         return identifier.hashCode()
         + 3 * className.hashCode()
         + 5 * implementations.hashCode()
-        + 7 * attributes.hashCode() 
+        + 7 * attributes.hashCode()
         + 11 * references.hashCode()
         + 13 * collections.hashCode();
     }
-    
+
     /**
     * @see Object#toString
     */

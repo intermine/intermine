@@ -23,10 +23,12 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.Restriction;
+import com.hp.hpl.jena.ontology.HasValueRestriction;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.ClassDescriptor;
@@ -256,7 +258,8 @@ public class OntologyUtil
                         } else if (res.onProperty(prop) && isObjectProperty(prop)) {
                             OntResource range = prop.getRange();
                             if (range.canAs(OntClass.class)
-                                && range.getNameSpace().equals(srcCls.getNameSpace())) {
+                                && (range.getNameSpace().equals(srcCls.getNameSpace())
+                                    || range.getNameSpace().equals(tgtCls.getNameSpace()))) {
                                 if (top != null) {
                                     subclasses.addAll(findRestrictedSubclasses(model,
                                                                      range.asClass(), top));
@@ -272,6 +275,143 @@ public class OntologyUtil
         }
         return subclasses;
     }
+
+
+    /**
+     * Use model to build a map from class URI to all possible SubclassRestriction templates
+     * (where a template is defined as a SubclassRestriction with null values for
+     * each path expression.
+     * @param model the model to examine
+     * @return a map of class URI to possible SubclassRestriction templates
+     */
+    public static Map getRestrictionSubclassTemplateMap(OntModel model) {
+
+        // build a map of class/restricted subclasses
+        Map classesMap = new HashMap();
+        Iterator clsIter = model.listClasses();
+        while (clsIter.hasNext()) {
+            OntClass cls = (OntClass) clsIter.next();
+            if (!cls.isAnon()) {
+                Set subs = OntologyUtil.findRestrictedSubclasses(model, cls);
+                if (subs.size() > 0) {
+                    classesMap.put(cls, subs);
+                }
+            }
+        }
+
+        Map srMap = new HashMap();
+
+        Iterator i = classesMap.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry e = (Map.Entry) i.next();
+            OntClass cls = (OntClass) e.getKey();
+            Iterator j = ((Set) e.getValue()).iterator();
+            Set srs = new HashSet();
+            while (j.hasNext()) {
+                OntClass sub = (OntClass) j.next();
+                // no values in SubclassRestrictions so any that operate on same paths
+                // will be .equals()
+                srs.add(createSubclassRestriction(model, sub, cls.getLocalName(), null, false));
+                srMap.put(cls.getURI(), srs);
+            }
+        }
+        return srMap;
+    }
+
+
+    /**
+     * Build a map from SubclassRetriction objects (with values filled in) to
+     * URI of restricted subclass that this defines.
+     * @param model the ontology model to process
+     * @return map from SubclassRestriction to class URI
+     */
+    public static Map getRestrictionSubclassMap(OntModel model) {
+
+        // build a map of class/restricted subclasses
+        Map classesMap = new HashMap();
+        Iterator clsIter = model.listClasses();
+        while (clsIter.hasNext()) {
+            OntClass cls = (OntClass) clsIter.next();
+            if (!cls.isAnon()) {
+                Set subs = OntologyUtil.findRestrictedSubclasses(model, cls);
+                if (subs.size() > 0) {
+                    classesMap.put(cls, subs);
+                }
+            }
+        }
+
+        // create a map of SubclassRestriction objects to restricted subclass URIs
+        Map restrictionMap = new HashMap();
+
+        Iterator i = classesMap.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry e = (Map.Entry) i.next();
+            OntClass cls = (OntClass) e.getKey();
+            Iterator j = ((Set) e.getValue()).iterator();
+            while (j.hasNext()) {
+                OntClass sub = (OntClass) j.next();
+                SubclassRestriction sr = createSubclassRestriction(model, sub,
+                                                      cls.getLocalName(), null, true);
+                restrictionMap.put(sr, sub.getURI());
+            }
+        }
+        return restrictionMap;
+    }
+
+
+    /**
+     * Examine ontology model to create a SubclassRestriction object describing reference/attribute
+     * values that defined the given restriced subclass.  Recurses to follow nested retrictions.
+     * @param model the model to process
+     * @param cls a restricted subclass to create description of
+     * @param path expression descriping path from superclass to current class
+     * @param sr partially created SubclassRestriction (when recursing) null initially
+     * @param values if true fill in values of attributes, otherwise just create template
+     * @return a description of the given restricted subclass
+     */
+    protected static SubclassRestriction createSubclassRestriction(OntModel model, OntClass cls,
+                                           String path, SubclassRestriction sr, boolean values) {
+        if (sr == null) {
+            sr = new SubclassRestriction();
+        }
+        Iterator j = model.listRestrictions();
+        while (j.hasNext()) {
+            Restriction res = (Restriction) j.next();
+            if (res.hasSubClass(cls, true) && res.isHasValueRestriction()) {
+                Iterator propIter = cls.listDeclaredProperties(true);
+                while (propIter.hasNext()) {
+                    OntProperty prop = (OntProperty) propIter.next();
+                    String propStr = "PROP: " + cls.toString() + ", " + prop.toString();
+                    Iterator p = prop.listDomain();
+                    while (p.hasNext()) {
+                        propStr += "$ " + ((OntResource) p.next()).toString();
+                    }
+                    if (res.onProperty(prop)) {
+                        String newPath = path + "." + prop.getLocalName();
+                        if (isDatatypeProperty(prop)) {
+                            // add path/value restriction to SubclassRestriction
+                            RDFNode node = ((HasValueRestriction) res.as(HasValueRestriction.class))
+                                .getHasValue();
+                            sr.addRestriction(newPath, values ? ((Literal) node.as(Literal.class))
+                                              .getValue() : null);
+                        } else if (isObjectProperty(prop)) {
+                            OntResource range = prop.getRange();
+                            if (range.canAs(OntClass.class)) {
+                                RDFNode node = ((HasValueRestriction) res
+                                                .as(HasValueRestriction.class)).getHasValue();
+                                OntClass hv = (OntClass) node.as(OntClass.class);
+                                createSubclassRestriction(model, hv, newPath, sr, values);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return sr;
+    }
+
+
 
     /**
      * Prepare format of OWL properties for generation of a FlyMine model:
@@ -412,9 +552,9 @@ public class OntologyUtil
                 || stmt.getPredicate().getLocalName().equals("sameAs")) {
                 Resource res = stmt.getResource();
                 if (srcNs == null) {
-                    equivMap.put(res.getURI(), stmt.getSubject());
+                    equivMap.put(res.getURI(), stmt.getSubject().getURI());
                 } else if (res.getNameSpace().equals(srcNs)) {
-                    equivMap.put(res.getURI(), stmt.getSubject());
+                    equivMap.put(res.getURI(), stmt.getSubject().getURI());
                 }
 // uncomment this code for mapping one source class to more than one target
 //                if (equivMap.containsKey(res.getURI())) {
@@ -557,4 +697,5 @@ public class OntologyUtil
         }
         return sb.toString().trim();
     }
+
 }
