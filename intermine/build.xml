@@ -84,8 +84,9 @@
     <pathelement location="${build.model}/testmodel"/>
   </path>
 
-  <path id="prod.class.path">
+  <path id="acedb.class.path">
     <path refid="project.class.path"/>
+    <pathelement location="${build.model}/acedb"/>
   </path>
 
   <path id="webapptest.class.path">
@@ -132,7 +133,9 @@
       <fileset dir="${resources}/test/xml" />
     </copy>
     <copy todir="${build.resources.testxml}">
-      <fileset dir="${resources}/test" />
+      <fileset dir="${resources}/test/">
+        <include name="*.xml"/>
+      </fileset>
     </copy>
 
   </target>
@@ -144,6 +147,13 @@
     <mkdir dir="${dist.javadoc}"/>
   </target>
     
+  <target name="prepare-testmodel">
+    <mkdir dir="${build.model}/testmodel" />
+  </target>
+
+  <target name="prepare-acedb">
+    <mkdir dir="${build.model}/acedb" />
+  </target>
 
   <!-- Compilation targets -->
 
@@ -174,33 +184,41 @@
 
   <!-- Model generation targets -->
 
-  <target name="prepare-model-generation" depends="compile-main" >
+  <target name="prepare-model-generation-acedb" depends="compile-main, prepare-acedb" >
      <taskdef
        name="model-generation"
        classname="org.flymine.task.ModelGenerationTask">
-       <classpath refid="prod.class.path"/>
+       <classpath refid="acedb.class.path"/>
      </taskdef>
   </target>
 
+  <target name="prepare-model-generation-test" depends="compile-main, prepare-testmodel" >
+     <taskdef
+       name="model-generation"
+       classname="org.flymine.task.ModelGenerationTask">
+       <classpath refid="test.class.path"/>
+     </taskdef>
+  </target>
+
+
+
   <!-- generate testmodel from xmi -->
-  <target name="generate-testmodel" depends="prepare-model-generation, unpack-testmodel">
+  <target name="generate-testmodel" depends="prepare-model-generation-test, unpack-testmodel">
     <model-generation
       type="xmi"
       modelname="testmodel"      
       source="${build.tmp}/TestModel_.xmi"
-      destdir="${build.resources}"
+      destdir="${build.model}/testmodel"
     />     
   </target>
 
   <!-- generate acedb model from acemodel file -->
-  <target name="generate-acemodel" depends="prepare-model-generation">
-    <mkdir dir="${build.model}/acedb" />
-
+  <target name="generate-acemodel" depends="prepare-model-generation-acedb">
     <model-generation
       type="acedb"
       modelname="acedb"
       source="${src.java}/org/flymine/model/acedb/acemodel.wrm"
-      destdir="${build.resources}"
+      destdir="${build.model}/acedb"
    />     
   </target> 
 
@@ -210,15 +228,15 @@
   <!-- Build flymine with testmodel -->
 
   <!-- define task for model output, make sure application compiled -->
-  <target name="model-output-prepare" depends="compile-main">
+  <target name="model-output-prepare-test" depends="compile-main, prepare-testmodel">
     <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
-      <classpath refid="prod.class.path" />
+      <classpath refid="test.class.path" />
     </taskdef>
   </target>
 
 
   <!-- has model been unzipped? -->
-  <target name="unpack-testmodel.check" depends="prepare">
+  <target name="unpack-testmodel.check" depends="prepare, prepare-testmodel">
     <uptodate property="unpack-testmodel.uptodate">
       <srcfiles dir="${src.java}/org/flymine/model/testmodel" includes="**/*.zargo"/>
       <mapper type="glob" from="*.zargo" to="${build.tmp}/*_.xmi" />
@@ -229,7 +247,6 @@
   <target name="unpack-testmodel" depends="unpack-testmodel.check"
           description="unpacks the testmodel from .zargo file"
           unless="unpack-testmodel.uptodate">
-    <mkdir dir="${build.model}/testmodel" />
     <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.tmp}">
       <!-- <patternset>
         <include name="**/*.xmi"/>
@@ -248,7 +265,7 @@
   </target>
 
   <!-- generate java source for testmodel -->
-  <target name="generate-java-testmodel" depends="testmodel-java.check, model-output-prepare, generate-testmodel"
+  <target name="generate-java-testmodel" depends="testmodel-java.check, model-output-prepare-test, generate-testmodel"
           description="generate testmodel classes from xmi"
           if="testmodel-java.outofdate">
     <model-output type="java" model="testmodel" destdir="${build.model}/testmodel/"/>
@@ -266,13 +283,15 @@
   <!-- is our repository descriptor older than the model? -->
   <target name="testmodel-repository.check" depends="unpack-testmodel">
     <uptodate property="testmodel-repository.outofdate" targetfile="${build.tmp}/TestModel_.xmi">
-      <srcfiles dir="${build.model}/testmodel" includes="**/*.xml"/>
+      <srcfiles dir="${build.model}/testmodel" 
+          includes="**/*.xml"
+          excludes="testmodel_model.xml" />
     </uptodate>
   </target>
 
 
   <!-- generate repository descriptor for testmodel -->
-  <target name="generate-repository-testmodel" depends="testmodel-repository.check, model-output-prepare, generate-testmodel"
+  <target name="generate-repository-testmodel" depends="testmodel-repository.check, model-output-prepare-test, generate-testmodel"
           if="testmodel-repository.outofdate">
     <model-output type="ojb" model="testmodel" destdir="${build.model}/testmodel"/>
 
@@ -285,7 +304,7 @@
   </target>
 
   <!-- generate mapping file for castor xml binding -->
-  <target name="generate-castorxmlmapping-testmodel" depends="testmodel-repository.check, model-output-prepare"
+  <target name="generate-castorxmlmapping-testmodel" depends="testmodel-repository.check, model-output-prepare-test"
           if="testmodel-repository.outofdate">
     <model-output type="castor" model="testmodel" destdir="${build.model}/testmodel"/>
 
@@ -330,11 +349,16 @@
 
   <!-- Production build targets (currently uses ace model) -->
   
-
+  <!-- define task for model output, make sure application compiled -->
+  <target name="model-output-prepare-acedb" depends="compile-main, prepare-acedb">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="acedb.class.path" />
+    </taskdef>
+  </target>
 
 
   <!-- generate java source for acedb model -->
-  <target name="generate-java-acedb" depends="model-output-prepare, generate-acemodel"
+  <target name="generate-java-acedb" depends="model-output-prepare-acedb, generate-acemodel"
           description="generate java classes from ace model">
     <model-output type="java" model="acedb" destdir="${build.model}/acedb"/>
   </target>
@@ -343,14 +367,14 @@
   <!-- compile java source for acedb model -->
   <target name="compile-acedb" depends="generate-java-acedb">
     <javac destdir="${build.model}/acedb" listfiles="yes">
-      <classpath refid="prod.class.path"/>
+      <classpath refid="acedb.class.path"/>
       <src path="${build.model}/acedb" />
     </javac>
   </target>
 
 
   <!-- generate repository descriptor for acedb model -->
-  <target name="generate-repository-acedb" depends="model-output-prepare, generate-acemodel">
+  <target name="generate-repository-acedb" depends="model-output-prepare-acedb, generate-acemodel">
     <model-output type="ojb" model="acedb" destdir="${build.model}/acedb"/>
 
     <!-- Copy the default repository files across -->
@@ -362,7 +386,7 @@
   </target>
 
   <!-- generate mapping file for castor xml binding -->
-  <target name="generate-castorxmlmapping-acedb" depends="model-output-prepare, generate-acemodel" >
+  <target name="generate-castorxmlmapping-acedb" depends="generate-acemodel, model-output-prepare-acedb" >
     <model-output type="castor" model="acedb" destdir="${build.model}/acedb"/>
 
     <!-- Copy acrosss castor include file(s) -->
@@ -390,7 +414,7 @@
     <taskdef
           name="build-db"
           classname="org.flymine.task.BuildDbTask">
-      <classpath refid="project.class.path"/>
+      <classpath refid="acedb.class.path"/>
     </taskdef>
     
     <build-db
@@ -406,11 +430,11 @@
     <taskdef
           name="insert-ace-data"
           classname="org.flymine.task.InsertAceDataTask">
-      <classpath refid="project.class.path"/>
+      <classpath refid="acedb.class.path"/>
     </taskdef>
 
     <insert-ace-data integrationWriter="integration.acedb" user="${acedb.user}" password="${acedb.password}" host="${acedb.host}" port="${acedb.port}">
-      <classpath refid="prod.class.path"/>
+      <classpath refid="acedb.class.path"/>
     </insert-ace-data>
   </target>
 
@@ -857,5 +881,21 @@
           description="clean up all distribution files">
     <delete dir="${dist}"/>
   </target>
+
+  <!-- AntDoc target -->
+
+  <taskdef
+	name="AntDoc"
+	classname="org.ed.pack.ant.AntDoc">
+        <classpath refid="project.class.path"/>
+  </taskdef>
+
+   <target name="ant-doc"> 
+     <AntDoc
+	destination="antdoc"
+	buildfile="${ant.file}"
+      />
+    </target>
+
 
 </project>
