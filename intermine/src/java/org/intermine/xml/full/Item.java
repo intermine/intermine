@@ -423,8 +423,8 @@ public class Item
         ClassDescriptor cd = model.getClassDescriptorByName(fullClassName);
 
         if (cd == null) {
-            throw new RuntimeException("class \"" + XmlUtil.getFragmentFromURI(fullClassName)
-                                       + "\" is not in the Model");
+            throw new IllegalArgumentException("class \"" + fullClassName
+                                               + "\" is not in the Model");
         }
 
         return cd;
