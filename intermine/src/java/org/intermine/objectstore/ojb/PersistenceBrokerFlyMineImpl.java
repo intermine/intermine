@@ -108,21 +108,21 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
             } catch (Exception e) {
             }
             Query query = new Query();
-            QueryClass company = new QueryClass(referencedClass);
-            QueryClass department = new QueryClass(obj.getClass());
-            query.addToSelect(company);
-            query.addFrom(company);
-            query.addFrom(department);
-            ClassConstraint cc1 = new ClassConstraint(department, ClassConstraint.EQUALS, obj);
+            QueryClass qc1 = new QueryClass(referencedClass);
+            QueryClass qc2 = new QueryClass(obj.getClass());
+            query.addToSelect(qc1);
+            query.addFrom(qc1);
+            query.addFrom(qc2);
+            ClassConstraint cc1 = new ClassConstraint(qc2, ClassConstraint.EQUALS, obj);
             String[] s = obj.getClass().getName().split("[.]");
             QueryReference qr = null;
             try {
-                qr = new QueryObjectReference(department, rds.getAttributeName());
+                qr = new QueryObjectReference(qc2, rds.getAttributeName());
             } catch (Exception e) {
                 throw new PersistenceBrokerException(e);
             }
             ContainsConstraint cc2 = 
-                new ContainsConstraint(qr, ContainsConstraint.CONTAINS, company);
+                new ContainsConstraint(qr, ContainsConstraint.CONTAINS, qc1);
             ConstraintSet cs = new ConstraintSet(ConstraintSet.AND);            
             cs.addConstraint(cc1);
             cs.addConstraint(cc2);
