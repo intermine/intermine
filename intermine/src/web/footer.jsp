@@ -5,7 +5,7 @@
 <table class="footer">
   <tr>
     <td align="left" width="10%">
-      <table class="footer">
+      <table>
         <tr>
           <td align="center">
             <a href="http://www.wellcome.ac.uk">
@@ -19,7 +19,7 @@
       </table>
     </td>
     <td align="right" width="10%">
-      <table class="footer" cellpadding="10">
+      <table>
         <tr>
           <td>
             FlyMine<br/>Department of Genetics<br/>Downing Street<br/>Cambridge, CB2 3EH, UK
