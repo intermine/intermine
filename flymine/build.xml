@@ -721,7 +721,19 @@
       <fileset dir="${dist}" includes="flymine*.jar"/>
     </copy>
     
-    <!-- (begin jsp precompilation) -->
+    <!-- this step is optional -->
+    <antcall target="precompile-jsp"/>
+
+    <delete file="${build.webapp}/flymine/WEB-INF/web.xml"/>
+    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
+      <lib dir="${build.webapp}/flymine/WEB-INF/lib"/>
+      <classes dir="${build.webapp}/flymine/WEB-INF/classes"/>
+      <webinf dir="${build.webapp}/flymine/WEB-INF"/>
+      <fileset dir="${build.webapp}/flymine"/>
+    </war>
+  </target>
+  
+  <target name="precompile-jsp">
     <jspc srcdir="${build.webapp}/flymine"
       destdir="${build.webapp}/flymine/WEB-INF/src"
       package="org.flymine.jsp"
@@ -735,8 +747,6 @@
 
     <delete>
       <fileset dir="${build.webapp}/flymine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
-      <!-- have to remove web.xml now - required by jspc but not allowed by war task -->
-      <fileset dir="${build.webapp}/flymine/WEB-INF" includes="web.xml"/>
     </delete>
 
     <loadfile property="generated.xml" srcFile="${build.tmp}/generated-web.xml"/>
@@ -757,16 +767,8 @@
 
     <!-- don't need the .java files -->
     <delete dir="${build.webapp}/flymine/WEB-INF/src"/>
-    <!-- (end jsp precompilation) -->
-    
-    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
-      <lib dir="${build.webapp}/flymine/WEB-INF/lib"/>
-      <classes dir="${build.webapp}/flymine/WEB-INF/classes"/>
-      <webinf dir="${build.webapp}/flymine/WEB-INF"/>
-      <fileset dir="${build.webapp}/flymine"/>
-    </war>
   </target>
-  
+
   <target name="build-testable-webapp" depends="build-webapp,jar-testmodel"
     description="Build a FlyMine webapp including the test classes and libraries">
     <war destfile="${dist.webapp}/flymine.war" update="true">
