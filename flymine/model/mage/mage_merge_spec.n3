@@ -61,7 +61,6 @@ null:Experiment__propertySets a owl:ObjectProperty;
         owl:onProperty :MicroArrayAssay__experiment ] ;
     owl:equivalentClass mage:DerivedBioAssay.
 
-
 :MicroArrayAssay__experiment a owl:ObjectProperty;
     owl:inverseOf :MicroArrayExperiment__assays.
 
@@ -73,7 +72,7 @@ null:Experiment__propertySets a owl:ObjectProperty;
     rdfs:domain :MicroArrayAssay;
     rdfs:range :MicroArrayExperimentalResult.
 
-:MicroArrayAssay__tissue a owl:ObjectProperty;
+:MicroArrayAssay__tissues a owl:ObjectProperty;
     rdfs:domain :MicroArrayAssay;
     rdfs:range :LabeledExtract.
 
@@ -126,7 +125,7 @@ null:DerivedBioAssay__propertySets a owl:ObjectProperty;
 
 :MicroArrayExperimentalResult__material a owl:ObjectProperty;
     rdfs:domain :MicroArrayExperimentalResult;
-    rdfs:range :BioEntity.
+    rdfs:range :CDNAClone.
 
 :MicroArrayExperimentalResult__genes a owl:ObjectProperty;
     rdfs:domain :MicroArrayExperimentalResult;
@@ -299,6 +298,9 @@ null:PhysicalArrayDesign__propertySets a owl:ObjectProperty;
     rdfs:domain :ReporterLocation;
     rdfs:range xsd:integer.
 
+:ReporterLocation__reporter a owl:ObjectProperty;
+    rdfs:domain :ReporterLocation;
+    rdfs:range :Reporter.
 
 null:FeatureReporterMap__featureInformationSources a owl:ObjectProperty;
     owl:equivalentProperty mage:FeatureReporterMap__featureInformationSources.
@@ -326,6 +328,9 @@ null:FeatureReporterMap__propertySets a owl:ObjectProperty;
         owl:maxCardinality "1" ;
         owl:onProperty :Reporter__material ];
     owl:equivalentClass mage:Reporter.
+
+:Reporter__results a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayExperimentalResult__reporter.
 
 :Reporter__location a owl:ObjectProperty;
     owl:inverseOf :ReporterLocation__reporter.
@@ -369,6 +374,10 @@ null:Reporter__immobilizedCharacteristics a owl:ObjectProperty;
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
         owl:onProperty :LabeledExtract__sample ] ;
+    rdfs:subClassOf 
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :LabeledExtract__assay ] ;
     owl:equivalentClass mage:LabeledExtract.
 
 :LabeledExtract__materialType a owl:DatatypeProperty;
@@ -386,6 +395,13 @@ null:Reporter__immobilizedCharacteristics a owl:ObjectProperty;
 :LabeledExtract__treatments a owl:ObjectProperty;
     rdfs:domain :LabeledExtract;
     rdfs:range :Treatment.
+
+:LabeledExtract__results a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayExperimentalResult__tissues.
+
+:LabeledExtract__assay a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayAssay__tissues.
+
 
 null:LabeledExtract__materialType a owl:ObjectProperty;
     owl:equivalentProperty mage:LabeledExtract__materialType.
@@ -418,8 +434,7 @@ null:LabeledExtract__propertySets a owl:ObjectProperty;
 
 :Sample__name a owl:DatatypeProperty;
     rdfs:domain :Sample;
-    rdfs:range xsd:string.
-    
+    rdfs:range xsd:string.    
 
 :Sample__materialType a owl:DatatypeProperty;
     rdfs:domain :Sample;
@@ -466,7 +481,7 @@ null:BioSource__propertySets a owl:ObjectProperty;
 :CDNAClone a owl:Class;
     rdfs:subClassOf :BioEntity.
 
-:CDNAClone__microArrayExperimentalResults a owl:ObjectProperty;
+:CDNAClone__results a owl:ObjectProperty;
     owl:inverseOf :MicroArrayExperimentalResult__material.
     
 :NuclearDNA a owl:Class;
@@ -479,8 +494,8 @@ null:BioSource__propertySets a owl:ObjectProperty;
    rdfs:domain :Gene;
    rdfs:range xsd:string.
 
-:Gene__microArrayExperimentalResults a owl:ObjectProperty;
-    owl:inverseOf :MicroArrayExperimentalResult__gene.
+:Gene__results a owl:ObjectProperty;
+    owl:inverseOf :MicroArrayExperimentalResult__genes.
 
 :Vector a owl:Class;
     rdfs:subClassOf :BioEntity.
