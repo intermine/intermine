@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.FileWriter;
@@ -100,17 +101,24 @@ public class WriteGFFTask extends Task
         Iterator resIter =
             CalculateLocationsUtil.findLocations(os, Chromosome.class, BioEntity.class, false);
 
-        Map processedChromosomes = new HashMap();
+        Map processedChromosomes = new LinkedHashMap();
 
         PrintWriter gffWriter = null;
+
+        // a Map of object classes to counts
+        Map objectCounts = null;
+
+        // the Gene reference from the last Exon seen
+        Gene lastExonGene = null;
+
+        // the last Chromosome seen
+        Chromosome chr = null;
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             BioEntity feature = (BioEntity) rr.get(1);
             Location loc = (Location) rr.get(2);
-
-            Chromosome chr;
 
             if (processedChromosomes.containsKey(chrId)) {
                 chr = (Chromosome) processedChromosomes.get(chrId);
@@ -125,20 +133,37 @@ public class WriteGFFTask extends Task
                 }
                 gffWriter = new PrintWriter(new FileWriter(gffFile));
 
-                writeFeature(gffWriter, chr, chr, null);
+                writeFeature(gffWriter, chr, chr, null, new Integer(0));
+
+                objectCounts = new HashMap();
             }
 
-            writeFeature(gffWriter, chr, feature, loc);
+            writeFeature(gffWriter, chr, feature, loc,
+                         (Integer) objectCounts.get(feature.getClass()));
+            incrementCount(objectCounts, feature);
         }
 
         gffWriter.close();
     }
 
+    private void incrementCount(Map objectCounts, Object object) {
+        if (objectCounts.containsKey(object.getClass())) {
+            int oldCount = ((Integer) objectCounts.get(object.getClass())).intValue();
+            objectCounts.put(object.getClass(), new Integer(oldCount + 1));
+        } else {
+            objectCounts.put(object.getClass(), new Integer(1));
+        }
+    }
+
     private static final String FLYMINE_STRING = "flymine";
 
     private void writeFeature(PrintWriter gffWriter, Chromosome chr,
-                              BioEntity bioEntity, Location location)
+                              BioEntity bioEntity, Location location, Integer index)
         throws IOException {
+
+        if (index == null) {
+            index = new Integer(0);
+        }
 
         StringBuffer lineBuffer = new StringBuffer();
 
@@ -204,7 +229,7 @@ public class WriteGFFTask extends Task
 
         lineBuffer.append("\t");
 
-        Map attributes = new HashMap();
+        Map attributes = new LinkedHashMap();
 
         List identifiers = new ArrayList();
         if (location == null && bioEntity == chr) {
@@ -214,9 +239,14 @@ public class WriteGFFTask extends Task
         }
         attributes.put(unqualifiedName, identifiers);
 
-        List flyMineIDs = new ArrayList();
-        flyMineIDs.add(bioEntity.getId() + "");
-        attributes.put("FlyMineID", flyMineIDs);
+        ArrayList flyMineIDs = new ArrayList();
+        flyMineIDs.add("FlyMineInternalID_" + bioEntity.getId());
+        attributes.put("Alias", flyMineIDs);
+        attributes.put("FlyMineInternalID", (List) flyMineIDs.clone());
+ 
+        ArrayList indexList = new ArrayList();
+        indexList.add(index.toString());
+        attributes.put("Index", indexList);
 
         lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
 
@@ -233,7 +263,7 @@ public class WriteGFFTask extends Task
 
         if (sequence != null) {
             sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                 chr.getIdentifier());
+                                                 chromosomeFileNamePrefix(chr));
             SeqIOTools.writeFasta(outputStream, sequence);
         }
     }
@@ -248,6 +278,6 @@ public class WriteGFFTask extends Task
 
     private String chromosomeFileNamePrefix(Chromosome chr) {
         return chr.getOrganism().getGenus() + "_" + chr.getOrganism().getSpecies()
-            + "_chromosome_" + chr.getIdentifier();
+            + "_chr_" + chr.getIdentifier();
     }
 }
