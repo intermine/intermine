@@ -35,9 +35,10 @@
     </html:link>
   </span>
   <span class="menu-item">
-    <html:link action="/templates.do">
-      <fmt:message key="menu.templates"/>
+    <html:link action="/templateSearch.do">
+      <fmt:message key="menu.searchTemplates"/>
     </html:link>
+    <img src="images/inspect.gif" width="12" height="11" alt="-&gt;"/>
   </span>
   <c:if test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
     <span class="menu-item">
