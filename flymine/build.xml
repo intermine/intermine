@@ -924,7 +924,7 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, compile-main, merge-rnai-model, 
-       merge-ensembl-model, merge-chado-model, merge-so-model" >
+       merge-orthologue-model, merge-go-model, merge-ensembl-model, merge-chado-model, merge-so-model" >
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1037,6 +1037,22 @@
   </target>
 
 
+  <target name="merge-go-model" depends="prepare-genomic-model">
+    <copy file="${model}/go/go_merge_spec.n3" todir="${build.model}/go/"/>
+
+    <!-- combine the go merge_spec with current genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/go/go_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+    </java> 
+  </target>
+
+
   <!-- merge ensembl owl -->
 
    <!-- convert ensembl model to OWL -->
@@ -1139,7 +1155,7 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="test-translation" depends="compile-test">
+  <target name="test-translation" depends="compile-test, build-db-fulldatatest">
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="test.class.path"/>
       <formatter type="xml" />
