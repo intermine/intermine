@@ -50,7 +50,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
-import org.intermine.objectstore.query.ConstraintWalkAction;
+import org.intermine.objectstore.query.ConstraintTraverseAction;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.PrecomputedTable;
@@ -680,7 +680,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
         final List bagConstraints = new ArrayList();
 
-        ConstraintHelper.walkConstraints(q.getConstraint(), new ConstraintWalkAction() {
+        ConstraintHelper.traverseConstraints(q.getConstraint(), new ConstraintTraverseAction() {
             public void apply(Constraint constraint) {
                 if (constraint instanceof BagConstraint) {
                     BagConstraint bagConstraint = (BagConstraint) constraint;
