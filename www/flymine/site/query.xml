@@ -13,12 +13,16 @@
       </item> 
       <item>
         Building a FlyMine query involves the following steps (described in
-        more detail below)
-        <index>
-          <item>Select classes and/or fields to constrain.</item>
-          <item>Select classes and /or fields you wish to include in the results.</item>
-          <item>Show Results. </item>
-        </index>
+        more detail below):
+      </item>
+      <item>
+        Select classes and/or fields to constrain.
+      </item>
+      <item>
+        Select classes and /or fields you wish to include in the results.
+      </item>
+      <item>
+        Show Results.
       </item>
     </section>
 
@@ -29,18 +33,18 @@
         fields. Some of the fields are references (links) from this class to
         other classes. Class references can be identified by the + box to the
         left, allowing you to expand the class. Expanding a referenced class
-        will show the fields associated with that class.
+        will show you its fields.
       </item>
       <item>
         Using the model browser you can navigate a path through the FlyMine
         classes to combine the information you require in different ways,
-        depending on your starting point
+        depending on your starting point.
       </item>
       <item>
-        For each class and field in the model browser there are two options:
+        There are two options for each class and field in the model browser:
         show and -&gt; (constrain). Use these to select fields from the model
         browser to constrain (in the constraint list) and/or 'show' (in the
-        output fields)
+        output fields list)
       </item> 
     </section>
 
@@ -95,12 +99,14 @@
 
     <section>
       <heading>Show results</heading>
-      <item>Press the 'Show Results' button to view the results of your query.</item>
+      <item>
+        Press the 'Show Results' button to view the results of your query.
+      </item>
       <item>
         All queries run are saved in the query history.  If you do not give
         your query a particular name (in the 'Save query' box at the bottom of
-        the query builder page), it will be saved as query_x (where x
-        increments for each query run).  To access your query history, click
+        the query builder page), it will be saved as query_n (where the number
+        n increments for each query run).  To access your query history, click
         on History in the menu bar.  Here you can select a query to run again
         or modify in the query builder page. You can also delete any queries
         you no longer wish to keep.
