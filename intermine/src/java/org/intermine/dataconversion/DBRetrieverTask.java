@@ -10,8 +10,6 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.io.File;
-
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.metadata.Model;
