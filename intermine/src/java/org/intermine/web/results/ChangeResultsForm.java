@@ -11,9 +11,16 @@ package org.intermine.web.results;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import java.util.Map;
+
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+
+import org.intermine.web.Constants;
 
 /**
  * Form bean to represent the inputs to a text-based query
@@ -103,6 +110,26 @@ public class ChangeResultsForm extends ActionForm
     }
 
     /**
+     * @see ActionForm#validate
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+
+        ActionErrors errors = null;
+        if (newBagName.equals("")) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                       new ActionError("errors.savebag.blank", newBagName));
+        } else if (savedBags != null && savedBags.containsKey(newBagName)) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                       new ActionError("errors.savebag.existing", newBagName));
+        }
+        return errors;
+    }
+
+    /**
      * Reset the form to the initial state
      *
      * @param mapping the mapping
@@ -110,6 +137,6 @@ public class ChangeResultsForm extends ActionForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         selectedObjects = new String[] {};
+        newBagName = null;
     }
-
 }

@@ -159,6 +159,18 @@
       <forward name="query" path="query.page"/>
     </action>
 
+    <!-- Action to delete a query -->
+    <action path="/deleteQuery"
+            type="org.intermine.web.DeleteQueryAction">
+      <forward name="history" path="history.page"/>
+    </action>
+
+    <!-- Action to delete a bag -->
+    <action path="/deleteQuery"
+            type="org.intermine.web.DeleteBagAction">
+      <forward name="history" path="history.page"/>
+    </action>
+
     <!-- Action to create a new query from the history page -->
     <action path="/createBoolean"
             type="org.intermine.web.HistoryAction"
@@ -169,7 +181,8 @@
     <!-- Action to chnge the displayed results in some way -->
     <action path="/changeResults"
             type="org.intermine.web.results.ChangeResultsAction"
-            parameter="method">
+            parameter="method"
+            input="results">
       <forward name="results" path="results.page"/>
     </action>
 

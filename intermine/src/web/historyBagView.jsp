@@ -17,6 +17,7 @@
         <th align="right">
           <fmt:message key="query.savedbags.countcolumnheader"/>
         </th>
+        <th/>
       </tr>
       <c:forEach items="${SAVED_BAGS}" var="savedBag">
         <tr>
@@ -27,6 +28,9 @@
           </td>
           <td align="right">
             <c:out value="${savedBag.value.size}"/>
+          </td>
+          <td>
+            <html:link action="/deleteBag?name=${savedBag.key}">delete</html:link>
           </td>
         </tr>
       </c:forEach>

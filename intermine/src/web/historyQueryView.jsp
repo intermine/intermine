@@ -17,6 +17,7 @@
         <th align="right">
           <fmt:message key="query.savedqueries.countcolumnheader"/>
         </th>
+        <th/>
       </tr>
       <c:forEach items="${SAVED_QUERIES}" var="savedQuery">
         <tr>
@@ -29,6 +30,9 @@
             <c:if test="${savedQuery.value.resultsInfo != null}">
               <c:out value="${savedQuery.value.resultsInfo.rows}"/>
             </c:if>
+          </td>
+          <td>
+            <html:link action="/deleteQuery?name=${savedQuery.key}">delete</html:link>
           </td>
         </tr>
       </c:forEach>
