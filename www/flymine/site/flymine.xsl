@@ -209,9 +209,7 @@ version="1.0">
         <img>
           <xsl:attribute name="border">0</xsl:attribute>
           <xsl:attribute name="hspace">5</xsl:attribute>
-          <xsl:attribute name="src">
-            <xsl:copy-of select="$basedir"/>/images/openoffice
-          </xsl:attribute>
+          <xsl:attribute name="src"><xsl:copy-of select="$basedir"/>/images/openoffice</xsl:attribute>
         </img>
       </xsl:when>
       <xsl:otherwise>
