@@ -130,6 +130,7 @@
     <include name="log4j*.jar"/>
     <include name="cglib*.jar"/>
     <include name="antlr*.jar"/>
+    <include name="stax*.jar"/>
     <include name="commons-lang*.jar"/>
     <include name="commons-logging*.jar"/>
     <include name="torque-gen*.jar"/>
