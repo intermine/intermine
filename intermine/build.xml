@@ -772,7 +772,10 @@
     </copy>
     <!-- lib dir -->
     <copy todir="${tutorial}/lib">
-      <fileset dir="${lib}"/>
+      <fileset dir="${lib}">
+        <patternset refid="lib.common"/>
+        <patternset refid="lib.antlr"/>
+      </fileset>
       <fileset dir="${dist}" includes="flymine.jar"/>
     </copy>
     <!-- model dir -->
