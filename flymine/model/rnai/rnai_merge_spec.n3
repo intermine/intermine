@@ -12,19 +12,49 @@
 :Gene__wormBaseSequenceName a owl:DatatypeProperty;
     owl:equivalentProperty rnai:Gene__sequenceName.
 
-:Gene__GCGApprovedName a owl:DatatypeProperty;
+:Gene__gcgApprovedName a owl:DatatypeProperty;
     owl:equivalentProperty rnai:Gene__commonName.
 
 :Gene__properties a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Phenotype;
+    rdfs:subPropertyOf :BioEntity__properties;
     owl:equivalentProperty rnai:Gene__phenotypes.
+
+# need to make subProperty relationships explicit
+
+:Gene__synonyms a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Synonym;
+    rdfs:subPropertyOf :BioEntity__synonyms .
+
+:Gene__organism a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Organism;
+    rdfs:subPropertyOf :BioEntity__organism.
 
 :RNAiExperiment a owl:Class;
     rdfs:subClassOf :Experiment.
 
+:RNAiExperiment__publication a owl:ObjectProperty ;
+    rdfs:domain :RNAiExperiment ;
+    rdfs:range :Publication ;
+    rdfs:subPropertyOf :Analysis__publication .
+
 null:Phenotype__code a owl:DatatypeProperty;
     owl:equivalentProperty rnai:Phenotype_code.
 
-:Phenotype a owl:Class.
+:Phenotype a owl:Class;
+    rdfs:subClassOf :BioProperty.
+
+:Phenotype__subject a owl:ObjectProperty;
+    owl:inverseOf :Gene__properties;
+    rdfs:subPropertyOf :BioProperty__subject.
+
+:Phenotype__evidence a owl:ObjectProperty;
+    rdfs:domain :Phenotype;
+    rdfs:range :RNAiExperiment;
+    rdfs:subPropertyOf :BioProperty__evidence.
 
 #Mapping from phenotype code -> phenotype ontology class
 :WildType a owl:Class;

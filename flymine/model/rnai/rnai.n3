@@ -86,14 +86,6 @@
     rdfs:domain :RNAiExperiment;
     rdfs:range :Publication.
 
-#Database
-
-:Database a owl:Class.
-
-:Database__url a owl:DatatypeProperty;
-    rdfs:domain :Database;
-    rdfs:range xsd:string.
-
 #Organism
 
 :Organism a owl:Class.
