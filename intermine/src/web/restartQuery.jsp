@@ -4,17 +4,8 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- restartQuery.jsp -->
-<c:if test="${(query != null) || (savedQueries != null)}">
+<c:if test="${query != null}">
   <html:form action="/restartQuery">
-    <html:select property="queryName">
-      <c:if test="${query != null}">
-        <html:option value="empty" key="query.empty"/>
-      </c:if>
-      <c:forEach items="${savedQueries}" var="entry">
-        <html:option value="${entry.key}"/>
-      </c:forEach>
-    </html:select>
-  
     <html:submit property="action">
       <bean:message key="query.abandon"/>
     </html:submit>

@@ -20,12 +20,12 @@ import org.apache.struts.action.ActionMapping;
  *
  * @author Andrew Varley
  * @author Matthew Wakeling
+ * @author Kim Rutherford
  */
-public class RestartQueryForm extends ActionForm
+public class LoadQueryForm extends ActionForm
 {
-
-    protected String queryName = "empty";
-
+    protected String queryName = null;
+    
     /**
      * Set the query name
      *
@@ -42,15 +42,5 @@ public class RestartQueryForm extends ActionForm
      */
     public String getQueryName() {
         return queryName;
-    }
-
-    /**
-     * Reset the form to the initial state
-     *
-     * @param mapping the mapping
-     * @param request the request
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        queryName = "empty";
     }
 }

@@ -6,6 +6,7 @@
 
 <tiles:importAttribute/>
 
+<!-- results.jsp -->
 <html:form action="/changeResultsSize">
 
 <%-- The following should probably be turned into a tag at some stage --%>
@@ -66,7 +67,7 @@
       <tr class="<c:out value="${rowClass}"/>">
 
         <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
-          <c:choose>  
+          <c:choose>
             <c:when test="${column.visible}">
               <c:choose>
                 <c:when test="${(status.count == 1) || (row[column.index] != prevrow[column.index])}">
@@ -187,5 +188,8 @@
   <html:submit property="action">
     <bean:message key="bag.new"/>
   </html:submit>
-
+  <br/>
 </html:form>
+
+<tiles:get name="saveQuery"/>
+<!-- /results.jsp -->

@@ -37,7 +37,11 @@
 
     <!-- restart query -->
     <form-bean      name="restartQueryForm"
-                    type="org.flymine.web.RestartQueryForm"/>
+                    type="org.apache.struts.action.DynaActionForm"/>
+
+    <!-- load query -->
+    <form-bean      name="loadQueryForm"
+                    type="org.flymine.web.LoadQueryForm"/>
 
     <!-- save query -->
     <form-bean      name="saveQueryForm"
@@ -126,6 +130,13 @@
     <action    path="/restartQuery"
                type="org.flymine.web.RestartQueryAction"
                name="restartQueryForm">
+      <forward name="buildquery" path="query.page"/>
+    </action>
+
+    <!-- Action to load a Query from the saved queries -->
+    <action    path="/loadQuery"
+               type="org.flymine.web.LoadQueryAction"
+               name="loadQueryForm">
       <forward name="buildquery" path="query.page"/>
     </action>
 

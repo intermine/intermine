@@ -22,14 +22,15 @@ import org.apache.struts.action.ActionMapping;
 import java.util.Map;
 
 /**
- * Implementation of <strong>Action</strong> that removes a Query from a session.
+ * Implementation of <strong>Action</strong> that set the current Query for
+ * the session from a saved Query.
  *
  * @author Richard Smith
+ * @author Kim Rutherford
  */
 
-public class RestartQueryAction extends Action
+public class LoadQueryAction extends Action
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -53,10 +54,18 @@ public class RestartQueryAction extends Action
         throws Exception {
 
         HttpSession session = request.getSession();
-        session.removeAttribute("query");
-        session.removeAttribute("queryClass");
-        session.removeAttribute("ops");
-        session.removeAttribute("constraints");
+
+        LoadQueryForm rqForm = (LoadQueryForm) form;
+        String queryName = rqForm.getQueryName();
+
+        Map savedQueries = (Map) session.getAttribute("savedQueries");
+
+        if ((savedQueries != null) && savedQueries.containsKey(queryName)) {
+            session.setAttribute("query", savedQueries.get(queryName));
+            session.removeAttribute("queryClass");
+            session.removeAttribute("ops");
+            session.removeAttribute("constraints");
+        }
 
         return (mapping.findForward("buildquery"));
     }

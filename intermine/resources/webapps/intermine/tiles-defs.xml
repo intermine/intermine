@@ -39,8 +39,8 @@
     <put name="querySelectBuild" value="querySelectBuild.tile"/>
     <put name="aliasChange" value="aliasChange.tile"/>
     <put name="runQuery" value="runQuery.jsp"/>
+    <put name="loadQuery" value="loadQuery.jsp"/>
     <put name="restartQuery" value="restartQuery.jsp"/>
-    <put name="saveQuery" value="saveQuery.jsp"/>
     <put name="queryView" value="queryView.tile"/>
 </definition>
 
@@ -63,6 +63,7 @@
 </definition>
 
 <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
+    <put name="saveQuery" value="saveQuery.jsp"/>
 </definition>
 
 <definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do">
