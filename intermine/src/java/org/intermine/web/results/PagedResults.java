@@ -41,6 +41,7 @@ public class PagedResults extends PagedTable
      * Create a new PagedResults object from the given Results object.
      *
      * @param results the Results object
+     * @param model the Model for the Results
      */
     public PagedResults(Results results, Model model) {
         this(QueryHelper.getColumnAliases(results.getQuery()), results, model);
@@ -51,6 +52,7 @@ public class PagedResults extends PagedTable
      *
      * @param results the Results object
      * @param columnNames the headings for the Results columns
+     * @param model the Model for the Results
      */
     public PagedResults(List columnNames, Results results, Model model) {
         super(columnNames);
