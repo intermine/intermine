@@ -993,7 +993,7 @@
     </delete>
   </target>
 
-  <target name="fulltest" depends="prepare, clean, test-models-full, checkstyle"
+  <target name="fulltest" depends="clean, test-models-full, checkstyle"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
