@@ -40,7 +40,6 @@ public class PrimaryKeyUtilTest extends TestCase
         Class c = Class.forName("org.intermine.model.testmodel.Employee");
         List fields = PrimaryKeyUtil.getPrimaryKeyFields(model, c);
         ArrayList testFieldNames = new ArrayList();
-        testFieldNames.add("id");
         testFieldNames.add("name");
         assertEquals(testFieldNames, fields);
     }

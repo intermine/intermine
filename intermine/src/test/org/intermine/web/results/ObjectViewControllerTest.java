@@ -101,7 +101,6 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         Map primaryKeyFields = (Map) context.getAttribute("primaryKeyFields");
         assertNotNull(primaryKeyFields);
         LinkedHashMap testFieldNames = new LinkedHashMap();
-        testFieldNames.put("id","id");
         testFieldNames.put("name","name");
         testFieldNames.put("company","company");
         assertEquals(testFieldNames, primaryKeyFields);
