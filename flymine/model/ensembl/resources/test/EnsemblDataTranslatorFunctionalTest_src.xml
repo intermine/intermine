@@ -336,18 +336,18 @@
     <attribute name="repeat_name" value="GC_rich"/>
   </item>
   <item id="23_1" class="http://www.flymine.org/model/ensembl#object_xref">
-    <attribute name="ensembl_id" value="1"/>
     <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
     <reference name="xref" ref_id="6_1"/>
   </item>
   <item id="23_2" class="http://www.flymine.org/model/ensembl#object_xref">
-    <attribute name="ensembl_id" value="1"/>
     <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
     <reference name="xref" ref_id="6_2"/>
   </item>
   <item id="23_3" class="http://www.flymine.org/model/ensembl#object_xref">
-    <attribute name="ensembl_id" value="1"/>
     <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
     <reference name="xref" ref_id="6_3"/>
   </item>
   <item id="6_1" class="http://www.flymine.org/model/ensembl#xref">
