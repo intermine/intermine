@@ -72,4 +72,122 @@
 	If anything goes wrong, throw an Exception, and pass the query through.
 </para>
 </sect1>
+
+<sect1>
+<title>How this information is used to optimise the query</title>
+<para>
+	Some of the chunks of data are just passed through - others are fiddled with.
+	<itemizedlist>
+		<listitem>List of tables the search is ranging over.
+			We use this to help choose which precomputed tables will help our query.
+			We can only use precomputed tables that have an improper subset of this list of tables.</listitem>
+		<listitem>List of fields to show.
+			This must be converted to the new precomputed table names, and passed through.</listitem>
+		<listitem>List of restrictions ANDed together from the where clause.
+			We also use this to help choose which precomputed tables will help our query.
+			We can only use precomputed tables that have an improper subset of this list of restrictions.
+			We also need to convert the restrictions to the new precomputed table names before passing them through.</listitem>
+		<listitem>A GROUP BY String.
+			This must be converted to the new precomputed table names, and passed through.</listitem>
+		<listitem>A list of fields to order by.
+			This must be converted to the new precomputed table names, and passed through.</listitem>
+		<listitem>A LIMIT number, and possibly an OFFSET number.
+			At first, we can just pass this through.
+			If we find that it is a bottleneck, we could do some clever caching of positions, taking advantage of the order by thingy.</listitem>
+	</itemizedlist>
+</para>
+</sect1>
+
+<sect1>
+<title>Meta-data in the database</title>
+<para>
+	We are going to need to store data in the database regarding what precomputed join tables are available, and what form they take.
+	Each precomputed table will contain data produced by joining a certain set of tables together (note that a given table can be specified more than once), restricted by a certain set of restrictions, and ordered in a certain way.
+	Therefore, we need to be able to ask the database to return all rows of table, where each row represents a precomputed join table, where none of the precomputed join tables have any tables that are not present in our list created from the query (again, noting that any table can be specified more than once, and it should be able to reorder duplicate tables to get a good match), and none of the precomputed join tables have any restrictions that are not present in our list of restrictions created from the query.
+	We also need this query to return very quickly, otherwise there is no point in doing it.
+</para>
+
+<para>
+	Therefore, the following database layout should be used:
+	<itemizedlist>
+		<listitem>TABLE: join_list. Precomputed joins.
+			Each row represents a precomputed join table.
+			<itemizedlist>
+				<listitem>FIELD: name. table name.
+					This is the name of the table that the entry points to.</listitem>
+				<listitem>FIELD: selectstatement. full select statement used to create the precomputed table</listitem>
+			</itemizedlist></listitem>
+		<listitem>TABLE: tables contained in precomputed joins.
+			Each row represents a table included in a precomputed join table.
+			<itemizedlist>
+				<listitem>FIELD: precomputed table name.
+					This is the name of the precomputed join table, so the same name as the field in the previous table.
+					These objects link to the above table through this field.</listitem>
+				<listitem>FIELD: table name.
+					This is the name of the table included in the precomputed join table.</listitem>
+			</itemizedlist></listitem>
+		<listitem>TABLE: restrictions contained in precomputed joins.
+			Each row represents a restriction included in a precomputed join table.
+			A particular precomputed join table may have more than one of these, in which case they act as if they are ANDed together.
+			<itemizedlist>
+				<listitem>FIELD: precomputed table name.
+					This is the name of the precomputed join table.
+					These objects link to the first table through this field.</listitem>
+				<listitem>FIELD: text of restriction.
+					This is in the form of the original (non-precomputed) table field names, rather than the field names of the precomputed tables.</listitem>
+			</itemizedlist></listitem>
+	</itemizedlist>
+	A SQL query like 
+	<emphasis>select fa.name from (select f.name from (select join_list.name, joined_restrict.restriction from join_list left join joined_restrict on joined_restrict.restriction not in (</emphasis>list of restrictions<emphasis>) and join_list.name = joined_restrict.join_name) as f where f.restriction is null) as fa, (select f.name from (select join_list.name, joined_tables.table_name from join_list left join joined_tables on joined_tables.table_name not in (</emphasis>list of tables<emphasis>) and join_list.name = joined_tables.join_name) as f where f.table_name is null) as fb where fa.name = fb.name;</emphasis>
+	would extract a list of suitable precomputed tables from the database.
+	The query searches for all precomputed joins that do not contain any tables or restrictions other than those in the query we wish to optimise.
+</para>
+
+<para>
+	This search will give us a list of precomputed tables.
+	We can then load in all the information on those precomputed tables into memory.
+	The optimiser can then go through all the possible selections of these precomputed tables.
+	For each selection, no two precomputed tables should refer to the same table in the query we wish to optimise.
+	The optimiser can then produce a list of selections of precomputed tables that do not clash with each other.
+	For each of these selections, the optimiser can reconstruct the query we wish to optimise, replacing tables with the precomputed tables, and removing restrictions that are already encoded in the precomputed tables.
+	For each of these reconstructed queries, the optimiser can then ask the database to estimate how long each would take to execute.
+	The optimiser can then easily pick the fastest reconstructed query.
+</para>
+</sect1>
+
+<sect1>
+<title>Current status, and TODO list</title>
+<para>
+	The org.flymine.p6flatten package currently performs all the above, to optimise a query.
+	It is capable of finding reconstructed queries that use more than one precomputed table to speed up the execution.
+	<itemizedlist>
+		<listitem>It doesn't perform full optimisation when there is more than one copy of a particular table in the query to optimise.
+			Currently, it assigns a name of "tablename" to the first copy of a table that it sees, and "tablename_copy1", "tablename_copy2"... to multiple copies.
+			This avoids the possibility that multiple tables will be confused, resulting in a query that does not produce identical results to the original query.
+			However it does not perform any optimisation of any tables except the first copy, unless a precomputed table is produced that explicitly specifies a table of the form "tablename_copyn".
+			This could be fixed by performing the search for precomputed tables several times, once for each combination of table copies swapped round, then translating the table names back to the original versions when replacing them with precomputed tables.</listitem>
+		<listitem>It doesn't ever create new precomputed tables.
+			Currently, we have to manually create precomputed tables.
+			There are three circumstances where we want to create new precomputed tables:
+			<itemizedlist>
+				<listitem>A user has just requested a small portion (using LIMIT and OFFSET) of a query that would take a long time to complete in fullness, but a short amount of time to complete just the portion required.
+					We also do not have a precomputed join that matches it completely (hence the query would take a long time to complete in fullness).
+					In this circumstance, it is okay for the user to keep requesting portions (pages) of the results, since they don't take too long each.
+					However, it would be good to create a precomputed table for the query in fullness, ordered by the same ordering as the ordering of the original query (which should be a unique ordering, so that requesting portions is consistent), before many portions have been requested.
+					In fact, it would probably be sensible to block after a certain number of portions until the precomputed table is ready, to leave some CPU time for the process creating the precomputed table.</listitem>
+				<listitem>A user has just requested a small portion (using LIMIT and OFFSET) of a query that would not take much less time to complete than to complete the query in fullness.
+					In this case, we should produce a precomputed table on the spot (in the same process), since we would be getting a precomputed table out of it, without delaying the user much more than is necessary anyway.</listitem>
+				<listitem>Over time, we gather statistics on what fragments of queries are most popular in the queries that we are given.
+					We can then (during a quiet period) create some of the more popular fragments.
+					In this circumstance, it would probably be best to create precomputed tables for every possible single-column ordering, because it is difficult to tell in advance what ordering the database can use to its advantage to avoid sorting a table prior to doing a merge-join.</listitem>
+			</itemizedlist></listitem>
+		<listitem>Depending on how Hibernate does paging, it might be necessary to write a JDBC layer to do the paging.
+			This would probably be a completely separate P6Spy module to our P6Flatten stuff.
+			It would implement paging using LIMIT and OFFSET, and by inserting an extra restriction into the WHERE clause, by looking at the primary sort key and caching some values with how many rows through the output those values change.
+			It would have to enforce a unique ordering, which can be done by taking the original ordering (or lack thereof) and appending it with a preset string for each table the query references.
+			These preset strings would be lists of fields which are guaranteed to uniquely order its table.
+			Subselects would be interesting.</listitem>
+	</itemizedlist>
+</para>
+</sect1>
 </article>
