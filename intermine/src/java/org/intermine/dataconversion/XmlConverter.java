@@ -10,7 +10,10 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Map;
@@ -312,7 +315,16 @@ public class XmlConverter extends DataConverter
                         }
                     }
                 } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
+                    try {
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        e.printStackTrace(pw);
+                        pw.close();
+                        sw.close();
+                        throw new SAXException(sw.toString());
+                    } catch (IOException e2) {
+                        throw new SAXException(e);
+                    }
                 }
             }
             isAttribute = false;
