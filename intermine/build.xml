@@ -10,7 +10,11 @@
 
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
 
+  <!-- used by build-model.xml -->
   <property name="namespace" value="http://www.intermine.org/model"/>
+
+  <!-- used by build-model.xml -->
+  <property name="packagename" value="org.flymine.model"/>
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
