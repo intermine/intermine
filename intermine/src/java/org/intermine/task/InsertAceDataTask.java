@@ -97,10 +97,6 @@ public class InsertAceDataTask extends ClassPathTask
                                                                                  String.class,
                                                                                  String.class,
                                                                                  int.class });
-
-            log("found loadData method", Project.MSG_INFO);
-
-
             method.invoke(driver, new Object [] {store,
                                                  user,
                                                  password,
