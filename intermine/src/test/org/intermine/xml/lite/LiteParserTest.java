@@ -191,7 +191,6 @@ public class LiteParserTest extends TestCase
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
-
     }
 
     public void testParseNullXml() throws Exception{
@@ -200,8 +199,16 @@ public class LiteParserTest extends TestCase
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
-
     }
 
+    public void testParseEmptyLastString() throws Exception {
+        Employee obj1 = (Employee) LiteParser.parse(
+                "org.flymine.model.testmodel.Employee" + LiteRenderer.DELIM
+                + "org.flymine.model.testmodel.Employable" + LiteRenderer.DELIM
+                + "aid" + LiteRenderer.DELIM + "1234" + LiteRenderer.DELIM
+                + "aname" + LiteRenderer.DELIM, os);
 
+        assertEquals("", obj1.getName());
+        assertEquals(new Integer(1234), obj1.getId());
+    }
 }

@@ -109,7 +109,11 @@ public class LiteParser
         for (int i = 2; i < a.length; i += 2) {
             Field f = new Field();
             f.setName(a[i].substring(1));
-            f.setValue(a[i + 1]);
+            if (i + 1 == a.length) {
+                f.setValue("");
+            } else {
+                f.setValue(a[i + 1]);
+            }
 
             if (a[i].startsWith("a")) {
                 item.addField(f);
