@@ -8,6 +8,7 @@ import org.apache.ojb.broker.TransactionAbortedException;
 
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
@@ -37,9 +38,13 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * @param os the ObjectStore that we wish to write to
      * @throws ObjectStoreException if there is any problem with the underlying ObjectStore
      */
-    public ObjectStoreWriterOjbImpl(ObjectStoreOjbImpl os) throws ObjectStoreException {
-        this.os = os;
-        pb = os.getPersistenceBroker();
+    public ObjectStoreWriterOjbImpl(ObjectStore os) throws ObjectStoreException {
+        try {
+            this.os = (ObjectStoreOjbImpl) os;
+            pb = this.os.getPersistenceBroker();
+        } catch (ClassCastException e) {
+            throw new ObjectStoreException(e);
+        }
     }
 
     /**
