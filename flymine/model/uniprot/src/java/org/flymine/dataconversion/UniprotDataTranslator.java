@@ -65,6 +65,7 @@ public class UniprotDataTranslator extends DataTranslator
     private Map organisms = new HashMap();
     private FileWriter fw = null;
     private boolean outputIdentifiers = false;
+    private Map identifierToOrganismDbId = new HashMap();
 
     private static final String SRC_NS = "http://www.flymine.org/model#";
 
@@ -291,16 +292,17 @@ public class UniprotDataTranslator extends DataTranslator
 
             // 5. create a Sequence object and reference from Protein
             // <entry><sequence>
-            Item srcSeq = ItemHelper.convert(srcItemReader
-                        .getItemById(srcItem.getReference("sequence").getRefId()));
-            if (srcSeq != null) {
-                Item sequence = createItem(tgtNs + "Sequence", "");
-                sequence.addAttribute(new Attribute("residues",
-                                                    srcSeq.getAttribute("sequence").getValue()));
-                retval.add(sequence);
-                protein.addReference(new Reference("sequence", sequence.getIdentifier()));
+            Reference seqRef = srcItem.getReference("sequence");
+            if (seqRef != null) {
+                Item srcSeq = ItemHelper.convert(srcItemReader.getItemById(seqRef.getRefId()));
+                if (srcSeq != null) {
+                    Item sequence = createItem(tgtNs + "Sequence", "");
+                    sequence.addAttribute(new Attribute("residues",
+                                                  srcSeq.getAttribute("sequence").getValue()));
+                    retval.add(sequence);
+                    protein.addReference(new Reference("sequence", sequence.getIdentifier()));
+                }
             }
-
 
             // TODO many dbReference types are present in uniprot records - e.g. Pfam, InterPro.
             // Specifc code could be add to create additional objects
@@ -345,7 +347,7 @@ public class UniprotDataTranslator extends DataTranslator
                     geneOrganismDbId = getDbReferenceValue(srcItem, "FlyBase", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
-                        dbId = getDbId("FlyMine");
+                        dbId = getDbId("FlyBase");
                     }
                 } else if (taxonId == 6239) { // C. Elegans
                     geneOrganismDbId = getDbReferenceValue(srcItem, "WormBase", geneNames);
@@ -360,10 +362,21 @@ public class UniprotDataTranslator extends DataTranslator
                     try {
                         fw.write(taxonId + "\tprotein: " + proteinName + "\tname: "
                                  + primaryGeneName + "\tidentifier: " + geneIdentifier
-                                 + "\torganismDbId: " + geneOrganismDbId
+                                 + "\tgeneOrganismDbId: " + geneOrganismDbId
                                  + System.getProperty("line.separator"));
                     } catch (IOException e) {
                         throw new InterMineException(e);
+                    }
+                }
+
+                // UniProt has at least one instance where the same CG number has different
+                // FBgn identifiers
+                if (createGene && (geneIdentifier != null)) {
+                    String oldOrganismDbId = (String) identifierToOrganismDbId.get(geneIdentifier);
+                    if ((oldOrganismDbId != null) && !(oldOrganismDbId.equals(geneOrganismDbId))) {
+                        createGene = false;
+                        LOG.info("found a different organismDbId and identifier pair. "
+                         + "organismDbId: " + geneOrganismDbId + ", identifier: " + geneIdentifier);
                     }
                 }
 
@@ -374,6 +387,8 @@ public class UniprotDataTranslator extends DataTranslator
                     String geneItemId = (String) geneIdentifierToId.get(geneOrganismDbId);
                     ReferenceList geneSynonyms = new ReferenceList("synonyms", new ArrayList());
                     if (geneItemId == null) {
+                        identifierToOrganismDbId.put(geneIdentifier, geneOrganismDbId);
+
                         Item gene = createItem(tgtNs + "Gene", "");
                         if (geneOrganismDbId != null) {
                             if (geneOrganismDbId.equals("")) {
