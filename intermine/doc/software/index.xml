@@ -1,8 +1,15 @@
 <menu>
   <section>
+
+    <heading>Tutorials</heading>
+    <item><ulink url="tutorial">Getting started - a tutorial</ulink></item>
+    <item><ulink url="tutorials/biologist">Getting started - a biologist's perspective</ulink></item>
+    <item><ulink url="tutorials/using-own-model">Creating your own database</ulink></item>
+  </section>
+
+  <section>
     <heading>System documentation</heading>
     <item><ulink url="overview">Technical overview</ulink></item>
-    <item><ulink url="tutorial">Getting started - a tutorial</ulink></item>
     <item><ulink url="FlyMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
     <item><ulink url="FlyMineArchitecture">System architecture</ulink></item>
   </section>
