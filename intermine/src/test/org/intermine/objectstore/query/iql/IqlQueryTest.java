@@ -58,8 +58,7 @@ public class FqlQueryTest extends FqlQueryTestCase
             boolean passed = false;
             while (resIter.hasNext()) {
                 FqlQuery fq = (FqlQuery) resIter.next();
-                passed = passed || (fq.getQueryString().equals(fqGenerated.getQueryString()));
-                passed = passed || (fq.getParameters().equals(fqGenerated.getParameters()));
+                passed = passed || ((fq.getQueryString().equals(fqGenerated.getQueryString())) && (fq.getParameters().equals(fqGenerated.getParameters())));
             }
             assertTrue(type + " has failed: " + fqGenerated.toString(), passed);
         }

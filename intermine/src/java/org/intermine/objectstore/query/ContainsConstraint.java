@@ -10,8 +10,11 @@ package org.flymine.objectstore.query;
  *
  */
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import org.flymine.util.DynamicUtil;
 
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.
@@ -51,13 +54,17 @@ public class ContainsConstraint extends Constraint
             throw new NullPointerException("cls cannot be null");
         }
 
-        if (ref instanceof QueryObjectReference && !ref.getType().equals(cls.getType())) {
-            throw new IllegalArgumentException("Invalid constraint: "
-                                               + ref.getType()
-                                               + " " + op
-                                               + " " + cls.getType());
+        Class c1 = ref.getType();
+        Class c2 = cls.getType();
+        Set cs1 = DynamicUtil.decomposeClass(c1);
+        Set cs2 = DynamicUtil.decomposeClass(c2);
+        if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
+            if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
+                throw new IllegalArgumentException("Invalid constraint: "
+                        + c1 + " " + op + " " + c2);
+            }
         }
-        
+
         this.ref = ref;
         this.op = op;
         this.cls = cls;

@@ -226,11 +226,19 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         results.put("InterfaceCollection", toList(r));
 
         r = new Object[][] { { data.get("CompanyA"), new Integer(876324), new Integer(1234) } };
-        results.put("DynamicClass", toList(r));
+        results.put("DynamicInterfacesAttribute", toList(r));
 
         r = new Object[][] { { data.get("ContractorA") },
                              { data.get("EmployeeB1") } };
-        results.put("DynamicClass2", toList(r));
+        results.put("DynamicClassInterface", toList(r));
+
+        results.put("DynamicClassRef1", Collections.EMPTY_LIST);
+        results.put("DynamicClassRef2", Collections.EMPTY_LIST);
+        results.put("DynamicClassRef3", Collections.EMPTY_LIST);
+        results.put("DynamicClassRef4", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("EmployeeB1") } };
+        results.put("DynamicClassConstraint", toList(r));
     }
 
     /**

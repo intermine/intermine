@@ -349,14 +349,14 @@ public class SqlGenerator
             Query q, Model model) throws ObjectStoreException {
         QueryReference arg1 = c.getReference();
         QueryClass arg2 = c.getQueryClass();
-        ClassDescriptor arg1Class = model.getClassDescriptorByName(arg1.getQueryClass().getType()
-                .getName());
-        if (arg1Class == null) {
+        Map fieldNameToFieldDescriptor = model.getFieldDescriptorsForClass(arg1.getQueryClass()
+                .getType());
+        ReferenceDescriptor arg1Desc = (ReferenceDescriptor)
+            fieldNameToFieldDescriptor.get(arg1.getFieldName());
+        if (arg1Desc == null) {
             throw new ObjectStoreException(arg1.getQueryClass().getType().toString()
                     + " is not in the model");
         }
-        ReferenceDescriptor arg1Desc = (ReferenceDescriptor) arg1Class
-            .getFieldDescriptorByName(arg1.getFieldName());
         if (arg1 instanceof QueryObjectReference) {
             String arg1Alias = (String) state.getFieldToAlias(arg1.getQueryClass()).get(arg1Desc
                     .getName());
@@ -364,11 +364,6 @@ public class SqlGenerator
                     + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
             queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
         } else if (arg1 instanceof QueryCollectionReference) {
-            ClassDescriptor arg2Class = model.getClassDescriptorByName(arg2.getType().getName());
-            if (arg2Class == null) {
-                throw new ObjectStoreException(arg2.getType().toString()
-                        + " is not in the model");
-            }
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 String arg2Alias = (String) state.getFieldToAlias(arg2)
                     .get(arg1Desc.getReverseReferenceDescriptor().getName());
@@ -664,9 +659,11 @@ public class SqlGenerator
             } else if (node instanceof QueryEvaluable) {
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 String alias = (String) q.getAliases().get(node);
-                if ((kind == QUERY_NORMAL) || (kind == QUERY_SUBQUERY_FROM)) {
+                if (kind == QUERY_NORMAL) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase()) ? alias : "\"" + alias
                                 + "\""));
+                } else if (kind == QUERY_SUBQUERY_FROM) {
+                    retval.append(" AS " + alias);
                 }
             }
         }

@@ -51,7 +51,7 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
      */
     public static void setUpResults() {
         results.put("SelectSimpleObject", new FqlQuery("SELECT Company FROM org.flymine.model.testmodel.Company AS Company", null));
-        results.put("SubQuery", new FqlQuery("SELECT DISTINCT a1_.a1_.name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_, 5 AS a2_ FROM org.flymine.model.testmodel.Company AS a1_) AS a1_", null));
+        results.put("SubQuery", new FqlQuery("SELECT DISTINCT a1_.a1_.name AS a2_, a1_.Alias AS a3_ FROM (SELECT DISTINCT a1_, 5 AS Alias FROM org.flymine.model.testmodel.Company AS a1_) AS a1_", null));
         results.put("WhereSimpleEquals", new FqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber = 1234", null));
         results.put("WhereSimpleNotEquals", new FqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber != 1234", null));
         results.put("WhereSimpleLike", new FqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.name LIKE 'Company%'", null));
@@ -112,12 +112,34 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         fq.setParameters(Collections.singletonList(data.get("Secretary1")));
         results.put("InterfaceCollection", fq);
         Set res = new HashSet();
-        res.add(new FqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.flymine.model.testmodel.Company, org.flymine.model.testmodel.Broke) AS a1_ WHERE a1_.debt > 0 AND a1_.vatNumber > 0", null));
-        res.add(new FqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Company) AS a1_ WHERE a1_.debt > 0 AND a1_.vatNumber > 0", null));
-        results.put("DynamicClass", res);
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.flymine.model.testmodel.Company, org.flymine.model.testmodel.Broke) AS a1_ WHERE (a1_.debt > 0 AND a1_.vatNumber > 0)", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Company) AS a1_ WHERE (a1_.debt > 0 AND a1_.vatNumber > 0)", null));
+        results.put("DynamicInterfacesAttribute", res);
         res = new HashSet();
         res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Employable, org.flymine.model.testmodel.Broke) AS a1_", null));
         res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Employable) AS a1_", null));
-        results.put("DynamicClass2", res);
+        results.put("DynamicClassInterface", res);
+        res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Department, org.flymine.model.testmodel.Broke) AS a1_, org.flymine.model.testmodel.Company AS a2_, org.flymine.model.testmodel.Bank AS a3_ WHERE (a2_.departments CONTAINS a1_ AND a3_.debtors CONTAINS a1_)", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Department) AS a1_, org.flymine.model.testmodel.Company AS a2_, org.flymine.model.testmodel.Bank AS a3_ WHERE (a2_.departments CONTAINS a1_ AND a3_.debtors CONTAINS a1_)", null));
+        results.put("DynamicClassRef1", res);
+        res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Department, org.flymine.model.testmodel.Broke) AS a1_, org.flymine.model.testmodel.Company AS a2_, org.flymine.model.testmodel.Bank AS a3_ WHERE (a1_.company CONTAINS a2_ AND a1_.bank CONTAINS a3_)", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Department) AS a1_, org.flymine.model.testmodel.Company AS a2_, org.flymine.model.testmodel.Bank AS a3_ WHERE (a1_.company CONTAINS a2_ AND a1_.bank CONTAINS a3_)", null));
+        results.put("DynamicClassRef2", res);
+        res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Company, org.flymine.model.testmodel.Bank) AS a1_, org.flymine.model.testmodel.Department AS a2_, org.flymine.model.testmodel.Broke AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a1_.debtors CONTAINS a3_)", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Bank, org.flymine.model.testmodel.Company) AS a1_, org.flymine.model.testmodel.Department AS a2_, org.flymine.model.testmodel.Broke AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a1_.debtors CONTAINS a3_)", null));
+        results.put("DynamicClassRef3", res);
+        res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Company, org.flymine.model.testmodel.Bank) AS a1_, org.flymine.model.testmodel.Department AS a2_, org.flymine.model.testmodel.Broke AS a3_ WHERE (a2_.company CONTAINS a1_ AND a3_.bank CONTAINS a1_)", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_, a2_, a3_ FROM (org.flymine.model.testmodel.Bank, org.flymine.model.testmodel.Company) AS a1_, org.flymine.model.testmodel.Department AS a2_, org.flymine.model.testmodel.Broke AS a3_ WHERE (a2_.company CONTAINS a1_ AND a3_.bank CONTAINS a1_)", null));
+        results.put("DynamicClassRef4", res);
+        res = new HashSet();
+        res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Employable, org.flymine.model.testmodel.Broke) AS a1_, (org.flymine.model.testmodel.HasAddress, org.flymine.model.testmodel.Broke) AS a2_ WHERE a1_ = a2_", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Employable) AS a1_, (org.flymine.model.testmodel.HasAddress, org.flymine.model.testmodel.Broke) AS a2_ WHERE a1_ = a2_", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Employable, org.flymine.model.testmodel.Broke) AS a1_, (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.HasAddress) AS a2_ WHERE a1_ = a2_", null));
+        res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Employable) AS a1_, (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.HasAddress) AS a2_ WHERE a1_ = a2_", null));
+        results.put("DynamicClassConstraint", res);
     }
 }

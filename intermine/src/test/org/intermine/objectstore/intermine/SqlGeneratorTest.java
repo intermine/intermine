@@ -53,7 +53,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     public static void setUpResults() throws Exception {
         results.put("SelectSimpleObject", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company ORDER BY Company.id");
-        results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_.OBJECT AS a1_, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS a2_ FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.a2_");
+        results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.Alias AS a3_ FROM (SELECT DISTINCT a1_.OBJECT AS a1_, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS Alias FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.Alias");
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
         results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
         results.put("WhereSimpleNegEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
@@ -102,11 +102,33 @@ public class SqlGeneratorTest extends SetupDataTestCase
         Set res = new HashSet();
         res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.vatNumber AS a3_ FROM Company AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1__1.debt > 0 AND a1_.vatNumber > 0) ORDER BY a1_.id, a1__1.debt, a1_.vatNumber");
         res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.vatNumber AS a3_ FROM Broke AS a1_, Company AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.debt > 0 AND a1__1.vatNumber > 0) ORDER BY a1_.id, a1_.debt, a1__1.vatNumber");
-        results.put("DynamicClass", res);
+        results.put("DynamicInterfacesAttribute", res);
         res = new HashSet();
         res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id ORDER BY a1_.id");
         res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id ORDER BY a1_.id");
-        results.put("DynamicClass2", res);
+        results.put("DynamicClassInterface", res);
+        res = new HashSet();
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Department AS a1_, Broke AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND (a2_.id = a1_.companyId AND a3_.id = a1__1.bankId) ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Broke AS a1_, Department AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND (a2_.id = a1__1.companyId AND a3_.id = a1_.bankId) ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef1", res);
+        res = new HashSet();
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Department AS a1_, Broke AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND (a1_.companyId = a2_.id AND a1__1.bankId = a3_.id) ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Broke AS a1_, Department AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND (a1__1.companyId = a2_.id AND a1_.bankId = a3_.id) ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef2", res);
+        res = new HashSet();
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Company AS a1_, Bank AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND (a1_.id = a2_.companyId AND a1_.id = a3_.bankId) ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Bank AS a1_, Company AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND (a1_.id = a2_.companyId AND a1_.id = a3_.bankId) ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef3", res);
+        res = new HashSet();
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Company AS a1_, Bank AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND (a2_.companyId = a1_.id AND a3_.bankId = a1_.id) ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM Bank AS a1_, Company AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND (a2_.companyId = a1_.id AND a3_.bankId = a1_.id) ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef4", res);
+        res = new HashSet();
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1, HasAddress AS a2_, Broke AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1, Broke AS a2_, HasAddress AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1, HasAddress AS a2_, Broke AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1, Broke AS a2_, HasAddress AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        results.put("DynamicClassConstraint", res);
     }
 
     public void executeTest(String type) throws Exception {

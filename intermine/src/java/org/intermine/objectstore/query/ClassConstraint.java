@@ -10,10 +10,12 @@ package org.flymine.objectstore.query;
  *
  */
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.Util;
 
 /**
@@ -56,12 +58,15 @@ public class ClassConstraint extends Constraint
             throw new NullPointerException("qc2 cannot be null");
         }
         
-        if (!(qc1.getType().isAssignableFrom(qc2.getType())
-              || qc2.getType().isAssignableFrom(qc1.getType()))) {
-            throw new IllegalArgumentException("Invalid constraint: "
-                                               + qc1.getType()
-                                               + " " + op
-                                               + " " + qc2.getType());
+        Class c1 = qc1.getType();
+        Class c2 = qc2.getType();
+        Set cs1 = DynamicUtil.decomposeClass(c1);
+        Set cs2 = DynamicUtil.decomposeClass(c2);
+        if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
+            if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
+                throw new IllegalArgumentException("Invalid constraint: "
+                        + c1 + " " + op + " " + c2);
+            }
         }
         
         this.qc1 = qc1;

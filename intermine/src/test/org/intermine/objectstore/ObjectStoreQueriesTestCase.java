@@ -175,8 +175,13 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("EmptyNorConstraintSet", emptyNorConstraintSet());
         queries.put("BagConstraint", bagConstraint());
         queries.put("InterfaceField", interfaceField());
-        queries.put("DynamicClass", dynamicClass());
-        queries.put("DynamicClass2", dynamicClass2());
+        queries.put("DynamicInterfacesAttribute", dynamicInterfacesAttribute());
+        queries.put("DynamicClassInterface", dynamicClassInterface());
+        queries.put("DynamicClassRef1", dynamicClassRef1());
+        queries.put("DynamicClassRef2", dynamicClassRef2());
+        queries.put("DynamicClassRef3", dynamicClassRef3());
+        queries.put("DynamicClassRef4", dynamicClassRef4());
+        queries.put("DynamicClassConstraint", dynamicClassConstraint());
     }
 
     /*
@@ -196,7 +201,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 
     /*
       select subquery.company.name, subquery.alias
-      from (select company, 5 as alias from Company) as subquery
+      from (select company, 5 as Alias from Company) as subquery
     */
     public static Query subQuery() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -204,6 +209,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(c1);
+        q1.alias(v1, "Alias");
         q1.addToSelect(v1);
         Query q2 = new Query();
         q2.addFrom(q1);
@@ -956,8 +962,15 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         return q1;
     }
 
-    public static Query dynamicClass() throws Exception {
-        Set classes = new LinkedHashSet();
+    /*
+      select a1_, a1_.debt, a1_.vatNumber from (Broke, Company) as a1_
+      where a1_.debt > 0 and a1_.vatNumber > 0;
+
+      Checks Attributes, and that they are sourced from the correct table
+      Checks that two Interfaces can be combined
+    */
+    public static Query dynamicInterfacesAttribute() throws Exception {
+        Set classes = new HashSet();
         classes.add(Broke.class);
         classes.add(Company.class);
         QueryClass qc1 = new QueryClass(classes);
@@ -975,14 +988,139 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         return q1;
     }
 
-    public static Query dynamicClass2() throws Exception {
-        Set classes = new LinkedHashSet();
+    /*
+      select a1_ from (Broke, Employable);
+
+      Checks that a Class can be combined with an Interface
+    */
+    public static Query dynamicClassInterface() throws Exception {
+        Set classes = new HashSet();
         classes.add(Broke.class);
         classes.add(Employable.class);
         QueryClass qc1 = new QueryClass(classes);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
+        return q1;
+    }
+
+    /*
+      select a1_, a2_, a3_ from (Department, Broke) as a1_, Company as a2_, Bank as a3_
+      where a2_.departments contains a1_ and a3_.debtors contains a1_
+    */
+    public static Query dynamicClassRef1() throws Exception {
+        Set classes = new HashSet();
+        classes.add(Department.class);
+        classes.add(Broke.class);
+        QueryClass qc1 = new QueryClass(classes);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryClass qc3 = new QueryClass(Bank.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addFrom(qc3);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addToSelect(qc3);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc2, "departments"), ConstraintOp.CONTAINS, qc1));
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc3, "debtors"), ConstraintOp.CONTAINS, qc1));
+        q1.setConstraint(cs);
+        return q1;
+    }
+    
+    /*
+      select a1_, a2_, a3_ from (Department, Broke) as a1_, Company as a2_, Bank as a3_
+      where a1_.company contains a2_ and a1_.bank contains a3_
+    */
+    public static Query dynamicClassRef2() throws Exception {
+        Set classes = new HashSet();
+        classes.add(Department.class);
+        classes.add(Broke.class);
+        QueryClass qc1 = new QueryClass(classes);
+        QueryClass qc2 = new QueryClass(Company.class);
+        QueryClass qc3 = new QueryClass(Bank.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addFrom(qc3);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addToSelect(qc3);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "company"), ConstraintOp.CONTAINS, qc2));
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "bank"), ConstraintOp.CONTAINS, qc3));
+        q1.setConstraint(cs);
+        return q1;
+    }
+
+    /*
+      select a1_, a2_, a3_ from (Company, Bank) as a1_, Department as a2_, Broke as a3_
+      where a1_.departments contains a2_ and a1_.debtors contains a3_
+    */
+    public static Query dynamicClassRef3() throws Exception {
+        Set classes = new HashSet();
+        classes.add(Company.class);
+        classes.add(Bank.class);
+        QueryClass qc1 = new QueryClass(classes);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryClass qc3 = new QueryClass(Broke.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addFrom(qc3);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addToSelect(qc3);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "departments"), ConstraintOp.CONTAINS, qc2));
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "debtors"), ConstraintOp.CONTAINS, qc3));
+        q1.setConstraint(cs);
+        return q1;
+    }
+ 
+    /*
+      select a1_, a2_, a3_ from (Company, Bank) as a1_, Department as a2_, Broke as a3_
+      where a2_.company contains a1_ and a3_.bank contains a1_
+    */
+    public static Query dynamicClassRef4() throws Exception {
+        Set classes = new HashSet();
+        classes.add(Company.class);
+        classes.add(Bank.class);
+        QueryClass qc1 = new QueryClass(classes);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryClass qc3 = new QueryClass(Broke.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addFrom(qc3);
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addToSelect(qc3);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc2, "company"), ConstraintOp.CONTAINS, qc1));
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc3, "bank"), ConstraintOp.CONTAINS, qc1));
+        q1.setConstraint(cs);
+        return q1;
+    }
+
+    /*
+      select a1_ from (Broke, Employable) as a1_, (Broke, HasAddress) as a2_ where a1_ = a2_;
+    */
+    public static Query dynamicClassConstraint() throws Exception {
+        Set classes = new HashSet();
+        classes.add(Broke.class);
+        classes.add(Employable.class);
+        QueryClass qc1 = new QueryClass(classes);
+        classes = new HashSet();
+        classes.add(Broke.class);
+        classes.add(HasAddress.class);
+        QueryClass qc2 = new QueryClass(classes);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addToSelect(qc1);
+        q1.setConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, qc2));
         return q1;
     }
 }

@@ -1,6 +1,7 @@
 <model name="testmodel" namespace="http://www.flymine.org/model/testmodel#">
     <class name="org.flymine.model.testmodel.Broke" is-interface="true">
         <attribute name="debt" type="int" primary-key="false"/>
+        <reference name="bank" referenced-type="org.flymine.model.testmodel.Bank" reverse-reference="debtors" primary-key="false"/>
     </class>
     <class name="org.flymine.model.testmodel.Thing" is-interface="true"></class>
     <class name="org.flymine.model.testmodel.Employable" extends="org.flymine.model.testmodel.Thing" is-interface="true">
@@ -65,5 +66,8 @@
         <attribute name="doubleObjType" type="java.lang.Double" primary-key="false"/>
         <attribute name="dateObjType" type="java.util.Date" primary-key="false"/>
         <attribute name="stringObjType" type="java.lang.String" primary-key="false"/>
-  </class>
+    </class>
+    <class name="org.flymine.model.testmodel.Bank" is-interface="false">
+        <collection name="debtors" referenced-type="org.flymine.model.testmodel.Broke" ordered="false" reverse-reference="bank" primary-key="false"/>
+    </class>
 </model>

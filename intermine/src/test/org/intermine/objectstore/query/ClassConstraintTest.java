@@ -14,6 +14,7 @@ import java.util.Collections;
 import junit.framework.TestCase;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.Company;
+import org.flymine.model.testmodel.Contractor;
 import org.flymine.model.testmodel.Manager;
 import org.flymine.model.testmodel.Employee;
 import org.flymine.util.DynamicUtil;
@@ -25,6 +26,7 @@ public class ClassConstraintTest extends TestCase {
     private QueryClass company2;
     private QueryClass employee;
     private QueryClass manager;
+    private QueryClass contractor;
     private Company company1Object;
     private Manager managerObject;
 
@@ -37,6 +39,7 @@ public class ClassConstraintTest extends TestCase {
         company2 = new QueryClass(Company.class);
         employee = new QueryClass(Employee.class);
         manager = new QueryClass(Manager.class);
+        contractor = new QueryClass(Contractor.class);
         company1Object = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1Object.setId(new Integer(8762134));
         managerObject = new Manager();
@@ -85,9 +88,17 @@ public class ClassConstraintTest extends TestCase {
 
     public void testInvalidClassTypesQCQC() throws Exception {
         try {
-            new ClassConstraint(employee, ConstraintOp.EQUALS, company1);
+            new ClassConstraint(employee, ConstraintOp.EQUALS, contractor);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testValidClassTypesDynamicQCQC() throws Exception {
+        try {
+            new ClassConstraint(employee, ConstraintOp.EQUALS, company1);
+        } catch (IllegalArgumentException e) {
+            fail("IllegalArgumentException should not have been thrown");
         }
     }
 
