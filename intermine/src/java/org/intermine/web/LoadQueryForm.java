@@ -10,10 +10,7 @@ package org.flymine.web;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean to represent the inputs to the query replacement action
