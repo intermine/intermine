@@ -52,7 +52,7 @@
 
 
   <BioSequence_package>
-    <BioSequence_assnlist>
+    <BioSequence_assnlist>     
       <BioSequence identifier="BS:A-FLYC-1:1">
         <PolymerType_assn>
           <OntologyEntry category="PolymerType"
@@ -62,6 +62,69 @@
         <Type_assn>
           <OntologyEntry category="BioSequenceType"
                          value="genomic_DNA">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSequence> 
+    <BioSequence identifier="BS:A-FLYC-1:2">
+        <SequenceDatabases_assnlist>
+          <DatabaseEntry accession="FBgn0051522">
+            <Database_assnref>
+              <Database_ref identifier="DB:flybase"/>
+            </Database_assnref>
+          </DatabaseEntry>
+          <DatabaseEntry accession="AA439743">
+            <Database_assnref>
+              <Database_ref identifier="DB:embl"/>
+            </Database_assnref>
+          </DatabaseEntry>
+          <DatabaseEntry accession="AW942311">
+            <Database_assnref>
+              <Database_ref identifier="DB:embl"/>
+            </Database_assnref>
+          </DatabaseEntry>
+        </SequenceDatabases_assnlist>
+        <PolymerType_assn>
+          <OntologyEntry category="PolymerType"
+                         value="DNA">
+          </OntologyEntry>
+        </PolymerType_assn>
+        <Type_assn>
+          <OntologyEntry category="BioSequenceType"
+                         value="cDNA_clone">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSequence>
+      <BioSequence identifier="BS:A-FLYC-1:3">
+        <SequenceDatabases_assnlist>
+          <DatabaseEntry accession="FBgn0010173">
+            <Database_assnref>
+              <Database_ref identifier="DB:flybase"/>
+            </Database_assnref>
+          </DatabaseEntry>
+          <DatabaseEntry accession="AY069331">
+            <Database_assnref>
+              <Database_ref identifier="DB:embl"/>
+            </Database_assnref>
+          </DatabaseEntry>
+          <DatabaseEntry accession="AA201663">
+            <Database_assnref>
+              <Database_ref identifier="DB:embl"/>
+            </Database_assnref>
+          </DatabaseEntry>
+          <DatabaseEntry accession="AW941561">
+            <Database_assnref>
+              <Database_ref identifier="DB:embl"/>
+            </Database_assnref>
+          </DatabaseEntry>
+        </SequenceDatabases_assnlist>
+        <PolymerType_assn>
+          <OntologyEntry category="PolymerType"
+                         value="DNA">
+          </OntologyEntry>
+        </PolymerType_assn>
+        <Type_assn>
+          <OntologyEntry category="BioSequenceType"
+                         value="cDNA_clone">
           </OntologyEntry>
         </Type_assn>
       </BioSequence>
