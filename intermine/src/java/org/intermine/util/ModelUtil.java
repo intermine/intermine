@@ -105,7 +105,7 @@ public class ModelUtil
      * @param obj the Object to check
      * @return true if primary keys set, false otherwise
      */
-    public static boolean checkKey(Object obj) {
+    public static boolean hasValidKey(Object obj) {
         if (obj == null) {
             throw new NullPointerException("obj must not be null");
         }

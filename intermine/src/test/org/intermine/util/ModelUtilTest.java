@@ -23,7 +23,7 @@ public class ModelUtilTest extends TestCase
     }
 
 
-    public void testCheckKeyValidObject() throws Exception {
+    public void testHasValidKeyValidObject() throws Exception {
         Address address = new Address();
         address.setAddress("Employee Street, BVille");
 
@@ -35,10 +35,10 @@ public class ModelUtilTest extends TestCase
         employee.setTitle("Mr.");
         employee.setSalary(45000);
 
-        assertTrue(ModelUtil.checkKey(employee));
+        assertTrue(ModelUtil.hasValidKey(employee));
     }
 
-    public void testCheckKeyInvalidObjectNoReference() throws Exception {
+    public void testHasValidKeyInvalidObjectNoReference() throws Exception {
 
         CEO employee = new CEO();
         employee.setName("EmployeeB1");
@@ -47,10 +47,10 @@ public class ModelUtilTest extends TestCase
         employee.setTitle("Mr.");
         employee.setSalary(45000);
 
-        assertFalse(ModelUtil.checkKey(employee));
+        assertFalse(ModelUtil.hasValidKey(employee));
     }
 
-    public void testCheckKeyInvalidObjectNoAttribute() throws Exception {
+    public void testHasValidKeyInvalidObjectNoAttribute() throws Exception {
         Address address = new Address();
         address.setAddress("Employee Street, BVille");
 
@@ -61,12 +61,12 @@ public class ModelUtilTest extends TestCase
         employee.setTitle("Mr.");
         employee.setSalary(45000);
 
-        assertFalse(ModelUtil.checkKey(employee));
-                    }
+        assertFalse(ModelUtil.hasValidKey(employee));
+    }
 
-    public void testCheckKeyNullObject() throws Exception {
+    public void testHasValidKeyNullObject() throws Exception {
         try {
-            ModelUtil.checkKey(null);
+            ModelUtil.hasValidKey(null);
             fail ("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
