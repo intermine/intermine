@@ -18,21 +18,21 @@
   <class name="org.flymine.model.genomic.Gene">
     <shortdisplayers>
       <displayer src="/oneField.jsp">
-        <param name="field" value="uniquename"/>
+        <param name="fieldName" value="uniquename"/>
       </displayer>
       <displayer src="/oneField.jsp">
-        <param name="field" value="name"/>
+        <param name="fieldName" value="name"/>
       </displayer>
     </shortdisplayers>
     <longdisplayers>
       <displayer src="/oneField.jsp">
-        <param name="field" value="uniquename"/>
+        <param name="fieldName" value="uniquename"/>
       </displayer>
       <displayer src="/oneField.jsp">
-        <param name="field" value="name"/>
+        <param name="fieldName" value="name"/>
       </displayer>
       <displayer src="/oneField.jsp">
-        <param name="field" value="seqlen"/>
+        <param name="fieldName" value="seqlen"/>
       </displayer>
     </longdisplayers>
   </class>
