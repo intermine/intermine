@@ -63,7 +63,6 @@
 
   <!-- Libraries that everything needs -->
   <patternset id="lib.common">
-    <include name="jasper*.jar"/>
     <include name="ant*.jar"/>
     <include name="castor*.jar" />
     <include name="cglib*.jar" />
@@ -128,13 +127,6 @@
     <include name="checkstyle*.jar"/>
   </patternset>
 
-  <!-- Jasper libraries -->
-  <patternset id="lib.jasper">
-    <include name="jasper*.jar"/>
-    <include name="ant*.jar"/>
-    <include name="cactus*.jar"/>
-  </patternset>
-
   <!-- Libraries that the InterMine query webapp uses -->
   <patternset id="lib.webapp.intermine">
     <include name="aspect*.jar" />
@@ -165,7 +157,6 @@
       <patternset refid="lib.build"/>
       <patternset refid="lib.webapp.intermine"/>
       <patternset refid="lib.webapp.webservice"/>
-      <patternset refid="lib.jasper"/>
       <patternset refid="lib.acedb"/>
       <patternset refid="lib.uml"/>
     </fileset>
@@ -650,66 +641,11 @@
     <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
   </target>
 
-  <!-- precompile and war a webapp -->
   <target name="build-webapp" depends="prepare-webapp"
-    description="Build the InterMine web application">
-
-    <!-- copy this so that precompilation can modify it -->
-    <copy todir="${build.tmp}" file="${resources}/webapps/intermine/web.xml"/>
-
-    <!-- this precompilation step is optional -->
-    <!--antcall target="precompile-jsp"/-->
-
-    <war destfile="${dist.webapp}/intermine.war" webxml="${build.tmp}/web.xml">
+          description="Build webapp without including a model">
+    <war destfile="${dist.webapp}/intermine.war"
+         webxml="${resources}/webapps/intermine/web.xml">
       <fileset dir="${build.webapp}/intermine"/>
-    </war>
-  </target>
-  
-  <target name="precompile-jsp">
-    <copy file="${resources}/webapps/intermine/web.xml" todir="${build.webapp}/intermine/WEB-INF"/>
-    <jspc srcdir="${build.webapp}/intermine"
-      destdir="${build.webapp}/intermine/WEB-INF/src"
-      package="org.intermine.jsp"
-      verbose="9"
-      webinc="${build.tmp}/generated-web.xml">
-      <include name="**/*.jsp"/>
-      <!-- have to exclude index.jsp because listed as a welcome-file in web.xml -->
-      <exclude name="index.jsp"/>
-      <classpath refid="base.class.path"/>
-    </jspc>
-    <delete file="${build.webapp}/intermine/WEB-INF/web.xml"/>
-
-    <delete>
-      <fileset dir="${build.webapp}/intermine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
-    </delete>
-
-    <loadfile property="generated.xml" srcFile="${build.tmp}/generated-web.xml"/>
-
-    <replace file="${build.tmp}/web.xml" value="${generated.xml}">
-      <!-- can't use normal token as xml must be parseable before this replacement -->
-      <replacetoken><![CDATA[<!--@JSPC_INCLUDE@-->]]></replacetoken>
-    </replace>
-
-    <javac srcdir="${build.webapp}/intermine/WEB-INF/src"
-           destdir="${build.webapp}/intermine/WEB-INF/classes"
-           listfiles="yes"
-           depend="yes">
-      <classpath refid="base.class.path"/>
-    </javac>
-
-    <!-- don't need the .java files -->
-    <delete dir="${build.webapp}/intermine/WEB-INF/src"/>
-  </target>
-
-  <target name="build-testable-webapp" depends="build-testmodel-webapp"
-    description="Build webapp including the test model and test libraries">
-    <!-- now update war to include the test jars -->
-    <war destfile="${dist.webapp}/intermine.war" update="true">
-      <lib dir="${lib}">
-        <patternset refid="lib.webapptest"/>
-      </lib>
-      <!-- struts test stuff requires messages to be in root of webapp -->
-      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
     </war>
   </target>
 
@@ -722,6 +658,18 @@
     </ant>
 
     <antcall target="build-webapp"/>
+  </target>
+
+  <target name="build-testable-webapp" depends="build-testmodel-webapp"
+    description="Build webapp including the test model and test libraries">
+    <!-- now update war to include the test jars -->
+    <war destfile="${dist.webapp}/intermine.war" update="true">
+      <lib dir="${lib}">
+        <patternset refid="lib.webapptest"/>
+      </lib>
+      <!-- struts test stuff requires messages to be in root of webapp -->
+      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
+    </war>
   </target>
 
   <!-- Webservice targets -->
