@@ -51,10 +51,20 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-        <span class="type"><c:out value="${node.type}"/><c:if test="${node.collection}"> collection</c:if></span>
+        <span class="type">
+          <c:out value="${node.type}"/>
+          <c:if test="${node.collection}"> collection</c:if>
+        </span>
         <html:link action="/mainChange?method=addToView&path=${node.path}">
           <fmt:message key="query.selectNode"/>
         </html:link>
+        <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle"/>
+        <c:if test="${node.indentation > 0}">
+          <html:link action="/mainChange?method=addPath&path=${node.path}"
+                     title="${addConstraintToTitle} ${node.fieldName}">
+            <img class="arrow" src="images/right-arrow.png" alt="->"/>
+          </html:link>
+        </c:if>
         <br/>
       </c:forEach>
       
