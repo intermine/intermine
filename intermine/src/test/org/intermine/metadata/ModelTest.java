@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+import java.util.Iterator;
 
 public class ModelTest extends TestCase
 {
@@ -94,6 +94,26 @@ public class ModelTest extends TestCase
         Model model = new Model("model", uri, clds);
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));
+    }
+
+    public void testGetClassDescriptorsForClass() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        Set cds = model.getClassDescriptorsForClass(org.intermine.model.testmodel.CEO.class);
+        Set expectedCdNames = new HashSet();
+        expectedCdNames.add("org.intermine.model.testmodel.ImportantPerson");
+        expectedCdNames.add("org.intermine.model.testmodel.Employable");
+        expectedCdNames.add("org.intermine.model.testmodel.HasAddress");
+        expectedCdNames.add("org.intermine.model.testmodel.CEO");
+        expectedCdNames.add("org.intermine.model.testmodel.Employee");
+        expectedCdNames.add("org.intermine.model.testmodel.Thing");
+        expectedCdNames.add("org.intermine.model.InterMineObject");
+        expectedCdNames.add("org.intermine.model.testmodel.HasSecretarys");
+        expectedCdNames.add("org.intermine.model.testmodel.Manager");
+        Set cdNames = new HashSet();
+        for (Iterator iter = cds.iterator(); iter.hasNext(); ) {
+            cdNames.add(((ClassDescriptor) iter.next()).getName());
+        }
+        assertEquals(expectedCdNames, cdNames);
     }
 
     public void testEquals() throws Exception {
