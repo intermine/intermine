@@ -17,8 +17,9 @@ public class SubQueryTest extends TestCase
         Table t = new Table("mytable");
         Constant c = new Constant("1");
         Field f = new Field("a", t);
+        SelectValue sv = new SelectValue(f, null);
         q1.addFrom(t);
-        q1.addSelect(f);
+        q1.addSelect(sv);
         q1.addWhere(new Constraint(f, Constraint.EQ, c));
         t1 = new SubQuery(q1, "alias1");
         t2 = new SubQuery(q1, "alias2");
@@ -27,8 +28,9 @@ public class SubQueryTest extends TestCase
         t = new Table("mytable");
         c = new Constant("1");
         f = new Field("a", t);
+        sv = new SelectValue(f, null);
         q2.addFrom(t);
-        q2.addSelect(f);
+        q2.addSelect(sv);
         q2.addWhere(new Constraint(f, Constraint.EQ, c));
         t3 = new SubQuery(q2, "alias1");
 
@@ -36,8 +38,9 @@ public class SubQueryTest extends TestCase
         t = new Table("anotherTable");
         c = new Constant("2");
         f = new Field("b", t);
+        sv = new SelectValue(f, null);
         q3.addFrom(t);
-        q3.addSelect(f);
+        q3.addSelect(sv);
         q3.addWhere(new Constraint(f, Constraint.LT, c));
         t4 = new SubQuery(q3, "alias3");
     }

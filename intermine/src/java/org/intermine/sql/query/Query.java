@@ -8,7 +8,7 @@ import java.util.*;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class Query
+public class Query implements SQLStringable
 {
     protected List select;
     protected Set from;
@@ -77,7 +77,7 @@ public class Query
     /**
      * Gets the list of select fields for this query.
      *
-     * @return a List of AbstractValue objects representing the select list of the query
+     * @return a List of SelectValue objects representing the select list of the query
      */
     public List getSelect() {
         return select;
@@ -87,9 +87,9 @@ public class Query
      * Adds a field to the select list of this query. Fields are stored in a List in the order they
      * are added.
      *
-     * @param obj an AbstractValue to add to the list
+     * @param obj a SelectValue to add to the list
      */
-    public void addSelect(AbstractValue obj) {
+    public void addSelect(SelectValue obj) {
         select.add(obj);
     }
 
@@ -245,19 +245,13 @@ public class Query
         boolean needComma = false;
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
-            Object o = iter.next();
+            SQLStringable o = (SQLStringable) iter.next();
             // TODO: Should we have an interface for classes that implement getSQLString()?
             if (needComma) {
                 retval += comma;
             }
             needComma = true;
-            if (o instanceof AbstractValue) {
-                retval += ((AbstractValue) o).getSQLString();
-            } else if (o instanceof AbstractTable) {
-                retval += ((AbstractTable) o).getSQLString();
-            } else if (o instanceof AbstractConstraint) {
-                retval += ((AbstractConstraint) o).getSQLString();
-            }
+            retval += o.getSQLString();
         }
         return retval;
     }

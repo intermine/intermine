@@ -7,7 +7,7 @@ package org.flymine.sql.query;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public abstract class AbstractTable
+public abstract class AbstractTable implements SQLStringable
 {
     protected String alias;
 

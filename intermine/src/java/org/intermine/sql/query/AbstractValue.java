@@ -7,7 +7,7 @@ package org.flymine.sql.query;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public abstract class AbstractValue
+public abstract class AbstractValue implements SQLStringable
 {
     /**
      * Describes two AbstractValues as being equal.

@@ -7,7 +7,7 @@ package org.flymine.sql.query;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public abstract class AbstractConstraint
+public abstract class AbstractConstraint implements SQLStringable
 {
     /**
      * Describes two constraints as being independent.
