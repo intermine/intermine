@@ -417,10 +417,11 @@ public class ClassDescriptor
             ClassDescriptor cld = (ClassDescriptor) superIter.next();
             if (!cld.isInterface()) {
                 if (this.isInterface()) {
-                    throw new MetaDataException("Cannot have a superclass of an interface");
+                    throw new MetaDataException("Cannot have a superclass of an interface for "
+                                                + this);
                 }
                 if (superclassDescriptor != null) {
-                    throw new MetaDataException("Cannot have multiple superclasses");
+                    throw new MetaDataException("Cannot have multiple superclasses for: " + this);
                 }
                 superclassDescriptor = cld;
             }
