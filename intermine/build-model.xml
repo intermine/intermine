@@ -49,9 +49,20 @@
 
 
   <!-- copy flymine xml model file to build model directory -->
-  <target name="copy-xml-model">
+  <target name="copy-xml-model" depends="prepare">
     <copy todir="${build.model}/${model.name}" file="${model.src}/${model.name}_model.xml"/>
   </target>
+
+  <!-- copy key definition files -->
+  <target name="copy-keydefs" depends="prepare">
+    <copy todir="${build.model}/${model.name}">
+      <fileset dir="${model.src}/resources">
+        <include name="*_keyDefs.properties"/>
+        <include name="*_keys.properties"/>
+      </fileset>
+    </copy>
+  </target>
+
 
   <!-- Model generation targets -->
   <target name="generate-xmi-model"
@@ -133,28 +144,28 @@
   </target>
 
   <!-- Targets that could be called from another build script -->
-  <target name="build-model-from-xml" depends="copy-xml-model, compile-java"
+  <target name="build-model-from-xml" depends="copy-xml-model, compile-java, copy-keydefs"
           description="Build a usable model from a FlyMine model XML file">
   </target>
 
-  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java"
+  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java, copy-keydefs"
           description="Build a usable model from a .zargo file">
   </target>
 
-  <target name="generate-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model"
+  <target name="generate-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
           description="Generate a FlyMine xml model from a .zargo file">
   </target>
 
-  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java"
+  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, copy-keydefs"
           description="Build a usable model from a .zargo file">
   </target>
 
-  <target name="generate-model-from-xmi" depends="copy-xmi, generate-xmi-model"
+  <target name="generate-model-from-xmi" depends="copy-xmi, generate-xmi-model, copy-keydefs"
           description="Generate a FlyMine xml model from a xmi file">
   </target>
   
 
-  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java"
+  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, copy-keydefs"
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
@@ -168,7 +179,7 @@
   </target>
 
   <!-- create indexes task definition -->
-  <target name="create-indexes">
+  <target name="create-indexes" depends="copy-keydefs">
     <taskdef
       name="create-indexes"
       classname="org.flymine.task.CreateIndexesTask">
