@@ -10,6 +10,8 @@
 
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
 
+  <property name="namespace" value="http://www.intermine.org/model"/>
+
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
   <property name="bin" location="bin"/>
