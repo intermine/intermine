@@ -53,12 +53,20 @@ public class ItemStore
     }
     
     /**
-    * Store an item
-    * @param item the Item to store
-    * @throws ObjectStoreException if an error occuring in accessing the Items
-    */
+     * Store an item
+     * @param item the Item to store
+     * @throws ObjectStoreException if an error occuring in storing the Item
+     */
     public void store(Item item) throws ObjectStoreException {
-        org.flymine.model.fulldata.Item dbItem = convert(item);
+        store(convert(item));
+    }
+    
+    /**
+     * Store a fulldata Item
+     * @param dbItem the Item to store
+     * @throws ObjectStoreException if an error occuring in storing the Item
+     */
+    public void store(org.flymine.model.fulldata.Item dbItem) throws ObjectStoreException {
         for (Iterator i = dbItem.getAttributes().iterator(); i.hasNext();) {
             osw.store((FlyMineBusinessObject) i.next());
         }
