@@ -71,14 +71,22 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
         ResultsHolder rh1 = new ResultsHolder(2);
         rh1.colNames = new String[] {"a2_", "a3_"};
         rh1.colTypes = new int[] {Types.VARCHAR, Types.INTEGER};
-        //rh1.rows = 10;  query doesn't yet return any data...
+        rh1.rows = 2;
         results.put("SubQuery", rh1);
 
         // WhereClassClass
         ResultsHolder rh2 = new ResultsHolder(8);
         rh2.colNames = new String[] {"a1_id", "a1_addressid", "a1_name", "a1_vatnumber", "a2_id", "a2_addressid", "a2_name", "a2_vatnumber"};
         rh2.colTypes = new int[] {Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER};
+        rh2.rows = 2;
         results.put("WhereClassClass", rh2);
+
+        // WhereSimpleEquals
+        ResultsHolder rh3 = new ResultsHolder(1);
+        rh3.colNames = new String[] {"a2_"};
+        rh3.colTypes = new int[] {Types.VARCHAR};
+        rh3.rows = 1;
+        results.put("WhereSimpleEquals", rh3);
     }
 
     public void executeTest(String type) throws Exception {
