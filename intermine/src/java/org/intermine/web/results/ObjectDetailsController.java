@@ -11,12 +11,13 @@ package org.intermine.web.results;
  */
 
 import java.util.Map;
+import java.util.Set;
+import java.util.Iterator;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.LRUMap;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -24,8 +25,10 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
+import org.intermine.web.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.
@@ -46,13 +49,8 @@ public class ObjectDetailsController extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Map displayObjects = (Map) session.getAttribute("displayObjects");
-        
-        // Build map from object id to DisplayObject
-        if (displayObjects == null) {
-            displayObjects = new LRUMap(150);
-            session.setAttribute("displayObjects", displayObjects);
-        }
+        Map displayObjects = SessionMethods.getDisplayObjects(session);
+
         String idString = (String) request.getParameter("id");
         if (idString != null && !idString.equals("")
             && (session.getAttribute("object") == null
@@ -72,14 +70,68 @@ public class ObjectDetailsController extends InterMineAction
             }
             DisplayObject dobj = (DisplayObject) displayObjects.get(key);
             if (dobj == null) {
-                Map webconfigTypeMap = (Map) servletContext.getAttribute(Constants.DISPLAYERS); 
-                Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-                dobj = new DisplayObject(object, os.getModel(), webconfigTypeMap, webPropertiesMap);
+                dobj = makeDisplayObject(session, object);
                 displayObjects.put(key, dobj);
             }
             session.setAttribute("object", dobj);
-        }
-        
+
+            if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
+                session.removeAttribute(Constants.PORTAL_QUERY_FLAG);
+                setVerboseCollections(session, dobj);
+            }
+
+       }
+
         return null;
+    }
+
+    /**
+     * The prefix to use before properties the specify which collection fields are open when coming
+     * from the portal page.  eg. portal.verbose.fields.Gene = proteins,chromosome
+     */
+    public static final String PORTAL_VERBOSE_FIELDS_PREFIX = "portal.verbose.fields.";
+
+    /**
+     * Read the port.verbose.fields.* properties from WEB_PROPERTIES and call
+     * DisplayObject.setVerbosity(true) on the field in the property value.
+     */
+    private static void setVerboseCollections(HttpSession session, DisplayObject dobj) {
+        ServletContext servletContext = session.getServletContext();
+        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+
+        Set clds = dobj.getClds();
+
+        Iterator iter = clds.iterator();
+
+        while (iter.hasNext()) {
+            ClassDescriptor cd = (ClassDescriptor) iter.next();
+
+            String propName = PORTAL_VERBOSE_FIELDS_PREFIX + TypeUtil.unqualifiedName(cd.getName());
+            String fieldNamesString = (String) webProperties.get(propName);
+
+            if (fieldNamesString != null) {
+                String[] fieldNames = fieldNamesString.split("\\s*,\\s*");
+                for (int i = 0; i < fieldNames.length; i++) {
+                    String fieldName = fieldNames[i];
+                    dobj.setVerbosity(fieldName, true);
+                }
+            }
+        }
+    }
+
+    /**
+     * Make a new DisplayObject from the given object.
+     * @param session used to get WEB_PROPERTIES and DISPLAYERS Maps
+     * @param object the InterMineObject
+     * @return the new DisplayObject
+     * @throws Exception if an error occurs
+     */
+    public static DisplayObject makeDisplayObject(HttpSession session, InterMineObject object)
+        throws Exception {
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Map webconfigTypeMap = (Map) servletContext.getAttribute(Constants.DISPLAYERS);
+        Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        return new DisplayObject(object, os.getModel(), webconfigTypeMap, webPropertiesMap);
     }
 }
