@@ -123,7 +123,7 @@ public class MainForm extends ActionForm
         ActionErrors errors = new ActionErrors();
 
         FieldDescriptor fd = MainHelper.getFieldDescriptor(path, model);
-        if (fd.isAttribute()) {
+        if (fd.isAttribute() && constraintValue != null) {
             AttributeDescriptor attr = (AttributeDescriptor) fd;
             Class fieldClass = TypeUtil.instantiate(attr.getType());
             if (Date.class.equals(fieldClass)) {
