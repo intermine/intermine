@@ -28,7 +28,7 @@
         <p>
           <c:set var="subnames" value="${CATEGORY_CLASSES[category]}"/>
           <c:forEach items="${subnames}" var="subname">
-            <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&className=${subname}">${subname}</a>,
+            <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&className=${subname}" title="${classDescriptions[subname]}">${subname}</a>,
           </c:forEach>
           <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
             <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
