@@ -262,6 +262,45 @@ public class ConstraintHelperTest extends TestCase
         assertTrue(ConstraintHelper.isRelatedTo(simpleConstraint7, qc1));
     }
 
+    public void testIsRelatedToNothing() throws Exception {
+        QueryValue qv1 = new QueryValue(new Integer(101));
+        QueryValue qv2 = new QueryValue(new Integer(202));
+        QueryExpression qe1 = new QueryExpression (qv1, QueryExpression.ADD, qv2);
+
+        SimpleConstraint sc1 = new SimpleConstraint(qv1, SimpleConstraint.EQUALS, qv2);
+        SimpleConstraint sc2 = new SimpleConstraint(qe1, SimpleConstraint.EQUALS, qv2);
+        assertTrue(ConstraintHelper.isRelatedToNothing(sc1));
+        assertTrue(ConstraintHelper.isRelatedToNothing(sc2));
+
+        // everything from testIsRelatedTo should be false
+
+        assertFalse(ConstraintHelper.isRelatedToNothing(classConstraint1));
+        assertFalse(ConstraintHelper.isRelatedToNothing(classConstraint1));
+        assertFalse(ConstraintHelper.isRelatedToNothing(classConstraint2));
+
+        // both sides of ContainsConstraint
+        assertFalse(ConstraintHelper.isRelatedToNothing(containsConstraint1));
+        assertFalse(ConstraintHelper.isRelatedToNothing(containsConstraint1));
+
+        // both sides oc SubqueryConstraint
+        assertFalse(ConstraintHelper.isRelatedToNothing(subqueryConstraint1));
+        assertFalse(ConstraintHelper.isRelatedToNothing(subqueryConstraint2));
+        assertFalse(ConstraintHelper.isRelatedToNothing(subqueryConstraint1));
+
+        // SimpleConstraints
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint1));
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint4));
+        // cross-reference constraint
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint2));
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint2));
+
+        // QueryExpression & QueryFunction
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint5));
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint6));
+
+        // single argument constraint
+        assertFalse(ConstraintHelper.isRelatedToNothing(simpleConstraint7));
+    }
 
     public void testIsAssociatedWith2() throws Exception {
         Query subQ = new Query();

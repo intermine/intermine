@@ -248,11 +248,21 @@ public class ConstraintHelper
 
 
     /**
-     * Returns true if the given constraint is associated with no particular FromElement.
+     * Returns true if the given constraint is related to no FromElement.  This should
+     * only return true if c is a SimpleConstraint that only references constants.
+     *
      * @param c the constraint to examine
      * @return true if constraint is not associated with a FromElement
     */
     public static boolean isRelatedToNothing(Constraint c) {
+        if (c instanceof SimpleConstraint) {
+            SimpleConstraint sc = (SimpleConstraint) c;
+            Set fields = getQueryFields(sc.getArg1());
+            fields.addAll(getQueryFields(sc.getArg2()));
+            if (fields.size() == 0) {
+                return true;
+            }
+        }
         return false;
     }
 
