@@ -187,7 +187,13 @@
   </c:if>
 </html:form>
 
-<html:link action="/export">
-  <fmt:message key="results.export"/>
-</html:link>
+<div>
+  <html:link action="/exportAction?method=excel"><fmt:message key="export.excel"/></html:link>
+</div>
+<div>
+  <html:link action="/exportAction?method=csv"><fmt:message key="export.csv"/></html:link>
+</div>
+<div>
+  <html:link action="/exportAction?method=tab"><fmt:message key="export.tabdelimited"/></html:link>
+</div>
 <!-- /table.jsp -->
