@@ -290,12 +290,14 @@ public class MergeOwlTest extends TestCase
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL + ENDL
             + ":Company a owl:Class ; " + ENDL
+            + "         rdfs:subClassOf :Organisation ;" + ENDL
             + "         rdfs:subClassOf src:Organisation ;" + ENDL
             + "         rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
             + "              owl:onProperty src:organisationType ;" + ENDL
             + "              owl:hasValue \"business\" ] ." + ENDL
             + ":Charity a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf src:Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL

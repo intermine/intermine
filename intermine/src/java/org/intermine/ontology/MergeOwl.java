@@ -149,9 +149,10 @@ public class MergeOwl
                     Resource sub = getTargetResource((Resource) subIter.next(), srcNs);
                     statements.add(tgtModel.createStatement(sub, stmt.getPredicate(),
                            tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE + "Class")));
-                    statements.add(tgtModel.createStatement(sub,
-                           tgtModel.createProperty(OntologyUtil.RDFS_NAMESPACE
-                                               + "subClassOf"), getTargetResource(subject, srcNs)));
+                    // make subclass in target model- not wanted by default
+                    //statements.add(tgtModel.createStatement(sub,
+                    //               tgtModel.createProperty(OntologyUtil.RDFS_NAMESPACE
+                    //               + "subClassOf"), getTargetResource(subject, srcNs)));
                 }
             }
             // lookup new subject and object, create statement

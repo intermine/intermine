@@ -185,7 +185,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         // in target model automatically becomes a subclass of Organisation
         // also equivalent to src1:Business, should get properties of both.
         owl.append(":Company a owl:Class ;" + ENDL
-                   //+ "         rdfs:subClassOf :Organisation ;" + ENDL
+                   + "         rdfs:subClassOf :Organisation ;" + ENDL
                    + "         rdfs:subClassOf src2:Org ;" + ENDL
                    + "         rdfs:subClassOf" + ENDL
                    + "            [ a owl:Restriction ;" + ENDL
@@ -269,7 +269,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         //      and   src2:Organsisation.profitable = false
         // in target model is a subclass of Organsiation
         owl.append(":Charity a owl:Class ; " + ENDL
-                   //+ "      rdfs:subClassOf :Organisation ;" + ENDL
+                   + "      rdfs:subClassOf :Organisation ;" + ENDL
                    + "      rdfs:subClassOf src2:Org ;" + ENDL
                    + "      rdfs:subClassOf" + ENDL
                    + "            [ a owl:Restriction ;" + ENDL
