@@ -47,7 +47,7 @@ public class ModifyQueryChangeAction extends DispatchAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
 
-        LoadQueryAction.loadQuery((PathQuery) profile.getSavedQueries().get(queryName), session);
+        SessionMethods.loadQuery((PathQuery) profile.getSavedQueries().get(queryName), session);
 
         return mapping.findForward("query");
     }

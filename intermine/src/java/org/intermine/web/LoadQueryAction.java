@@ -50,25 +50,8 @@ public class LoadQueryAction extends DispatchAction
         Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
         String queryName = request.getParameter("name");
 
-        loadQuery((PathQuery) exampleQueries.get(queryName), session);
+        SessionMethods.loadQuery((PathQuery) exampleQueries.get(queryName), session);
 
         return mapping.findForward("query");
-    }
-    
-    /**
-     * Load a query into the session, cloning to avoid modifying the original
-     * @param query the query
-     * @param session the session
-     */
-    public static void loadQuery(PathQuery query, HttpSession session) {
-        session.setAttribute(Constants.QUERY, query.clone());
-        //at the moment we can only load queries that have saved using the webapp
-        //this is because the webapp satisfies our (dumb) assumption that the view list is not empty
-        String path = (String) query.getView().iterator().next();
-        if (path.indexOf(".") != -1) {
-            path = path.substring(0, path.indexOf("."));
-        }
-        session.setAttribute("path", path);
-        session.removeAttribute("prefix");
     }
 }
