@@ -742,10 +742,10 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-                                                  merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                                                  merge-ensembl-model, merge-ensembl-human-model,  merge-phenotype-model, merge-go-model,
-                                                  merge-uniprot-model,
-                                                  merge-protein_structure-model, merge-mage-model, merge-so-model">
+                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-ensembl-model, merge-ensembl-human-model,  merge-phenotype-model, 
+                merge-go-model, merge-uniprot-model,
+                merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
   
@@ -773,6 +773,24 @@
     </ant>
   </target>
 
+  <!-- create java objects for the genomic human model 
+  <target name="compile-human-model" depends="create-human-model">  
+    <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+  
+ <target name="create-human-model" depends="remove-genomic, prepare-build-model,
+       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+       merge-ensembl-human-model,  merge-phenotype-model, merge-go-model,
+       merge-uniprot-model,
+       merge-protein_structure-model, merge-so-model">
+    <antcall target="create-genomic-model"/>
+  </target>  
+ -->
+
+ 
   <!-- if genomic.n3 not copied into build directory then copy it -->
   <target name="prepare-genomic-model" depends="prepare">
     <copy file="${model}/genomic/genomic.n3" todir="${build.model}/genomic/"/>
@@ -957,16 +975,6 @@
     </ant>
   </target>
 
-  <!--<target name= "debug">
-    <java classname = "${ant.project.name}" fork = "yes">
-      <sysproperty key = "java.library.path" value = "${lib}"/>
-      <classpath refid = "project-classpath"/>
-      <jvmarg value = "-Xdebug"/>
-      <jvmarg value = "-Xrunjdwp:transport=dt_socket, address = jdbconn, server=y,suspend = y"/>
-    </java>
-    </target>-->
-  
-
   <!-- build ensembl human tgt items database -->
   <target name="build-db-ensembl-human-tgt-items" depends="convert-ensembl-human">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -977,17 +985,18 @@
     </ant>
   </target>
 
-  <!-- translate ensembl human -->
-  <target name="translate-ensembl-human" depends="compile-ensembl-java, build-db-ensembl-human-tgt-items">
-    <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
-          maxmemory="800m"  failonerror="true">
+
+ <!-- translate ensembl human -->
+ <target name="translate-ensembl-human" depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
+    <java classname="org.flymine.dataconversion.EnsemblHumanDataTranslator" fork="true"
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="os.ensembl-human-src-items" />
       <arg value="osw.ensembl-human-tgt-items" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="DM" />
+      <arg value="HS" />
     </java>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
