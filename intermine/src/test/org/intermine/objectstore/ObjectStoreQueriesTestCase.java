@@ -133,6 +133,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SelectInterfaceAndSubClasses3", selectInterfaceAndSubClasses3());
         //queries.put("SelectClassFromSubQuery", selectClassFromSubQuery());
         queries.put("OrderByAnomaly", orderByAnomaly());
+        queries.put("SelectUnidirectionalCollection", selectUnidirectionalCollection());
     }
 
     /*
@@ -800,6 +801,17 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(c);
         q.addToSelect(new QueryValue(new Integer(5)));
         q.addToSelect(new QueryField(c, "name"));
+        return q;
+    }
+
+    public static Query selectUnidirectionalCollection() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Secretary.class);
+        Query q = new Query();
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(qc2);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ContainsConstraint.CONTAINS, qc2));
         return q;
     }
 }
