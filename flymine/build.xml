@@ -259,7 +259,7 @@
   <!-- Javadoc -->
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
-    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="${ant.project.name} API">
+    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="${ant.project.name} API" additionalparam="-breakiterator">
       <classpath refid="project.class.path"/>
       <fileset dir="${src.java}" defaultexcludes="yes" />
       <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
