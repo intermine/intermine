@@ -1685,7 +1685,7 @@
   <property name="summarise.output.properties" 
             value="${build.model}/genomic/objectstoresummary.properties"/>
 
-  <target name="check-production-objectstore-summary">
+  <target name="check-production-objectstore-summary" depends="prepare">
     <uptodate property="production-objectstore-is-summarised"
               srcfile="${os.summary.properties.file}"
               targetfile="${summarise.output.properties}"/>
