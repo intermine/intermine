@@ -39,8 +39,7 @@
       >
       <a name="${node.object}"/>
       <html:link action="/changeTree?method=select&node=${node.object}">
-        <im:unqualify className="${node.object}" var="name"/>
-        <span class="type">${name}</span>
+        <im:unqualify className="${node.object}" var="name"/>${name}
       </html:link>
       <im:typehelp type="${name}"/>
       </span>
