@@ -17,33 +17,55 @@ Summary for selected
 
 <div class="body">
 <table cellpadding="5" rules="all">
-  <c:forEach items="${object.keyAttributes}" var="entry">
+  <c:forEach items="${object.keyAttributes}" var="attributeName">
     <tr>
       <td>
-        <span class="attributeField">${entry.key}</span>
+        <span class="attributeField">${attributeName}</span>
       </td>
-      <td colspan="2"><span class="value">${entry.value}</span></td>
+      <td colspan="2"><span class="value">${object.attributes[attributeName]}</span></td>
     </tr>
   </c:forEach>
-
-  <c:forEach items="${object.keyReferences}" var="keyRefEntry">
-    <c:forEach items="${keyRefEntry.value.identifiers}" var="entry" varStatus="status">
-      <tr>
-        <c:if test="${status.first}">
-          <td rowspan="${fn:length(keyRefEntry.value.identifiers)}">
-            <html:link action="/objectDetails?id=${keyRefEntry.value.id}">
-              <span class="referenceField">${keyRefEntry.key}</span>
+  <c:forEach items="${object.keyReferences}" var="referenceName">
+    <c:set var="reference" value="${object.references[referenceName]}"/>
+    <c:choose>
+      <c:when test="${!empty DISPLAYERS[reference.cld.name].shortDisplayers}">
+        <tr>
+          <td>
+            <html:link action="/objectDetails?id=${object.references[referenceName].id}">
+              <span class="referenceField">${referenceName}</span>
             </html:link>
           </td>
-        </c:if>
-        <td>
-          <span class="attributeField">${entry.key}</span>
-        </td>
-        <td>
-          <span class="value">${entry.value}</span>
-        </td>
-      </tr>
-    </c:forEach>
+          <td colspan="2">
+            <c:set var="object_bak" value="${object}"/>
+            <c:set var="object" value="${reference.object}" scope="request"/>
+            <c:set var="displayer" value="${DISPLAYERS[reference.cld.name].shortDisplayers[0]}"/>
+            <span class="value">
+              <tiles:insert beanName="displayer" beanProperty="src"/>
+            </span>
+            <c:set var="object" value="${object_bak}"/>
+          </td>
+        </tr>
+      </c:when>
+      <c:otherwise>
+        <c:forEach items="${object.references[referenceName].keyAttributes}" var="attributeEntry" varStatus="status">
+          <tr>
+            <c:if test="${status.first}">
+              <td rowspan="${fn:length(object.references[referenceName].keyAttributes)}">
+                <html:link action="/objectDetails?id=${object.references[referenceName].id}">
+                  <span class="referenceField">${referenceName}</span>
+                </html:link>
+              </td>
+            </c:if>
+            <td>
+              <span class="attributeField">${attributeEntry.key}</span>
+            </td>
+            <td>
+              <span class="value">${attributeEntry.value}</span>
+            </td>
+          </tr>
+        </c:forEach>
+      </c:otherwise>
+    </c:choose>
   </c:forEach>
 </table>
 </div>
