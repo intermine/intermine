@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
@@ -27,6 +29,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -49,6 +53,8 @@ import org.intermine.objectstore.ObjectStoreFactory;
  */
 public class InitialiserPlugin implements PlugIn
 {
+    private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
+    
     ProfileManager profileManager;
 
     /**
@@ -67,8 +73,8 @@ public class InitialiserPlugin implements PlugIn
         
         loadClassDescriptions(servletContext);
         loadWebProperties(servletContext);
-        loadExampleQueries(servletContext);
         loadTemplateQueries(servletContext);
+        loadExampleQueries(servletContext);
         loadWebConfig(servletContext);
 
         ObjectStore os = null;
@@ -79,7 +85,9 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Unable to instantiate ObjectStore", e);
         }
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
-
+        
+        loadClassCategories(servletContext, os);
+        
         processWebConfig(servletContext, os);
         summarizeObjectStore(servletContext, os);
         createProfileManager(servletContext, os);
@@ -200,7 +208,8 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Read the template queries into the TEMPLATE_QUERIES servlet context attribute.
+     * Read the template queries into the TEMPLATE_QUERIES servlet context attribute and create
+     * CATEGORY_TEMPLATES servlet context attribute that maps category name to list of templates.
      */
     private void loadTemplateQueries(ServletContext servletContext) throws ServletException {
         InputStream templateQueriesStream =
@@ -210,6 +219,7 @@ public class InitialiserPlugin implements PlugIn
         }
         Reader templateQueriesReader = new InputStreamReader(templateQueriesStream);
         Map templateQueries = null;
+        Map categoryTemplates = new HashMap();
         try {
             templateQueries = new PathQueryBinding().unmarshal(templateQueriesReader);
         } catch (Exception e) {
@@ -227,11 +237,81 @@ public class InitialiserPlugin implements PlugIn
         for (Iterator i = templateQueries.keySet().iterator(); i.hasNext();) {
             String queryName = (String) i.next();
             String msgKey = "templateQuery." + queryName + ".description";
+            String catKey = "templateQuery." + queryName + ".category";
             PathQuery query = (PathQuery) templateQueries.get(queryName);
-            templateQueries.put(queryName, new TemplateQuery((String) modelProperties.get(msgKey),
-                                                             query));
+            TemplateQuery template = new TemplateQuery(queryName,
+                                                       modelProperties.getProperty(msgKey),
+                                                       modelProperties.getProperty(catKey),
+                                                       query);
+            templateQueries.put(queryName, template);
+            // Now add to list of templates associated with category
+            List list = (List) categoryTemplates.get(template.getCategory());
+            if (list == null) {
+                list = new ArrayList();
+                categoryTemplates.put(template.getCategory(), list);
+            }
+            list.add(template);
         }
         servletContext.setAttribute(Constants.TEMPLATE_QUERIES, templateQueries);
+        servletContext.setAttribute(Constants.CATEGORY_TEMPLATES, categoryTemplates);
+    }
+    
+    /**
+     * Load the CATEGORY_CLASSES and CATEGORIES servlet context attribute. Loads cateogires and
+     * subcateogires from roperties file /WEB-INF/classCategories.properties<p>
+     *
+     * The properties file should look something like:
+     * <pre>
+     *   category.0.name = People
+     *   category.0.subcategories = Employee Manager CEO Contractor Secretary
+     *   category.1.name = Entities
+     *   category.1.subcategories = Bank Address Department
+     * </pre>
+     *
+     * If a specified class cannot be found in the model, the class is ignored and not added to
+     * the category.
+     */
+    private void loadClassCategories(ServletContext servletContext, ObjectStore os) throws ServletException {
+        List categories = new ArrayList();
+        Map subcategories = new HashMap();
+        InputStream in = servletContext.getResourceAsStream("/WEB-INF/classCategories.properties");
+        if (in == null) {
+            return;
+        }
+        Properties properties = new Properties();
+        
+        try {
+            properties.load(in);
+        } catch (IOException err) {
+            throw new ServletException(err);
+        }
+        
+        int n = 0;
+        String catname;
+        
+        while ((catname = properties.getProperty("category." + n + ".name")) != null) {
+            String sc = properties.getProperty("category." + n + ".subcategories");
+            String subcats[] = StringUtils.split(sc, ' ');
+            List subcatlist = new ArrayList();
+            
+            subcats = StringUtils.stripAll(subcats);
+            
+            for (int i = 0 ; i < subcats.length ; i++) {
+                String className = os.getModel().getPackageName() + "." + subcats[i];
+                if (os.getModel().hasClassDescriptor(className)) {
+                    subcatlist.add(subcats[i]);
+                } else {
+                    LOG.warn("Category \"" + catname + "\" contains unknown class \"" + subcats[i] +
+                       "\"");
+                }
+            }
+            categories.add(catname);
+            subcategories.put(catname, subcatlist);
+            n++;
+        }
+        
+        servletContext.setAttribute(Constants.CATEGORIES, categories);
+        servletContext.setAttribute(Constants.CATEGORY_CLASSES, subcategories);
     }
 
     /**
