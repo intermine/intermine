@@ -83,12 +83,18 @@ public class MageDataTranslator extends DataTranslator
     protected Map synonymAccessionMap = new HashMap();//key:accession value:synonymItem
     protected Set synonymAccession = new HashSet();
 
+    // reporterSet:Flymine reporter. reporter:material -> bioEntity may probably merged when
+    //it has same identifier. need to reprocess reporterMaterial
+    protected Set reporterSet = new HashSet();
+    protected Map bioEntityRefMap = new HashMap();
+
     protected Map identifier2BioEntity = new HashMap();
     protected Map organismDbId2Gene = new HashMap();
 
     protected Map treatment2BioSourceMap = new HashMap();
     protected Set bioSource = new HashSet();
 
+    protected Map organismMap = new HashMap();
     /**
      * @see DataTranslator#DataTranslator
      */
@@ -114,6 +120,11 @@ public class MageDataTranslator extends DataTranslator
         }
 
         i = processGene2MAEResult().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
+        i = processReporterMaterial().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
@@ -177,6 +188,7 @@ public class MageDataTranslator extends DataTranslator
                     translateMicroArrayExperimentalResult(srcItem, tgtItem, normalised);
                 } else if (className.equals("Reporter")) {
                     setBioEntityMap(srcItem, tgtItem);
+                    storeTgtItem = false;
                 } else if (className.equals("BioSequence")) {
                     translateBioEntity(srcItem, tgtItem);
                     storeTgtItem = false;
@@ -184,6 +196,7 @@ public class MageDataTranslator extends DataTranslator
                     translateLabeledExtract(srcItem, tgtItem);
                 } else if (className.equals("BioSource")) {
                     organism = translateSample(srcItem, tgtItem);
+                    result.add(organism);
                 } else if (className.equals("Treatment")) {
                     translateTreatment(srcItem, tgtItem);
                 }
@@ -476,6 +489,7 @@ public class MageDataTranslator extends DataTranslator
 
             }
         }
+        reporterSet.add(tgtItem);
 
     }
 
@@ -809,8 +823,8 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @param srcItem = databaseEntry item refed in BioSequence
      * @param sourceId = database id
-     * @param subjectId = bioEntity identifier will probably be changed when
-     * reprocessing bioEntitySet
+     * @param subjectId = bioEntity identifier will probably be changed
+     * when reprocessing bioEntitySet
      * @return synonym item
      */
     protected Item createSynonym(Item srcItem, String sourceId, String subjectId) {
@@ -929,11 +943,10 @@ public class MageDataTranslator extends DataTranslator
                 // prefetch done
                 Item charItem = ItemHelper.convert(srcItemReader.getItemById(id));
                 s = charItem.getAttribute("category").getValue();
-                if (s.equalsIgnoreCase("organism")) {
-                    organism = createOrganism(tgtNs + "Organism", "",
-                        charItem.getAttribute("value").getValue());
+                if (s.equalsIgnoreCase("organism") && charItem.hasAttribute("value")) {
+                    String organismName = charItem.getAttribute("value").getValue();
+                    organism = createOrganism(tgtNs + "Organism", "", organismName);
                     tgtItem.addReference(new Reference("organism", organism.getIdentifier()));
-
                 } else {
                     list.add(id);
                 }
@@ -948,12 +961,7 @@ public class MageDataTranslator extends DataTranslator
                  (String) srcItem.getReference("materialType").getRefId()));
             tgtItem.addAttribute(new Attribute("materialType",
                   type.getAttribute("value").getValue()));
-/**
-     * @param className = tgtClassName
-     * @param implementation = tgtClass implementation
-     * @param value = attribute for organism name
-     * @return organism item
-     */        }
+        }
 
         if (srcItem.hasAttribute("name")) {
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
@@ -1174,11 +1182,12 @@ public class MageDataTranslator extends DataTranslator
                         synonymAccessionMap.put(accession, synonym);
                     }
                 }
-                anotherEntity.addCollection(new ReferenceList("synonyms", synonymList));
+                if (synonymList != null) {
+                    anotherEntity.addCollection(new ReferenceList("synonyms", synonymList));
+                }
 
                 List maerList = new ArrayList();
                 if (anotherEntity.hasCollection("microArrayExperimentalResults")) {
-
                     ReferenceList maerList1 = anotherEntity.getCollection(
                                                 "microArrayExperimentalResults");
                     for (Iterator j = maerList1.getRefIds().iterator(); j.hasNext();) {
@@ -1186,7 +1195,6 @@ public class MageDataTranslator extends DataTranslator
                         maerList.add(refId);
                     }
                 }
-
                 if (bioEntity.hasCollection("microArrayExperimentalResults")) {
                     ReferenceList maerList2 = bioEntity.getCollection(
                                                  "microArrayExperimentalResults");
@@ -1197,10 +1205,13 @@ public class MageDataTranslator extends DataTranslator
                         }
                     }
                 }
-                anotherEntity.addCollection(new ReferenceList("microArrayExperimentalResults",
+                if (maerList != null) {
+                    anotherEntity.addCollection(new ReferenceList("microArrayExperimentalResults",
                                           maerList));
+                }
 
                 identifier2BioEntity.put(identifierAttribute, anotherEntity);
+                bioEntityRefMap.put(bioEntity.getIdentifier(), anotherEntity.getIdentifier());
 
             } else {
                 bioEntity.addAttribute(new Attribute("identifier", identifierAttribute));
@@ -1215,6 +1226,8 @@ public class MageDataTranslator extends DataTranslator
             results.add(bioEntity);
 
         }
+
+        //
         for (Iterator i = synonymAccession.iterator(); i.hasNext();) {
             Item synonym = (Item) synonymAccessionMap.get((String) i.next());
             results.add(synonym);
@@ -1311,6 +1324,31 @@ public class MageDataTranslator extends DataTranslator
 
     }
 
+    /**
+     * got reporterSet from setBioEntityMap()
+     * refererence material may be changed after processBioEntity2MAEResult()
+     * bioEntity is merged if it has the same identifierAttribute
+     * @return resutls with right material refid
+     */
+
+    protected Set processReporterMaterial() {
+        Set results = new HashSet();
+
+        for (Iterator i = reporterSet.iterator(); i.hasNext();) {
+            Item reporter = (Item) i.next();
+            String bioEntityId = (String) reporter.getReference("material").getRefId();
+            if (bioEntityRefMap.containsKey("bioEntityId")) {
+                String newBioEntityId = (String) bioEntityRefMap.get("bioEntityId");
+                reporter.addReference(new Reference("material", newBioEntityId));
+                results.add(reporter);
+            } else {
+                results.add(reporter);
+            }
+        }
+        return results;
+
+    }
+
 
     /**
      * normalised attribute is added during MageConverter
@@ -1366,9 +1404,14 @@ public class MageDataTranslator extends DataTranslator
      * @return organism item
      */
      private Item createOrganism(String className, String implementation, String value) {
-        Item organism = new Item();
-        organism = createItem(className, implementation);
-        organism.addAttribute(new Attribute("name", value));
+         Item organism = new Item();
+         if (!organismMap.containsKey("value")) {
+             organism = createItem(className, implementation);
+             organism.addAttribute(new Attribute("name", value));
+             organismMap.put("value", organism);
+         } else {
+             organism = (Item) organismMap.get("value");
+         }
         return organism;
     }
 
