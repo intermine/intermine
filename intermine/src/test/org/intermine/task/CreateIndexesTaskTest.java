@@ -32,6 +32,8 @@ public class CreateIndexesTaskTest extends TestCase
         List expected = new ArrayList();
         expected.add("drop index Department__key");
         expected.add("create index Department__key on Department(name, companyId, id)");
+        expected.add("drop index Department__key__nulls");
+        expected.add("create index Department__key__nulls on Department((name IS NULL))");
         expected.add("drop index Department__company");
         expected.add("create index Department__company on Department(companyId, id)");
 
@@ -55,6 +57,8 @@ public class CreateIndexesTaskTest extends TestCase
         expected = new ArrayList();
         expected.add("drop index Secretary__key");
         expected.add("create index Secretary__key on Secretary(name, id)");
+        expected.add("drop index Secretary__key__nulls");
+        expected.add("create index Secretary__key__nulls on Secretary((name IS NULL))");
         task = new DummyCreateIndexesTask();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Secretary"));
         assertEquals(expected, task.sqlStatements);
@@ -65,12 +69,20 @@ public class CreateIndexesTaskTest extends TestCase
         List expected = new ArrayList();
         expected.add("drop index ImportantPerson__key");
         expected.add("create index ImportantPerson__key on ImportantPerson(seniority, id)");
+        expected.add("drop index ImportantPerson__key__nulls");
+        expected.add("create index ImportantPerson__key__nulls on ImportantPerson((seniority IS NULL))");
         expected.add("drop index Contractor__key");
         expected.add("create index Contractor__key on Contractor(seniority, id)");
+        expected.add("drop index Contractor__key__nulls");
+        expected.add("create index Contractor__key__nulls on Contractor((seniority IS NULL))");
         expected.add("drop index Manager__key");
         expected.add("create index Manager__key on Manager(seniority, id)");
+        expected.add("drop index Manager__key__nulls");
+        expected.add("create index Manager__key__nulls on Manager((seniority IS NULL))");
         expected.add("drop index CEO__key");
         expected.add("create index CEO__key on CEO(seniority, id)");
+        expected.add("drop index CEO__key__nulls");
+        expected.add("create index CEO__key__nulls on CEO((seniority IS NULL))");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson"));

@@ -41,8 +41,10 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
 
@@ -83,6 +85,174 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         assertTrue(!r.equals(r3));
     }
 
+    public void testLargeOffset2() throws Exception {
+        Employee nullEmployee = new Employee();
+        nullEmployee.setAge(26);
+        nullEmployee.setName(null);
+        try {
+            storeDataWriter.store(nullEmployee);
+            Query q = new Query();
+            QueryClass qc = new QueryClass(Employee.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            q.addToOrderBy(new QueryField(qc, "name"));
+            Query q2 = QueryCloner.cloneQuery(q);
+            SingletonResults r = new SingletonResults(q, os, os.getSequence());
+            r.setBatchSize(2);
+            Employee o = (Employee) r.get(2);
+            SqlGenerator.registerOffset(q2, 3, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
+            SingletonResults r2 = new SingletonResults(q2, os, os.getSequence());
+            r2.setBatchSize(2);
+
+            Query q3 = QueryCloner.cloneQuery(q);
+            SqlGenerator.registerOffset(q3, 2, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
+            SingletonResults r3 = new SingletonResults(q3, os, os.getSequence());
+            r3.setBatchSize(2);
+
+            assertEquals(r, r2);
+            assertTrue(!r.equals(r3));
+        } finally {
+            storeDataWriter.delete(nullEmployee);
+        }
+    }
+
+    /*public void testLargeOffset3() throws Exception {
+        // This is to test the indexing of large offset queries, so it needs to do a performance test.
+        Set toDelete = new HashSet();
+        try {
+            long start = System.currentTimeMillis();
+            storeDataWriter.beginTransaction();
+            for (int i = 0; i < 10105; i++) {
+                Employee e = new Employee();
+                String name = "Fred_";
+                if (i < 10000) {
+                    name += "0";
+                }
+                if (i < 1000) {
+                    name += "0";
+                }
+                if (i < 100) {
+                    name += "0";
+                }
+                if (i < 10) {
+                    name += "0";
+                }
+                e.setName(name + i);
+                e.setAge(i + 1000000);
+                storeDataWriter.store(e);
+                toDelete.add(e);
+            }
+            for (int i = 10105; i < 10205; i++) {
+                Employee e = new Employee();
+                e.setAge(i + 1000000);
+                storeDataWriter.store(e);
+                toDelete.add(e);
+            }
+            storeDataWriter.commitTransaction();
+            Connection c = null;
+            try {
+                c = ((ObjectStoreWriterInterMineImpl) storeDataWriter).getConnection();
+                c.createStatement().execute("ANALYSE");
+            } finally {
+                if (c != null) {
+                    ((ObjectStoreWriterInterMineImpl) storeDataWriter).releaseConnection(c);
+                }
+            }
+            long now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to insert data");
+            start = now;
+            Query q = new Query();
+            QueryClass qc = new QueryClass(Employee.class);
+            QueryField f = new QueryField(qc, "name");
+            q.addFrom(qc);
+            q.addToSelect(f);
+            q.setDistinct(false);
+            SingletonResults r = new SingletonResults(q, os, os.getSequence());
+            r.setBatchSize(10);
+            assertEquals("Fred_00000", r.get(6));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find first row");
+            long timeA = now - start;
+            start = now;
+            assertEquals("Fred_10015", r.get(10021));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find row 10015");
+            long timeB = now - start;
+            start = now;
+            assertEquals("Fred_10035", r.get(10041));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find row 10035");
+            long timeC = now - start;
+            start = now;
+            assertNull(r.get(10141));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find row 10135");
+            long timeD = now - start;
+
+            q = QueryCloner.cloneQuery(q);
+            ((ObjectStoreInterMineImpl) os).precompute(q);
+            r = new SingletonResults(q, os, os.getSequence());
+            r.setBatchSize(10);
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to precompute results");
+            start = now;
+            assertEquals("Fred_00000", r.get(6));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find first precomputed row");
+            long timePA = now - start;
+            start = now;
+            assertEquals("Fred_10015", r.get(10021));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find precomputed row 10015");
+            long timePB = now - start;
+            start = now;
+            assertEquals("Fred_10035", r.get(10041));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find precomputed row 10035");
+            long timePC = now - start;
+            start = now;
+            assertNull(r.get(10141));
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to find precomputed row 10135");
+            long timePD = now - start;
+            assertTrue("Row 6 found in " + timeA + "ms", timeA < 30);
+            assertTrue("Row 10015 found in " + timeB + "ms", timeB > 30);
+            assertTrue("Row 10035 found in " + timeC + "ms", timeC < 22);
+            assertTrue("Row 10135 found in " + timeD + "ms", timeD < 15);
+            assertTrue("Precomputed row 6 found in " + timePA + "ms", timePA < 30);
+            assertTrue("Precomputed row 10015 found in " + timePB + "ms", timePB > 30);
+            //TODO: This should pass - it's Postgres being thick.
+            //assertTrue("Precomputed row 10035 found in " + timePC + "ms", timePC < 15);
+            assertTrue("Precomputed row 10135 found in " + timePD + "ms", timePD < 15);
+        } finally {
+            if (storeDataWriter.isInTransaction()) {
+                storeDataWriter.abortTransaction();
+            }
+            long start = System.currentTimeMillis();
+            storeDataWriter.beginTransaction();
+            Iterator iter = toDelete.iterator();
+            while (iter.hasNext()) {
+                Employee e = (Employee) iter.next();
+                storeDataWriter.delete(e);
+            }
+            storeDataWriter.commitTransaction();
+            long now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to remove data");
+            start = now;
+            Connection c = null;
+            try {
+                c = ((ObjectStoreWriterInterMineImpl) storeDataWriter).getConnection();
+                c.createStatement().execute("VACUUM FULL ANALYSE");
+            } finally {
+                if (c != null) {
+                    ((ObjectStoreWriterInterMineImpl) storeDataWriter).releaseConnection(c);
+                }
+            }
+            now = System.currentTimeMillis();
+            System.out.println("Took " + (now - start) + "ms to VACUUM FULL ANALYSE");
+        }
+    }*/
+
     public void testPrecompute() throws Exception {
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Department.class);
@@ -119,7 +289,9 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         Map expectedIndexMap = new HashMap();
         expectedIndexMap.put("index" + tableName + "_field_a1_id__a3___a4_", "CREATE INDEX index" + tableName + "_field_a1_id__a3___a4_ ON " + tableName + " USING btree (a1_id, a3_, a4_)");
         expectedIndexMap.put("index" + tableName + "_field_a3_", "CREATE INDEX index" + tableName + "_field_a3_ ON " + tableName + " USING btree (a3_)");
+        expectedIndexMap.put("index" + tableName + "_field_a3__nulls", "CREATE INDEX index" + tableName + "_field_a3__nulls ON " + tableName + " USING btree (((a3_ IS NULL)))");
         expectedIndexMap.put("index" + tableName + "_field_a4_", "CREATE INDEX index" + tableName + "_field_a4_ ON " + tableName + " USING btree (a4_)");
+        expectedIndexMap.put("index" + tableName + "_field_a4__nulls", "CREATE INDEX index" + tableName + "_field_a4__nulls ON " + tableName + " USING btree (((a4_ IS NULL)))");
         assertEquals(expectedIndexMap, indexMap);
     }
 

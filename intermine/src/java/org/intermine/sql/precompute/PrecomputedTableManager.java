@@ -210,7 +210,8 @@ public class PrecomputedTableManager
             // Create the table
             Statement stmt = con.createStatement();
             LOG.info("Creating new precomputed table " + pt.getName());
-            stmt.execute(pt.getSQLString());
+            String sql = pt.getSQLString();
+            stmt.execute(sql);
 
             String orderByField = pt.getOrderByField();
             if (orderByField != null) {
@@ -232,7 +233,9 @@ public class PrecomputedTableManager
 
             Iterator indexIter = indexes.iterator();
             while (indexIter.hasNext()) {
-                addIndex(pt.getName(), (String) indexIter.next(), con);
+                String indexName = (String) indexIter.next();
+                addIndex(pt.getName(), indexName, con, (!indexName.equals(orderByField))
+                        && (indexName.indexOf(",") == -1));
             }
 
             LOG.info("ANALYSEing precomputed table " + pt.getName());
@@ -325,9 +328,11 @@ public class PrecomputedTableManager
      * @param table the name of the table
      * @param field the name of the field
      * @param con a Connection to use
+     * @param nulls whether an index should be created for null values
      * @throws SQLException if an error occurs in the underlying database
      */
-    protected void addIndex(String table, String field, Connection con) throws SQLException {
+    protected void addIndex(String table, String field, Connection con,
+            boolean nulls) throws SQLException {
         String sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
             .replace(' ', '_') + " ON " + table + " (" + field + ")";
         try {
@@ -340,6 +345,21 @@ public class PrecomputedTableManager
             SQLException f = new SQLException(e.getMessage() + " when executing " + sql);
             f.setNextException(e);
             throw f;
+        }
+        if (nulls) {
+            sql = "CREATE INDEX index" + table + "_field_" + field.replace(',', '_')
+                .replace(' ', '_') + "_nulls" + " ON " + table + " ((" + field + " IS NULL))";
+            try {
+                Statement stmt = con.createStatement();
+                stmt.execute(sql);
+                if (!con.getAutoCommit()) {
+                    con.commit();
+                }
+            } catch (SQLException e) {
+                SQLException f = new SQLException(e.getMessage() + " when executing " + sql);
+                f.setNextException(e);
+                throw f;
+            }
         }
     }
     

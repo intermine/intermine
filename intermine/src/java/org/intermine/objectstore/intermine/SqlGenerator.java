@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -165,11 +166,37 @@ public class SqlGenerator
                         if (firstOrderBy instanceof QueryClass) {
                             firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                         }
-                        SimpleConstraint simpleConstraint =
-                            new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                                 ConstraintOp.GREATER_THAN, new QueryValue(value));
-                        String sql = generate(q, schema, db, simpleConstraint, QUERY_NORMAL,
-                                              bagTableNames);
+                        // Now we need to work out if this field is a primitive type or a object
+                        // type (that can accept null values).
+                        boolean hasNulls = true;
+                        if (firstOrderBy instanceof QueryField) {
+                            FromElement qc = ((QueryField) firstOrderBy).getFromElement();
+                            if (qc instanceof QueryClass) {
+                                if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
+                                    hasNulls = false;
+                                } else {
+                                    AttributeDescriptor desc = (AttributeDescriptor) schema
+                                        .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
+                                                .getType()).get(((QueryField) firstOrderBy)
+                                                .getFieldName());
+                                    if (desc.isPrimitive()) {
+                                        hasNulls = false;
+                                    }
+                                }
+                            }
+                        }
+                        SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                    ConstraintOp.GREATER_THAN, new QueryValue(value));
+                        String sql;
+                        if (hasNulls) {
+                            ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+                            cs.addConstraint(sc);
+                            cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                        ConstraintOp.IS_NULL));
+                            sql = generate(q, schema, db, cs, QUERY_NORMAL, bagTableNames);
+                        } else {
+                            sql = generate(q, schema, db, sc, QUERY_NORMAL, bagTableNames);
+                        }
                         cacheEntry.setLast(start, sql);
                     }
                     SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
@@ -194,10 +221,37 @@ public class SqlGenerator
                 if (firstOrderBy instanceof QueryClass) {
                     firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                 }
-                SimpleConstraint simpleConstraint =
-                    new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                         ConstraintOp.GREATER_THAN, new QueryValue(value));
-                String sql = generate(q, schema, db, simpleConstraint, QUERY_NORMAL, bagTableNames);
+                // Now we need to work out if this field is a primitive type or a object
+                // type (that can accept null values).
+                boolean hasNulls = true;
+                if (firstOrderBy instanceof QueryField) {
+                    FromElement qc = ((QueryField) firstOrderBy).getFromElement();
+                    if (qc instanceof QueryClass) {
+                        if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
+                            hasNulls = false;
+                        } else {
+                            AttributeDescriptor desc = (AttributeDescriptor) schema
+                                .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
+                                        .getType()).get(((QueryField) firstOrderBy)
+                                        .getFieldName());
+                            if (desc.isPrimitive()) {
+                                hasNulls = false;
+                            }
+                        }
+                    }
+                }
+                SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                            ConstraintOp.GREATER_THAN, new QueryValue(value));
+                String sql;
+                if (hasNulls) {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+                    cs.addConstraint(sc);
+                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                ConstraintOp.IS_NULL));
+                    sql = generate(q, schema, db, cs, QUERY_NORMAL, bagTableNames);
+                } else {
+                    sql = generate(q, schema, db, sc, QUERY_NORMAL, bagTableNames);
+                }
                 if (cacheEntry == null) {
                     cacheEntry = new CacheEntry(start, sql);
                     schemaCache.put(q, cacheEntry);
@@ -296,7 +350,7 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static String generate(Query q, DatabaseSchema schema, Database db,
-                                     SimpleConstraint offsetCon, int kind,
+                                     Constraint offsetCon, int kind,
                                      Map bagTableNames) throws ObjectStoreException {
         State state = new State();
         state.setDb(db);
