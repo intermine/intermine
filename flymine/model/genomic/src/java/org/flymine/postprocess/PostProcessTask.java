@@ -128,6 +128,10 @@ public class PostProcessTask extends Task
                 UpdateOrthologues uo = new UpdateOrthologues(osw);
                 LOG.info("Starting UpdateOrthologues.process()");
                 uo.process();
+                CreateReferences cr = new CreateReferences(osw);
+                LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
+                cr.populateOrthologuesCollection();
+                LOG.info("Finsihed update-orthologues");
             } else {
                 throw new BuildException("unknown type: " + type);
             }

@@ -95,10 +95,8 @@ public class CreateReferences
         }
 
         LOG.info("insertReferences stage 10");
-        insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
-        LOG.info("insertReferences stage 11");
         insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
-        LOG.info("insertReferences stage 12");
+        LOG.info("insertReferences stage 11");
         insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
 
        if (os instanceof ObjectStoreInterMineImpl) {
@@ -106,23 +104,34 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 13");
+        LOG.info("insertReferences stage 12");
         insertGeneAnnotationReferences();
 
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-        LOG.info("insertReferences stage 14");
+        LOG.info("insertReferences stage 13");
 
         insertReferences(Gene.class, GOTerm.class, "GOTerms");
-        LOG.info("insertReferences stage 15");
+        LOG.info("insertReferences stage 14");
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
+    }
+
+
+    /**
+     * Fill in the "orthologues" collection of Gene.  Needs to be run after
+     * UpdateOrthologues which in turn relies on CreateReferences -> so has
+     * become a separate method.
+     * @throws Exception if anything goes wrong
+     */
+    public void populateOrthologuesCollection() throws Exception {
+        insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
     }
 
     /**
