@@ -36,11 +36,11 @@
     rdfs:domain :BioEntity ;
     rdfs:range :Organism .
 
-:BioEntity__subjects a Owl:ObjectProperty;
+:BioEntity__subjects a owl:ObjectProperty;
     rdfs:domain :BioEntity;
     rdfs:range :Relation.  
 
-:BioEntity__objects a Owl:ObjectProperty;
+:BioEntity__objects a owl:ObjectProperty;
     rdfs:domain :BioEntity;
     rdfs:range :Relation.
 
@@ -253,8 +253,8 @@
     rdfs:range xsd:string.
 
 :Author__publications a owl:ObjectProperty;
-    rdfs:domain :Author
-    rdfs:range :Publication
+    rdfs:domain :Author ;
+    rdfs:range :Publication .
 
 :Database a owl:Class ;
     rdfs:subClassOf :InfoSource .
