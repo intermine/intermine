@@ -34,8 +34,8 @@ public abstract class FieldDescriptor
      */
     public static final int M_N_RELATION = 4;
 
-    protected String name; // name of field
-    protected boolean primaryKey;
+    protected final String name; // name of field
+    protected final boolean primaryKey;
     protected ClassDescriptor cld; // parent class of this field
     private boolean cldSet = false;
 

@@ -11,9 +11,9 @@ package org.flymine.metadata;
 public class CollectionDescriptor extends ReferenceDescriptor
 {
 
-    protected boolean ordered;
+    protected final boolean ordered;
     private boolean setReverseRef = false;
-    protected Class collectionClass;
+    protected final Class collectionClass;
 
     /**
      * Construct a CollectionDescriptor.  name and referencedType may not be null.
@@ -89,8 +89,8 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @see Object#toString
      */
     public String toString() {
-        return "<collection name=\"" + name + "\" referenced-type=\"" + refName + "\" ordered=\"" 
-            + ordered + "\" reverseReference=\"" + reverseRefName + "\" primarykey=\"" 
+        return "<collection name=\"" + name + "\" referenced-type=\"" + refName + "\" ordered=\""
+            + ordered + "\" reverseReference=\"" + reverseRefName + "\" primarykey=\""
             + primaryKey + "\"/>";
     }
 }

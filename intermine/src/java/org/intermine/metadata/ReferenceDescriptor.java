@@ -13,8 +13,8 @@ public class ReferenceDescriptor extends FieldDescriptor
 {
 
     protected ReferenceDescriptor reverseRef; // can be a reference, collection or null
-    protected String reverseRefName;
-    protected String refName;
+    protected final String reverseRefName;
+    protected final String refName;
     protected ClassDescriptor refClassDescriptor;
     private boolean modelSet = false;
 

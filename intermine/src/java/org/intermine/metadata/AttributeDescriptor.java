@@ -10,7 +10,7 @@ package org.flymine.metadata;
 public class AttributeDescriptor extends FieldDescriptor
 {
 
-    protected String type;
+    protected final String type;
 
     /**
      * Construct, name and type cannot be null.

@@ -20,23 +20,23 @@ import org.flymine.util.StringUtil;
 public class ClassDescriptor
 {
 
-    private String name;        // name of this class
-    private String superclassName;
-    private String interfaces;
+    private final String name;        // name of this class
+    private final String superclassName;
+    private final String interfaces;
     private ClassDescriptor superclassDescriptor;
     private List interfaceNames = new ArrayList();
-    private List interfaceDescriptors = new ArrayList(); // names of interfaces
+    private final List interfaceDescriptors = new ArrayList();
 
     private ClassDescriptor ultimateSuperclassDesc;
     private boolean ultimateSuperSet = false;
 
-    private boolean isInterface;
-    private List attDescriptors;
-    private List refDescriptors;
-    private List colDescriptors;
-    private Map fieldDescriptors = new HashMap();
+    private final boolean isInterface;
+    private final List attDescriptors;
+    private final List refDescriptors;
+    private final List colDescriptors;
+    private final Map fieldDescriptors = new HashMap();
 
-    private List pkFields = new ArrayList();
+    private final List pkFields = new ArrayList();
     private Model model;  // set when ClassDesriptor added to DescriptorRespository
     private boolean modelSet = false;
     private List subclassDescriptors;
@@ -247,6 +247,7 @@ public class ClassDescriptor
     /**
      * Get the name of the super class of this class (may be null)
      * @return the super class name
+     * @throws IllegalStateException if model not set
      */
     public ClassDescriptor getSuperclassDescriptor() {
         if (!modelSet) {
@@ -330,7 +331,6 @@ public class ClassDescriptor
             ultimateSuperSet = true;
         }
         return this.ultimateSuperclassDesc;
-
     }
 
     /**
@@ -379,8 +379,13 @@ public class ClassDescriptor
      * Set list of ClassDescriptors that are direct subclasses of this class.
      * Called once during Model creation.
      * @param sub list of direct subclass descriptors
+     * @throws IllegalStateException if subclasses already set
      */
     protected void setSubclassDescriptors(List sub) {
+        if (subSet) {
+            throw new IllegalStateException("subclasses have already been set for this "
+                                            + "ClassDescriptor (" + this.name + ").");
+        }
         this.subclassDescriptors = sub;
         subSet = true;
     }
@@ -390,8 +395,14 @@ public class ClassDescriptor
      * Set list of ClassDescriptors for classes that are direct implemetations
      * of this class, i.e. not subclasses of implentations.
      * @param impl list of direct implementations
+     * @throws IllegalStateException if implementors already set
      */
     protected void setImplementorDescriptors(List impl) {
+        if (implSet) {
+            throw new IllegalStateException("implementors have already been set for this "
+                                            + "ClassDescriptor (" + this.name + ").");
+        }
+
         if (this.isInterface()) {
             this.implementorDescriptors = impl;
         }

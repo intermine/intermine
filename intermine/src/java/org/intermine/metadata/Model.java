@@ -6,9 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
-
 
 /**
  * Represents a named business model, makes availble metadata for each class
@@ -20,7 +17,7 @@ import java.util.HashSet;
 public class Model
 {
 
-    private String name;
+    private final String name;
     private final Map cldMap = new HashMap();
     private final Map subclassMap = new HashMap();
     private final Map implementorsMap = new HashMap();
@@ -135,26 +132,12 @@ public class Model
     }
 
     /**
-     * Get a Collection of class names in the model (without full package).
-     * @return Collection of class names
-     */
-    public Collection getNames() {
-        return (Collection) cldMap.keySet();
-    }
-
-    /**
      * Get a Collection of fully qualified class names in this model (i.e. including
-     * package name.
+     * package name).
      * @return Collection of fully qualified class names
      */
-    public Collection getFullNames() {
-        Set names = cldMap.keySet();
-        Set fullNames = new HashSet();
-        Iterator namesIter = names.iterator();
-        while (namesIter.hasNext()) {
-            fullNames.add(name + (String) namesIter.next());
-        }
-        return (Collection) fullNames;
+    public Collection getClassNames() {
+        return (Collection) cldMap.keySet();
     }
 
     /**
