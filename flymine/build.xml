@@ -157,26 +157,6 @@
     <mkdir dir="${dist.webapp}"/>
     <mkdir dir="${dist.javadoc}"/>
   </target>
-    
-  <target name="prepare-testmodel">
-    <ant antfile="build-model.xml" target="prepare">
-      <property name="model.name" value="testmodel"/>
-    </ant>
-  </target>
-
-  <target name="prepare-acedbtest">
-    <ant antfile="build-model.xml" target="prepare">
-      <property name="model.name" value="acedbtest"/>
-    </ant>
-  </target>
-
-  <target name="prepare-acedb">
-    <ant antfile="build-model.xml" target="prepare">
-      <property name="model.name" value="acedb"/>
-    </ant>
-  </target>
-
-
 
   <!-- Help -->
   <target name="help" description="Displays user targets">
@@ -184,7 +164,7 @@
     <echo message="FlyMine build file - available targets are:"/>
     <echo message=""/>
     <echo message="compile-main           --> compiles the source code"/>
-    <echo message="compile-java-testmodel --> generate testmodel java classes"/>
+    <echo message="build-testmodel        --> generate testmodel class and mapping files"/>
     <echo message="build-db-testmodel     --> create the testmodel database tables"/>
     <echo message="insert-data-testmodel  --> store testmodel test data"/>
     <echo message="test-main              --> runs the unit tests"/>
@@ -223,98 +203,27 @@
 
 
 
-  <!-- Build flymine with testmodel -->
+  <!-- Models to build -->
 
-  <!-- unzip testmodel -->
-  <target name="unpack-testmodel" depends="prepare-testmodel">
-    <ant antfile="build-model.xml" target="unpack-xmi-model">
+  <!-- Testmodel -->
+  <target name="build-testmodel" depends="compile-main" >
+    <ant antfile="build-model.xml" target="build-model-from-zargo">
       <property name="model.name" value="testmodel"/>
       <property name="model.src" value="${model}/uml"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
-  <!-- generate testmodel model from xmi -->
-  <target name="generate-model-testmodel" depends="compile-main, unpack-testmodel" >
-    <taskdef name="model-generation" classname="org.flymine.task.ModelGenerationTask">
-      <classpath refid="test.class.path"/>
-    </taskdef>
-
-    <model-generation
-      type="xmi"
-      modelname="testmodel"      
-      source="${build.tmp}/testmodel_.xmi"
-      destdir="${build.model}/testmodel"
-      />   
-  </target>
-
-  <!-- define task for model output -->
-  <target name="prepare-model-output-testmodel" depends="generate-model-testmodel">
-    <taskdef name="model-output-testmodel" classname="org.flymine.task.ModelOutputTask">
-      <classpath refid="test.class.path" />
-    </taskdef>
-  </target>
-
-  <!-- generate java source for testmodel -->
-  <target name="generate-java-testmodel" depends="prepare-model-output-testmodel">
-    <model-output-testmodel type="java" model="testmodel" destdir="${build.model}/testmodel"/>
-  </target>
-
-  <!-- compile java source for testmodel -->
-  <target name="compile-java-testmodel" depends="generate-java-testmodel">
-    <javac destdir="${build.model}/testmodel" listfiles="yes">
-      <classpath refid="test.class.path"/>
-      <src path="${build.model}/testmodel" />
-    </javac>
-  </target>
-
-  <!-- generate repository descriptor for testmodel -->
-  <target name="generate-repository-testmodel" depends="prepare-model-output-testmodel">
-    <model-output-testmodel type="ojb" model="testmodel" destdir="${build.model}/testmodel"/>
-
-    <copy todir="${build.model}/testmodel" flatten="true">
-      <fileset dir="${resources}">
-        <include name="**/repository*"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <!-- generate mapping file for castor xml binding for testmodel -->
-  <target name="generate-xmlmapping-testmodel" depends="prepare-model-output-testmodel">
-    <model-output-testmodel type="castor" model="testmodel" destdir="${build.model}/testmodel"/>
-
-    <copy todir="${build.model}/testmodel" flatten="true">
-      <fileset dir="${resources}">
-        <include name="**/castor*.xml"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <!-- generate schema from repository descriptor and use to create testmodel database tables -->
-  <target name="build-db-testmodel" depends="prepare-model-output-testmodel">
-    <model-output-testmodel type="torque" model="testmodel" destdir="${build.model}/testmodel"/>
-    <copy todir="${build.model}/testmodel">
-      <fileset dir="${src.schema}">
-        <include name="**/*-schema.xml"/>
-      </fileset>
-    </copy>
-    
-    <taskdef
-      name="build-db"
-      classname="org.flymine.task.BuildDbTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    
-    <build-db
-      database="db.unittest"
-      destdir="${build.model}/testmodel">
-      <fileset dir="${build.model}/testmodel">
-        <include name="*-schema.xml" />
-      </fileset>
-    </build-db>
+  <target name="build-db-testmodel" depends="build-testmodel">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.unittest"/>
+    </ant>
   </target>
   
   <!-- insert the testmodel data into the database -->
-  <target name="insert-data-testmodel" depends="compile-java-testmodel, generate-repository-testmodel, generate-xmlmapping-testmodel, build-db-testmodel">
+  <target name="insert-data-testmodel" depends="build-db-testmodel">
     <taskdef
       name="insert-xml-data"
       classname="org.flymine.task.InsertXmlDataTask">
@@ -327,140 +236,45 @@
   </target>
 
 
-
-
   <!-- Acedb test build targets -->
   
-  <!-- define model generation task with acedbtest class path -->
-  <target name="generate-model-acedbtest" depends="prepare-acedbtest, compile-main" >
-    <taskdef
-      name="model-generation"
-      classname="org.flymine.task.ModelGenerationTask">
-      <classpath refid="acedbtest.class.path"/>
-    </taskdef>
-
-    <model-generation
-      type="acedb"
-      modelname="acedbtest"
-      source="${model}/acedb/acedbtest.wrm"
-      destdir="${build.model}/acedbtest"/>
-  </target>
-
-  <!-- define model output task with acedbtest class path -->
-  <target name="prepare-model-output-acedbtest" depends="generate-model-acedbtest">
-    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
-      <classpath refid="acedbtest.class.path"/>
-    </taskdef>
-  </target>
-
-  <!-- generate java source for acedb model -->
-  <target name="generate-java-acedbtest" depends="prepare-model-output-acedbtest">
-    <model-output type="java" model="acedbtest" destdir="${build.model}/acedbtest"/>
-  </target>
-  
-  <!-- compile java source for acedb model -->
-  <target name="compile-java-acedbtest" depends="generate-java-acedbtest">
-    <javac destdir="${build.model}/acedbtest" listfiles="yes">
-      <classpath refid="acedbtest.class.path"/>
-      <src path="${build.model}/acedbtest"/>
-    </javac>
+  <!-- generate acedbtest model from .wrm file -->
+  <target name="build-acedbtest" depends="compile-main" >
+    <ant antfile="build-model.xml" target="build-model-from-ace">
+      <property name="model.name" value="acedbtest"/>
+      <property name="model.src" value="${model}/acedb/acedbtest.wrm"/>
+      <reference torefid="class.path" refid="acedbtest.class.path"/>
+    </ant>
   </target>
 
   <!-- copy original .wrm file to model directory for acedataloadertest -->
-  <target name="copy-model-acedbtest" depends="prepare-acedbtest">
+  <target name="copy-model-acedbtest" depends="build-acedbtest">
     <copy todir="${build.model}/acedbtest" file="${model}/acedb/acedbtest.wrm"/>
   </target>
-
-
-
 
 
   <!-- Production build targets (currently uses ace model) -->
   
   <!-- generate acedb model from acemodel file -->
-  <target name="generate-model-acedb" depends="compile-main, prepare-acedb">
-     <taskdef
-       name="model-generation"
-       classname="org.flymine.task.ModelGenerationTask">
-       <classpath refid="acedb.class.path"/>
-     </taskdef>
-
-    <model-generation
-      type="acedb"
-      modelname="acedb"
-      source="${model}/acedb/acedb.wrm"
-      destdir="${build.model}/acedb"
-   />     
+  <target name="build-acedb" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-model-from-ace">
+      <property name="model.name" value="acedb"/>
+      <property name="model.src" value="${model}/acedb/acedb.wrm"/>
+      <reference torefid="class.path" refid="acedb.class.path"/>
+    </ant>
   </target> 
 
-  <!-- define task for model output -->
-  <target name="prepare-model-output-acedb" depends="generate-model-acedb">
-    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
-      <classpath refid="acedb.class.path" />
-    </taskdef>
+
+  <target name="build-db-acedb" depends="build-acedb">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="acedb"/>
+      <reference torefid="class.path" refid="acedb.class.path"/>
+      <property name="db.name" value="db.acedb"/>
+    </ant>
   </target>
-
-  <!-- generate java source for acedb model -->
-  <target name="generate-java-acedb" depends="prepare-model-output-acedb">
-    <model-output type="java" model="acedb" destdir="${build.model}/acedb"/>
-  </target>
-
-  <!-- compile java source for acedb model -->
-  <target name="compile-java-acedb" depends="generate-java-acedb">
-    <javac destdir="${build.model}/acedb" listfiles="yes">
-      <classpath refid="acedb.class.path"/>
-      <src path="${build.model}/acedb" />
-    </javac>
-  </target>
-
-  <!-- generate repository descriptor for acedb model -->
-  <target name="generate-repository-acedb" depends="prepare-model-output-acedb">
-    <model-output type="ojb" model="acedb" destdir="${build.model}/acedb"/>
-
-    <copy todir="${build.model}/acedb" flatten="true">
-      <fileset dir="${resources}">
-        <include name="**/repository*"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <!-- generate mapping file for castor xml binding of acedb model -->
-  <target name="generate-xmlmapping-acedb" depends="prepare-model-output-acedb" >
-    <model-output type="castor" model="acedb" destdir="${build.model}/acedb"/>
-
-    <copy todir="${build.model}/acedb" flatten="true">
-      <fileset dir="${resources}">
-        <include name="**/castor*.xml"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <!-- generate schema from repository descriptor and use to create acedb database tables -->
-  <target name="build-db-acedb" depends="prepare-model-output-acedb">
-    <model-output type="torque" model="acedb" destdir="${build.model}/acedb"/>
-    <copy todir="${build.model}/acedb">
-      <fileset dir="${src.schema}">
-        <include name="**/*-schema.xml"/>
-      </fileset>
-    </copy>
-
-    <taskdef
-          name="build-db"
-          classname="org.flymine.task.BuildDbTask">
-      <classpath refid="acedb.class.path"/>
-    </taskdef>
-    
-    <build-db
-          database="db.acedb"
-          destdir="${build.model}/acedb">
-      <fileset dir="${build.model}/acedb">
-        <include name="*-schema.xml" />
-      </fileset>
-    </build-db>
-  </target>
-
+  
   <!-- insert the ace data into the database -->
-   <target name="insert-data-acedb" depends="compile-java-acedb, generate-repository-acedb, build-db-acedb">
+   <target name="insert-data-acedb" depends="build-db-acedb">
     <taskdef
           name="insert-ace-data"
           classname="org.flymine.task.InsertAceDataTask">
@@ -491,13 +305,10 @@
   </target>
 
 
-
-
-
   <!-- Unit test targets -->
 
   <!-- compile the tests -->
-  <target name="compile-test" depends="compile-java-testmodel, compile-java-acedbtest"
+  <target name="compile-test" depends="build-testmodel, build-acedbtest"
           description="compile the java test source" >
     <copy todir="${build.src.test}">
       <fileset dir="${src.test}">
@@ -511,7 +322,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, generate-repository-testmodel, build-db-testmodel, generate-xmlmapping-testmodel, copy-model-acedbtest"
+  <target name="test-main" depends="compile-test, build-db-testmodel, copy-model-acedbtest"
           description="perform JUnit tests on main source code" >
 
     <!-- this will cause every test to be re-run if any java file changes -->
@@ -836,13 +647,13 @@
 
   </target>
 
-  <target name="jar-testmodel" depends="prepare-dist, compile-java-testmodel, generate-repository-testmodel, generate-xmlmapping-testmodel"
+  <target name="jar-testmodel" depends="prepare-dist, build-testmodel"
           description="create a jar of the testmodel">
-    <jar destfile="${dist}/flymine-testmodel.jar">
-      <fileset dir="${build.model}/testmodel" >
-        <exclude name="**/*.java"/>
-      </fileset>
-    </jar>
+    <ant antfile="build-model.xml" target="jar">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="model.src" value="${model}/uml"/>
+    </ant>    
   </target>
 
 
@@ -880,10 +691,6 @@
             password="${webapp.password}" path="${webapp.path}"/>
   </target>
   
-
-
-
-
 
   <!-- Cleaning-up targets -->
 
