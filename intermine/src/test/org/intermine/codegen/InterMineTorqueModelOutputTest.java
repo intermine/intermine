@@ -172,12 +172,6 @@ public class FlyMineTorqueModelOutputTest extends TestCase
         expected = INDENT + "<table name=\"Class1Cod1\">" + ENDL
             + INDENT + INDENT + "<column name=\"Cod1\" type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"Class1\" type=\"INTEGER\"/>" + ENDL
-            + INDENT + INDENT + "<index name=\"Class1Cod1_Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<index-column name=\"Cod1\"/>" + ENDL
-            + INDENT + INDENT + "</index>" + ENDL
-            + INDENT + INDENT + "<index name=\"Class1Cod1_Class1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<index-column name=\"Class1\"/>" + ENDL
-            + INDENT + INDENT + "</index>" + ENDL
             + INDENT + "</table>" + ENDL;
 
         assertEquals(expected, mo.generateIndirectionTable(cod1));
