@@ -494,8 +494,8 @@
                 merge-ensembl-model, merge-phenotype-model,
                 merge-go-model, merge-uniprot-model,
                 merge-protein_structure-model, merge-so-model, 
-                merge-flyreg-model, merge-drosdel-model, merge-long_oligo-model, 
-                merge-tiling_path-model, merge-chado-model, merge-shortcuts">
+                merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
+                merge-chado-model, merge-shortcuts">
   </target>
 
 
@@ -515,6 +515,15 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
+
+  <target name="store-metadata">
+       <taskdef name="db-insert-model"
+             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <db-insert-model database="db.production" modelName="genomic"/> 
+  </target>
+
 
   <target name="jar-genomic" depends="compile-genomic-model"
           description="create a jar of the genomic model">
@@ -737,34 +746,6 @@
   </target>
 
 
-  <!-- Translate Chado data -->
-  <target name="translate-chado" depends="convert-chado, compile-chado-java, compile-genomic-java">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.chado-tgt-items"/>
-      <property name="objectstore.name" value="os.chado-tgt-items-std"/>
-    </ant>
-    <copy file="${model}/chado/chado_mappings" toDir="${build.model}/chado"/>
-    <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <translate-data translator="org.flymine.dataconversion.ChadoDataTranslator"
-                    source="os.chado-src-items"
-                    target="osw.chado-tgt-items"
-                    srcModel="chado"
-                    tgtModel="genomic"/>
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.chado-tgt-items-std"/>
-    </ant>
-    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.chado-tgt-items"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
   <!-- Load data from chado tgt items into production -->
   <target name="load-chado" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
@@ -773,6 +754,8 @@
 
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado"/>
   </target>
+
+  <target name="build-flybase-production" depends="filter-chado,retrieve-chado,load-chado"/>
 
 
   <!-- ENSEMBL ORTHOLOGUES PIPELINE -->
