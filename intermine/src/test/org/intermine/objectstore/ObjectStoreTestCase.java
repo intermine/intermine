@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -306,6 +307,8 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("OrderByReference", toList(r));
+
+        results.put("FailDistinctOrder", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
     }
 
     /**
@@ -317,8 +320,21 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
      * @throws Exception if type does not appear in the queries map
      */
     public void executeTest(String type) throws Exception {
-        Results res = os.execute((Query)queries.get(type));
-        assertEquals(type + " has failed", results.get(type), res);
+        if (results.get(type) instanceof Failure) {
+            try {
+                Results res = os.execute((Query) queries.get(type));
+                Iterator iter = res.iterator();
+                while (iter.hasNext()) {
+                    iter.next();
+                }
+                fail(type + " was expected to fail");
+            } catch (Exception e) {
+                assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
+            }
+        } else {
+            Results res = os.execute((Query)queries.get(type));
+            assertEquals(type + " has failed", results.get(type), res);
+        }
     }
 
     public void testResults() throws Exception {

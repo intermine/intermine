@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.Failure;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -207,32 +208,42 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("Substring2", Collections.singleton("Employee"));
         results.put("OrderByReference", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", Collections.singleton("Employee"));
+        results.put("FailDistinctOrder", new Failure(ObjectStoreException.class, "Field a1_.age in the ORDER BY list must be in the SELECT list, or the whole QueryClass org.intermine.model.testmodel.Employee must be in the SELECT list, or the query made non-distinct"));
     }
 
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
-        String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
         Object expected = results.get(type);
-        if (expected instanceof String) {
-            assertEquals("", results.get(type), generated);
-        } else if (expected instanceof Collection) {
-            boolean hasEqual = false;
-            Iterator expectedIter = ((Collection) expected).iterator();
-            while ((!hasEqual) && expectedIter.hasNext()) {
-                String expectedString = (String) expectedIter.next();
-                hasEqual = expectedString.equals(generated);
+        if (expected instanceof Failure) {
+            try {
+                SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
+                fail(type + " was expected to fail");
+            } catch (Exception e) {
+                assertEquals(type + " was expected to produce a particular exception", expected, new Failure(e));
             }
-            assertTrue(generated, hasEqual);
         } else {
-            assertTrue("No result found for " + type, false);
-        }
+            String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
+            if (expected instanceof String) {
+                assertEquals("", results.get(type), generated);
+            } else if (expected instanceof Collection) {
+                boolean hasEqual = false;
+                Iterator expectedIter = ((Collection) expected).iterator();
+                while ((!hasEqual) && expectedIter.hasNext()) {
+                    String expectedString = (String) expectedIter.next();
+                    hasEqual = expectedString.equals(generated);
+                }
+                assertTrue(generated, hasEqual);
+            } else {
+                assertTrue("No result found for " + type, false);
+            }
 
-        assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
+            assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
 
-        // TODO: extend sql so that it can represent these
-        if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty"))) {
-            // And check that the SQL generated is high enough quality to be parsed by the optimiser.
-            org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
+            // TODO: extend sql so that it can represent these
+            if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty"))) {
+                // And check that the SQL generated is high enough quality to be parsed by the optimiser.
+                org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
+            }
         }
     }
 

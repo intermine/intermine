@@ -194,6 +194,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Substring", substring());
         queries.put("Substring2", substring2());
         queries.put("OrderByReference", orderByReference());
+        queries.put("FailDistinctOrder", failDistinctOrder());
     }
 
     /*
@@ -1258,6 +1259,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.addToOrderBy(new QueryObjectReference(qc, "department"));
+        return q;
+    }
+
+    /*
+     * SELECT DISTINCT a1_.name FROM Employee AS a1_ ORDER BY a1_.age;
+     */
+    public static Query failDistinctOrder() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qc, "name"));
+        q.addToOrderBy(new QueryField(qc, "age"));
+        q.setDistinct(true);
         return q;
     }
 }
