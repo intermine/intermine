@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -21,21 +20,33 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
-import org.intermine.model.InterMineObject;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.results.PagedResults;
 
 /**
- * Action to handle submit from the template page
+ * Action to handle submit from the template page.
+ *
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class TemplateAction extends Action
 {
-    /** 
-     * @see Action#execute
+    /**
+     * Build a query based on the template and the input from the user.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -52,7 +63,7 @@ public class TemplateAction extends Action
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             int j = template.getNodes().indexOf(node);
-            String op = (String) ((TemplateForm) form).getAttributeOps("" + (j + 1));
+                String op = (String) ((TemplateForm) form).getAttributeOps("" + (j + 1));
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
             
             Object constraintValue = ((TemplateForm) form).getParsedAttributeValues("" + (j + 1));
@@ -60,26 +71,32 @@ public class TemplateAction extends Action
             node.getConstraints().set(0, new Constraint(constraintOp, constraintValue));
         }
         
-        LoadQueryAction.loadQuery(template.getQuery(), request.getSession());
-
-        if (request.getParameter("skipBuilder") != null) {
-            form.reset (mapping, request);
-            // If the form wants to skip the query builder we need to execute the query
-            if (!SessionMethods.runQuery (session, request)) {
-                return mapping.findForward("failure");
-            }
-            // Look at results, if only one result, go straight to object details page
-            PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
-            if (pr.getSize () == 1) {
-                Object o = ((List) pr.getAllRows ().get(0)).get(0);
-                if (o instanceof InterMineObject) {
-                    return new ActionForward(mapping.findForward("details").getPath () + "?id="
-                                        + ((InterMineObject) o).getId());
-                }
-            }
-            return mapping.findForward("results");
-        }
+        SessionMethods.loadQuery(template.getQuery(), request.getSession());
         
+        form.reset (mapping, request);
+        
+        return handleTemplateQuery(mapping, form, request, response);
+    }
+    
+    /**
+     * Called after the form has been read and the query has been loaded into the session. By
+     * default, this method returns forward "query". Override to forward to some other
+     * destination or do more processing on the template query.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    protected ActionForward handleTemplateQuery(ActionMapping mapping,
+                                             ActionForm form,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws Exception {
         return mapping.findForward("query");
     }
 }
