@@ -53,9 +53,9 @@ public class WebConfig
         digester.addSetProperties("webconfig/class", "className", "className");
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
-        digester.addObjectCreate("webconfig/class/shortdisplayers/displayer", Displayer.class);
-        digester.addSetProperties("webconfig/class/shortdisplayers/displayer", "src", "src");
-        digester.addSetNext("webconfig/class/shortdisplayers/displayer", "addShortDisplayer");
+        digester.addObjectCreate("webconfig/class/fields/fieldconfig", FieldConfig.class);
+        digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
+        digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
 
         digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/longdisplayers/displayer", "src", "src");
@@ -64,10 +64,6 @@ public class WebConfig
         digester.addCallMethod("webconfig/class/longdisplayers/displayer/param", "addParam", 2);
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
-
-        digester.addCallMethod("webconfig/class/shortdisplayers/displayer/param", "addParam", 2);
-        digester.addCallParam("webconfig/class/shortdisplayers/displayer/param", 0, "name");
-        digester.addCallParam("webconfig/class/shortdisplayers/displayer/param", 1, "value");
 
         digester.addSetNext("webconfig/class", "addType");
         
@@ -133,7 +129,8 @@ public class WebConfig
             return false;
         }
 
-        return types.equals(((WebConfig) obj).types);
+        WebConfig webConfigObj = (WebConfig) obj;
+        return types.equals(webConfigObj.types) && exporters.equals(webConfigObj.exporters);
     }
 
     /**

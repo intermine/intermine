@@ -13,6 +13,7 @@ package org.intermine.web.config;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * Configuration object for displaying a class
@@ -24,7 +25,7 @@ public class Type
     // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
-    private List shortDisplayers = new ArrayList();
+    private List fieldConfigs = new ArrayList();
     private List longDisplayers = new ArrayList();
 
     /**
@@ -64,21 +65,21 @@ public class Type
     }
 
     /**
-     * Add a short displayer for this Type
+     * Add a FieldConfig for this Type
      *
-     * @param disp the Displayer to add
+     * @param df the FieldConfig to add
      */
-    public void addShortDisplayer(Displayer disp) {
-        shortDisplayers.add(disp);
+    public void addFieldConfig(FieldConfig df) {
+        fieldConfigs.add(df);
     }
 
     /**
-     * Get the List of short Displayers
+     * Get the List of FieldConfig objects
      *
-     * @return the List of short Displayers
+     * @return the List of FieldConfig objects
      */
-    public List getShortDisplayers() {
-        return this.shortDisplayers;
+    public List getFieldConfigs() {
+        return Collections.unmodifiableList(this.fieldConfigs);
     }
 
    /**
@@ -96,7 +97,7 @@ public class Type
      * @return the List of long Displayers
      */
     public List getLongDisplayers() {
-        return this.longDisplayers;
+        return Collections.unmodifiableList(this.longDisplayers);
     }
 
     /**
@@ -110,17 +111,19 @@ public class Type
             return false;
         }
 
-        return shortDisplayers.equals(((Type) obj).shortDisplayers)
-            && longDisplayers.equals(((Type) obj).longDisplayers);
+        Type typeObj = (Type) obj;
+        
+        return fieldConfigs.equals(typeObj.fieldConfigs)
+            && longDisplayers.equals(typeObj.longDisplayers);
     }
 
     /**
      * @see Object#hashCode
      *
-     * @return the hashCode for this WebConfig object
+     * @return the hashCode for this Type object
      */
     public int hashCode() {
-        return shortDisplayers.hashCode() + 3 * longDisplayers.hashCode();
+        return fieldConfigs.hashCode() + 3 * longDisplayers.hashCode();
     }
 
     /**
@@ -135,12 +138,12 @@ public class Type
             sb.append(" fieldName=\"" + fieldName + "\"");
         }
         sb.append(">");
-        sb.append("<shortdisplayers>");
-        Iterator iter = shortDisplayers.iterator();
+        sb.append("<fieldconfigs>");
+        Iterator iter = fieldConfigs.iterator();
         while (iter.hasNext()) {
             sb.append(iter.next().toString());
         }
-        sb.append("</shortdisplayers>");
+        sb.append("</fieldconfigs>");
         sb.append("<longdisplayers>");
         iter = longDisplayers.iterator();
         while (iter.hasNext()) {
