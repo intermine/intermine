@@ -124,14 +124,18 @@
 
   <!-- Libraries that both the webapps use -->
   <patternset id="lib.webapp.common">
+    <!-- Minimal stuff essential to run intermine -->
     <include name="postgresql*.jar"/>
     <include name="log4j*.jar"/>
     <include name="cglib*.jar"/>
     <include name="antlr*.jar"/>
-    <include name="commons-logging*"/>
-    <include name="commons-digester*"/>
+    <include name="commons-lang*.jar"/>
+    <include name="commons-logging*.jar"/>
+    <include name="torque-gen*.jar"/>
+    <!-- Stuff for webapps -->
+    <include name="commons-digester*.jar"/>
     <include name="commons-collections*.jar"/>
-    <include name="commons-beanutils*"/>
+    <include name="commons-beanutils*.jar"/>
   </patternset>
 
   <!-- Libraries that the webapp uses -->
@@ -143,8 +147,8 @@
     <include name="mail*.jar"/>
     <include name="activation*.jar"/>
     <include name="poi*.jar"/>
-    <include name="commons-fileupload*"/>
-    <include name="commons-validator*"/>
+    <include name="commons-fileupload*.jar"/>
+    <include name="commons-validator*.jar"/>
   </patternset>
 
   <!-- Libraries that the webservice uses -->
