@@ -250,4 +250,10 @@ span.collectionDescription {
   margin-top: 5px;
 }
 
-
+.box .buildmenu .body {
+  border: 1px solid #888;
+  height: 10;
+  font-size: 12px;
+  padding: 4px;
+  margin-top: 5px;
+}

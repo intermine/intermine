@@ -365,12 +365,6 @@ a.webapplink , a.webapplink:link, a.webapplink:visited, a.webapplink:active, a.w
   background-color: white;
 }
 
-.box .buildmenu .body {
-  border: 1px solid #888;
-  height: 10;
-  font-size: 12px;
-}
-
 .body .collapsed {
   font-size: 11px;
   font-style: italic;
