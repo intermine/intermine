@@ -345,23 +345,23 @@ public class TransferSequencesTest extends TestCase
         storedContigs[0].setId(new Integer(300));
         storedContigs[0].setLength(new Integer(1000));
         String contigResidues0 =
-            "tatatataatttaataaatacattccgacgatactgcctctatggcttagtggtacagca" +
-            "tcgcacttgtaatgcgaagatccttggttcgattccgagtggaggcatatacattatatt" +
-            "atattctttttcatgcggaaaaaagatttcaaatttttgggtatgatattaatatgactg" +
-            "taacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatctcttttccg" +
-            "agtaagacgttttccagtctaaatttggagtctgcagttgtttcgcaattcttaatgtat" +
-            "ggttatactaaatacaaactttaaagctctgatttatgtttgcaataaactaaaataaaa" +
-            "gcacaaaaacctttacccattaatttcaaacaacttataaactaccggtaaacttttttt" +
-            "ctaacctttataatttataaactagaatgtttaatgtctacggccatacctaggcgaaaa" +
-            "caccagttcccgtccgatcactgcagttaagcgtctgagggcctcgttagtactatggtt" +
-            "ggagacaacatgggaatccggggtgctgtaggctatttttttatatccgtctttcttact" +
-            "acttgcctaacaagtcatgatgtactctcaaaatatgtttgcatgccttgtaatattggt" +
-            "tatggatagctccttctggacttgatcttttgtagccaagaacaatgggtatagactctg" +
-            "accttgtgatgttgtagccacagattataataggtattttcaagtacagtaacaaaaatc" +
-            "ttctagtttttttttagaaaggatacaccaagtataagcaaattcaggaattgttgatta" +
-            "aactgtcaacttcggtaaaactttgggcataagtagtgtgggagcaagtttaactaaaat" +
-            "tctattcagatgtcgaatccaaaccgctaattttgctcaactagcttttcataaaaacca" +
-            "attcatagtttcatactaataaagacgattgtttacttta";
+            "TATATATAATTTAATAAATACATTCCGACGATACTGCCTCTATGGCTTAGTGGTACAGCA" +
+            "TCGCACTTGTAATGCGAAGATCCTTGGTTCGATTCCGAGTGGAGGCATATACATTATATT" +
+            "ATATTCTTTTTCATGCGGAAAAAAGATTTCAAATTTTTGGGTATGATATTAATATGACTG" +
+            "TAACGTTAATAGCAAAGTGAGTGTTAATAATGATAAAATAGCAGCAAAATCTCTTTTCCG" +
+            "AGTAAGACGTTTTCCAGTCTAAATTTGGAGTCTGCAGTTGTTTCGCAATTCTTAATGTAT" +
+            "GGTTATACTAAATACAAACTTTAAAGCTCTGATTTATGTTTGCAATAAACTAAAATAAAA" +
+            "GCACAAAAACCTTTACCCATTAATTTCAAACAACTTATAAACTACCGGTAAACTTTTTTT" +
+            "CTAACCTTTATAATTTATAAACTAGAATGTTTAATGTCTACGGCCATACCTAGGCGAAAA" +
+            "CACCAGTTCCCGTCCGATCACTGCAGTTAAGCGTCTGAGGGCCTCGTTAGTACTATGGTT" +
+            "GGAGACAACATGGGAATCCGGGGTGCTGTAGGCTATTTTTTTATATCCGTCTTTCTTACT" +
+            "ACTTGCCTAACAAGTCATGATGTACTCTCAAAATATGTTTGCATGCCTTGTAATATTGGT" +
+            "TATGGATAGCTCCTTCTGGACTTGATCTTTTGTAGCCAAGAACAATGGGTATAGACTCTG" +
+            "ACCTTGTGATGTTGTAGCCACAGATTATAATAGGTATTTTCAAGTACAGTAACAAAAATC" +
+            "TTCTAGTTTTTTTTTAGAAAGGATACACCAAGTATAAGCAAATTCAGGAATTGTTGATTA" +
+            "AACTGTCAACTTCGGTAAAACTTTGGGCATAAGTAGTGTGGGAGCAAGTTTAACTAAAAT" +
+            "TCTATTCAGATGTCGAATCCAAACCGCTAATTTTGCTCAACTAGCTTTTCATAAAAACCA" +
+            "ATTCATAGTTTCATACTAATAAAGACGATTGTTTACTTTA";
         storedContigSequences[0].setResidues(contigResidues0);
         storedContigs[0].setSequence(storedContigSequences[0]);
 
@@ -382,15 +382,15 @@ public class TransferSequencesTest extends TestCase
             "gagccagccgtttatctcgcggatcctgtcctgtaacgggataagctcattgcggacaaa" +
             "gacctttgccactttctcaatatcacccagcgacccgacgttctccggcttgccacccat" +
             "caactgaaaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttgatatt" +
-            "aaaaaaatcgtccttcgtcgccacttcactgagggggataattttaatgccgtcggcttt" +
-            "cccctgtggggcatagagaaacaggtttttaaagttgttgcggcctttcgacttgaccat" +
-            "gttttcgcgaagcatttcgatatcgttgcgatcctgcacggcatcggtgacatacatgat" +
-            "gtatccggcatgtgcgccattttcgtaatacttgcggcggaacaacgtggccgactcatt" +
-            "cagccaggcagagttaagggcgctgagatattccggcaggccgtacagctcctgattaat" +
-            "atccggctccagcaggtgaaacacggagccgggcgcgaaggctgtcggctcgttgaagga" +
-            "cggcacccaccagtaaacatcctcttccacgccacggcgggtatattttgccggtgaggt" +
-            "ttccagtctgatgaccttaccggtggtgctgtaacgcttttccagaaacgcattaccgaa" +
-            "caccagaaaatccagcacaaagcggctgaaatcctgctgggaaagccatggatgcgggat" +
+            "AAAAAAATCGTCCTTCGTCGCCACTTCACTGAGGGGGATAATTTTAATGCCGTCGGCTTT" +
+            "CCCCTGTGGGGCATAGAGAAACAGGTTTTTAAAGTTGTTGCGGCCTTTCGACTTGACCAT" +
+            "GTTTTCGCGAAGCATTTCGATATCGTTGCGATCCTGCACGGCATCGGTGACATACATGAT" +
+            "GTATCCGGCATGTGCGCCATTTTCGTAATACTTGCGGCGGAACAACGTGGCCGACTCATT" +
+            "CAGCCAGGCAGAGTTAAGGGCGCTGAGATATTCCGGCAGGCCGTACAGCTCCTGATTAAT" +
+            "ATCCGGCTCCAGCAGGTGAAACACGGAGCCGGGCGCGAAGGCTGTCGGCTCGTTGAAGGA" +
+            "CGGCACCCACCAGTAAACATCCTCTTCCACGCCACGGCGGGTATATTTTGCCGGTGAGGT" +
+            "TTCCAGTCTGATGACCTTACCGGTGGTGCTGTAACGCTTTTCCAGAAACGCATTACCGAA" +
+            "caccagaaaatccAGCACAAAGCGGCTGAAATCCTGCTGGGAAAGCCATGGATGCGGGAT" +
             "aaatgtcgaggccagaatattgcgtttgacgtaaatcggcgagctgtgatgcacggcagc" +
             "ccgcaggctttttgccagaccggtaaagctgaccggtggctcataccatctgccgttact" +
             "gatgcactcgacgtaatccagaatgtcacggcggtcgagtaccggcaccggctcaccaaa" +
@@ -415,18 +415,18 @@ public class TransferSequencesTest extends TestCase
         String contigResidues2 =
             "gttaacagctaaaaacataactcgattacttacaattgttgattctttactcccagaacg" +
             "acgcattgtagtaggcaatgaaattaaagcccaaacagtagtcagaagttggtaggtgtt" +
-            "gcagtcaaattattattctacagaggagaatattatagccagcgtggtagaatctggata" +
-            "tatatctactgcaaaagtgtaattgcattggtttaaagggtatactatggttaagtaata" +
-            "tattcacagctgtacaatttacagtcataactaaaacttccttaagccgtaaagaaatac" +
-            "ctggtgttgtaaaatttgttgtatatccacggcatggtcatataatgtgattttgtgctc" +
-            "aaataaatataaaatatgcataatttttgtacatttaatttgagaaacccatcttttgtt" +
-            "gagaggctgtcaatgaatagcagtttcattgaaaagcagcgggatgaccagaaaagtatt" +
-            "ttacaatggcaagggagtagaaagctagcgtaatattcagaaagctaggtaattgagcaa" +
-            "tcctttaattcattgctaagcatgctaggtaaacgcagtaaacctttcagttttcattta" +
-            "ggtataaggctgtttaatgagtatctccactaaatttaaagatcaaaactcagtatcaat" +
-            "tcttaaaagttttattttatttaataatcatatacttctcataatctttcaattttttcc" +
-            "ccattttgatgatatttttattaatcctacagtaagctctatgatatcgttattcttcaa" +
-            "ataggctggtcagcacgtggacggtgttacttatcgttaaataaatcgtactaaggaggt" +
+            "GCAGTCAAATTATTATTCTACAGAGGAGAATATTATAGCCAGCGTGGTAGAATCTGGATA" +
+            "TATATCTACTGCAAAAGTGTAATTGCATTGGTTTAAAGGGTATACTATGGTTAAGTAATA" +
+            "TATTCACAGCTGTACAATTTACAGTCATAACTAAAACTTCCTTAAGCCGTAAAGAAATAC" +
+            "CTGGTGTTGTAAAATTTGTTGTATATCCACGGCATGGTCATATAATGTGATTTTGTGCTC" +
+            "AAATAAATATAAAATATGCATAATTTTTGTACATTTAATTTGAGAAACCCATCTTTTGTT" +
+            "GAGAGGCTGTCAATGAATAGCAGTTTCATTGAAAAGCAGCGGGATGACCAGAAAAGTATT" +
+            "TTACAATGGCAAGGGAGTAGAAAGCTAGCGTAATATTCAGAAAGCTAGGTAATTGAGCAA" +
+            "TCCTTTAATTCATTGCTAAGCATGCTAGGTAAACGCAGTAAACCTTTCAGTTTTCATTTA" +
+            "GGTATAAGGCTGTTTAATGAGTATCTCCACTAAATTTAAAGATCAAAACTCAGTATCAAT" +
+            "TCTTAAAAGTTTTATTTTATTTAATAATCATATACTTCTCATAATCTTTCAATTTTTTCC" +
+            "CCATTTTGATGATATTTTTATTAATCCTACAGTAAGCTCTATGATATCGTTATTCTTCAA" +
+            "ATAGGCTGGTCAGCACGTGGACGGTGTTACTTATCGTTAAATAAATCGTACTAAGGAGGT" +
             "gcgatgtaaatgatatgcttgtcaagtattaactgctctccaccaaccgccggtttaact" +
             "gattattgttgaaaagcgcagacgaagtttagagaattactagcgtattttaaatttaat" +
             "caacggactattttttattcctttgagatccgactttatc";
