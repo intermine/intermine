@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
-  <item url="/index.xml" title="Home"/>
+  <item url="/index.xml" title="Home">
+    <item url="/introduction.xml" title="Introduction"/>
+  </item>
+
   <item url="/query/begin.do" title="Start a query"/>
   
   <item url="/doc/index.xml" title="Documentation">
