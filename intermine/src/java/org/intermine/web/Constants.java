@@ -26,11 +26,11 @@ public interface Constants
      * ServletContext attribute used to store the example queries
      */
     public static final String EXAMPLE_QUERIES = "EXAMPLE_QUERIES";
-
+    
     /**
-     * ServletContext attribute used to store the template queries
+     * ServletContext attribute used to store global template queries
      */
-    public static final String TEMPLATE_QUERIES = "TEMPLATE_QUERIES";
+    public static final String GLOBAL_TEMPLATE_QUERIES = "GLOBAL_TEMPLATE_QUERIES";
     
     /**
      * ServletContext attribute maps category name to List of TemplateQuerys
@@ -83,7 +83,18 @@ public interface Constants
      * Session attribute used to store the current query
      */
     public static final String QUERY = "QUERY";
-
+    
+    /**
+     * Session attribute used to store the copy of the query that the user is
+     * building a template with.
+     */
+    public static final String TEMPLATE_PATHQUERY = "TEMPLATE_PATHQUERY";
+    
+    /**
+     * Session attribute used to store shared template queries
+     */
+    public static final String USER_TEMPLATE_QUERIES = "USER_TEMPLATE_QUERIES";
+    
     /**
      * Session attribute used to store the results of running the current query
      */
@@ -93,4 +104,16 @@ public interface Constants
      * Session attribute used to store the active results table (which may be QUERY_RESULTS)
      */
     public static final String RESULTS_TABLE = "RESULTS_TABLE";
+    
+    /**
+     * Session attribute equals Boolean.TRUE when logged in user is superuser.
+     */
+    public static final String IS_SUPERUSER = "IS_SUPERUSER";
+    
+    /**
+     * Servlet attribute used to store username of superuser (this attribute
+     * will disappear when we implement a more fine-grained user privaleges
+     * system).
+     */
+    public static final String SUPERUSER_ACCOUNT = "SUPERUSER_ACCOUNT";
 }
