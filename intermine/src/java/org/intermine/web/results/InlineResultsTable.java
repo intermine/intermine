@@ -147,7 +147,7 @@ public class InlineResultsTable
                                                         .getKey()).getName());
                 List fieldDescriptors = (List) entry.getValue();
                 if (ref == null) {
-                    for (int k = 0; k < fieldsDescriptors.size(); k++) {
+                    for (int k = 0; k < fieldDescriptors.size(); k++) {
                         row.add(null);
                     }
                 } else {
