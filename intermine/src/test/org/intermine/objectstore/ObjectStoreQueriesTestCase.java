@@ -949,6 +949,9 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         d1.setName("DepartmentA1");
         d1.setManager((Manager) e1);
         d1.setEmployees(Arrays.asList(new Object[] { e1, e2, e3 }));
+        e1.setDepartment(d1);
+        e2.setDepartment(d1);
+        e3.setDepartment(d1);
         d1.setCompany(p);
         p.setDepartments(Arrays.asList(new Object[] { d1 }));
         return p;
@@ -984,11 +987,14 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         d1.setName("DepartmentB1");
         d1.setManager(e1);
         d1.setEmployees(Arrays.asList(new Object[] { e1, e2 }));
+        e1.setDepartment(d1);
+        e2.setDepartment(d1);
         d1.setCompany(p);
          Department d2 = new Department();
         d2.setName("DepartmentB2");
         d2.setManager((Manager) e3);
         d2.setEmployees(Arrays.asList(new Object[] { e3 }));
+        e3.setDepartment(d2);
         d2.setCompany(p);
         p.setDepartments(Arrays.asList(new Object[] { d1, d2 }));
         return p;
