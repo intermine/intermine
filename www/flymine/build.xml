@@ -40,7 +40,7 @@
     </copy>
 
     <filter token="BASEDIR" value="${www.location}"/>
-    <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}${webapp.path}"/>
+    <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}/${webapp.path}"/>
     <filter token="OUTPUT_EXTENSION" value="${output.extension}"/>
     <filter token="BRANDING" value="${branding}"/>
     <filter token="SOURCEREF" value="${build.www}"/>
@@ -75,7 +75,7 @@
            force="false">
       <param name="branding" expression="flymine" />
       <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
+      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
       <param name="file" expression="systemId()" />
       <param name="sourceref" expression="${build.www}" />
