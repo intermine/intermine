@@ -190,5 +190,45 @@ public class AceDataLoaderTest extends TestCase {
         assertEquals(testObj1.references.size(), ret.references.size());
     }
 
+    public void testHash() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceNode node1 = new StaticAceNode("hashValue", obj);
+        obj.addNode(node1);
+        StaticAceNode node2 = new StaticAceNode("stringValue", node1);
+        node1.addNode(node2);
+        StaticStringValue value1 = new StaticStringValue("A string", node2);
+        node2.addNode(value1);
+
+        AceTestObject testObj1 = new AceTestObject();
+        AceTestObject testObj2 = new AceTestObject();
+        testObj1.identifier = "AceTestObject1";
+        testObj2.identifier = "";
+        testObj2.stringValue = "A string";
+        testObj1.hashValue = testObj2;
+
+        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+
+        assertEquals(testObj1.identifier, ret.identifier);
+        assertEquals(testObj2.identifier, ret.hashValue.identifier);
+        assertEquals(testObj2.stringValue, ret.hashValue.stringValue);
+
+    }
+
+    // Expect nothing to be set, but the object to be created
+    public void testFieldMissing() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceNode node1 = new StaticAceNode("nonexistentValue", obj);
+        obj.addNode(node1);
+        StaticStringValue value1 = new StaticStringValue("A string", node1);
+        node1.addNode(value1);
+        AceTestObject testObj = new AceTestObject();
+        testObj.identifier = "AceTestObject1";
+
+        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+
+        assertEquals(testObj.identifier, ret.identifier);
+
+    }
+
 
 }
