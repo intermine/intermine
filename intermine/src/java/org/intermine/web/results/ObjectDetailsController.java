@@ -10,13 +10,13 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.LRUMap;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -50,7 +50,7 @@ public class ObjectDetailsController extends InterMineAction
         
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
-            displayObjects = new HashMap();
+            displayObjects = new LRUMap(100);
             session.setAttribute("displayObjects", displayObjects);
         }
         String idString = (String) request.getParameter("id");
