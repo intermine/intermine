@@ -101,7 +101,7 @@ fi
 
 # Options for using ANT with FlyMine
 if [ "${ANT_OPTS:+set}" = "set" ]; then
-    ANT_OPTS=$ANT_OPTS\ -XX:MaxPermSize=128m
+    ANT_OPTS=$ANT_OPTS\ -XX:MaxPermSize=128m; export ANT_OPTS
 else
-    ANT_OPTS=-XX:MaxPermSize=128m
+    ANT_OPTS=-XX:MaxPermSize=128m; export ANT_OPTS
 fi
