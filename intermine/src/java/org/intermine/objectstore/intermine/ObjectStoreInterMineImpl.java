@@ -288,8 +288,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
                 if (minBagTableSizeString != null) {
                     try {
-                        int minBagTableSize = Integer.parseInt(minBagTableSizeString);
-                        os.setMinBagTableSize(minBagTableSize);
+                        int minBagTableSizeInt = Integer.parseInt(minBagTableSizeString);
+                        os.setMinBagTableSize(minBagTableSizeInt);
                     } catch (NumberFormatException e) {
                         LOG.error("Error setting minBagTableSize: " + e);
                     }
