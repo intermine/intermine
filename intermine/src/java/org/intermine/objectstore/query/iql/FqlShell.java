@@ -156,6 +156,8 @@ public class FqlShell
         FqlQuery fq = new FqlQuery(fql, modelPackage);
         Query q = fq.toQuery();
 
+        out.println("Query to run: " + q.toString());
+
         Results res = os.execute(q);
         out.print("Column headings: ");
         outputList(QueryHelper.getColumnAliases(q));

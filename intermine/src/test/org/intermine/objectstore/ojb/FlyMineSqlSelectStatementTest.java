@@ -52,7 +52,7 @@ public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
     }
 
     public static void setUpResults() throws Exception {
-        results.put("SelectSimpleObject", "SELECT DISTINCT Company.ID AS \"CompanyID\", Company.addressId AS \"CompanyaddressId\", Company.cEOId AS \"CompanycEOId\", Company.name AS \"Companyname\", Company.vatNumber AS \"CompanyvatNumber\" FROM Company AS Company ORDER BY Company.ID");
+        results.put("SelectSimpleObject", "SELECT Company.ID AS \"CompanyID\", Company.addressId AS \"CompanyaddressId\", Company.cEOId AS \"CompanycEOId\", Company.name AS \"Companyname\", Company.vatNumber AS \"CompanyvatNumber\" FROM Company AS Company ORDER BY Company.ID");
         results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS a2_ FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.a2_");
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
         results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");

@@ -45,6 +45,7 @@ public class FqlQueryParser
      */
     public static Query parse(FqlQuery fq) {
         Query q = new Query();
+        q.setDistinct(false);
         String modelPackage = fq.getPackageName();
         String fql = fq.getQueryString();
         Iterator iterator = fq.getParameters().iterator();
@@ -107,6 +108,9 @@ public class FqlQueryParser
     private static void processAST(AST ast, Query q, String modelPackage, Iterator iterator) {
         boolean processSelect = false;
         switch (ast.getType()) {
+            case FqlTokenTypes.LITERAL_distinct:
+                q.setDistinct(true);
+                break;
             case FqlTokenTypes.SELECT_LIST:
                 // Always do the select list last.
                 processSelect = true;
@@ -241,6 +245,7 @@ public class FqlQueryParser
         } while (ast != null);
 
         Query sq = new Query();
+        sq.setDistinct(false);
         processFqlStatementAST(subquery, sq, modelPackage, iterator);
         if (tableAlias == null) {
             throw new IllegalArgumentException("No alias for subquery");
@@ -677,6 +682,7 @@ public class FqlQueryParser
                     throw new IllegalArgumentException("Expected: a FQL SELECT statement");
                 }
                 Query rightb = new Query();
+                rightb.setDistinct(false);
                 processFqlStatementAST(subAST, rightb, modelPackage, iterator);
                 if (leftb instanceof QueryClass) {
                     return new SubqueryConstraint(rightb, SubqueryConstraint.CONTAINS,

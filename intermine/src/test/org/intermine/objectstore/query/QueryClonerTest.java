@@ -51,7 +51,7 @@ public class QueryClonerTest extends SetupDataTestCase
         cloned.addFrom(c2);
         cloned.addToSelect(c2);
 
-        assertEquals("SELECT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_", cloned.toString());
+        assertEquals("SELECT DISTINCT a1_, a2_ FROM org.flymine.model.testmodel.Company AS a1_, org.flymine.model.testmodel.Department AS a2_", cloned.toString());
     }
 }
     

@@ -78,7 +78,7 @@ public class FqlQueryTest extends FqlQueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new ConstraintSet(ConstraintSet.AND));
-        String expected = "SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_";
+        String expected = "SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_";
         FqlQuery fq = new FqlQuery(q);
         assertEquals(expected, fq.toString());
     }

@@ -72,7 +72,7 @@ public class FqlQuery
         }
 
         boolean needComma = false;
-        String retval = "SELECT ";
+        String retval = (q.isDistinct() ? "SELECT DISTINCT " : "SELECT ");
         Iterator selectIter = q.getSelect().iterator();
         while (selectIter.hasNext()) {
             QueryNode qn = (QueryNode) selectIter.next();

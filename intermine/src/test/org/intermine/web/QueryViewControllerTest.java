@@ -151,7 +151,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         Map expected3 = new HashMap();
         expected3.put(qcA, "Company");
         expected3.put(qcB, "Department");
-        expected3.put(subQ, "SELECT Company FROM org.flymine.model.testmodel.Company AS Company");
+        expected3.put(subQ, "SELECT DISTINCT Company FROM org.flymine.model.testmodel.Company AS Company");
         Map expected4 = new HashMap();
         expected4.put(qcA, "a");
         expected4.put(qcB, "b");
