@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+
+<article>
+	<artheader>
+		<date>2003-05-19</date>
+		<title>Flymine - FQL text-based query specification</title>
+		<authorgroup>
+			<author>
+				<firstname>Matthew</firstname>
+				<surname>Wakeling</surname>
+			</author>
+		</authorgroup>
+	</artheader>
+
+	<sect1>
+		<title>Introduction</title>
+		<para>This document is a specification for the text-based version of the Flymine Query, named FQL (Flymine Query Language) after SQL and OQL.
+			The language has similar syntax to SQL and OQL, with a few subtle differences.
+			The language maps directly onto the Flymine Query Java structure - indeed it was constructed specifically so.
+			This is the reason for the syntax being as it is.</para>
+	</sect1>
+
+	<sect1>
+		<title>General syntax</title>
+		<para>An FQL statement follows the following form:</para>
+		<para>SELECT <emphasis>&lt;list of QueryNode objects&gt;</emphasis> FROM <emphasis>&lt;list of FromElements (QueryClass objects, or subqueries)&gt;</emphasis> [ WHERE <emphasis>&lt;a constraint&gt;</emphasis> ] [ GROUP BY <emphasis>&lt;list of QueryNode objects&gt;</emphasis> ] [ ORDER BY <emphasis>&lt;list of QueryNode objects&gt;</emphasis> ]</para>
+		<para>As one can see, an FQL statement is simpler than an SQL statement (which has HAVING, LIMIT, and OFFSET clauses).
+			There are no UNIONs or anything else particularly fishy.</para>
+	</sect1>
+
+	<sect1>
+		<title>The FROM clause</title>
+		<para>The FROM clause contains a list of FromElement objects (which can be either QueryClass objects or subqueries).
+			Each element of this list can be associated with an alias, by appending " AS <emphasis>&lt;alias&gt;</emphasis>" to the element.
+			If a QueryClass does not have an alias, then the name of the Class becomes the alias - however subqueries <emphasis>must</emphasis> have an alias.
+			There must be no more than one instance of each alias in the FROM clause.</para>
+		<itemizedlist>
+			<listitem><highlights>QueryClass objects</highlights>. The textual representation of a QueryClass is merely the name of the java class, without the common prefix, which should be supplied along with the query.
+				For instance, if one wishes to create a QueryClass for a Class of org.flymine.model.testmodel.Manager, and one had a prefix of "org.flymine.model.testmodel", one would write "Manager" as the text for the required QueryClass.</listitem>
+			<listitem><highlights>Subqueries</highlights>. The textual representation of a subquery is (like SQL) the entire text of the subquery as an FQL query, enclosed inside parentheses.
+				Note that this <emphasis>must</emphasis> be followed by an alias.</listitem>
+		</itemizedlist>
+	</sect1>
+
+	<sect1>
+		<title>QueryNode objects</title>
+		<para>There are several types of QueryNode object.
+			A QueryNode is a Java interface for all objects that may be present in the SELECT list.
+			The implementations of QueryNode are:</para>
+		<itemizedlist>
+			<listitem><highlights>QueryClass</highlights> - This represents actual objects from the database.
+				The textual representation is the alias that was specified in the FROM clause.</listitem>
+			<listitem><highlights>QueryEvaluable</highlights> - This is an interface for various QueryNodes that represent primitive values (type String, Number, Boolean, or Date).
+				<itemizedlist>
+					<listitem><highlights>QueryField</highlights> - This represents a primitive field in an object or subquery, of type String, Number, Boolean, or Date.
+						There are several textual representations, depending on where the field is from:
+						<itemizedlist>
+							<listitem><highlights>Field in a QueryClass</highlights>. The textual representation is the alias of the QueryClass (in the FROM clause), followed by a dot, followed by the name of the field - for example "<emphasis>SELECT Company.name as field FROM Company</emphasis>".</listitem>
+							<listitem><highlights>Field from a field present in a subquery</highlights>. The textual representation is the alias of the subquery, followed by a dot, followed by the name of the field, as aliased in the subquery - for example "<emphasis>SELECT subquery.thing as field FROM (SELECT Company.name as thing FROM Company) as subquery</emphasis>".</listitem>
+							<listitem><highlights>Field from a QueryClass, in a subquery</highlights>. The textual representation is the alias of the subquery, followed by a dot, followed by the name of the QueryClass, as aliased in the subquery, followed by another dot, followed by the name of the field - for example "<emphasis>SELECT subquery.Company.name as field FROM (SELECT Company from Company) as subquery</emphasis>".</listitem>
+						</itemizedlist></listitem>
+					<listitem><highlights>QueryValue</highlights> - This represents a constant value.
+						The textual representation depends on the type of the constant to be represented:
+						<itemizedlist>
+							<listitem><highlights>Number</highlights>. The textual representation is as a normal number with no embellishment.
+								The number will be created as a Long if there is no decimal point, and as a Double if there is.</listitem>
+							<listitem><highlights>String</highlights>. The textual representation is with single quotes enclosing the required String.</listitem>
+							<listitem><highlights>Boolean</highlights>. The textual representation is "<emphasis>true</emphasis>" or "<emphasis>false</emphasis>".</listitem>
+							<listitem><highlights>Date</highlights>. The textual representation is "<emphasis>'yyyy-MM-dd HH:mm:ss.SSS'</emphasis>", including the single quotes enclosing it.
+								<highlights>Note: This definition overlaps with that of a String.</highlights></listitem>
+						</itemizedlist></listitem>
+					<listitem><highlights>QueryFunction</highlights> - This represents an aggregate function.
+						Most of these functions require a single argument, which should be a QueryField, or maybe a QueryExpression.
+						The presence of an aggregate function in a query means that either the entire set of rows of the query are rolled together into one row with the results of the aggregate function, or the entire set of rows of the query are rolled into multiple groups of rows, dictated by the contents of the GROUP BY clause, if it exists.
+						The textual representation of these functions is:
+						<itemizedlist>
+							<listitem><highlights>COUNT(*)</highlights> - this evaluates to the number of rows in the group it represents.</listitem>
+							<listitem><highlights>MIN(<emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - this evaluates to the minimum value of the QueryEvaluable mentioned in the group of rows it represents.</listitem>
+							<listitem><highlights>MAX(<emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - this evaluates to the maximum value of the QueryEvaluable mentioned in the group of rows it represents.</listitem>
+							<listitem><highlights>SUM(<emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - this evaluates to the sum of all the values of the QueryEvaluable mentioned in the group of rows it represents.</listitem>
+							<listitem><highlights>AVG(<emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - this evaluates to the average of all the value of the QueryEvaluable mentioned in the group of rows it represents.</listitem>
+						</itemizedlist></listitem>
+					<listitem><highlights>QueryExpression</highlights> - This represents an arithmetic expression, comprised of two other QueryEvaluables (QueryValue, QueryField, QueryFunction, or QueryExpression) and an operation, or a substring operation with three QueryEvaluable arguments.
+						The two types are:
+						<itemizedlist>
+							<listitem><highlights><emphasis>&lt;QueryEvaluable&gt;</emphasis> {+, -, *, /} <emphasis>&lt;QueryEvaluable&gt;</emphasis></highlights> - Normal arithmetic expressions.</listitem>
+							<listitem><highlights>SUBSTR(<emphasis>&lt;QueryEvaluable&gt;</emphasis>, <emphasis>&lt;QueryEvaluable&gt;</emphasis>, <emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - The result of the expression is the substring of the first argument, from the character numbered from 1 from the left determined by the second argument, and as many characters to the right as determined by the third argument or the end of the first argument being reached.</listitem>
+						</itemizedlist></listitem>
+				</itemizedlist></listitem>
+		</itemizedlist>
+		<para>These QueryNodes can be used in the SELECT, GROUP BY, and ORDER BY clauses, as well as inside different constraints.
+			However, elements in the SELECT list need to have aliases - except QueryClasses (which already have an alias specified in the FROM list)</para>
+	</sect1>
+
+	<sect1>
+		<title>Constraints and the WHERE clause</title>
+		<para>The WHERE clause contains a single constraint of some kind, where that constraint may contain other constraints.
+			These are the different kinds of constraint:</para>
+		<itemizedlist>
+			<listitem><highlights>SimpleConstraint</highlights> - This type of constraint performs the comparison between different QueryEvaluables.
+				It has two forms - a comparison between a QueryEvaluable and NULL, and a comparison between two QueryEvaluables.
+				<itemizedlist>
+					<listitem><highlights><emphasis>&lt;QueryEvaluable&gt;</emphasis> {=, !=, &lt;, &lt;=, &gt;, &gt;=, LIKE, NOT LIKE} <emphasis>&lt;QueryEvaluable&gt;</emphasis></highlights> - Returns true if the condition is satisfied.
+						Note that "=" and "!=" are available to all QueryEvaluable types, but "&lt;", "&lt;=", "&gt;", "&gt;=" are only available to numeric QueryEvaluable types, and "LIKE" and "NOT LIKE" are only available to String QueryEvaluable types.
+						The two QueryEvaluables must have matching types.</listitem>
+					<listitem><highlights><emphasis>&lt;QueryEvaluable&gt;</emphasis> IS [NOT] NULL</highlights> - Returns true if the condition is satisfied.</listitem>
+				</itemizedlist></listitem>
+			<listitem><highlights>ClassConstraint</highlights> - This is a comparison between two QueryClasses as specified in the FROM clause.
+				The textual representation is the first QueryClass, followed by "=" or "!=", followed by the second QueryClass.</listitem>
+			<listitem><highlights>ContainsConstraint</highlights> - This is a comparison between a reference type member of a QueryClass, and a QueryClass that the reference may contain.
+				There are two types of reference which can be present in an object - an object reference (which references a single object), and a collection reference (which is represented in the object as a Collection containing multiple objects).
+				Nevertheless, both types of reference are treated exactly the same in FQL - the only noticable difference between them being that collections are often named with a plural-like name (for instance "departments").
+				So, even though you may wish to write "<emphasis>Department.company = Company</emphasis>", the correct syntax is "<emphasis>Department.company CONTAINS Company</emphasis>".
+				The textual representation is a reference type (represented as the QueryClass followed by a dot, followed by the name of the reference), followed by "CONTAINS" or "DOES NOT CONTAIN", followed by the QueryClass being referred to.
+				For example - "<emphasis>Company.departments CONTAINS Department</emphasis>".</listitem>
+			<listitem><highlights>SubqueryConstraint</highlights> - This is a comparison between the results of a subquery, and a QueryClass or a QueryEvaluable.
+				The constraint will return true if the value of the QueryClass or QueryEvaluable is present (or not present) in one of the rows of the results of the subquery.
+				The textual representation is the QueryClass or QueryEvaluable, followed by "IN" or "NOT IN", followed by an FQL query statement with only one element in the SELECT list, enclosed in parentheses.
+				For example "<emphasis>Company.name IN (SELECT Company.name AS name FROM Company)</emphasis>".</listitem>
+			<listitem><highlights>NotConstraint</highlights> - This isn't actually a Flymine Query Java object - but it is a textual representation of reversing the <emphasis>negated</emphasis> flag on any Constraint.
+				The textual representation is "NOT", followed by the Constraint to reverse.
+				If In Doubt, Use Brackets.
+				For example "<emphasis>NOT Company.name = Department.name</emphasis>".</listitem>
+			<listitem><highlights>ConstraintSet</highlights> - This represents a set of multiple constraints that have been combined with the AND or OR operators.
+				The textual representation is a string of any number of Constraints, separated by "AND" or "OR" - again If In Doubt, Use Brackets.
+				For example "<emphasis>Company.name = Department.name AND (Company.vatNumber = 3 OR Company.name = 'flobble') AND Department.name != 'wotsit'</emphasis>".</listitem>
+		</itemizedlist>
+	</sect1>
+</article>

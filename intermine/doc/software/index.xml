@@ -1,7 +1,8 @@
 <menu>
   <section>
     <heading>System Documentation</heading>
-    <item><ulink url="query_spec/spec">Query specification</ulink></item>
+    <item><ulink url="query_spec/spec">Graphical Query specification</ulink></item>
+    <item><ulink url="query_spec/fql">FQL text-based Query specification</ulink></item>
     <item><ulink url="architecture/FlyMineArchitecture">System architecture</ulink></item>
     <item><ulink url="architecture/FlyMineArchObjectStore">ObjectStore Architecture</ulink></item>
     <item><ulink url="architecture/OJB-details">Details of O/R mapping layer</ulink></item>
