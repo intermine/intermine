@@ -60,27 +60,27 @@ public class CreateReferences
      * @throws Exception if anything goes wrong
      */
     public void insertReferences() throws Exception {
-        LOG.info"insertReferences stage 1");
+        LOG.info("insertReferences stage 1");
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
-        LOG.info"insertReferences stage 2");
+        LOG.info("insertReferences stage 2");
         insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
 
-        LOG.info"insertReferences stage 3");
+        LOG.info("insertReferences stage 3");
         insertReferences(Chromosome.class, "subjects", Location.class, "subject",
                          Exon.class, "chromosome");
-        LOG.info"insertReferences stage 4");
+        LOG.info("insertReferences stage 4");
         insertReferences(Chromosome.class, "subjects", Location.class, "subject",
                          ChromosomeBand.class, "chromosome");
-        LOG.info"insertReferences stage 5");
+        LOG.info("insertReferences stage 5");
         insertReferences(Gene.class, "subjects", SimpleRelation.class, "subject",
                          Transcript.class, "gene");
-        LOG.info"insertReferences stage 6");
+        LOG.info("insertReferences stage 6");
         insertReferences(Gene.class, "transcripts", Transcript.class, "exons",
                          Exon.class, "gene");
-        LOG.info"insertReferences stage 7");
+        LOG.info("insertReferences stage 7");
         insertReferences(Chromosome.class, "exons", Exon.class, "gene",
                          Gene.class, "chromosome");
-        LOG.info"insertReferences stage 8");
+        LOG.info("insertReferences stage 8");
         insertReferences(Chromosome.class, "exons", Exon.class, "transcripts",
                          Transcript.class, "chromosome");
 
@@ -90,11 +90,11 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info"insertReferences stage 9");
+        LOG.info("insertReferences stage 9");
         insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
-        LOG.info"insertReferences stage 10");
+        LOG.info("insertReferences stage 10");
         insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
-        LOG.info"insertReferences stage 11");
+        LOG.info("insertReferences stage 11");
         insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -102,17 +102,17 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info"insertReferences stage 12");
+        LOG.info("insertReferences stage 12");
         insertGeneAnnotationReferences();
 
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-        LOG.info"insertReferences stage 13");
+        LOG.info("insertReferences stage 13");
 
         insertReferences(Gene.class, GOTerm.class, "GOTerms");
-        LOG.info"insertReferences stage 14");
+        LOG.info("insertReferences stage 14");
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
         if (os instanceof ObjectStoreInterMineImpl) {
