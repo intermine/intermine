@@ -17,6 +17,21 @@
       <fieldconfig fieldExpr="department.company.name"/>
       <fieldconfig fieldExpr="age"/>
     </fields>
+    <longdisplayers>
+      <displayer src="/model/employeeName.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <!-- exists to test that long displayers for base classes (in this case
+       /model/employeeName.jsp) show up in sub-classes -->
+  <class className="org.intermine.model.testmodel.Manager">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="department.name"/>
+      <fieldconfig fieldExpr="department.company.name"/>
+      <fieldconfig fieldExpr="age"/>
+      <fieldconfig fieldExpr="seniority"/>
+    </fields>
   </class>
 
   <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
