@@ -13,8 +13,6 @@ package org.flymine.web;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
