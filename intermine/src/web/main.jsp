@@ -334,34 +334,50 @@
             <c:when test="${editingNode.attribute}">
               <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" height="65">
                 <tr>
-                  <td valign="top">
-                    <html:select property="attributeOp" onchange="updateConstraintForm(this.form)">
-                      <c:forEach items="${attributeOps}" var="attributeOp">
-                        <html:option value="${attributeOp.key}">
-                          <c:out value="${attributeOp.value}"/>
-                        </html:option>
-                      </c:forEach>
-                    </html:select>
-                  </td>
-                  <td valign="top" align="center">
-                    <span id="operandEditSpan">
-                      <html:text property="attributeValue"/><br/>
-                    </span>
-                    <c:if test="${!empty attributeOptions}">
-                      <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
-                      <c:forEach items="${attributeOptions}" var="option">
-                        <option value="${option}">
-                          <c:out value="${option}"/>
-                        </option>
-                      </c:forEach>
-                      </select>
-                    </c:if>
-                  </td>
-                  <td valign="top">
-                    <html:submit property="attribute">
-                      <fmt:message key="query.submitConstraint"/>
-                    </html:submit>
-                  </td>
+                  <c:choose>
+                    <c:when test="${editingNode.type == 'boolean'}">
+                      <td valign="top">
+                        = <input type="hidden" name="attributeOp" value="0"/>
+                        <input type="radio" name="attributeValue" value="true" checked />True
+                        <input type="radio" name="attributeValue" value="false"/>False
+                      </td>
+                      <td valign="top">
+                        <html:submit property="attribute">
+                          <fmt:message key="query.submitConstraint"/>
+                        </html:submit>
+                      </td>
+                    </c:when>
+                    <c:otherwise>
+                      <td valign="top">
+                        <html:select property="attributeOp" onchange="updateConstraintForm(this.form)">
+                          <c:forEach items="${attributeOps}" var="attributeOp">
+                            <html:option value="${attributeOp.key}">
+                              <c:out value="${attributeOp.value}"/>
+                            </html:option>
+                          </c:forEach>
+                        </html:select>
+                      </td>
+                      <td valign="top" align="center">
+                        <span id="operandEditSpan">
+                          <html:text property="attributeValue"/><br/>
+                        </span>
+                        <c:if test="${!empty attributeOptions}">
+                          <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
+                          <c:forEach items="${attributeOptions}" var="option">
+                            <option value="${option}">
+                              <c:out value="${option}"/>
+                            </option>
+                          </c:forEach>
+                          </select>
+                        </c:if>
+                      </td>
+                      <td valign="top">
+                        <html:submit property="attribute">
+                          <fmt:message key="query.submitConstraint"/>
+                        </html:submit>
+                      </td>
+                    </c:otherwise>
+                  </c:choose>
                 </tr>
               </table>
             </c:when>
