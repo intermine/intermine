@@ -7,35 +7,38 @@
     <property name="build.www" location="build"/>
     <property name="dist.www" location="dist"/>
 
-<copy todir="${build.www}">
-    <fileset dir="${src.www}">
-        <include name="**/*"/>
-    </fileset>
-</copy>
+<target name="prepare">
+    <copy todir="${build.www}">
+        <fileset dir="${src.www}">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
 
-<copy todir="${build.www}/doc">
-    <fileset dir="${src.doc}">
-        <include name="**/*"/>
-    </fileset>
-</copy>
+    <copy todir="${build.www}/doc">
+        <fileset dir="${src.doc}">
+            <include name="**/*"/>
+        </fileset>
+    </copy>
 
-<copy todir="${dist.www}/style/">
-    <fileset dir="${build.www}/style/">
-        <include name="*"/>
-    </fileset>
-</copy>
+    <copy todir="${dist.www}/style/">
+        <fileset dir="${build.www}/style/">
+           <include name="*"/>
+        </fileset>
+    </copy>
 
-<copy todir="${dist.www}/doc/">
-    <fileset dir="${build.www}/doc/">
-        <include name="**/*.pdf"/>
-        <include name="**/*.sxi"/>
-        <include name="**/*.png"/>
-        <include name="**/*.gif"/>
-        <include name="**/*.zargo"/>
-    </fileset>
-</copy>
+    <copy todir="${dist.www}/doc/">
+        <fileset dir="${build.www}/doc/">
+            <include name="**/*.pdf"/>
+            <include name="**/*.sxi"/>
+            <include name="**/*.png"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.zargo"/>
+        </fileset>
+     </copy>
 
-<target name="www-intermine"> 
+</target>
+
+<target name="www-intermine" depends="prepare"> 
     <style basedir="${build.www}" destdir="${dist.www}" extension=".html"
         style="../main.xsl" includes="**/*.xml" force="false">
         <param name="branding" expression="intermine" />
@@ -65,4 +68,10 @@
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
 </target>
+
+<target name="clean">
+    <delete dir="${build.www}"/>
+    <delete dir="${dist.www}"/>
+</target>
+
 </project>
