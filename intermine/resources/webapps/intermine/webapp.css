@@ -16,18 +16,33 @@ form {
   padding-right: 5px;
   padding-left: 5px;
 }
-.paneTitle {
-  font-weight: bold;
-}
 .description {
-  font-weight: bold;
 }
 .errors {
   color: red;
+  font-size: large;
+  background: white;
+  border: 1px solid #000;
 }
 .messages {
   color: green;
+  font-size: large;
+  background: white;
+  border: 1px solid #000;
 }
+
+.box .heading {
+  border: 1px solid #000;
+  background-color: #eee;
+  padding: 4px;
+  margin: 3px;
+}
+
+.box .body {
+  padding: 4px;
+  margin: 3px;
+}
+
 table.templateBuilder td {
   border-bottom: 1px solid #aaa;
 }
@@ -41,12 +56,16 @@ table.templateBuilder th {
 table.query {
   border: none;
 }
+
+/*
 table.query th, table.query td {
   border-bottom: 1px solid black;
 }
+*/
 table.query td.modelbrowse {
   border-right: 1px solid black;
 }
+
 table.results {
   border-left: solid 1px black;
   border-top: solid 1px black;
@@ -66,13 +85,13 @@ table.noborder, table.noborder td, table.noborder th {
   border: none;
 }
 .showing {
-  background: #eee;
+  background: #F5F0FF;
   border: 1px solid #bbb;
   padding-top: 1px;
   padding-bottom: 1px;
   padding-right: px;
   padding-left: 3px;
-  margin-left: -4px;
+  margin-left: 3px;
   margin-right: 3px;
   line-height: 25px;
 }
@@ -82,14 +101,13 @@ table.noborder, table.noborder td, table.noborder th {
 }
 /* surrounds view paths */
 div.view {
-  border-bottom: solid 1px;
   padding: 4px;
   padding-bottom: 14px;
 }
 /* one path added to the view area */
 div.viewpath {
-  background: #eee;
-  border: 1px solid black;
+  background: #F5F0FF;
+  border: 1px solid #bbb;
   padding: 5px;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -98,19 +116,18 @@ div.viewpath {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 11px;
 }
-table.results th {
-  background: #caf;
-}
 table.results tr.even {
-  background: #edf;
+  background: #F5F0FF;
 }
 
 .type {
   font-style: italic;
 }
 .collectionField {
+  color: green;
 }
 .referenceField {
+  color: green;
 }
 .attributeField {
   color: green;
@@ -127,9 +144,11 @@ table.results tr.even {
 }
 
 /* classes for the object details page */
-table.refSummary {
-  margin-left: 50px; 
+.refSummary {
+  margin-left: 15px; 
   padding: 5px; 
+}
+table.refSummary {
   border: 1px solid #000;
 }
 table.refSummary thead tr td {
@@ -152,29 +171,21 @@ table.box {
 table.box th {
   background: #eee;
   border-bottom: 1px solid black;
-  color: #210075;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
-table.box > td {
-  padding: 9px;
-}
-
-table.box td {
-  background: white; 
+table.box > tbody > tr > td {
+  padding: 3px;
+  background: white;
+  font-size: 90%;
 }
 
 table.box th.help {
-  padding: 6px;
-  font-size: 10px;
-  font-weight: normal;
+  padding: 5px;
   text-align: right;
 }
 
 table.box th.title {
-  padding: 6px;
-  font-size: 14px;
-  font-weight: bold;
+  padding: 5px;
   text-align: left;
 }
 
@@ -208,9 +219,6 @@ table.box th.title {
 /* override flymine2.css */
 #pagecontent
 {
-  background: white;
-  margin-top: 14px;
-  margin-right: 10px;
-  margin-left: 10px;
-  margin-bottom: 14px;
+  margin: 10px;
+  padding: 0px;
 }
