@@ -307,7 +307,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 boolean done = false;
                 while ((!done) && (rowNo >= 0)) {
                     Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
-                    if (!lastObj.equals(thisObj)) {
+                    if ((lastObj != null) && (thisObj != null) && !lastObj.equals(thisObj)) {
                         done = true;
                         SqlGenerator.registerOffset(q, start + rowNo + 1, model, db,
                                 (thisObj instanceof InterMineObject
