@@ -428,7 +428,7 @@ public class DatabaseUtil
             con.createStatement().execute("DROP TABLE " + tablename);
         }
     }
-            
+
     /**
      * Creates a table name for a class descriptor
      *
@@ -436,7 +436,7 @@ public class DatabaseUtil
      * @return a valid table name
      */
     public static String getTableName(ClassDescriptor cld) {
-        return cld.getUnqualifiedName();
+        return generateSqlCompatibleName(cld.getUnqualifiedName());
     }
 
     /**
@@ -584,13 +584,7 @@ public class DatabaseUtil
     public static void analyse(Database db, ClassDescriptor cld, boolean full) throws SQLException {
         Set tables = new HashSet();
         tables.add(getTableName(cld));
-        Iterator iter = cld.getAllCollectionDescriptors().iterator();
-        while (iter.hasNext()) {
-            CollectionDescriptor col = (CollectionDescriptor) iter.next();
-            if (FieldDescriptor.M_N_RELATION == col.relationType()) {
-                tables.add(getIndirectionTableName(col));
-            }
-        }
+        tables.addAll(getIndirectionTableNames(cld));
 
         Connection conn = db.getConnection();
         boolean autoCommit = conn.getAutoCommit();
@@ -614,6 +608,24 @@ public class DatabaseUtil
             conn.setAutoCommit(autoCommit);
             conn.close();
         }
+    }
+
+
+    /**
+     * Given a ClassDescriptor find names of all related indirection tables.
+     * @param cld class to find tables for
+     * @return a set of all indirection table names
+     */
+    public static Set getIndirectionTableNames(ClassDescriptor cld) {
+        Set tables = new HashSet();
+        Iterator iter = cld.getAllCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            CollectionDescriptor col = (CollectionDescriptor) iter.next();
+            if (FieldDescriptor.M_N_RELATION == col.relationType()) {
+                tables.add(getIndirectionTableName(col));
+            }
+        }
+        return tables;
     }
 
     /**

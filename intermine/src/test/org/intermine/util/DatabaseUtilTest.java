@@ -106,6 +106,14 @@ public class DatabaseUtilTest extends TestCase
         assertEquals("Class1", DatabaseUtil.getTableName(cld));
     }
 
+    public void testGetTableNameTwo() throws Exception {
+        ClassDescriptor cld = new ClassDescriptor("Array", null, false, new HashSet(), new HashSet(), new HashSet());
+
+        Model model1 = new Model("test1", uri, new HashSet(Arrays.asList(new Object[] {cld})));
+
+        assertEquals("intermine_Array", DatabaseUtil.getTableName(cld));
+    }
+
     public void testGetColumnName() throws Exception {
         FieldDescriptor attr = new AttributeDescriptor("attr1", "int");
 
