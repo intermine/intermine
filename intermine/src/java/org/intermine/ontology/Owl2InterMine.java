@@ -58,8 +58,8 @@ public class Owl2FlyMine
 
     /**
      * Generate a FlyMine metadata model from an OWL ontology.  Can handle attributes,
-     * references and collections but not: reverseRef, primary keys (easy to implement)
-     * or ordered collections (how to represent in OWL?).  Also will not do anyhting
+     * references and collections, reverse references.  Will not handle
+     * ordered collections (how to represent in OWL?).  Also will not do anything
      * about individuals in OWL.
      * @param ontModel jena java representation of OWL ontology
      * @param tgtNamespace the namespace merged ontology model
@@ -72,9 +72,7 @@ public class Owl2FlyMine
         references = new HashMap();
         collections = new HashMap();
 
-        // TODO if we want primary keys examine inverseFunctionalProperties
-
-        // Deal with properties, place in maps of class_name:set_of fields
+        // Deal with properties, place in maps of class_name/set_of fields
         for (Iterator i = ontModel.listOntProperties(); i.hasNext(); ) {
             OntProperty prop = (OntProperty) i.next();
             if (!prop.getNameSpace().equals(tgtNamespace)) {
@@ -176,6 +174,15 @@ public class Owl2FlyMine
         if (domain == null) {
             // property does not have a defined domain in the target namespace
             return;
+        }
+
+        // if this is an inherited duplicate property ignore it, in FlyMine model property
+        // will get inherited
+        OntProperty superProp = prop.getSuperProperty();
+        if (superProp != null && domain.canAs(OntClass.class)) {
+            if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superProp.getDomain(), true)) {
+                return;
+            }
         }
 
         // we don't want heterogeneous collections/enumerations in our java so check
