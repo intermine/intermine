@@ -521,7 +521,7 @@ public class EnsemblDataTranslator extends DataTranslator
         if (chosenProtein != null) {
             proteinIds.put(translation.getIdentifier(), chosenProtein.getIdentifier());
         } else {
-            LOG.warn("no protein created for translation: " + translation.getIdentifier());
+            LOG.info("no protein created for translation: " + translation.getIdentifier());
         }
         return chosenProtein;
     }
