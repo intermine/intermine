@@ -666,8 +666,9 @@
     </ant>    
   </target>
 
-  <target name="build-tutorial" depends="jar">
-    <!-- root -->
+  <target name="build-tutorial" depends="jar"
+          description="build the tutorial tree">
+    <!-- root dir -->
     <copy todir="${tutorial}">
       <fileset dir="${resources}/tutorial">
         <include name="build.xml"/>
@@ -675,14 +676,14 @@
       </fileset>
       <fileset dir="." includes="build-model.xml"/>
     </copy>
-    <!-- lib -->
+    <!-- lib dir -->
     <copy todir="${tutorial}/lib">
       <fileset dir="${lib}"/>
       <fileset dir="${dist}" includes="flymine.jar"/>
     </copy>
-    <!-- model -->
+    <!-- model dir -->
     <copy todir="${tutorial}/model" file="${resources}/tutorial/tutorial_model.xml"/>
-    <!-- resources -->
+    <!-- resources dir -->
     <copy todir="${tutorial}/resources">
       <fileset dir="${resources}/runtime">
         <include name="repository.xml"/>
@@ -692,7 +693,7 @@
       </fileset>
       <fileset dir="${resources}/tutorial" includes="tutorial_data.xml"/>
     </copy>
-    <!-- src -->
+    <!-- src dir -->
     <copy todir="${tutorial}/src/java/org/flymine">
       <fileset dir="${src.java}/org/flymine/tutorial"/>
     </copy>
