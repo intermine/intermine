@@ -13,10 +13,17 @@ package org.intermine.util;
 import junit.framework.TestCase;
 
 import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Date;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.metadata.Model;
@@ -25,10 +32,15 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.sql.Database;
+
+import org.intermine.model.testmodel.*;
+import org.intermine.model.InterMineObject;
 
 public class DatabaseUtilTest extends TestCase
 {
     private Connection con;
+    private Database db;
     private String uri = "http://www.intermine.org/model/testmodel";
 
     public DatabaseUtilTest(String arg1) {
@@ -36,7 +48,8 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        con = DatabaseFactory.getDatabase("db.unittest").getConnection();
+        db = DatabaseFactory.getDatabase("db.unittest");
+        con = db.getConnection();
     }
 
     public void tearDown() throws Exception {
@@ -186,5 +199,190 @@ public class DatabaseUtilTest extends TestCase
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
+    }
+
+    public void testCreateBagTable() throws Exception {
+        Collection bag = new HashSet();
+
+        bag.add(new Integer(-10000));
+        bag.add(new Integer(0));
+        bag.add(new Integer(10000));
+        bag.add(new Long(-10000));
+        bag.add(new Long(0));
+        bag.add(new Long(10000));
+        bag.add(new Short((short) -10000));
+        bag.add(new Short((short) 0));
+        bag.add(new Short((short) 10000));
+        bag.add(new BigDecimal(-10000.0));
+        bag.add(new BigDecimal(0.0));
+        bag.add(new BigDecimal(10000.0));
+        bag.add(new Float(-10000.0));
+        bag.add(new Float(0.0));
+        bag.add(new Float(10000.0));
+        bag.add(new Double(-10000.0));
+        bag.add(new Double(0.0));
+        bag.add(new Double(10000.0));
+        bag.add(new String());
+        bag.add(new String("a String with spaces"));
+        bag.add(new String("123456"));
+        bag.add(new String("123456.7")); 
+        bag.add(new Boolean(true));
+        bag.add(new Boolean(false));
+        bag.add(new Date(999999));
+        bag.add(new Date(100));
+        Employee employee = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        employee.setId(new Integer(5000));
+        bag.add(employee);
+        Manager manager = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        manager.setId(new Integer(5001));
+        bag.add(manager);
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company.setId(new Integer(6000));
+        bag.add(company);
+        
+        // this shouldn't appear in any table
+        bag.add(BigInteger.ONE);
+
+        DatabaseUtil.createBagTable(db, con, "integer_table", bag, Integer.class);
+        DatabaseUtil.createBagTable(db, con, "long_table", bag, Long.class);
+        DatabaseUtil.createBagTable(db, con, "short_table", bag, Short.class);
+        DatabaseUtil.createBagTable(db, con, "bigdecimal_table", bag, BigDecimal.class);
+        DatabaseUtil.createBagTable(db, con, "float_table", bag, Float.class);
+        DatabaseUtil.createBagTable(db, con, "double_table", bag, Double.class);
+        DatabaseUtil.createBagTable(db, con, "string_table", bag, String.class);
+        DatabaseUtil.createBagTable(db, con, "boolean_table", bag, Boolean.class);
+        DatabaseUtil.createBagTable(db, con, "date_table", bag, Date.class);
+        DatabaseUtil.createBagTable(db, con, "intermineobject_table", bag, InterMineObject.class);
+        DatabaseUtil.createBagTable(db, con, "employee_table", bag, Employee.class);
+
+
+        Statement s = con.createStatement();
+        ResultSet r = s.executeQuery("SELECT value FROM integer_table");
+        Set result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        Set expected = new HashSet();
+        expected.add(new Integer(-10000));
+        expected.add(new Integer(0));
+        expected.add(new Integer(10000));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM long_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new Long(-10000));
+        expected.add(new Long(0));
+        expected.add(new Long(10000));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM short_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new Short((short) -10000));
+        expected.add(new Short((short) 0));
+        expected.add(new Short((short) 10000));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM double_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new Double(-10000.0));
+        expected.add(new Double(0.));
+        expected.add(new Double(10000.0));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM float_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new Float(-10000.0));
+        expected.add(new Float(0.));
+        expected.add(new Float(10000.0));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM string_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new String());
+        expected.add(new String("a String with spaces"));
+        expected.add(new String("123456"));
+        expected.add(new String("123456.7"));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM boolean_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new Boolean(true));
+        expected.add(new Boolean(false));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM date_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(new Long(999999));
+        expected.add(new Long(100));
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM intermineobject_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(employee.getId());
+        expected.add(manager.getId());
+        expected.add(company.getId());
+
+        assertEquals(expected, result);
+
+        r = s.executeQuery("SELECT value FROM employee_table");
+        result = new HashSet();
+        while (r.next()) {
+            result.add(r.getObject(1));
+        }
+
+        expected = new HashSet();
+        expected.add(employee.getId());
+        expected.add(manager.getId());
+
+        assertEquals(expected, result);
     }
 }
