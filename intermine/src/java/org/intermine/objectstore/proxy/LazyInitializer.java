@@ -68,7 +68,9 @@ public class LazyInitializer implements MethodInterceptor
             java.lang.reflect.Field f = o.getClass().getDeclaredField("id");
             f.setAccessible(true);
             int otherId = f.getInt(o);
-            if (otherId!=0) return new Boolean(id.intValue()==otherId);
+            if (otherId != 0) {
+                return new Boolean(id.intValue() == otherId);
+            }
         }
         if (method.getName().equals("hashCode") && id.intValue() != 0) {
             return id;
