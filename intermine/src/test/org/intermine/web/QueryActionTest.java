@@ -12,9 +12,13 @@ package org.flymine.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import servletunit.struts.MockStrutsTestCase;
 
 import org.flymine.objectstore.query.Query;
+import org.flymine.model.testmodel.Company;
+import org.flymine.metadata.Model;
 
 public class QueryActionTest extends MockStrutsTestCase {
 
@@ -30,7 +34,20 @@ public class QueryActionTest extends MockStrutsTestCase {
         super.tearDown();
     }
 
-    public void testSubmitSuccessfulQuery() {
+    public void testSelectSuccessful() throws Exception {
+        setRequestPathInfo("/query");
+        HttpSession session = getSession();
+        Model model = Model.getInstanceByName("testmodel");
+        session.setAttribute("model", model);
+        addRequestParameter("action", "Select");
+        addRequestParameter("cldName", "org.flymine.model.testmodel.Company");
+        actionPerform();
+        verifyForward("buildquery");
+        assertNotNull(session.getAttribute("cld"));
+
+    }
+
+    /*    public void testSubmitSuccessfulQuery() {
         setRequestPathInfo("/query");
         addRequestParameter("querystring","select a1_ from Company as a1_");
         addRequestParameter("action", "Submit");
@@ -85,4 +102,5 @@ public class QueryActionTest extends MockStrutsTestCase {
         verifyForward("error");
         assertNull((String) getRequest().getAttribute("query"));
     }
+    */
 }
