@@ -83,10 +83,6 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
         task.precomputeAll(os, oss);
         
-        for (int i = 0; i < task.queries.size() ; ++i ) {
-            org.intermine.web.LogMe.log("pct", "" + task.queries.get(i));
-        }
-
         assertEquals(14, task.queries.size());
 
         String[] expectedQueries = new String[] {
