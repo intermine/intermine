@@ -197,9 +197,11 @@
         <html:link action="/changeResults?method=next">
           <fmt:message key="results.next"/>
         </html:link>
-        <html:link action="/changeResults?method=last">
-          <fmt:message key="results.last"/>
-        </html:link>
+        <c:if test="${RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
+          <html:link action="/changeResults?method=last">
+            <fmt:message key="results.last"/>
+          </html:link>
+        </c:if>
       </c:if>
       <br/>
 
