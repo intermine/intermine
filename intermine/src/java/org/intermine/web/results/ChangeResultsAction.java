@@ -212,8 +212,8 @@ public class ChangeResultsAction extends DispatchAction
      *
      * @exception ServletException if a servlet error occurs
      */
-    public ActionForward moveUp(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
+    public ActionForward moveColumnUp(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
 
@@ -241,8 +241,8 @@ public class ChangeResultsAction extends DispatchAction
      *
      * @exception ServletException if a servlet error occurs
      */
-    public ActionForward moveDown(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
+    public ActionForward moveColumnDown(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
 

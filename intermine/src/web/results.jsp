@@ -30,12 +30,12 @@
 
         <%-- right/left --%>
         <c:if test="${not status.first}">
-          <html:link action="/changeResults?method=moveUp&columnAlias=${column.alias}">
+          <html:link action="/changeResults?method=moveColumnUp&columnAlias=${column.alias}">
             [<bean:message key="results.moveUp"/>]
           </html:link>
         </c:if>
         <c:if test="${not status.last}">
-          <html:link action="/changeResults?method=moveDown&columnAlias=${column.alias}">
+          <html:link action="/changeResults?method=moveColumnDown&columnAlias=${column.alias}">
             [<bean:message key="results.moveDown"/>]
           </html:link>
         </c:if>
