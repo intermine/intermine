@@ -121,7 +121,7 @@
 
     <model-generation
        type="xmlschema"
-       nameSpace="${namespace}"
+       pkg="${pkg}"
        modelName="${model.name}"
        source="${model.src}/${model.name}.xsd"
        destDir="${build.model.dir}" />   

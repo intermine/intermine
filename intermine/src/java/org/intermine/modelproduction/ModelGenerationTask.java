@@ -30,10 +30,8 @@ import org.intermine.metadata.Model;
  */
 public class ModelGenerationTask extends Task
 {
-    protected String nameSpace;
-    protected String modelName;
+    protected String nameSpace, pkg, modelName, type;
     protected File destDir;
-    protected String type;
     protected File source;
 
     /**
@@ -42,6 +40,14 @@ public class ModelGenerationTask extends Task
      */
     public void setNameSpace(String nameSpace) {
         this.nameSpace = nameSpace;
+    }
+
+    /**
+     * Set the pacakge to use in the InterMine model
+     * @param pkg the package name
+     */
+    public void setPkg(String pkg) {
+        this.pkg = pkg;
     }
 
     /**
@@ -105,8 +111,7 @@ public class ModelGenerationTask extends Task
         } else if (type.equals("acedb")) {
             parser = new AceModelParser(nameSpace, modelName);
         } else if (type.equals("xmlschema")) {
-            // TODO should be pkgName not nameSpace
-            parser = new XmlSchemaParser(nameSpace, modelName);
+            parser = new XmlSchemaParser(modelName, pkg);
         } else {
             throw new BuildException("Unrecognised value for type: " + type);
         }
