@@ -57,6 +57,7 @@
   <path id="base.class.path">
     <pathelement path="${build.java}"/>
     <pathelement path="${build.resources}"/>
+    <pathelement location="${build.model}/acedb"/>
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
       <exclude name="antlr.jar"/>
@@ -84,7 +85,6 @@
 
   <path id="prod.class.path">
     <path refid="project.class.path"/>
-    <pathelement location="${build.model}/acedb"/>
   </path>
 
   <path id="webapptest.class.path">
@@ -844,6 +844,7 @@
     <delete dir="${build.schema}"/>
     <delete file="velocity.log" />
     <delete file="${build}/flymine.log" />
+    <delete file="${build}/TestModel_.xmi" />
     <antcall target="prepare" />
   </target>
   
