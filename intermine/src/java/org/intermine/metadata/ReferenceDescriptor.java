@@ -1,5 +1,6 @@
 package org.flymine.metadata;
 
+import org.flymine.util.Util;
 
 /**
  * Describes a field that references a single other class (i.e. not a collection
@@ -8,14 +9,12 @@ package org.flymine.metadata;
  *
  * @author Richard Smith
  */
-
 public class ReferenceDescriptor extends FieldDescriptor
 {
-
-    protected ReferenceDescriptor reverseRef; // can be a reference, collection or null
-    protected final String reverseRefName;
-    protected final String refName;
-    protected ClassDescriptor refClassDescriptor;
+    protected final String referencedType;
+    protected ClassDescriptor referencedClassDesc;
+    protected final String reverseRefName; // can be reference, collection or null
+    protected ReferenceDescriptor reverseRefDesc;
     private boolean modelSet = false;
 
     /**
@@ -29,7 +28,7 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @throws IllegalArgumentException if fields are null
      */
     public ReferenceDescriptor(String name, boolean primaryKey, String referencedType,
-                                  String reverseRefName)
+                               String reverseRefName)
         throws IllegalArgumentException {
         super(name, primaryKey);
         if (referencedType == null || referencedType == "") {
@@ -37,9 +36,8 @@ public class ReferenceDescriptor extends FieldDescriptor
                                                + "the referenced type");
         }
         this.reverseRefName = reverseRefName;
-        this.refName = referencedType;
+        this.referencedType = referencedType;
     }
-
 
     /**
      * Returns a ClassDescriptor for the object referenced by this field.
@@ -48,12 +46,11 @@ public class ReferenceDescriptor extends FieldDescriptor
      */
     public ClassDescriptor getReferencedClassDescriptor() throws IllegalStateException {
         if (!modelSet) {
-            throw new IllegalStateException("This ReferenceDescriptor (" + this.getName()
+            throw new IllegalStateException("This ReferenceDescriptor (" + getName()
                                             + ") is not yet part of a metadata Model");
         }
-        return this.refClassDescriptor;
+        return referencedClassDesc;
     }
-
 
     /**
      * Gets the field in the referenced object that refers back to this class.
@@ -64,10 +61,10 @@ public class ReferenceDescriptor extends FieldDescriptor
      */
     public ReferenceDescriptor getReverseReferenceDescriptor() throws IllegalStateException {
         if (!modelSet) {
-            throw new IllegalStateException("This ReferenceDescriptor (" + this.getName()
+            throw new IllegalStateException("This ReferenceDescriptor (" + getName()
                                             + ") is not yet part of a metadata Model");
         }
-        return this.reverseRef;
+        return reverseRefDesc;
     }
 
     /**
@@ -75,31 +72,29 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @throws MetaDataException if references not found
      */
     protected void findReferencedDescriptor() throws MetaDataException {
-
         // find ClassDescriptor for referenced class
-        if (this.cld.getModel().hasClassDescriptor(refName)) {
-            this.refClassDescriptor = this.cld.getModel().getClassDescriptorByName(refName);
+        if (cld.getModel().hasClassDescriptor(referencedType)) {
+            referencedClassDesc = cld.getModel().getClassDescriptorByName(referencedType);
 
         } else {
-            throw new MetaDataException("Unable to find ClassDescriptor for: "
-                                            + refName + " in model.");
+            throw new MetaDataException("Unable to find ClassDescriptor for '"
+                                            + referencedType + "' in model");
         }
 
         // find ReferenceDescriptor for the reverse reference
         if (reverseRefName != null && reverseRefName != "") {
-            this.reverseRef = this.refClassDescriptor
+            reverseRefDesc = referencedClassDesc
                 .getReferenceDescriptorByName(reverseRefName);
-            if (reverseRef == null) {
-                this.reverseRef = this.refClassDescriptor
+            if (reverseRefDesc == null) {
+                reverseRefDesc = referencedClassDesc
                     .getCollectionDescriptorByName(reverseRefName);
             }
-            if (reverseRef == null) {
-                throw new MetaDataException("Unable to find named reverse reference ("
-                                            + reverseRefName + ") in class ("
-                                            + this.refClassDescriptor.getClassName() + ").");
+           if (reverseRefDesc == null) {
+                throw new MetaDataException("Unable to find named reverse reference '"
+                                            + reverseRefName + "' in class "
+                                            + referencedClassDesc.getClassName());
             }
         }
-
         modelSet = true;
     }
 
@@ -115,11 +110,35 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
+     * @see Object#equals
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ReferenceDescriptor) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) obj;
+            return name.equals(ref.name)
+                && primaryKey == ref.primaryKey
+                && referencedType.equals(ref.referencedType)
+                && Util.equals(reverseRefName, ref.reverseRefName);
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 3 * name.hashCode()
+            + 5 * (primaryKey ? 1 : 0)
+            + 7 * referencedType.hashCode()
+            + 11 * Util.hashCode(reverseRefName);
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<reference name=\"" + name + "\" referenced-type=\"" + refName + "\"")
+        sb.append("<reference name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
             .append(" primary-key=\"" + primaryKey + "\"/>");
         return sb.toString();

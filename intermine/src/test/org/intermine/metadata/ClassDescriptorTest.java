@@ -7,19 +7,13 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.HashSet;
 
-
-public class ClassDescriptorTest extends TestCase {
+public class ClassDescriptorTest extends TestCase
+{
+    private static final Set EMPTY_SET = Collections.EMPTY_SET;
 
     public ClassDescriptorTest(String arg) {
         super(arg);
     }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
 
     public void testConstructNameNull() {
         try {
@@ -120,7 +114,6 @@ public class ClassDescriptorTest extends TestCase {
         }
     }
 
-
     public void testSuperClassWrongType() throws Exception {
         // test where superclass is an interface, subclass isn't
         ClassDescriptor int1 = new ClassDescriptor("interface1", null, null, true,
@@ -141,9 +134,7 @@ public class ClassDescriptorTest extends TestCase {
             fail("Expected MetaDataException");
         } catch (MetaDataException e) {
         }
-
     }
-
 
     public void testAttributeDescriptorByName() throws Exception {
         Set attributes = getAttributes();
@@ -168,8 +159,6 @@ public class ClassDescriptorTest extends TestCase {
         assertNotNull(cld.getCollectionDescriptorByName("cld1"));
         assertNotNull(cld.getCollectionDescriptorByName("cld2"));
     }
-
-
 
     public void testUltimateSuperClassOne() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
@@ -199,7 +188,6 @@ public class ClassDescriptorTest extends TestCase {
         assertTrue("ultimate superclass should have been null", cld1.getUltimateSuperclassDescriptor() == null);
     }
 
-
     public void testGetAllAttributeDescriptors() throws Exception {
         // three superclass levels with one attribute each, getAllAttributeDescriptors on cld3 should return all 3
         AttributeDescriptor atb1 = new AttributeDescriptor("att1", false, "String");
@@ -214,7 +202,6 @@ public class ClassDescriptorTest extends TestCase {
 
         assertEquals(atts, cld3.getAllAttributeDescriptors());
     }
-
 
     public void testGetPkFieldDescriptors() throws Exception {
         AttributeDescriptor atb1 = new AttributeDescriptor("att1", false, "String");
@@ -238,10 +225,7 @@ public class ClassDescriptorTest extends TestCase {
         assertEquals(pks, cld1.getPkFieldDescriptors());
     }
 
-
-
     public void testGetPkFieldDescriptorsSuper() throws Exception {
-
         AttributeDescriptor atb1 = new AttributeDescriptor("att1", true, "String");
         AttributeDescriptor atb2 = new AttributeDescriptor("att2", false, "String");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(Arrays.asList(new Object[] {atb1, atb2})),
@@ -275,7 +259,6 @@ public class ClassDescriptorTest extends TestCase {
         assertEquals(subs, cld1.getSubclassDescriptors());
     }
 
-
     public void testGetImplementorDescriptors() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, "interface1", false, new HashSet(), new HashSet(), new HashSet());
@@ -290,36 +273,31 @@ public class ClassDescriptorTest extends TestCase {
         assertEquals(impls, cld1.getImplementorDescriptors());
     }
 
-    public void testEquals1() throws Exception {
-        ClassDescriptor c1 = new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c2 = new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c3 = new ClassDescriptor("class1", null, null, true, Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.EMPTY_SET);
-        ClassDescriptor c4 = new ClassDescriptor("class2", null, null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c5 = new ClassDescriptor("class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c6 = new ClassDescriptor("class1", "flibble", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c7 = new ClassDescriptor("class1", null, "flibble", true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c8 = new ClassDescriptor("class1", null, null, false, Collections.singleton(new AttributeDescriptor("field", false, "java.lang.String")), new HashSet(), new HashSet());
-        ClassDescriptor c9 = new ClassDescriptor("class1", null, null, false, Collections.singleton(new AttributeDescriptor("field", false, "java.lang.String")), new HashSet(), new HashSet());
-        
-        assertEquals(c1, c2);
-        assertEquals(c1, c3);
-        assertTrue(!c1.equals(c4));
-        assertTrue(!c1.equals(c5));
-        assertTrue(!c1.equals(c6));
-        assertTrue(!c1.equals(c7));
-        assertTrue(!c5.equals(c8));
-        assertEquals(c8, c9);
+    public void testEquals() throws Exception {
+        ClassDescriptor col1 = new ClassDescriptor("class1", null, null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor col2 = new ClassDescriptor("class1", null, null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor col3 = new ClassDescriptor("class1", "Super", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor col4 = new ClassDescriptor("class1", "Super", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor col5 = new ClassDescriptor("class1", null, "Interface", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor col6 = new ClassDescriptor("class1", null, null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor col7 = new ClassDescriptor("class1", null, null, true, Collections.singleton(new AttributeDescriptor("field", false, "int")), EMPTY_SET, EMPTY_SET);
+
+        assertEquals(col1, col2);
+        assertEquals(col1.hashCode(), col2.hashCode());
+        assertFalse(col1.equals(col3));
+        assertEquals(col3, col4);
+        assertEquals(col3.hashCode(), col4.hashCode());
+        assertFalse(col1.equals(col5));
+        assertFalse(col1.equals(col6));
+        assertFalse(col1.equals(col7));
     }
 
     public void testToString() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", "Class2", "Interface1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", "Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class1\" extends=\"Class2\" implements=\"Interface1\" is-interface=\"false\">"
             + "</class>";
-
         assertEquals(expected, cld1.toString());
     }
-
-
 
     // ============================================
 

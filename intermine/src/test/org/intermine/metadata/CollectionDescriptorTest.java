@@ -8,46 +8,39 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class CollectionDescriptorTest extends TestCase {
+public class CollectionDescriptorTest extends TestCase
+{
+    private static final Set EMPTY_SET = Collections.EMPTY_SET;
 
     public CollectionDescriptorTest(String arg) {
         super(arg);
     }
 
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
-
     public void testNullConstructorFields() throws Exception {
         try {
             CollectionDescriptor cod = new CollectionDescriptor(null, true, "String", null, true);
-            fail("Expected: IllegalArgumentException, name parameter");
+            fail("Expected IllegalArgumentException for null name");
         } catch (IllegalArgumentException e) {
         }
 
         try {
             CollectionDescriptor cod = new CollectionDescriptor("", true, "String", null, true);
-            fail("Expected: IllegalArgumentException, name parameter");
+            fail("Expected: IllegalArgumentException for empty name");
         } catch (IllegalArgumentException e) {
         }
 
         try {
             CollectionDescriptor cod = new CollectionDescriptor("name", true, null, null, true);
-            fail("Expected: IllegalArgumentException, referencedType parameter");
+            fail("Expected IllegalArgumentException for null referencedType");
         } catch (IllegalArgumentException e) {
         }
 
         try {
             CollectionDescriptor cod = new CollectionDescriptor("name", true, "", null, true);
-            fail("Expected: IllegalArgumentException, referencedType parameter");
+            fail("Expected: IllegalArgumentException for empty referencedType");
         } catch (IllegalArgumentException e) {
         }
-
     }
-
 
     public void testSetClassDescriptor() throws Exception {
 
@@ -68,7 +61,6 @@ public class CollectionDescriptorTest extends TestCase {
         }
     }
 
-
     public void testReferencedClassNotSet() throws Exception {
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
         Set collections = new HashSet(Arrays.asList(new Object[] {cod1}));
@@ -81,7 +73,6 @@ public class CollectionDescriptorTest extends TestCase {
         } catch (IllegalStateException e) {
         }
     }
-
 
     public void testGetReferencedClass() throws Exception {
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
@@ -98,7 +89,6 @@ public class CollectionDescriptorTest extends TestCase {
             fail("Should have returned a ClassDescriptor");
         }
     }
-
 
     public void testReverseReferenceValid() throws Exception {
         // codd1 in Class1 points to Class2, cod2 in Class2 points to Class1
@@ -134,4 +124,48 @@ public class CollectionDescriptorTest extends TestCase {
         }
     }
 
+    public void testRelationTypeOneToMany() throws Exception {
+        CollectionDescriptor col = new CollectionDescriptor("col1", false, "Class1", "ref1", false);
+        ReferenceDescriptor ref  = new ReferenceDescriptor("ref1", false, "Class1", null);
+        Set cols = Collections.singleton(col);
+        Set refs = Collections.singleton(ref);
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, EMPTY_SET, refs, cols);        
+        Model model = new Model("model1", Collections.singleton(cld));
+        assertEquals(FieldDescriptor.ONE_N_RELATION, col.relationType());
+    }
+
+    public void testRelationTypeManyToMany() throws Exception {
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class1", "col2", false);
+        CollectionDescriptor col2 = new CollectionDescriptor("col2", false, "Class1", null, false);
+        Set cols = new HashSet(Arrays.asList(new Object[] { col1, col2 }));
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, EMPTY_SET, EMPTY_SET, cols);
+        Model model = new Model("model1", Collections.singleton(cld));
+        assertEquals(FieldDescriptor.M_N_RELATION, col1.relationType());
+    }
+
+    public void testEquals() throws Exception {
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class1", "cod1", true);
+        CollectionDescriptor cod2 = new CollectionDescriptor("cod1", false, "Class1", "cod1", true);
+        CollectionDescriptor cod3 = new CollectionDescriptor("cod2", false, "Class1", "cod1", true);
+        CollectionDescriptor cod4 = new CollectionDescriptor("cod1", true, "Class1", "cod1", true);
+        CollectionDescriptor cod5 = new CollectionDescriptor("cod1", false, "Class2", "cod1", true);
+        CollectionDescriptor cod6 = new CollectionDescriptor("cod1", false, "Class1", "cod2", true);
+        CollectionDescriptor cod7 = new CollectionDescriptor("cod1", false, "Class1", "cod1", false);
+        assertEquals(cod1, cod2);
+        assertEquals(cod1.hashCode(), cod2.hashCode());
+        assertFalse(cod1.equals(cod3));
+        assertFalse(cod1.equals(cod4));
+        assertFalse(cod1.equals(cod5));
+        assertFalse(cod1.equals(cod6));
+        assertFalse(cod1.equals(cod7));
+    }
+
+    public void testToString() throws Exception {
+        CollectionDescriptor col = new CollectionDescriptor("ref", true, "Class1", null, false);
+        String expected = "<collection name=\"ref\" referenced-type=\"Class1\" ordered=\"false\" primary-key=\"true\"/>";
+        assertEquals(col.toString(), expected);
+        col = new CollectionDescriptor("ref", true, "Class1", "reverseRef", false);
+        expected = "<collection name=\"ref\" referenced-type=\"Class1\" ordered=\"false\" reverse-reference=\"reverseRef\" primary-key=\"true\"/>";
+        assertEquals(col.toString(), expected);
+    }       
 }

@@ -9,7 +9,6 @@ package org.flymine.metadata;
 
 public class AttributeDescriptor extends FieldDescriptor
 {
-
     protected final String type;
 
     /**
@@ -21,10 +20,9 @@ public class AttributeDescriptor extends FieldDescriptor
      */
     public AttributeDescriptor(String name, boolean primaryKey, String type)
         throws IllegalArgumentException {
-
         super(name, primaryKey);
         if (type == null || type == "") {
-            throw new IllegalArgumentException("type (" + name + ") parameter cannot be null");
+            throw new IllegalArgumentException("name cannot be null or empty");
         }
         this.type = type;
     }
@@ -46,21 +44,14 @@ public class AttributeDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see Object#toString
-     */
-    public String toString() {
-        return "<attribute name=\"" + name + "\" type=\"" + type + "\" primary-key=\""
-            + primaryKey + "\"/>";
-    }
-
-    /**
      * @see Object#equals
      */
     public boolean equals(Object obj) {
         if (obj instanceof AttributeDescriptor) {
-            AttributeDescriptor a = (AttributeDescriptor) obj;
-            return name.equals(a.name) && (primaryKey == a.primaryKey)
-                && type.equals(a.type);
+            AttributeDescriptor attr = (AttributeDescriptor) obj;
+            return name.equals(attr.name) 
+                && primaryKey == attr.primaryKey
+                && type.equals(attr.type);
         }
         return false;
     }
@@ -69,6 +60,16 @@ public class AttributeDescriptor extends FieldDescriptor
      * @see Object#hashCode
      */
     public int hashCode() {
-        return (3 * name.hashCode()) + (primaryKey ? 5 : 0) + (7 * type.hashCode());
+        return 3 * name.hashCode()
+            + 5 * (primaryKey ? 1 : 0)
+            + 7 * type.hashCode();
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return "<attribute name=\"" + name + "\" type=\"" + type + "\" primary-key=\""
+            + primaryKey + "\"/>";
     }
 }

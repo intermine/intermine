@@ -7,19 +7,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
-public class ReferenceDescriptorTest extends TestCase {
+public class ReferenceDescriptorTest extends TestCase
+{
+    private static final Set EMPTY_SET = Collections.EMPTY_SET;
 
     public ReferenceDescriptorTest(String arg) {
         super(arg);
     }
-
-    public void setUp() {
-    }
-
-    public void tearDown() {
-    }
-
 
     public void testNullConstructorFields() throws Exception {
         try {
@@ -45,29 +39,23 @@ public class ReferenceDescriptorTest extends TestCase {
             fail("Expected: IllegalArgumentException, referencedType parameter");
         } catch (IllegalArgumentException e) {
         }
-
     }
 
-
     public void testSetClassDescriptor() throws Exception {
-
         ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
                                                   new HashSet(), new HashSet(), new HashSet());
-
         ReferenceDescriptor rfd = new ReferenceDescriptor("name", true, "String", "String");
         try {
             rfd.setClassDescriptor(cld);
         } catch (IllegalStateException e) {
             fail("should have been able set ClassDescriptor");
         }
-
         try {
             rfd.setClassDescriptor(cld);
             fail("Expected: IllegalStateException, ClassDescriptor already set");
         } catch (IllegalStateException e) {
         }
     }
-
 
     public void testReferencedClassNotSet() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
@@ -81,7 +69,6 @@ public class ReferenceDescriptorTest extends TestCase {
         } catch (IllegalStateException e) {
         }
     }
-
 
     public void testGetReferencedClass() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
@@ -126,7 +113,6 @@ public class ReferenceDescriptorTest extends TestCase {
         Set refs2 = Collections.singleton(rfd2);
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), refs1, new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), refs2, new HashSet());
-
         try {
             Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
             fail("Expected a MetaDataException to be thrown");
@@ -134,4 +120,46 @@ public class ReferenceDescriptorTest extends TestCase {
         }
     }
 
+    public void testRelationTypeOneToOne() throws Exception {
+        ReferenceDescriptor ref1  = new ReferenceDescriptor("ref1", false, "Class1", "ref2");
+        ReferenceDescriptor ref2  = new ReferenceDescriptor("ref2", false, "Class1", null);
+        Set refs = new HashSet(Arrays.asList(new Object[] { ref1, ref2 }));
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, EMPTY_SET, refs, EMPTY_SET);
+        Model model = new Model("model1", Collections.singleton(cld));
+        assertEquals(FieldDescriptor.ONE_ONE_RELATION, ref1.relationType());
+    }
+
+    public void testRelationTypeManyToOne() throws Exception {
+        CollectionDescriptor col = new CollectionDescriptor("col1", false, "Class1", null, false);
+        ReferenceDescriptor ref  = new ReferenceDescriptor("ref1", false, "Class1", "col1");
+        Set cols = Collections.singleton(col);
+        Set refs = Collections.singleton(ref);
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, EMPTY_SET, refs, cols);        
+        Model model = new Model("model1", Collections.singleton(cld));
+        assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
+    }
+
+    public void testEquals() throws Exception {
+        ReferenceDescriptor ref1 = new ReferenceDescriptor("rfd1", false, "Class2", "rfd1");
+        ReferenceDescriptor ref2 = new ReferenceDescriptor("rfd1", false, "Class2", "rfd1");
+        ReferenceDescriptor ref3 = new ReferenceDescriptor("rfd2", false, "Class2", "rfd1");
+        ReferenceDescriptor ref4 = new ReferenceDescriptor("rfd1", true, "Class2", "rfd1");
+        ReferenceDescriptor ref5 = new ReferenceDescriptor("rfd1", false, "Class3", "rfd1");
+        ReferenceDescriptor ref6 = new ReferenceDescriptor("rfd1", false, "Class2", "rfd2");
+        assertEquals(ref1, ref2);
+        assertEquals(ref1.hashCode(), ref2.hashCode());
+        assertFalse(ref1.equals(ref3));
+        assertFalse(ref1.equals(ref4));
+        assertFalse(ref1.equals(ref5));
+        assertFalse(ref1.equals(ref6));
+    }
+
+    public void testToString() throws Exception {
+        ReferenceDescriptor ref = new ReferenceDescriptor("ref", true, "Class1", null);
+        String expected = "<reference name=\"ref\" referenced-type=\"Class1\" primary-key=\"true\"/>";
+        assertEquals(ref.toString(), expected);
+        ref = new ReferenceDescriptor("ref", true, "Class1", "reverseRef");
+        expected = "<reference name=\"ref\" referenced-type=\"Class1\" reverse-reference=\"reverseRef\" primary-key=\"true\"/>";
+        assertEquals(ref.toString(), expected);
+    }
 }

@@ -6,7 +6,6 @@ package org.flymine.metadata;
  *
  * @author Richard Smith
  */
-
 public abstract class FieldDescriptor
 {
     /**
@@ -39,7 +38,6 @@ public abstract class FieldDescriptor
     protected ClassDescriptor cld; // parent class of this field
     private boolean cldSet = false;
 
-
     /**
      * Construct, name of field must not be null
      * @param name name of field in class
@@ -48,9 +46,8 @@ public abstract class FieldDescriptor
      */
     public FieldDescriptor(String name, boolean primaryKey)
         throws IllegalArgumentException {
-
-        if (name == null || name == "") {
-            throw new IllegalArgumentException("name (" + name + ") parameter cannot be null");
+        if (name == null || name.equals("")) {
+            throw new IllegalArgumentException("name cannot be null or empty");
         }
         this.name = name;
         this.primaryKey = primaryKey;
@@ -88,6 +85,9 @@ public abstract class FieldDescriptor
      * @throws IllegalStateException if the parent ClassDescriptor is not set
      */
      protected void setClassDescriptor(ClassDescriptor cld) throws IllegalStateException {
+         if (cld == null) {
+             throw new NullPointerException("cld cannot be null");
+         }
          if (cldSet) {
             throw new IllegalStateException("ClassDescriptor has already been set and "
                                             + "may not be changed.");
@@ -102,5 +102,5 @@ public abstract class FieldDescriptor
      *
      * @return int to describe the relationship type
      */
-    public abstract int relationType(); // attr (NOT_RELATION), ref (N_1, 1_1), coll (1_N, M_N)
+    public abstract int relationType(); // attr (NOT_RELATION), ref (N_1, 1_1) or coll (1_N, M_N)
 }

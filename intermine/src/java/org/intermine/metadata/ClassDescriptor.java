@@ -9,6 +9,7 @@ import java.util.Set;
 import org.flymine.util.StringUtil;
 import org.flymine.util.Util;
 
+import org.apache.log4j.Logger;
 
 /**
  * Describe a business model class.  Gives access to attribute, reference and collection
@@ -16,12 +17,9 @@ import org.flymine.util.Util;
  *
  * @author Richard Smith
  */
-
-
 public class ClassDescriptor
 {
-    //    protected static final org.apache.log4j.Logger LOG
-    //    = org.apache.log4j.Logger.getLogger(ClassDescriptor.class);
+    protected static final Logger LOG = Logger.getLogger(ClassDescriptor.class);
 
     private final String name;        // name of this class
     private final String superclassName;
@@ -67,7 +65,6 @@ public class ClassDescriptor
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
         this.name = name;
-        //LOG.warn("MODEL: cld: name = " + name);
         this.superclassName = superclassName;
         this.interfaces = interfaces;
 
@@ -485,6 +482,32 @@ public class ClassDescriptor
     }
 
     /**
+     * @see Object#equals
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ClassDescriptor) {
+            ClassDescriptor cld = (ClassDescriptor) obj;
+            return name.equals(cld.name)
+                && Util.equals(superclassName, cld.superclassName)
+                && interfaceNames.equals(cld.interfaceNames)
+                && isInterface == cld.isInterface
+                && fieldDescriptors.equals(cld.fieldDescriptors);
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 3 * name.hashCode() 
+            + 5 * Util.hashCode(superclassName)
+            + 7 * interfaceNames.hashCode()
+            + 11 * (isInterface ? 1 : 0)
+            + 13 * fieldDescriptors.hashCode();
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {
@@ -502,37 +525,5 @@ public class ClassDescriptor
         }
         sb.append("</class>");
         return sb.toString();
-    }
-
-    /**
-     * @see Object#equals
-     */
-    public boolean equals(Object obj) {
-        if (obj instanceof ClassDescriptor) {
-            ClassDescriptor c = (ClassDescriptor) obj;
-            return Util.equals(name, c.name) && Util.equals(superclassName, c.superclassName)
-                && Util.equals(interfaces, c.interfaces)
-                && Util.equals(superclassDescriptor, c.superclassDescriptor)
-                && Util.equals(interfaceNames, c.interfaceNames)
-                && Util.equals(interfaceDescriptors, c.interfaceDescriptors)
-                && Util.equals(ultimateSuperclassDesc, c.ultimateSuperclassDesc)
-                && (ultimateSuperSet == c.ultimateSuperSet)
-                && (isInterface == c.isInterface)
-                && Util.equals(attDescriptors, c.attDescriptors)
-                && Util.equals(refDescriptors, c.refDescriptors)
-                && Util.equals(colDescriptors, c.colDescriptors)
-                && Util.equals(fieldDescriptors, c.fieldDescriptors)
-                && Util.equals(subclassDescriptors, c.subclassDescriptors)
-                && Util.equals(implementorDescriptors, c.implementorDescriptors);
-        }
-        return false;
-    }
-
-    /**
-     * @see Object#hashCode
-     */
-    public int hashCode() {
-        return (3 * name.hashCode()) + (5 * attDescriptors.hashCode())
-            + (7 * refDescriptors.hashCode()) + (11 * colDescriptors.hashCode());
     }
 }

@@ -11,44 +11,11 @@ import java.util.Set;
 
 public class ModelTest extends TestCase
 {
-    Model m1, m2, m3, m4, m5;
+    private static final Set EMPTY_SET = Collections.EMPTY_SET;
 
     public ModelTest(String arg) {
         super(arg);
     }
-
-    public void setUp() throws Exception {
-        super.setUp();
-        m1 = new Model("flibble", new HashSet());
-        m2 = new Model("flibble", new HashSet());
-        m3 = new Model("flobble", new HashSet());
-        m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet())));
-        m5 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, null, true, new HashSet(), new HashSet(), new HashSet())));
-    }
-
-    public void testEquals1() throws Exception {
-        assertEquals(m1, m2);
-        assertEquals(m1.hashCode(), m2.hashCode());
-        assertTrue(!m1.equals(m3));
-        assertTrue(m1.hashCode() != m3.hashCode());
-    }
-
-    public void testEquals2() throws Exception {
-        assertTrue(!m1.equals(m4));
-        assertTrue(m1.hashCode() != m4.hashCode());
-        assertEquals(m4, m5);
-        assertEquals(m4.hashCode(), m5.hashCode());
-    }
-
-    /*
-     * TODO
-    public void testEquals3() throws Exception {
-        AceModelParser amp = new AceModelParser();
-        Model lm1 = amp.readerToModel(new BufferedReader(new FileReader("models.wrm")));
-        Model lm2 = amp.readerToModel(new BufferedReader(new FileReader("models.wrm")));
-        assertTrue(lm1.equals(lm2));
-    }
-    */
 
     public void testGetInstanceByWrongName() throws Exception {
         try {
@@ -116,6 +83,19 @@ public class ModelTest extends TestCase
         Set names = new HashSet(Arrays.asList(new Object[] {"Class1", "Class2"}));
 
         assertEquals(names, model.getClassNames());
+    }
+      
+    public void testEquals() throws Exception {
+        Model m1 = new Model("flibble", EMPTY_SET);
+        Model m2 = new Model("flibble", EMPTY_SET);
+        Model m3 = new Model("flobble", EMPTY_SET);
+        Model m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
+
+        assertEquals(m1, m2);
+        assertEquals(m1.hashCode(), m2.hashCode());
+        assertFalse(m1.equals(m3));
+        assertTrue(!m1.equals(m3));
+        assertTrue(!m1.equals(m4));
     }
 
     public void testToString() throws Exception {

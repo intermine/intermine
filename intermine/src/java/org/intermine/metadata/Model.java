@@ -22,6 +22,7 @@ import org.flymine.modelproduction.xml.FlyMineModelParser;
 public class Model
 {
     private static Map models = new HashMap();
+
     private final String name;
     private final Map cldMap = new LinkedHashMap();
     private final Map subclassMap = new LinkedHashMap();
@@ -178,6 +179,26 @@ public class Model
     }
 
     /**
+     * @see Object#equals
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof Model) {
+            Model model = (Model) obj;
+            return name.equals(model.name)
+                && cldMap.equals(model.cldMap);
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 3 * name.hashCode()
+            + 5 * cldMap.hashCode();
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {
@@ -188,30 +209,5 @@ public class Model
         }
         sb.append("</model>");
         return sb.toString();
-    }
-
-    /**
-     * Overrides Object.
-     *
-     * @param obj another object to compare to
-     * @return true if they are equal
-     */
-    public boolean equals(Object obj) {
-        if (obj instanceof Model) {
-            Model m = (Model) obj;
-            return name.equals(m.name) && cldMap.equals(m.cldMap)
-                && subclassMap.equals(m.subclassMap) && implementorsMap.equals(m.implementorsMap);
-        }
-        return false;
-    }
-
-    /**
-     * Overrides Object.
-     *
-     * @return an integer built from the contents of the object
-     */
-    public int hashCode() {
-        return (3 * name.hashCode()) + (5 * cldMap.hashCode()) + (7 * subclassMap.hashCode())
-            + (11 * implementorsMap.hashCode());
     }
 }

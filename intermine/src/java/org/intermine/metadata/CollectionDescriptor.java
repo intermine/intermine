@@ -1,5 +1,7 @@
 package org.flymine.metadata;
 
+import org.flymine.util.Util;
+
 /**
  * Describes a field that references a collection of other objects.
  * getReverseReferenceDescriptor()
@@ -83,13 +85,39 @@ public class CollectionDescriptor extends ReferenceDescriptor
             return ONE_N_RELATION;
         } 
     }
-    
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof CollectionDescriptor) {
+            CollectionDescriptor ref = (CollectionDescriptor) obj;
+            return name.equals(ref.name)
+                && primaryKey == ref.primaryKey
+                && referencedType.equals(ref.referencedType)
+                && Util.equals(reverseRefName, ref.reverseRefName)
+                && ordered == ref.ordered;
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 3 * name.hashCode()
+            + 5 * (primaryKey ? 1 : 0)
+            + 7 * referencedType.hashCode()
+            + 11 * Util.hashCode(reverseRefName)
+            + 13 * (ordered ? 1 : 0);
+    }
+
     /**
      * @see Object#toString
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<collection name=\"" + name + "\" referenced-type=\"" + refName + "\"")
+        sb.append("<collection name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
             .append(" ordered=\"" + ordered + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
             .append(" primary-key=\"" + primaryKey + "\"/>");

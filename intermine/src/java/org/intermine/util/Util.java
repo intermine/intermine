@@ -16,9 +16,21 @@ public class Util
      */
     public static boolean equals(Object a, Object b) {
         if (a == null) {
-            return (b == null);
-        } else {
-            return a.equals(b);
+            return b == null;
         }
+        return a.equals(b);
+    }
+
+    /**
+     * Return a zero hashCode if the object is null, otherwise return the real hashCode
+     *
+     * @param obj an object
+     * @return the hashCode, or zero if the object is null
+     */
+    public static int hashCode(Object obj) {
+        if (obj == null) {
+            return 0;
+        }
+        return obj.hashCode();
     }
 }
