@@ -54,6 +54,7 @@ public class BuildTemplateAction extends Action
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.TEMPLATE_PATHQUERY);
         BuildTemplateForm tf = (BuildTemplateForm) form;
+        TemplateQuery editing = (TemplateQuery) session.getAttribute(Constants.EDITING_TEMPLATE);
         
         TemplateQuery template = TemplateHelper.buildTemplateQuery(tf, query);
         
@@ -64,11 +65,16 @@ public class BuildTemplateAction extends Action
         } else {
             // Create new user template
             session.removeAttribute(Constants.TEMPLATE_PATHQUERY);
-            ActionMessages actionMessages = new ActionMessages();
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                             new ActionError("templateBuilder.templateCreated", tf.getShortName()));
-            saveMessages(request, actionMessages);
+            session.removeAttribute(Constants.EDITING_TEMPLATE);
+            String key = (editing == null) ? "templateBuilder.templateCreated"
+                                           : "templateBuilder.templateUpdated";
+            String msg = getResources(request).getMessage(key, template.getName());
+            session.setAttribute(Constants.MESSAGE, msg);
             tf.reset();
+            // Replace template if needed
+            if (editing != null) {
+                profile.deleteTemplate(editing.getName());
+            }
             profile.saveTemplate(template.getName(), template);
             // If superuser then rebuild shared templates
             if (profile.getUsername() != null
