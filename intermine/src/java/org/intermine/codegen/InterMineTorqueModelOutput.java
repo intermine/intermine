@@ -171,6 +171,12 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         return sb.toString();
     }
 
+    /**
+     * Generate an indirection table
+     *
+     * @param col the CollectionDescriptor to generate table for
+     * @return a String representing the schema for the indirection table
+     */
     protected String generateIndirectionTable(CollectionDescriptor col) {
         StringBuffer sb = new StringBuffer();
         String table = DatabaseUtil.getIndirectionTableName(col);
