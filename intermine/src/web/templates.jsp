@@ -1,12 +1,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- templates.jsp -->
-<c:forEach items="${templates}" var="templateQuery">
-  <c:out value="${templateQuery.description}"/>
-  <html:link action="/template?name=${templateQuery.name}">
-    <img class="arrow" src="images/right-arrow.gif" alt="->"/>
-  </html:link>
-  <br/>
-</c:forEach>
+<c:choose>
+  <c:when test="${empty param.category}">
+    <c:forEach items="${CATEGORIES}" var="category">
+      <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+        <div class="heading">${category}</div>
+        <div class="body"><im:templateList type="global" category="${category}"/></div>
+      </c:if>
+    </c:forEach>
+  </c:when>
+  <c:otherwise>
+    <div class="heading">${category}</div>
+    <div class="body"><im:templateList type="global" category="${param.category}"/></div>
+  </c:otherwise>
+</c:choose>
 <!-- /templates.jsp -->

@@ -328,8 +328,8 @@ function setBorderStyle(path, style)
         
         var fixedOps = new Array();
         
-        <c:forEach items="${fixedOptionsOps}" var="op">
-          fixedOps.push("<c:out value="${op}"/>");
+        <c:forEach items="${fixedOptionsOps}" var="op" varStatus="status">
+          fixedOps[${status.count}] = "<c:out value="${op}"/>";
         </c:forEach>
         
        

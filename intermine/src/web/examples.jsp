@@ -6,9 +6,9 @@
 <!-- examples.jsp -->
 <fmt:setBundle basename="model"/>
 
-<div class="exampleQueries">
+<div class="body">
   <c:if test="${!empty EXAMPLE_QUERIES}">
-    <c:forEach items="${EXAMPLE_QUERIES}" var="exampleQuery">
+    <c:forEach items="${EXAMPLE_QUERIES}" var="exampleQuery" varStatus="status">
       <div class="exampleQuery">
         <span class="title">
           <fmt:message key="exampleQuery.${exampleQuery.key}.description"/>
@@ -27,7 +27,9 @@
           </html:link>
         </span>
       </div>
-      <br/>
+      <c:if test="${!status.last}">
+        <div class="seperator"></div>
+      </c:if>
     </c:forEach>
   </c:if>
 </div>
