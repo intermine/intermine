@@ -1686,7 +1686,6 @@
 
     <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/databases.xml" sourceName="static"/>
     <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/publications.xml" sourceName="static"/>
     <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static"/>
   </target>
 
