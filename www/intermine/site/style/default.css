@@ -38,15 +38,21 @@ span.fly
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     background: #F0F2FF;
     padding: 7px;
-    border-bottom: ridge black 3px;
+    border-bottom: solid black 1px;
+    margin-bottom: 0px;
 }
 	
 #header h1
 {
     font-size: 1.6em;
     font-weight: bold;
-    color: #210075;
     margin: 3px;
+}
+
+#header h1 a
+{
+    color: #210075;
+    text-decoration: none;
 }
 
 #header p
@@ -203,7 +209,7 @@ ul ul li#current a
 	font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     background-color: #FFFFFF;
 	clear: both;
-    border-top: ridge black 3px;
+    border-top: solid black 1px;
     padding: 5px 2em 1em 2em;
     font-size: 1em;
     font-size/**/: 0.6em; /* Mac IE Hack*/

@@ -43,7 +43,7 @@ doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
     <body>
     <div id="header">
-    <h1><xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/></h1>
+    <h1><a href="{$basedir}"><xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/></a></h1>
     <p><xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/></p>
     </div>
     
