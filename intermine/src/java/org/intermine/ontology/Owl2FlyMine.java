@@ -54,20 +54,18 @@ public class Owl2FlyMine
     }
 
 
-    // INITIAL VERSION NOT DESIGNED TO COPE WITH INDIVIDUALS
-
     /**
      * Generate a FlyMine metadata model from an OWL ontology.  Can handle attributes,
      * references and collections, reverse references.  Will not handle
      * ordered collections (how to represent in OWL?).  Also will not do anything
      * about individuals in OWL.
      * @param ontModel jena java representation of OWL ontology
-     * @param tgtNamespace the namespace merged ontology model
+     * @param tgtNs the namespace merged ontology model
      * @return a FlyMine metadata model
      * @throws Exception if anything goes wrong
      */
-    public Model process(OntModel ontModel, String tgtNamespace) throws Exception {
-        tgtNamespace = OntologyUtil.correctNamespace(tgtNamespace);
+    public Model process(OntModel ontModel, String tgtNs) throws Exception {
+        tgtNs = OntologyUtil.correctNamespace(tgtNs);
         attributes = new HashMap();
         references = new HashMap();
         collections = new HashMap();
@@ -75,14 +73,14 @@ public class Owl2FlyMine
         // Deal with properties, place in maps of class_name/set_of fields
         for (Iterator i = ontModel.listOntProperties(); i.hasNext(); ) {
             OntProperty prop = (OntProperty) i.next();
-            if (!prop.getNameSpace().equals(tgtNamespace)) {
-                 continue;
+            if (!prop.getNameSpace().equals(tgtNs)) {
+                continue;
             }
 
-            processProperty(ontModel, prop, tgtNamespace, false);
+            processProperty(ontModel, prop, tgtNs, false);
             if (prop.hasInverse()) {
                 processProperty(ontModel, (OntProperty) prop.listInverse().next(),
-                                tgtNamespace, true);
+                                tgtNs, true);
             }
         }
 
@@ -91,13 +89,13 @@ public class Owl2FlyMine
         Iterator i = ontModel.listClasses();
         while (i.hasNext()) {
             OntClass cls = (OntClass) i.next();
-            if (cls.getNameSpace() != null && cls.getNameSpace().equals(tgtNamespace)) {
+            if (cls.getNameSpace() != null && cls.getNameSpace().equals(tgtNs)) {
                 String clsName = pkg + "." + cls.getLocalName();
                 StringBuffer superClasses = new StringBuffer();
                 for (Iterator j = cls.listSuperClasses(true); j.hasNext(); ) {
                     OntClass superCls = (OntClass) j.next();
                     if (superCls.getNameSpace() != null
-                        && superCls.getNameSpace().equals(tgtNamespace)) {
+                        && superCls.getNameSpace().equals(tgtNs)) {
                         superClasses.append(pkg + "." + superCls.getLocalName());
                         if (j.hasNext()) {
                             superClasses.append(" ");
@@ -115,7 +113,7 @@ public class Owl2FlyMine
                                                                     cls.getLocalName())));
             }
         }
-        return new Model(modelName, tgtNamespace, classes);
+        return new Model(modelName, tgtNs, classes);
     }
 
 
@@ -134,26 +132,40 @@ public class Owl2FlyMine
                                    boolean isInverse)
         throws Exception {
 
+        if (!prop.getNameSpace().equals(tgtNs)) {
+            return;
+        }
+
         Iterator r = prop.listRange();
         Iterator d = prop.listDomain();
         String reverseRef = null;
         OntProperty invProp = null;
 
         Iterator inverse = prop.listInverse();
-        if   (inverse.hasNext()) {
-            invProp = (OntProperty) inverse.next();
-            if (inverse.hasNext()) {
-                throw new Exception("Property: " + prop.getURI().toString()
-                                    + " has more than one inverse property.");
+        if (inverse.hasNext()) {
+            // only set invProp if inverse is in target namespace
+            OntProperty tmpProp = (OntProperty) inverse.next();
+            if (tmpProp.getNameSpace().equals(tgtNs)) {
+                invProp = tmpProp;
+                if (inverse.hasNext()) {
+                    throw new Exception("Property: " + prop.getURI().toString()
+                                        + " has more than one inverse property.");
+                }
             }
         }
         Iterator inverseOf = prop.listInverseOf();
         if (inverseOf.hasNext()) {
-            invProp = (OntProperty) inverseOf.next();
-            if (inverseOf.hasNext()) {
-                throw new Exception("Property: " + prop.getURI().toString()
-                                    + " has more than one inverse property.");
+            // find the top level property that is in the target namespace
+            invProp = ultimateSuperProperty((OntProperty) inverseOf.next(), tgtNs);
+
+            // check that all inverse properties are in in the same inheritance path
+            while (inverseOf.hasNext()) {
+                if (!invProp.equals(ultimateSuperProperty((OntProperty) inverseOf.next(), tgtNs))) {
+                    throw new Exception("Property: " + prop.getURI().toString()
+                                        + " has more than one inverse property.");
+                }
             }
+
             r = invProp.listDomain();
             d = invProp.listRange();
         }
@@ -274,8 +286,32 @@ public class Owl2FlyMine
     }
 
     /**
+     * Find top level of property inheritance hierarchy.
+     * @param prop the property to find to level
+     * @param tgtNs target namespace
+     * @return top level of property inheritance
+     */
+    protected OntProperty ultimateSuperProperty(OntProperty prop, String tgtNs) {
+        Set superProps = new HashSet();
+        Iterator i = prop.listSuperProperties();
+        while (i.hasNext()) {
+            OntProperty sup = (OntProperty) i.next();
+            if (!sup.equals(prop) && sup.getNameSpace().equals(tgtNs)) {
+                superProps.add(sup);
+            }
+        }
+
+        i = superProps.iterator();
+        while (i.hasNext()) {
+            return ultimateSuperProperty((OntProperty) i.next(), tgtNs);
+        }
+        return prop;
+    }
+
+
+    /**
      * Main method to convert OWL to FlyMine model XML.
-     * @param args srcFilename, RDF format, tgtFilename, modelname, package, tgtNamespace
+     * @param args srcFilename, RDF format, tgtFilename, modelname, package, tgtNs
      * @throws Exception if anything goes wrong
      */
     public static void main(String[] args) throws Exception {
@@ -288,12 +324,12 @@ public class Owl2FlyMine
         String tgtFilename = args[2];
         String modelName = args[3];
         String pkg = args[4];
-        String tgtNamespace = args[5];
+        String tgtNs = args[5];
 
         Owl2FlyMine o2f = new Owl2FlyMine(modelName, pkg);
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(srcFilename)), null, format);
-        Model tgt = o2f.process(model, tgtNamespace);
+        Model tgt = o2f.process(model, tgtNs);
         FileWriter writer = new FileWriter(new File(tgtFilename));
         writer.write(tgt.toString());
         writer.close();

@@ -194,17 +194,85 @@ public class Owl2FlyMineTest extends TestCase
         assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
         assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.CEO"));
         ClassDescriptor cld1 = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
-        System.out.println(cld1.toString());
         CollectionDescriptor cod1 = cld1.getCollectionDescriptorByName("ceoX");
         assertNotNull(cod1);
 
         ClassDescriptor cld2 = model.getClassDescriptorByName("org.flymine.model.testmodel.CEO");
-        System.out.println(cld2.toString());
         CollectionDescriptor cod2 = cld2.getCollectionDescriptorByName("companyX");
         assertNotNull(cod2);
 
         assertEquals(cod2, cod1.getReverseReferenceDescriptor());
         assertEquals(cod1, cod2.getReverseReferenceDescriptor());
+    }
+
+
+    public void testProcessInverseSubProperty() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Organisation a owl:Class ." + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "    rdfs:subClassOf :Organisation ." + ENDL
+            + ":CEO a owl:Class ." + ENDL
+            + ":Organisation__ceo a owl:ObjectProperty ;" + ENDL
+            + "     rdfs:domain :Organisation ;" + ENDL
+            + "     rdfs:range :CEO ." + ENDL
+            + ":Company__ceo a owl:ObjectProperty ;" + ENDL
+            + "     rdfs:domain :Company ;" + ENDL
+            + "     rdfs:range :CEO ;" + ENDL
+            + "     rdfs:subPropertyOf :Organisation__ceo ." + ENDL
+            + ":CEO__company a owl:ObjectProperty ;" + ENDL
+            + "     owl:inverseOf :Organisation__ceo, :Company__ceo ." + ENDL;
+
+
+        ont.read(new StringReader(owl), null, "N3");
+
+        try {
+            Model model = generator.process(ont, ns);
+        } catch (Exception e) {
+            fail("Exception was thrown when calculating inverse properties: " + e.getMessage());
+        }
+    }
+
+
+    public void testUltimateSuperProperty() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Organisation a owl:Class ." + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "    rdfs:subClassOf :Organisation ." + ENDL
+            + ":LtdCompany a owl:Class ;" + ENDL
+            + "    rdfs:subClassOf :Company ." + ENDL
+            + ":CEO a owl:Class ." + ENDL
+            + ":Organisation__ceo a owl:ObjectProperty ;" + ENDL
+            + "     rdfs:domain :Organisation ;" + ENDL
+            + "     rdfs:range :CEO ." + ENDL
+            + ":Company__ceo a owl:ObjectProperty ;" + ENDL
+            + "     rdfs:domain :Company ;" + ENDL
+            + "     rdfs:range :CEO ;" + ENDL
+            + "     rdfs:subPropertyOf :Organisation__ceo ." + ENDL
+            + ":LtdCompany__ceo a owl:ObjectProperty ;" + ENDL
+            + "     rdfs:domain :LtdCompany ;" + ENDL
+            + "     rdfs:range :CEO ;" + ENDL
+            + "     rdfs:subPropertyOf :Company__ceo ." + ENDL
+            + ":CEO__company a owl:ObjectProperty ;" + ENDL
+            + "     owl:inverseOf :Organisation__ceo, :Company__ceo ." + ENDL;
+
+
+        ont.read(new StringReader(owl), null, "N3");
+        OntProperty org = ont.getOntProperty(ns + "Organisation__ceo");
+        OntProperty com = ont.getOntProperty(ns + "Company__ceo");
+        OntProperty ltd = ont.getOntProperty(ns + "LtdCompany__ceo");
+        assertEquals(org, generator.ultimateSuperProperty(org, ns));
+        assertEquals(org, generator.ultimateSuperProperty(com, ns));
+        assertEquals(org, generator.ultimateSuperProperty(ltd, ns));
     }
 
 
