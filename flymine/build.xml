@@ -546,7 +546,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-anoph-src-items"/>
+    <retrieve-ensembl database="db.ensembl-anopheles" model="ensembl" osName="osw.ensembl-anoph-src-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -561,7 +561,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-ensembl database="db.ensembl-dros" model="ensembl" osName="osw.ensembl-dros-src-items"/>
+    <retrieve-ensembl database="db.ensembl-drosophila" model="ensembl" osName="osw.ensembl-dros-src-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
