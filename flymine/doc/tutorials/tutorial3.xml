@@ -5,17 +5,15 @@
 
 
     <sect1>
-       <title>Tutorial3: <span class="tutorial">Show all the orthologues between <span class="organism">Drosophila melanogaster</span> and <span class="organism">Anopheles gambiae</span> and the method used to determine them.</span></title>
+       <title>Tutorial3: <span class="tutorial">Show all the orthologues between <span class="organism">Drosophila melanogaster</span> and <span class="organism">Anopheles gambiae</span></span></title>
 
 
        <para>This page will guide you through the query: Show all the
        orthologues between <span class="organism">Drosophila
        melanogaster</span> and <span class="organism">Anopheles
-       gambiae</span> and the method used to determine them.  The aim
-       of this query tutorial is to show you how a relation between
-       BioEntity objects (eg genes) is linked via a subject and an
-       object and how to get information from the Evidence
-       class.  This query involves:
+       gambiae</span>. The aim of this query tutorial is to show you
+       how a relation between BioEntity objects (eg genes) is linked
+       via a subject and an object. This query involves:
        </para>
 
    
@@ -26,9 +24,7 @@
              <span class="organism">Drosophila melanogaster</span> and
              constraining the subjects of the relations to <span
              class="organism">Anopheles gambiae</span>.</listitem>
-             <listitem>Constraining and adding fields from the
-             Evidence class to show how the orthologues were
-             determined.</listitem>
+             
           </orderedlist>
         </para>
 
@@ -88,48 +84,11 @@
 	  </entry>
 
 
-
-
-         <listitem>You now need to add fields to show how the orthologues were
-         determined.  The Evidence class links relation data to an
-         AnalysisResult class.  Click on the constrain arrow next to the
-         evidence field of the Relation class.  Constrain this to type:
-         AnalysisResult, and press 'Add to query' to add the constraint to the
-         constraints list.</listitem> 
-
-	  <entry>
-	      <inlinegraphic fileref="constrainEvidence2"/>
-	  </entry>
-
-
-
-
-	  <entry>
-	      <inlinegraphic fileref="constrainEvidence1"/>
-	  </entry>
-
-
-
-        <listitem>As you constrained the Evidence class to type =
-        AnalysisResult above, the AnalysisResult class will now be displayed
-        in the model browser.  You want to show the analysis in your results.
-        Click on show next to the analysis field to add this to the 'Fields
-        selected for output'</listitem> 
-
-
-
-	  <entry>
-	      <inlinegraphic fileref="showFields3"/>
-	  </entry>
-
-
-
-
          <listitem>Press 'Show results' to view your results in the results page:</listitem>
 
 
 	  <entry>
-	      <inlinegraphic fileref="resultsQuery4"/>
+	      <inlinegraphic fileref="resultsQuery4temp"/>
 	  </entry>
 
 
