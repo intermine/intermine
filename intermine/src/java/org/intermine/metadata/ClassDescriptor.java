@@ -13,6 +13,7 @@ package org.intermine.metadata;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ public class ClassDescriptor
     private final Set refDescriptors;
     private final Set colDescriptors;
     private final Map fieldDescriptors = new HashMap();
-    private LinkedHashSet allFieldDescriptors;
+    private Map allFieldDescriptors = new LinkedHashMap();
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
     private boolean modelSet = false;
@@ -143,8 +144,8 @@ public class ClassDescriptor
      * Gets the FieldDescriptors for this class and all superclasses and interfaces.
      * @return set of FieldDescriptors
      */
-    public LinkedHashSet getAllFieldDescriptors() {
-        return allFieldDescriptors;
+    public Set getAllFieldDescriptors() {
+        return new LinkedHashSet(allFieldDescriptors.values());
     }
 
     /**
@@ -156,18 +157,12 @@ public class ClassDescriptor
         allFieldDescriptors = findAllFieldDescriptors();
     }
 
-    private LinkedHashSet findAllFieldDescriptors() throws MetaDataException {
-        LinkedHashSet set = new LinkedHashSet(getFieldDescriptors());
-        Map map = new HashMap();
-        Iterator addIter = set.iterator();
-        while (addIter.hasNext()) {
-            FieldDescriptor fd = (FieldDescriptor) addIter.next();
-            map.put(fd.getName(), fd);
-        }
+    private LinkedHashMap findAllFieldDescriptors() throws MetaDataException {
+        LinkedHashMap map = new LinkedHashMap(fieldDescriptors);
         Iterator superIter = superDescriptors.iterator();
         while (superIter.hasNext()) {
-            Set toAdd = ((ClassDescriptor) superIter.next()).findAllFieldDescriptors();
-            addIter = toAdd.iterator();
+            Map toAdd = ((ClassDescriptor) superIter.next()).findAllFieldDescriptors();
+            Iterator addIter = toAdd.values().iterator();
             while (addIter.hasNext()) {
                 FieldDescriptor fd = (FieldDescriptor) addIter.next();
                 FieldDescriptor fdAlready = (FieldDescriptor) map.get(fd.getName());
@@ -182,11 +177,10 @@ public class ClassDescriptor
                     }
                 } else {
                     map.put(fd.getName(), fd);
-                    set.add(fd);
                 }
             }
         }
-        return set;
+        return map;
     }
 
     /**
@@ -200,15 +194,7 @@ public class ClassDescriptor
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(name);
-        if (fd == null) {
-            Iterator superIter = superDescriptors.iterator();
-            while (superIter.hasNext() && (fd == null)) {
-                ClassDescriptor superClass = (ClassDescriptor) superIter.next();
-                fd = superClass.getFieldDescriptorByName(name);
-            }
-        }
-        return fd;
+        return (FieldDescriptor) allFieldDescriptors.get(name);
     }
 
     /**
@@ -266,18 +252,34 @@ public class ClassDescriptor
      * @return a ReferenceDescriptor
      */
     public ReferenceDescriptor getReferenceDescriptorByName(String name) {
+        return getReferenceDescriptorByName(name, false);
+    }
+
+    /**
+     * Gets a ReferenceDescriptor for a field of the given name.  Returns null if
+     * not found.  If ascend flag is true will also look in superclasses.
+     * @param name the name of a ReferenceDescriptor to find
+     * @param ascend if true search in super class hierarchy
+     * @return a ReferenceDescriptor
+     */
+    public ReferenceDescriptor getReferenceDescriptorByName(String name, boolean ascend) {
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        if (fieldDescriptors.containsKey(name)
-            && fieldDescriptors.get(name) instanceof ReferenceDescriptor
-            && !(fieldDescriptors.get(name) instanceof CollectionDescriptor)) {
-            return (ReferenceDescriptor) fieldDescriptors.get(name);
+        Map map = null;
+        if (ascend) {
+            map = allFieldDescriptors;
+        } else {
+            map = fieldDescriptors;
+        }
+        if (map.containsKey(name)
+            && map.get(name) instanceof ReferenceDescriptor
+            && !(map.get(name) instanceof CollectionDescriptor)) {
+            return (ReferenceDescriptor) map.get(name);
         } else {
             return null;
         }
     }
-
 
     /**
      * Gets an AttributeDescriptor for a field of the given name.  Returns null if
@@ -292,6 +294,31 @@ public class ClassDescriptor
         if (fieldDescriptors.containsKey(name)
             && fieldDescriptors.get(name) instanceof AttributeDescriptor) {
             return (AttributeDescriptor) fieldDescriptors.get(name);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets an AttributeDescriptor for a field of the given name.  Returns null if
+     * not found.  If ascend flag is true will also look in superclasses.
+     * @param name the name of an AttributeDescriptor to find
+     * @param ascend if true search in super class hierarchy
+     * @return an AttributeDescriptor
+     */
+    public AttributeDescriptor getAttributeDescriptorByName(String name, boolean ascend) {
+        if (name == null) {
+            throw new NullPointerException("Argument 'name' cannot be null");
+        }
+        Map map = null;
+        if (ascend) {
+            map = allFieldDescriptors;
+        } else {
+            map = fieldDescriptors;
+        }
+        if (map.containsKey(name)
+            && map.get(name) instanceof AttributeDescriptor) {
+            return (AttributeDescriptor) map.get(name);
         } else {
             return null;
         }
@@ -343,16 +370,35 @@ public class ClassDescriptor
      * @return a CollectionDescriptor
      */
     public CollectionDescriptor getCollectionDescriptorByName(String name) {
+        return getCollectionDescriptorByName(name, false);
+    }
+
+   /**
+     * Gets a CollectionDescriptor for a field of the given name.  Returns null if
+     * not found.  If ascend flag is true will also look in superclasses.
+     * @param name the name of an CollectionDescriptor to find
+     * @param ascend if true search in super class hierarchy
+     * @return an CollectionDescriptor
+     */
+    public CollectionDescriptor getCollectionDescriptorByName(String name, boolean ascend) {
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        if (fieldDescriptors.containsKey(name)
-            && fieldDescriptors.get(name) instanceof CollectionDescriptor) {
-            return (CollectionDescriptor) fieldDescriptors.get(name);
+        Map map = null;
+        if (ascend) {
+            map = allFieldDescriptors;
+        } else {
+            map = fieldDescriptors;
+        }
+        if (map.containsKey(name)
+            && map.get(name) instanceof CollectionDescriptor) {
+            return (CollectionDescriptor) map.get(name);
         } else {
             return null;
         }
     }
+
+
 
     /**
      * Get the name of the super class of this class (may be null)

@@ -135,6 +135,7 @@ public class ClassDescriptorTest extends TestCase
         Set cols = getCollections();
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   attributes, refs, cols);
+        cld.setAllFieldDescriptors();
         assertNotNull(cld.getFieldDescriptorByName("atd1"));
         assertNotNull(cld.getFieldDescriptorByName("atd2"));
         assertNotNull(cld.getFieldDescriptorByName("rfd1"));
