@@ -32,8 +32,6 @@ public class SessionListener implements HttpSessionListener
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         session.setAttribute(Constants.PROFILE,
                              new Profile(pm, null, new HashMap(), new HashMap(), new HashMap()));
-        // temp
-        session.setAttribute(Constants.USER_TEMPLATE_QUERIES, new HashMap());
     }
 
     /**
