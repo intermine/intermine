@@ -102,7 +102,7 @@ function unselectColumnCheckbox(column) {
                        don't do the check if there is only one column --%>
                   <c:when test="${RESULTS_TABLE.columnCount == 1 ||
                                   ((status.count == 1) ||
-                                   (row[status2.index] != prevrow[status2.index]))}">
+                                  !(row[status2.index] == prevrow[status2.index]))}">
                     <%-- the checkbox to select this object --%>
                     <td align="center" width="1%">
                       <html:multibox property="selectedObjects"
