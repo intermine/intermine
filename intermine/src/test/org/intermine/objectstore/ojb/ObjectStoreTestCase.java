@@ -18,6 +18,8 @@ import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 
+import org.flymine.util.ModelUtil;
+import org.flymine.util.TypeUtil;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.*;
@@ -881,19 +883,17 @@ public abstract class QueryTestCase extends TestCase
             return;
         }
         c.add(o);
-        PropertyDescriptor[] pd = Introspector.getBeanInfo(o.getClass()).getPropertyDescriptors();
-        for(int i=0;i<pd.length;i++) {
-            Method getter = pd[i].getReadMethod();
-            if(!getter.getName().equals("getClass")) {
-                Class returnType = getter.getReturnType();
-                if(java.util.Collection.class.isAssignableFrom(returnType)) {
-                    Iterator iter = ((Collection)getter.invoke(o, new Object[] {})).iterator();
-                    while(iter.hasNext()) {
-                        flatten_(iter.next(), c);
-                    }
-                } else if(returnType.getName().startsWith("org.flymine.model")) {
-                    flatten_(getter.invoke(o, new Object[] {}), c);
+        Method[] getters = TypeUtil.getGetters(o.getClass());
+        for(int i=0;i<getters.length;i++) {
+            Method getter = getters[i];
+            Class returnType = getter.getReturnType();
+            if(ModelUtil.isCollection(returnType)) {
+                Iterator iter = ((Collection)getter.invoke(o, new Object[] {})).iterator();
+                while(iter.hasNext()) {
+                    flatten_(iter.next(), c);
                 }
+            } else if(ModelUtil.isReference(returnType)) {
+                flatten_(getter.invoke(o, new Object[] {}), c);
             }
         }
     }
