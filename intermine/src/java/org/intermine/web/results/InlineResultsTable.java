@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.PrimaryKeyUtil;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 
@@ -99,5 +100,17 @@ public class InlineResultsTable
                                                        .getModel()));
         }
         return types;
+    }
+
+    /**
+     * Get the ids of the objects in the rows
+     * @return a List of ids, one per row
+     */
+    public List getIds() {
+        List ids = new ArrayList();
+        for (Iterator i = results.subList(0, size).iterator(); i.hasNext();) {
+            ids.add(((InterMineObject) i.next()).getId());
+        }
+        return ids;
     }
 }
