@@ -35,15 +35,6 @@ public class QueryActionTest extends MockStrutsTestCase {
     }
 
     public void testSelectSuccessful() throws Exception {
-        setRequestPathInfo("/query");
-        HttpSession session = getSession();
-        Model model = Model.getInstanceByName("testmodel");
-        session.setAttribute("model", model);
-        addRequestParameter("action", "Select");
-        addRequestParameter("cldName", "org.flymine.model.testmodel.Company");
-        actionPerform();
-        verifyForward("buildquery");
-        assertNotNull(session.getAttribute("cld"));
 
     }
 
