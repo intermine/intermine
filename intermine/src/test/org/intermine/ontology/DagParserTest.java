@@ -229,4 +229,24 @@ public class DagParserTest extends TestCase
     }
 
 
+    public void testReplaceRelationStrings() throws Exception {
+        String test = "@ISA@term1";
+        assertEquals("%term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@ISA@term1"))).readLine());
+        assertEquals("%term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@isa@term1"))).readLine());
+        assertEquals("%term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@IS_A@term1"))).readLine());
+        assertEquals("%term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@is_a@term1"))).readLine());
+        assertEquals("<term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@PARTOF@term1"))).readLine());
+        assertEquals("<term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@partof@term1"))).readLine());
+        assertEquals("<term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@PART_OF@term1"))).readLine());
+        assertEquals("<term1",
+                     new BufferedReader(parser.replaceRelationStrings(new StringReader("@part_of@term1"))).readLine());
+    }
+
 }

@@ -110,7 +110,7 @@ public class Dag2Owl
      * @return the generated property name
      */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
-        return namespace + "#" + filter(domain.getId() + "$" + range.getId());
+        return namespace + "#" + filter(domain.getId() + "_" + range.getId());
     }
 
     /**

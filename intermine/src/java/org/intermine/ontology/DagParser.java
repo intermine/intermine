@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.io.StringWriter;
+import java.io.StringReader;
+import java.io.File;
 
 /**
  * Parse a file in DAG format into a tree of DagTerms.
@@ -31,6 +34,7 @@ public class DagParser
     protected Stack parents = new Stack();
     protected HashSet terms = new HashSet();
     protected HashMap seenTerms = new HashMap();
+    private File tmpFile;
 
     private final String comment = "!";
     private final String domain = "$";
@@ -45,7 +49,7 @@ public class DagParser
      * @throws Exception if anything goes wrong
      */
     public Set process(Reader in) throws Exception {
-        readTerms(new BufferedReader(in));
+        readTerms(new BufferedReader(replaceRelationStrings(in)));
         return terms;
     }
 
@@ -107,6 +111,7 @@ public class DagParser
         line = line.substring(1);
         StringTokenizer tokenizer = new StringTokenizer(line, (domain + isa + partof), true);
 
+
         String termStr = tokenizer.nextToken();
         DagTerm term = null;
 
@@ -150,10 +155,10 @@ public class DagParser
         details = details.trim();
         String[] elements = details.split(delimiter);
         String name = stripEscaped(elements[0]);
-        String id = elements[1];
         if (elements.length < 2) {
-            throw new Exception("term does not have and id");
+            throw new Exception("term does not have an id: " + details);
         }
+        String id = elements[1];
 
         // TODO check that 0 and 1 are name and id, handle broken terms better
 
@@ -208,6 +213,24 @@ public class DagParser
         return sb.toString();
     }
 
+    /**
+     * Replace common alternative isa and partof strings with tokens (% and <).
+     * @param in a reader for the DAG text
+     * @return a reader for the altered DAG text
+     * @throws Exception if anything goes wrong
+     */
+    protected Reader replaceRelationStrings(Reader in) throws Exception {
+        StringWriter writer = new StringWriter();
+        BufferedReader buf = new BufferedReader(in);
+        String line;
+        while ((line = buf.readLine()) != null) {
+            line = line.replaceAll("@ISA@|@isa@|@is_a@|@IS_A@", isa);
+            line = line.replaceAll("@PARTOF@|@partof@|@part_of@|@PART_OF@", partof);
+            writer.write(line + "\n");
+        }
+        writer.flush();
+        return new StringReader(writer.toString());
+    }
 
     /**
      * temporary main method to aid evaluation
