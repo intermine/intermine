@@ -52,6 +52,10 @@ public class ObjectStoreDataLoader extends DataLoader
      */
     public void process(ObjectStore os, Source source, Source skelSource)
         throws ObjectStoreException {
+        long times[] = new long[20];
+        for (int i = 0; i < 20; i++) {
+            times[i] = -1;
+        }
         Query q = new Query();
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
         q.addFrom(qc);
@@ -61,7 +65,7 @@ public class ObjectStoreDataLoader extends DataLoader
         long time = (new Date()).getTime();
         iw.beginTransaction();
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
-        //res.setBatchSize(1);
+        res.setBatchSize(5000);
         Iterator iter = res.iterator();
         //for (int i = 0; i < 35000; i++) {
         //    String text = iter.next().toString();
@@ -76,14 +80,22 @@ public class ObjectStoreDataLoader extends DataLoader
             //    System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60
             //                    : objTextLen)));
             //}
-            //iw.store(obj, source, skelSource);
+            iw.store(obj, source, skelSource);
             opCount++;
             if (opCount % 1000 == 0) {
                 long now = (new Date()).getTime();
-                LOG.error("Dataloaded " + opCount + " objects - running at "
-                        + (60000000 / (now - time)) + " objects per minute"
-                        + " -- now on " + obj.getClass().getName());
+                if (times[(opCount / 1000) % 20] == -1) {
+                    LOG.error("Dataloaded " + opCount + " objects - running at "
+                            + (60000000 / (now - time)) + " objects per minute"
+                            + " -- now on " + obj.getClass().getName());
+                } else {
+                    LOG.error("Dataloaded " + opCount + " objects - running at "
+                            + (60000000 / (now - time)) + " (avg "
+                            + (1200000000 / (now - times[(opCount / 1000) % 20]))
+                            + ") objects per minute -- now on " + obj.getClass().getName());
+                }
                 time = now;
+                times[(opCount / 1000) % 20] = now;
                 iw.commitTransaction();
                 iw.beginTransaction();
             }

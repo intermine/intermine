@@ -553,7 +553,13 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             Connection conn = null;
             try {
                 conn = getConnection();
+                //long time = (new Date()).getTime();
                 batch.executeBatch();
+                //long now = (new Date()).getTime();
+                //if (now - time > 10) {
+                //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+                //            + (now - time) + "): Flushed batch");
+                //}
                 logFlushBatch();
                 batch = null;
             } catch (SQLException e) {

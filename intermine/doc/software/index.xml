@@ -66,6 +66,7 @@
   <section>
     <heading>Data loading and integration</heading>
     <item><ulink url="dataloader/">The dataloader store() method</ulink></item>
+    <item><ulink url="dataloader/performance">Performance tuning</ulink></item>
   </section>
 
   <section>

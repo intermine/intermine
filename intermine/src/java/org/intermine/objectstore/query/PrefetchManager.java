@@ -185,9 +185,6 @@ public class PrefetchManager
                 LOG.info("doRequest - servicing request:                        " + request);
                 // Now, we can service this request in a normal manner, outside all locks.
                 retval = request.result.fetchBatchFromObjectStore(request.batchNo);
-                // And add the result to batches, assuming we didn't get an exception.
-                Integer key = new Integer(request.batchNo);
-                request.result.batches.put(key, retval);
             } finally {
                 // And then report that it is finished, inside a lock, even if we did get an
                 // exception.
@@ -292,9 +289,6 @@ public class PrefetchManager
                     try {
                         // Now, we can service this request in a normal manner, outside all locks.
                         List batch = request.result.fetchBatchFromObjectStore(request.batchNo);
-                        // And add the result to batches, assuming we didn't get an exception.
-                        Integer key = new Integer(request.batchNo);
-                        request.result.batches.put(key, batch);
                     } catch (Exception e) {
                         LOG.info("ServiceThread.run - Received exception                " + request
                                 + " " + e);

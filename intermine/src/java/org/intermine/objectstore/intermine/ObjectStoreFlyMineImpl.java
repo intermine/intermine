@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -154,7 +155,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             c = getConnection();
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
+                //long time = (new Date()).getTime();
                 ExplainResult explainResult = ExplainResult.getInstance(sql, c);
+                //long now = (new Date()).getTime();
+                //if (now - time > 10) {
+                //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+                //            + (now - time) + "): EXPLAIN " + sql);
+                //}
 
                 if (explainResult.getTime() > maxTime) {
                     throw (new ObjectStoreException("Estimated time to run query("
@@ -163,8 +170,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
                 }
             }
 
-            //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
+            long time = (new Date()).getTime();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            long now = (new Date()).getTime();
+            if (now - time > 10000) {
+                LOG.error(getModel().getName() + ": Executed SQL (time = "
+                        + (now - time) + "): " + sql);
+            }
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             return objResults;
         } catch (SQLException e) {
@@ -189,8 +201,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
                 sql = QueryOptimiser.optimise(sql, db);
             }
             c = getConnection();
-            //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
+            //long time = (new Date()).getTime();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
+            //long now = (new Date()).getTime();
+            //if (now - time > 10) {
+            //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+            //            + (now - time) + "): EXPLAIN " + sql);
+            //}
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
                     (int) explain.getEstimatedRows());
         } catch (SQLException e) {
@@ -214,8 +231,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             }
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             c = getConnection();
+            //long time = (new Date()).getTime();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
-            //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
+            //long now = (new Date()).getTime();
+            //if (now - time > 10) {
+            //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+            //            + (now - time) + "): " + sql);
+            //}
             sqlResults.next();
             return sqlResults.getInt(1);
         } catch (SQLException e) {
@@ -252,7 +274,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
         try {
             c = getConnection();
             //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
+            //long time = (new Date()).getTime();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            //long now = (new Date()).getTime();
+            //if (now - time > 10) {
+            //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
+            //            + (now - time) + "): " + sql);
+            //}
             if (sqlResults.next()) {
                 currentColumn = sqlResults.getString("a1_");
                 if (sqlResults.next()) {

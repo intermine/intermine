@@ -43,8 +43,9 @@ import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.util.DynamicUtil;
-import org.flymine.util.TypeUtil;
+import org.flymine.util.IntToIntMap;
 import org.flymine.util.PropertiesUtil;
+import org.flymine.util.TypeUtil;
 
 /**
  * Class providing utility methods to help with primary key and data source priority configuration
@@ -240,12 +241,12 @@ public class DataLoaderHelper
      * @param model a Model
      * @param obj the Object to take as an example
      * @param source the Source database
-     * @param idMap a Map from source IDs to destination IDs
+     * @param idMap an IntToIntMap from source IDs to destination IDs
      * @return a Query
      * @throws MetaDataException if anything goes wrong
      */
     public static Query createPKQuery(Model model, FlyMineBusinessObject obj,
-            Source source, Map idMap) throws MetaDataException {
+            Source source, IntToIntMap idMap) throws MetaDataException {
         try {
             int subCount = 0;
             Query q = new Query();
@@ -294,7 +295,10 @@ public class DataLoaderHelper
                                                 new QueryObjectReference(qc, fieldName),
                                                 ConstraintOp.IS_NULL));
                                 } else {
-                                    Integer destId = (Integer) idMap.get(refObj.getId());
+                                    Integer destId = null;
+                                    if (refObj.getId() != null) {
+                                        destId = idMap.get(refObj.getId());
+                                    }
                                     if (destId == null) {
                                         QueryClass qc2 = new QueryClass(((ReferenceDescriptor) fd)
                                                 .getReferencedClassDescriptor().getType());

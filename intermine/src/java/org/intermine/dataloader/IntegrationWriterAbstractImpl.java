@@ -13,7 +13,6 @@ package org.flymine.dataloader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +30,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.util.IntToIntMap;
 import org.flymine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -53,7 +53,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected static final int SKELETON = 0;
     protected static final int FROM_DB = 1;
     protected static final int SOURCE = 2;
-    protected LinkedHashMap idMap = new LinkedHashMap(MAX_MAPPINGS * 14 / 10, 0.75F, true);
+    protected IntToIntMap idMap = new IntToIntMap();
     protected int idMapOps = 0;
 
     /**
@@ -83,7 +83,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         int oTextLength = oText.length();
         //System//.out.println(" --------------- getEquivalentObjects() called on "
         //        + oText.substring(0, oTextLength > 60 ? 60 : oTextLength));
-        Integer destId = (Integer) idMap.get(obj.getId());
+        Integer destId = null;
+        if (obj.getId() != null) {
+            destId = idMap.get(obj.getId());
+        }
         if (destId == null) {
             Query q = null;
             try {
@@ -262,16 +265,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if ((source != null) && (dest != null)) {
             idMap.put(source, dest);
             idMapOps++;
-            if (idMapOps % 10000 == 0) {
+            if (idMapOps % 100000 == 0) {
                 LOG.error("idMap size = " + idMap.size() + ", ops = " + idMapOps);
-            }
-            int removeItems = idMap.size() - MAX_MAPPINGS;
-            if (removeItems > 10) {
-                Iterator iter = idMap.entrySet().iterator();
-                for (int i = 0; i < removeItems && iter.hasNext(); i++) {
-                    iter.next();
-                    iter.remove();
-                }
             }
         }
     }

@@ -34,6 +34,7 @@ import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.util.DynamicUtil;
+import org.flymine.util.IntToIntMap;
 
 import junit.framework.Test;
 
@@ -89,7 +90,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, Collections.EMPTY_MAP));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap()));
     }
 
     public void testCreateQuery2() throws Exception {
@@ -106,7 +107,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, Collections.EMPTY_MAP));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap()));
     }
         
     public void testCreateQuery3() throws Exception {
@@ -137,7 +138,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         a.setAddress("10 Downing Street");
         c.setAddress(a);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, Collections.EMPTY_MAP));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
     }
 
     public void testCreateQuery4() throws Exception {
@@ -157,7 +158,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         c.setName("jkhsdfg");
         c.setAddress(null);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, Collections.EMPTY_MAP));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
     }
 
     public void testGetDescriptors() throws Exception {

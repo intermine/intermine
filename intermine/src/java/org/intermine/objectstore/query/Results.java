@@ -11,6 +11,7 @@ package org.flymine.objectstore.query;
  */
 
 import org.apache.log4j.Logger;
+import java.lang.ref.SoftReference;
 import java.util.List;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class Results extends AbstractList
     // Basically, this keeps a tally of how many times in a row accesses have been sequential.
     // If sequential gets above a PREFETCH_SEQUENTIAL_THRESHOLD, then we prefetch the batch after
     // the one we are currently using.
+    protected SoftReference thisBatchHolder;
+    protected SoftReference nextBatchHolder;
 
     protected int lastGetAtGetInfoBatch = -1;
     protected ResultsInfo info;
@@ -169,6 +172,23 @@ public class Results extends AbstractList
                 && !batches.containsKey(new Integer(endBatch + 1))) {
             PrefetchManager.addRequest(this, endBatch + 1);
         }
+        synchronized (this) {
+            if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD) {
+                if (startBatch == getBatchNoForRow(end + 1) - 1) {
+                    thisBatchHolder = nextBatchHolder;
+                    nextBatchHolder = null;
+                }
+                if (thisBatchHolder != null) {
+                    thisBatchHolder.get();
+                }
+                if (nextBatchHolder != null) {
+                    nextBatchHolder.get();
+                }
+            } else {
+                thisBatchHolder = null;
+                nextBatchHolder = null;
+            }
+        }
         lastGet = end;
         /*
         // Do the loop in reverse, so that we get IndexOutOfBoundsException first thing if we are
@@ -261,6 +281,18 @@ public class Results extends AbstractList
                     int size = start + rows.size();
                     minSize = (minSize > size ? minSize : size);
                 }
+
+                Integer key = new Integer(batchNo);
+                // Set holders, so our data doesn't go away too quickly
+                if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD) {
+                    if (batchNo == getBatchNoForRow(lastGet + 1)) {
+                        thisBatchHolder = new SoftReference(key);
+                    } else if (batchNo == getBatchNoForRow(lastGet + 1) + 1) {
+                        nextBatchHolder = new SoftReference(key);
+                    }
+                }
+
+                batches.put(key, rows);
             }
         } catch (ObjectStoreLimitReachedException e) {
             throw e;

@@ -147,7 +147,7 @@ public class DataTracker
             misses++;
         }
         ops++;
-        if (ops % 100000 == 0) {
+        if (ops % 1000000 == 0) {
             LOG.error("Operations: " + ops + ", cache misses: " + misses);
         }
         return desc;
