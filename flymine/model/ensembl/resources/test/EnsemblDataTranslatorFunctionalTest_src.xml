@@ -54,7 +54,7 @@
     <reference name="analysis" ref_id="11_76"/>
     <reference name="translation" ref_id="4_1"/>
   </item>
-  <item id="23_1" class="http://www.flymine.org/model/ensembl#gene_stable_id">
+  <item id="22_1" class="http://www.flymine.org/model/ensembl#gene_stable_id">
     <attribute name="created" value="1062457200000"/>
     <attribute name="modified" value="1062457200000"/>
     <attribute name="stable_id" value="ENSANGG00000017446"/>

@@ -160,16 +160,19 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
-                    promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
-                    if (!tgtItem.hasAttribute("name")) {
-                        Item stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
-                        if (stableId != null) {
-                            moveField(stableId, tgtItem, "stable_id", "name");
-                        }
+                    // gene name should be its stable id (or identifier if none)
+                    Item stableId = null;
+                    stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
+                    if (stableId != null) {
+                        LOG.error("gene stableId not null");
+                        moveField(stableId, tgtItem, "stable_id", "name");
                     }
                     if (!tgtItem.hasAttribute("name")) {
                         tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
                     }
+                    // display_xref is symbol (?)
+                    //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
+
                 } else if ("contig".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     Item relation = createItem(tgtNs + "SimpleRelation", "");
@@ -510,6 +513,7 @@ public class EnsemblDataTranslator extends DataTranslator
         constraints.add(new FieldNameAndValue("className",
                                               srcNs + ensemblType + "_stable_id", false));
         constraints.add(new FieldNameAndValue(ensemblType, value, true));
+        LOG.error(constraints);
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
         if (stableIds.hasNext()) {
