@@ -36,6 +36,8 @@ import org.intermine.metadata.Model;
  */
 public class SavedQueryParser
 {
+    Map savedQueries = new LinkedHashMap();
+    
     /**
      * Parse saved queries from a Reader
      * @param reader the saved queries
@@ -43,17 +45,15 @@ public class SavedQueryParser
      * @throws Exception if an error occurs in reading or parsing
      */
     public Map process(Reader reader) throws Exception {
-        ModelHandler handler = new ModelHandler();
-        SAXParser.parse(new InputSource(reader), handler);
-        return handler.savedQueries;
+        SAXParser.parse(new InputSource(reader), new QueryHandler());
+        return savedQueries;
     }
 
     /**
      * Extension of DefaultHandler to handle metadata file
      */
-    class ModelHandler extends DefaultHandler
+    class QueryHandler extends DefaultHandler
     {
-        Map savedQueries = new LinkedHashMap();
         Map qNodes;
         String queryName;
         RightNode qNode;

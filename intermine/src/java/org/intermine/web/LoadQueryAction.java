@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.Map;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -21,6 +22,8 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>Action</strong> that sets the current Query for
@@ -49,13 +52,25 @@ public class LoadQueryAction extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String queryName = request.getParameter("name");
 
         if (exampleQueries != null && exampleQueries.containsKey(queryName)) {
             QueryInfo queryInfo = (QueryInfo) exampleQueries.get(queryName);
-            session.setAttribute(Constants.QUERY, queryInfo.getQuery());
-            session.setAttribute(Constants.VIEW, queryInfo.getView());
+            Map qNodes = queryInfo.getQuery();
+            List view = queryInfo.getView();
 
+            // query interface requires a (root) node, whereas xml doesn't. so add one.
+            if (qNodes.size() == 0) {
+                String path = (String) view.iterator().next();
+                if (path.indexOf(".") != -1) {
+                    path = path.substring(0, path.indexOf("."));
+                }
+                MainHelper.addNode(qNodes, path, os.getModel());
+            }
+
+            session.setAttribute(Constants.QUERY, qNodes);
+            session.setAttribute(Constants.VIEW, view);
             session.removeAttribute("path");
             session.removeAttribute("prefix");
 

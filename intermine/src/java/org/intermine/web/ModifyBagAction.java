@@ -10,7 +10,9 @@ package org.intermine.web;
  *
  */
 
-import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
@@ -26,8 +28,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.webservice.ser.SerializationUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -35,6 +38,8 @@ import org.intermine.objectstore.webservice.ser.SerializationUtil;
  */
 public class ModifyBagAction extends Action
 {
+    protected static final String INDENT = "   ";
+
     /**
      * Forward to the correct method based on the button pressed
      * @param mapping The ActionMapping used to select this instance
@@ -172,17 +177,33 @@ public class ModifyBagAction extends Action
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         String[] selectedBags = ((ModifyBagForm) form).getSelectedBags();
         
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "Attachment; Filename=\"savedBags\"");
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition", "Attachment; Filename=\"savedBags.xml\"");
         
-        ObjectOutputStream out = new ObjectOutputStream(response.getOutputStream());
-        for (int i = 0; i < selectedBags.length; i++) {
+         PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
+         out.println("<bag-list>");
+         for (int i = 0; i < selectedBags.length; i++) {
             String bagName = (String) selectedBags[i];
             InterMineBag bag = (InterMineBag) savedBags.get(bagName);
-            out.writeObject(SerializationUtil.collectionToStrings(bag, model));
-        }
-        out.close();
-        
-        return null;
+            out.println(INDENT + "<bag name='" + bagName + "'>");
+            for (Iterator j = bag.iterator(); j.hasNext();) {
+                Object o = j.next();
+                String type, value;
+                if (o instanceof InterMineObject) {
+                    type = InterMineObject.class.getName();
+                    value = ((InterMineObject) o).getId().toString();
+                } else {
+                    type = o.getClass().getName();
+                    value = TypeUtil.objectToString(o);
+                }
+                out.println(INDENT + INDENT + "<element type='" + type + "' value='" + value
+                            + "'/>");
+            }
+            out.println(INDENT + "</bag>");
+         }
+         out.println("</bag-list>");
+         out.close();
+         
+         return null;
     }
 }
