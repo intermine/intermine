@@ -12,6 +12,7 @@ package org.flymine.metadata;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -125,7 +126,7 @@ public class Model
 
         }
     }
-    
+
     /**
      * Get the ClassDescriptors for the subclasses of a class
      * @param cld the parent ClassDescriptor
@@ -175,6 +176,15 @@ public class Model
      */
     public boolean hasClassDescriptor(String name) {
         return cldMap.containsKey(name);
+    }
+
+    /**
+     * Get a Collection of fully qualified class names in this model (i.e. including
+     * package name).
+     * @return Collection of fully qualified class names
+     */
+    public Collection getClassNames() {
+        return (Collection) cldMap.keySet();
     }
 
     /**
