@@ -27,7 +27,7 @@ public abstract class FileConverter extends DataConverter
      * @param reader BufferedReader used as input
      * @param writer the Writer used to output the resultant items
      */
-    protected FileConverter(BufferedReader reader, ItemWriter writer) {
+    public FileConverter(BufferedReader reader, ItemWriter writer) {
         super(writer);
         this.reader = reader;
     }

@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2003 FlyMine
+ * Copyright (C) 2002-2004 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,19 +12,15 @@ package org.intermine.dataconversion;
 
 import junit.framework.TestCase;
 
-import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.FullParser;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -35,22 +31,34 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
 import org.intermine.model.InterMineObject;
-import org.intermine.dataloader.IntegrationWriterSingleSourceImpl;
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.dataloader.DataLoader;
-import org.intermine.dataloader.ObjectStoreDataLoader;
 import org.intermine.metadata.Model;
 
-public abstract class DataConversionTestCase extends TestCase {
+/**
+ * TestCase that specific data sources can use to test that translated/converted
+ * items materialise correctly in given model.
+ *
+ * @author Richard Smith
+ */
+
+public abstract class DataConversionTestCase extends TestCase
+{
     ObjectStoreWriter osw;
     protected Collection expectedItems;
     protected String modelName;
 
+    /**
+     * Set up.
+     * @throws Exception if anyhting goes wrong
+     */
     public void setUp() throws Exception {
         osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.fulldatatest");
     }
 
+    /**
+     * Delete items put in temporary objectstore.
+     * @throws Exception if anything goes wrong
+     */
     public void tearDown() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
@@ -62,7 +70,6 @@ public abstract class DataConversionTestCase extends TestCase {
         osw.beginTransaction();
         while (iter.hasNext()) {
             InterMineObject obj = (InterMineObject) iter.next();
-            System.out.println("Deleting " + obj);
             osw.delete(obj);
         }
         osw.commitTransaction();
@@ -70,7 +77,12 @@ public abstract class DataConversionTestCase extends TestCase {
     }
 
 
-    public void testDataLoad() throws Exception {
+    /**
+     * Test that converted/translated items can be made into business objects.  Will highlight
+     * problems with model incompatibility.
+     * @throws Exception if anything goes wrong
+     */
+    public void testItemToObject() throws Exception {
         ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.fulldatatest");
         ItemWriter iw = new ObjectStoreItemWriter(osw);
@@ -83,8 +95,10 @@ public abstract class DataConversionTestCase extends TestCase {
         }
         iw.close();
 
-        ItemToObjectTranslator t = new ItemToObjectTranslator(Model.getInstanceByName(modelName), osw.getObjectStore());
-        ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName(modelName), osw.getObjectStore(), t);
+        ItemToObjectTranslator t = new ItemToObjectTranslator(Model.getInstanceByName(modelName),
+                                                              osw.getObjectStore());
+        ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName(modelName),
+                                                        osw.getObjectStore(), t);
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
@@ -97,6 +111,12 @@ public abstract class DataConversionTestCase extends TestCase {
         }
     }
 
+    /**
+     * Store a collection of items in a Map that can be used with a MockItemReader.
+     * @param items the collection of items
+     * @return the item map
+     * @throws Exception if anything goes wrong
+     */
     protected Map writeItems(Collection items) throws Exception {
         LinkedHashMap itemMap = new LinkedHashMap();
         ItemWriter iw = new MockItemWriter(itemMap);
@@ -107,6 +127,10 @@ public abstract class DataConversionTestCase extends TestCase {
         return itemMap;
     }
 
+    /**
+     * Subclasses must provide access to the ontology model.
+     * @return the ontology model
+     */
     protected abstract OntModel getOwlModel();
 
 }
