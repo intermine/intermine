@@ -33,7 +33,7 @@ public class TypeUtilTest extends TestCase
     }
 
     public void testGetFieldValue() throws Exception {
-        assertNotNull(TypeUtil.getFieldValue(new Company(), "key"));
+        assertNotNull(TypeUtil.getFieldValue(new Company(), "departments"));
     }
 
     public void testSetFieldValue() throws Exception {
