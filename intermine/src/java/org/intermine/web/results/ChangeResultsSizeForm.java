@@ -67,7 +67,7 @@ public class ChangeResultsSizeForm extends ActionForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
-        PagedResults pr = (PagedResults) request.getSession().getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pr = (PagedTable) request.getSession().getAttribute(Constants.RESULTS_TABLE);
         if (pr != null) {
             pageSize = "" + pr.getPageSize();
         }
