@@ -97,7 +97,7 @@
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="demo.class.path"/>
   </taskdef>
-  <insert-xml-data integrationWriter="integration.demo" xmlFile="../../intermine/resources/test/testmodel_data.xml" sourceName="demosource">
+  <insert-xml-data integrationWriter="integration.demo" xmlFile="../../intermine/resources/test/testmodel_data.xml" sourceName="testsource">
     <classpath refid="demo.class.path"/>
   </insert-xml-data>
 
