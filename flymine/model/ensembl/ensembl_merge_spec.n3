@@ -441,13 +441,13 @@ null:map_density a owl:Class ;
     owl:equivalentClass e:analysis .
 
 :ComputationalAnalysis__algorithm a owl:DatatypeProperty ;
-    owl:equivalentProperty e:analysis__program .
+    owl:equivalentProperty e:analysis__logic_name .
 
 null:analysis__created a owl:DatatypeProperty ;
     owl:equivalentProperty e:analysis__created .
 
 null:analysis__logic_name a owl:DatatypeProperty ;
-    owl:equivalentProperty e:analysis__logic_name .
+    owl:equivalentProperty e:analysis__program .
 
 null:analysis__db a owl:DatatypeProperty ;
     owl:equivalentProperty e:analysis__db .
