@@ -2,9 +2,8 @@ package org.flymine.codegen;
 
 import java.io.File;
 import java.util.Collection;
-//import java.util.LinkedHashSet;
 import java.util.Iterator;
-//import java.util.Set;
+import java.util.Set;
 
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
@@ -43,7 +42,7 @@ public class JavaModelOutput extends ModelOutput
             outputToFile(path, generate(cld));
         }
     }
-    
+
     /**
      * This mapping generates one file per ClassDescriptor, so nothing output for the Model itself
      * @see ModelOutput#generate(Model)
@@ -68,12 +67,12 @@ public class JavaModelOutput extends ModelOutput
         sb.append("public ")
             .append(cld.isInterface() ? "interface " : "class ")
             .append(TypeUtil.unqualifiedName(cld.getClassName()));
-        
+
         if (cld.getSuperclassDescriptor() != null) {
             sb.append(" extends ")
                 .append(TypeUtil.unqualifiedName(cld.getSuperclassDescriptor().getClassName()));
         }
-        
+
         if (cld.getInterfaceDescriptors().size() > 0) {
             sb.append(" implements ");
             Iterator iter = cld.getInterfaceDescriptors().iterator();
@@ -85,23 +84,23 @@ public class JavaModelOutput extends ModelOutput
                 }
             }
         }
- 
+
         sb.append(ENDL)
             .append("{" + ENDL);
-        
+
         if (OJB && !cld.isInterface()) {
             if (cld.getSuperclassDescriptor() == null) {
                 sb.append(INDENT + "protected Integer id;" + ENDL)
-                    .append(INDENT + "public Integer getId() { return id; };" + ENDL + ENDL);
+                    .append(INDENT + "public Integer getId() { return id; }" + ENDL + ENDL);
             }
-            
-            if (cld.getSuperclassDescriptor() != null || cld.getSubclassDescriptors() != null) {
+
+            if (cld.getSuperclassDescriptor() != null || !cld.getSubclassDescriptors().isEmpty()) {
                 sb.append(INDENT + "protected String ojbConcreteClass = \"")
                     .append(cld.getClassName())
                     .append("\";" + ENDL + ENDL);
             }
         }
-        
+
         Iterator iter;
         iter = cld.getAttributeDescriptors().iterator();
         while (iter.hasNext()) {
@@ -124,7 +123,7 @@ public class JavaModelOutput extends ModelOutput
 
         return sb.toString();
     }
-    
+
     /**
      * @see ModelOutput#generate(AttributeDescriptor)
      */
@@ -164,7 +163,7 @@ public class JavaModelOutput extends ModelOutput
     protected String generate(CollectionDescriptor col) {
         String type = col.isOrdered() ? "java.util.List" : "java.util.Set";
         String impl = col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet";
-        
+
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
             .append("protected ")
@@ -181,7 +180,12 @@ public class JavaModelOutput extends ModelOutput
 
     //=================================================================
 
-    private String generateGetSet(FieldDescriptor field) {
+    /**
+     * Write code for getters and setters for given field.
+     * @param field descriptor for field
+     * @return string with generated java code
+     */
+    protected String generateGetSet(FieldDescriptor field) {
         String name = field.getName(), type = getType(field);
 
         StringBuffer sb = new StringBuffer();
@@ -216,7 +220,13 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
-    private String generateEquals(ClassDescriptor cld) {
+
+    /**
+     * Generate a .equals() method for the given class.
+     * @param cld descriptor for class in question
+     * @return generated java code as string
+     */
+    protected String generateEquals(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
@@ -230,17 +240,22 @@ public class JavaModelOutput extends ModelOutput
                 .append(unqualifiedName)
                 .append(")) return false;" + ENDL)
                 .append(INDENT + INDENT)
-                .append("return (id==null) ? equalsPK(o) : id.equals(((")
+                .append("return (id == null) ? equalsPK(o) : id.equals(((")
                 .append(unqualifiedName)
                 .append(")o).getId());" + ENDL)
                 .append(INDENT)
                 .append("}" + ENDL + ENDL);
         }
-        
+
         return sb.toString();
     }
 
-    private String generateEqualsPK(ClassDescriptor cld) {
+    /**
+     * Generate a .equals() method based on the object's primary keys.
+     * @param cld descriptor for class in question
+     * @return generated java code as string
+     */
+    protected String generateEqualsPK(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
@@ -259,7 +274,7 @@ public class JavaModelOutput extends ModelOutput
                 .append(unqualifiedName)
                 .append(") o;" + ENDL)
                 .append(INDENT + INDENT)
-                .append("return obj.getId()==null && ");
+                .append("return obj.getId() == null && ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) iter.next();
@@ -267,7 +282,7 @@ public class JavaModelOutput extends ModelOutput
                     && isPrimitive(((AttributeDescriptor) field).getType())) {
                     sb.append("obj.get")
                         .append(StringUtil.capitalise(field.getName()))
-                        .append("() ==")
+                        .append("() == ")
                         .append(field.getName());
                 } else {
                     String thatField = "obj.get" + StringUtil.capitalise(field.getName()) + "()";
@@ -290,7 +305,13 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
-    private String generateHashCode(ClassDescriptor cld) {
+
+    /**
+     * Generate a .hashCode() method for the given class.
+     * @param cld descriptor for the class in question
+     * @return generate java code as a string
+     */
+    protected String generateHashCode(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
         Collection keyFields = cld.getPkFieldDescriptors();
@@ -298,7 +319,7 @@ public class JavaModelOutput extends ModelOutput
             sb.append(INDENT)
                 .append("public int hashCode() {" + ENDL)
                 .append(INDENT + INDENT)
-                .append("if (id!=null) return id.hashCode();" + ENDL)
+                .append("if (id != null) return id.hashCode();" + ENDL)
                 .append(INDENT + INDENT)
                 .append("return ");
             Iterator iter = keyFields.iterator();
@@ -327,12 +348,17 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
-    private String generateToString(ClassDescriptor cld) {
+    /**
+     * Generate a .toString() method for the given class .
+     * @param cld descriptor for the class in question
+     * @return generated java code as a string
+     */
+    protected String generateToString(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
 
-        Collection keyFields = cld.getPkFieldDescriptors();
+        Set keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
             sb.append(INDENT)
                 .append("public String toString() { ")
@@ -353,8 +379,13 @@ public class JavaModelOutput extends ModelOutput
         }
         return sb.toString();
     }
-    
-    private String getType(FieldDescriptor field) {
+
+    /**
+     * Return the java type of a particular field.
+     * @param field descriptor for the field in question
+     * @return the java type
+     */
+    protected String getType(FieldDescriptor field) {
         String type = null;
         if (field instanceof AttributeDescriptor) {
             type = ((AttributeDescriptor) field).getType();
@@ -363,7 +394,7 @@ public class JavaModelOutput extends ModelOutput
                 type = "java.util.List";
             } else {
                 type = "java.util.Set";
-            }            
+            }
         } else {
             type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getClassName();
         }
