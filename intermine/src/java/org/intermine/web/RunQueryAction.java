@@ -10,16 +10,17 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.Results;
@@ -56,13 +57,14 @@ public class RunQueryAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
 
         Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (q == null) {
             return mapping.findForward("buildquery");
         } else {
-            ObjectStore os = ObjectStoreFactory.getObjectStore();
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
             Results results = os.execute(QueryCloner.cloneQuery(q));
             session.setAttribute("results", results);
