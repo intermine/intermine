@@ -59,29 +59,7 @@ select_list: #( SELECT_LIST ( select_value )+ ) ;
 from_list: #( FROM_LIST ( abstract_table )+ ) ;
 
 where_clause:
-        "hello"
-        
-//        | ! ( #( WHERE_CLAUSE AND_CONSTRAINT_SET abstract_constraint ))=>
-//            #( ta:WHERE_CLAUSE #( AND_CONSTRAINT_SET a:abstract_constraint_list )
-//                b:abstract_constraint_list )
-//            { #where_clause = #(#ta, #a, #b); }
-
-//        | ! ( #( WHERE_CLAUSE AND_CONSTRAINT_SET ))=>
-//            #( tb:WHERE_CLAUSE #( AND_CONSTRAINT_SET c:abstract_constraint_list ))
-//            { #where_clause = #(#tb, #c); }
-
-//        | ! ( #( WHERE_CLAUSE abstract_constraint_list_notand AND_CONSTRAINT_SET
-//                    abstract_constraint ))=>
-//            #( WHERE_CLAUSE d:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
-//                    e:abstract_constraint_list ) f:abstract_constraint_list )
-//            { #where_clause = #(#WHERE_CLAUSE, #d, #e, #f); }
-
-//        | ! ( #( WHERE_CLAUSE abstract_constraint_list_notand AND_CONSTRAINT_SET ))=>
-//            #( td:WHERE_CLAUSE g:abstract_constraint_list_notand #( AND_CONSTRAINT_SET
-//                    h:abstract_constraint_list ))
-//            { #where_clause = #(#td, #g, #h); }
-
-        | #( WHERE_CLAUSE ( abstract_constraint)+ ) ;
+        #( WHERE_CLAUSE ( abstract_constraint)+ ) ;
 
 group_clause: #( GROUP_CLAUSE ( abstract_value )+ ) ;
 
