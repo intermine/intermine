@@ -74,16 +74,16 @@ public class SimpleConstraint implements Constraint
     public static final int IS_NOT_NULL = 10;
 
     private static final String OPERATIONS[] = {"",
-        " = ",
-        " != ",
-        " < ",
-        " <= ",
-        " > ",
-        " >= ",
-        " LIKE ",
-        " NOT LIKE ",
-        " IS NULL",
-        " IS NOT NULL"};
+        "=",
+        "!=",
+        "<",
+        "<=",
+        ">",
+        ">=",
+        "LIKE",
+        "NOT LIKE",
+        "IS NULL",
+        "IS NOT NULL"};
 
     protected QueryEvaluable qe1;
     protected QueryEvaluable qe2;
