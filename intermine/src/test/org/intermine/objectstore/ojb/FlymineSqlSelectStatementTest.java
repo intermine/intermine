@@ -25,18 +25,12 @@ import org.flymine.model.testmodel.Company;
 
 public class FlymineSqlSelectStatementTest extends QueryTestCase
 {
-    private DescriptorRepository dr;
-
     public FlymineSqlSelectStatementTest(String arg1) {
         super(arg1);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        Database db = DatabaseFactory.getDatabase("db.unittest");
-        ObjectStoreOjbImpl os = ObjectStoreOjbImpl.getInstance(db);
-        PersistenceBroker broker = os.getPersistenceBroker();
-        dr = broker.getDescriptorRepository();
     }
 
     public void setUpResults() throws Exception {
@@ -56,8 +50,11 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         results.put("WhereClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE (a1_.ID = a2_.ID) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
         results.put("WhereNotClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
         results.put("WhereNegClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
-        results.put("WhereClassObject", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = 2345) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
-
+        Object obj = data.get("CompanyA");
+        ClassDescriptor cld = dr.getDescriptorFor(obj.getClass());
+        FieldDescriptor fld = cld.getFieldDescriptorByName("id");
+        int id = ((Integer) fld.getPersistentField().get(obj)).intValue();
+        results.put("WhereClassObject", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = " + id + ") ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
     }
 
     public void executeTest(String type) throws Exception {
