@@ -48,8 +48,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         Item bindingSite = getFeature();
         String factor = (String) ((List) record.getAttributes().get("Factor")).get(0);
         bindingSite.setAttribute("factor", factor);
-        String fpid = (String) ((List) record.getAttributes().get("FPID")).get(0);
-        bindingSite.setAttribute("identifier", fpid);
 
         String pmid = (String) ((List) record.getAttributes().get("PMID")).get(0);
 
