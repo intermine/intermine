@@ -49,7 +49,17 @@ public class Model
              throw new MetaDataException("'model' does not have a name specified"
                                          + " (check properties file)");
          }
-         String filename = props.getProperty("name") + "_model.xml";
+         return getInstanceByName(props.getProperty("name"));
+    }
+
+    /**
+     * Return a Model for specified model name (loading Model if necessary)
+     * @param name the name of the model
+     * @return the relevant metadata
+     * @throws MetaDataException if there is problem parsing the model xml
+     */
+    public static Model getInstanceByName(String name) throws MetaDataException {
+         String filename = name + "_model.xml";
          InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
          try {
              ModelParser parser = new ModelParser();
@@ -65,7 +75,7 @@ public class Model
      * Construct a Model with a name and list of ClassDescriptors.  The model will be
      * set to this in each of the ClassDescriptors. NB This method should only be called
      * by members of the modelproduction package, eventually it may be replaced with
-     * a static addModel method linked to getInstanceByName (or similar)
+     * a static addModel method linked to getInstanceByName
      * @param name name of model
      * @param clds a List of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
