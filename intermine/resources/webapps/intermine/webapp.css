@@ -34,6 +34,15 @@ table td {
 }
 .contextHelp {
 }
+.waitmsg {
+  background-color: white;
+  border-bottom: solid #888 1px;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  text-align: center;
+}
 
 .heading a {
   color: black;
