@@ -262,6 +262,7 @@
     <mkdir dir="${tutorial}"/>
     <mkdir dir="${tutorial}/lib"/>
     <mkdir dir="${tutorial}/model"/>
+    <mkdir dir="${tutorial}/model/resources"/>
     <mkdir dir="${tutorial}/resources"/>
     <mkdir dir="${tutorial}/src/java/org/flymine/tutorial"/>
 
