@@ -10,33 +10,19 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletContext;
 
-import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.actions.LookupDispatchAction;
-import org.apache.struts.Globals;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStore;
 
 /**
  * An action that makes a bag from text.
