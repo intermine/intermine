@@ -125,8 +125,9 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
 
         HttpSession session = request.getSession();
 
-        Map savedBags = (Map) session.getAttribute("savedBags");
-        Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
+        Map savedBags = (Map) session.getAttribute(ResultsViewController.SAVEDBAGS_NAME);
+        Map savedBagsInverse =
+            (Map) session.getAttribute(ResultsViewController.SAVEDBAGSINVERSE_NAME);
         Results results = (Results) session.getAttribute("results");
         String[] selectedObjects = changeResultsForm.getSelectedObjects();
 
@@ -147,6 +148,14 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
             int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
 
             bag.add(((ResultsRow) results.get(row)).get(column));
+        }
+
+        // handle the case where queryName already exists - remove it from
+        // both maps
+        if (savedBags.get(bagName) != null) {
+            Collection savedCollection = (Collection) savedBags.get(bagName);
+            savedBagsInverse.remove(savedCollection);
+            savedBags.remove(bagName);
         }
 
         // Save the altered bag in the savedBags map
