@@ -1,6 +1,5 @@
 package org.flymine.modelproduction.xml;
 
-import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -8,6 +7,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.flymine.metadata.*;
@@ -23,14 +23,14 @@ public class ModelParser
 
     /**
      * Parse the metadata xml file
-     * @param f the file to parse
+     * @param is the inputsource to parse
      * @throws Exception if an error occuring during parsing
      */
-    public void parse(File f) throws Exception {
+    public void parse(InputSource is) throws Exception {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(true);
-            factory.newSAXParser().parse(f, handler);
+            factory.newSAXParser().parse(is, handler);
         } catch (ParserConfigurationException e) {
             throw new Exception("The underlying parser does not support "
                                 + " the requested features");

@@ -1,6 +1,6 @@
 package org.flymine.metadata;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Properties;
+
+import org.xml.sax.InputSource;
 
 import org.flymine.util.PropertiesUtil;
 import org.flymine.modelproduction.xml.ModelParser;
@@ -48,10 +50,10 @@ public class Model
                                          + " (check properties file)");
          }
          String filename = props.getProperty("name") + "_model.xml";
-         File f = new File(Model.class.getClassLoader().getResource(filename).toString());
+         InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
          try {
              ModelParser parser = new ModelParser();
-             parser.parse(f);
+             parser.parse(new InputSource(is));
              model = new Model(parser.getModelName(), parser.getClasses());
          } catch (Exception e) {
              throw new MetaDataException("Error parsing metadata: " + e);
