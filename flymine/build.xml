@@ -32,7 +32,7 @@
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
-  <property name="build.resources.testxml" location="${build}/resources/test"/>
+  <property name="build.resources.test" location="${build}/resources/test"/>
   <property name="build.test" location="${build}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.src.java" location="${build}/javasrc"/>
@@ -182,6 +182,7 @@
 
   <path id="test.class.path">
     <path refid="project.class.path"/>
+    <pathelement path="${build.resources.test}"/>
     <pathelement location="${build.test}"/>
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
@@ -229,7 +230,7 @@
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
-    <mkdir dir="${build.resources.testxml}"/>
+    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.src.java}"/>
@@ -254,21 +255,14 @@
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
     </copy>
-    <copy todir="${build.resources.testxml}">
-      <fileset dir="${resources}/test/xml" />
-    </copy>
-    <copy todir="${build.resources.testxml}">
-      <fileset dir="${resources}/test/">
-        <include name="*.xml"/>
-      </fileset>
-    </copy>
-     <copy todir="${build.resources}" flatten="true">
+    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
       <fileset dir="${model}">
-        <include name="*/resources/*"/>
+        <include name="testmodel/resources/**"/>
+      </fileset>
+      <fileset dir="${resources}/test/">
+        <include name="**/*"/>
       </fileset>
     </copy>
-
-
   </target>
 
   <target name="prepare-dist">
@@ -344,6 +338,15 @@
 
   <!-- Models to build -->
 
+  <!-- Datatracking -->
+    <target name="build-db-datatrackingtest" depends="compile-datatracking">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="datatracking"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.unittest"/>
+    </ant>
+  </target>
+
   <!-- Testmodel -->
   <target name="build-testmodel" depends="compile-main" >
     <ant antfile="build-model.xml" target="build-model-from-xml">
@@ -369,7 +372,7 @@
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <insert-xml-data integrationWriter="integration.unittest" file="${build.resources.testxml}/testmodel_data.xml">
+    <insert-xml-data integrationWriter="integration.unittest" file="${build.resources.test}/testmodel_data.xml">
       <classpath refid="test.class.path"/>
     </insert-xml-data>
   </target>
@@ -478,7 +481,7 @@
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <insert-xml-data integrationWriter="integration.production" file="${build.resources.testxml}/testmodel_data.xml">
+    <insert-xml-data integrationWriter="integration.production" file="${build.resources.test}/testmodel_data.xml">
       <classpath refid="test.class.path"/>
     </insert-xml-data>
   </target>
@@ -563,7 +566,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, copy-model-acedbtest, copy-model-xmitest"
+  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-datatrackingtest, copy-model-acedbtest, copy-model-xmitest"
           description="perform JUnit tests on main source code" >
 
     <!-- this will cause every test to be re-run if any java file changes -->
@@ -580,7 +583,9 @@
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
-          <exclude name="org/flymine/dataloader/**" />
+          <exclude name="org/flymine/dataloader/DataLoaderTest*" />
+          <exclude name="org/flymine/dataloader/XmlDataLoaderTest*" />
+          <exclude name="org/flymine/dataloader/IntegrationWriterSingleSourceImplTest*" />
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
         </fileset>
