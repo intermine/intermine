@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -21,11 +20,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Action to edit a user template query. The action expect a <code>name</code>
@@ -59,7 +53,8 @@ public class EditTemplateAction extends Action
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        TemplateQuery template = (TemplateQuery) profile.getSavedTemplates().get(request.getParameter("name"));
+        TemplateQuery template = (TemplateQuery) profile.getSavedTemplates()
+                                                        .get(request.getParameter("name"));
         
         
         PathQuery queryClone = (PathQuery) template.query.clone();
