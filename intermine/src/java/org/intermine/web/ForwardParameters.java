@@ -1,10 +1,14 @@
-/*
- * ForwardParameters.java
- *
- * Created on November 1, 2004, 1:58 PM
- */
-
 package org.intermine.web;
+
+/*
+ * Copyright (C) 2002-2004 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import java.util.HashMap;
 import java.util.Iterator;
