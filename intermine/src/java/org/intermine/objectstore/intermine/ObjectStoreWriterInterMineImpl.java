@@ -86,7 +86,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         try {
             conn = this.os.getConnection();
         } catch (SQLException e) {
-            throw new ObjectStoreException("Could not obtain connection to database", e);
+            throw new ObjectStoreException("Could not obtain connection to database "
+                                           + db.getURL() + "(user=" + db.getUser()
+                                           + ")", e);
         }
         this.os.writers.add(this);
         Runtime.getRuntime().addShutdownHook(new StatsShutdownHook(this));
@@ -117,7 +119,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
         }
     }
-    
+
     /**
      * Allows the changing of the BatchWriter that this ObjectStoreWriter uses.
      *
@@ -349,7 +351,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     tableToFieldNameArray.put(tableName, fieldNames);
                     tableToCollections.put(tableName, collections);
                 }
-                    
+
                 if (!os.missingTables.contains(tableName)) {
                     if (doDeletes) {
                         batch.deleteRow(c, tableName, "id", o.getId());
@@ -669,10 +671,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             releaseConnection(c);
         }
     }
-    
+
     /**
      * @see ObjectStoreInterMineImpl#count
-     * 
+     *
      * This method is overridden in order to flush batches properly before the read.
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
