@@ -629,8 +629,8 @@ public class QueryOptimiserTest extends TestCase
         }
 
         //assertEquals(expected, got);
-        System.out.println(expected);
-        System.out.println(got);
+        //System.out.println(expected);
+        //System.out.println(got);
 
         assertEquals(eSet, newSet);
     }
