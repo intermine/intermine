@@ -297,33 +297,6 @@ null:transcript__display_xref a owl:ObjectProperty ;
 # currently cannot have a src Resource equivalent to two tgt resources
 #    owl:equivalentProperty e:simple_feature__contig.
 
-
-:CpGIsland a owl:Class ;
-    rdfs:subClassOf :BioEntity ;
-      rdfs:subClassOf e:simple_feature ;
-      rdfs:subClassOf
-        [ a owl:Restriction ;
-           owl:onProperty e:simple_feature__analysis ;
-           owl:hasValue
-               [  rdfs:subClassOf e:analysis ;
-                  rdfs:subClassOf
-                      [ a owl:Restriction ;
-                        owl:onProperty e:analysis__program ;
-                        owl:hasValue "cpg"
-                      ]
-               ]
-       ] ;
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :CpGIsland__contig ] .
-
-:CpGIsland__contig a owl:ObjectProperty;
-    rdfs:domain :CpGIsland;
-    rdfs:range :Contig.
-# currently cannot have a src Resource equivalent to two tgt resources
-#    owl:equivalentProperty e:simple_feature__contig.
-
 null:simple_feature a owl:Class ;
     owl:equivalentClass e:simple_feature .
 
