@@ -56,6 +56,7 @@
   <patternset id="lib.build">
     <include name="AntDoc*.jar" />
     <include name="junit*.jar" />
+    <include name="catalina-ant.jar" />
   </patternset>
 
   <!-- Checkstyle library -->
