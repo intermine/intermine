@@ -462,14 +462,14 @@ public class ClassDescriptor
     }
 
     /**
-     * Return a Set of ClassDescriptors for all classes that extend or implement this class or
-     * interface.
+     * Return a Set of ClassDescriptors for all classes that directly extend or implement this class
+     * or interface.
      * @return set of subclass ClassDescriptors
      * @throws IllegalStateException if the set of subclasses has not been set
      */
     public Set getSubDescriptors() throws IllegalStateException {
         checkModel();
-        return model.getSubs(this);
+        return model.getDirectSubs(this);
     }
 
     /**
