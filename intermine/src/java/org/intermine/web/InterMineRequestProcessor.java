@@ -34,9 +34,12 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     /**
      * Paths that can be used as initial pages ie. when there is no session.
      */
-    public static final List START_PATHS = Arrays.asList(new String[]
-        {LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild", "/examples", "/iqlQuery"});
-
+    public static final List START_PATHS =
+        Arrays.asList(new String[] {
+                          LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild",
+                          "/objectDetails", "/initObjectDetails", "/examples", "/iqlQuery"
+                      });
+    
     /**
      * @see TilesRequestProcessor#processPreprocess
      */
