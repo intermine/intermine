@@ -50,7 +50,7 @@ public class ObjectDetailsController extends InterMineAction
         
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
-            displayObjects = new LRUMap(100);
+            displayObjects = new LRUMap(150);
             session.setAttribute("displayObjects", displayObjects);
         }
         String idString = (String) request.getParameter("id");
