@@ -12,25 +12,13 @@
     rdfs:range xsd:string.
 
 :Orthologue a owl:Class;
-    rdfs:subClassOf :LinkRelation.
-
-:Orthologue__confidence a owl:DatatypeProperty;
-    rdfs:domain :Orthologue;
-    rdfs:range xsd:float.
+    rdfs:subClassOf :Relation.
 
 :Paralogue a owl:Class;
-    rdfs:subClassOf :LinkRelation.
-
-:Paralogue__confidence a owl:DatatypeProperty;
-    rdfs:domain :Paralogue;
-    rdfs:range xsd:float.
+    rdfs:subClassOf :Relation.
 
 :INPARANOIDResult a owl:Class;
     rdfs:subClassOf :ComputationalResult.
-
-:INPARANOIDResult__confidence a owl:DatatypeProperty;
-    rdfs:domain :INPARANOIDResult;
-    rdfs:range xsd:float.
 
 :INPARANOIDAnalysis a owl:Class;
     rdfs:subClassOf :ComputationalAnalysis.
