@@ -33,6 +33,7 @@ import org.flymine.xml.full.ItemHelper;
 public class DataTranslatorTest extends TestCase
 {
     private String srcNs = "http://www.flymine.org/source#";
+    private String nullNs = "http://www.flymine.org/null#";
     private String tgtNs = "http://www.flymine.org/target#";
     private DataTranslator translator;
     private ObjectStoreWriter writer;
@@ -115,6 +116,36 @@ public class DataTranslatorTest extends TestCase
         translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
+
+    public void testTranslateItemNullAttributes() throws Exception {
+        Item src1 = new Item();
+        src1.setIdentifier("1");
+        src1.setClassName(srcNs + "LtdCompany");
+        src1.setImplementations(srcNs + "Organisation");
+        Attribute a1 = new Attribute();
+        a1.setName("name");
+        a1.setValue("testname");
+        src1.addAttribute(a1);
+        Attribute a2 = new Attribute();
+        a2.setName("vatNumber");
+        a2.setValue("10");
+        src1.addAttribute(a2);
+
+
+
+        Item expected = new Item();
+        expected.setIdentifier("1");
+        expected.setClassName(tgtNs + "Company");
+        expected.setImplementations(tgtNs + "Organisation");
+        Attribute ea1 = new Attribute();
+        ea1.setName("Company_name");
+        ea1.setValue("testname");
+        expected.addAttribute(ea1);
+
+        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        assertEquals(expected, translator.translateItem(src1).iterator().next());
+    }
+
 
     public void testTranslateItemReferences() throws Exception {
         Item src1 = new Item();
@@ -704,6 +735,7 @@ public class DataTranslatorTest extends TestCase
 
         String owl = "@prefix : <" + tgtNs + "> ." + ENDL
             + "@prefix src: <" + srcNs + "> ." + ENDL
+            + "@prefix null: <" + nullNs + "> ." + ENDL
             + ENDL
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
@@ -724,6 +756,8 @@ public class DataTranslatorTest extends TestCase
             + "              rdfs:domain :Company ;" + ENDL
             + "              rdfs:range xsd:string ;" + ENDL
             + "              owl:equivalentProperty src:name ." + ENDL
+            + "null:vatNumber a owl:DatatypeProperty ;" + ENDL
+            + "              owl:equivalentProperty src:vatNumber ." + ENDL
             + ":Address a owl:Class ;" + ENDL
             + "         owl:equivalentClass src:Address ." + ENDL
             + ":Department a owl:Class ;" + ENDL

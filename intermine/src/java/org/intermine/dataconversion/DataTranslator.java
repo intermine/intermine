@@ -36,6 +36,8 @@ import org.flymine.xml.full.ReferenceList;
 import org.flymine.ontology.OntologyUtil;
 import org.flymine.ontology.SubclassRestriction;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.util.StringUtil;
+
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreWriter;
@@ -60,7 +62,7 @@ public class DataTranslator
     protected Map templateMap;    // map of src class URI/SubclassRestriction templates possible
     protected Map restrictionMap; // map of SubclassRestrictions to target restricted subclass URI
     protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
-    private String ns;
+    private String tgtNs;
 
     protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
     /**
@@ -68,10 +70,10 @@ public class DataTranslator
      * Use model to set up src/tgt maps required during translation.
      * @param srcItemReader the ItemReader from which to retrieve the source Items
      * @param model the merged ontology model
-     * @param ns the target namespace in model
+     * @param tgtNs the target namespace in model
      */
-    public DataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
-        this.ns = ns;
+    public DataTranslator(ItemReader srcItemReader, OntModel model, String tgtNs) {
+        this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
         this.model = model;
         this.templateMap = OntologyUtil.getRestrictionSubclassTemplateMap(model);
@@ -87,6 +89,22 @@ public class DataTranslator
      * @throws ObjectStoreException if error reading/writing an item
      * @throws FlyMineException if no target class/property name can be found
      */
+
+
+//         int i=0;
+//         String clsName = "";
+//         while (itemIter.hasNext()) {
+//             //tgtItemWriter.store(translateItem((Item) itemIter.next()));
+//             Item item = (Item) itemIter.next();
+//             if (!item.getClassName().equals(clsName)) {
+//                 clsName = item.getClassName();
+//                 i = 0;
+//             }
+//             if (item.getClassName().equals(clsName) && i < 100) {
+//                 translateItem(item);
+//             }
+//             i++;
+
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
@@ -106,7 +124,7 @@ public class DataTranslator
      * @throws FlyMineException if no target class/property name can be found
      */
     protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
-        String ns = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
+        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         Item tgtItem = new Item();
         tgtItem.setIdentifier(srcItem.getIdentifier());
 
@@ -131,7 +149,7 @@ public class DataTranslator
             }
         }
         tgtItem.setClassName(tgtClsName);
-        LOG.warn("translating item: " + srcItem.getClassName() + " to " + tgtClsName);
+        LOG.warn("translating item: " + srcItem.getIdentifier() + ", " + srcItem.getClassName() + " to " + tgtClsName);
 
         // sort out implementations
         newImps += getImplementationsString(tgtClsName);
@@ -139,40 +157,53 @@ public class DataTranslator
 
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
-            Attribute attr = (Attribute) i.next();
-            LOG.warn("Attribute: " + attr.getName() + ", " + attr.getValue());
-            Attribute newAttr = new Attribute();
-            String attrTgtURI = getTargetFieldURI(tgtClsName, ns + attr.getName());
-            //            String srcName = OntologyUtil.getFragmentFromURI(srcItem.getClassName())
-            //    + "__" + attr.getName();
-            newAttr.setName(OntologyUtil.getFragmentFromURI(
-                getTargetFieldURI(tgtClsName, ns + attr.getName())));
-            newAttr.setValue(attr.getValue());
-            tgtItem.addAttribute(newAttr);
+            Attribute att = (Attribute) i.next();
+            LOG.warn("Attribute: " + att.getName() + ", " + att.getValue());
+            String attSrcURI = srcNs + att.getName();
+            String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
+            System.out.println(OntologyUtil.getNamespaceFromURI(attSrcURI) + ", "
+                               + OntologyUtil.getNamespaceFromURI(attTgtURI) + ", "
+                               + tgtNs);
+            if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
+                Attribute newAtt = new Attribute();
+                newAtt.setName(OntologyUtil.getFragmentFromURI(attTgtURI));
+                newAtt.setValue(StringUtil.duplicateQuotes(att.getValue()));
+                tgtItem.addAttribute(newAtt);
+            }
         }
 
         //references
         for (Iterator i = srcItem.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
-            Reference newRef = new Reference();
-            //String srcName = OntologyUtil.getFragmentFromURI(srcItem.getClassName())
-            //    + "__" + ref.getName();
-            newRef.setName(OntologyUtil.getFragmentFromURI(
-                getTargetFieldURI(tgtClsName, ns + ref.getName())));
-            newRef.setRefId(ref.getRefId());
-            tgtItem.addReference(newRef);
+            LOG.warn("Reference: " + ref.getName());
+            String refSrcURI = srcNs + ref.getName();
+            String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
+            System.out.println(OntologyUtil.getNamespaceFromURI(refSrcURI) + ", "
+                               + OntologyUtil.getNamespaceFromURI(refTgtURI) + ", "
+                               + tgtNs);
+            if (OntologyUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
+                Reference newRef = new Reference();
+                newRef.setName(OntologyUtil.getFragmentFromURI(refTgtURI));
+                newRef.setRefId(ref.getRefId());
+                tgtItem.addReference(newRef);
+            }
         }
 
         //collections
         for (Iterator i = srcItem.getCollections().iterator(); i.hasNext();) {
             ReferenceList col = (ReferenceList) i.next();
-            ReferenceList newCol = new ReferenceList();
-            //String srcName = OntologyUtil.getFragmentFromURI(srcItem.getClassName())
-            //   + "__" + col.getName();
-            newCol.setName(OntologyUtil.getFragmentFromURI(
-                getTargetFieldURI(tgtClsName, ns + col.getName())));
-            newCol.setRefIds(col.getRefIds());
-            tgtItem.addCollection(newCol);
+            LOG.warn("ReferenceList: " + col.getName());
+            String colSrcURI = srcNs + col.getName();
+            String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
+            System.out.println(OntologyUtil.getNamespaceFromURI(colSrcURI) + ", "
+                               + OntologyUtil.getNamespaceFromURI(colTgtURI) + ", "
+                               + tgtNs);
+            if (OntologyUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
+                ReferenceList newCol = new ReferenceList();
+                newCol.setName(OntologyUtil.getFragmentFromURI(colTgtURI));
+                newCol.setRefIds(col.getRefIds());
+                tgtItem.addCollection(newCol);
+            }
         }
         return Collections.singleton(tgtItem);
     }
@@ -224,7 +255,7 @@ public class DataTranslator
         if (tokenizer.hasMoreTokens()) {
             String fieldName = tokenizer.nextToken();
             if (tokenizer.hasMoreTokens()  && item.hasReference(fieldName)) {
-                Reference ref = item.getReference(fieldName);
+                org.flymine.xml.full.Reference ref = item.getReference(fieldName);
                 return buildRestriction(tokenizer,
                          ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
             } else if (item.hasAttribute(fieldName)) {
@@ -265,12 +296,12 @@ public class DataTranslator
         Iterator clsIter = model.listClasses();
         while (clsIter.hasNext()) {
             OntClass cls = (OntClass) clsIter.next();
-            if (!cls.isAnon() && cls.getNameSpace().equals(ns)) {
+            if (!cls.isAnon() && cls.getNameSpace().equals(tgtNs)) {
                 Map propMap = new HashMap();
                 Iterator propIter = cls.listDeclaredProperties(false);
                 while (propIter.hasNext()) {
                     OntProperty prop = (OntProperty) propIter.next();
-                    if (prop.getNameSpace().equals(ns) && prop.getSuperProperty() != null) {
+                    if (prop.getNameSpace().equals(tgtNs) && prop.getSuperProperty() != null) {
                         Iterator equivIter = prop.listEquivalentProperties();
                         while (equivIter.hasNext()) {
                             propMap.put(((OntProperty) equivIter.next()).getURI(), prop.getURI());
@@ -329,6 +360,7 @@ public class DataTranslator
         return imps;
     }
 
+
     /**
      * Main method
      * @param args command line arguments
@@ -352,4 +384,5 @@ public class DataTranslator
         LOG.warn("Calling DataTranslator.translate()");
         dt.translate(tgtItemWriter);
     }
+
 }
