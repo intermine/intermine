@@ -52,6 +52,7 @@
   <property name="build.webapp.model" location="${build.webapp}/model"/>
   <property name="build.tmp" location="${build}/tmp"/>
   <property name="build.gbrowse" location="${build}/gbrowse"/>
+  <property name="build.gbrowse.images" location="${build.gbrowse}/images"/>
   <property name="build.gbrowse.data" location="${build.gbrowse}/data"/>
   <property name="build.webapp.intermine.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
   <property name="build.webservice.lib" location="${build.webapp}/webservice/WEB-INF/lib"/>
@@ -191,6 +192,7 @@
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
     <mkdir dir="${build.gbrowse}"/>
+    <mkdir dir="${build.gbrowse.images}"/>
     <mkdir dir="${build.gbrowse.data}"/>
     <mkdir dir="${build.webapp}"/>
     <mkdir dir="${build.webapp.model}"/>
@@ -2147,15 +2149,8 @@
 
   <!-- GBROWSE TARGETS -->
 
-  <target name="prepare-gbrowse-conf" depends="prepare">
-    <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
-          toFile="${build.gbrowse}/${gbrowse.config.file}"
-          overwrite="yes"/>
-  </target>
-
   <target name="install-gbrowse-conf"
-          description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory"
-          depends="prepare-gbrowse-conf">
+          description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory">
     <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX"
             value="${webapp.baseurl}${webapp.path}/${webapp.viewByID.prefix}"/>
     <filter token="FLYMINE_SITE_PREFIX"
@@ -2170,21 +2165,41 @@
             value="${gbrowse.database.password}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR"
             value="${gbrowse.database.adaptor}"/>
-    <copy file="${build.gbrowse}/${gbrowse.config.file}"
-          toFile="${gbrowse.config.directory}/${gbrowse.config.file}"
+    <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
+          toFile="${build.gbrowse}/${gbrowse.config.file}"
           filtering="true"/>
-    <chmod file="${gbrowse.config.directory}/${gbrowse.config.file}" perm="a+r"/>
 
-    <copy todir="${gbrowse.www.directory}/images/buttons">
+    <echo message="file: ${build.gbrowse}/${gbrowse.config.file}"/>
+
+    <copy toDir="${build.gbrowse.images}">
       <fileset dir="${model}/genomic/resources/gbrowse/images">
         <include name="*.gif"/>
       </fileset>
     </copy>
+
     <chmod perm="a+r">
-      <fileset dir="${gbrowse.www.directory}/images/buttons">
+      <fileset dir="${build.gbrowse.images}">
         <include name="*.gif"/>
       </fileset>
     </chmod>
+
+    <chmod perm="a+x">
+      <fileset dir="${build.gbrowse.images}"/>
+    </chmod>
+
+    <chmod perm="a+r">
+      <fileset dir="${build.gbrowse}">
+        <include name="${gbrowse.config.file}"/>
+      </fileset>
+    </chmod>
+
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz ${build.gbrowse}/${gbrowse.config.file} ${gbrowse.config.directory}/${gbrowse.config.file}" />
+    </exec>
+
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz ${build.gbrowse.images} ${gbrowse.www.directory}/images/buttons/" />
+    </exec>
   </target>
 
   <target name="load-gbrowse-data"
