@@ -706,9 +706,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(qc2);
         q1.addFrom(qc1);
         q1.addFrom(qc2);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        cs1.addConstraint(cc1);
-        q1.setConstraint(cs1);
+        q1.setConstraint(cc1);
         return q1;
     }
 
