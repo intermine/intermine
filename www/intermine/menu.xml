@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
-    <item url="/index.xml" title="Home"/>
-    <item url="/begin.do" title="Demo"/>
-    <item url="/doc/index.xml" title="Documentation">
+    <item title="Main">
+        <item url="/index.xml" title="Home"/>
+        <item url="/begin.do" title="Demo"/>
+        <item url="/contact/index.xml" title="Contact"/>
+    </item>
+    <item title="Documentation">
         <item url="/doc/software/index.xml" match="/doc/software" title="Software"/>
         <item url="http://www.intermine.org/api/" title="API&#160;JavaDoc"/>
         <item url="/doc/contribute/index.xml" title="Contribute"/>
     </item>
-
-    <item url="/download/index.xml" title="Download&#160;software">
+    <item title="Download&#160;software">
         <item url="http://download.flymine.org/releases/" title="Latest&#160;release"/>
         <item url="http://download.flymine.org/nightly/" title="Nightly&#160;build"/>
         <item url="http://cvs.flymine.org/" title="Browse CVS"/>
+        <item url="/download/index.xml" title="CVS checkout"/>
     </item>
-
-    <item url="/contact/index.xml" title="Contact"/>
 </menu>
 

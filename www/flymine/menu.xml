@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
-  <item url="/index.xml" title="Home">
-    <item url="/introduction.xml" title="Introduction"/>
+  <item title="Main">
+      <item url="/index.xml" title="Home"/>
+      <item url="/begin.do" title="Start a query"/>
+      <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
+      <item url="/contact/index.xml" title="Contact"/>
   </item>
 
-  <item url="/begin.do" title="Start a query"/>
-  
-  <item url="/doc/index.xml" title="Documentation">
+  <item title="Documentation">
     <item url="/doc/manual/manualQuickstart.xml" title="Quick start guide"/>
     <item url="/doc/tutorials/index.xml" title="Tutorials"/>
     <item url="/examples.do" title="Query examples"/>
     <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
     <item url="/doc/usage_scenarios/index.xml" title="Usage scenarios"/>
-    <item url="/doc/ontology_merging/index.xml" title="Ontology Merging"/>
   </item>
   
   <item url="/download/index.xml" title="Download&#160;software">
@@ -22,16 +22,15 @@
     <item url="http://cvs.flymine.org/" title="Browse CVS"/>
   </item>
   
-  <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
-  
-  <item url="/project/index.xml" title="Project">
+  <item title="Project">
+    <item url="/project/index.xml" title="About"/>
     <item url="/project/team.xml" title="Team"/>
     <item url="/project/funding.xml" title="Funding"/>
     <item url="/project/jobs.xml" title="Jobs"/>
   </item>
   
-  <item url="/contact/index.xml" title="Contact"/>
-  
-  <item url="/internal/index.xml" title="Internal"/>
+  <item title="Internal">
+    <item url="/internal/index.xml" title="Menu"/>
+  </item>
 </menu>
 

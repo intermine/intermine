@@ -23,52 +23,9 @@ a
 
 /**************************************/
 
-#sidebar
+#sidebar ul ul li a
 {
-    border/**/: solid #808080 1px; /* Mac IE Hack*/
-}
-
-#sidebar a
-{
-    color: #750054;
-    background: #E5E5E5;
-    border-top: solid 1px #FFFFFF;
-    border-bottom: solid 1px #CCCCCC;
-}
-
-#sidebar a:hover
-{
-    color: #FFFFFF;
-    background: #BC00F0;
-    border-top: solid 1px #D86BFF;
-    border-bottom: solid 1px #336699;
-}
-
-#current a:hover
-{
-    background: #BC00F0 url(side.gif) left repeat-y;
-}
-
-#current ul li a:hover
-{
-    background: #BC00F0;
-}
-
-#sidebar ul ul a
-{
-    color: #210075;
-    background: #BC00F0;
-    border-bottom: 1px solid #BC00F0;
-}
-
-#current a
-{
-    background: #E5E5E5 url(side.gif) left repeat-y;
-}
-
-ul ul li#current a
-{
-    background: #F5F5F5 url(side.gif) left repeat-y;
+    color: #5C0075;
 }
 
 /**************************************/
