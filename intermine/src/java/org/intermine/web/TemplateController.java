@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.objectstore.query.SimpleConstraint;
 
@@ -67,6 +72,9 @@ public class TemplateController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
+                                               getAttribute(Constants.OBJECT_STORE_SUMMARY);
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
         String queryName = request.getParameter("name");
@@ -98,6 +106,9 @@ public class TemplateController extends TilesAction
         Map names = new HashMap();
         Map constraints = new HashMap();
         Map labels = new HashMap();
+        Map options = new HashMap();
+        Map fixedOps = new HashMap();
+        
         
         int j = 0;
         
@@ -112,6 +123,21 @@ public class TemplateController extends TilesAction
                 ops.put(c, MainHelper.mapOps(SimpleConstraint.validOps(MainHelper.
                                                                   getClass(node.getType()))));
 
+                String parentType = node.getParentType();
+                String parentClassName = MainHelper.getClass(parentType, os.getModel()).getName();
+                List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
+                if (fieldNames != null && node.getType() != null) {
+                    options.put(c, fieldNames);
+                    
+                    Class parentClass = MainHelper.getClass(node.getType());
+                    Iterator iter = SimpleConstraint.fixedEnumOps(parentClass).iterator();
+                    List fixedOpsCodes = new ArrayList();
+                    while (iter.hasNext()) {
+                        fixedOpsCodes.add(((ConstraintOp) iter.next()).getIndex());
+                    }
+                    fixedOps.put(c, fixedOpsCodes);
+                }
+                
                 PathNode parent = (PathNode) template.getQuery().getNodes().
                     get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
                 names.put(c, parent.getType() + " "
@@ -142,6 +168,8 @@ public class TemplateController extends TilesAction
         request.setAttribute("ops", ops);
         request.setAttribute("names", names);
         request.setAttribute("constraints", constraints);
+        request.setAttribute("options", options);
+        request.setAttribute("fixedOps", fixedOps);
 
         return null;
     }
