@@ -21,11 +21,9 @@
         <c:when test="${fieldDescriptor.attribute}">
           <c:if test="${fieldDescriptor.name != 'id'}">
             <div>
-              <nobr>
-                <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
-                <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
-                <c:out value="${object[fieldDescriptor.name]}" default="${nullFieldText}"/>
-              </nobr>
+              <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
+              <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
+              <c:out value="${object[fieldDescriptor.name]}" default="${nullFieldText}"/>
             </div>
           </c:if>
         </c:when>
@@ -33,12 +31,10 @@
         <c:when test="${fieldDescriptor.reference}">
           <c:if test="${object[fieldDescriptor.name] != null}">
             <div>
-              <nobr>
-                <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
-                <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
-                  <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}"/>
-                </html:link>
-              </nobr>
+              <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
+              <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
+                <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}"/>
+              </html:link>
             </div>
           </c:if>
         </c:when>
@@ -47,12 +43,10 @@
           <c:set var="listSize" value="${fn:length(object[fieldDescriptor.name])}"/>
           <c:if test="${listSize > 0}">
             <div>
-              <nobr>
-                <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
-                <html:link action="/collectionDetails?id=${object.id}&field=${fieldDescriptor.name}">
-                  <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
-                </html:link>
-              </nobr>
+              <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
+              <html:link action="/collectionDetails?id=${object.id}&field=${fieldDescriptor.name}">
+                <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
+              </html:link>
             </div>
           </c:if>
         </c:when>
