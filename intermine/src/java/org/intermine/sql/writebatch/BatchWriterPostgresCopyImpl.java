@@ -10,7 +10,6 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -20,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.intermine.util.SensibleByteArrayOutputStream;
 
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
@@ -54,7 +55,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                             + " back to prepared statements");
                     super.doInserts(name, table);
                 } else {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    SensibleByteArrayOutputStream baos = new SensibleByteArrayOutputStream();
                     DataOutputStream dos = new DataOutputStream(baos);
                     dos.writeBytes("PGCOPY\n");
                     dos.writeByte(255);
@@ -205,7 +206,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                             + " back to prepared statements");
                     super.doIndirectionInserts(name, table);
                 } else {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    SensibleByteArrayOutputStream baos = new SensibleByteArrayOutputStream();
                     DataOutputStream dos = new DataOutputStream(baos);
                     dos.writeBytes("PGCOPY\n");
                     dos.writeByte(255);
