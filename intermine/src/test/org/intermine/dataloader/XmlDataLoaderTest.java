@@ -20,13 +20,11 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.io.Reader;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
 
 import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.query.Query;
@@ -34,7 +32,6 @@ import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
-import org.flymine.util.ListBean;
 import org.flymine.util.XmlBinding;
 import org.flymine.model.testmodel.*;
 
