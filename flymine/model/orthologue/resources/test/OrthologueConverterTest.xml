@@ -12,7 +12,7 @@
 <attribute name="title" value="ensembl"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="shortName" value="ORG1"/>
+<attribute name="abbreviation" value="ORG1"/>
 </item>
 <item id="1_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="name" value="GENE2"/>
@@ -35,7 +35,7 @@
 </collection>
 </item>
 <item id="0_2" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="shortName" value="ORG2"/>
+<attribute name="abbreviation" value="ORG2"/>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#ComputationalResult">
 <reference name="analysis" ref_id="2_1"/>
@@ -43,6 +43,7 @@
 </item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
 <attribute name="description" value="Best Reciprocal Hit"/>
+<attribute name="algorithm" value="BRH"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Orthologue">
 <reference name="object" ref_id="1_1"/>

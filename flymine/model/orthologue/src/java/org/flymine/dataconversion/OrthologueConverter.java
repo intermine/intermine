@@ -78,11 +78,11 @@ public class OrthologueConverter extends FileConverter
 
                 Item gene1 = createGene(array[0], organism1);
                 Item gene2 = createGene(array[1], organism2);
-                Item result = createResult(getAnalysis(array[2], array[3]), getSource(array[4]));
+                Item result = createResult(getAnalysis(array[2], array[3], array[4]), getSource(array[5]));
                 items.add(ItemHelper.convert(result));
-                Item orth1 = createOrthologue(gene1, gene2, result, getSource(array[4]));
+                Item orth1 = createOrthologue(gene1, gene2, result, getSource(array[5]));
                 items.add(ItemHelper.convert(orth1));
-                Item orth2 = createOrthologue(gene2, gene1, result, getSource(array[4]));
+                Item orth2 = createOrthologue(gene2, gene1, result, getSource(array[5]));
                 items.add(ItemHelper.convert(orth2));
                 addToCollection(gene1, "objects", orth2.getIdentifier());
                 addToCollection(gene1, "subjects", orth1.getIdentifier());
@@ -136,12 +136,12 @@ public class OrthologueConverter extends FileConverter
         return id.toString();
     }
 
-    private Item createOrganism(String name) {
-        if (name == null) {
+    private Item createOrganism(String abbrev) {
+        if (abbrev == null) {
             throw new IllegalArgumentException("Cannot create an organism with no name");
         }
         Item organism = newItem("Organism");
-        organism.addAttribute(new Attribute("shortName", name));
+        organism.addAttribute(new Attribute("abbreviation", abbrev));
         return organism;
     }
 
@@ -167,12 +167,13 @@ public class OrthologueConverter extends FileConverter
         return gene;
     }
 
-    private Item getAnalysis(String type, String method) {
-        Item analysis = (Item) analyses.get(method);
+    private Item getAnalysis(String type, String algorithm, String method) {
+        Item analysis = (Item) analyses.get(algorithm);
         if (analysis == null) {
             analysis = newItem("ComputationalAnalysis");
             analysis.addAttribute(new Attribute("description", method));
-            analyses.put(method, analysis);
+            analysis.addAttribute(new Attribute("algorithm", algorithm));
+            analyses.put(algorithm, analysis);
         }
         return analysis;
     }

@@ -39,9 +39,9 @@ public class OrthologueConverterTest extends DataConversionTestCase
 
     public void testProcess() throws Exception {
         // the input file format is 5 tab-delimited columns:
-        // gene1   gene2   orthologue_type   method   source
+        // gene1   gene2   orthologue_type   algorithm   method   source
 
-        String input = "Title" + ENDL + "GENE1\tGENE2\tSEED\tBest Reciprocal Hit\tEnsembl Database" + ENDL;
+        String input = "Title" + ENDL + "GENE1\tGENE2\tSEED\tBRH\tBest Reciprocal Hit\tEnsembl Database" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         OrthologueConverter converter = new OrthologueConverter(new BufferedReader(new StringReader(input)), itemWriter);
