@@ -39,6 +39,10 @@
     <form-bean      name="runQueryForm"
                     type="org.apache.struts.action.DynaActionForm"/>
 
+    <!-- restart query has no properties, uses an DynaActionForm -->
+    <form-bean      name="restartQueryForm"
+                    type="org.apache.struts.action.DynaActionForm"/>
+
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -107,6 +111,13 @@
                type="org.flymine.web.RunQueryAction"
                name="runQueryForm">
       <forward name="results" path="results.page"/>
+    </action>
+
+    <!-- Action to reset the current query -->
+    <action    path="/restartQuery"
+               type="org.flymine.web.RestartQueryAction"
+               name="restartQueryForm">
+      <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
