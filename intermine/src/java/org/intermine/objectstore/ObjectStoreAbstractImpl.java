@@ -14,7 +14,7 @@ import java.util.Properties;
 
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryHelper;
+import org.flymine.objectstore.query.QueryCreator;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.CacheMap;
@@ -37,7 +37,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int maxLimit = Integer.MAX_VALUE;
     protected long maxTime = Long.MAX_VALUE;
     protected CacheMap cache = new CacheMap();
-    
+
     protected int getObjectOps = 0;
     protected int getObjectHits = 0;
     protected int getObjectPrefetches = 0;
@@ -83,7 +83,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         }
         boolean contains = true;
         Object cached = null;
-        Object cacheKey = QueryHelper.createQueryForExampleObject(obj, model).toString();
+        Object cacheKey = QueryCreator.createQueryForExampleObject(obj, model).toString();
         synchronized (cache) {
             cached = cache.get(cacheKey);
             if (cached == null) {
@@ -117,9 +117,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     protected Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
-        Results res = execute(QueryHelper.createQueryForExampleObject(obj, model));
+        Results res = execute(QueryCreator.createQueryForExampleObject(obj, model));
         res.setNoOptimise();
-        
+
         if (res.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
                                                + "this primary key");
@@ -147,7 +147,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @see ObjectStore#invalidateObjectByExample
      */
     public void invalidateObjectByExample(Object obj) {
-        Object key = QueryHelper.createQueryForExampleObject(obj, model).toString();
+        Object key = QueryCreator.createQueryForExampleObject(obj, model).toString();
         synchronized (cache) {
             cache.remove(key);
         }
@@ -157,7 +157,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @see ObjectStore#cacheObjectByExample
      */
     public Object cacheObjectByExample(Object obj, Object obj2) {
-        Object key = QueryHelper.createQueryForExampleObject(obj, model).toString();
+        Object key = QueryCreator.createQueryForExampleObject(obj, model).toString();
         synchronized (cache) {
             cache.put(key, obj2);
         }

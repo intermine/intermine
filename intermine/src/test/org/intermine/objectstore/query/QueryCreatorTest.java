@@ -19,11 +19,11 @@ import org.flymine.model.testmodel.*;
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.metadata.Model;
 
-public class QueryHelperTest extends QueryTestCase
+public class QueryCreatorTest extends QueryTestCase
 {
     Model model;
 
-    public QueryHelperTest(String arg1) {
+    public QueryCreatorTest(String arg1) {
         super(arg1);
     }
 
@@ -33,11 +33,11 @@ public class QueryHelperTest extends QueryTestCase
     }
 
     public static Test suite() {
-        return OneTimeTestCase.buildSuite(QueryHelperTest.class);
+        return OneTimeTestCase.buildSuite(QueryCreatorTest.class);
     }
-    
+
     public void testQueryForExampleSetEmptySet() {
-        assertNull(QueryHelper.createQueryForExampleSet(new HashSet(), model));
+        assertNull(QueryCreator.createQueryForExampleSet(new HashSet(), model));
     }
 
     public void testQueryForExampleSetDifferentElementTypes() {
@@ -50,7 +50,7 @@ public class QueryHelperTest extends QueryTestCase
         set.add(d);
 
         try {
-            QueryHelper.createQueryForExampleSet(set, model);
+            QueryCreator.createQueryForExampleSet(set, model);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -63,7 +63,7 @@ public class QueryHelperTest extends QueryTestCase
         Address a = new Address();
         a.setAddress("1 The Street");
         set.add(a);
-        Query q = QueryHelper.createQueryForExampleSet(set, model);
+        Query q = QueryCreator.createQueryForExampleSet(set, model);
 
         Query expected = new Query();
         QueryClass qc = new QueryClass(Address.class);
@@ -89,7 +89,7 @@ public class QueryHelperTest extends QueryTestCase
         Address a2 = new Address();
         a2.setAddress("2 The Street");
         set.add(a2);
-        Query q = QueryHelper.createQueryForExampleSet(set, model);
+        Query q = QueryCreator.createQueryForExampleSet(set, model);
 
         Query expected = new Query();
         QueryClass qc = new QueryClass(Address.class);
@@ -124,7 +124,7 @@ public class QueryHelperTest extends QueryTestCase
         e.setAge(20);
         set.add(e);
 
-        Query q = QueryHelper.createQueryForExampleSet(set, model);
+        Query q = QueryCreator.createQueryForExampleSet(set, model);
 
         Query expected = new Query();
         QueryClass qcEmployee = new QueryClass(Employee.class);
@@ -173,7 +173,7 @@ public class QueryHelperTest extends QueryTestCase
         e2.setAge(30);
         set.add(e2);
 
-        Query q = QueryHelper.createQueryForExampleSet(set, model);
+        Query q = QueryCreator.createQueryForExampleSet(set, model);
 
         Query expected = new Query();
         QueryClass qcEmployee = new QueryClass(Employee.class);
@@ -211,7 +211,7 @@ public class QueryHelperTest extends QueryTestCase
 
     public void testQueryForExampleObjectNullObject() throws Exception {
         try {
-            QueryHelper.createQueryForExampleObject(null, model);
+            QueryCreator.createQueryForExampleObject(null, model);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -221,7 +221,7 @@ public class QueryHelperTest extends QueryTestCase
         // Address's key is "address" field
         Address a = new Address();
         a.setAddress("1 The Street");
-        Query q = QueryHelper.createQueryForExampleObject(a, model);
+        Query q = QueryCreator.createQueryForExampleObject(a, model);
 
         Query expected = new Query();
         QueryClass qc = new QueryClass(Address.class);
@@ -246,7 +246,7 @@ public class QueryHelperTest extends QueryTestCase
         e.setName("Employee 1");
         e.setAge(20);
 
-        Query q = QueryHelper.createQueryForExampleObject(e, model);
+        Query q = QueryCreator.createQueryForExampleObject(e, model);
 
         Query expected = new Query();
         QueryClass qcEmployee = new QueryClass(Employee.class);
@@ -285,7 +285,7 @@ public class QueryHelperTest extends QueryTestCase
         c.setBusinessAddress(a2);
         c.setName("Contractor 1");
 
-        Query q = QueryHelper.createQueryForExampleObject(c, model);
+        Query q = QueryCreator.createQueryForExampleObject(c, model);
 
         Query expected = new Query();
         QueryClass qcContractor = new QueryClass(Contractor.class);
@@ -328,7 +328,7 @@ public class QueryHelperTest extends QueryTestCase
         e.setAge(20);
         e.setSalary(45000);
 
-        Query q = QueryHelper.createQueryForExampleObject(e, model);
+        Query q = QueryCreator.createQueryForExampleObject(e, model);
 
         Query expected = new Query();
         QueryClass qcEmployee = new QueryClass(CEO.class);
@@ -368,7 +368,7 @@ public class QueryHelperTest extends QueryTestCase
         // Name not set
 
         try {
-            Query q = QueryHelper.createQueryForExampleObject(employee, model);
+            Query q = QueryCreator.createQueryForExampleObject(employee, model);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -384,7 +384,7 @@ public class QueryHelperTest extends QueryTestCase
         // Address not set
 
         try {
-            Query q = QueryHelper.createQueryForExampleObject(employee, model);
+            Query q = QueryCreator.createQueryForExampleObject(employee, model);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }

@@ -31,9 +31,9 @@ import org.flymine.metadata.CollectionDescriptor;
  *
  * @author Andrew Varley
  */
-public class QueryHelper
+public class QueryCreator
 {
-    protected static final Logger LOG = Logger.getLogger(QueryHelper.class);
+    protected static final Logger LOG = Logger.getLogger(QueryCreator.class);
 
     /**
      * Create a query that will retrieve a set of objects from the data store given
@@ -293,23 +293,23 @@ public class QueryHelper
                 }
                 Constraint c = new SimpleConstraint(qf, SimpleConstraint.EQUALS, value);
                 ((ConstraintSet) q.getConstraint()).addConstraint(c);
-            
+
             } else if (field instanceof ReferenceDescriptor) {
-            
-                Object otherObject = TypeUtil.getFieldValue(obj, field.getName());            
+
+                Object otherObject = TypeUtil.getFieldValue(obj, field.getName());
                 if (otherObject == null) {
                     throw new IllegalArgumentException("All primary key fields must be set");
                 }
-            
+
                 QueryReference qr = new QueryObjectReference(qc, field.getName());
                 Class otherClass = TypeUtil.getField(obj.getClass(), field.getName()).getType();
                 QueryClass otherQueryClass = new QueryClass(otherClass);
                 q.addFrom(otherQueryClass);
                 // And add a ClassConstraint for it
                 ((ConstraintSet) q.getConstraint())
-                    .addConstraint(new ContainsConstraint(qr, ContainsConstraint.CONTAINS, 
+                    .addConstraint(new ContainsConstraint(qr, ContainsConstraint.CONTAINS,
                                                           otherQueryClass));
-                
+
                 // Add the keys of the other object
                 addKeysToQuery(q, otherQueryClass, otherObject, model);
             }
