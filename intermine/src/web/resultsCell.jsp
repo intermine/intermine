@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%--/**
      * Render a results cell
      * The following parameters must be set:
@@ -6,6 +7,8 @@
      * icons: a List of icons to display
      */
 --%>
+
+<tiles:importAttribute/>
 
 <font class="resultsCellTitle">
   <c:out value="${cld.unqualifiedName}"/>
