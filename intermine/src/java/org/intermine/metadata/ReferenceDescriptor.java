@@ -60,6 +60,14 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
         return referencedClassDesc;
     }
+    
+    /**
+     * Gets the name of the reverse reference field.
+     * @return the name of the reverse reference field
+     */
+    public String getReverseReferenceFieldName() {
+        return reverseRefName;
+    }
 
     /**
      * Returns the class name of the object referenced by this field.
