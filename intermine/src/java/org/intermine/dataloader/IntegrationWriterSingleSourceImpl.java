@@ -48,42 +48,44 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         Object dbObj = osw.getObjectByExample(obj);
         IntegrationDescriptor retval = new IntegrationDescriptor();
 
-        try {
-            Class cls = obj.getClass();
-            retval.put(cls.getDeclaredField("id"),
-                       cls.getMethod("getId", new Class[] {}).invoke(dbObj, new Object[] {}));
+        if (dbObj != null) {
+            try {
+                Class cls = obj.getClass();
+                retval.put(cls.getDeclaredField("id"),
+                           cls.getMethod("getId", new Class[] {}).invoke(dbObj, new Object[] {}));
 
-            if (nonSkeletons.contains(dbObj)) {
-                // This data was written by us in the past. Therefore, the database version
-                // overrides everything, except collections.
-                Map fieldToGetter = TypeUtil.getFieldToGetter(obj.getClass());
-                Iterator iter = fieldToGetter.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    Field field = (Field) entry.getKey();
-                    int fieldType = describeRelation(field);
+                if (nonSkeletons.contains(dbObj)) {
+                    // This data was written by us in the past. Therefore, the database version
+                    // overrides everything, except collections.
+                    Map fieldToGetter = TypeUtil.getFieldToGetter(obj.getClass());
+                    Iterator iter = fieldToGetter.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iter.next();
+                        Field field = (Field) entry.getKey();
+                        int fieldType = describeRelation(field);
 
-                    Method method = (Method) entry.getValue();
-                    Object value = method.invoke(obj, new Object[] {});
-                    retval.put(field, value);
+                        Method method = (Method) entry.getValue();
+                        Object value = method.invoke(obj, new Object[] {});
+                        retval.put(field, value);
+                    }
                 }
+                //        } else {
+                // This data was not written for real in the past by us. Therefore, we do not
+                // need to fill in anything (except id) in the return value.
+                //        }
+            } catch (IntrospectionException e) {
+                throw new ObjectStoreException("Something horribly wrong with the model", e);
+            } catch (NoSuchFieldException e) {
+                throw new ObjectStoreException("Something even worse wrong with the model", e);
+            } catch (NoSuchMethodException e) {
+                throw new ObjectStoreException("Something nasty with the model", e);
+            } catch (IllegalAccessException e) {
+                throw new ObjectStoreException("Something upset in java", e);
+            } catch (InvocationTargetException e) {
+                throw new ObjectStoreException("Something weird in java", e);
             }
-            //        } else {
-            // This data was not written for real in the past by us. Therefore, we do not need to
-            // fill in anything (except id) in the return value.
-            //        }
-            return retval;
-        } catch (IntrospectionException e) {
-            throw new ObjectStoreException("Something horribly wrong with the model", e);
-        } catch (NoSuchFieldException e) {
-            throw new ObjectStoreException("Something even worse wrong with the model", e);
-        } catch (NoSuchMethodException e) {
-            throw new ObjectStoreException("Something nasty with the model", e);
-        } catch (IllegalAccessException e) {
-            throw new ObjectStoreException("Something upset in java", e);
-        } catch (InvocationTargetException e) {
-            throw new ObjectStoreException("Something weird in java", e);
         }
+        return retval;
     }
 
     /**
