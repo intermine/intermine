@@ -22,6 +22,7 @@
     <div class="main-layout">
       <tiles:get name="header"/>
       <tiles:get name="menu"/>
+      <br/>
       <tiles:get name="errorMessages"/>
       <tiles:insert attribute="description">
         <tiles:put name="pageDescription" beanName="pageDescription" beanScope="tile"/>

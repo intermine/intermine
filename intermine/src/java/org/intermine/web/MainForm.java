@@ -129,10 +129,14 @@ public class MainForm extends ActionForm
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
 
+        if (constraintValue == null) {
+            return null;
+        }
+
         ActionErrors errors = new ActionErrors();
 
         FieldDescriptor fd = MainHelper.getFieldDescriptor(path, model);
-        if (fd.isAttribute() && constraintValue != null) {
+        if (fd.isAttribute()) {
             AttributeDescriptor attr = (AttributeDescriptor) fd;
             Class fieldClass = TypeUtil.instantiate(attr.getType());
             if (Date.class.equals(fieldClass)) {
@@ -173,6 +177,7 @@ public class MainForm extends ActionForm
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         constraintOp = null;
         constraintValue = null;
+        parsedConstraintValue = null;
         path = null;
         subclass = null;
     }

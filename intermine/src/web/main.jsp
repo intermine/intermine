@@ -104,7 +104,17 @@
         <br/>
         <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
           <c:forEach begin="0" end="${node.indentation}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</c:forEach>
-          <span class="constraint"><c:out value="${constraint.op} ${constraint.value}"/></span>
+          <span class="constraint">
+            <c:out value="${constraint.op}"/>
+            <c:choose>
+              <c:when test="${constraint.value.class.name == 'java.util.Date'}">
+                <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
+              </c:when>
+              <c:otherwise>
+                <c:out value=" ${constraint.value}"/>
+              </c:otherwise>
+            </c:choose>
+          </span>
           <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}">
             <fmt:message key="query.removeConstraint"/>
           </html:link>
