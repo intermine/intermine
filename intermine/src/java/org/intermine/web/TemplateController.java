@@ -102,41 +102,21 @@ public class TemplateController extends TilesAction
             return null;
         }
         
-        Map ops = new HashMap();
+        Map displayConstraints = new HashMap();
         Map names = new HashMap();
         Map constraints = new HashMap();
-        Map labels = new HashMap();
-        Map options = new HashMap();
-        Map fixedOps = new HashMap();
-        
         
         int j = 0;
         
-        //for each node with an editable constraint, store the valid ops for those constraints
-        //and the human-readable "name" for each node (Department.company.name -> "Company namae")
+        // For each node with an editable constraint, create a DisplayConstraint bean
+        // and the human-readable "name" for each node (Department.company.name -> "Company namae")
+        
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
-            
-                ops.put(c, MainHelper.mapOps(SimpleConstraint.validOps(MainHelper.
-                                                                  getClass(node.getType()))));
-
-                String parentType = node.getParentType();
-                String parentClassName = MainHelper.getClass(parentType, os.getModel()).getName();
-                List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
-                if (fieldNames != null && node.getType() != null) {
-                    options.put(c, fieldNames);
-                    
-                    Class parentClass = MainHelper.getClass(node.getType());
-                    Iterator iter = SimpleConstraint.fixedEnumOps(parentClass).iterator();
-                    List fixedOpsCodes = new ArrayList();
-                    while (iter.hasNext()) {
-                        fixedOpsCodes.add(((ConstraintOp) iter.next()).getIndex());
-                    }
-                    fixedOps.put(c, fixedOpsCodes);
-                }
+                displayConstraints.put(c, new DisplayConstraint(node, os.getModel(), oss));
                 
                 PathNode parent = (PathNode) template.getQuery().getNodes().
                     get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
@@ -148,6 +128,8 @@ public class TemplateController extends TilesAction
                     tf.setAttributeValues (attributeKey, "" + c.getDisplayValue(node));
                     tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
                     if (c.getIdentifier() != null) {
+                        // If special request parameter key is present then we initialise
+                        // the form bean with the parameter value
                         String paramName = c.getIdentifier() + "_value";
                         String constraintValue = request.getParameter(paramName);
                         if (constraintValue != null) {
@@ -165,11 +147,9 @@ public class TemplateController extends TilesAction
         session.setAttribute("queryName", queryName);
         session.setAttribute("templateType", type);
         request.setAttribute("templateQuery", template);
-        request.setAttribute("ops", ops);
         request.setAttribute("names", names);
         request.setAttribute("constraints", constraints);
-        request.setAttribute("options", options);
-        request.setAttribute("fixedOps", fixedOps);
+        request.setAttribute("displayConstraints", displayConstraints);
 
         return null;
     }
