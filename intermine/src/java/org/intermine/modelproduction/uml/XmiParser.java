@@ -46,7 +46,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.Collection;
-import java.io.InputStream;
+import java.io.Reader;
 import org.xml.sax.InputSource;
 
 import org.apache.log4j.Logger;
@@ -80,17 +80,16 @@ public class XmiParser implements ModelParser
         this.modelName = modelName;
     }
 
-
     /**
      * Read source model information in XMI format and
      * construct a FlyMine Model object.
      *
-     * @param is the source XMI file to parse
+     * @param reader the source XMI file to parse
      * @return the FlyMine Model created
      * @throws Exception if Model not created successfully
      */
-    public Model process(InputStream is) throws Exception {
-        recurse(new XMIReader().parse(new InputSource(is)));
+    public Model process(Reader reader) throws Exception {
+        recurse(new XMIReader().parse(new InputSource(reader)));
         return new Model(modelName, classes);
     }
 

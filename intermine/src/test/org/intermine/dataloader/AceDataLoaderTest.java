@@ -13,13 +13,13 @@ package org.flymine.dataloader;
 import junit.framework.TestCase;
 
 import java.util.Date;
+import java.io.InputStreamReader;
 
 import org.acedb.*;
 import org.acedb.staticobj.*;
 
 import org.flymine.util.StringUtil;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
-
 import org.flymine.model.acedbtest.*;
 
 public class AceDataLoaderTest extends TestCase
@@ -33,8 +33,7 @@ public class AceDataLoaderTest extends TestCase
     public void setUp() throws Exception {
         super.setUp();
         FlyMineModelParser parser = new FlyMineModelParser();
-        loader = new AceDataLoader(parser.process(getClass().getClassLoader()
-                                                  .getResourceAsStream("acedbtest_model.xml")));
+        loader = new AceDataLoader(parser.process(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("acedbtest_model.xml"))));
     }
     
     public void testSimpleTag() throws Exception {

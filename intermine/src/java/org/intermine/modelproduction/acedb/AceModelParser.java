@@ -11,8 +11,7 @@ package org.flymine.modelproduction.acedb;
  */
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ReferenceDescriptor;
-import org.flymine.metadata.MetaDataException;
 
 import org.apache.log4j.Logger;
 
@@ -63,26 +61,12 @@ public class AceModelParser implements ModelParser
      * Read source model information in Ace model format and
      * construct a FlyMine Model object.
      *
-     * @param is the AceDBsource model to parse
+     * @param reader the AceDBsource model to parse
      * @return the FlyMine Model created
-     * @throws Exception if Model not created successfully
+     * @throws Exception if a problem occurs during parsing
      */
-    public Model process(InputStream is) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(is));
-        Model m = readerToModel(in);
-        return m;
-    }
-
-    /**
-     * Converts an ACEDB model file provided in the BufferedReader into a Flymine Model.
-     *
-     * @param in the contents of the ACEDB model file
-     * @return a Flymine Model
-     * @throws IOException if the BufferedReader does
-     * @throws MetaDataException if the model is inconsistent
-     */
-    protected Model readerToModel(BufferedReader in) throws IOException, MetaDataException {
-        Set classes = parse(in);
+    public Model process(Reader reader) throws Exception {
+        Set classes = parse(new BufferedReader(reader));
         Set classDescriptors = new LinkedHashSet();
         addBuiltinClasses(classDescriptors);
         Iterator classIter = classes.iterator();

@@ -12,18 +12,14 @@ package org.flymine.modelproduction.xml;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import java.io.InputStream;
-
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
+import java.io.Reader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.flymine.modelproduction.ModelParser;
 import org.flymine.metadata.*;
+import org.flymine.util.SAXParser;
 
 /**
  * Parse FlyMine metadata XML to produce a FlyMine Model
@@ -32,39 +28,18 @@ import org.flymine.metadata.*;
  */
 public class FlyMineModelParser implements ModelParser
 {
-    protected ModelHandler handler = new ModelHandler();
-
-
     /**
      * Read source model information in FlyMine XML format and
      * construct a FlyMine Model object.
      *
-     * @param is the source model to parse
+     * @param reader the source model to parse
      * @return the FlyMine Model created
      * @throws Exception if Model not created successfully
      */
-    public Model process(InputStream is) throws Exception {
-        parse(new InputSource(is));
+    public Model process(Reader reader) throws Exception {
+        ModelHandler handler = new ModelHandler();
+        SAXParser.parse(new InputSource(reader), handler);
         return new Model(handler.modelName, handler.classes);
-    }
-
-
-    /**
-     * Parse the metadata xml file
-     * @param is the inputsource to parse
-     * @throws Exception if an error occuring during parsing
-     */
-    protected void parse(InputSource is) throws Exception {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(true);
-            factory.newSAXParser().parse(is, handler);
-        } catch (ParserConfigurationException e) {
-            throw new Exception("The underlying parser does not support "
-                                + " the requested features");
-        } catch (SAXException e) {
-            throw new Exception("Error parsing XML document: " + e);
-        }
     }
 
     /**

@@ -114,7 +114,7 @@ public class ModelTest extends TestCase
         Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("model", clds);
 
-        String expected = "<model name=\"model\">"
+        String expected = "<model xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"model\" name=\"model\">"
             + "<class name=\"Class1\" is-interface=\"false\"></class>"
             + "<class name=\"Class2\" is-interface=\"false\"></class>"
             + "</model>";

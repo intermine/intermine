@@ -11,6 +11,9 @@ package org.flymine.modelproduction.acedb;
  */
 
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.InputStreamReader;
+
 import java.util.Set;
 import java.util.LinkedHashSet;
 
@@ -29,7 +32,7 @@ public class AceModelParserFunctionalTest extends TestCase
     private static final String PKG = "org.flymine.model." + MODEL + ".";
 
     private ModelParser parser;
-    private InputStream stream;
+    private Reader reader;
     private Model model;
 
     public AceModelParserFunctionalTest(String arg) {
@@ -39,12 +42,12 @@ public class AceModelParserFunctionalTest extends TestCase
     public void setUp() throws Exception {
         super.setUp();
         parser = new AceModelParser(MODEL);
-        stream = getClass().getClassLoader().getResourceAsStream(MODEL + ".wrm");
+        reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".wrm"));
         model = createModel();
     }
 
     public void testProcess() throws Exception {
-        assertEquals(model, parser.process(stream));
+        assertEquals(model, parser.process(reader));
     }
 
     private Model createModel() throws Exception {

@@ -14,8 +14,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.flymine.modelproduction.ModelParser;
@@ -103,8 +102,7 @@ public class ModelGenerationTask extends Task
         Model model = null;
 
         try {
-            FileInputStream fis = new FileInputStream(source);
-            model = parser.process((InputStream) fis);
+            model = parser.process(new FileReader(source));
         } catch (Exception e) {
             throw new BuildException("Error parsing model: " + e);
         }

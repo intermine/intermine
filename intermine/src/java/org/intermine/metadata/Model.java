@@ -11,6 +11,7 @@ package org.flymine.metadata;
  */
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -55,7 +56,7 @@ public class Model
             }
             try {
                 ModelParser parser = new FlyMineModelParser();
-                model = parser.process(is);
+                model = parser.process(new InputStreamReader(is));
             } catch (Exception e) {
                 throw new MetaDataException("Error parsing metadata: " + e);
             }
@@ -213,7 +214,8 @@ public class Model
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + name + "\">");
+        sb.append("<model xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
+            .append(" xsi:type=\"model\" name=\"" + name + "\">");
         for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
             sb.append(iter.next().toString());
         }
