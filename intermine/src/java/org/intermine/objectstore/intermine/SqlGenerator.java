@@ -10,24 +10,18 @@ package org.flymine.objectstore.flymine;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.FieldDescriptor;
@@ -57,7 +51,6 @@ import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.UnknownTypeValue;
 import org.flymine.util.DatabaseUtil;
-import org.flymine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -86,6 +79,7 @@ public class SqlGenerator
      * @param limit the maximum number of rows for the query to return
      * @param model the Model to look up metadata in
      * @return a String suitable for passing to an SQL server
+     * @throws ObjectStoreException if something goes wrong
      */
     public static String generate(Query q, int start, int limit, Model model) 
             throws ObjectStoreException {
@@ -102,6 +96,7 @@ public class SqlGenerator
      * @param model the Model to look up metadata in
      * @param kind Query type
      * @return a String suitable for passing to an SQL server
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static String generate(Query q, int start, int limit, Model model,
             int kind) throws ObjectStoreException {
@@ -122,6 +117,7 @@ public class SqlGenerator
      * @param state the current Sql Query state
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void buildFromComponent(State state, Query q, Model model)
             throws ObjectStoreException {
@@ -152,6 +148,7 @@ public class SqlGenerator
      * @param state the current Sql Query state
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void buildWhereClause(State state, Query q, Model model)
             throws ObjectStoreException {
@@ -171,6 +168,7 @@ public class SqlGenerator
      * @param c the Constraint object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void constraintToString(State state, Constraint c, Query q, Model model)
             throws ObjectStoreException {
@@ -198,6 +196,7 @@ public class SqlGenerator
      * @param c the ConstraintSet object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void constraintSetToString(State state, ConstraintSet c, Query q, Model model)
             throws ObjectStoreException {
@@ -230,6 +229,7 @@ public class SqlGenerator
      * @param c the SimpleConstraint object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q,
             Model model) throws ObjectStoreException {
@@ -248,6 +248,7 @@ public class SqlGenerator
      * @param c the SubqueryConstraint object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void subqueryConstraintToString(State state, SubqueryConstraint c, Query q,
             Model model) throws ObjectStoreException {
@@ -270,6 +271,7 @@ public class SqlGenerator
      * @param c the ClassConstraint object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void classConstraintToString(State state, ClassConstraint c, Query q,
             Model model) throws ObjectStoreException {
@@ -300,6 +302,7 @@ public class SqlGenerator
      * @param c the ContainsConstraint object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void containsConstraintToString(State state, ContainsConstraint c,
             Query q, Model model) throws ObjectStoreException {
@@ -327,7 +330,8 @@ public class SqlGenerator
             String arg2Alias = ((String) q.getAliases().get(arg2));
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY);
-                state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ") + arg2Alias + "."
+                state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ") + arg2Alias
+                        + "."
                         + DatabaseUtil.getColumnName(arg1Desc.getReverseReferenceDescriptor()));
             } else {
                 CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
@@ -353,6 +357,7 @@ public class SqlGenerator
      * @param c the BagConstraint object
      * @param q the Query
      * @param model the Model
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void bagConstraintToString(State state, BagConstraint c, Query q,
             Model model) throws ObjectStoreException {
@@ -396,7 +401,8 @@ public class SqlGenerator
      * Converts an Object to a String, in a form suitable for SQL.
      *
      * @param buffer a StringBuffer to add text to
-     * @param obj the Object to convert
+     * @param value the Object to convert
+     * @throws ObjectStoreException if something goes wrong
      */
     public static void objectToString(StringBuffer buffer, Object value)
             throws ObjectStoreException {
@@ -492,6 +498,7 @@ public class SqlGenerator
      * @param buffer the StringBuffer to add text to
      * @param node the QueryEvaluable
      * @param q the Query
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static void queryEvaluableToString(StringBuffer buffer, QueryEvaluable node,
             Query q) throws ObjectStoreException {
@@ -592,6 +599,7 @@ public class SqlGenerator
      * @param model the Model
      * @param kind the kind of output requested
      * @return a String
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static String buildSelectComponent(State state, Query q, Model model, int kind)
             throws ObjectStoreException {
@@ -633,6 +641,7 @@ public class SqlGenerator
      * @param q the Query
      * @param model the Model
      * @return a String
+     * @throws ObjectStoreException if something goes wrong
      */
     protected static String buildGroupBy(Query q, Model model) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
@@ -658,8 +667,10 @@ public class SqlGenerator
      * @param q the Query
      * @param model the Model
      * @return a String
+     * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildOrderBy(State state, Query q, Model model) throws ObjectStoreException {
+    protected static String buildOrderBy(State state, Query q, Model model)
+            throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
         List orderBy = new ArrayList(q.getOrderBy());
@@ -687,7 +698,8 @@ public class SqlGenerator
         return retval.toString();
     }
 
-    private static class State {
+    private static class State
+    {
         private StringBuffer whereText = new StringBuffer();
         private StringBuffer fromText = new StringBuffer();
         private Set orderBy = new LinkedHashSet();

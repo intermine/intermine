@@ -64,7 +64,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param skeleton is this a skeleton object?
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public abstract void store(FlyMineBusinessObject o, boolean skeleton) throws ObjectStoreException;
+    public abstract void store(FlyMineBusinessObject o, boolean skeleton)
+        throws ObjectStoreException;
 
     /**
      * Store an object in this ObjectStore, delegates to internal ObjectStoreWriter.

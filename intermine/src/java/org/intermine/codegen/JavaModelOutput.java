@@ -262,7 +262,7 @@ public class JavaModelOutput extends ModelOutput
         } else {
             sb.append(" { ");
             if ((field instanceof ReferenceDescriptor)
-                    && (! (field instanceof CollectionDescriptor))) {
+                    && (!(field instanceof CollectionDescriptor))) {
                 // This is an object reference.
                 sb.append("if (")
                     .append(name)
@@ -304,7 +304,7 @@ public class JavaModelOutput extends ModelOutput
         }
 
         if ((field instanceof ReferenceDescriptor)
-                && (! (field instanceof CollectionDescriptor))) {
+                && (!(field instanceof CollectionDescriptor))) {
             // This is an object reference.
             sb.append(INDENT)
                 .append("public void proxy")

@@ -29,7 +29,6 @@ import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
@@ -70,10 +69,11 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * Returns a Connection. Please put them back.
      *
      * @return a java.sql.Connection
+     * @throws SQLException if there is a problem with that
      */
     protected Connection getConnection() throws SQLException {
         Connection retval = db.getConnection();
-        if (! retval.getAutoCommit()) {
+        if (!retval.getAutoCommit()) {
             retval.setAutoCommit(true);
         }
         return retval;
@@ -81,11 +81,13 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
 
     /**
      * Allows one to put a connection back.
+     *
+     * @param c a Connection
      */
     protected void releaseConnection(Connection c) {
         if (c != null) {
             try {
-                if (! c.getAutoCommit()) {
+                if (!c.getAutoCommit()) {
                     LOG.error("releaseConnection called while in transaction - rolling back");
                     c.rollback();
                     c.setAutoCommit(true);

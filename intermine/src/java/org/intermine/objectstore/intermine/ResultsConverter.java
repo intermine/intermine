@@ -53,7 +53,8 @@ public class ResultsConverter
      * @throws ObjectStoreException if the ResultSet does not match the Query in any way, or if a
      * SQL exception occurs
      */
-    public static List convert(ResultSet sqlResults, Query q, ObjectStore os) throws ObjectStoreException {
+    public static List convert(ResultSet sqlResults, Query q, ObjectStore os)
+            throws ObjectStoreException {
         Object currentColumn = null;
         try {
             ArrayList retval = new ArrayList();
@@ -69,7 +70,8 @@ public class ResultsConverter
                         if (obj == null) {
                             String objectField = sqlResults.getString(alias);
                             currentColumn = objectField;
-                            obj = LiteParser.parse(new ByteArrayInputStream(objectField.getBytes()), os);
+                            obj = LiteParser.parse(new ByteArrayInputStream(
+                                        objectField.getBytes()), os);
                             os.cacheObjectById(idField, obj);
                         }
                         row.add(obj);

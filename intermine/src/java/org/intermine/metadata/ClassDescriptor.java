@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
-import org.flymine.util.Util;
 
 import org.apache.log4j.Logger;
 
@@ -142,8 +141,9 @@ public class ClassDescriptor
 
 
     /**
-     * Get a set of primary key FieldDescriptors for this Class and all its superclasses and interfaces.
-     * Could be a combination of attributes and references (and collections).
+     * Get a set of primary key FieldDescriptors for this Class and all its superclasses and
+     * interfaces. Could be a combination of attributes and references (and collections).
+     *
      * @return set of primary key fields
      * @throws IllegalStateException if model has not been set
      */
@@ -173,6 +173,11 @@ public class ClassDescriptor
         return allFieldDescriptors;
     }
 
+    /**
+     * Sets up the object a little.
+     *
+     * @throws MetaDataException if something goes wrong
+     */
     protected void setAllFieldDescriptors() throws MetaDataException {
         allFieldDescriptors = findAllFieldDescriptors();
     }
@@ -193,12 +198,10 @@ public class ClassDescriptor
                 FieldDescriptor fd = (FieldDescriptor) addIter.next();
                 FieldDescriptor fdAlready = (FieldDescriptor) map.get(fd.getName());
                 if ((fdAlready != null) && (fd != fdAlready)) {
-                    if ((fd instanceof AttributeDescriptor)
-                            && (fdAlready instanceof AttributeDescriptor)
-                            && (((AttributeDescriptor) fd).getType()
-                                .equals(((AttributeDescriptor) fdAlready).getType()))) {
-                        // Compatible, but from different classes. Don't bother adding.
-                    } else {
+                    if (!((fd instanceof AttributeDescriptor)
+                                && (fdAlready instanceof AttributeDescriptor)
+                                && (((AttributeDescriptor) fd).getType()
+                                    .equals(((AttributeDescriptor) fdAlready).getType())))) {
                         throw new MetaDataException("Incompatible similarly named fields inherited"
                                 + " from multiple superclasses and interfaces in " + getName());
                     }
@@ -212,7 +215,8 @@ public class ClassDescriptor
     }
 
     /**
-     * Retrieve a FieldDescriptor by name. The class and all superclasses and interfaces are searched.
+     * Retrieve a FieldDescriptor by name. The class and all superclasses and interfaces are
+     * searched.
      *
      * @param name the name
      * @return the FieldDescriptor

@@ -111,7 +111,8 @@ public class DataLoader
                         if (objs != null) {  // if any collection members in new object store them
                             Iterator objIter = objs.iterator();
                             while (objIter.hasNext()) {
-                                FlyMineBusinessObject subObj = (FlyMineBusinessObject) objIter.next();
+                                FlyMineBusinessObject subObj = (FlyMineBusinessObject)
+                                    objIter.next();
                                 store(subObj, set, true);
                             }
                         }

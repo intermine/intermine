@@ -11,7 +11,6 @@ package org.flymine.objectstore.webservice.ser;
  */
 
 import java.lang.reflect.Method;
-import java.util.List;
 
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.encoding.DeserializationContext;
@@ -122,12 +121,13 @@ public class DefaultDeserializer extends DeserializerImpl
             if (value instanceof ProxyBean) {
                 ProxyBean pb = (ProxyBean) value;
                 Class cls = Class.forName(pb.getType());
-                if (List.class.isAssignableFrom(cls)) {
+                //TODO:
+                //if (List.class.isAssignableFrom(cls)) {
                     //value = new LazyCollection(pb.getFqlQuery().toQuery());
-                } else {
+                //} else {
                     //value = LazyInitializer.getDynamicProxy(cls, pb.getFqlQuery().toQuery(),
                     //                                        pb.getId());
-                }
+                //}
             }
             TypeUtil.setFieldValue(this.value, fieldName, value);
         } catch (Exception e) {

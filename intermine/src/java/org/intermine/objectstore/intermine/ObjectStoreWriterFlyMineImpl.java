@@ -21,12 +21,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
@@ -60,6 +57,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * Connection, grabbed from the provided ObjectStore.
      *
      * @param os an ObjectStoreFlyMineImpl
+     * @throws ObjectStoreException if a problem occurs
      */
     public ObjectStoreWriterFlyMineImpl(ObjectStore os) throws ObjectStoreException {
         super(null, os.getModel());
@@ -77,7 +75,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * @see ObjectStoreFlyMineImpl#getConnection
      */
     protected Connection getConnection() throws SQLException {
-        synchronized(conn) {
+        synchronized (conn) {
             while (connInUse) {
                 /*Exception trace = new Exception();
                 trace.fillInStackTrace();
@@ -112,7 +110,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      */
     protected void releaseConnection(Connection c) {
         if (c == conn) {
-            synchronized(conn) {
+            synchronized (conn) {
                 connInUse = false;
                 LOG.info("Released connection - notifying");
                 conn.notify();
@@ -185,7 +183,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
                 TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldEntry.getValue();
                 if (FlyMineBusinessObject.class.isAssignableFrom(fieldInfo.getType())) {
-                    FlyMineBusinessObject obj = (FlyMineBusinessObject) TypeUtil.getFieldValue(o, fieldInfo.getName());
+                    FlyMineBusinessObject obj = (FlyMineBusinessObject) TypeUtil.getFieldValue(o,
+                            fieldInfo.getName());
                     if ((obj != null) && (obj.getId() == null)) {
                         obj.setId(getSequence());
                     }
@@ -221,7 +220,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 fieldIter = cld.getAllFieldDescriptors().iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
-                    if (! (field instanceof CollectionDescriptor)) {
+                    if (!(field instanceof CollectionDescriptor)) {
                         String fieldName = DatabaseUtil.getColumnName(field);
                         sql.append(", ");
                         sql.append(fieldName);
@@ -237,7 +236,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                         CollectionDescriptor collection = (CollectionDescriptor) field;
                         // Collection - if it's many to many, then write indirection table stuff.
                         if (field.relationType() == FieldDescriptor.M_N_RELATION) {
-                            String indirectTableName = DatabaseUtil.getIndirectionTableName(collection);
+                            String indirectTableName =
+                                DatabaseUtil.getIndirectionTableName(collection);
                             String inwardColumnName =
                                 DatabaseUtil.getInwardIndirectionColumnName(collection);
                             String outwardColumnName =
@@ -288,7 +288,8 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     /**
      * Gets an ID number which is unique in the database.
      *
-     * @return an int
+     * @return an Integer
+     * @throws SQLException if a problem occurs
      */
     public Integer getSequence() throws SQLException {
         Connection c = null;
@@ -360,7 +361,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         Connection c = null;
         try {
             c = getConnection();
-            return ! c.getAutoCommit();
+            return !c.getAutoCommit();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error finding transaction status", e);
         } finally {
@@ -375,7 +376,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         Connection c = null;
         try {
             c = getConnection();
-            if (! c.getAutoCommit()) {
+            if (!c.getAutoCommit()) {
                 throw new ObjectStoreException("beginTransaction called, but already in"
                         + " transaction");
             }

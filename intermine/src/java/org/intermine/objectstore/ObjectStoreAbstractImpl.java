@@ -10,9 +10,7 @@ package org.flymine.objectstore;
  *
  */
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.flymine.metadata.Model;
@@ -21,10 +19,8 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCreator;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.CacheMap;
 import org.flymine.util.PropertiesUtil;
-import org.flymine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -117,7 +113,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * Internal service method for getObjectById.
      *
-     * @param obj the object to get
+     * @param id the ID of the object to get
      * @return an object from the database
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
@@ -180,7 +176,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @see ObjectStore#pilferObjectById
      */
     public FlyMineBusinessObject pilferObjectById(Integer id) {
-        synchronized(cache) {
+        synchronized (cache) {
             return (FlyMineBusinessObject) cache.get(id);
         }
     }

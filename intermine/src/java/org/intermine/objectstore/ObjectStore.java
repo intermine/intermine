@@ -146,7 +146,7 @@ public interface ObjectStore
      * this method throws an exception.
      *
      * @param o an example object
-     * @param fieldnames a List of fieldnames
+     * @param fieldNames a List of fieldnames
      * @return a FlyMineBusinessObject from the objectstore, or null if none fits
      * @throws ObjectStoreException if there are too many matches, or some other error occurs
      */

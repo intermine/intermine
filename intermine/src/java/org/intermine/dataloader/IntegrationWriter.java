@@ -33,7 +33,8 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @return details of database object and which fields can be overwrittern
      * @throws ObjectStoreException if anything goes wrong
      */
-    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj) throws ObjectStoreException;
+    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj)
+        throws ObjectStoreException;
 
     /**
      * Store an object in this ObjectStore.

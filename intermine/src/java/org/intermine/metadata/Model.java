@@ -258,14 +258,14 @@ public class Model
      * or any of its parents. The Class may be a dynamic class - ie not in the model, although
      * all its parents are in the model.
      *
-     * @param a Class
+     * @param c a Class
      * @return a Set of ClassDescriptor objects
      */
     public Set getClassDescriptorsForClass(Class c) {
-        if (! FlyMineBusinessObject.class.isAssignableFrom(c)) {
+        if (!FlyMineBusinessObject.class.isAssignableFrom(c)) {
             return Collections.EMPTY_SET;
         }
-        synchronized(classToClassDescriptorSet) {
+        synchronized (classToClassDescriptorSet) {
             Set retval = (Set) classToClassDescriptorSet.get(c);
             if (retval == null) {
                 retval = new HashSet();
@@ -274,17 +274,18 @@ public class Model
                 stack.push(c);
                 while (!stack.empty()) {
                     Class toAdd = (Class) stack.pop();
-                    if (! done.contains(toAdd)) {
+                    if (!done.contains(toAdd)) {
                         ClassDescriptor cld = getClassDescriptorByName(toAdd.getName());
                         if (cld != null) {
                             retval.add(cld);
                         }
                         Class superClass = toAdd.getSuperclass();
-                        if ((superClass != null) && (FlyMineBusinessObject.class.isAssignableFrom(superClass))) {
+                        if ((superClass != null)
+                                && (FlyMineBusinessObject.class.isAssignableFrom(superClass))) {
                             stack.push(superClass);
                         }
                         Class[] interfaces = toAdd.getInterfaces();
-                        for (int i = 0; i<interfaces.length; i++) {
+                        for (int i = 0; i < interfaces.length; i++) {
                             if (FlyMineBusinessObject.class.isAssignableFrom(interfaces[i])) {
                                 stack.push(interfaces[i]);
                             }
@@ -303,14 +304,14 @@ public class Model
      * or any of its parents. The Class may be a dynamic class - ie not in the model, although
      * all its parents are in the model.
      *
-     * @param a Class
+     * @param c a Class
      * @return a Set of FieldDescriptor objects
      */
     public Set getFieldDescriptorsForClass(Class c) {
-        if (! FlyMineBusinessObject.class.isAssignableFrom(c)) {
+        if (!FlyMineBusinessObject.class.isAssignableFrom(c)) {
             return Collections.EMPTY_SET;
         }
-        synchronized(classToFieldDescriptorSet) {
+        synchronized (classToFieldDescriptorSet) {
             Set retval = (Set) classToFieldDescriptorSet.get(c);
             if (retval == null) {
                 retval = new HashSet();

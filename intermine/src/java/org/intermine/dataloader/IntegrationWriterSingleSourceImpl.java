@@ -10,11 +10,11 @@ package org.flymine.dataloader;
  *
  */
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+//import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+//import java.util.Iterator;
+//import java.util.Map;
 import java.util.Set;
 
 import org.flymine.model.FlyMineBusinessObject;
@@ -55,7 +55,8 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @return details of object in database and which fields can be overwritten
      * @throws ObjectStoreException if error occurs finding object
      */
-    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj) throws ObjectStoreException {
+    public IntegrationDescriptor getByExample(FlyMineBusinessObject obj)
+            throws ObjectStoreException {
         /*Object dbObj = osw.getObjectStore().getObjectByExample(obj);
         IntegrationDescriptor retval = new IntegrationDescriptor();
 

@@ -99,7 +99,7 @@ public class LiteParser
     protected static FlyMineBusinessObject convertToObject(Item item, ObjectStore os)
             throws ClassNotFoundException {
         Class clazz = null;
-        if ((item.getClassName() != null) && (! "".equals(item.getClassName()))) {
+        if ((item.getClassName() != null) && (!"".equals(item.getClassName()))) {
             clazz = Class.forName(item.getClassName());
         }
         List interfaces = StringUtil.tokenize(item.getImplementations());
@@ -107,9 +107,9 @@ public class LiteParser
         List intClasses = new ArrayList();
         while (intIter.hasNext()) {
             String className = (String) intIter.next();
-            if (! "net.sf.cglib.Factory".equals(className)) {
+            if (!"net.sf.cglib.Factory".equals(className)) {
                 Class intClass = Class.forName(className);
-                if ((clazz == null) || (! intClass.isAssignableFrom(clazz))) {
+                if ((clazz == null) || (!intClass.isAssignableFrom(clazz))) {
                     intClasses.add(Class.forName(className));
                 }
             }

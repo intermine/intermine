@@ -114,8 +114,7 @@ public class FlyMineModelParser implements ModelParser
         /**
          * Constructor
          * @param name the fully qualified name of the described class
-         * @param extend the fully qualified super class name if one exists
-         * @param implement a space string of fully qualified interface names
+         * @param supers a space string of fully qualified class names
          * @param isInterface true if describing an interface
          */
         SkeletonClass(String name, String supers, boolean isInterface) {

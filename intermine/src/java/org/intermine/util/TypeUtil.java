@@ -210,7 +210,8 @@ public class TypeUtil
                                     : getterName.substring(3, 4).toLowerCase())
                                 + getterName.substring(4);
                             if (!getter.getName().equals("getClass")) {
-                                FieldInfo info = new FieldInfo(fieldname, getter, setter, proxySetter);
+                                FieldInfo info = new FieldInfo(fieldname, getter, setter,
+                                        proxySetter);
                                 infos.put(fieldname, info);
                             }
                         }
