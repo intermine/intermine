@@ -23,9 +23,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.ItemWriter;
@@ -45,18 +42,17 @@ import org.apache.log4j.Logger;
 
 public class GFF3ConverterTest extends TestCase {
     GFF3Converter converter;
-    String NAMESPACE = "http://www.flymine.org/model/genomic#";
     File f = null;
 
-    OntModel model = getOwlModel();
     GFF3Parser parser = new GFF3Parser();
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
     String infoSourceTitle = "UCSC";
+    String targetNameSpace = "http://www.flymine.org/model/genomic#";
 
     public void setUp() {
-        converter = new GFF3Converter(model, parser, writer, seqClsName, orgAbbrev, infoSourceTitle);
+        converter = new GFF3Converter(parser, writer, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace);
     }
 
     public void tearDown() throws Exception {
@@ -80,16 +76,6 @@ public class GFF3ConverterTest extends TestCase {
 
     }
 
-
-
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(
-             getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
-    }
 
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/GFF3ConverterTest.xml"));
