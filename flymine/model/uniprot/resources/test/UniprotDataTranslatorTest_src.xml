@@ -1,11 +1,17 @@
 <items>
-<item id="0_7" class="http://www.flymine.org/model#NameType">
-<attribute name="name" value="Troponin C-akin-1 protein"/>
+<item id="0_79" class="http://www.flymine.org/model#DbReferenceType">
+<attribute name="evidence" value="EI1"/>
+<attribute name="id" value="180454"/>
+<attribute name="key" value="2"/>
+<attribute name="type" value="NCBI Taxonomy"/>
 </item>
 <item id="0_57" class="http://www.flymine.org/model#DbReferenceType">
 <attribute name="id" value="7926802"/>
 <attribute name="key" value="4"/>
 <attribute name="type" value="PubMed"/>
+</item>
+<item id="0_7" class="http://www.flymine.org/model#NameType">
+<attribute name="name" value="Troponin C-akin-1 protein"/>
 </item>
 <item id="0_60" class="http://www.flymine.org/model#Scope_ReferenceType">
 <attribute name="scope" value="NUCLEOTIDE SEQUENCE."/>
@@ -17,38 +23,67 @@
 <attribute name="name" value="Fruit fly"/>
 <attribute name="type" value="common"/>
 </item>
-<item id="0_64" class="http://www.flymine.org/model#CommentType">
-<attribute name="text" value="Belongs to the 14-3-3 family"/>
-<attribute name="type" value="similarity"/>
+<item id="0_85" class="http://www.flymine.org/model#SourceDataType">
+<collection name="strains">
+<reference ref_id="0_86"/>
+</collection>
 </item>
 <item id="0_14" class="http://www.flymine.org/model#DbReferenceType">
 <attribute name="id" value="7227"/>
 <attribute name="key" value="2"/>
 <attribute name="type" value="NCBI Taxonomy"/>
 </item>
+<item id="0_64" class="http://www.flymine.org/model#CommentType">
+<attribute name="text" value="Belongs to the 14-3-3 family"/>
+<attribute name="type" value="similarity"/>
+</item>
 <item id="0_48" class="http://www.flymine.org/model#DbReferenceType">
 <attribute name="id" value="6239"/>
 <attribute name="key" value="2"/>
 <attribute name="type" value="NCBI Taxonomy"/>
+</item>
+<item id="0_76" class="http://www.flymine.org/model#GeneNameType">
+<attribute name="evidence" value="EI1"/>
+<attribute name="name" value="ENSANGG00000008710"/>
+<attribute name="type" value="ORF"/>
 </item>
 <item id="0_62" class="http://www.flymine.org/model#Strain_SourceDataType">
 <collection name="names">
 <reference ref_id="0_63"/>
 </collection>
 </item>
-<item id="0_1" class="http://www.flymine.org/model#Uniprot">
-<attribute name="xmlns" value="http://uniprot.org/uniprot"/>
-<attribute name="xmlns:xsi" value="http://www.w3.org/2001/XMLSchema-instance"/>
-<attribute name="xsi:schemaLocation" value="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd"/>
-<collection name="entrys">
-<reference ref_id="0_2"/>
-<reference ref_id="0_36"/>
-</collection>
-</item>
 <item id="0_49" class="http://www.flymine.org/model#Lineage_Organism_EntryType">
 <collection name="taxons">
 <reference ref_id="0_50"/>
 <reference ref_id="0_51"/>
+</collection>
+</item>
+<item id="0_81" class="http://www.flymine.org/model#CitationType">
+<attribute name="date" value="2003-04"/>
+<attribute name="db" value="EMBL/GenBank/DDBJ databases"/>
+<attribute name="type" value="submission"/>
+<reference name="authorList" ref_id="0_82"/>
+</item>
+<item id="0_70" class="http://www.flymine.org/model#EntryType">
+<attribute name="created" value="2005-02-01"/>
+<attribute name="dataset" value="TrEMBL"/>
+<attribute name="modified" value="2005-02-01"/>
+<reference name="protein" ref_id="0_73"/>
+<reference name="sequence" ref_id="0_88"/>
+<collection name="accessions">
+<reference ref_id="0_71"/>
+</collection>
+<collection name="genes">
+<reference ref_id="0_75"/>
+</collection>
+<collection name="names">
+<reference ref_id="0_72"/>
+</collection>
+<collection name="organisms">
+<reference ref_id="0_77"/>
+</collection>
+<collection name="references">
+<reference ref_id="0_80"/>
 </collection>
 </item>
 <item id="0_20" class="http://www.flymine.org/model#NameListType">
@@ -62,21 +97,18 @@
 <item id="0_17" class="http://www.flymine.org/model#Taxon_Lineage_Organism_EntryType">
 <attribute name="taxon" value="Drosophila"/>
 </item>
+<item id="0_63" class="http://www.flymine.org/model#Name_Strain_SourceDataType">
+<attribute name="name" value="Bristol N2"/>
+</item>
 <item id="0_43" class="http://www.flymine.org/model#GeneNameType">
 <attribute name="name" value="par-5"/>
 <attribute name="type" value="primary"/>
-</item>
-<item id="0_63" class="http://www.flymine.org/model#Name_Strain_SourceDataType">
-<attribute name="name" value="Bristol N2"/>
 </item>
 <item id="0_54" class="http://www.flymine.org/model#NameListType">
 <collection name="persons">
 <reference ref_id="0_55"/>
 <reference ref_id="0_56"/>
 </collection>
-</item>
-<item id="0_51" class="http://www.flymine.org/model#Taxon_Lineage_Organism_EntryType">
-<attribute name="taxon" value="Caenorhabditis"/>
 </item>
 <item id="0_35" class="http://www.flymine.org/model#Sequence_EntryType">
 <attribute name="checksum" value="8FCDE6E575950F5F"/>
@@ -85,15 +117,19 @@
 <attribute name="modified" value="2001-10-16"/>
 <attribute name="sequence" value="MGQAKKVSSALSKLFVYGALKYGQPSNSILASSGNGFAKFWCKATTTQKLPLVIATRYNIPFLLNKPGVGYYVTGEIYEVDDRMLNSLDNLEDCEEIYTREMHDMNIGVGEGTVPCWVYLLQKYPENLLSLRYLSSYENSTTHPYIMRHRRTHKHPAQDDLTYEAQN"/>
 </item>
+<item id="0_51" class="http://www.flymine.org/model#Taxon_Lineage_Organism_EntryType">
+<attribute name="taxon" value="Caenorhabditis"/>
+</item>
+<item id="0_86" class="http://www.flymine.org/model#Strain_SourceDataType">
+<attribute name="evidence" value="EI1"/>
+<collection name="names">
+<reference ref_id="0_87"/>
+</collection>
+</item>
 <item id="0_58" class="http://www.flymine.org/model#DbReferenceType">
 <attribute name="id" value="95011616"/>
 <attribute name="key" value="5"/>
 <attribute name="type" value="MEDLINE"/>
-</item>
-<item id="0_6" class="http://www.flymine.org/model#ProteinType">
-<collection name="names">
-<reference ref_id="0_7"/>
-</collection>
 </item>
 <item id="0_67" class="http://www.flymine.org/model#DbReferenceType">
 <attribute name="id" value="WBGene00003920"/>
@@ -101,6 +137,16 @@
 <attribute name="type" value="WormBase"/>
 <collection name="propertys">
 <reference ref_id="0_68"/>
+</collection>
+</item>
+<item id="0_6" class="http://www.flymine.org/model#ProteinType">
+<collection name="names">
+<reference ref_id="0_7"/>
+</collection>
+</item>
+<item id="0_82" class="http://www.flymine.org/model#NameListType">
+<collection name="persons">
+<reference ref_id="0_83"/>
 </collection>
 </item>
 <item id="0_47" class="http://www.flymine.org/model#OrganismNameType">
@@ -148,12 +194,33 @@
 <attribute name="type" value="gene designation"/>
 <attribute name="value" value="Tina-1"/>
 </item>
+<item id="0_75" class="http://www.flymine.org/model#Gene_EntryType">
+<collection name="names">
+<reference ref_id="0_76"/>
+</collection>
+</item>
+<item id="0_88" class="http://www.flymine.org/model#Sequence_EntryType">
+<attribute name="checksum" value="7088375B365BE04A"/>
+<attribute name="length" value="838"/>
+<attribute name="mass" value="96122"/>
+<attribute name="modified" value="2005-02-01"/>
+<attribute name="sequence" value="MEEAGPSSEIPAGLDEAKEVHRPIDKNQCIRKHFLNKLQRIEEALSGTSLGDTTFLKGCANRLTSLASEYEKWHQTVLETADMENFEDGEEEYARFEKRH"/>
+</item>
 <item id="0_69" class="http://www.flymine.org/model#Sequence_EntryType">
 <attribute name="checksum" value="B9350039628341AF"/>
 <attribute name="length" value="248"/>
 <attribute name="mass" value="28163"/>
 <attribute name="modified" value="1995-11-01"/>
 <attribute name="sequence" value="MSDTVEELVQRAKLAEQAERYDDMAAAMKKVTEQGQELSNEERNLLSVAYKNVVGARRSSWRVISSIEQKTEGSEKKQQLAKEYRVKVEQELNDICQDVLKLLDEFLIVKAGAAESKAFYLKMKGDYYRYLAEVASEDRAAVVEKSQKAYQEALDIAKDKMQPTHPIRLGLALNFSVFYYEILNTPEHACQLAKQAFDDAIAELDTLNEDSYKDSTLIMQLLRDNLTLWTSDVGAEDQEQEGNQEAGN"/>
+</item>
+<item id="0_80" class="http://www.flymine.org/model#ReferenceType">
+<attribute name="evidence" value="EI1"/>
+<attribute name="key" value="3"/>
+<reference name="citation" ref_id="0_81"/>
+<reference name="source" ref_id="0_85"/>
+<collection name="scopes">
+<reference ref_id="0_84"/>
+</collection>
 </item>
 <item id="0_66" class="http://www.flymine.org/model#PropertyType">
 <attribute name="type" value="protein sequence ID"/>
@@ -221,6 +288,9 @@
 <item id="0_56" class="http://www.flymine.org/model#PersonType">
 <attribute name="name" value="Shakes D.C."/>
 </item>
+<item id="0_84" class="http://www.flymine.org/model#Scope_ReferenceType">
+<attribute name="scope" value="NUCLEOTIDE SEQUENCE."/>
+</item>
 <item id="0_61" class="http://www.flymine.org/model#SourceDataType">
 <collection name="strains">
 <reference ref_id="0_62"/>
@@ -237,25 +307,6 @@
 <item id="0_30" class="http://www.flymine.org/model#CommentType">
 <attribute name="text" value="Belongs to the UPF0131 family"/>
 <attribute name="type" value="similarity"/>
-</item>
-<item id="0_23" class="http://www.flymine.org/model#DbReferenceType">
-<attribute name="id" value="20196006"/>
-<attribute name="key" value="5"/>
-<attribute name="type" value="MEDLINE"/>
-</item>
-<item id="0_10" class="http://www.flymine.org/model#GeneNameType">
-<attribute name="name" value="CG2803"/>
-<attribute name="type" value="ORF"/>
-</item>
-<item id="0_46" class="http://www.flymine.org/model#Organism_EntryType">
-<attribute name="key" value="1"/>
-<reference name="lineage" ref_id="0_49"/>
-<collection name="dbReferences">
-<reference ref_id="0_48"/>
-</collection>
-<collection name="names">
-<reference ref_id="0_47"/>
-</collection>
 </item>
 <item id="0_36" class="http://www.flymine.org/model#EntryType">
 <attribute name="created" value="1995-11-01"/>
@@ -286,6 +337,39 @@
 <collection name="references">
 <reference ref_id="0_52"/>
 </collection>
+</item>
+<item id="0_46" class="http://www.flymine.org/model#Organism_EntryType">
+<attribute name="key" value="1"/>
+<reference name="lineage" ref_id="0_49"/>
+<collection name="dbReferences">
+<reference ref_id="0_48"/>
+</collection>
+<collection name="names">
+<reference ref_id="0_47"/>
+</collection>
+</item>
+<item id="0_23" class="http://www.flymine.org/model#DbReferenceType">
+<attribute name="id" value="20196006"/>
+<attribute name="key" value="5"/>
+<attribute name="type" value="MEDLINE"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model#Uniprot">
+<collection name="entrys">
+<reference ref_id="0_2"/>
+<reference ref_id="0_36"/>
+<reference ref_id="0_70"/>
+</collection>
+</item>
+<item id="0_10" class="http://www.flymine.org/model#GeneNameType">
+<attribute name="name" value="CG2803"/>
+<attribute name="type" value="ORF"/>
+</item>
+<item id="0_71" class="http://www.flymine.org/model#Accession_EntryType">
+<attribute name="accession" value="Q5TME6"/>
+</item>
+<item id="0_78" class="http://www.flymine.org/model#OrganismNameType">
+<attribute name="name" value="Anopheles gambiae str. PEST"/>
+<attribute name="type" value="scientific"/>
 </item>
 <item id="0_68" class="http://www.flymine.org/model#PropertyType">
 <attribute name="type" value="gene designation"/>
@@ -342,12 +426,24 @@
 <item id="0_5" class="http://www.flymine.org/model#Name_EntryType">
 <attribute name="name" value="TINA1_DROME"/>
 </item>
+<item id="0_77" class="http://www.flymine.org/model#Organism_EntryType">
+<attribute name="key" value="1"/>
+<collection name="dbReferences">
+<reference ref_id="0_79"/>
+</collection>
+<collection name="names">
+<reference ref_id="0_78"/>
+</collection>
+</item>
 <item id="0_55" class="http://www.flymine.org/model#PersonType">
 <attribute name="name" value="Wang W."/>
 </item>
 <item id="0_12" class="http://www.flymine.org/model#OrganismNameType">
 <attribute name="name" value="Drosophila melanogaster"/>
 <attribute name="type" value="scientific"/>
+</item>
+<item id="0_74" class="http://www.flymine.org/model#NameType">
+<attribute name="name" value="ENSANGP00000011199"/>
 </item>
 <item id="0_2" class="http://www.flymine.org/model#EntryType">
 <attribute name="created" value="2001-10-16"/>
@@ -380,6 +476,12 @@
 <reference ref_id="0_18"/>
 </collection>
 </item>
+<item id="0_73" class="http://www.flymine.org/model#ProteinType">
+<attribute name="evidence" value="EI1"/>
+<collection name="names">
+<reference ref_id="0_74"/>
+</collection>
+</item>
 <item id="0_29" class="http://www.flymine.org/model#CommentType">
 <attribute name="text" value="In embryos, expression is seen in heart cells of the dorsal vessel and hindgut visceral mesoderm"/>
 <attribute name="type" value="tissue specificity"/>
@@ -395,8 +497,17 @@
 <reference ref_id="0_13"/>
 </collection>
 </item>
+<item id="0_72" class="http://www.flymine.org/model#Name_EntryType">
+<attribute name="name" value="Q5TME6_ANOGA"/>
+</item>
+<item id="0_87" class="http://www.flymine.org/model#Name_Strain_SourceDataType">
+<attribute name="name" value="PEST"/>
+</item>
 <item id="0_25" class="http://www.flymine.org/model#Scope_ReferenceType">
 <attribute name="scope" value="NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]."/>
+</item>
+<item id="0_83" class="http://www.flymine.org/model#PersonType">
+<attribute name="name" value="Anopheles Genome Sequencing Consortium"/>
 </item>
 <item id="0_9" class="http://www.flymine.org/model#GeneNameType">
 <attribute name="name" value="Tina-1"/>
