@@ -27,7 +27,7 @@ public class CreateIndexesTaskTest extends TestCase
     }
     
     //test defined keys and N-1 keys
-    public void testProcessClassDescriptor1() throws Exception {
+    public void testCreateStandardIndexes1() throws Exception {
         List expected = new ArrayList();
         expected.add("drop index Department__key");
         expected.add("create index Department__key on Department(name, companyId, id)");
@@ -35,12 +35,12 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index Department__company on Department(companyId, id)");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
-        task.processClassDescriptor(m.getClassDescriptorByName("org.intermine.model.testmodel.Department"));
+        task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Department"));
         assertEquals(expected, task.sqlStatements);
     }
 
     //test indirection table columns
-    public void testProcessClassDescriptor2() throws Exception {
+    public void testCreateStandardIndexes2() throws Exception {
         List expected = new ArrayList();
         expected.add("drop index HasSecretarysSecretarys__Secretarys");
         expected.add("drop index HasSecretarysSecretarys__HasSecretarys");
@@ -48,18 +48,27 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index HasSecretarysSecretarys__HasSecretarys on HasSecretarysSecretarys(HasSecretarys, Secretarys)");
 
         DummyCreateIndexesTask task = new DummyCreateIndexesTask();
-        task.processClassDescriptor(m.getClassDescriptorByName("org.intermine.model.testmodel.HasSecretarys"));
+        task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.HasSecretarys"));
         assertEquals(expected, task.sqlStatements);
 
         expected = new ArrayList();
         expected.add("drop index Secretary__key");
         expected.add("create index Secretary__key on Secretary(name, id)");
         task = new DummyCreateIndexesTask();
-        task.processClassDescriptor(m.getClassDescriptorByName("org.intermine.model.testmodel.Secretary"));
+        task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Secretary"));
+        assertEquals(expected, task.sqlStatements);
+    } 
+
+    public void testCreateAttributeIndexes() throws Exception {
+        List expected = new ArrayList();
+        expected.add("create index HasSecretarysSecretarys__HasSecretarys on HasSecretarysSecretarys(HasSecretarys, Secretarys)");
+
+        DummyCreateIndexesTask task = new DummyCreateIndexesTask();
+        task.createAttributeIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Department"));
         assertEquals(expected, task.sqlStatements);
     }
 
-   class DummyCreateIndexesTask extends CreateIndexesTask {
+    class DummyCreateIndexesTask extends CreateIndexesTask {
         protected List sqlStatements = new ArrayList();
         protected void execute(String sql) throws SQLException {
             sqlStatements.add(sql);
