@@ -351,56 +351,12 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
-//      private String generateHashCodeAndEquals(MClassifier cls) {
-//          StringBuffer hashCode = new StringBuffer();
-//          StringBuffer equals = new StringBuffer();     
-
-//          Collection keyFields = getKeys(cls);
-//          if (keyFields.size() > 0) {
-//              hashCode.append(INDENT + "public int hashCode() { return ");
-//              equals.append(INDENT + "public boolean equals(Object o) { return o instanceof " + cls.getName() + " && ");
-//              Iterator iter = keyFields.iterator();
-//              while (iter.hasNext()) {
-//                  String field = (String) iter.next();
-//                  if (getAllAttributes(cls).containsKey(field)) { // not association (and therefore not a business object)
-//                      String fieldType = ((MAttribute) getAllAttributes(cls).get(field)).getType().getName();
-//                      if (isPrimitive(fieldType)) {
-//                          if (fieldType.equals("boolean")) {
-//                              hashCode.append("(" + field + " ? 1 : 0)");
-//                          } else {
-//                              hashCode.append(field);
-//                          }
-//                          equals.append("((" + cls.getName() + ")o)." + field + "==" + field);
-//                      }
-//                  } else {
-//                     //hashCode.append(field + ".hashCode()");
-//                     //equals.append("((" + cls.getName() + ")o)." + field + ".equals(" + field + ")");
-//                     //TODO use the previous line in preference to the following two...
-//                     //our "key" fields can be null at present - if they are then don't do comparison
-//                      hashCode.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
-//                      String thisField = "((" + cls.getName() + ")o)." + field;
-//                      equals.append("(" + thisField + " == null ? (" + field + " == null) : "
-//                                    + thisField + ".equals(" + field + "))");
-//                  }
-//                  if (iter.hasNext()) {
-//                      hashCode.append(" ^ ");
-//                      equals.append(" && ");
-//                  }
-//              }
-//              hashCode.append("; }\n");
-//              equals.append("; }\n");
-//          }
-
-//          return hashCode.toString() + equals.toString();
-//      }
-
     private String generateEquals(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
 
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public boolean equals(Object o) { ")
-                .append("return (o instanceof " + cls.getName() + " && ");
+            sb.append(INDENT + "public boolean equals(Object o) { return o instanceof " + cls.getName() + " && ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
@@ -419,7 +375,37 @@ public class JavaModelOutput extends ModelOutput
                     sb.append(" && ");
                 }
             }
-            sb.append("); }\n");
+            sb.append("; }\n");
+        }
+        return sb.toString();
+    }
+
+    private String generateHashCode(MClassifier cls) {
+        StringBuffer sb = new StringBuffer();
+
+        Collection keyFields = getKeys(cls);
+        if (keyFields.size() > 0) {
+            sb.append(INDENT + "public int hashCode() { return ");
+            Iterator iter = keyFields.iterator();
+            while (iter.hasNext()) {
+                String field = (String) iter.next();
+                if (getAllAttributes(cls).containsKey(field) 
+                    && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
+                    if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
+                        sb.append("(" + field + " ? 0 : 1)");
+                    } else {
+                        sb.append(field);
+                    }
+                } else {
+                    //sb.append(field + ".hashCode()");
+                    //TODO same as above
+                    sb.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
+                }
+                if (iter.hasNext()) {
+                    sb.append(" ^ ");
+                }
+            }
+            sb.append("; }\n");
         }
         return sb.toString();
     }
@@ -429,7 +415,7 @@ public class JavaModelOutput extends ModelOutput
 
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public String toString() {")
+            sb.append(INDENT + "public String toString() { ")
                 .append("return \"" + cls.getName() + " [\"")
                 .append(OJB ? "+id" : "+get" + generateCapitalName(cls.getName()) + "Id()")
                 .append("+\"] \"+");
@@ -449,6 +435,8 @@ public class JavaModelOutput extends ModelOutput
     private StringBuffer generateClassifierEnd(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
         sb.append(generateEquals(cls))
+            .append("\n")
+            .append(generateHashCode(cls))
             .append("\n")
             .append(generateToString(cls))
             .append("}");
