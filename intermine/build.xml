@@ -70,6 +70,7 @@
     <include name="ant*.jar"/>
     <include name="castor*.jar" />
     <include name="cglib*.jar" />
+    <include name="poi-2.5-final-20040302.jar" />
     <include name="commons-collections*.jar" />
     <include name="commons-dbcp*.jar" />
     <include name="commons-lang*.jar" />
