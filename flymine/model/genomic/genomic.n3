@@ -204,6 +204,10 @@
 :AnalysisResult__bioEntity a owl:ObjectProperty ;
     owl:inverseOf :BioEntity__analysisResults .
 
+:AnalysisResult__source a owl:ObjectProperty;
+    rdfs:domain :AnalysisResult;
+    rdfs:range :InfoSource.
+
 :ComputationalResult a owl:Class ;
     rdfs:subClassOf :AnalysisResult .
 
