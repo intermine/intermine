@@ -28,6 +28,24 @@ public class Item
     protected Map references = new HashMap();
     protected Map collections = new HashMap();
 
+
+    /**
+     * Construct an item.
+     */
+    public Item() { }
+
+    /**
+     * Construct an item.
+     * @param identifier item identifier
+     * @param className name of described class
+     * @param implementations names of implemented classes
+     */
+    public Item(String identifier, String className, String implementations) {
+        this.identifier = identifier;
+        this.className = className;
+        this.implementations = implementations;
+    }
+
     /**
      * Set the identifier of this item
      *
@@ -151,7 +169,7 @@ public class Item
     /**
      * Return true if named reference exists
      *
-     * @param referenceName the attribute name
+     * @param referenceName the reference name
      * @return true if the reference exists
      */
     public boolean hasReference(String referenceName) {
@@ -174,6 +192,16 @@ public class Item
      */
     public Collection getCollections() {
         return collections.values();
+    }
+
+    /**
+     * Return true if named collection exists
+     *
+     * @param collectionName the collection name
+     * @return true if the collection exists
+     */
+    public boolean hasCollection(String collectionName) {
+        return collections.containsKey(collectionName);
     }
 
     /**
