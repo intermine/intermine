@@ -79,10 +79,22 @@ function setBorderStyle(path, style)
                 <img src="images/blank.png" alt=" "/>
               </c:otherwise>
             </c:choose>
-            <c:if test="${viewPaths[node.path]}">
-              <span class="showing" id="browser${fn:replace(node.path,".","")}"
-                    onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
-                    onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
+            <%-- construct the real path for this node --%>
+            <c:choose>
+              <c:when test="${prefix == null}">
+                <c:set var="fullpath" value="${node.path}"/>
+              </c:when>
+              <c:when test="${prefix != null && node.indentation == 0}">
+                <c:set var="fullpath" value="${prefix}"/>
+              </c:when>
+              <c:otherwise>
+                <c:set var="fullpath" value="${prefix}.${fn:substringAfter(node.path,'.')}"/>
+              </c:otherwise>
+            </c:choose>
+            <c:if test="${viewPaths[fullpath]}">
+              <span class="showing" id="browser${fn:replace(fullpath,".","")}"
+                    onMouseOver="enterPath('${fn:replace(fullpath,".","")}')"
+                    onMouseOut="exitPath('${fn:replace(fullpath,".","")}')">
             </c:if>
             <c:if test="${node.indentation > 0}">
               <span class="metadata">
@@ -108,7 +120,7 @@ function setBorderStyle(path, style)
                 </fmt:message>
               </c:otherwise>
             </c:choose>
-            <c:if test="${viewPaths[node.path]}">
+            <c:if test="${viewPaths[fullpath]}">
               </span>
             </c:if>
             <html:link action="/mainChange?method=addToView&path=${node.path}"
