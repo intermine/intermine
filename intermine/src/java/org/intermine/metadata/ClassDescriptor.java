@@ -152,22 +152,26 @@ public class ClassDescriptor
     }
 
     /**
-     * Gets the FieldDescriptors for this class (but not subclasses)
+     * Gets the FieldDescriptors for this class (but not superclasses)
      * @return set of FieldDescriptors
      */
     public Set getFieldDescriptors() {
         return new LinkedHashSet(fieldDescriptors.values());
     }
 
-//     public Set getAllFieldDescriptors() {
-//         if (superclassDescriptor == null) {
-//             return getFieldDescriptors();
-//         } else {
-//             Set set = new LinkedHashSet(getFieldDescriptors());
-//             set.addAll(superclassDescriptor.getAllFieldDescriptors());
-//             return set;
-//         }
-//     }
+    /**
+     * Gets the FieldDescriptors for this class and all superclasses
+     * @return set of FieldDescriptors
+     */
+    public Set getAllFieldDescriptors() {
+        if (superclassDescriptor == null) {
+            return getFieldDescriptors();
+        } else {
+            Set set = new LinkedHashSet(getFieldDescriptors());
+            set.addAll(superclassDescriptor.getAllFieldDescriptors());
+            return set;
+        }
+    }
 
     /**
      * Retrieve a FieldDescriptor by name
