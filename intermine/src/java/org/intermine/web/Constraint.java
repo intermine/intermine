@@ -16,6 +16,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 /**
  * A simple constraint representation
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class Constraint
 {
