@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @author Kim Rutherford
  */
 
-public class InterMineAction extends DispatchAction
+public class InterMineDispatchAction extends DispatchAction
 {
     /**
      * Add the given ActionMessage as a message for this Action
