@@ -9,7 +9,7 @@
   <fmt:message key="${pageDescription}" var="description"/>
   <c:if test="${!empty description}">
     <div class="description">
-      <c:out value="${description}"/>
+      <c:out value="${description}" escapeXml="false"/>
     </div>
     <br/>
   </c:if>
