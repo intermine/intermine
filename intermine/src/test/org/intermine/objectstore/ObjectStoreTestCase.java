@@ -313,6 +313,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeB2") } };
         results.put("LargeBagConstraint", toList(r));
+        results.put("LargeBagConstraintUsingTable", toList(r));
     }
 
     /**
