@@ -143,6 +143,28 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
+    public void testSetOrganismDbId() throws Exception {
+        String srcNs = "http://www.flymine.org/model/ensembl#";
+        Item gene = createItem(srcNs + "gene", "1_1", "");
+        Item transcript = createItem(srcNs + "transcript", "2_1", "");
+        transcript.addReference(new Reference("gene", "1_1"));
+        transcript.addReference(new Reference("translation", "4_1"));
+        Item stableId = createItem(srcNs + "gene_stable_id", "3_1", "");
+        stableId.addAttribute(new Attribute("stable_id", "FBgn1001"));
+        stableId.addReference(new Reference("gene", "1_1"));
+
+        Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, stableId, transcript})));
+        EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
+                                                                     getOwlModel(), tgtNs, "WB");
+
+        Item exp1 = createItem(tgtNs + "Gene", "1_1", "");
+        exp1.addAttribute(new Attribute("organismDbId", "FBgn1001"));
+        exp1.addAttribute(new Attribute("identifier", "FBgn1001"));
+        exp1.addReference(new Reference("organism", "-1_1"));
+        exp1.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
+        assertEquals(Collections.singleton(exp1), translator.translateItem(gene));
+    }
+
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
     }
