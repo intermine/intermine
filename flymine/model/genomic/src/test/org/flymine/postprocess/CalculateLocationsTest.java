@@ -71,13 +71,13 @@ public class CalculateLocationsTest extends TestCase {
                                                     .getSequence());
         LOG.error("created results");
         Iterator resIter = res.iterator();
-//        osw.beginTransaction();
+        //        osw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             LOG.error("deleting: " +o.getId());
             osw.delete(o);
         }
-//        osw.commitTransaction();
+        //        osw.commitTransaction();
         LOG.error("committed transaction");
         osw.close();
         LOG.error("closed objectstore");
@@ -107,7 +107,7 @@ public class CalculateLocationsTest extends TestCase {
 
         Object [] objects = new Object[] {
             contig1, contig2,
-            exon1, exon2,
+            exon1, exon2, 
             exon1OnContig1, exon2OnContig1, exon2OnContig2
         };
 
@@ -186,6 +186,63 @@ public class CalculateLocationsTest extends TestCase {
         assertEquals(expectedResExon2OnContig2Item, resExon2OnContig2Item);
     }
 
+    public void testCreateSpanningLocations() throws Exception {
+        Exon exon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon1.setId(new Integer(107));
+
+        Exon exon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon2.setId(new Integer(108));
+
+        Location exon1OnChr = createLocation(getChromosome(), exon1, 1, 51, 100, Location.class);
+        exon1OnChr.setId(new Integer(1010));
+        Location exon2OnChr = createLocation(getChromosome(), exon2, 1, 201, 250, Location.class);
+        exon1OnChr.setId(new Integer(1011));
+        
+        Transcript trans1 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        trans1.setId(new Integer(201));
+
+        Transcript trans2 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        trans2.setId(new Integer(202));
+        
+        Location trans2OnChr = createLocation(getChromosome(), trans2, 1, 61, 300, Location.class);
+        exon1OnChr.setId(new Integer(1011));
+
+        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        gene.setId(new Integer(301));
+
+        exon1.setTranscripts(Arrays.asList(new Object [] {trans1}));
+        exon2.setTranscripts(Arrays.asList(new Object [] {trans1}));
+        trans1.setGene(gene);
+        trans2.setGene(gene);
+
+        Set toStore = new HashSet(Arrays.asList(new Object[] {
+                                                    getChromosome(), gene, trans1, trans2,
+                                                    exon1, exon2,
+                                                    exon1OnChr, exon2OnChr
+                                                }));
+
+        Iterator i = toStore.iterator();
+        while (i.hasNext()) {
+            osw.store((InterMineObject) i.next());
+        }
+
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
+
+        // bug - does nothing at the moment:
+        cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
+
+        ObjectStore os = osw.getObjectStore();
+        Transcript resTrans1 = (Transcript) os.getObjectById(new Integer(201));
+        
+        assertEquals(1, resTrans1.getObjects().size());
+        Location resTrans1Location = (Location) resTrans1.getObjects().get(0);
+        assertEquals(51, resTrans1Location.getStart().intValue());
+        assertEquals(250, resTrans1Location.getEnd().intValue());
+    }
+    
     public void testSupercontigToChromosome() throws Exception {
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     getChromosome(), getChromosomeBand(),
@@ -2637,7 +2694,7 @@ public class CalculateLocationsTest extends TestCase {
             bandOnChr = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
             bandOnChr.setObject(getChromosome());
             bandOnChr.setSubject(getChromosomeBand());
-            bandOnChr.setStrand(new Integer(1));
+            bandOnChr.setStrand(new Integer(0));
             bandOnChr.setStart(new Integer(1001));
             bandOnChr.setEnd(new Integer(2000));
             bandOnChr.setId(new Integer(103));
