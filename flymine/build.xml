@@ -44,6 +44,7 @@
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
   <property name="build.resources.test" location="${build.resources}/test"/>
+  <property name="build.test" location="${build}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.src.java" location="${build}/javasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
@@ -167,6 +168,7 @@
 
   <path id="test.class.path">
     <pathelement path="${build.resources.test}"/>
+    <pathelement location="${build.test}"/>
     <path refid="models.class.path"/>
   </path>
 
@@ -185,6 +187,7 @@
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.resources.test}"/>
+    <mkdir dir="${build.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.model}/fulldata" />
     <mkdir dir="${build.src.java}"/>
@@ -215,6 +218,25 @@
     <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false" overwrite="true">
       <fileset dir="${resources}/test/"/>
     </copy>
+
+    <copy todir="${build.src.test}">
+      <fileset dir="${src.test}">
+        <include name="**/*.java"/>
+      </fileset>
+    </copy>
+    <depend srcdir="${build.src.test}" destdir="${build.test}" closure="yes" dump="yes">
+      <classpath>
+        <pathelement path="${build.java}"/>
+      </classpath>
+    </depend>
+  </target>
+
+  <target name="compile-test" depends="prepare-test"
+          description="compile the java test source" >
+    <javac destdir="${build.test}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+      <classpath refid="test.class.path"/>
+      <src path="${build.src.test}" />
+    </javac>
   </target>
 
   <target name="prepare-dist">
@@ -1526,7 +1548,6 @@
     </ant>
   </target>
 
-
   <target name="translate-uniprot" depends="prepare-build-model, compile-uniprot-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -2290,6 +2311,31 @@
   </target>
 
   <!-- ============================================================================== -->
+
+  <!-- Targets for the non-model Java -->
+
+
+  <target name="compile-flymine-java" depends="prepare">
+    <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+      <classpath refid="base.class.path"/>
+      <src path="${build.src.java}"/>
+      <src path="${src.java}"/>
+    </javac>
+  </target>
+
+  <target name="test-flymine-java" depends="compile-flymine-java, compile-test">
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
+      <classpath refid="test.class.path"/>
+      <formatter type="xml" />
+      <batchtest fork="no" todir="${results.junit}">
+        <fileset dir="${build.test}" includes="**/*Test.class">
+          <depend targetdir="${results.junit}">
+            <mapper type="package" from="*.class" to="TEST-*.xml" />
+          </depend>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
 
   <!-- JAVADOC TARGETS -->
 
