@@ -1027,8 +1027,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
     }
 
-    static final String SEQUENCE_NAME = "objectstore_unique_integer";
-
     /**
      * Return a unique integer from a SEQUENCE in the database.
      *
