@@ -142,7 +142,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
                     if (stableId != null) {
-                        moveField(stableId, tgtItem, "stable_id", "name");
+                        moveField(stableId, tgtItem, "stable_id", "identifier");
                     }
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     // more than one item representing same exon -> store up in map
@@ -155,7 +155,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 } else if ("simple_feature".equals(className)) {
                     tgtItem.addReference(getOrgRef());
-                    tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
+                    tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("prediction_transcript".equals(className)) {
@@ -168,7 +168,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
                                  "repeat_consensus");
                     promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
-                    promoteField(tgtItem, srcItem, "name", "repeat_consensus", "repeat_name");
+                    promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
@@ -176,10 +176,10 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
                     if (stableId != null) {
-                         moveField(stableId, tgtItem, "stable_id", "name");
+                         moveField(stableId, tgtItem, "stable_id", "identifier");
                     }
-                    if (!tgtItem.hasAttribute("name")) {
-                        tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
+                    if (!tgtItem.hasAttribute("identifier")) {
+                        tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
                     }
                     // display_xref is symbol (?)
                     //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
@@ -202,14 +202,15 @@ public class EnsemblDataTranslator extends DataTranslator
                     moveField(srcItem, transRelation, "translation", "subject");
                     result.add(transRelation);
                     // display_labels are not unique
-                    //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
-                    // if no name set the identifier as name (primary key)
-                    if (!tgtItem.hasAttribute("name")) {
+                    //promoteField(tgtItem, srcItem, "identifie", "display_xref", "display_label");
+                    // if no identifier set the identifier as name (primary key)
+                    if (!tgtItem.hasAttribute("identifier")) {
                         Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
                         if (stableId != null) {
-                            moveField(stableId, tgtItem, "stable_id", "name");
+                            moveField(stableId, tgtItem, "stable_id", "identifier");
                         } else {
-                            tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
+                            tgtItem.addAttribute(new Attribute("identifier",
+                                                               srcItem.getIdentifier()));
                         }
                     }
                 // stable_ids become syonyms, need ensembl Database as source
@@ -329,7 +330,7 @@ public class EnsemblDataTranslator extends DataTranslator
             chrLoc.addReference(new Reference("subject", supercontig.getIdentifier()));
             chrLoc.addReference(new Reference("object", chrId));
 
-            supercontig.addAttribute(new Attribute("name", name));
+            supercontig.addAttribute(new Attribute("identifier", name));
             ReferenceList subjects = new ReferenceList();
             subjects.setName("subjects");
             supercontig.addCollection(subjects);
@@ -357,7 +358,7 @@ public class EnsemblDataTranslator extends DataTranslator
         while (i.hasNext()) {
             Item sc = (Item) i.next();
             results.add(sc);
-            results.add((Item) scLocs.get(sc.getAttribute("name").getValue()));
+            results.add((Item) scLocs.get(sc.getAttribute("identifier").getValue()));
         }
         return results;
     }

@@ -2,7 +2,7 @@
 <items>
   <item id="13_8847" class="http://www.flymine.org/model/genomic#Clone">
     <attribute name="htgPhase" value="2"/>
-    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="identifier" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="synonyms">
       <reference ref_id="-1_14"/>
@@ -34,7 +34,7 @@
     <reference name="source" ref_id="-1_2"/>
   </item>
   <item id="19_160" class="http://www.flymine.org/model/genomic#ChromosomeBand">
-    <attribute name="name" value="1A"/>
+    <attribute name="identifier" value="1A"/>
     <attribute name="stain" value=""/>
     <reference name="chromosome" ref_id="18_1"/>
     <reference name="organism" ref_id="-1_1"/>
@@ -43,7 +43,7 @@
     </collection>
   </item>
   <item id="14_2077" class="http://www.flymine.org/model/genomic#TRNA">
-    <attribute name="name" value="14_2077"/>
+    <attribute name="identifier" value="14_2077"/>
     <reference name="contig" ref_id="1_11167"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
@@ -56,7 +56,7 @@
   </item>
   <item id="13_8846" class="http://www.flymine.org/model/genomic#Clone">
     <attribute name="htgPhase" value="3"/>
-    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="identifier" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="synonyms">
       <reference ref_id="-1_13"/>
@@ -82,7 +82,7 @@
   </item>
   <item id="1_11169" class="http://www.flymine.org/model/genomic#Contig">
     <attribute name="length" value="25020"/>
-    <attribute name="name" value="AAAB01008846_377"/>
+    <attribute name="identifier" value="AAAB01008846_377"/>
     <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
     <reference name="clone" ref_id="13_8848"/>
     <reference name="organism" ref_id="-1_1"/>
@@ -112,7 +112,7 @@
     <attribute name="algorithm" value="ensembl"/>
   </item>
   <item id="0_2" class="http://www.flymine.org/model/genomic#Exon">
-    <attribute name="name" value="ENSANGE00000019936"/>
+    <attribute name="identifier" value="ENSANGE00000019936"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_2"/>
@@ -123,7 +123,7 @@
   </item>
   <item id="1_11167" class="http://www.flymine.org/model/genomic#Contig">
     <attribute name="length" value="25020"/>
-    <attribute name="name" value="AAAB01008846_375"/>
+    <attribute name="identifier" value="AAAB01008846_375"/>
     <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
     <reference name="clone" ref_id="13_8846"/>
     <reference name="organism" ref_id="-1_1"/>
@@ -132,7 +132,7 @@
     </collection>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Exon">
-    <attribute name="name" value="ENSANGE00000019935"/>
+    <attribute name="identifier" value="ENSANGE00000019935"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_2"/>
@@ -176,7 +176,7 @@
   <item id="24_78815" class="http://www.flymine.org/model/genomic#RepeatRegion">
     <attribute name="consensus" value="N"/>
     <attribute name="end" value="23"/>
-    <attribute name="name" value="GC_rich"/>
+    <attribute name="identifier" value="GC_rich"/>
     <attribute name="start" value="1"/>
     <attribute name="type" value="Low_complexity"/>
     <reference name="contig" ref_id="1_11167"/>
@@ -196,7 +196,7 @@
     <reference name="subject" ref_id="4_1"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="name" value="ENSANGG00000017446"/>
+    <attribute name="identifier" value="ENSANGG00000017446"/>
     <attribute name="organismDbId" value="FBgn0001"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
@@ -222,7 +222,7 @@
     <reference name="subject" ref_id="13_8846"/>
   </item>
   <item id="-1_16" class="http://www.flymine.org/model/genomic#Supercontig">
-    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="identifier" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="objects">
       <reference ref_id="-1_17"/>
@@ -253,7 +253,7 @@
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Transcript">
     <attribute name="exonCount" value="2"/>
-    <attribute name="name" value="ENSANGT00000019935"/>
+    <attribute name="identifier" value="ENSANGT00000019935"/>
     <reference name="gene" ref_id="5_1"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="protein" ref_id="4_1"/>
@@ -331,7 +331,7 @@
   </item>
   <item id="13_8848" class="http://www.flymine.org/model/genomic#Clone">
     <attribute name="htgPhase" value="1"/>
-    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="identifier" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="synonyms">
       <reference ref_id="-1_15"/>
@@ -403,7 +403,7 @@
   </item>
   <item id="18_1" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="length" value="22145176"/>
-    <attribute name="name" value="X"/>
+    <attribute name="identifier" value="X"/>
     <reference name="organism" ref_id="-1_1"/>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Synonym">
@@ -425,7 +425,7 @@
   </item>
   <item id="1_11168" class="http://www.flymine.org/model/genomic#Contig">
     <attribute name="length" value="25020"/>
-    <attribute name="name" value="AAAB01008846_376"/>
+    <attribute name="identifier" value="AAAB01008846_376"/>
     <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
     <reference name="clone" ref_id="13_8847"/>
     <reference name="organism" ref_id="-1_1"/>

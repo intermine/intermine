@@ -20,7 +20,7 @@
         owl:maxCardinality "1" ;
         owl:onProperty :BioEntity__organism ] .
 
-:BioEntity__name a owl:DatatypeProperty ;
+:BioEntity__identifier a owl:DatatypeProperty ;
     rdfs:domain :BioEntity ;
     rdfs:range xsd:string .
 
