@@ -2198,6 +2198,19 @@
     </read-fasta>
   </target>
 
+  <target name="read-flybase-chromosome-4-fasta"
+          depends="compile-genomic-java, compile-flymine-java">
+    <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
+      <fileset dir="${flybase.chado.fasta}">
+        <include name="dmel-4-chromosome-*.fasta"/>
+      </fileset>
+    </read-fasta>
+  </target>
+
   <target name="read-flybase-gene-fasta"
           depends="compile-genomic-java, compile-flymine-java">
     <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
