@@ -10,11 +10,9 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Collection;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -27,13 +25,13 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class PagedCollection implements PagedTable
 {
-    private Column column = new Column();
+    private Column column;
     private List columns;
     private int start = 0;
     private int pageSize = 10;
 
     private Collection collection;
-    private List collectionAsList;
+    private List collectionAsList = new ArrayList();
     private String name;
 
     /**
@@ -44,25 +42,20 @@ public class PagedCollection implements PagedTable
      * @param collection the Collection
      */
     public PagedCollection(Collection collection, String name) {
-        this.name = name;
         this.collection = collection;
-        // turn the Collection into a List so it is ordered and we can call get(int)
-        collectionAsList = new ArrayList();
+        this.name = name;
 
-        Iterator iter = collection.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
-            ArrayList rowList = new ArrayList();
-            rowList.add(o);
+        for (Iterator i = collection.iterator(); i.hasNext();) {
+            ArrayList row = new ArrayList();
+            row.add(i.next());
             collectionAsList.add(rowList);
         }
 
+        column.setVisible(true);
         column.setName(name);
 
-        List newColumns = new LinkedList();
-        newColumns.add(column);
-
-        columns = Collections.unmodifiableList(newColumns);
+        columns = new ArrayList();
+        columns.add(column);
     }
 
     /**
