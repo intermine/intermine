@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
  *
  * @author Matthew Wakeling
  */
-public class ProxyCollection extends AbstractList implements Set, Lazy
+public class ProxyCollection extends AbstractList implements Set, LazyCollection
 {
     private static final Logger LOG = Logger.getLogger(ProxyCollection.class);
 
