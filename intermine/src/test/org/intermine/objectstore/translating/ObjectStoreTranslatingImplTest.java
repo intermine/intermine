@@ -40,7 +40,7 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
     public static Test suite() {
         return buildSuite(ObjectStoreTranslatingImplTest.class);
     }
-    
+
     public void testLimitTooHigh() throws Exception {
     }
 
@@ -81,7 +81,7 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         } catch (UnsupportedOperationException e) {
         }
     }
-    
+
     public void testTranslation() throws Exception {
         ObjectStore os2 = new ObjectStoreTranslatingImpl(Model.getInstanceByName("testmodel"), ObjectStoreFactory.getObjectStore("os.unittest"), new CompanyTranslator());
         Query q = new Query();
@@ -93,30 +93,30 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         assertEquals("CompanyA", ((Bank) ((ResultsRow) res.get(0)).get(0)).getName());
         assertEquals("CompanyB", ((Bank) ((ResultsRow) res.get(1)).get(0)).getName());
     }
-    
+
     static class DummyTranslator extends Translator
     {
         public void setObjectStore(ObjectStore os) {
         }
-        
+
         public Query translateQuery(Query query) throws ObjectStoreException {
             return query;
         }
-        
+
         public FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o) {
             return o;
         }
-        
+
         public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o) {
             return o;
         }
     }
-    
+
     static class CompanyTranslator extends Translator
     {
         public void setObjectStore(ObjectStore os) {
         }
-        
+
         public Query translateQuery(Query query) throws ObjectStoreException {
             Query q = new Query();
             QueryClass qc = new QueryClass(Company.class);
@@ -124,14 +124,15 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
             q.addFrom(qc);
             return q;
         }
-        
+
         public FlyMineBusinessObject translateToDbObject(FlyMineBusinessObject o) {
             return o;
         }
-        
+
         public FlyMineBusinessObject translateFromDbObject(FlyMineBusinessObject o) {
             if (o instanceof Company) {
                 Bank bank = new Bank();
+                bank.setId(((Company) o).getId());
                 bank.setName(((Company) o).getName());
                 return bank;
             } else {
