@@ -17,17 +17,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.util.SAXParser;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 
 import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.Publication;
@@ -45,6 +51,8 @@ public class UpdatePublications
     // see http://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
     protected static final String ESUMMARY_URL =
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=";
+    // number of summaries to retrieve per request
+    protected static final int BATCH_SIZE = 50;
     protected ObjectStoreWriter osw;
 
     /**
@@ -64,83 +72,123 @@ public class UpdatePublications
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
         q.addToSelect(qc);
+
+        Map publications = new HashMap();
         for (Iterator i = ((List) osw.getObjectStore().execute(q)).iterator(); i.hasNext();) {
             Publication publication = (Publication) ((List) i.next()).get(0);
-            BufferedReader reader =
-                new BufferedReader(new InputStreamReader(new URL(ESUMMARY_URL + publication
-                                                                 .getPubMedId()).openStream()));
-            try {
-                SAXParser.parse(new InputSource(reader), new Handler(publication));
-                osw.store(publication);
-                for (Iterator j = publication.getAuthors().iterator(); j.hasNext();) {
-                    osw.store((InterMineObject) j.next());
-                }
-            } catch (SAXException e) {
-                LOG.error("Failed to update publication: " + publication + " due to error: "
-                          + e.getMessage());
+            publications.put(publication.getPubMedId(), publication);
+            if (publications.size() == BATCH_SIZE || !i.hasNext()) {
+                String ids = StringUtil.join(publications.keySet(), ",");
+                BufferedReader reader = 
+                    new BufferedReader(new InputStreamReader(new URL(ESUMMARY_URL
+                                                                     + ids).openStream()));
+                SAXParser.parse(new InputSource(reader), new Handler(publications));
+                storePublications(publications.values());
+                publications = new HashMap();
             }
         }
     }
 
-     /**
-      * Extension of DefaultHandler to handle an esummary for a publication
-      */
-     class Handler extends DefaultHandler
-     {
-         Publication publication;
-         String name;
+    /**
+     * Store a collection of publications
+     * @param publications the publications
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected void storePublications(Collection publications) throws ObjectStoreException {
+        for (Iterator i = publications.iterator(); i.hasNext();) {
+            Publication publication = (Publication) i.next();
+            osw.store(publication);
+            for (Iterator j = publication.getAuthors().iterator(); j.hasNext();) {
+                osw.store((InterMineObject) j.next());
+            }
+        }
+    }
 
-         /**
-          * Constructor
-          * @param publication the publication that needs to be updated
-          */
-         public Handler(Publication publication) {
-             this.publication = publication;
-             publication.setAuthors(new ArrayList());
-         }
+    /**
+     * Extension of DefaultHandler to handle an esummary for a publication
+     */
+    class Handler extends DefaultHandler
+    {
+        Map publications;
+        Publication publication;
+        String name;
+        StringBuffer characters;
+
+        /**
+         * Constructor
+         * @param publications Map from pubMedId to publication that needs to be updated
+         */
+        public Handler(Map publications) {
+            this.publications = publications;
+        }
          
-         /**
-          * @see DefaultHandler#startElement
-          */
-         public void startElement(String uri, String localName, String qName, Attributes attrs)
-             throws SAXException {
-             if ("ERROR".equals(qName)) {
-                 throw new SAXException("esummary returned an error message - is the pmid valid?");
-             }
-             name = attrs.getValue("Name");
-         }
+        /**
+         * @see DefaultHandler#startElement
+         */
+        public void startElement(String uri, String localName, String qName, Attributes attrs)
+            throws SAXException {
+            if ("ERROR".equals(qName)) {
+                throw new SAXException("esummary returned an error message - is the pmid valid?");
+            } else if ("Id".equals(qName)) {
+                name = "Id";
+            } else {
+                name = attrs.getValue("Name");
+            }
+            characters = new StringBuffer();
+        }
 
-         /**
-          * @see DefaultHandler#characters
-          */
-         public void characters(char[] ch, int start, int length) throws SAXException {
-             String string = new String(ch, start, length);
-             if ("PubDate".equals(name)) {
-                 publication.setYear(new Integer(string.split(" ")[0]));
-             } else if ("Source".equals(name)) {
-                 publication.setJournal(string);
-             } else if ("Title".equals(name)) {
-                 publication.setTitle(string);
-             } else if ("Volume".equals(name)) {
-                 publication.setVolume(string);
-             } else if ("Issue".equals(name)) {
-                 publication.setIssue(string);
-             } else if ("Pages".equals(name)) {
-                 publication.setPages(string);
-             } else if ("Author".equals(name)) {
-                 Author author = (Author)
-                     DynamicUtil.createObject(Collections.singleton(Author.class));
-                 author.setName(string);
-                 author.getPublications().add(publication);
-                 publication.getAuthors().add(author);
-             }
-         }
+        /**
+         * @see DefaultHandler#characters
+         */
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            characters.append(new String(ch, start, length));
+        }
 
-         /**
-          * @see DefaultHandler#endElement
-          */
-         public void endElement(String uri, String localName, String qName) throws SAXException {
-             name = null;
-         }
-     }
+        /**
+         * @see DefaultHandler#endElement
+         */
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if ("Id".equals(name)) {
+                publication = (Publication) publications.get(characters.toString());
+                publication.setAuthors(new ArrayList());
+            } else if ("PubDate".equals(name)) {
+                publication.setYear(new Integer(characters.toString().split(" ")[0]));
+            } else if ("Source".equals(name)) {
+                publication.setJournal(characters.toString());
+            } else if ("Title".equals(name)) {
+                publication.setTitle(characters.toString());
+            } else if ("Volume".equals(name)) {
+                publication.setVolume(characters.toString());
+            } else if ("Issue".equals(name)) {
+                publication.setIssue(characters.toString());
+            } else if ("Pages".equals(name)) {
+                publication.setPages(characters.toString());
+            } else if ("Author".equals(name)) {
+                Author author = (Author)
+                    DynamicUtil.createObject(Collections.singleton(Author.class));
+                author.setName(characters.toString());
+                author.getPublications().add(publication);
+                publication.getAuthors().add(author);
+            }
+            name = null;
+        }
+    }
+    
+    /**
+     * Main method
+     * @param args the arguments
+     * @throws Exception if an error occurs
+     */
+    public static void main(String[] args) throws Exception {
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.production");
+        List ids = new ArrayList();
+        ids.add("10021333");
+        for (Iterator i = ids.iterator(); i.hasNext();) {
+            Publication publication = (Publication)
+                DynamicUtil.createObject(Collections.singleton(Publication.class));
+            publication.setPubMedId((String) i.next());
+            osw.store(publication);
+        }
+        new UpdatePublications(osw).execute();
+    }
 }
