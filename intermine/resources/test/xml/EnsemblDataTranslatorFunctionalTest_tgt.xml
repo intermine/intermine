@@ -1,5 +1,5 @@
 <items>
-<item id="-9" class="http://www.flymine.org/model/genomic#Relation">
+<item id="-9" class="http://www.flymine.org/model/genomic#SimpleRelation">
 <reference name="object" ref_id="5_1"/>
 <reference name="subject" ref_id="3_1"/>
 </item>
@@ -110,7 +110,7 @@
 <reference name="object" ref_id="1_11167"/>
 <reference name="subject" ref_id="0_1"/>
 </item>
-<item id="-10" class="http://www.flymine.org/model/genomic#Relation">
+<item id="-10" class="http://www.flymine.org/model/genomic#SimpleRelation">
 <reference name="object" ref_id="3_1"/>
 <reference name="subject" ref_id="4_1"/>
 </item>
@@ -154,7 +154,7 @@
 <reference ref_id="-5"/>
 </collection>
 </item>
-<item id="-24" class="http://www.flymine.org/model/genomic#Relation">
+<item id="-24" class="http://www.flymine.org/model/genomic#SimpleRelation">
 <reference name="object" ref_id="1_11167"/>
 <reference name="subject" ref_id="13_8846"/>
 </item>
@@ -170,7 +170,7 @@
 <item id="11_2" class="http://www.flymine.org/model/genomic#ComputationalAnalysis" implements="http://www.flymine.org/model/genomic#Analysis">
 <attribute name="algorithm" value="RepeatMask"/>
 </item>
-<item id="-8" class="http://www.flymine.org/model/genomic#Relation">
+<item id="-8" class="http://www.flymine.org/model/genomic#SimpleRelation">
 <reference name="object" ref_id="1_11168"/>
 <reference name="subject" ref_id="13_8847"/>
 </item>
@@ -299,7 +299,7 @@
 <reference name="object" ref_id="-11"/>
 <reference name="subject" ref_id="1_11167"/>
 </item>
-<item id="-4" class="http://www.flymine.org/model/genomic#Relation">
+<item id="-4" class="http://www.flymine.org/model/genomic#SimpleRelation">
 <reference name="object" ref_id="1_11169"/>
 <reference name="subject" ref_id="13_8848"/>
 </item>

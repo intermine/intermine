@@ -105,17 +105,17 @@ public class EnsemblDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
 
                 } else if ("contig".equals(className)) {
-                    Item relation = createItem(tgtNs + "Relation", "");
+                    Item relation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, relation, "subjects", true, "object", false);
                     moveField(srcItem, relation, "clone", "subject");
                     result.add(relation);
                     promoteField(tgtItem, srcItem, "residues", "dna", "sequence");
                 } else if ("transcript".equals(className)) {
-                    Item geneRelation = createItem(tgtNs + "Relation", "");
+                    Item geneRelation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, geneRelation, "objects", true, "subject", false);
                     moveField(srcItem, geneRelation, "gene", "object");
                     result.add(geneRelation);
-                    Item transRelation = createItem(tgtNs + "Relation", "");
+                    Item transRelation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, transRelation, "subjects", true, "object", false);
                     moveField(srcItem, transRelation, "translation", "subject");
                     result.add(transRelation);
