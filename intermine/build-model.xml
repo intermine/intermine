@@ -341,6 +341,7 @@
 
     <copy todir="${build.webapp}/intermine/model">
       <fileset dir="${model}/${model.name}/src/web/jsp"/>
+      <fileset dir="${model}/${model.name}/src/web/images"/>
       <fileset file="${model}/${model.name}/resources/web/model.css"/>
     </copy>
 
