@@ -124,12 +124,17 @@
     </fileset>
   </path>
 
+  <path id="genomic.class.path">
+    <path refid="base.class.path"/>
+    <pathelement location="${build.model}/genomic"/>
+  </path>
+
   <path id="webapp.class.path">
     <path refid="base.class.path"/>
+    <path refid="genomic.class.path"/>
     <fileset dir="${build.webapp.intermine.lib}">
       <include name="*.jar"/>
     </fileset>
-    <pathelement location="${build.model}/genomic"/>
   </path>
 
   <path id="webservice.class.path">
@@ -147,12 +152,12 @@
 
   <path id="models.class.path">
     <path refid="base.class.path"/>
+    <path refid="genomic.class.path"/>
     <pathelement location="${build.model}/userprofile"/>
     <pathelement location="${build.model}/acedb"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
     <pathelement location="${build.model}/so"/>
-    <pathelement location="${build.model}/genomic"/>
     <pathelement location="${build.model}/ensembl"/>
     <pathelement location="${build.model}/ensembl-human"/>
     <pathelement location="${build.model}/rnai"/>
@@ -599,7 +604,7 @@
   <!-- Load data from ensembl-dros-tgt-items into production -->
   <target name="load-ensembl-drosophila" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-dros integrationWriter="integration.production" source="os.ensembl-dros-translated" sourceName="ensembl-dros"/>
@@ -665,7 +670,7 @@
   <!-- Load data from ensembl anopheles tgt items into production -->
   <target name="load-ensembl-anopheles" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph"/>
@@ -740,7 +745,7 @@
   <!-- Load data from chado tgt items into production -->
   <target name="load-chado" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="true"/>
@@ -788,7 +793,7 @@
   <!-- Load data from ensembl orthologues into production -->
   <target name="load-orthologues-ensembl" depends="copy-genomic-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-orthologue integrationWriter="integration.production" source="os.ensembl-orthologue-translated" sourceName="orthologue-ensembl"/>
@@ -829,7 +834,7 @@
   <!-- Load data from inparanoid orthologues into production -->
   <target name="load-orthologues-inparanoid" depends="copy-genomic-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated" 
@@ -870,7 +875,7 @@
 
   <target name="load-rnai" depends="copy-genomic-config">
     <taskdef name="load-rnai" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-rnai integrationWriter="integration.production" source="os.rnai-translated" sourceName="rnai"/>
   </target>
@@ -910,7 +915,7 @@
 
   <target name="load-phenotype"  depends="copy-genomic-config">
     <taskdef name="load-phenotype" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-phenotype integrationWriter="integration.production" source="os.phenotype-translated" sourceName="phenotype"/>
@@ -945,7 +950,7 @@
 
   <target name="load-psi-dag"  depends="copy-genomic-config">
     <taskdef name="load-psi-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-psi-dag integrationWriter="integration.production" source="os.psi-dag-translated" sourceName="psi-dag"/>
   </target>
@@ -1034,14 +1039,14 @@
 
   <target name="load-psi-hybrigenics"  depends="copy-genomic-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi-hybrigenics" ignoreDuplicates="true"/>
   </target>
 
   <target name="load-psi-intact" depends="copy-genomic-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi-intact" ignoreDuplicates="true"/>
   </target>
@@ -1076,7 +1081,7 @@
 
   <target name="load-taxonomy"  depends="copy-genomic-config">
     <taskdef name="load-taxonomy" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-taxonomy integrationWriter="integration.production" source="os.taxonomy-translated" sourceName="taxonomy"/>
@@ -1164,7 +1169,7 @@
 
   <target name="load-mage" depends = "prepare-build-model, copy-genomic-config">
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-mage integrationWriter="integration.production" source="os.mage-translated" sourceName="mage" ignoreDuplicates="false"/>
@@ -1229,7 +1234,7 @@
 
   <target name="load-protein_structure"  depends="copy-genomic-config">
     <taskdef name="load-protein_structure" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-protein_structure integrationWriter="integration.production" source="os.protein_structure-translated" sourceName="protein_structure" ignoreDuplicates="true"/>
   </target>
@@ -1267,7 +1272,7 @@
 
   <target name="load-go-dag"  depends="copy-genomic-config">
     <taskdef name="load-go-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-go-dag integrationWriter="integration.production" source="os.go-dag-translated" sourceName="go"/>
@@ -1306,7 +1311,7 @@
 
   <target name="load-go-annotation"  depends="copy-genomic-config">
     <taskdef name="load-go-annotation" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-go-annotation integrationWriter="integration.production"
@@ -1359,7 +1364,7 @@
   <target name="load-flyreg"
           depends="copy-genomic-config, prepare-build-model, compile-flyreg-java, compile-genomic-java">
     <taskdef name="load-flyreg" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-flyreg integrationWriter="integration.production"
@@ -1412,7 +1417,7 @@
   <target name="load-long_oligo"
           depends="copy-genomic-config, prepare-build-model, compile-long_oligo-java, compile-genomic-java">
     <taskdef name="load-long_oligo" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-long_oligo integrationWriter="integration.production"
@@ -1465,7 +1470,7 @@
   <target name="load-tiling_path"
           depends="copy-genomic-config, prepare-build-model, compile-tiling_path-java, compile-genomic-java">
     <taskdef name="load-tiling_path" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-tiling_path integrationWriter="integration.production"
@@ -1520,7 +1525,7 @@
 
  <!--target name="load-gff3" depends="copy-genomic-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-gff3 integrationWriter="integration.genomic-test"
@@ -1624,7 +1629,7 @@
 
   <target name="load-uniprot"  depends="copy-genomic-config">
     <taskdef name="load-uniprot" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="true"/>
@@ -2435,9 +2440,9 @@
   </target>
 
   <target name="load-gbrowse-data-mysql"
-          description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse">
+          description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec executable="/bin/sh">
-      <arg line="-c 'bp_load_gff.pl -create --dsn dbi:mysql:dbname=${gbrowse.mysql.database}\;host=${gbrowse.mysql.database.host} --user ${gbrowse.mysql.database.write.user} --password ${gbrowse.mysql.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
+      <arg line="-c 'bp_bulk_load_gff.pl -create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
     </exec>
   </target>
 
@@ -2711,7 +2716,7 @@
   <!-- Load data from ensembl-human-tgt-items into production -->
   <target name="load-ensembl-human" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-human" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human" /><!--queryClass="org.flymine.model.genomic.Synonym"/-->
@@ -2900,7 +2905,7 @@
 
  <target name="load-tfbs" depends="copy-genomic-config">
     <taskdef name="load-tfbs" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
+      <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-tfbs integrationWriter="integration.genomic-test"
