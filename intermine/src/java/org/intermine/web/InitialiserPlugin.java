@@ -290,7 +290,7 @@ public class InitialiserPlugin implements PlugIn
         String catname;
         
         while ((catname = properties.getProperty("category." + n + ".name")) != null) {
-            String sc = properties.getProperty("category." + n + ".subcategories");
+            String sc = properties.getProperty("category." + n + ".classes");
             String subcats[] = StringUtils.split(sc, ' ');
             List subcatlist = new ArrayList();
             
