@@ -39,6 +39,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
@@ -308,6 +310,22 @@ public abstract class ModelOutput
             MFeature feature = (MFeature) features.next();
             if (feature instanceof MAttribute) {
                 result.add(feature);
+            }
+        }
+        return result;
+    }
+
+    protected Map getAllAttributes(MClassifier cls) {
+        Map result = new HashMap();
+        List parentList = getParents(cls);
+        parentList.add(cls);
+        Iterator iter = parentList.iterator();
+        while (iter.hasNext()) {
+            MClassifier parent = (MClassifier) iter.next();
+            Iterator iter2 = getAttributes(parent).iterator();
+            while (iter2.hasNext()) {
+                MAttribute attr = (MAttribute) iter2.next();
+                result.put(attr.getName(), attr);
             }
         }
         return result;
