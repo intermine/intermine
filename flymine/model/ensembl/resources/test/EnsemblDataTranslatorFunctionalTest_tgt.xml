@@ -197,6 +197,7 @@
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="identifier" value="ENSANGG00000017446"/>
+    <attribute name="name" value="fb_symbol"/>
     <attribute name="organismDbId" value="FBgn0001"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
