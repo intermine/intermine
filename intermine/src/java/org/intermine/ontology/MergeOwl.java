@@ -116,14 +116,21 @@ public class MergeOwl
             Statement stmt = (Statement) stmtIter.next();
             Resource subject = stmt.getSubject();
 
-            // copy src namespace statements into target model
-            if ((!subject.isAnon() && subject.getNameSpace().equals(srcNs))) {
+            // copy src namespace and any other non-target/framework statements into target model
+            if (!subject.isAnon() && !subject.getNameSpace().equals(tgtNs)
+                 && !subject.getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
+                 && !subject.getNameSpace().equals(OntologyUtil.RDFS_NAMESPACE)
+                 && !subject.getNameSpace().equals(OntologyUtil.OWL_NAMESPACE)
+                 && !subject.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
                 statements.add(stmt);
             }
 
-            // Jena makes classes subClasses of themselves -> prevent this
-            if (stmt.getPredicate().getURI().equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")
+            // Jena makes classes/properties subClassOf/subPropertyOf themselves -> prevent this
+            if ((stmt.getPredicate().getURI().equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")
+              || stmt.getPredicate().getURI().equals(OntologyUtil.RDFS_NAMESPACE + "subPropertyOf"))
                 && stmt.getObject().canAs(Resource.class) && !((Resource) stmt.getObject()).isAnon()
+                && stmt.getSubject().canAs(Resource.class)
+                && !((Resource) stmt.getSubject()).isAnon()
                 && stmt.getSubject().getURI().equals(((Resource) stmt.getObject()).getURI())) {
                 continue;
             }
