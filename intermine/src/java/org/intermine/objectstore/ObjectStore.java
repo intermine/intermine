@@ -31,11 +31,11 @@ public interface ObjectStore
      *
      * @param q the Query to execute
      * @param start the start row
-     * @param end the end row
+     * @param limit the maximum number of rows to return
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int end) throws ObjectStoreException;
+    public List execute(Query q, int start, int limit) throws ObjectStoreException;
 
 
     /**
@@ -48,16 +48,16 @@ public interface ObjectStore
     public ExplainResult estimate(Query q) throws ObjectStoreException;
 
     /**
-     * Runs an EXPLAIN for the given query with specified start and end parameters.  This
+     * Runs an EXPLAIN for the given query with specified start and limit parameters.  This
      * gives estimated time for a single 'page' of the query.
      *
      * @param q the query to explain
      * @param start first row required, numbered from zero
-     * @param end the number of the last row required, numbered from zero
+     * @param limit the maximum number og rows to return
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explining the query
      */
-    public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException;
+    public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException;
 
     /**
      * Execute a COUNT(*) on a query, returns the number of row the query will produce
