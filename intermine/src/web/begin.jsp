@@ -26,6 +26,7 @@
                 <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
               </c:if>
             </div>
+            <im:vspacer height="5"/>
           </c:forEach>
         </div>
       </td>
@@ -54,7 +55,7 @@
 
 <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
 <c:if test="${!empty browseTemplateName && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
-  <p>
+  <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}"
           titleKey="begin.heading.browse">
     <div class="body" align="center">
@@ -73,7 +74,7 @@
 </c:if>
 
 <c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
-  <p>
+  <im:vspacer height="12"/>
   <div class="altmessage">
     <fmt:message key="begin.noBrowseTemplate">
       <fmt:param value="${browseTemplateName}"/>
@@ -82,26 +83,30 @@
 </c:if>
 <%-- /Browse --%>
 
-<p>
-<im:box helpUrl="${helpUrl}" titleKey="begin.heading.templates">
-  <c:forEach items="${CATEGORIES}" var="category">
-    <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-      <div class="heading">${category}</div>
-      <div class="body"><im:templateList type="global" category="${category}"/></div>
+<c:if test="${!IS_SUPERUSER}">
+  <im:vspacer height="12"/>
+  <im:box helpUrl="${helpUrl}" titleKey="begin.heading.templates">
+    <c:forEach items="${CATEGORIES}" var="category">
+      <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+        <div class="heading">${category}</div>
+        <div class="body"><im:templateList type="global" category="${category}"/></div>
+        <im:vspacer height="5"/>
+      </c:if>
+    </c:forEach>
+    <c:if test="${empty GLOBAL_TEMPLATE_QUERIES}">
+      <div class="altmessage"><fmt:message key="templateList.noTemplates"/></div>
     </c:if>
-  </c:forEach>
-  <c:if test="${empty GLOBAL_TEMPLATE_QUERIES}">
-    <div class="altmessage"><fmt:message key="templateList.noTemplates"/></div>
-  </c:if>
-</im:box>
+  </im:box>
+</c:if>
 
 <c:if test="${!empty PROFILE.savedTemplates}">
-  <p>
+  <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}" titleKey="begin.heading.mytemplates">
     <c:forEach items="${CATEGORIES}" var="category">
       <c:if test="${!empty PROFILE.categoryTemplates[category]}">
         <div class="heading">${category}</div>
         <div class="body"><im:templateList type="user" category="${category}"/></div>
+        <im:vspacer height="5"/>
       </c:if>
     </c:forEach>
   </im:box>

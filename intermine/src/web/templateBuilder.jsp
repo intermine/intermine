@@ -108,7 +108,7 @@
         </c:choose>
       </html:submit>
     </p>
-    <p>
+    <br/><br/>
     <c:if test="${showPreview}">
       <div align="center">
         <div id="tmplPreview">
