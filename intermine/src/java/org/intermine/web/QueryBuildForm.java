@@ -51,6 +51,8 @@ public class QueryBuildForm extends ActionForm
     protected Map fieldOps = new HashMap();
     // map from constraint name to constraint value (a string)
     protected Map fieldValues = new HashMap();
+    // the errors, if any, returned by the last call to validate()
+    protected ActionErrors errors = new ActionErrors();
 
     /**
      * Set newFieldName
@@ -145,6 +147,15 @@ public class QueryBuildForm extends ActionForm
     }
 
     /**
+     * Get any errors that occured at the last validation
+     *
+     * @return the errors
+     */
+    public ActionErrors getErrors() {
+        return errors;
+    }
+
+    /**
      * Return a Map of field names to ConstraintOp objects.  The ConstraintOp objects are created
      * by validate().
      *
@@ -220,7 +231,8 @@ public class QueryBuildForm extends ActionForm
                 }
             }
         }
-
+        //this is necessary because the controller needs to know if there were any errors
+        this.errors = errors;
         return errors;
     }
 

@@ -71,9 +71,12 @@ public class QueryBuildController extends TilesAction
             
             DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
             QueryBuildForm qbf = (QueryBuildForm) form;
-            qbf.setFieldOps(QueryBuildHelper.toStrings(d.getFieldOps()));
-            qbf.setFieldValues(QueryBuildHelper.toStrings(d.getFieldValues()));
-            
+            //if validation failed we don't want to wipe out the invalid values
+            if (qbf.getErrors().isEmpty()) {
+                qbf.setFieldOps(QueryBuildHelper.toStrings(d.getFieldOps()));
+                qbf.setFieldValues(QueryBuildHelper.toStrings(d.getFieldValues()));
+            }
+
             session.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, false));
             List allFieldNames = QueryBuildHelper.getAllFieldNames(cld);
             if (allFieldNames.size() == 0) {
