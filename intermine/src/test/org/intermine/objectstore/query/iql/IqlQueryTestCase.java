@@ -115,8 +115,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq.setParameters(Collections.singletonList(data.get("Secretary1")));
         results.put("InterfaceCollection", fq);
         Set res = new HashSet();
-        res.add(new IqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.intermine.model.testmodel.Company, org.intermine.model.testmodel.Broke) AS a1_ WHERE (a1_.debt > 0 AND a1_.vatNumber > 0)", null));
-        res.add(new IqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.vatNumber AS a3_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Company) AS a1_ WHERE (a1_.debt > 0 AND a1_.vatNumber > 0)", null));
+        res.add(new IqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.age AS a3_ FROM (org.intermine.model.testmodel.Employee, org.intermine.model.testmodel.Broke) AS a1_ WHERE (a1_.debt > 0 AND a1_.age > 0)", null));
+        res.add(new IqlQuery("SELECT DISTINCT a1_, a1_.debt AS a2_, a1_.age AS a3_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employee) AS a1_ WHERE (a1_.debt > 0 AND a1_.age > 0)", null));
         results.put("DynamicInterfacesAttribute", res);
         res = new HashSet();
         res.add(new IqlQuery("SELECT DISTINCT a1_ FROM (org.intermine.model.testmodel.Employable, org.intermine.model.testmodel.Broke) AS a1_", null));

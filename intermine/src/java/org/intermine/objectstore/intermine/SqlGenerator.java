@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -83,6 +84,7 @@ public class SqlGenerator
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
 
     protected static Map sqlCache = new WeakHashMap();
+    protected static Map tablenamesCache = new WeakHashMap();
 
     /**
      * Generates a query to retrieve a single object from the database, by id.
@@ -109,6 +111,24 @@ public class SqlGenerator
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " LIMIT 2";
         }
+    }
+
+    /**
+     * Returns the table name used by the ID fetch query.
+     *
+     * @param clazz the Class of the object
+     * @param schema the DatabaseSchema
+     * @return a table name
+     * @throws ObjectStoreException if the given class is not in the model
+     */
+    public static String tableNameForId(Class clazz,
+            DatabaseSchema schema) throws ObjectStoreException {
+        ClassDescriptor cld = schema.getModel().getClassDescriptorByName(clazz.getName());
+        if (cld == null) {
+            throw new ObjectStoreException(clazz.toString() + " is not in the model");
+        }
+        ClassDescriptor tableMaster = schema.getTableMaster(cld);
+        return DatabaseUtil.getTableName(tableMaster);
     }
 
     /**
@@ -284,6 +304,112 @@ public class SqlGenerator
         return retval.toString();
     }
 
+    /**
+     * Builds a Set of all table names that are touched by a given query.
+     *
+     * @param q the Query
+     * @param schema the DatabaseSchema in which to look up metadata
+     * @return a Set of table names
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public static Set findTableNames(Query q, DatabaseSchema schema) throws ObjectStoreException {
+        synchronized (q) {
+            Map schemaCache = getTablenamesCacheForSchema(schema);
+            Set tablenames = (Set) schemaCache.get(q);
+            if (tablenames == null) {
+                tablenames = new HashSet();
+                findTableNames(tablenames, q, schema);
+                schemaCache.put(q, tablenames);
+            }
+            return tablenames;
+        }
+    }
+
+    /**
+     * Returns a cache for table names specific to a particular DatabaseSchema.
+     *
+     * @param schema the DatabaseSchema
+     * @return a Map
+     */
+    private static Map getTablenamesCacheForSchema(DatabaseSchema schema) {
+        synchronized (tablenamesCache) {
+            Map retval = (Map) tablenamesCache.get(schema);
+            if (retval == null) {
+                retval = Collections.synchronizedMap(new WeakHashMap());
+                tablenamesCache.put(schema, retval);
+            }
+            return retval;
+        }
+    }
+
+    /**
+     * Adds table names to a Set of table names, from a given Query.
+     *
+     * @param tablenames a Set of table names - new names will be added here
+     * @param q the Query
+     * @param schema the DatabaseSchema in which to look up metadata
+     * @throws ObjectStoreException if something goes wrong
+     */
+    private static void findTableNames(Set tablenames, Query q,
+            DatabaseSchema schema) throws ObjectStoreException {
+        findTableNamesInConstraint(tablenames, q.getConstraint(), schema);
+        Set fromElements = q.getFrom();
+        Iterator fromIter = fromElements.iterator();
+        while (fromIter.hasNext()) {
+            FromElement fromElement = (FromElement) fromIter.next();
+            if (fromElement instanceof QueryClass) {
+                QueryClass qc = (QueryClass) fromElement;
+                Set classes = DynamicUtil.decomposeClass(qc.getType());
+                Iterator classIter = classes.iterator();
+                while (classIter.hasNext()) {
+                    Class cls = (Class) classIter.next();
+                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
+                    if (cld == null) {
+                        throw new ObjectStoreException(cls.toString() + " is not in the model");
+                    }
+                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                }
+            } else if (fromElement instanceof Query) {
+                Query subQ = (Query) fromElement;
+                findTableNames(tablenames, subQ, schema);
+            }
+        }
+    }
+
+    /**
+     * Adds table names to a Set of table names, from a given constraint.
+     *
+     * @param tablenames a Set of table names - new names will be added here
+     * @param c the Constraint
+     * @param schema the DatabaseSchema in which to look up metadata
+     * @throws ObjectStoreException if something goes wrong
+     */
+    private static void findTableNamesInConstraint(Set tablenames, Constraint c,
+            DatabaseSchema schema) throws ObjectStoreException {
+        if (c instanceof ConstraintSet) {
+            Iterator conIter = ((ConstraintSet) c).getConstraints().iterator();
+            while (conIter.hasNext()) {
+                Constraint subC = (Constraint) conIter.next();
+                findTableNamesInConstraint(tablenames, subC, schema);
+            }
+        } else if (c instanceof SubqueryConstraint) {
+            findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema);
+        } else if (c instanceof ContainsConstraint) {
+            ContainsConstraint cc = (ContainsConstraint) c;
+            QueryReference ref = cc.getReference();
+            if (ref instanceof QueryCollectionReference) {
+                ReferenceDescriptor refDesc = (ReferenceDescriptor) schema.getModel()
+                    .getFieldDescriptorsForClass(ref.getQueryClass().getType())
+                    .get(ref.getFieldName());
+                if (refDesc.relationType() == FieldDescriptor.M_N_RELATION) {
+                    tablenames.add(DatabaseUtil.getIndirectionTableName((CollectionDescriptor)
+                                refDesc));
+                }
+            }
+        }
+    }
+    
     /**
      * Builds the FROM list for the SQL query.
      *

@@ -235,7 +235,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("CompanyB") } };
         results.put("InterfaceCollection", toList(r));
 
-        r = new Object[][] { { data.get("CompanyA"), new Integer(876324), new Integer(1234) } };
+        r = new Object[][] { { data.get("EmployeeB1"), new Integer(340), new Integer(40) } };
         results.put("DynamicInterfacesAttribute", toList(r));
 
         r = new Object[][] { { data.get("ContractorA") },
