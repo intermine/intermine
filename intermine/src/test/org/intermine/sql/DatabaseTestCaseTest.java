@@ -1,4 +1,4 @@
-package org.flymine.testing.sql;
+package org.flymine.sql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -17,9 +17,6 @@ import java.sql.Types;
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
 import com.mockobjects.sql.MockResultSetMetaData;
-
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
 
 public class DatabaseTestCaseTest extends DatabaseTestCase
 {

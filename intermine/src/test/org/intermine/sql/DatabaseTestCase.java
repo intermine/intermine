@@ -1,4 +1,4 @@
-package org.flymine.testing.sql;
+package org.flymine.sql;
 
 /*
  * Copyright (C) 2002-2003 FlyMine
@@ -15,8 +15,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import junit.framework.*;
-
-import org.flymine.sql.Database;
 
 /**
  * TestCase for doing unit tests using an SQL database.
@@ -68,14 +66,19 @@ public abstract class DatabaseTestCase extends TestCase
             ResultSetMetaData rsmd1 = rs1.getMetaData();
             ResultSetMetaData rsmd2 = rs2.getMetaData();
             assertEquals(msg + "(difference in number of columns)",
-                                rsmd1.getColumnCount(), rsmd2.getColumnCount());
+                    rsmd1.getColumnCount(), rsmd2.getColumnCount());
 
             // Names and types of columns should be the same
             for (int i = 1; i <= rsmd1.getColumnCount(); i++) {
-                assertEquals(msg + "(difference in column names)",
-                             rsmd1.getColumnName(i), rsmd2.getColumnName(i));
+                try {
+                    assertEquals(msg + "(difference in column names)",
+                            rsmd1.getColumnLabel(i), rsmd2.getColumnLabel(i));
+                } catch (com.mockobjects.util.NotImplementedException e) {
+                    assertEquals(msg + "(difference in column names)",
+                            rsmd1.getColumnName(i), rsmd2.getColumnName(i));
+                }
                 assertEquals(msg + "(difference in column types)",
-                             rsmd1.getColumnType(i), rsmd2.getColumnType(i));
+                        rsmd1.getColumnType(i), rsmd2.getColumnType(i));
             }
 
             // Contents should be the same

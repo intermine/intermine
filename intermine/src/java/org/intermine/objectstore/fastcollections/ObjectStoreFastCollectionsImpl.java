@@ -175,8 +175,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     Query subQ = new Query();
                                     subQ.setDistinct(false);
                                     QueryClass qc1 = new QueryClass(clazz);
-                                    QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
-                                            .getType());
+                                    QueryClass qc2 = new QueryClass(coll
+                                            .getReferencedClassDescriptor().getType());
                                     subQ.addFrom(qc1);
                                     subQ.addFrom(qc2);
                                     subQ.addToSelect(qc1);
@@ -185,8 +185,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     subQ.setConstraint(cs);
                                     QueryCollectionReference qcr = new QueryCollectionReference(qc1,
                                             fieldName);
-                                    cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
-                                                qc2));
+                                    cs.addConstraint(new ContainsConstraint(qcr,
+                                                ConstraintOp.CONTAINS, qc2));
                                     cs.addConstraint(new BagConstraint(qc1, ConstraintOp.IN,
                                                 bagList.subList(i, (i + 1000 < bagList.size()
                                                         ? i + 1000 : bagList.size()))));

@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-import org.flymine.testing.sql.DatabaseTestCase;
+import org.flymine.sql.DatabaseTestCase;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.*;
@@ -107,7 +107,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         queries.put("halfOftable2halfOfTable3groupByCount", "SELECT table2.col2, count(*) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 AND table2.col1 < " + (DATA_SIZE/2) + " AND table3.col1 < " + (DATA_SIZE/2) + " GROUP BY table2.col2 ORDER BY table2.col2");
         queries.put("halfOftable2HalfOfTable3groupByAvg", "SELECT table2.col1, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 AND table2.col1 < " + (DATA_SIZE/2) + " AND table3.col1 < " + (DATA_SIZE/2) + " GROUP BY table2.col1 ORDER BY table2.col1");
         queries.put("table2Table3groupByAvg", "SELECT table2.col1, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
-        queries.put("table2Table3groupByAvgHaving", "SELECT table2.col1, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 HAVING avg(table2.col2 + table3.col2) > " + (DATA_SIZE/5) + " ORDER BY table2.col1");
+        queries.put("table2Table3groupByAvgHaving", "SELECT table2.col1 AS wotsit, avg(table2.col2 + table3.col2) as xxx FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 HAVING avg(table2.col2 + table3.col2) > " + (DATA_SIZE/5) + " ORDER BY table2.col1");
     }
 
     // Add some precomputed tables into the database
@@ -219,7 +219,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
             Statement stmt2 = con2.createStatement();
             ResultSet rs2 = stmt2.executeQuery(q2.getSQLString());
 
-            assertEquals(rs1, rs2);
+            assertEquals("Results for queries do not match: Q1 = \"" + q1.getSQLString() + "\", Q2 = \"" + q2.getSQLString() + "\"", rs1, rs2);
         } finally {
             con1.close();
             con2.close();

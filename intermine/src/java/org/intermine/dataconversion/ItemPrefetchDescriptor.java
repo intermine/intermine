@@ -29,7 +29,10 @@ public class ItemPrefetchDescriptor
     private String name;
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @param name a name which will be included in the toString output, for debug and logging
+     * purposes only
      */
     public ItemPrefetchDescriptor(String name) {
         constraints = new HashSet();
@@ -93,6 +96,7 @@ public class ItemPrefetchDescriptor
      * Returns true if the given FieldNameAndValue object is present in the Set of constraints.
      *
      * @param f the FieldNameAndValue object
+     * @return a boolean
      */
     public boolean isStatic(FieldNameAndValue f) {
         return constraints.contains(f);
