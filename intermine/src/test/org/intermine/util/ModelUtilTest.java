@@ -3,11 +3,18 @@ package org.flymine.util;
 import junit.framework.TestCase;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.metadata.Model;
 
 public class ModelUtilTest extends TestCase
 {
+    Model model;
+
     public ModelUtilTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() throws Exception {
+        model = Model.getInstanceByName("testmodel");
     }
 
     // key of CEO is "name age address"
@@ -20,7 +27,7 @@ public class ModelUtilTest extends TestCase
         employee.setAge(40);
         employee.setAddress(address);
 
-        assertTrue(ModelUtil.hasValidKey(employee));
+        assertTrue(ModelUtil.hasValidKey(employee, model));
     }
 
     public void testHasValidKeyInvalidObjectNoReference() throws Exception {
@@ -28,7 +35,7 @@ public class ModelUtilTest extends TestCase
         ceo.setName("EmployeeB1");
         ceo.setAge(40);
 
-        assertFalse(ModelUtil.hasValidKey(ceo));
+        assertFalse(ModelUtil.hasValidKey(ceo, model));
     }
 
     public void testHasValidKeyInvalidObjectNoAttribute() throws Exception {
@@ -39,12 +46,12 @@ public class ModelUtilTest extends TestCase
         ceo.setAge(40);
         ceo.setAddress(address);
 
-        assertFalse(ModelUtil.hasValidKey(ceo));
+        assertFalse(ModelUtil.hasValidKey(ceo, model));
     }
 
     public void testHasValidKeyNullObject() throws Exception {
         try {
-            ModelUtil.hasValidKey(null);
+            ModelUtil.hasValidKey(null, model);
             fail ("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }

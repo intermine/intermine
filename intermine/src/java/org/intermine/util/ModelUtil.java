@@ -21,12 +21,13 @@ public class ModelUtil
      * Checks that an object has its primary keys set
      *
      * @param obj the Object to check
+     * @param model the metadata against which to check
      * @return true if primary keys set, false otherwise
      * @throws IllegalAccessException if one of the fields is inaccessible
      * @throws MetaDataException if there is a problem retrieving the metadata
      */
-    public static boolean hasValidKey(Object obj) throws IllegalAccessException, MetaDataException {
-        Model model = Model.getInstance();
+    public static boolean hasValidKey(Object obj, Model model)
+        throws IllegalAccessException, MetaDataException {
         if (obj == null) {
             throw new NullPointerException("obj must not be null");
         }
