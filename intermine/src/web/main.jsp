@@ -92,8 +92,7 @@
               </c:if>            
               <span class="collectionDescription">
               <c:if test="${node.type != 'String' && node.type != 'Integer'}">
-                <span class="type"><c:out value="${node.type}"/></span><c:if test="${!empty classDescriptions[node.type]}"><sup><im:help text="${node.type}: ${classDescriptions[node.type]}">?</im:help></sup>
-                </c:if>
+                <span class="type">${node.type}</span><im:typehelp type="${node.type}"/>
               </c:if>
               <c:if test="${node.collection}">
                 <fmt:message key="query.collection"/>
