@@ -140,7 +140,7 @@ public class CastorModelOutput extends ModelOutput
             .append("<bind-xml name=\"")
             .append(attr.getName());
 
-        if (isPrimitive(attr.getType()) || attr.getType().equals("java.lang.String")) {
+        if ((isPrimitive(attr.getType())) || (isBasicType(attr.getType()))) {
             sb.append("\" node=\"attribute\"/>" + ENDL);
         } else {
             sb.append("\" node=\"element\"/>" + ENDL);
