@@ -16,7 +16,7 @@
         <fmt:message key="exampleQuery.${exampleQuery.key}.prefix" var="prefix"/>
         <c:if test="${!empty prefix}">
           <span class="docLink">
-            [<html:link href="/${prefix}/${exampleQuery.key}.html">
+            [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/${prefix}/${exampleQuery.key}.html">
             tutorial
             </html:link>]
           </span>
