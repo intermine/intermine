@@ -857,8 +857,20 @@
     </taskdef>
 
     <analyse-db database="db.production" full="true"/>
+
+    <!-- grant 'flymine' user select permission on db -->
+
+
   </target>
 
+
+  <target name="grant-temp">
+    <taskdef name="grant" classname="org.intermine.task.GrantTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <grant database="db.production" user="flymine" perm="SELECT"/>
+  </target>
 
 
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
