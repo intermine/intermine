@@ -182,6 +182,37 @@ public class ClassDescriptorTest extends TestCase {
     }
 
 
+    public void testUltimateSuperClassOne() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+
+        Model model1 = new Model("test1", Arrays.asList(new Object[] {cld1, cld2}));
+
+        assertEquals(cld1, cld2.getUltimateSuperclassDescriptor());
+    }
+
+    public void testUltimateSuperClassMany() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class3", null, false, new ArrayList(), new ArrayList(), new ArrayList());
+
+        Model model2 = new Model("test2", Arrays.asList(new Object[] {cld1, cld2, cld3, cld4}));
+
+        assertEquals(cld1, cld4.getUltimateSuperclassDescriptor());
+    }
+
+    public void testUltimateSuperClassNone() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), new ArrayList(), new ArrayList());
+
+        Model model1 = new Model("test1", Arrays.asList(new Object[] {cld1}));
+
+        assertTrue("ultimate superclass should have been null", cld1.getUltimateSuperclassDescriptor() == null);
+    }
+
+
+    // ------------
+
     private List getAttributes() {
         List attributes = new ArrayList();
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", false, "String");
