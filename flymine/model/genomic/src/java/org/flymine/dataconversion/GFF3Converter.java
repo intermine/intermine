@@ -26,6 +26,7 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.metadata.Model;
 
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
@@ -50,32 +51,34 @@ public class GFF3Converter
     private String seqClsName;
     private String orgAbbrev;
     private Item infoSource;
-    private String targetNameSpace;
+    private Model tgtModel;
     private int itemid = 0;
     private Map analyses = new HashMap();
     private Map seqs = new HashMap();
     private Map idMap = new HashMap();
-
+    private GFF3RecordHandler handler;
 
     /**
      * Constructor
-     * @param parser GFF3Parser;
      * @param writer ItemWriter
      * @param seqClsName sequenceClassName
      * @param orgAbbrev organismAbbreviation. HS this case
      * @param infoSourceTitle title for infoSource
-     * @param targetNameSpace target namesace
+     * @param tgtModel the model to create items in
+     * @param handler object to perform optional additional operations per GFF3 line
      */
+
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgAbbrev,
-                         String infoSourceTitle, String targetNameSpace) {
+                         String infoSourceTitle, Model tgtModel, GFF3RecordHandler handler) {
 
         this.writer = writer;
         this.seqClsName = seqClsName;
         this.orgAbbrev = orgAbbrev;
-        this.targetNameSpace = targetNameSpace;
+        this.tgtModel = tgtModel;
+        this.handler = handler;
 
         this.organism = getOrganism();
-        this.infoSource = createItem(targetNameSpace + "InfoSource", "");
+        this.infoSource = createItem("InfoSource");
         infoSource.addAttribute(new Attribute("title", infoSourceTitle));
     }
 
@@ -90,6 +93,10 @@ public class GFF3Converter
         GFF3Record record;
         long start, now, opCount;
 
+        // get rid of previous record Items from handler
+        handler.clear();
+
+        // TODO should probably not store if an empty file
         writer.store(ItemHelper.convert(organism));
         writer.store(ItemHelper.convert(infoSource));
 
@@ -102,7 +109,7 @@ public class GFF3Converter
             if (opCount % 1000 == 0) {
                 now = System.currentTimeMillis();
                 System.err .println("processed " + opCount + " lines --took "
-                                  + (now - start) + " ms");
+                                    + (now - start) + " ms");
                 LOG.info("processed " + opCount + " lines --took " + (now - start) + " ms");
                 start = System.currentTimeMillis();
             }
@@ -138,10 +145,10 @@ public class GFF3Converter
 
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
-            feature = createItem(targetNameSpace + className, "", getIdentifier(record.getId()));
+            feature = createItem(className, getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
         } else {
-            feature = createItem(targetNameSpace + className, "");
+            feature = createItem(className);
         }
 
         if (record.getName() != null) {
@@ -151,15 +158,15 @@ public class GFF3Converter
 
         // if parents -> create a SimpleRelation
         if (record.getParent() != null) {
-            Item simpleRelation = createItem(targetNameSpace + "SimpleRelation", "");
+            Item simpleRelation = createItem("SimpleRelation");
             simpleRelation.setReference("object", getIdentifier(record.getParent()));
             simpleRelation.setReference("subject", feature.getIdentifier());
-            result.add(simpleRelation);
+            handler.setParentRelation(simpleRelation);
         }
 
 
 
-        Item location = createItem(targetNameSpace + "Location", "");
+        Item location = createItem("Location");
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
         if (record.getStrand() != null && record.getStrand().equals("+")) {
@@ -177,14 +184,14 @@ public class GFF3Converter
         location.addReference(new Reference("subject", feature.getIdentifier()));
         location.addCollection(new ReferenceList("evidence",
                             Arrays.asList(new Object[] {infoSource.getIdentifier()})));
-        result.add(location);
+        handler.setLocation(location);
 
         ReferenceList evidence = new ReferenceList("evidence");
         evidence.addRefId(infoSource.getIdentifier());
 
         if (record.getScore() != null) {
 
-            Item computationalResult = createItem(targetNameSpace + "ComputationalResult", "");
+            Item computationalResult = createItem("ComputationalResult");
             if (String.valueOf(record.getScore()) != null) {
                 computationalResult.addAttribute(new Attribute("score",
                                                                String.valueOf(record.getScore())));
@@ -193,18 +200,19 @@ public class GFF3Converter
 
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
-                                                 computationalAnalysis.getIdentifier()));
-            }
-            result.add(computationalResult);
-            evidence.addRefId(computationalResult.getIdentifier());
+                                                          computationalAnalysis.getIdentifier()));
+                handler.setAnalysis(computationalAnalysis);
 
+            }
+            handler.setResult(computationalResult);
+            evidence.addRefId(computationalResult.getIdentifier());
         }
 
         feature.addCollection(evidence);
-        result.add(feature);
+        handler.setFeature(feature);
 
         try {
-            Iterator iter = result.iterator();
+            Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
                 writer.store(ItemHelper.convert((Item) iter.next()));
             }
@@ -236,7 +244,7 @@ public class GFF3Converter
      */
     private Item getOrganism() {
         if (organism == null) {
-            organism = createItem(targetNameSpace + "Organism", "");
+            organism = createItem("Organism");
             organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
         }
         return organism;
@@ -258,7 +266,7 @@ public class GFF3Converter
     private Item getComputationalAnalysis(String algorithm) {
         Item analysis = (Item) analyses.get(algorithm);
         if (analysis == null) {
-            analysis = createItem(targetNameSpace + "ComputationalAnalysis", "");
+            analysis = createItem("ComputationalAnalysis");
             analysis.addAttribute(new Attribute("algorithm", algorithm));
             analyses.put(algorithm, analysis);
         }
@@ -271,9 +279,10 @@ public class GFF3Converter
     private Item getSeq(String identifier) {
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
-            seq = createItem(targetNameSpace + seqClsName, "");
+            seq = createItem(seqClsName);
             seq.addAttribute(new Attribute("identifier", identifier));
             seqs.put(identifier, seq);
+            handler.setSequence(seq);
         }
         return seq;
     }
@@ -285,8 +294,8 @@ public class GFF3Converter
      * @param identifier
      * @return the created item
      */
-    private Item createItem(String className, String implementations) {
-        return createItem(className, implementations, createIdentifier());
+    private Item createItem(String className) {
+        return createItem(className, createIdentifier());
     }
 
     /**
@@ -296,10 +305,9 @@ public class GFF3Converter
      * @param identifier
      * @return the created item
      */
-    private Item createItem(String className, String implementations, String identifier) {
+    private Item createItem(String className, String identifier) {
         Item item = new Item();
-        item.setClassName(className);
-        item.setImplementations(implementations);
+        item.setClassName(tgtModel.getNameSpace() + className);
         item.setIdentifier(identifier);
         return item;
     }

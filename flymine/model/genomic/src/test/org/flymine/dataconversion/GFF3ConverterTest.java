@@ -27,9 +27,11 @@ import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
 import org.flymine.dataconversion.GFF3Converter;
+
 
 import org.apache.log4j.Logger;
 
@@ -49,10 +51,11 @@ public class GFF3ConverterTest extends TestCase {
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
     String infoSourceTitle = "UCSC";
-    String targetNameSpace = "http://www.flymine.org/model/genomic#";
 
-    public void setUp() {
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace);
+    public void setUp() throws Exception {
+        Model tgtModel = Model.getInstanceByName("genomic");
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel,
+                                      new GFF3RecordHandler(tgtModel));
     }
 
     public void tearDown() throws Exception {

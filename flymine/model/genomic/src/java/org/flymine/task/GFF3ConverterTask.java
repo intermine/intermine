@@ -18,8 +18,10 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
+import org.intermine.metadata.Model;
 
 import org.flymine.dataconversion.GFF3Converter;
+import org.flymine.dataconversion.GFF3RecordHandler;
 import org.flymine.io.gff3.GFF3Parser;
 
 import org.apache.tools.ant.BuildException;
@@ -40,7 +42,7 @@ public class GFF3ConverterTask extends Task
 
     protected FileSet fileSet;
     protected String converter, targetAlias,
-        seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace;
+        seqClsName, orgAbbrev, infoSourceTitle, model;
     protected GFF3Parser parser;
 
      /**
@@ -95,11 +97,11 @@ public class GFF3ConverterTask extends Task
     }
 
     /**
-     * Set the targetNameSpace
-     * @param targetNameSpace the targetNameSpace
+     * Set the name of model to create data in
+     * @param model name of model
      */
-    public void setTargetNameSpace(String targetNameSpace) {
-        this.targetNameSpace = targetNameSpace;
+    public void setModel(String model) {
+        this.model = model;
     }
 
 
@@ -126,8 +128,8 @@ public class GFF3ConverterTask extends Task
         if (infoSourceTitle == null) {
             throw new BuildException("infoSourceTitle attribute not set");
         }
-        if (targetNameSpace == null) {
-            throw new BuildException("targetNameSpace attribute not set");
+        if (model == null) {
+            throw new BuildException("model attribute not set");
         }
 
 
@@ -137,8 +139,10 @@ public class GFF3ConverterTask extends Task
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(targetAlias);
             writer = new ObjectStoreItemWriter(osw);
             parser = new GFF3Parser();
+            Model tgtModel = Model.getInstanceByName(model);
             GFF3Converter gff3converter =
-                new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace);
+                new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle,
+                                  tgtModel, new GFF3RecordHandler(tgtModel));
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
