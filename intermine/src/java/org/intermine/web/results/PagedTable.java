@@ -27,9 +27,10 @@ public abstract class PagedTable
     protected List rows;
     protected int startRow = 0;
     protected int pageSize = 10;
+    protected boolean summary = true;
 
     /**
-     * Construct a PageTable with a list of column names
+     * Construct a PagedTable with a list of column names
      * @param columnNames the column headings
      */
     public PagedTable(List columnNames) {
@@ -40,6 +41,25 @@ public abstract class PagedTable
             column.setVisible(true);
             columns.add(column);
         }
+    }
+
+    /**
+     * Construct a PagedTable with a list of column names and a parameter indicating whether this
+     * table should display its cells in a summary or detailed format
+     * @param columnNames the column headings
+     * @param summary the format for displaying cells
+     */
+    public PagedTable(List columnNames, boolean summary) {
+        this(columnNames);
+        this.summary = summary;
+    }
+
+    /**
+     * Check the format for displaying cells
+     * @return true if this table should display its cells in a summary format
+     */
+    public boolean isSummary() {
+        return summary;
     }
 
     /**

@@ -135,7 +135,14 @@
                     </td>
                     <td>
                       <c:set var="object" value="${row[column.index]}" scope="request"/>
-                      <c:set var="viewType" value="summary" scope="request"/>
+                      <c:choose>
+                        <c:when test="${RESULTS_TABLE.summary}">
+                          <c:set var="viewType" value="summary" scope="request"/>
+                        </c:when>
+                        <c:otherwise>
+                          <c:set var="viewType" value="detail" scope="request"/>
+                        </c:otherwise>
+                      </c:choose>
                       <tiles:get name="objectView.tile" />
                     </td>
                   </c:when>

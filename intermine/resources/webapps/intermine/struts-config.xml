@@ -260,6 +260,9 @@
     <action path="/initCollectionDetails"
             type="org.intermine.web.results.CollectionDetailsController"/>
 
+    <action path="/initObjectDetails"
+            type="org.intermine.web.results.ObjectDetailsController"/>
+
     <action path="/initBagDetails"
             type="org.intermine.web.results.BagDetailsController"/>
 

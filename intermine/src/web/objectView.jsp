@@ -13,14 +13,16 @@
       <c:out value="${object}" default="${nullFieldText}"/>
     </c:when>
     <c:otherwise>
-      <nobr>
-        <html:link action="/objectDetails?id=${object.id}">
-          <c:forEach var="cld" items="${leafClds}">
-            <c:out value="${cld.unqualifiedName}"/>
-          </c:forEach>
-        </html:link>
-      </nobr>
-      <br/><br/>
+      <c:if test="${viewType == 'summary'}">
+        <nobr>
+          <html:link action="/objectDetails?id=${object.id}">
+            <c:forEach var="cld" items="${leafClds}">
+              <c:out value="${cld.unqualifiedName}"/>
+            </c:forEach>
+          </html:link>
+        </nobr>
+        <br/><br/>
+      </c:if>
       <c:forEach var="cld" items="${leafClds}">
         <c:set var="cld" value="${cld}" scope="request"/>
         <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
