@@ -95,6 +95,12 @@ public class PostProcessTask extends Task
                 StoreSequences ss = new StoreSequences(osw, ensemblDb);
                 LOG.info("Starting StoreSequences.storeContigSequences()");
                 ss.storeContigSequences();
+                LOG.info("Finished StoreSequences.storeContigSequences()");
+            } else if ("transfer-sequences-chromosome".equals(type)) {
+                TransferSequences ts = new TransferSequences(osw);
+                LOG.info("Starting TransferSequences.transferToChromosome()");
+                ts.transferToChromosome();
+                LOG.info("Finished transfer-sequences-chromosome");
             } else if ("transfer-sequences".equals(type)) {
                 TransferSequences ts = new TransferSequences(osw);
                 LOG.info("Starting TransferSequences.transferToChromosome()");
