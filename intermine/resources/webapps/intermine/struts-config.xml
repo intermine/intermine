@@ -66,7 +66,7 @@
               scope="request"
               input="query"
               parameter="action">
-      <forward name="results"              path="results.page"/>
+      <forward name="runquery"              path="/runQuery"/>
       <forward name="buildquery"           path="query.page"/>
     </action>
 
@@ -92,6 +92,12 @@
 
     <action    path="/buildquery"
             forward="query.page">
+    </action>
+
+    <!-- Action to run a query for a Query object on the request -->
+    <action    path="/runQuery"
+               type="org.flymine.web.RunQueryAction">
+      <forward name="results" path="results.page"/>
     </action>
 
     <action    path="/documentation"
