@@ -86,6 +86,15 @@ public class Results extends AbstractList
      }
 
     /**
+     * Get the Query that produced this Results object
+     *
+     * @return the Query that produced this Results object
+     */
+    public Query getQuery() {
+        return this.query;
+    }
+
+    /**
      * Returns a range of rows of results. Will fetch batches from the
      * underlying ObjectStore if necessary.
      *
