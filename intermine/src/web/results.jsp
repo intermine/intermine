@@ -15,6 +15,11 @@
       <th align="center" class="resultsHeader">
         <c:out value="${column.alias}"/>
 
+        <%-- order by --%>
+        <html:link action="/changeResults?method=orderByColumn&columnAlias=${column.alias}">
+          [<bean:message key="results.orderByColumn"/>]
+        </html:link>
+
         <%-- show/hide --%>
         <c:choose>
           <c:when test="${column.visible}">
