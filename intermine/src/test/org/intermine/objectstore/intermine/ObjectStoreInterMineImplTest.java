@@ -320,9 +320,9 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         }
     }
 
-     public void testCreateTempBagTables() throws Exception {
+    public void testCreateTempBagTables() throws Exception {
         Query q = ObjectStoreQueriesTestCase.bagConstraint();
-
+        
         Map bagTableNames = new HashMap();
 
         Connection con = null;
@@ -376,8 +376,24 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
                 ((ObjectStoreInterMineImpl) os).releaseConnection(con);
             }
         }
+    }
 
+    public void testGetUniqueInteger() throws Exception {
+        ObjectStoreInterMineImpl osii = (ObjectStoreInterMineImpl) os;
+        Connection con = osii.getConnection();
 
+        con.setAutoCommit(false);
+        int integer1 = osii.getUniqueInteger(con);
+        int integer2 = osii.getUniqueInteger(con);
+
+        assertTrue(integer2 > integer1);
+
+        con.setAutoCommit(true);
+        int integer3 = osii.getUniqueInteger(con);
+        int integer4 = osii.getUniqueInteger(con);
+
+        assertTrue(integer3 > integer2);
+        assertTrue(integer4 > integer3);
     }
 
     private static class DelayedCancel implements Runnable
