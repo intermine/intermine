@@ -94,6 +94,17 @@ public class SchemaOutput
     }
 
     /**
+     * Add a column to the specified table if it doesn't already exist
+     * @param table the table
+     * @param column the column
+     */
+    protected void addColumn(Table table, Column column) {
+        if (!table.columns.contains(column)) {
+            table.columns.add(column);
+        }
+    }
+
+    /**
      * Custom handler for SAX events
      */
     protected class MyHandler extends DefaultHandler
@@ -115,8 +126,10 @@ public class SchemaOutput
                 addTable(attrs.getValue("indirection-table"), true); // this alters currentTable
             }
             if (qName.equals("fk-pointing-to-this-class")) {
-                currentTable.columns.add(new Column(
-                                                    attrs.getValue("column"), "INTEGER"));
+                addColumn(currentTable, new Column(attrs.getValue("column"), "INTEGER"));
+            }
+            if (qName.equals("fk-pointing-to-element-class")) {
+                addColumn(currentTable, new Column(attrs.getValue("column"), "INTEGER"));
             }
         }   
     }

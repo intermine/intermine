@@ -20,8 +20,6 @@ public class OJBModelOutput extends ModelOutput
 {
     protected StringBuffer references, collections;
 
-
-
     /**
      * @see ModelOutput#Constructor
      */
@@ -184,13 +182,18 @@ public class OJBModelOutput extends ModelOutput
      * @see ModelOutput#generate(CollectionDescriptor)
      */
     protected String generate(CollectionDescriptor col) {
-
         StringBuffer sb = new StringBuffer();
-
         String name2 = col.getName();
+        ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
 
-        if (col.getReverseReferenceDescriptor() instanceof CollectionDescriptor) { //many:many
-            String name1 = col.getReverseReferenceDescriptor().getName();
+        if (rd == null || rd instanceof CollectionDescriptor) { //many:many
+            String name1;
+            if (rd == null) {
+                name1 = StringUtil.decapitalise(TypeUtil.unqualifiedName(col.getClassDescriptor()
+                                                                         .getClassName()));
+            } else {
+                name1 = rd.getName();
+            }
             String joiningTableName = "";
             if (name1.compareTo(name2) < 0) {
                 joiningTableName = StringUtil.capitalise(name1) + StringUtil.capitalise(name2);
@@ -237,19 +240,7 @@ public class OJBModelOutput extends ModelOutput
                 .append("Id\"/>" + ENDL)
                 .append(INDENT + INDENT)
                 .append("</collection-descriptor>" + ENDL);
-        } else { // unidirectional relationship
-            collections.append(INDENT + INDENT)
-                .append("<collection-descriptor name=\"")
-                .append(name2)
-                .append("\" element-class-ref=\"")
-                .append(col.getReferencedClassDescriptor().getClassName())
-                .append("\" collection-class=\"")
-                .append(col.getCollectionClass().getName())
-                .append("\" proxy=\"true\"/>" + ENDL);
         }
-
-
-
         return sb.toString();
     }
 
