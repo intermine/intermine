@@ -16,6 +16,7 @@
   <property name="src" location="src"/>
   <property name="src.java" location="${src}/java"/>
   <property name="src.test" location="${src}/test"/>
+  <property name="src.schema" location="${src}/schema" />
   <property name="src.www" location="doc"/>
   <property name="src.www-internal" location="../flymine-private/doc"/>
 
@@ -26,8 +27,11 @@
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
+  <property name="build.resources.test" location="${build.resources}/test" />
   <property name="build.test" location="${build}/test"/>
+  <property name="build.schema" location="${build}/schema" />
   <property name="build.src.java" location="${build}/javasrc"/>
+  <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.www" location="${build}/www"/>
   <property name="build.www-internal" location="${build}/www/internal"/>
@@ -66,6 +70,7 @@
   </path>
 
   <path id="test.class.path">
+    <pathelement path="${build.resources.test}" />
     <path refid="project.class.path"/>
     <pathelement location="${build.test}"/>
   </path>
@@ -84,8 +89,11 @@
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
+    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.test}"/>
+    <mkdir dir="${build.schema}" />
     <mkdir dir="${build.src.java}"/>
+    <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.www}"/>
     <mkdir dir="${build.www-internal}"/>
@@ -95,6 +103,9 @@
     <mkdir dir="${results.checkstyle}"/>
 
     <copy file="${build.properties.local}" tofile="${build.resources}/flymine.properties">
+    </copy>
+    <copy todir="${build.resources}">
+      <fileset dir="${resources}" />
     </copy>
 
   </target>
@@ -108,6 +119,7 @@
 
   <!-- Compilation targets -->
 
+  <!-- main java source -->
   <target name="compile-main" depends="prepare"
           description="compile the java source" >
     <copy todir="${build.src.java}">
@@ -126,57 +138,117 @@
   </target>
 
   <!-- has model been unzipped? -->
-  <target name="unpack-model.check" depends="prepare">
-    <uptodate property="unpack-model.uptodate">
+  <target name="unpack-testmodel.check" depends="prepare">
+    <uptodate property="unpack-testmodel.uptodate">
       <srcfiles dir="${src.java}/org/flymine/model/testmodel" includes="**/*.zargo"/>
-      <mapper type="glob" from="*.zargo" to="${build.src.java}/*_.xmi" />
+      <mapper type="glob" from="*.zargo" to="${build.src.test}/*_.xmi" />
     </uptodate>
   </target>
   
-  <target name="unpack-model" depends="unpack-model.check"
-          description="unpacks the model from .zargo file"
-          unless="unpack-model.uptodate">
-    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.src.java}" />
-    <touch file="${build.src.java}/TestModel_.xmi" />
+  <!-- unzip model -->
+  <target name="unpack-testmodel" depends="unpack-testmodel.check"
+          description="unpacks the testmodel from .zargo file"
+          unless="unpack-testmodel.uptodate">
+    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.src.test}">
+      <!-- <patternset>
+        <include name="**/*.xmi"/>
+      </patternset> -->
+    </unzip>
+    <touch file="${build.src.test}/TestModel_.xmi" />
   </target>
 
-  <!-- has model been compiled? -->
-  <target name="model.check" depends="unpack-model">
-    <dependset>
-      <srcfileset dir="${src}" includes="org/flymine/model/testmodel/**/*.java" />
-      <targetfilelist dir="${build.src.java}" files=".model-created" />
-    </dependset>
-    <uptodate property="model.uptodate" targetfile="${build.src.java}/.model-created">
-      <srcfiles dir="${build.src.java}" includes="TestModel_.xmi"/>
+  <!-- is our java source older than the model? -->
+  <target name="testmodel-java.check" depends="unpack-testmodel">
+    <uptodate property="testmodel-java.outofdate" targetfile="${build.src.test}/TestModel_.xmi">
+      <srcfiles dir="${build.src.test}" includes="org/flymine/model/testmodel/**/*.java"/>
     </uptodate>
   </target>
   
-  <target name="model" depends="model.check, compile-main"
-          description="generate model classes from xmi"
-          unless="model.uptodate">
+  <!-- generate java source for model -->
+  <target name="generate-java-testmodel" depends="testmodel-java.check, compile-main"
+          description="generate testmodel classes from xmi"
+          if="testmodel-java.outofdate">
     <java classname="org.flymine.codegen.JavaModelOutput" fork="true" dir="${build}">
       <classpath refid="project.class.path" />
       <arg value="TestModel" />
-      <arg value="${build.src.java}" />
+      <arg value="${build.src.test}" />
+      <arg value="${build.src.test}" />
     </java>
-    <javac destdir="${build.java}" listfiles="yes">
-      <classpath refid="project.class.path"/>
-      <src path="${build.src.java}/org/flymine/model" />
-    </javac>
-    <touch file="${build.src.java}/.model-created"/>
   </target>
 
-  <target name="compile-test" depends="model"
-          description="compile the java test source" >
+  <!-- compile java source for model -->
+  <target name="compile-testmodel" depends="generate-java-testmodel">
     <javac destdir="${build.test}" listfiles="yes">
       <classpath refid="project.class.path"/>
-      <src path="${src.test}" />
+      <src path="${build.src.test}/org/flymine/model" />
     </javac>
   </target>
 
+  <!-- is our repository descriptor older than the model? -->
+  <target name="testmodel-repository.check" depends="unpack-testmodel">
+    <uptodate property="testmodel-repository.outofdate" targetfile="${build.src.test}/TestModel_.xmi">
+      <srcfiles dir="${build.resources.test}" includes="**/*.xml"/>
+    </uptodate>
+  </target>
+
+  <!-- generate repository descriptor for model -->
+  <target name="generate-repository-testmodel" depends="testmodel-repository.check, compile-main"
+          if="testmodel-repository.outofdate">
+    <java classname="org.flymine.codegen.OJBModelOutput" fork="true" dir="${build}">
+      <classpath refid="project.class.path" />
+      <arg value="TestModel" />
+      <arg value="${build.src.test}" />
+      <arg value="${build.resources.test}" />
+    </java>
+  </target>
+
+  <!-- generate schema from repository descriptor and use to create database tables -->
+  <target name="build-db-testmodel" depends="generate-repository-testmodel"
+          if="testmodel-repository.outofdate">
+    <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
+      <classpath refid="project.class.path" />
+      <arg value="${build.resources.test}/repository_testmodel.xml" />
+      <arg value="${build.schema}/testmodel-schema.xml" />
+    </java>
+    <copy todir="${build.schema}">
+      <fileset dir="${src.schema}">
+        <include name="**/*-schema.xml"/>
+      </fileset>
+    </copy>
+    
+    <taskdef
+          name="build-db"
+          classname="org.flymine.task.BuildDbTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    
+    <build-db
+          database="db.unittest"
+          destdir="${build.schema}">
+      <fileset dir="${build.schema}">
+        <include name="*-schema.xml" />
+        </fileset>
+    </build-db>
+  </target>
+  
   <!-- Unit tests -->
 
-  <target name="test-main" depends="compile-test"
+  <!-- compile the tests -->
+  <target name="compile-test" depends="compile-testmodel"
+          description="compile the java test source" >
+    <copy todir="${build.src.test}">
+      <fileset dir="${src.test}">
+        <include name="**/*.java"/>
+      </fileset>
+    </copy>
+    <javac destdir="${build.test}" listfiles="yes">
+      <classpath refid="project.class.path"/>
+      <src path="${build.src.test}" />
+    </javac>
+  </target>
+
+  <!-- run the tests -->
+  <target name="test-main" depends="compile-test, build-db-testmodel"
           description="perform JUnit tests on main source code" >
 
     <!-- Specify that the tests depend on the java files in the main directories -->
@@ -196,7 +268,7 @@
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}" unless="test-main.uptodate">
         <fileset dir="${build.test}">
-         <include name="**/*.class" />
+         <include name="**/*Test.class" />
         </fileset>
       </batchtest>
     </junit>
@@ -204,9 +276,8 @@
     <antcall target="test-report"/>
   </target>
 
-
+  <!-- force all the unit tests to be redone -->
   <target name="junit-clean" depends="prepare">
-    <!-- Force all the unit tests to be redone -->
     <delete>
       <fileset dir="${results.junit}" includes="TEST-*.xml"/>
     </delete>
@@ -239,7 +310,7 @@
     <taskdef resource="checkstyletask.properties">
       <classpath refid="checkstyle.class.path"/>
     </taskdef>
-    <checkstyle config="${resources}/checkstyle-config.xml"
+    <checkstyle config="${build.resources}/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
       <classpath refid="checkstyle.class.path"/>
@@ -252,7 +323,7 @@
 
     <style in="${results.checkstyle}/checkstyle_report.xml"
            out="${results.checkstyle}/checkstyle_report.html"
-           style="${resources}/checkstyle-frames.xsl" />
+           style="${build.resources}/checkstyle-frames.xsl" />
 
   </target>
 
