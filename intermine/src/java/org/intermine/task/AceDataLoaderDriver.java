@@ -8,6 +8,7 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
+import org.flymine.dataloader.AceDataLoader;
 import org.flymine.dataloader.IntegrationWriter;
 import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
 
@@ -38,13 +39,13 @@ public class AceDataLoaderDriver
             // Need to get rid of OJB-specific stuff here
             ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(os);
 
-            //Model model = Model.getInstance();
             IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, os, writer);
 
             AceURL aceURL = new AceURL("acedb://" + user + ':' + password + '@'
                                        + host + ':' + port);
 
-            //         AceDataLoader.processAce(model, iw, aceURL);
+            AceDataLoader dl = new AceDataLoader(os.getModel(), iw);
+            dl.processAce(aceURL);
         } catch (Exception e) {
             throw new BuildException(e);
         }
