@@ -57,7 +57,6 @@ package org.flymine.objectstore.ojb;
 
 //import java.util.HashSet;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,6 +64,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import org.flymine.objectstore.query.Query;
@@ -258,21 +258,6 @@ public class FlymineSqlSelectStatement implements SqlStatement
             QueryField nodeF = (QueryField) node;
             FromElement nodeClass = nodeF.getFromElement();
             String classAlias = (String) query.getAliases().get(nodeClass);
-            //boolean done = false;
-            //ClassDescriptor cld = null;
-            //for (int i = 0; (i<clds.length) && (! done) ; i++) {
-            //    cld = clds[i];
-            //    if (cld.getClassOfObject().equals(nodeClass.getType())) {
-            //        done = true;
-            //    }
-            //}
-            //if (cld == null) {
-            //    throw (new Exception("Couldn't find class descriptor for class "
-            //                + nodeClass.getType()));
-            //}
-
-            // Now cld is the ClassDescriptor for the node's class. Now need to find node's
-            // FieldDescriptor.
 
             return classAlias + "." + nodeF.getFieldName();
         } else if (node instanceof QueryExpression) {
@@ -370,15 +355,18 @@ public class FlymineSqlSelectStatement implements SqlStatement
                 QueryClass qc = (QueryClass) fromElement;
                 ClassDescriptor cld = dr.getDescriptorFor(qc.getType());
                 String alias = (String) query.getAliases().get(qc);
-                ArrayList subclasses = new ArrayList(cld.getExtentClasses());
-                subclasses.add(cld.getClassOfObject());
+                Stack subclasses = new Stack();
+                subclasses.push(cld.getClassOfObject());
                 TreeSet allColumnNames = new TreeSet();
                 HashMap tableNameToColumns = new HashMap();
                 HashMap tableNameToClasses = new HashMap();
-                Iterator subclassIter = subclasses.iterator();
-                while (subclassIter.hasNext()) {
-                    Class subclass = (Class) subclassIter.next();
+                while (!subclasses.empty()) {
+                    Class subclass = (Class) subclasses.pop();
                     ClassDescriptor subclassDesc = dr.getDescriptorFor(subclass);
+                    Iterator toAddIter = subclassDesc.getExtentClasses().iterator();
+                    while (toAddIter.hasNext()) {
+                        subclasses.push(toAddIter.next());
+                    }
                     if (!subclassDesc.isInterface()) {
                         String tableName = subclassDesc.getFullTableName();
                         if (!tableNameToColumns.containsKey(tableName)) {
@@ -449,7 +437,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
                             if (tableColumns.contains(columnName)) {
                                 fromText += columnName;
                             } else {
-                                if (columnName == OJB_CONCRETE_CLASS_COLUMN) {
+                                if (OJB_CONCRETE_CLASS_COLUMN.equals(columnName)) {
                                     fromText += "'"
                                         + ((String) tableNameToClasses.get(tableName))
                                         + "' AS " + columnName;

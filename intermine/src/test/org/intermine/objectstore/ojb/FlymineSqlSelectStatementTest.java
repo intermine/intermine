@@ -30,6 +30,7 @@ import org.flymine.model.testmodel.Employable;
 import org.flymine.model.testmodel.Manager;
 import org.flymine.model.testmodel.Contractor;
 import org.flymine.model.testmodel.CEO;
+import org.flymine.model.testmodel.RandomInterface;
 
 public class FlymineSqlSelectStatementTest extends QueryTestCase
 {
@@ -274,6 +275,24 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
 
     public void testManager() throws Exception {
         QueryClass qc1 = new QueryClass(Manager.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        throw (new Exception(s1.getStatement()));
+    }
+
+    public void testRandomInterface() throws Exception {
+        QueryClass qc1 = new QueryClass(RandomInterface.class);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
+        throw (new Exception(s1.getStatement()));
+    }
+
+    public void testCEO() throws Exception {
+        QueryClass qc1 = new QueryClass(CEO.class);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
