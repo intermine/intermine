@@ -80,8 +80,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         }
         String oText = obj.toString();
         int oTextLength = oText.length();
-        System.out.println(" --------------- getEquivalentObjects() called on "
-                + oText.substring(0, oTextLength > 60 ? 60 : oTextLength));
+        //System//.out.println(" --------------- getEquivalentObjects() called on "
+        //        + oText.substring(0, oTextLength > 60 ? 60 : oTextLength));
         Integer destId = (Integer) idMap.get(obj.getId());
         if (destId == null) {
             Query q = null;
@@ -90,17 +90,17 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             } catch (MetaDataException e) {
                 throw new ObjectStoreException(e);
             }
-            System.out.println(" --------------------------- " + q);
+            //System//.out.println(" --------------------------- " + q);
             SingletonResults retval = new SingletonResults(q, this, getSequence());
             retval.setNoOptimise();
             retval.setNoExplain();
             return retval;
         } else {
-            if (osw.pilferObjectById(destId) == null) {
-                System.out.println(" --------------------------- Cache miss");
-            } else {
-                System.out.println(" --------------------------- Cache hit");
-            }
+            //if (osw.pilferObjectById(destId) == null) {
+                //System//.out.println(" --------------------------- Cache miss");
+            //} else {
+                //System//.out.println(" --------------------------- Cache hit");
+            //}
             return Collections.singleton(osw.getObjectById(destId));
         }
     }
@@ -254,18 +254,19 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * Puts a mapping into idMap.
      *
-     * @param sourceId the ID of the object from the source
-     * @param destId the ID of the object from the destination
+     * @param source the ID of the object from the source
+     * @param dest the ID of the object from the destination
      */
     public void assignMapping(Integer source, Integer dest) {
-        if ((source != null) && (dest != null))
-        idMap.put(source, dest);
-        int removeItems = idMap.size() - MAX_MAPPINGS;
-        if (removeItems > 10) {
-            Iterator iter = idMap.entrySet().iterator();
-            for (int i = 0; i < removeItems && iter.hasNext(); i++) {
-                iter.next();
-                iter.remove();
+        if ((source != null) && (dest != null)) {
+            idMap.put(source, dest);
+            int removeItems = idMap.size() - MAX_MAPPINGS;
+            if (removeItems > 10) {
+                Iterator iter = idMap.entrySet().iterator();
+                for (int i = 0; i < removeItems && iter.hasNext(); i++) {
+                    iter.next();
+                    iter.remove();
+                }
             }
         }
     }

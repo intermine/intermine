@@ -85,8 +85,8 @@ public class DataTracking
             }
             Map cachedObject = (Map) cache.get(obj.getId().toString());
             if (cachedObject == null) {
-                //LOG.error("Getting datatracking data for id=" + obj.getId()
-                //        + " - not cached, field=" + field + ", cache size = " + cache.size()
+                //System//.out.println("Getting datatracking data for id=" + obj.getId()
+                //        + " - not cached, field=" + field + ", cache size = " + cache.size());
                 //        + ", cache = " + cache.keySet());
                 cachedObject = new HashMap();
                 Query q = new Query();
@@ -115,7 +115,7 @@ public class DataTracking
                 cache.put(obj.getId().toString(), cachedObject);
             //} else {
                 //System//.out.println("Getting datatracking data for id=" + obj.getId()
-                //        + " -     cached, field=" + field + ", cache = " + cache.keySet());
+                //        + " -     cached, field=" + field + ", cache size = " + cache.size());
             }
             return (Field) cachedObject.get(field);
         } else {

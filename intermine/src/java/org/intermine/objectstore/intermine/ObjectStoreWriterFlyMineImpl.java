@@ -322,8 +322,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             if (batch == null) {
                 s.executeBatch();
                 logFlushBatch();
-                //System//.out.println(getModel().getName()
-                //        + ": Executed SQL batch at end of store()");
             }
             try {
                 FlyMineBusinessObject toCache = LiteParser.parse(xml, this);

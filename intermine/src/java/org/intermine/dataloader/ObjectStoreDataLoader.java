@@ -66,13 +66,14 @@ public class ObjectStoreDataLoader extends DataLoader
         //for (int i = 0; i < 35000; i++) {
         //    String text = iter.next().toString();
         //    int textLen = text.length();
-        //    System.out.println("Skipping " + text.substring(0, (textLen > 60 ? 60 : textLen)));
+        //    System//.out.println("Skipping " + text.substring(0, (textLen > 60 ? 60 : textLen)));
         //}
         while (iter.hasNext()) {
             FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
-            String objText = obj.toString();
-            int objTextLen = objText.length();
-            System.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60 : objTextLen)));
+            //String objText = obj.toString();
+            //int objTextLen = objText.length();
+            //System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60
+            //                : objTextLen)));
             iw.store(obj, source, skelSource);
             opCount++;
             if (opCount % 1000 == 0) {

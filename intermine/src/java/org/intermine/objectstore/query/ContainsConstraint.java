@@ -86,7 +86,8 @@ public class ContainsConstraint extends Constraint
             throw new NullPointerException("ref cannot be null");
         }
         if (!(ref instanceof QueryObjectReference)) {
-            throw new IllegalArgumentException("Cannot compare a collection reference to an object");
+            throw new IllegalArgumentException("Cannot compare a collection reference to an"
+                    + " object");
         }
         if (op == null) {
             throw new NullPointerException("op cannot be null");

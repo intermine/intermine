@@ -32,7 +32,6 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.datatracking.Source;
-import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.ContainsConstraint;

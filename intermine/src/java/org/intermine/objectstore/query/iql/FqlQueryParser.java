@@ -809,7 +809,8 @@ public class FqlQueryParser
                                             + firstString + "." + secondString + " does not exist"
                                             + ", or is not a collection or object reference");
                         }
-                        // Now we have a collection or object reference. Now we need a class or object.
+                        // Now we have a collection or object reference. Now we need a class or
+                        // object.
                         if (subAST.getNextSibling().getType() == FqlTokenTypes.QUESTION_MARK) {
                             return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
                                     (FlyMineBusinessObject) iterator.next());
