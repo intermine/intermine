@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 
 import org.apache.struts.tiles.ComponentContext;
 
@@ -40,6 +41,9 @@ public class TreeControllerTest extends MockStrutsTestCase
         openClasses.add(model + "Thing");
         getSession().setAttribute("openClasses", openClasses);
         getRequest().setAttribute("rootClass", model + "Thing");
+        //necessary to work-round struts test case not invoking our SessionListener
+        getSession().setAttribute(Constants.PROFILE,
+                                  new Profile(null, null, new HashMap(), new HashMap(), new HashMap()));
 
         actionPerform();
         verifyNoActionErrors();
