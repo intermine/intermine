@@ -1889,6 +1889,13 @@
     <mappings alias="osw.production" type="transfer-sequences"/>
   </target>
 
+  <target name="update-publications" depends="compile-genomic-java">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings alias="osw.production" type="update-publications" integrationWriter="integration.production"/>
+  </target>
+
   <property name="os.summary.properties.file" 
             value="${model}/genomic/resources/objectstoresummary.config.properties" />
   <property name="summarise.output.properties" 

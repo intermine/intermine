@@ -28,11 +28,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.intermine.dataloader.IntegrationWriter;
+import org.intermine.dataloader.IntegrationWriterFactory;
+import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.SAXParser;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
@@ -55,14 +57,16 @@ public class UpdatePublications
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=";
     // number of summaries to retrieve per request
     protected static final int BATCH_SIZE = 50;
-    protected ObjectStoreWriter osw;
+    // source name for IntegrationWriter
+    protected static final String SOURCE_NAME = "pubmed";
+    protected IntegrationWriter iw;
 
     /**
      * Constructor
-     * @param osw the relevent ObjectStoreWriter
+     * @param iw the relevent IntegrationWriter
      */
-    public UpdatePublications(ObjectStoreWriter osw) {
-        this.osw = osw;
+    public UpdatePublications(IntegrationWriter iw) {
+        this.iw = iw;
     }
 
     /**
@@ -93,7 +97,7 @@ public class UpdatePublications
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        return osw.getObjectStore().execute(q);
+        return new SingletonResults(q, iw.getObjectStore(), iw.getObjectStore().getSequence());
     }
 
     /**
@@ -113,13 +117,18 @@ public class UpdatePublications
      * @throws ObjectStoreException if an error occurs
      */
     protected void storePublications(Collection publications) throws ObjectStoreException {
+        Source mainSource = iw.getMainSource(SOURCE_NAME);
+        Source skeletonSource = iw.getSkeletonSource(SOURCE_NAME);
+        iw.beginTransaction();
         for (Iterator i = publications.iterator(); i.hasNext();) {
             Publication publication = (Publication) i.next();
-            osw.store(publication);
+            iw.store(publication, mainSource, skeletonSource);
             for (Iterator j = publication.getAuthors().iterator(); j.hasNext();) {
-                osw.store((InterMineObject) j.next());
+                iw.store((InterMineObject) j.next(), mainSource, skeletonSource);
             }
         }
+        iw.commitTransaction();
+        iw.close();
     }
 
     /**
@@ -198,15 +207,17 @@ public class UpdatePublications
      * @throws Exception if an error occurs
      */
     public static void main(String[] args) throws Exception {
-        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.production");
+        IntegrationWriter iw =
+            IntegrationWriterFactory.getIntegrationWriter("integration.production");
+        iw.setIgnoreDuplicates(true);
         List ids = new ArrayList();
         ids.add("10021333");
         for (Iterator i = ids.iterator(); i.hasNext();) {
             Publication publication = (Publication)
                 DynamicUtil.createObject(Collections.singleton(Publication.class));
             publication.setPubMedId((String) i.next());
-            osw.store(publication);
+            iw.store(publication, iw.getMainSource("rnai"), iw.getSkeletonSource("rnai"));
         }
-        new UpdatePublications(osw).execute();
+        new UpdatePublications(iw).execute();
     }
 }
