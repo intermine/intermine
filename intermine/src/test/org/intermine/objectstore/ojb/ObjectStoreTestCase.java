@@ -26,7 +26,7 @@ import org.flymine.objectstore.*;
 import org.flymine.objectstore.query.*;
 import org.flymine.model.testmodel.*;
 
-public abstract class QueryTestCase extends TestCase
+public abstract class ObjectStoreTestCase extends TestCase
 {
     private ObjectStoreWriter writer;
     protected Database db;
@@ -40,7 +40,7 @@ public abstract class QueryTestCase extends TestCase
     /**
      * Constructor
      */
-    public QueryTestCase(String arg) {
+    public ObjectStoreTestCase(String arg) {
         super(arg);
     }
 
