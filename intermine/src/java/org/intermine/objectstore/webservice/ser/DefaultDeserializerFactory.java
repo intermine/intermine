@@ -10,37 +10,23 @@ package org.flymine.objectstore.webservice.ser;
  *
  */
 
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.DeserializerFactory;
-import javax.xml.rpc.encoding.Deserializer;
+import javax.xml.namespace.QName;
 
-import java.util.Iterator;
-import java.util.ArrayList;
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 
 /**
  * Produce DefaultDeserializers
  *
  * @author Mark Woodbridge
  */
-public class DefaultDeserializerFactory implements DeserializerFactory
+public class DefaultDeserializerFactory extends BaseDeserializerFactory
 {
-    private ArrayList mechanisms;
-
     /**
-     * @see DeserializerFactory#getDeserializerAs
+     * Constructor
+     * @param javaType the type of the object to instantiate
+     * @param xmlType the qname (tag) of the xml version of the object
      */
-    public Deserializer getDeserializerAs(String mechanismType) {
-        return new DefaultDeserializer();
-    }
-
-    /**
-     * @see DeserializerFactory#getSupportedMechanismTypes
-     */
-    public Iterator getSupportedMechanismTypes() {
-        if (mechanisms == null) {
-            mechanisms = new ArrayList();
-            mechanisms.add(Constants.AXIS_SAX);
-        }
-        return mechanisms.iterator();
+    public DefaultDeserializerFactory(Class javaType, QName xmlType) {
+        super(DefaultDeserializer.class, xmlType, javaType);
     }
 }
