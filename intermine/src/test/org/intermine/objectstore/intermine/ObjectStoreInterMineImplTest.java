@@ -367,11 +367,12 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             } catch (SQLException e) {
                 // expected
             }
-            
+
             assertEquals(expected, results);
         } finally {
             if (con != null) {
                 con.commit();
+                con.setAutoCommit(true);
                 ((ObjectStoreInterMineImpl) os).releaseConnection(con);
             }
         }
