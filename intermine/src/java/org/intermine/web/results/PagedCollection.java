@@ -43,7 +43,7 @@ public class PagedCollection implements PagedTable
      * the single column of results
      * @param collection the Collection
      */
-    public PagedCollection(String name, Collection collection) {
+    public PagedCollection(Collection collection, String name) {
         this.name = name;
         this.collection = collection;
         // turn the Collection into a List so it is ordered and we can call get(int)

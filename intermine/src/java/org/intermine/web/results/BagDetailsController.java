@@ -54,11 +54,9 @@ public class BagDetailsController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
 
         String bagName = request.getParameter("bagName");
-
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
- 
         Collection bag = (Collection) savedBags.get(bagName);
 
         if (bag == null) {
@@ -66,7 +64,7 @@ public class BagDetailsController extends TilesAction
             bag = new InterMineBag();
         }
 
-        TableHelper.makeTable(session, bagName, bag);
+        session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(bag, bagName));
 
         return null;
     }

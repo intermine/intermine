@@ -12,7 +12,6 @@ package org.intermine.web.results;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
@@ -30,8 +29,8 @@ import org.intermine.objectstore.query.QueryHelper;
  */
 public class PagedResults implements PagedTable
 {
-    // Map to quickly look up columns from aliases
-    private Map aliasToColumn = new HashMap();
+    // Map to quickly look up columns from names
+    private Map nameToColumn = new HashMap();
 
     // The columns and their order
     private List columns = new LinkedList();
@@ -46,17 +45,24 @@ public class PagedResults implements PagedTable
      * @param results the Results object
      */
     public PagedResults(Results results) {
+        this(results, QueryHelper.getColumnAliases(results.getQuery()));
+    }
+
+    /**
+     * Create a new PagedResults object from the given Results object.
+     *
+     * @param results the Results object
+     * @param columnNames the headings for the Results columns
+     */
+    public PagedResults(Results results, List columnNames) {
         this.results = results;
 
-        // Add some blank column configurations
-        Iterator columnIter = QueryHelper.getColumnAliases(results.getQuery()).iterator();
-        int i = 0;
-        while (columnIter.hasNext()) {
-            String alias = (String) columnIter.next();
+        for (int i = 0; i < columnNames.size(); i++) {
+            String name = (String) columnNames.get(i);
             Column column = new Column();
-            column.setName(alias);
+            column.setName(name);
             column.setIndex(i++);
-            aliasToColumn.put(alias, column);
+            nameToColumn.put(name, column);
             columns.add(column);
         }
     }
@@ -73,20 +79,20 @@ public class PagedResults implements PagedTable
     /**
      * Get the list of column configurations
      *
-     * @param alias the alias of the column to get
-     * @return the column for the given alias
+     * @param name the name of the column to get
+     * @return the column for the given name
      */
-    public Column getColumnByName(String alias) {
-        return (Column) aliasToColumn.get(alias);
+    public Column getColumnByName(String name) {
+        return (Column) nameToColumn.get(name);
     }
 
     /**
      * Move a column up in the display order
      *
-     * @param alias the alias of the column to move
+     * @param name the name of the column to move
      */
-    public void moveColumnUp(String alias) {
-        Column column = getColumnByName(alias);
+    public void moveColumnUp(String name) {
+        Column column = getColumnByName(name);
         int index = columns.indexOf(column);
         if (index > 0) {
             columns.remove(index);
@@ -97,10 +103,10 @@ public class PagedResults implements PagedTable
     /**
      * Move a column down in the display order
      *
-     * @param alias the alias of the column to move
+     * @param name the name of the column to move
      */
-    public void moveColumnDown(String alias) {
-        Column column = getColumnByName(alias);
+    public void moveColumnDown(String name) {
+        Column column = getColumnByName(name);
         int index = columns.indexOf(column);
         if ((index != -1) && (index < (columns.size() - 1))) {
             columns.remove(index);

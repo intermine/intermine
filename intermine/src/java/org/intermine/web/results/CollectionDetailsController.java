@@ -56,23 +56,14 @@ public class CollectionDetailsController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Integer id = new Integer((String) request.getParameter("id"));
         String field = request.getParameter("field");
 
         Object o = os.getObjectById(id);
 
-        PagedTable pt;
-
-        if (field == null) {
-            pt = new PagedCollection(field, (Collection) o);
-        } else {
-            Collection c = (Collection) TypeUtil.getFieldValue(o, field);
-            pt = new PagedCollection(field, c);
-        }
-
-        session.setAttribute(Constants.RESULTS_TABLE, pt);
+        Collection c = (Collection) TypeUtil.getFieldValue(o, field);
+        session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(c, field));
 
         return null;
     }

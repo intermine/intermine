@@ -13,16 +13,16 @@
   <table cellspacing="0">
     <tr>
       <c:forEach var="path" items="${view}" varStatus="status">
-        <td>
+        <th>
           <c:out value="${path}"/>
           <c:if test="${!status.first}">
-            <html:link action="/viewChange?method=moveLeft&index=${status.index}">&lt; </html:link>
+            [<html:link action="/viewChange?method=moveLeft&index=${status.index}">&lt; </html:link>]
           </c:if>
           <c:if test="${!status.last}">
-            <html:link action="/viewChange?method=moveRight&index=${status.index}">&gt;</html:link>
+            [<html:link action="/viewChange?method=moveRight&index=${status.index}">&gt;</html:link>]
           </c:if>
-          <html:link action="/viewChange?method=removeFromView&path=${path}">x</html:link>
-        </td>
+          [<html:link action="/viewChange?method=removeFromView&path=${path}">x</html:link>]
+        </th>
       </c:forEach>
     </tr>
   </table>
