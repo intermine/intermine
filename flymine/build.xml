@@ -1060,6 +1060,7 @@
     description="Build the FlyMine web application">
     <mkdir dir="${build.webapp}/flymine"/>
     <mkdir dir="${build.webapp}/flymine/model"/>
+    <mkdir dir="${build.webapp}/flymine/META-INF"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF/classes"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF/lib"/>
@@ -1104,14 +1105,15 @@
 
     <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
 
+    <copy todir="${build.webapp}/flymine/META-INF" file="${resources}/webapps/flymine/context.xml"/>
+
+    <replace file="${build.webapp}/flymine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
+
     <!-- this precompilation step is optional -->
     <antcall target="precompile-jsp"/>
 
     <delete file="${build.webapp}/flymine/WEB-INF/web.xml"/>
     <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
-      <lib dir="${build.webapp}/flymine/WEB-INF/lib"/>
-      <classes dir="${build.webapp}/flymine/WEB-INF/classes"/>
-      <webinf dir="${build.webapp}/flymine/WEB-INF"/>
       <fileset dir="${build.webapp}/flymine"/>
     </war>
 
@@ -1166,14 +1168,33 @@
   <!-- Webservice targets -->
   <target name="build-webservice" depends="prepare,prepare-dist,jar"
     description="Build the FlyMine webservice">
-    <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
-      <lib dir="${lib}">
+    <mkdir dir="${build.webapp}/webservice"/>
+    <mkdir dir="${build.webapp}/webservice/META-INF"/>
+    <mkdir dir="${build.webapp}/webservice/WEB-INF"/>
+    <mkdir dir="${build.webapp}/webservice/WEB-INF/lib"/>
+    <copy todir="${build.webapp}/webservice/WEB-INF">
+      <fileset dir="${resources}/webapps/webservice">
+        <exclude name="web.xml"/>
+        <exclude name="deploy-ObjectStore.wsdd"/>
+        <exclude name="undeploy-ObjectStore.wsdd"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.webapp}/webservice/WEB-INF/lib">
+      <fileset dir="${lib}">
         <patternset refid="lib.common"/>
         <patternset refid="lib.antlr"/>
         <patternset refid="lib.webapp.webservice"/>
-      </lib>
-      <lib dir="${dist}" includes="flymine*.jar"/>
-      <webinf dir="${resources}/webapps/webservice" excludes="web.xml deploy-ObjectStore.wsdd undeploy-ObjectStore.wsdd"/>
+      </fileset>
+      <fileset dir="${dist}" includes="webservice*.jar"/>
+      <fileset dir="${dist}" includes="flymine*.jar"/>
+    </copy>
+    
+    <copy todir="${build.webapp}/webservice/META-INF" file="${resources}/webapps/webservice/context.xml"/>
+
+    <replace file="${build.webapp}/webservice/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webservice.path}"/>
+
+    <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
+      <fileset dir="${build.webapp}/webservice"/>
     </war>
   </target>
 
