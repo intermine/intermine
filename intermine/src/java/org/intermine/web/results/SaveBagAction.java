@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ import org.intermine.web.InterMineBag;
 import org.intermine.web.Profile;
 import org.intermine.web.InterMineAction;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Saves selected items in a new bag or combines with existing bag.
@@ -39,6 +42,8 @@ import org.intermine.objectstore.query.Results;
  */
 public class SaveBagAction extends InterMineAction
 {
+    protected static final Logger LOG = Logger.getLogger(SaveBagAction.class);
+
     /**
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -104,18 +109,47 @@ public class SaveBagAction extends InterMineAction
 
                 if (allRows instanceof Results) {
                     Results results = (Results) allRows;
-                    
-                    if (maxBagSize > results.getObjectStore().getMaxLimit()) {
-                        results.setBatchSize(results.getObjectStore().getMaxLimit());
-                    } else {
-                        results.setBatchSize(maxBagSize);
-                    }
 
                     if (results.size() > maxBagSize) {
                         ActionMessage actionMessage =
                             new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                         recordError(actionMessage, request);
                         
+                        return mapping.findForward("results");
+                    }
+
+                    try {
+                        // make a copy of the Results object with a larger batch size so the object
+                        // store doesn't need to do lots of queries
+                        // we copy because setBatchSize() throws an exception if size() has already
+                        // been called
+                        Results newResults = results.getObjectStore().execute(results.getQuery());
+                    
+                        if (maxBagSize > results.getObjectStore().getMaxLimit()) {
+                            newResults.setBatchSize(results.getObjectStore().getMaxLimit());
+                        } else {
+                            newResults.setBatchSize(maxBagSize);
+                        }
+
+                        // make sure we can get the first batch
+                        try {
+                            newResults.get(0);
+                        } catch (IndexOutOfBoundsException e) {
+                            // Ignore - that means there are NO rows in this results object.
+                        }
+
+                        allRows = newResults;
+                    } catch (RuntimeException e) {
+                        if (e.getCause() instanceof ObjectStoreException) {
+                            recordError(new ActionMessage("errors.query.objectstoreerror"),
+                                        request, (ObjectStoreException) e.getCause(), LOG);
+                            return mapping.findForward("results");
+                        } else {
+                            throw e;
+                        }
+                    } catch (ObjectStoreException e) {
+                        recordError(new ActionMessage("errors.query.objectstoreerror"),
+                                    request, e, LOG);
                         return mapping.findForward("results");
                     }
                 }
