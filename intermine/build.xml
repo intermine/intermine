@@ -94,6 +94,7 @@
   <target name="prepare">
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
+      <format property="DTSTAMP" pattern="yyyyMMddHHmm"/>
     </tstamp>
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
@@ -566,7 +567,24 @@
 
   <target name="jar" depends="prepare-dist, compile-main"
     description="Makes a JAR file of all the classes and configuration files">
-    <jar destfile="${dist}/flymine.jar">
+    <condition property="version" value="${DTSTAMP}">
+      <not>
+        <isset property="version" />
+      </not>
+    </condition>
+
+    <echo message="Creating jar file version ${version}" />
+    <manifest file="${build}/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Specification-Title" value="FlyMine"/>
+      <attribute name="Specification-Version" value="${version}"/>
+      <attribute name="Specification-Vendor" value="FlyMine"/>
+      <attribute name="Implementation-Title" value="FlyMine"/>
+      <attribute name="Implementation-Version" value="${version}"/> 
+      <attribute name="Implementation-Vendor" value="FlyMine"/>
+    </manifest>
+
+    <jar destfile="${dist}/flymine.jar" manifest="${build}/MANIFEST.MF">
       <fileset dir="${build.java}" />
       <fileset dir="${build.resources}"/>
     </jar>
