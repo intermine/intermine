@@ -518,7 +518,7 @@ ALIAS options { testLiterals=true; } :
     ;
 
 QUOTED_STRING:
-        '\'' ( ~'\'' )* '\''
+        '\'' ( ~'\'' )* ( '\'' '\'' ( ~'\'' )* )* '\''
     ;
 
 SEMI: ';';
