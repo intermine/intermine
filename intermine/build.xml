@@ -265,7 +265,6 @@
       <fileset dir="${resources}/runtime"/>
     </copy>
     <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false" failonerror="false">
-      <fileset file="${runtime.properties.local}"/>
       <fileset dir="${model}">
         <include name="testmodel/resources/**"/>
       </fileset>
@@ -273,6 +272,7 @@
         <include name="**/*"/>
       </fileset>
     </copy>
+    <copy file="${runtime.properties.local}" tofile="${build.resources.test}/intermine.properties"/>
   </target>
 
   <target name="prepare-dist">
@@ -775,8 +775,7 @@
   <target name="dist-javadoc" depends="prepare-dist,javadoc"
           description="makes the javadoc available for distribution">
      <copy todir="${dist.javadoc}">
-      <fileset dir="${build.javadoc}">
-      </fileset>
+      <fileset dir="${build.javadoc}"/>
     </copy>
   </target>   
 
