@@ -95,7 +95,7 @@ public class AceModelParser extends AbstractModelParser
         atts.add(new AttributeDescriptor("identifier", true, "java.util.Date"));
         l.add(new ClassDescriptor(PACKAGE + "DateType", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
-        atts.add(new AttributeDescriptor("identifier", true, "float"));
+        atts.add(new AttributeDescriptor("identifier", true, "java.lang.Float"));
         l.add(new ClassDescriptor(PACKAGE + "Float", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "int"));
@@ -247,8 +247,8 @@ public class AceModelParser extends AbstractModelParser
             Set cols = new LinkedHashSet();
             atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
             nodeToSets(node.getChild(), "value", true, atts, refs, cols);
-            return new ClassDescriptor(PACKAGE + node.getName().substring(1),
-                    null, null, false, atts, refs, cols);
+            return new ClassDescriptor(PACKAGE + formatAceName(node.getName().substring(1)),
+                                       null, null, false, atts, refs, cols);
         } else {
             throw new IllegalArgumentException("Not a class");
         }
@@ -271,7 +271,7 @@ public class AceModelParser extends AbstractModelParser
             if (node.getChild() != null) {
                 nodeToSets(node.getChild(), node.getName(), true, atts, refs, cols);
             } else {
-                atts.add(new AttributeDescriptor(node.getName(), false, "boolean"));
+                atts.add(new AttributeDescriptor(formatAceName(node.getName()), false, "boolean"));
             }
             if (node.getSibling() != null) {
                 nodeToSets(node.getSibling(), parent, collection, atts, refs, cols);
@@ -324,13 +324,14 @@ public class AceModelParser extends AbstractModelParser
             collection = true;
             nextNode = nextNode.getChild();
         }
-        String fieldName = parent + (number == 1 ? "" : "_" + number);
+        String fieldName = formatAceName(parent + (number == 1 ? "" : "_" + number));
         String type = node.getName();
         if ((type.charAt(0) == '#') || (type.charAt(0) == '?')) {
             type = type.substring(1);
         }
         if (collection) {
-            cols.add(new CollectionDescriptor(fieldName, false, PACKAGE + type, xref, false));
+            cols.add(new CollectionDescriptor(fieldName, false, PACKAGE + formatAceName(type),
+                                              formatAceName(xref), false));
         } else if ("Text".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, false, "java.lang.String"));
         } else if ("Float".equals(type)) {
@@ -340,7 +341,8 @@ public class AceModelParser extends AbstractModelParser
         } else if ("DateType".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, false, "java.util.Date"));
         } else {
-            refs.add(new ReferenceDescriptor(fieldName, false, PACKAGE + type, xref));
+            refs.add(new ReferenceDescriptor(fieldName, false, PACKAGE + formatAceName(type),
+                                             formatAceName(xref)));
         }
         if (nextNode != null) {
             if (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE) {
@@ -361,5 +363,22 @@ public class AceModelParser extends AbstractModelParser
             }
         }
     }
+
+    private String formatAceName(String name) {
+
+        if (name == null) {
+            return null;
+        }
+        // cannot have digits as first character of field/Class names in java
+        if (Character.isDigit(name.charAt(0))) {
+            return "x" + name;
+        }
+        if (name.equals("Class") || name.equals("Id")) {
+            return "Ace" + name;
+        }
+        return name;
+    }
+
+
 
 }
