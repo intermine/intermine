@@ -466,9 +466,9 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
      */
     public void testAbortTransactions() throws Exception {
         Address address1 = new Address();
-        address1.setAddress("Address 1");
+        address1.setAddress("Address 3");
         Address address2 = new Address();
-        address2.setAddress("Address 2");
+        address2.setAddress("Address 4");
 
         Query q = new Query();
         QueryClass qcAddress = new QueryClass(Address.class);
@@ -480,24 +480,31 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         q.addToOrderBy(qf);
         q.setConstraint(cs1);
 
+        Results res = writer.execute(q);
+        assertEquals(res.toString(), 0, res.size());
+
+        res = realOs.execute(q);
+        assertEquals(res.toString(), 0, res.size());
+
         writer.beginTransaction();
         assertTrue(writer.isInTransaction());
 
         writer.store(address1);
         writer.store(address2);
 
-        Results res = writer.execute(q);
+        res = writer.execute(q);
         assertEquals(2, res.size());
 
         writer.abortTransaction();
         assertFalse(writer.isInTransaction());
 
-        // Should be nothing there until we commit
-        res = realOs.execute(q);
-        assertEquals(0, res.size());
+        // Should be nothing there unless we commit
 
         res = writer.execute(q);
-        assertEquals(0, res.size());
+        assertEquals(res.toString(), 0, res.size());
+
+        res = realOs.execute(q);
+        assertEquals(res.toString(), 0, res.size());
     }
 
     public void testTransactionsAndCaches() throws Exception {
