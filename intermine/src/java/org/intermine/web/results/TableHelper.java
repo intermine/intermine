@@ -16,6 +16,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
 
 /**
  * Helper methods for the PagedTable object.
@@ -25,6 +26,11 @@ import org.intermine.objectstore.query.Query;
 
 public abstract class TableHelper
 {
+    /**
+     * Batch size for the underlying objectstore
+     */
+    public static final int BATCH_SIZE = 100;
+
     /**
      * Add a PagedTable object to the session for the given query (by executing the Query and
      * creating a PagedResults object).  The PagedResults object is stored as RESULTS_TABLE in the
@@ -38,11 +44,12 @@ public abstract class TableHelper
      */
     public static PagedResults makeTable(ObjectStore os, Query query, List view)
         throws ObjectStoreException {
-        PagedResults pr = new PagedResults(os.execute(query), view);
+        Results r = os.execute(query);
+        r.setBatchSize(BATCH_SIZE);
 
         // call this so that if an exception occurs we notice now rather than in the JSP code
         try {
-            pr.getResults().size();
+            r.size();
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ObjectStoreQueryDurationException) {
                 throw (ObjectStoreQueryDurationException) e.getCause();
@@ -51,6 +58,6 @@ public abstract class TableHelper
             }
         }
 
-        return pr;
+        return new PagedResults(r, view);
     }
 }

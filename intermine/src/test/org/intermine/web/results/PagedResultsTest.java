@@ -76,7 +76,6 @@ public class PagedResultsTest extends TestCase
         PagedResults dr = getExactResults();
         dr.setPageSize(10);
         dr.setStart(0);
-        assertFalse(dr.isSizeEstimate());
         assertEquals(15, dr.getExactSize());
     }
 
@@ -84,7 +83,6 @@ public class PagedResultsTest extends TestCase
         PagedResults dr = getEstimateTooHighResults();
         dr.setPageSize(10);
         dr.setStart(0);
-        assertTrue(dr.isSizeEstimate());
         assertEquals(25, dr.getEstimatedSize());
     }
 
@@ -92,7 +90,6 @@ public class PagedResultsTest extends TestCase
         PagedResults dr = getEstimateTooLowResults();
         dr.setPageSize(10);
         dr.setStart(0);
-        assertTrue(dr.isSizeEstimate());
         // Calling size() affects the estimate as it tries to fetch
         // more rows.  I think the best thing to do here is to check
         // that the size is greater than 10 and less than 15 to prove
@@ -105,7 +102,6 @@ public class PagedResultsTest extends TestCase
         PagedResults dr = getEmptyResults();
         dr.setPageSize(10);
         dr.setStart(0);
-        assertFalse(dr.isSizeEstimate());
         assertEquals(0, dr.getEstimatedSize());
     }
 

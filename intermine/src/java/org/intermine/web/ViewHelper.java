@@ -66,7 +66,7 @@ public abstract class ViewHelper
         Query q = makeQuery(request);
         PagedResults pr = TableHelper.makeTable(os, q, view);
         String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
-        ResultsInfo resultsInfo = pr.getResults().getInfo();
+        ResultsInfo resultsInfo = pr.getResultsInfo();
         SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
         return pr;
     }

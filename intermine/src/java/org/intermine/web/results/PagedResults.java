@@ -168,13 +168,15 @@ public class PagedResults implements PagedTable
         return end;
     }
 
+
     /**
-     * Get the underlying results object
+     * Get the exact size of the underlying object.
      *
-     * @return the underlying results object
+     * @return the exact size of the underlying Results object
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public Results getResults() {
-        return results;
+    public int getExactSize() throws ObjectStoreException {
+        return results.size();
     }
 
     /**
@@ -196,26 +198,6 @@ public class PagedResults implements PagedTable
     }
 
     /**
-     * Gets whether or not the size is an estimate
-     *
-     * @return true if size is an estimate
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public boolean isSizeEstimate() throws ObjectStoreException {
-        return !(results.getInfo().getStatus() == ResultsInfo.SIZE);
-    }
-
-    /**
-     * Get the exact size of the underlying object.
-     *
-     * @return the exact size of the underlying Results object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getExactSize() throws ObjectStoreException {
-        return getResults().size();
-    }
-
-    /**
      * Gets whether or not there could be any previous rows
      *
      * @return true if the "previous" button should be shown
@@ -232,7 +214,7 @@ public class PagedResults implements PagedTable
      */
     public boolean isMoreRows() throws ObjectStoreException {
         int size = getEstimatedSize();
-        if (isSizeEstimate()) {
+        if (!(results.getInfo().getStatus() == ResultsInfo.SIZE)) {
             // If we were on the end, size would not be an estimate
             return true;
         }
@@ -248,6 +230,15 @@ public class PagedResults implements PagedTable
      * @return the rows of the table
      */
     public List getList() {
-        return getResults();
+        return results;
+    }
+
+    /**
+     * Return information about the results
+     * @return the relevant ResultsInfo
+     * @throws ObjectStoreException if an error occurs accessing the underlying ObjectStore
+     */
+    public ResultsInfo getResultsInfo() throws ObjectStoreException {
+        return results.getInfo();
     }
 }

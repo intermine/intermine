@@ -155,12 +155,13 @@ public class PagedCollection implements PagedTable
     }
 
     /**
-     * Get the underlying collection object
+     * Get the exact size of the underlying object.
      *
-     * @return the underlying collection object
+     * @return the size of the underlying object
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    private Collection getCollection() {
-        return collection;
+    public int getExactSize() throws ObjectStoreException {
+        return collection.size();
     }
 
     /**
@@ -171,27 +172,7 @@ public class PagedCollection implements PagedTable
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
     public int getEstimatedSize() throws ObjectStoreException {
-        return getCollection().size();
-    }
-
-    /**
-     * Gets whether or not the size is an estimate (Implementation of the PagedTable interface)
-     *
-     * @return true if size is an estimate (always returns false for this implementation)
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public boolean isSizeEstimate() throws ObjectStoreException {
-        return false;
-    }
-
-    /**
-     * Get the exact size of the underlying object.
-     *
-     * @return the size of the underlying object
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public int getExactSize() throws ObjectStoreException {
-        return getCollection().size();
+        return collection.size();
     }
 
     /**

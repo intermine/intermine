@@ -189,7 +189,6 @@ function unselectColumnCheckbox(column) {
     <html:option value="25">25</html:option>
     <html:option value="50">50</html:option>
     <html:option value="100">100</html:option>
-    <html:option value="200">200</html:option>
   </html:select>
   <html:submit property="buttons(changePageSize)">
     <fmt:message key="button.change"/>
