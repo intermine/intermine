@@ -30,7 +30,7 @@
   <body>
     <tiles:get name="header"/>
     <tiles:get name="menu"/>
-    <div id="content">
+    <div id="pagecontent">
     
       <%-- figure out whether or not we have a page description, if not we don't
            render a box around the content frame. --%>
