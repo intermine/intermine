@@ -126,7 +126,6 @@ public class ObjectStoreDummyImplTest extends TestCase
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         Query q = new Query();
         os.setResultsSize(10);
-        Results res = os.execute(q);
         os.setPoisonRowNo(7);
         os.execute(q, 0, 4);
         os.execute(q, 8, 9);
@@ -151,5 +150,12 @@ public class ObjectStoreDummyImplTest extends TestCase
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
+    }
+
+    public void testCount() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os.setResultsSize(12);
+        Query q = new Query();
+        assertEquals(os.count(q), 12);
     }
 }
