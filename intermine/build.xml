@@ -162,6 +162,7 @@
     <include name="axis*.jar"/>
     <include name="saaj*.jar"/>
     <include name="jaxrpc*.jar"/>
+    <include name="wsdl4j*.jar"/>
     <include name="libreadline-java*.jar"/>
   </patternset>
 
