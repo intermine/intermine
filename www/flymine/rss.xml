@@ -27,13 +27,23 @@
     <!-- Add new news at the top here -->
     
     <item>
+      <title>FlyMine 2.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-2.0/begin.do"&gt;
+        FlyMine 2.0&lt;/a&gt; is now available.
+      </description>
+      <pubDate>Wed, 30 Mar 2005 16:53:30 GMT</pubDate>
+    </item>
+    
+    <item>
       <title>FlyMine is hiring</title>
       <link>http://www.flymine.org/</link>
       <description>
         See &lt;a href="http://www.flymine.org/project/jobs.html"&gt;
         http://www.flymine.org/project/jobs.html&lt;/a&gt; for more information.
       </description>
-      <pubDate>Fri Mar 18 11:03:55 GMT 2005</pubDate>
+      <pubDate>Fri, Mar 18 11:03:55 GMT 2005</pubDate>
     </item>
 
 
