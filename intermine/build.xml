@@ -301,7 +301,7 @@
            outputdirectory="${build.src.java}/org/intermine/objectstore/query/iql">
       <classpath refid="project.class.path"/>
     </antlr>
-    <depend srcdir="${build.src.java}" destdir="${build.java}" closure="yes" dump="yes"/>
+    <depend srcdir="${src.java}" destdir="${build.java}" closure="yes" dump="yes"/>
     <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
