@@ -21,6 +21,7 @@
   <property name="intermine.dist.path" location="../intermine/dist"/>
   <property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/>
   <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
+  <property name="webservice-client.jar.path" location="${intermine.dist.path}/webservice-client.jar"/>
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
@@ -1793,6 +1794,14 @@
       <property name="db.name" value="db.userprofile"/>
       <property name="objectstore.name" value="os.userprofile"/>
     </ant>
+  </target>
+
+  <target name="jar-production-webservice-client" depends="compile-genomic-model">
+    <jar destfile="${dist}/flymine-webservice-client.jar">
+      <zipfileset src="${webservice-client.jar.path}"/>
+      <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
+      <fileset dir="${build.model}/genomic"/>
+    </jar>
   </target>
 
   <!-- MODEL COMPILATION TARGETS -->
