@@ -128,7 +128,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
         }
 
         PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db);
-        ExplainResult explain = pb.explain(q, start, end);
+        ExplainResult explain = pb.explain(q, start, limit);
 
         if (explain.getTime() > maxTime) {
             throw (new ObjectStoreException("Estimated time to run query(" + explain.getTime()
@@ -150,14 +150,14 @@ public class ObjectStoreOjbImpl implements ObjectStore
     }
 
     /**
-     * Runs an EXPLAIN on the query without ant LIMIT or OFFSET.
+     * Runs an EXPLAIN on the query without and LIMIT or OFFSET.
      *
      * @param q the query to estimate rows for
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explining the query
      */
     public ExplainResult estimate(Query q) throws ObjectStoreException {
-        return explain(q, 0, 0);
+        return explain(q, 0, Integer.MAX_VALUE - 1);
     }
 
     /**
@@ -175,8 +175,9 @@ public class ObjectStoreOjbImpl implements ObjectStore
     }
 
     private ExplainResult explain(Query q, int start, int end) throws ObjectStoreException {
+        int limit = (end - start) + 1;
         PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db);
-        ExplainResult result = pb.explain(q, start, end);
+        ExplainResult result = pb.explain(q, start, limit);
         pb.close();
         return result;
     }
