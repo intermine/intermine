@@ -65,7 +65,9 @@
         <html:text property="attributeValues(1)"/>
         <input type="hidden" name="templateType" value="global"/>
         <input type="hidden" name="queryName" value="${browseTemplateName}"/>
-        <html:submit property="skipBuilder"><fmt:message key="begin.input.submit"/></html:submit>
+        <input type="hidden" name="skipBuilder" value="1"/>
+        <input type="hidden" name="noSaveQuery" value="1"/>
+        <html:submit><fmt:message key="begin.input.submit"/></html:submit>
         <br/>
         <span class="smallnote">${WEB_PROPERTIES["begin.browse.prompt"]}</span>
       </html:form>

@@ -24,7 +24,9 @@ import org.intermine.model.InterMineObject;
 import org.intermine.web.results.PagedResults;
 
 /**
- * Action to handle submit from the template page.
+ * Action to handle submit from the template page. <code>setSavingQueries</code>
+ * can be used to set whether or not queries run by this action are automatically
+ * saved in the user's query history. This property is true by default.
  *
  * @author Mark Woodbridge
  * @author Thomas Riley
@@ -32,7 +34,19 @@ import org.intermine.web.results.PagedResults;
 public class TemplateAction extends InterMineAction
 {
     /**
-     * Build a query based on the template and the input from the user.
+     * Build a query based on the template and the input from the user. The template to
+     * be run is identified by the "queryName" and "templateType" request parameters or,
+     * if they are not found there, session attributes. There are also some request
+     * parameters that, if present, effect the behaviour of the action. These are:
+     *
+     * <dl>
+     * <dt>skipBuilder</dt>
+     *      <dd>If this attribute is specifed (with any value) then the action will forward
+     *      directly to the object details page if the results contain just one object.</dd>
+     * <dt>noSaveQuery</dt>
+     *      <dd>If this attribute is specifed (with any value) then the query is not
+     *      automatically saved in the user's query history.</dd>
+     * </dl>
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -67,7 +81,8 @@ public class TemplateAction extends InterMineAction
         SessionMethods.loadQuery(queryCopy, request.getSession());
         form.reset (mapping, request);
         return handleTemplateQuery(mapping, request, response,
-                                    (request.getParameter("skipBuilder") != null));
+                                    (request.getParameter("skipBuilder") != null),
+                                    (request.getParameter("noSaveQuery") == null));
     }
     
     /**
@@ -79,6 +94,7 @@ public class TemplateAction extends InterMineAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @param skipBuilder If true then skip query builder
+     * @param saveQuery If true then query is saved automatically in user's query history
      * @return an ActionForward object defining where control goes next
      *
      * @exception Exception if the application business logic throws
@@ -87,14 +103,15 @@ public class TemplateAction extends InterMineAction
     protected ActionForward handleTemplateQuery(ActionMapping mapping,
                                                 HttpServletRequest request,
                                                 HttpServletResponse response,
-                                                boolean skipBuilder)
+                                                boolean skipBuilder,
+                                                boolean saveQuery)
                                                  
         throws Exception {
         HttpSession session = request.getSession();
         
         if (skipBuilder) {
             // If the form wants to skip the query builder we need to execute the query
-            if (!SessionMethods.runQuery (session, request)) {
+            if (!SessionMethods.runQuery (session, request, saveQuery)) {
                 return mapping.findForward("failure");
             }
             // Look at results, if only one result, go straight to object details page
