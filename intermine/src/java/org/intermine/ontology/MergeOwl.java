@@ -189,10 +189,8 @@ public class MergeOwl
                 }
             }
         }
-
         tgtModel.add(statements);
     }
-
 
 
     /**
@@ -210,6 +208,7 @@ public class MergeOwl
         }
         return res;
     }
+
 
     /**
      * Add to statements list the appropriate equivalence statement between a new resource
@@ -240,7 +239,6 @@ public class MergeOwl
             }
         }
     }
-
 
 
     /**

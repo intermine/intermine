@@ -118,8 +118,9 @@ public class FlyMine2Owl
      */
     protected ObjectProperty getObjectProperty(ReferenceDescriptor rfd, OntModel ont) {
         ClassDescriptor cld = rfd.getClassDescriptor();
+        //String uri = OntologyUtil.generatePropertyName(rfd);
         String uri =  cld.getModel().getNameSpace() + TypeUtil.unqualifiedName(cld.getName())
-            + "_" + rfd.getName();
+            + "__" + rfd.getName();
         ObjectProperty prop = ont.getObjectProperty(uri);
         if (prop == null) {
             prop = ont.createObjectProperty(uri);

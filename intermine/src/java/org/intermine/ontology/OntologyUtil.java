@@ -59,14 +59,14 @@ public class OntologyUtil
 
     /**
      * Generate a name for a property in OntModel, this takes the form:
-     * <namespace>#<classname>_<fieldname>.
+     * <namespace>#<classname>__<fieldname>.
      * @param fld field to create property name for
      * @return the new property name
      */
     public static String generatePropertyName(FieldDescriptor fld) {
         ClassDescriptor cld = fld.getClassDescriptor();
         return cld.getModel().getNameSpace()
-            + TypeUtil.unqualifiedName(cld.getName()) + "_" + fld.getName();
+            + TypeUtil.unqualifiedName(cld.getName()) + "__" + fld.getName();
     }
 
 
@@ -79,10 +79,10 @@ public class OntologyUtil
      */
     public static String generateFieldName(OntProperty prop, OntResource domain) {
         String name = prop.getLocalName();
-        if (name.indexOf("_") > 0) {
-            String start = name.substring(0, name.indexOf("_"));
+        if (name.indexOf("__") > 0) {
+            String start = name.substring(0, name.indexOf("__"));
             if (start.equals(domain.getLocalName())) {
-                return name.substring(name.indexOf("_") + 1);
+                return name.substring(name.indexOf("__") + 2);
             }
         }
         return name;
@@ -185,14 +185,33 @@ public class OntologyUtil
 
     /**
      * For the given OntClass get a set of subclasses with a hasValue restriction
-     * on a particular DatatypeProperty.  srcCls may be from a different OntModel,
-     * use this class to find properties, look in given model for subclasses.  If
-     * srcCls is from given model then this is no different.
+     * on a particular DatatypeProperty.  May have to follow ObjectProperties to
+     * other classes to find the restricted DatatypeProperty.  srcCls may be from a
+     * different OntModel, use this class to find properties, look in given model for
+     * subclasses.  If srcCls is from given model then this is no different.
      * @param model the ontology model to search for subclasses in
      * @param srcCls the OntClass to find restricted subclasses for
      * @return a set of subclasses with a hasValue Restriction
      */
     public static Set findRestrictedSubclasses(OntModel model, OntClass srcCls) {
+        return findRestrictedSubclasses(model, srcCls, null);
+    }
+
+
+    /**
+     * For the given OntClass get a set of subclasses with a hasValue restriction
+     * on a particular DatatypeProperty.  May have to follow ObjectProperties to
+     * other classes to find the restricted DatatypeProperty, if so method is recursed
+     * but retains original subclass in 'top' parameter.  srcCls may be from a different
+     * OntModel, use this class to find properties, look in given model for subclasses.
+     * If srcCls is from given model then this is no different.
+     * @param model the ontology model to search for subclasses in
+     * @param srcCls the OntClass to find restricted subclasses for
+     * @param top if nested call made to this method, the highest level subclass found,
+     *            null on first call.
+     * @return a set of subclasses with a hasValue Restriction
+     */
+    protected static Set findRestrictedSubclasses(OntModel model, OntClass srcCls, OntClass top) {
         OntClass tgtCls = model.getOntClass(srcCls.getURI());
         Set subclasses = new HashSet();
         Iterator i = tgtCls.listSubClasses();
@@ -205,9 +224,25 @@ public class OntologyUtil
                 if (res.hasSubClass(subcls) && res.isHasValueRestriction()) {
                     Iterator propIter = srcCls.listDeclaredProperties(false);
                     while (propIter.hasNext()) {
-                        Property prop = (Property) propIter.next();
+                        OntProperty prop = (OntProperty) propIter.next();
                         if (res.onProperty(prop) && isDatatypeProperty(prop)) {
-                            subclasses.add(subcls);
+                            if (top != null) {
+                                subclasses.add(top);
+                            } else {
+                                subclasses.add(subcls);
+                            }
+                        } else if (res.onProperty(prop) && isObjectProperty(prop)) {
+                            OntResource range = prop.getRange();
+                            if (range.canAs(OntClass.class)
+                                && range.getNameSpace().equals(srcCls.getNameSpace())) {
+                                if (top != null) {
+                                    subclasses.addAll(findRestrictedSubclasses(model,
+                                                                     range.asClass(), top));
+                                } else {
+                                    subclasses.addAll(findRestrictedSubclasses(model,
+                                                                     range.asClass(), subcls));
+                                }
+                            }
                         }
                     }
                 }
@@ -215,6 +250,7 @@ public class OntologyUtil
         }
         return subclasses;
     }
+
 
     /**
      * Test whether a OntProperty is a datatype property - if type of property
@@ -240,6 +276,7 @@ public class OntologyUtil
         return false;
     }
 
+
     /**
      * Test whether a given property is an object property.  If type of property
      * is not owl:ObjectProperty establishes whether it is a DatatypeProperty.
@@ -252,7 +289,6 @@ public class OntologyUtil
         }
         return !isDatatypeProperty(prop);
     }
-
 
 
     /**
@@ -318,8 +354,8 @@ public class OntologyUtil
 
 
     /**
-     * Return a valid resource given a resource name fragment i.e. replaces spaces
-     * with underscores and encode invalid characters.
+     * Return a valid resource given a resource name fragment, currently just replaces
+     * spaces with underscores.
      * @param fragment fragment part of a resource name uri
      * @return a valid resource name fragment
      */

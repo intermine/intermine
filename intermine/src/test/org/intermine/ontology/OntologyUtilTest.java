@@ -44,14 +44,14 @@ public class OntologyUtilTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", false, "java.lang.String");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, Collections.singleton(atd1), new HashSet(), new HashSet());
         Model model = new Model("model", ns, Collections.singleton(cld1));
-        assertEquals(ns + "Class1_atd1", OntologyUtil.generatePropertyName(atd1));
+        assertEquals(ns + "Class1__atd1", OntologyUtil.generatePropertyName(atd1));
     }
 
 
     public void testGenerateFieldName() throws Exception {
         OntModel ont = ModelFactory.createOntologyModel();
         OntClass cls = ont.createClass(ns + "Company");
-        OntProperty prop1 = ont.createOntProperty(ns + "Company_name");
+        OntProperty prop1 = ont.createOntProperty(ns + "Company__name");
         OntProperty prop2 = ont.createOntProperty(ns + "address");
 
         assertEquals("name", OntologyUtil.generateFieldName(prop1, cls));
@@ -208,7 +208,7 @@ public class OntologyUtilTest extends TestCase
     }
 
 
-    public void testFindRestrictedSubclasses() throws Exception {
+    public void testFindRestrictedSubclassesDatatype() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL
             + ENDL
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
@@ -255,6 +255,99 @@ public class OntologyUtilTest extends TestCase
         OntClass cls3 = ont.getOntClass(ns + "Charity");
         Set expected = new HashSet(Arrays.asList(new Object[] {cls2, cls3}));
 
+        assertEquals(expected, OntologyUtil.findRestrictedSubclasses(ont, cls1));
+    }
+
+    public void testFindRestrictedSubclassesObject() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Organisation a owl:Class ." + ENDL
+            + ":organisationType a owl:ObjectProperty ;" + ENDL
+            + "                  rdfs:domain :Organisation ;" + ENDL
+            + "                  rdfs:range :OrganisationType ." + ENDL
+            + ":OrganisationType a owl:Class ." + ENDL
+            + ":type a owl:DatatypeProperty ;" + ENDL
+            + "      rdfs:domain :OrganisationType ;" + ENDL
+            + "      rdfs:range xsd:String ." + ENDL
+            + ":companyModel a owl:ObjectProperty ;" + ENDL
+            + "              rdfs:domain :OrganisationType ;" + ENDL
+            + "              rdfs:range :CompanyModel ." + ENDL
+            + ":CompanyModel a owl:Class ." + ENDL
+            + ":model a owl:DatatypeProperty ;" + ENDL
+            + "       rdfs:domain :CompanyModel ;" + ENDL
+            + "       rdfs:range xsd:String ." + ENDL
+            + ":Business a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf :Organisation ;" + ENDL
+            + "          rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:hasValue" + ENDL
+            + "                [  rdfs:subClassOf :OrganisationType ;" + ENDL
+            + "                   rdfs:subClassOf" + ENDL
+            + "                     [ a owl:Restriction ;" + ENDL
+            + "                       owl:onProperty :type ;" + ENDL
+            + "                       owl:hasValue \"business\"" + ENDL
+            + "                     ] " + ENDL
+            + "                ] " + ENDL
+            + "            ] ." + ENDL
+            + ":PrivateBusiness a owl:Class ; " + ENDL
+            + "          rdfs:subClassOf :Organisation ;" + ENDL
+            + "          rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:hasValue" + ENDL
+            + "                [  rdfs:subClassOf :OrganisationType ;" + ENDL
+            + "                   rdfs:subClassOf" + ENDL
+            + "                     [ a owl:Restriction ;" + ENDL
+            + "                       owl:onProperty :companyModel ;" + ENDL
+            + "                       owl:hasValue"
+            + "                         [ rdfs:subClassOf :CompanyModel ;" + ENDL
+            + "                           rdfs:subClassOf" + ENDL
+            + "                             [ a owl:Restriction ;" + ENDL
+            + "                               owl:onProperty :model ;" + ENDL
+            + "                               owl:hasValue \"limited\"" + ENDL
+            + "                             ] " + ENDL
+            + "                         ] " + ENDL
+            + "                     ] " + ENDL
+            + "                ] " + ENDL
+            + "            ] ." + ENDL
+            + ":OtherOrganisation a owl:Class ;" + ENDL
+            + "                   rdfs:subClassOf :Organisation ." + ENDL;
+
+        OntModel ont = ModelFactory.createOntologyModel();
+        ont.read(new StringReader(owl), null, "N3");
+
+        assertNotNull(ont.getOntClass(ns + "Organisation"));
+        assertNotNull(ont.getOntClass(ns + "Business"));
+        assertNotNull(ont.getOntClass(ns + "PrivateBusiness"));
+        assertNotNull(ont.getOntClass(ns + "OtherOrganisation"));
+        assertNotNull(ont.getOntClass(ns + "OrganisationType"));
+        assertNotNull(ont.getOntClass(ns + "CompanyModel"));
+
+        assertNotNull(ont.getOntProperty(ns + "organisationType"));
+        assertNotNull(ont.getOntProperty(ns + "companyModel"));
+        assertNotNull(ont.getOntProperty(ns + "type"));
+        assertNotNull(ont.getOntProperty(ns + "model"));
+
+        OntClass cls1 = ont.getOntClass(ns + "Organisation");
+
+        assertTrue(cls1.hasSubClass(ont.getOntClass(ns + "Business")));
+        assertTrue(cls1.hasSubClass(ont.getOntClass(ns + "PrivateBusiness")));
+        assertTrue(cls1.hasSubClass(ont.getOntClass(ns + "OtherOrganisation")));
+
+        assertTrue(ont.getOntProperty(ns + "organisationType").hasDomain(ont.getOntClass(ns + "Organisation")));
+        assertTrue(ont.getOntProperty(ns + "type").hasDomain(ont.getOntClass(ns + "OrganisationType")));
+        assertTrue(ont.getOntProperty(ns + "companyModel").hasDomain(ont.getOntClass(ns + "OrganisationType")));
+        assertTrue(ont.getOntProperty(ns + "model").hasDomain(ont.getOntClass(ns + "CompanyModel")));
+
+        OntClass cls2 = ont.getOntClass(ns + "Business");
+        OntClass cls3 = ont.getOntClass(ns + "PrivateBusiness");
+        Set expected = new HashSet(Arrays.asList(new Object[] {cls2, cls3}));
         assertEquals(expected, OntologyUtil.findRestrictedSubclasses(ont, cls1));
     }
 

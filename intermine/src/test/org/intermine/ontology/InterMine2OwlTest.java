@@ -92,8 +92,8 @@ public class FlyMine2OwlTest extends TestCase
 
         OntModel ont = convertor.process(model);
         OntClass ontCls1 = ont.getOntClass(ns + "Class1");
-        OntProperty ontProp1 = ont.getOntProperty(ns + "Class1_atd1");
-        OntProperty ontProp2 = ont.getOntProperty(ns + "Class1_atd2");
+        OntProperty ontProp1 = ont.getOntProperty(ns + "Class1__atd1");
+        OntProperty ontProp2 = ont.getOntProperty(ns + "Class1__atd2");
         assertTrue(ontProp1.isDatatypeProperty());
         Iterator domains1 = ontProp1.listDomain();
         assertEquals(ontCls1, domains1.next());
@@ -128,9 +128,9 @@ public class FlyMine2OwlTest extends TestCase
 
         OntClass ontCls2 = ont.getOntClass(ns + "Class2");
         OntClass ontCls3 = ont.getOntClass(ns + "Class3");
-        OntProperty ontProp1 = ont.getOntProperty(ns + "Class1_rfd1");
-        OntProperty ontProp2 = ont.getOntProperty(ns + "Class2_rfd2");
-        OntProperty ontProp3 = ont.getOntProperty(ns + "Class3_rfd3");
+        OntProperty ontProp1 = ont.getOntProperty(ns + "Class1__rfd1");
+        OntProperty ontProp2 = ont.getOntProperty(ns + "Class2__rfd2");
+        OntProperty ontProp3 = ont.getOntProperty(ns + "Class3__rfd3");
 
         assertTrue(ontProp1.isObjectProperty());
         Iterator domains1 = ontProp1.listDomain();
@@ -169,9 +169,9 @@ public class FlyMine2OwlTest extends TestCase
         OntClass ontCls1 = ont.getOntClass(ns + "Class1");
         OntClass ontCls2 = ont.getOntClass(ns + "Class2");
         OntClass ontCls3 = ont.getOntClass(ns + "Class3");
-        OntProperty ontProp1 = ont.getOntProperty(ns + "Class1_cod1");
-        OntProperty ontProp2 = ont.getOntProperty(ns + "Class2_cod2");
-        OntProperty ontProp3 = ont.getOntProperty(ns + "Class3_cod3");
+        OntProperty ontProp1 = ont.getOntProperty(ns + "Class1__cod1");
+        OntProperty ontProp2 = ont.getOntProperty(ns + "Class2__cod2");
+        OntProperty ontProp3 = ont.getOntProperty(ns + "Class3__cod3");
 
         assertTrue(ontProp1.isObjectProperty());
         Iterator domains1 = ontProp1.listDomain();
@@ -216,9 +216,9 @@ public class FlyMine2OwlTest extends TestCase
         Model model = new Model("model", ns, Collections.singleton(cld1));
         ObjectProperty prop1 = convertor.getObjectProperty(rfd1, ont);
         assertNotNull(prop1);
-        assertEquals(ns + "Class1_rfd1", prop1.getURI().toString());
+        assertEquals(ns + "Class1__rfd1", prop1.getURI().toString());
         ObjectProperty prop2 = convertor.getObjectProperty(rfd1, ont);
         assertNotNull(prop2);
-        assertEquals(ns + "Class1_rfd1", prop2.getURI().toString());
+        assertEquals(ns + "Class1__rfd1", prop2.getURI().toString());
     }
 }
