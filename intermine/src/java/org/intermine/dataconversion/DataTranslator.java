@@ -92,7 +92,9 @@ public class DataTranslator
      * @throws ObjectStoreException if error reading/writing an item
      * @throws InterMineException if no target class/property name can be found
      */
-    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, InterMineException {
+    public void translate(ItemWriter tgtItemWriter)
+        throws ObjectStoreException, InterMineException {
+
         int opCount = 0;
         long time = System.currentTimeMillis();
         long start = time;
@@ -141,7 +143,9 @@ public class DataTranslator
      * @throws ObjectStoreException if error reading/writing an item
      * @throws InterMineException if no target class/property name can be found
      */
-    protected Collection translateItem(Item srcItem) throws ObjectStoreException, InterMineException {
+    protected Collection translateItem(Item srcItem)
+        throws ObjectStoreException, InterMineException {
+        
         // see if there are any SubclassRestriction template for this class
         String tgtClsName = null;
         Set templates = (Set) templateMap.get(srcItem.getClassName());
