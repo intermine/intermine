@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- confirm.jsp -->
-<div align="center">
+<div align="center" class="body">
   ${message}<p>
   <table border=0>
     <tr>

@@ -4,9 +4,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- history.jsp -->
+<div class="body">
+  <fmt:message key="history.intro"/>
+</div>
 <c:choose>
   <c:when test="${empty PROFILE.savedBags && empty PROFILE.savedQueries}">
-    <fmt:message key="history.nohistory"/>
+    <div class="body altmessage">
+      <fmt:message key="history.nohistory"/>
+    </div>
   </c:when>
   <c:otherwise>
     <tiles:get name="historyBagView"/>
