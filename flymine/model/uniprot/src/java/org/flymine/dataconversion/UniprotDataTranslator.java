@@ -340,10 +340,13 @@ public class UniprotDataTranslator extends DataTranslator
 
                 String dbId = null;
                 boolean createGene = false;
-                // secondIdentifier = <entry><dbReference><type="FlyBase/WormBase/..">
+                // geneOrganismDbId = <entry><dbReference><type="FlyBase/WormBase/..">
                 //             where designation = primary gene name
                 String geneOrganismDbId = null;
                 if (taxonId == 7227) { // D. melanogaster
+                    // do not set CG numbers from Uniprot - there are conflicting combinations of
+                    // FBgn/CG identifiers with ensembl
+                    geneIdentifier = null;
                     geneOrganismDbId = getDbReferenceValue(srcItem, "FlyBase", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
@@ -369,17 +372,6 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 }
 
-                // UniProt has at least one instance where the same CG number has different
-                // FBgn identifiers
-                if (createGene && (geneIdentifier != null)) {
-                    String oldOrganismDbId = (String) identifierToOrganismDbId.get(geneIdentifier);
-                    if ((oldOrganismDbId != null) && !(oldOrganismDbId.equals(geneOrganismDbId))) {
-                        createGene = false;
-                        LOG.info("found a different organismDbId and identifier pair. "
-                         + "organismDbId: " + geneOrganismDbId + ", identifier: " + geneIdentifier);
-                    }
-                }
-
                 // uniprot data source has primary key of Gene.organismDbId
                 // only create gene if a value was found
                 if (createGene) {
@@ -387,8 +379,6 @@ public class UniprotDataTranslator extends DataTranslator
                     String geneItemId = (String) geneIdentifierToId.get(geneOrganismDbId);
                     ReferenceList geneSynonyms = new ReferenceList("synonyms", new ArrayList());
                     if (geneItemId == null) {
-                        identifierToOrganismDbId.put(geneIdentifier, geneOrganismDbId);
-
                         Item gene = createItem(tgtNs + "Gene", "");
                         if (geneOrganismDbId != null) {
                             if (geneOrganismDbId.equals("")) {
