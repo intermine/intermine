@@ -12,10 +12,9 @@ package org.intermine.web.results;
 
 import java.util.Set;
 import java.util.HashSet;
-import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.struts.tiles.ComponentContext;
 
@@ -99,9 +98,9 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
 
         Model model = Model.getInstanceByName("testmodel");
         assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
-        assertFalse(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
-        assertFalse(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
+        assertTrue(((Collection) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
+        assertFalse(((Collection) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
+        assertFalse(((Collection) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
         Map primaryKeyFields = (Map) context.getAttribute("primaryKeyFields");
         assertNotNull(primaryKeyFields);
         LinkedHashMap testFieldNames = new LinkedHashMap();
@@ -118,6 +117,6 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         getRequest().setAttribute("object", "test string");
         actionPerform();
 
-        assertEquals(0, ((ArrayList) context.getAttribute("leafClds")).size());
+        assertEquals(0, ((Collection) context.getAttribute("leafClds")).size());
     }
 }
