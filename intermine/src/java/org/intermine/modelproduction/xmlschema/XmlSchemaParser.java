@@ -121,6 +121,7 @@ public class XmlSchemaParser implements ModelParser
      *
      * @param pkgName name of package to generation Java code in
      * @param modelName the name of the model to produce
+     * @param nameSpace namespace of the target model
      */
     public XmlSchemaParser(String modelName, String pkgName, String nameSpace) {
         this.pkgName = pkgName;
