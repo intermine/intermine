@@ -1,5 +1,7 @@
 // http://www.alistapart.com/articles/footers/
 
+var _footerHeight=-1;
+
 function getWindowHeight() {
     var windowHeight = 0;
     if (typeof(window.innerHeight) == 'number') {
@@ -22,10 +24,11 @@ function setFooter() {
     if (document.getElementById) {
         var windowHeight = getWindowHeight();
 		if (windowHeight > 0) {
+			var headerHeight = document.getElementById('header').offsetHeight;
 			var contentHeight = document.getElementById('content').offsetHeight;
 			var footerElement = document.getElementById('footer');
 			var footerHeight  = footerElement.offsetHeight;
-			if (windowHeight - (contentHeight + footerHeight) >= 0) {
+			if (windowHeight - (headerHeight + contentHeight + footerHeight) >= 0) {
 				footerElement.style.position = 'absolute';
 				footerElement.style.top = (windowHeight - footerHeight) + 'px';
 				footerElement.style.marginTop = '0';
@@ -33,6 +36,7 @@ function setFooter() {
             else {
                 footerElement.style.position = 'static';
 			}
+            _footerHeight=footerHeight;
 		}
 	}
 }
@@ -44,3 +48,11 @@ window.onload = function() {
 window.onresize = function() {
 	setFooter();
 }
+
+// Change of font size
+window.onmouseover = function() {
+    if (_footerHeight!=document.getElementById('footer').offsetHeight) {
+        setFooter();
+    }
+}
+
