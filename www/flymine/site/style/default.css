@@ -265,3 +265,10 @@ address
 {
     margin-left: 6em;
 }
+
+span.tutorial, span.organism
+{
+   font-style: oblique;
+}
+
+/**************************************/
