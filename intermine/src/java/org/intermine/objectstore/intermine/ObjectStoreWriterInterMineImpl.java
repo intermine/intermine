@@ -143,6 +143,23 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
+     * Not implemented.
+     *
+     * @param tableName ignored
+     */
+    public void setLogTableName(String tableName) {
+        throw new UnsupportedOperationException("Cannot change the log table name on a writer");
+    }
+
+    /**
+     * @see ObjectStoreInterMineImpl#dbLog
+     */
+    protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
+            Query q, String sql) {
+        os.dbLog(optimise, estimated, execute, permitted, convert, q, sql);
+    }
+
+    /**
      * Allows the changing of the BatchWriter that this ObjectStoreWriter uses.
      *
      * @param batchWriter the new BatchWriter - use BatchWriterSimpleImpl for writers likely to see

@@ -31,6 +31,9 @@ import java.sql.SQLException;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.util.DatabaseUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * Generates and inserts SQL given database name, schema and temporary directory
@@ -39,6 +42,7 @@ import org.intermine.sql.DatabaseFactory;
  */
 public class BuildDbTask extends Task
 {
+    private static final Logger LOG = Logger.getLogger(BuildDbTask.class);
     protected static final String SEQUENCE_NAME = "serial";
     protected File tempDir;
     protected Database database;
@@ -87,6 +91,24 @@ public class BuildDbTask extends Task
             throw new BuildException("schemaFile attribute is not set");
         }
        
+        {
+            Connection c = null;
+            try {
+                c = database.getConnection();
+                c.setAutoCommit(true);
+                DatabaseUtil.removeAllTables(c);
+            } catch (SQLException e) {
+                LOG.error("Failed to remove all tables from database: " + e);
+            } finally {
+                if (c != null) {
+                    try {
+                        c.close();
+                    } catch (SQLException e) {
+                    }
+                }
+            }
+        }
+
         SQL sql = new SQL();
         sql.setControlTemplate("sql/base/Control.vm");
         sql.setOutputDirectory(tempDir);
@@ -152,7 +174,6 @@ public class BuildDbTask extends Task
             c = database.getConnection();
             c.setAutoCommit(true);
             c.createStatement().execute("create sequence " + SEQUENCE_NAME);
-            c.createStatement().execute("drop table tracker");
         } catch (SQLException e) {
         } finally {
             if (c != null) {

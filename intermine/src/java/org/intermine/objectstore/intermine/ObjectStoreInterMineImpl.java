@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -48,7 +49,11 @@ import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.query.ExplainResult;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
+import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 
 import org.apache.log4j.Logger;
 
@@ -59,7 +64,7 @@ import org.apache.log4j.Logger;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
+public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
@@ -71,7 +76,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     protected Set noObjectTables = new HashSet();
     protected Writer log = null;
     protected DatabaseSchema schema;
-
+    protected Connection logTableConnection = null;
+    protected Batch logTableBatch = null;
+    protected String logTableName = null;
+    private static final String[] LOG_TABLE_COLUMNS = new String[] {"optimise", "estimated",
+        "execute", "permitted", "convert", "iql", "sql"};
+    
     /**
      * Constructs an ObjectStoreInterMineImpl.
      *
@@ -84,6 +94,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         super(model);
         this.db = db;
         schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
+        ShutdownHook.registerObject(new WeakReference(this));
     }
 
     /**
@@ -98,6 +109,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         super(schema.getModel());
         this.db = db;
         this.schema = schema;
+        ShutdownHook.registerObject(new WeakReference(this));
     }
 
     /**
@@ -176,13 +188,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         String noObjectTablesString = props.getProperty("noObjectTables");
         String logfile = props.getProperty("logfile");
         String truncatedClassesString = props.getProperty("truncatedClasses");
+        String logTable = props.getProperty("logTable");
 
         String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName()
             + (missingTablesString == null ? "" : ", missingTables = " + missingTablesString)
             + (noObjectTablesString == null ? "" : ", noObjectTables = " + noObjectTablesString)
             + (logfile == null ? "" : ", logfile = " + logfile)
             + (truncatedClassesString == null ? "" : ", truncatedClasses = "
-                    + truncatedClassesString);
+                    + truncatedClassesString)
+            + (logTable == null ? "" : ", logTable = " + logTable);
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
@@ -234,6 +248,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                         LOG.error("Error setting up execute log in file " + logfile + ": " + e);
                     }
                 }
+                if (logTable != null) {
+                    try {
+                        os.setLogTableName(logTable);
+                    } catch (SQLException e) {
+                        LOG.error("Error setting up execute log in database table " + logTable + ":"
+                                + e);
+                    }
+                }
                 instances.put(objectStoreDescription, os);
             }
             return os;
@@ -260,6 +282,65 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     }
 
     /**
+     * Allows the log table name to be set in this objectstore.
+     *
+     * @param tableName the table name
+     * @throws SQLException if something goes wrong
+     */
+    public synchronized void setLogTableName(String tableName) throws SQLException {
+        try {
+            if (logTableName != null) {
+                logTableBatch.close(logTableConnection);
+                releaseConnection(logTableConnection);
+                logTableConnection = null;
+                logTableBatch = null;
+                logTableName = null;
+            }
+            if (tableName != null) {
+                logTableConnection = getConnection();
+                if (!DatabaseUtil.tableExists(logTableConnection, tableName)) {
+                    logTableConnection.createStatement().execute("CREATE TABLE " + tableName
+                            + "(optimise bigint, estimated bigint, execute bigint, "
+                            + "permitted bigint, convert bigint, iql text, sql text)");
+                }
+                logTableBatch = new Batch(new BatchWriterPostgresCopyImpl());
+                logTableName = tableName;
+            }
+        } catch (SQLException e) {
+            logTableConnection = null;
+            logTableBatch = null;
+            logTableName = null;
+            throw e;
+        }
+    }
+
+    /**
+     * Produce an entry in the DB log.
+     *
+     * @param optimise the number of milliseconds used to optimise the query
+     * @param estimated the estimated number of milliseconds required to run the query
+     * @param execute the number of milliseconds spent executing the query
+     * @param permitted an acceptable number of milliseconds for the query to take
+     * @param convert the number of milliseconds spent converting the results
+     * @param q the Query run
+     * @param sql the SQL string executed
+     */
+    protected synchronized void dbLog(long optimise, long estimated, long execute, long permitted,
+            long convert, Query q, String sql) {
+        if (logTableName != null) {
+            try {
+                logTableBatch.addRow(logTableConnection, logTableName, null, LOG_TABLE_COLUMNS,
+                        new Object[] {new Long(optimise), new Long(estimated), new Long(execute),
+                            new Long(permitted), new Long(convert), q.toString(), sql});
+            } catch (SQLException e) {
+                LOG.error("Failed to write to log table: " + e);
+            }
+        }
+    }
+
+    /**
+     * 
+    /**
      * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
@@ -272,6 +353,40 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             throw new ObjectStoreException("Could not get connection to database", e);
         } finally {
             releaseConnection(c);
+        }
+    }
+
+    /**
+     * Overrides Object.finalize - release the DB log connection.
+     */
+    protected synchronized void finalize() {
+        if (logTableName != null) {
+            LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequence
+                    + " and Database " + getDatabase().getURL());
+            close();
+        }
+    }
+
+    /**
+     * Closes this ObjectStore's DB log connection.
+     */
+    public void close() {
+        LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequence);
+        try {
+            setLogTableName(null);
+        } catch (SQLException e) {
+            LOG.error("Failed to close log table connection: " + e);
+        }
+    }
+
+    /**
+     * Called by the ShutdownHook on shutdown.
+     */
+    public synchronized void shutdown() {
+        if (logTableName != null) {
+            LOG.error("Shutting down open ObjectStoreInterMineImpl with sequence = " + sequence
+                    + " and Database " + getDatabase().getURL());
+            close();
         }
     }
 
@@ -351,6 +466,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                         LOG.error("Error writing to execute log " + e);
                     }
                 }
+                dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
+                        permittedTime, postConvert - postExecute, q, sql);
             }
             QueryOrderable firstOrderBy = null;
             try {
