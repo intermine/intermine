@@ -2104,6 +2104,7 @@
     <copy todir="${build.tmp}" file="${build.model}/genomic/objectstoresummary.properties"/>
 
     <filter token="SITE_PREFIX" value="${www.location}"/>
+    <filter token="HELP_LOCATION" value="${www.help.location}"/>
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
     <copy todir="${build.tmp}" filtering="true"
           file="${resources}/webapp/flymine/global.web.properties"
