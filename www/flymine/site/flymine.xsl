@@ -54,7 +54,7 @@ version="1.0">
                             <tr>
                                 <td align="center">
                                     <a href="http://www.wellcome.ac.uk">
-                                        <img src="{concat($basedir, '/wellcome.gif')}" border="0" hspace="10" alt="Wellcome Trust Logo"/>
+                                        <img src="{concat($basedir, '/images/wellcome.gif')}" border="0" hspace="10" alt="Wellcome Trust Logo"/>
                                     </a>
                                 </td>
                                 <td>
@@ -246,6 +246,13 @@ version="1.0">
 </xsl:template>
 
 <xsl:template match="abstract | date | keywords | copyright"/>
+
+
+<xsl:template match="anchor">
+<a>
+<xsl:attribute name="name"><xsl:apply-templates/></xsl:attribute>
+</a>
+</xsl:template>
 
 <xsl:template match="menu/section">
 <p><xsl:apply-templates/></p>
