@@ -1,13 +1,14 @@
-<project name="FlyMine" default="help" basedir=".">
+<project name="flymine" default="help" basedir=".">
   <description>FlyMine build file</description>
 
   <!-- Property setup targets -->
   <!-- buildtime and runtime settings -->
-  <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+
   <property file="${build.properties.local}"/>
   <property file="build.properties"/>
 
-  <property name="runtime.properties.local" value="${user.home}/flymine.properties" />
+  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
@@ -534,10 +535,10 @@
 
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
-    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="${ant.project.name} API" additionalparam="-breakiterator">
+    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="FlyMine API" additionalparam="-breakiterator">
       <classpath refid="project.class.path"/>
       <fileset dir="${src.java}" defaultexcludes="yes" />
-      <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
+      <doctitle><![CDATA[<h1>FlyMine</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; ${YEAR} FlyMine. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
