@@ -53,33 +53,17 @@ public class TransferSequences
     }
 
     /**
-     * Copy the residues from the Contigs to the Chromosome in the ObjectStoreWriter that was
-     * passed to the constructor
+     * Copy the contig sequences to the appropriate place in the chromosome sequences and store a
+     * Sequence object for each Chromosome.  Uses the ObjectStoreWriter that was passed to the
+     * constructor
      * @throws Exception if there are problems with the transfer
      */
-    public void transferSequences()
+    public void transferToChromosome()
         throws Exception {
         osw.beginTransaction();
-        transferToChromosome();
-        transferToLocatedSequenceFeatures();
-        transferToTranscripts();
-        osw.commitTransaction();
-    }
-
-    /**
-     * Copy the contig sequences to the appropriate place in the chromosome sequence and store a
-     * Sequence object for each Chromosome.
-     * Returns a Map from chromosome ID to a char array of the chromosome sequence.
-     */
-    private void transferToChromosome()
-        throws IllegalSymbolException, IllegalAlphabetException, ObjectStoreException {
         ObjectStore os = osw.getObjectStore();
         Iterator resIter =
             CalculateLocationsUtil.findLocations(os, Chromosome.class, Contig.class, true);
-
-        // keep the new Chromosome sequences in a char[] for speed - convert to String at the end
-        // this is a Map from Chromosome to char[]
-        Map seqArrayMap = new HashMap();
 
         Integer currentChrId = null;
         char[] currentChrBases = null;
@@ -93,7 +77,7 @@ public class TransferSequences
 
             if (currentChrId == null || !chrId.equals(currentChrId)) {
                 if (currentChrId != null) {
-                    storeChromosome(chr, currentChrBases);
+                    storeNewSequence(chr, currentChrBases);
                 }
                 currentChrBases = new char[chr.getLength().intValue()];
                 // fill with '.' so we can see the parts of the Chromosome sequence that haven't
@@ -104,28 +88,35 @@ public class TransferSequences
                 currentChrId = chrId;
             }
 
-            copySeqArray(currentChrBases, contig.getSequence().getSequence(), contigOnChrLocation);
+            copySeqArray(currentChrBases, contig.getSequence().getSequence(),
+                         contigOnChrLocation.getStart().intValue(),
+                         contigOnChrLocation.getEnd().intValue(),
+                         contigOnChrLocation.getStrand().intValue());
         }
         Chromosome chr = (Chromosome) os.getObjectById(currentChrId);
-        storeChromosome(chr, currentChrBases);
+        storeNewSequence(chr, currentChrBases);
+        osw.commitTransaction();
     }
 
-    private void storeChromosome(Chromosome chr, char [] chrBases) throws ObjectStoreException {
+    private void storeNewSequence(LocatedSequenceFeature feature, char [] featureBases)
+        throws ObjectStoreException {
         Sequence sequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        sequence.setSequence(new String(chrBases));
-        chr.setSequence(sequence);
-        osw.store(chr);
+        sequence.setSequence(new String(featureBases));
+        feature.setSequence(sequence);
+        osw.store(feature);
         osw.store(sequence);
     }
 
     /**
      * Use the Location relations to copy the sequence from the Chromosomes to every
      * LocatedSequenceFeature that is located on a Chromosome and which doesn't already have a
-     * sequence (ie. don't copy to Contig).
+     * sequence (ie. don't copy to Contig).  Uses the ObjectStoreWriter that was passed to the
+     * constructor
+     * @throws Exception if there are problems with the transfer
      */
-    private void transferToLocatedSequenceFeatures()
-        throws IllegalSymbolException, IllegalAlphabetException, ObjectStoreException {
+    public void transferToLocatedSequenceFeatures()
+        throws Exception {
         ObjectStore os = osw.getObjectStore();
         Iterator resIter =
             CalculateLocationsUtil.findLocations(os, Chromosome.class,
@@ -177,11 +168,12 @@ public class TransferSequences
         return subSeqString;
     }
 
-    private void copySeqArray(char[] destArray, String sourceSequence, Location contigOnChrLocation)
+    private void copySeqArray(char[] destArray, String sourceSequence,
+                              int start, int end, int strand)
         throws IllegalSymbolException, IllegalAlphabetException {
         char[] sourceArray;
 
-        if (contigOnChrLocation.getStrand().intValue() == -1) {
+        if (strand == -1) {
             SymbolList symbolList = DNATools.createDNA(sourceSequence);
 
             symbolList = DNATools.reverseComplement(symbolList);
@@ -191,50 +183,97 @@ public class TransferSequences
             sourceArray = sourceSequence.toCharArray();
         }
 
-        int charsToCopy =
-            contigOnChrLocation.getEnd().intValue() - contigOnChrLocation.getStart().intValue() + 1;
+        int charsToCopy = end - start + 1;
 
-        System.arraycopy(sourceArray, 0,
-                         destArray, contigOnChrLocation.getStart().intValue() - 1, charsToCopy);
+        System.arraycopy(sourceArray, 0, destArray, start - 1, charsToCopy);
     }
 
     /**
-     * For each Transcript, join and transfer the sequences to the parent Transcript.
+     * For each Transcript, join and transfer the sequences from the child Exons to a new Sequence
+     * object for the Transcript.  Uses the ObjectStoreWriter that was passed to the constructor
+     * @throws Exception if there are problems with the transfer
      */
-    private void transferToTranscripts() {
+    public void transferToTranscripts()
+        throws Exception {
+
+        osw.beginTransaction();
+
         ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         q.setDistinct(false);
+
         QueryClass qcTranscript = new QueryClass(Transcript.class);
         q.addFrom(qcTranscript);
         q.addToSelect(qcTranscript);
+        q.addToOrderBy(qcTranscript);
+
+        QueryClass qcRankedRelation = new QueryClass(RankedRelation.class);
+        q.addFrom(qcRankedRelation);
+        q.addToSelect(qcRankedRelation);
+        QueryField qfObj = new QueryField(qcRankedRelation, "rank");
+        q.addToOrderBy(qfObj);
+
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
-        // add to query so the Exon.getSequence() is (mostly) fast
+
         QueryClass qcExonSequence = new QueryClass(Sequence.class);
         q.addFrom(qcExonSequence);
         q.addToSelect(qcExonSequence);
-        q.addToOrderBy(qcTranscript);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryCollectionReference exonRef = new QueryCollectionReference(qcTranscript, "exons");
-        ContainsConstraint cc1 = new ContainsConstraint(exonRef, ConstraintOp.CONTAINS, qcExon);
+
+        QueryObjectReference rankTransRef =
+            new QueryObjectReference(qcRankedRelation, "object");
+        ContainsConstraint cc1 =
+            new ContainsConstraint(rankTransRef, ConstraintOp.CONTAINS, qcTranscript);
         cs.addConstraint(cc1);
-        QueryObjectReference sequenceRef = new QueryObjectReference(qcExon, "sequence");
+
+        QueryObjectReference rankExonRef =
+            new QueryObjectReference(qcRankedRelation, "subject");
         ContainsConstraint cc2 =
-            new ContainsConstraint(sequenceRef, ConstraintOp.CONTAINS, qcExonSequence);
+            new ContainsConstraint(rankExonRef, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(cc2);
+
+        QueryObjectReference sequenceRef = new QueryObjectReference(qcExon, "sequence");
+        ContainsConstraint cc3 =
+            new ContainsConstraint(sequenceRef, ConstraintOp.CONTAINS, qcExonSequence);
+        cs.addConstraint(cc3);
+
         q.setConstraint(cs);
 
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(10000);
 
-
         Iterator resIter = res.iterator();
 
+        Transcript currentTranscript = null;
+        StringBuffer currentTranscriptBases = new StringBuffer();
+
         while (resIter.hasNext()) {
-//            org.intermine.web.LogMe.log("i", "next: " + resIter.next());
+           ResultsRow rr = (ResultsRow) resIter.next();
+
+           Transcript transcript =  (Transcript) rr.get(0);
+
+           RankedRelation rankedRelation = (RankedRelation) rr.get(1);
+           Exon exon = (Exon) rr.get(2);
+           Sequence sequence = (Sequence) rr.get(3);
+           String sequenceString = sequence.getSequence();
+
+           if (currentTranscript == null || !transcript.equals(currentTranscript)) {
+               if (currentTranscript != null) {
+                   storeNewSequence(currentTranscript,
+                                    currentTranscriptBases.toString().toCharArray());
+               }
+               currentTranscriptBases = new StringBuffer();
+               currentTranscript = transcript;
+           }
+
+           currentTranscriptBases.append(exon.getSequence().getSequence());
         }
+
+        storeNewSequence(currentTranscript, currentTranscriptBases.toString().toCharArray());
+
+        osw.commitTransaction();
     }
 }
