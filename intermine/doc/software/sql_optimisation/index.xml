@@ -242,6 +242,7 @@
 			It isn't completely clear what happens when you have more than two levels of select statements.</listitem>
 		<listitem>It doesn't cope with non-fully-qualified value names in the SELECT portion of the SQL statement, even if there is only one table present in the FROM portion.</listitem>
 		<listitem>It doesn't cope with aggregate functions at all - it sees them as non-fully-qualified value names, and therefore rejects them.</listitem>
+		<listitem>It might be a good idea to cache results a little - that way, a query which is being paged shouldn't have optimisation overhead for every paging call made. One way to do this that already works is for paging requests to use prepared statements. However, it still might be good to implement some sort of cache, depending on whether we think it might be useful. Needs to be investigated.</listitem>
 	</itemizedlist>
 </para>
 </sect1>
