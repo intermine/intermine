@@ -7,5 +7,6 @@
 		<item><ulink url="architecture/OJB-details">Details of O/R mapping layer</ulink></item>
 		<item><ulink url="class_diagram/FlyMineApplication.zargo">Class diagram</ulink></item>
 		<item><ulink url="sql_optimisation">SQL query optimisation</ulink></item>
+        <item><ulink url="architecture/ResultsToJdbc">How a results object accesses JDBC (directly through ObjectStoreOjbImpl)</ulink></item>
 	</section>
 </menu>
