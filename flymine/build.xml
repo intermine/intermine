@@ -2349,6 +2349,9 @@
   
   <!-- load default global template queries -->
   <target name="load-default-templates" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
     <!-- insert default template queries. this will also create the superuser account. -->
     <taskdef name="insert-default-templates" classname="org.intermine.task.LoadDefaultTemplatesTask">
       <classpath refid="webapp.class.path"/>
