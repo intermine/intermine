@@ -115,7 +115,7 @@ function unselectColumnCheckbox(column) {
                     </td>
                     <td>
                       <c:set var="object" value="${row[column.index]}" scope="request"/>
-                      <tiles:get name="resultsCell.tile" />
+                      <tiles:get name="objectSummary.tile" />
                     </td>
                   </c:when>
                   <c:otherwise>

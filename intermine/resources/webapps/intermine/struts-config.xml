@@ -235,8 +235,8 @@
             type="org.intermine.web.IqlQueryController"
             name="iqlQueryForm"/>
 
-    <action path="/initResultsCell"
-            type="org.intermine.web.results.ResultsCellController"/>
+    <action path="/initObjectSummary"
+            type="org.intermine.web.results.ObjectSummaryController"/>
 
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>

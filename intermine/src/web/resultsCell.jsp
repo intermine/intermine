@@ -4,17 +4,5 @@
 <tiles:importAttribute scope="request"/>
 
 <!-- resultsCell.jsp -->
-<c:choose>
-  <%-- check whether we have a business object or a plain java object --%>
-  <c:when test="${!empty leafClds}">
-    <tiles:insert name="objectSummary.tile"/>
-  </c:when>
-  <c:otherwise>
-    <font class="resultsCellValue">
-      <nobr>
-        <c:out value="${object}" default="null"/>
-      </nobr>
-    </font>
-  </c:otherwise>
-</c:choose>
+<tiles:insert name="objectSummary.tile"/>
 <!-- /resultsCell.jsp -->
