@@ -10,19 +10,29 @@
 <table border="1px" width="90%">
   <%-- The headers --%>
   <tr>
-    <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-      <c:if test="${resultsTable.columns[status.index].visible}">
-        <th align="center" class="resultsHeader">
-          <c:out value="${column.alias}"/>
-        </th>
-      </c:if>
+    <c:forEach var="column" items="${resultsTable.columns}">
+      <th align="center" class="resultsHeader">
+        <c:out value="${column.value.alias}"/>
+        <c:choose>
+          <c:when test="${column.value.visible}">
+            <html:link action="/changeResults?method=hideColumn&columnAlias=${column.value.alias}">
+              [<bean:message key="results.hideColumn"/>]
+            </html:link>
+          </c:when>
+          <c:otherwise>
+            <html:link action="/changeResults?method=showColumn&columnAlias=${column.value.alias}">
+              [<bean:message key="results.showColumn"/>]
+            </html:link>
+          </c:otherwise>
+        </c:choose>
+      </th>
     </c:forEach>
   </tr>
 
   <%-- The data --%>
 
   <%-- Row --%>
-  <c:forEach var="row" items="${results}" varStatus="status" begin="${resultsTable.start}" end="${resultsTable.end}">
+  <c:forEach var="row" items="${resultsTable.results}" varStatus="status" begin="${resultsTable.start}" end="${resultsTable.end}">
 
     <c:set var="rowClass">
       <c:choose>
@@ -32,9 +42,12 @@
     </c:set>
 
     <tr class="<c:out value="${rowClass}"/>">
-      <c:forEach var="item" items="${row}">
+
+      <c:forEach var="column" items="${resultsTable.columns}">
         <td>
-          <c:out value="${item}"/>
+          <c:if test="${column.value.visible}">
+            <c:out value="${row[column.value.index]}"/>
+          </c:if>
         </td>
       </c:forEach>
     </tr>
