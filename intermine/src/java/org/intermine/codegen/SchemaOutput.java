@@ -54,15 +54,15 @@ public class SchemaOutput
                         .append(c.name + "\" type=\"" + c.type + "\" />" + ENDL);
                 }
             }
-            Iterator foreignKeys = table.foreignKeys.iterator();
-            while (foreignKeys.hasNext()) {
-                ForeignKey k = (ForeignKey) foreignKeys.next();
-                sb.append(INDENT + INDENT + "<foreign-key foreignTable=\"")
-                    .append((String) classTable.get(k.foreignClass) + "\">" + ENDL)
-                    .append(INDENT + INDENT + INDENT + "<reference local=\"")
-                    .append(k.local + "\" foreign=\"ID\"/>" + ENDL)
-                    .append(INDENT + INDENT + "</foreign-key>" + ENDL);
-            }
+//             Iterator foreignKeys = table.foreignKeys.iterator();
+//             while (foreignKeys.hasNext()) {
+//                 ForeignKey k = (ForeignKey) foreignKeys.next();
+//                 sb.append(INDENT + INDENT + "<foreign-key foreignTable=\"")
+//                     .append((String) classTable.get(k.foreignClass) + "\">" + ENDL)
+//                     .append(INDENT + INDENT + INDENT + "<reference local=\"")
+//                     .append(k.local + "\" foreign=\"ID\"/>" + ENDL)
+//                     .append(INDENT + INDENT + "</foreign-key>" + ENDL);
+//             }
             sb.append(INDENT + "</table>" + ENDL);
         }
         sb.append("</database>" + ENDL);
