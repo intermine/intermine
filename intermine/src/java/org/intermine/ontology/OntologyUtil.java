@@ -803,6 +803,40 @@ public class OntologyUtil
     }
 
     /**
+     * Given a fully qualified class name return the appropriate model name space.
+     *
+     * @param a full qualified class name
+     * @return a name space
+     */
+    public static String getNamespaceFromClassName(String className) {
+        String nameSpace ="http://www.";
+
+        if (className.startsWith("org")) {
+
+            String [] packageParts = className.split("\\.");
+
+            if (packageParts.length > 2) {
+
+                nameSpace += packageParts[1] + "." + packageParts[0];
+
+                for (int partsIndex = 2; partsIndex < packageParts.length - 1; partsIndex++) {
+                    nameSpace += "/" + packageParts[partsIndex];
+                }
+
+                nameSpace += "#";
+
+                nameSpace += packageParts[packageParts.length - 1];
+            } else {
+                throw new IllegalArgumentException("className too short: " + className);
+            }
+
+            return nameSpace;
+        }
+
+        throw new IllegalArgumentException("method only accepts org packages, not: " + className);
+    }
+
+    /**
      * If a given namespace uri does not end in a '#' add one, rmoving trailing '/' if present.
      * @param ns the namespace uri
      * @return the corrected namespace
