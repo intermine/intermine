@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
@@ -54,7 +53,8 @@ public class Constraint
      * Return value in display format. This performs conversion between SQL
      * wildcard % symbols and user wildcard * symbols.
      *
-     * @return  constraint value translated for the user as a string
+     * @param node  the path node related to this constraint
+     * @return      constraint value translated for the user as a string
      */
     public String getDisplayValue(PathNode node) {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {

@@ -175,7 +175,11 @@ public class MainController extends TilesAction
     }
     
     /**
+     * Get a list of paths that should not be removed from the query by the
+     * user. This is usually because they are involved in a loop query constraint.
      *
+     * @param pathquery  the PathQuery containing the paths
+     * @return           list of paths (as Strings) that cannot be removed by the user
      */
     protected static List findLockedPaths(PathQuery pathquery) {
         ArrayList paths = new ArrayList();
