@@ -10,34 +10,30 @@
 
   <form-beans>
 
+    <form-bean name="modifyBagForm"
+               type="org.intermine.web.ModifyBagForm"/>
+
     <form-bean name="mainForm"
                type="org.intermine.web.MainForm"/>
 
-    <!-- IQL Query form bean -->
     <form-bean name="iqlQueryForm"
                type="org.intermine.web.IqlQueryForm"/>
 
-    <!-- QueryClassSelect form bean -->
     <form-bean name="queryClassSelectForm"
                type="org.intermine.web.QueryClassSelectForm"/>
 
-    <!-- ChangeResults form bean -->
     <form-bean name="changeResultsForm"
                type="org.intermine.web.results.ChangeResultsForm"/>
 
-    <!-- run query has no properties, use an DynaActionForm -->
     <form-bean name="emptyForm"
                type="org.apache.struts.action.DynaActionForm"/>
 
-    <!-- save query -->
     <form-bean name="saveQueryForm"
                type="org.intermine.web.SaveQueryForm"/>
 
-    <!-- query history -->
     <form-bean name="historyForm"
                type="org.intermine.web.HistoryForm"/>
 
-    <!-- bag build form bean -->
     <form-bean name="buildBagForm"
                type="org.intermine.web.BuildBagForm"/>
 
@@ -62,27 +58,46 @@
   <!-- ========== Action Mapping Definitions ============================== -->
   <action-mappings>
 
+    <!-- Actions that just forward elsewhere - only used by jsps -->
     <action path="/query"
             forward="query.page"/>
 
+    <action path="/bagBuild"
+            forward="bagBuild.page"/>
+
+    <action path="/examples"
+            forward="templates.page"/>
+
+    <action path="/history"
+            forward="history.page"/>
+
+    <action path="/classChooser"
+            forward="classChooser.page"/>
+
+    <action path="/help"
+            forward="help.page"/>
+
+    <action path="/bagDetails"
+            forward="bagDetails.page"/>
+
+    <action path="/collectionDetails"
+            forward="collectionDetails.page"/>
+
+    <action path="/begin"
+            forward="begin.page"/>
+
+    <!-- Actions invoked using links -->
+    <action path="/modifyQuery"
+            type="org.intermine.web.ModifyQueryAction"
+            parameter="method">
+      <forward name="query" path="query.page"/>
+      <forward name="history" path="history.page"/>
+    </action>
+      
     <action path="/mainChange"
             type="org.intermine.web.MainChange"
             parameter="method">
       <forward name="query" path="query.page"/>
-    </action>
-
-    <action path="/mainAction"
-            type="org.intermine.web.MainAction"
-            name="mainForm"
-            parameter="action"
-            input="query">
-      <forward name="query" path="query.page"/>
-    </action>
-
-    <action path="/viewAction"
-            type="org.intermine.web.ViewAction"
-            name="emptyForm">
-      <forward name="results" path="results.page"/>
     </action>
 
     <action path="/viewChange"
@@ -93,52 +108,60 @@
 
     <action path="/exportAction"
             type="org.intermine.web.ExportAction"
+            parameter="method"/>
+
+    <action path="/changeResults"
+            type="org.intermine.web.results.ChangeResultsAction"
             parameter="method">
-      <forward name="error" path="/export"/>
+      <forward name="results" path="results.page"/>
     </action>
 
-    <!-- Input a query -->
-    <action path="/buildiqlquery"
-            forward="iqlquery.page"/>
-
-    <action path="/history"
-            forward="history.page"/>
-
-    <action path="/classChooser"
-            forward="classChooser.page"/>
-
-    <action path="/begin"
-            type="org.intermine.web.BeginAction">
-      <forward name="beginpage" path="begin.page"/>
+    <action path="/changeTree"
+            type="org.intermine.web.TreeAction"
+            parameter="method">
+      <forward name="renderTree" path="tree.page"/>
+      <forward name="query" path="query.page"/>
     </action>
 
-    <action path="/bagBuild"
-            forward="bagBuild.page"/>
+    <!-- Actions invoked using buttons - no other form input -->
+    <action path="/viewAction"
+            type="org.intermine.web.ViewAction"
+            name="emptyForm">
+      <forward name="results" path="results.page"/>
+    </action>
 
-    <action path="/index"
-            forward="index.page"/>
-
-    <action path="/examples"
-            forward="templates.page"/>
-
-    <action path="/help"
-            forward="help.page"/>
-
-    <action path="/export"
-            forward="export.page"/>
-
-    <!-- Input an iql query -->
-    <action path="/iqlquery"
-            type="org.intermine.web.IqlQueryAction"
-            name="iqlQueryForm"
-            input="buildiqlquery"
+    <!-- Actions invoked using buttons - not validating form -->
+    <action path="/buildBag"
+            type="org.intermine.web.BuildBagAction"
+            name="buildBagForm"
             parameter="action">
-      <forward name="runquery" path="/runQuery.do"/>
-      <forward name="buildquery" path="query.page"/>
-      <forward name="buildiqlquery" path="iqlquery.page"/>
+      <forward name="bagDetails" path="bagDetails.page"/>
+      <forward name="buildBag" path="bagBuild.page"/>
     </action>
 
-    <!-- Select a QueryClass -->
+    <action path="/modifyBag"
+            type="org.intermine.web.ModifyBagAction"
+            name="modifyBagForm"
+            parameter="action">
+      <forward name="history" path="history.page"/>
+    </action>
+  
+    <!-- Actions invoked using buttons - validating form -->
+    <action path="/changeResultsSize"
+            type="org.intermine.web.results.ChangeResultsSizeAction"
+            name="changeResultsForm"
+            parameter="action"
+            input="results">
+      <forward name="results" path="results.page"/>
+    </action>
+
+    <action path="/saveQuery"
+            type="org.intermine.web.SaveQueryAction"
+            name="saveQueryForm"
+            input="query">
+      <forward name="query" path="query.page"/>
+    </action>
+
     <action path="/queryClassSelect"
             type="org.intermine.web.QueryClassSelectAction"
             name="queryClassSelectForm"
@@ -149,98 +172,28 @@
       <forward name="tree" path="tree.page"/>
     </action>
 
-    <!-- Action to load a Query from the saved queries -->
-    <action path="/loadQuery"
-            type="org.intermine.web.LoadQueryAction">
-      <forward name="buildquery" path="query.page"/>
-    </action>
-
-    <!-- Action to save the current query -->
-    <action path="/saveQuery"
-            type="org.intermine.web.SaveQueryAction"
-            name="saveQueryForm"
+    <action path="/mainAction"
+            type="org.intermine.web.MainAction"
+            name="mainForm"
+            parameter="action"
             input="query">
       <forward name="query" path="query.page"/>
     </action>
 
-    <!-- Action to delete a query -->
-    <action path="/deleteQuery"
-            type="org.intermine.web.DeleteQueryAction">
-      <forward name="history" path="history.page"/>
-    </action>
-
-    <!-- Action to delete a bag -->
-    <action path="/deleteBag"
-            type="org.intermine.web.DeleteBagAction">
-      <forward name="history" path="history.page"/>
-    </action>
-
-    <!-- Action to view a bag -->
-    <action path="/viewBag"
-            type="org.intermine.web.ViewBagAction">
-      <forward name="details" path="/bagDetails.do"/>
-    </action>
-
-    <!-- Action to create a bag from a bunch of strings -->
-    <action path="/buildBag"
-            type="org.intermine.web.BuildBagAction"
-            name="buildBagForm"
+    <action path="/iqlquery"
+            type="org.intermine.web.IqlQueryAction"
+            name="iqlQueryForm"
+            input="buildiqlquery"
             parameter="action">
-      <forward name="bagDetails" path="/bagDetails.do"/>
-      <forward name="buildBag" path="bagBuild.page"/>
+      <forward name="runquery" path="/runQuery.do"/>
+      <forward name="buildquery" path="query.page"/>
+      <forward name="buildiqlquery" path="iqlquery.page"/>
     </action>
-
-    <!-- Action to view a collection from an object -->
-    <action path="/viewCollection"
-            type="org.intermine.web.ViewCollectionAction">
-      <forward name="details" path="/collectionDetails.do"/>
-    </action>
-
-    <!-- Action to create a new query from the history page -->
-    <action path="/createBoolean"
-            type="org.intermine.web.HistoryAction"
-            name="historyForm">
-      <forward name="history" path="/history.dod"/>
-    </action>
-
-    <!-- Action to chnge the displayed results in some way -->
-    <action path="/changeResults"
-            type="org.intermine.web.results.ChangeResultsAction"
-            parameter="method">
-      <forward name="results" path="results.page"/>
-    </action>
-
-    <!-- Action to chnge the displayed results in some way -->
-    <action path="/changeResultsSize"
-            type="org.intermine.web.results.ChangeResultsSizeAction"
-            name="changeResultsForm"
-            parameter="action"
-            input="results">
-      <forward name="results" path="results.page"/>
-    </action>
-
-    <!-- Action to change the displayed results in some way -->
-    <action path="/changeTree"
-            type="org.intermine.web.TreeAction"
-            parameter="method">
-      <forward name="renderTree" path="tree.page"/>
-      <forward name="query" path="query.page"/>
-    </action>
-
-    <action path="/objectDetails"
-            forward="objectDetails.page"/>
-
-    <action path="/collectionDetails"
-            forward="collectionDetails.page"/>
-
-    <action path="/bagDetails"
-            forward="bagDetails.page"/>
-
-    <action path="/results"
-            forward="results.page"/>
 
     <!-- Controllers -->
-
+    <action path="/initBegin"
+            type="org.intermine.web.BeginController"/>
+    
     <action path="/initMain"
             type="org.intermine.web.MainController"/>
 

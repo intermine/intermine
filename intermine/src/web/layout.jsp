@@ -28,6 +28,7 @@
         <tiles:put name="pageDescription" beanName="pageDescription" beanScope="tile"/>
       </tiles:insert>
       <tiles:get name="body"/>
+      <br/>
       <tiles:get name="footer"/>
     </div>
   </body>

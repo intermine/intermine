@@ -30,7 +30,7 @@
     <put name="pageDescription" value="history.page.description"/>
   </definition>
   <definition name="begin.page" extends="layout.template">
-    <put name="body" value="begin.jsp"/>
+    <put name="body" value="begin.tile"/>
     <put name="pageDescription" value="begin.page.description"/>
   </definition>
   <definition name="templates.page" extends="layout.template">
@@ -78,6 +78,7 @@
     <put name="pageDescription" value="tree.page.description"/>
   </definition>
   <!--tiles-->
+  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
     <put name="view" value="view.tile"/>

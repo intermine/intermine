@@ -25,8 +25,7 @@ import org.apache.struts.action.ActionMapping;
  *
  * @author Kim Rutherford
  */
-
-public class BeginAction extends Action
+public class BeginController extends Action
 {
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -58,6 +57,6 @@ public class BeginAction extends Action
             session.removeAttribute("prefix");
         }
 
-        return mapping.findForward("beginpage");
+        return null;
     }
 }

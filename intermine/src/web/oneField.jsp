@@ -37,7 +37,7 @@
         <div>
           <nobr>
             <c:out value="${fieldDescriptor.name}"/>:
-            <html:link action="/viewCollection?id=${object.id}&field=${fieldDescriptor.name}">
+            <html:link action="/collectionDetails?id=${object.id}&field=${fieldDescriptor.name}">
               <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
             </html:link>
           </nobr>

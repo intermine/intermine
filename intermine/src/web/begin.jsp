@@ -23,9 +23,8 @@
   </html:link>
 </div>
 <div>
-  <html:link page="/buildiqlquery.do">
+  <html:link page="/buildiqlquery">
     <fmt:message key="index.iqlQuery"/>
   </html:link>
 </div>
-<br/>
 <!-- /begin.jsp -->

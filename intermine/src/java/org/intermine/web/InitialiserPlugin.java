@@ -53,34 +53,30 @@ public class InitialiserPlugin implements PlugIn
      */
     public void init(ActionServlet servlet, ModuleConfig config)
         throws ServletException {
-
         ServletContext servletContext = servlet.getServletContext();
 
+        InputStream is = servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        if (is == null) {
+            throw new ServletException("There is no model in the webapp");
+        }
+
         try {
-            WebConfig wc =
-                WebConfig.parse(servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml"));
-            ObjectStore os = ObjectStoreFactory.getObjectStore();
-            Model model = os.getModel();
-
-            ObjectStoreSummary oss = new ObjectStoreSummary(os);
-
-            servletContext.setAttribute(Constants.OBJECTSTORE, os);
-            servletContext.setAttribute("webconfig", wc);
-
+            servletContext.setAttribute("webconfig", WebConfig.parse(is));
+            
             Properties webProperties = new Properties();
-
             InputStream globalPropertiesStream =
                 servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
-
             webProperties.load(globalPropertiesStream);
-
             InputStream modelPropertiesStream =
                 servletContext.getResourceAsStream("/WEB-INF/web.properties");
-
             webProperties.load(modelPropertiesStream);
-
             servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
-
+            
+            ObjectStore os = ObjectStoreFactory.getObjectStore();
+            servletContext.setAttribute(Constants.OBJECTSTORE, os); 
+            
+            ObjectStoreSummary oss = new ObjectStoreSummary(os);
+            Model model = os.getModel();
             Map classes = new LinkedHashMap();
             Map classCounts = new LinkedHashMap();
             for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
@@ -88,11 +84,10 @@ public class InitialiserPlugin implements PlugIn
                 classes.put(className, TypeUtil.unqualifiedName(className));
                 classCounts.put(className, new Integer(oss.getClassCount(className)));
             }
-
             servletContext.setAttribute("classes", classes);
             servletContext.setAttribute("classCounts", classCounts);
         } catch (Exception e) {
-            throw new ServletException("there was a problem while initialising", e);
+            throw new ServletException("Initialisation failed: " + e.getMessage(), e);
         }
     }
 

@@ -214,6 +214,7 @@ function unselectColumnCheckbox(column) {
   </c:if>
 </html:form>
 
+<br/>
 <div>
   <html:link action="/exportAction?method=excel"><fmt:message key="export.excel"/></html:link>
 </div>

@@ -25,7 +25,7 @@
       <c:forEach items="${SAVED_QUERIES}" var="savedQuery">
         <tr>
           <td align="left">
-            <html:link action="/loadQuery?queryName=${savedQuery.key}">
+            <html:link action="/modifyQuery?method=load&name=${savedQuery.key}">
               <c:out value="${savedQuery.key}"/>
             </html:link>
           </td>
@@ -35,12 +35,11 @@
             </c:if>
           </td>
           <td>
-            <html:link action="/deleteQuery?name=${savedQuery.key}">delete</html:link>
+            <html:link action="/modifyQuery?method=delete&name=${savedQuery.key}">delete</html:link>
           </td>
         </tr>
       </c:forEach>
     </table>
-    <br/>
   </c:if>
 </div>
 <!-- /historyQueryView.jsp -->

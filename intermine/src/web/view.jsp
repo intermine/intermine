@@ -66,7 +66,6 @@
     <div>
       <tiles:get name="saveQuery"/>
     </div>
-    <br/>
   </c:otherwise>
 </c:choose>
 <!-- /view.jsp -->

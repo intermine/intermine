@@ -9,18 +9,9 @@
     <fmt:message key="history.nohistory"/>
   </c:when>
   <c:otherwise>
-    <html:form action="/createBoolean">
-      <tiles:get name="historyBagView"/>
-      <tiles:get name="historyQueryView"/>
-      <%--
-        <html:submit property="action">
-          <fmt:message key="history.union"/>
-        </html:submit>
-        <html:submit property="action">
-          <fmt:message key="history.intersect"/>
-        </html:submit>
-        --%>
-    </html:form>
+    <tiles:get name="historyBagView"/>
+    <br/>
+    <tiles:get name="historyQueryView"/>
   </c:otherwise>
 </c:choose>
 <!-- /history.jsp -->
