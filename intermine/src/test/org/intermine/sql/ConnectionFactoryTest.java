@@ -30,6 +30,16 @@ public class ConnectionFactoryTest extends TestCase
 
     }
 
+    public void testInvalidDataSource() throws Exception {
+        Properties invalidProps = new Properties();
+        invalidProps.put("db.test.dataSource", "org.postgresql.jdbc2.optional.PoolingDataSource");
+        try {
+            DataSource ds = ConnectionFactory.configureDataSource("db.notthere", invalidProps);
+            fail("Expected: ClassNotFoundException");
+        } catch (ClassNotFoundException e) {
+        }
+    }
+
     public void testInvalidDataSourceClass() throws Exception {
         Properties invalidProps = new Properties();
         invalidProps.put("db.test.dataSource", "org.class.that.cannot.be.Found");
