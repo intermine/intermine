@@ -200,6 +200,11 @@
   </target>
 
   <target name="compile-test" depends="compile-java, copy-test-resources">
+    <depend srcdir="${model.src}/src/test" destdir="${build.model.dir.tmp}" closure="yes" dump="yes">
+      <classpath>
+        <pathelement path="${build.model.dir}"/>
+      </classpath>
+    </depend>
     <javac destdir="${build.model.dir.tmp}/" listfiles="yes">
       <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/test"/>
