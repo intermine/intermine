@@ -68,15 +68,23 @@
         <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
           <c:choose>  
             <c:when test="${column.visible}">
-              <%-- the checkbox to select this object --%>
-              <td align="center">
-                <html:multibox property="selectedObjects">
-                  <c:out value="${column.index},${status.index}"/>
-                </html:multibox>
-              </td>
-              <td>
-                <c:out value="${row[column.index]}"/>
-              </td>
+              <c:choose>
+                <c:when test="${(status.count == 1) || (row[column.index] != prevrow[column.index])}">
+                  <%-- the checkbox to select this object --%>
+                  <td align="center">
+                    <html:multibox property="selectedObjects">
+                      <c:out value="${column.index},${status.index}"/>
+                    </html:multibox>
+                  </td>
+                  <td>
+                    <c:set var="object" value="${row[column.index]}" scope="request"/>
+                    <tiles:get name="resultsCell.tile" />
+                  </td>
+                </c:when>
+                <c:otherwise>
+                  <td colspan=2/>
+                </c:otherwise>
+              </c:choose>
             </c:when>
             <c:otherwise>
               <td colspan=2></td>
@@ -84,6 +92,7 @@
           </c:choose>
         </c:forEach>
       </tr>
+    <c:set var="prevrow" value="${row}" scope="page"/>
     </c:forEach>
   </c:if>
 
