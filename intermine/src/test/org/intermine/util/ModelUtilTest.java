@@ -10,62 +10,36 @@ public class ModelUtilTest extends TestCase
         super(arg);
     }
 
-    public void testGetFieldTypeCollection() {
-        assertEquals(ModelUtil.COLLECTION, ModelUtil.getFieldType(Company.class, "departments"));
-    }
-
-    public void testGetFieldTypeAttribute() {
-        assertEquals(ModelUtil.ATTRIBUTE, ModelUtil.getFieldType(Company.class, "name"));
-    }
-
-    public void testGetFieldTypeReference() {
-        assertEquals(ModelUtil.REFERENCE, ModelUtil.getFieldType(Company.class, "address"));
-    }
-
-    public void testGetFieldTypeInvalidField() {
-        assertEquals(-1, ModelUtil.getFieldType(Company.class, "noSuchField"));
-    }
-
-
+    // key of CEO is "name age address"
     public void testHasValidKeyValidObject() throws Exception {
         Address address = new Address();
         address.setAddress("Employee Street, BVille");
 
         CEO employee = new CEO();
         employee.setName("EmployeeB1");
-        employee.setFullTime(true);
-        employee.setAddress(address);
         employee.setAge(40);
-        employee.setTitle("Mr.");
-        employee.setSalary(45000);
+        employee.setAddress(address);
 
         assertTrue(ModelUtil.hasValidKey(employee));
     }
 
     public void testHasValidKeyInvalidObjectNoReference() throws Exception {
+        CEO ceo = new CEO();
+        ceo.setName("EmployeeB1");
+        ceo.setAge(40);
 
-        CEO employee = new CEO();
-        employee.setName("EmployeeB1");
-        employee.setFullTime(true);
-        employee.setAge(40);
-        employee.setTitle("Mr.");
-        employee.setSalary(45000);
-
-        assertFalse(ModelUtil.hasValidKey(employee));
+        assertFalse(ModelUtil.hasValidKey(ceo));
     }
 
     public void testHasValidKeyInvalidObjectNoAttribute() throws Exception {
         Address address = new Address();
         address.setAddress("Employee Street, BVille");
 
-        CEO employee = new CEO();
-        employee.setFullTime(true);
-        employee.setAddress(address);
-        employee.setAge(40);
-        employee.setTitle("Mr.");
-        employee.setSalary(45000);
+        CEO ceo = new CEO();
+        ceo.setAge(40);
+        ceo.setAddress(address);
 
-        assertFalse(ModelUtil.hasValidKey(employee));
+        assertFalse(ModelUtil.hasValidKey(ceo));
     }
 
     public void testHasValidKeyNullObject() throws Exception {
@@ -75,6 +49,4 @@ public class ModelUtilTest extends TestCase
         } catch (NullPointerException e) {
         }
     }
-
-
 }
