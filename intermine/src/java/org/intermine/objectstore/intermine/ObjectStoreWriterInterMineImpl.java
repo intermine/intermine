@@ -620,7 +620,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public void abortTransactionWithConnection(Connection c) throws ObjectStoreException {
         try {
-            batch.flush(c);
+            batch.clear();
             if (c.getAutoCommit()) {
                 throw new ObjectStoreException("abortTransaction called, but not in transaction");
             }

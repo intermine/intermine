@@ -13,6 +13,7 @@ package org.intermine.sql.writebatch;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -110,6 +111,20 @@ public class Batch
         batchSize = 0;
         //long end = System.currentTimeMillis();
         //LOG.error("Flushed batch - took " + (end - start) + " ms");
+    }
+
+    /**
+     * Clears the batch without writing it to the database.
+     */
+    public void clear() {
+        Iterator iter = tables.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            TableBatch table = (TableBatch) entry.getValue();
+            table.getIdsToInsert().clear();
+            table.getIdsToDelete().clear();
+        }
+        batchSize = 0;
     }
 
     /**

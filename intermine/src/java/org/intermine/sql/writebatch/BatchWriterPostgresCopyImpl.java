@@ -172,11 +172,11 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                 //    .append(", dscale = ")
                 //    .append(Integer.toString(scale))
                 //    .append(")");
-                //for (int i = digits.size() - 1; i >= 0; i--) {
-                //    int digit = ((Integer) digits.get(i)).intValue();
-                //    dos.writeShort(digit);
+                for (int i = digits.size() - 1; i >= 0; i--) {
+                    int digit = ((Integer) digits.get(i)).intValue();
+                    dos.writeShort(digit);
                 //    log.append(" " + digit);
-                //}
+                }
                 //LOG.error(log.toString());
             }
         } else {
