@@ -263,8 +263,7 @@ public class QueryBuildForm extends ActionForm
             }
         } catch (ParseException e) {
             Date dateExample = new GregorianCalendar().getTime();
-
-            return new ActionError("error.date", fieldValue, dateExample);
+            return new ActionError("errors.date", fieldValue, dateExample);
         } catch (NumberFormatException e) {
             String shortClassName =
                 fieldClass.getName().substring(fieldClass.getName().lastIndexOf(".") + 1);
