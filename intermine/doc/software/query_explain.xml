@@ -66,6 +66,8 @@
     <itemizedlist>
       <listitem><classname>ExplainResult</classname> is already used in <packagename>org.flymine.sql package</packagename>.  It will need to be adapted so it can be constructed with the <classname>PreparedStatement</classname> available in <classname>JdbcAccessFlymineImpl</classname>.</listitem>
       <listitem>Caching is done using a <classname>WeakHashMap</classname> in <classname>SqlGeneratorFlymineImpl</classname>, implement clever hashcode generation?</listitem>
+      <listitem>Change <classname>FlymineSqlSelectStatement</classname> so that it no longer takes LIMIT and OFFSET.  These will by applied in <classname>SqlGeneratorFlymineImpl</classname> so that queries can be cached without them.</listitem>
+      <listitem><classname>Results</classname> could be constructed with a threshold value or retrieve it from a config file</listitem>
       </itemizedlist>
 
 
