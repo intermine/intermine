@@ -3,7 +3,7 @@ package org.flymine.sql.query;
 /**
  * An abstract representation of an item that can be present in the FROM section of an
  * SQL query.
- * 
+ *
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
@@ -18,6 +18,15 @@ public abstract class AbstractTable implements SQLStringable
      */
     public String getAlias() {
         return alias;
+    }
+
+    /**
+     * Sets the alias for this AbstractTable object.
+     *
+     * @param alias the alias of this "table"
+     */
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     /**
