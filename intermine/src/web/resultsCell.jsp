@@ -14,7 +14,10 @@
   <c:when test="${cld != null}">
   <%-- Go through all the items in the WebConfig for this object --%>
   <%-- For the moment, only do the primary keys --%>
-    <tiles:get name="/pkFields.jsp" />
+  <table><tr>
+    <td><tiles:insert name="/pkFields.jsp" /></td>
+  </tr></table>
+
   </c:when>
   <c:otherwise>
     <font class="resultsCellValue">
