@@ -35,8 +35,6 @@ public class StoreSequencesTest extends TestCase {
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
         storeContigs();
-
-
     }
 
     public void tearDown() throws Exception {
@@ -78,7 +76,8 @@ public class StoreSequencesTest extends TestCase {
         q1.addToSelect(qc);
         q1.addFrom(qc);
         QueryField qf = new QueryField(qc, "identifier");
-        SimpleConstraint sc1 = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("CR381709.1.2001.2054"));
+        SimpleConstraint sc1 = new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                               new QueryValue("CR381709.1.2001.2054"));
         q1.setConstraint(sc1);
         ObjectStore os = osw.getObjectStore();
         SingletonResults res1 = new SingletonResults(q1, os, os.getSequence());
@@ -90,7 +89,8 @@ public class StoreSequencesTest extends TestCase {
         Query q2 = new Query();
         q2.addToSelect(qc);
         q2.addFrom(qc);
-        SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("AADD01209098.1.15791.15883"));
+        SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                               new QueryValue("AADD01209098.1.15791.15883"));
         q2.setConstraint(sc2);
         SingletonResults res2 = new SingletonResults(q2, os, os.getSequence());
         Contig con2 = (Contig) res2.get(0);
