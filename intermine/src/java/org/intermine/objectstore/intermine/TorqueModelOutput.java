@@ -24,6 +24,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.MetadataManager;
 import org.intermine.objectstore.ObjectStoreException;
 
 import org.apache.log4j.Logger;
@@ -119,13 +120,13 @@ public class TorqueModelOutput
         }
 
         // create a metadata table, ensuring keys are unique
-        sb.append(INDENT + "<table name=\"intermine_metadata\">" + ENDL)
+        sb.append(INDENT + "<table name=\"" + MetadataManager.METADATA_TABLE + "\">" + ENDL)
             .append(generateColumn("key", "java.lang.String"))
             .append(generateColumn("value", "java.lang.String"))
-            .append(INDENT + "</table>" + ENDL)
-            .append(INDENT + "<unique name=\"intermine_metadata_key\">" + ENDL)
+            .append(INDENT + "<unique name=\"" + MetadataManager.METADATA_TABLE + "_key\">" + ENDL)
             .append(INDENT + INDENT + "<unique-column name=\"key\"/>" + ENDL)
-            .append(INDENT + "</unique>" + ENDL);
+            .append(INDENT + "</unique>" + ENDL)
+            .append(INDENT + "</table>" + ENDL);
         
         sb.append("</database>" + ENDL);
         return sb.toString();

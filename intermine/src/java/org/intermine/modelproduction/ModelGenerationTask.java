@@ -13,13 +13,14 @@ package org.intermine.modelproduction;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
+import java.io.IOException;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 
 import org.intermine.modelproduction.uml.XmiParser;
 import org.intermine.modelproduction.xmlschema.XmlSchemaParser;
 import org.intermine.modelproduction.acedb.AceModelParser;
+import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 
 /**
@@ -132,11 +133,8 @@ public class ModelGenerationTask extends Task
         }
 
         try {
-            File output = new File(destDir, modelName + "_model.xml");
-            FileWriter writer = new FileWriter(output);
-            writer.write(model.toString());
-            writer.close();
-        } catch (Exception e) {
+            MetadataManager.saveModel(model, destDir);
+        } catch (IOException e) {
             throw new BuildException(e);
         }
     }

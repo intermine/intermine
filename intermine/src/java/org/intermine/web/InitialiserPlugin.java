@@ -39,6 +39,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetadataManager;
 import org.intermine.web.config.WebConfig;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -71,7 +72,6 @@ public class InitialiserPlugin implements PlugIn
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
         ServletContext servletContext = servlet.getServletContext();
         
-        loadClassDescriptions(servletContext);
         loadWebProperties(servletContext);
         loadExampleQueries(servletContext);
         loadWebConfig(servletContext);
@@ -86,6 +86,7 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         
         loadClassCategories(servletContext, os);
+        loadClassDescriptions(servletContext, os);
         
         processWebConfig(servletContext, os);
         summarizeObjectStore(servletContext, os);
@@ -115,17 +116,13 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load the user-friendly class descriptions
      */
-    private void loadClassDescriptions(ServletContext servletContext) throws ServletException {
-        InputStream is =
-            servletContext.getResourceAsStream("/WEB-INF/classDescriptions.properties");
-        if (is == null) {
-            return;
-        }
-        Properties classDescriptions = new Properties();
+    private void loadClassDescriptions(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        Properties classDescriptions = null;
         try {
-            classDescriptions.load(is);
+            classDescriptions = MetadataManager.loadClassDescriptions(os.getModel().getName());
         } catch (Exception e) {
-            throw new ServletException("Error loading classDescriptions.properties", e);
+            throw new ServletException("Error loading class descriptions", e);
         }
         servletContext.setAttribute("classDescriptions", classDescriptions);
     }

@@ -10,25 +10,28 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.util.Properties;
+
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.MetadataManager;
+import org.intermine.util.PropertiesUtil;
 
 /**
- * Copy a Model in the intermine_metadata table of an database
- *
+ * Store model metadata to a database
  * @author Kim Rutherford
  */
-public class InsertModelTask extends Task
+public class StoreMetadataTask extends Task
 {
     protected String modelName;
     protected String database;
 
     /**
-     * Sets the name of the model.
+     * Sets the model name
      *
      * @param modelName the model name
      */
@@ -37,8 +40,8 @@ public class InsertModelTask extends Task
     }
 
     /**
-     * Sets the database
-     * @param database String used to identify Database (usually dataSourceName)
+     * Sets the database alias
+     * @param database the database alias
      */
     public void setDatabase(String database) {
         this.database = database;
@@ -46,7 +49,6 @@ public class InsertModelTask extends Task
 
     /**
      * @see Task#execute
-     * @throws BuildException
      */
     public void execute() throws BuildException {
         if (modelName == null) {
@@ -56,9 +58,22 @@ public class InsertModelTask extends Task
             throw new BuildException("database attribute is not set");
         }
         try {
-            Model model = Model.getInstanceByName(modelName);
             Database db = DatabaseFactory.getDatabase(database);
-            MetadataManager.storeModel(model.toString(), db);
+
+            Model model = MetadataManager.loadModel(modelName);
+            MetadataManager.store(db, MetadataManager.MODEL, model.toString());
+
+            Properties keys = MetadataManager.loadKeyDefinitions(modelName);
+            if (keys != null) {
+                MetadataManager.store(db, MetadataManager.KEY_DEFINITIONS,
+                                      PropertiesUtil.serialize(keys));
+            }
+
+            Properties descriptions = MetadataManager.loadClassDescriptions(modelName);
+            if (descriptions != null) {
+                MetadataManager.store(db, MetadataManager.CLASS_DESCRIPTIONS,
+                                      PropertiesUtil.serialize(descriptions));
+            }
         } catch (Exception e) {
             throw new BuildException(e);
         }

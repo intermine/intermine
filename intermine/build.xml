@@ -130,7 +130,6 @@
     <include name="log4j*.jar"/>
     <include name="cglib*.jar"/>
     <include name="antlr*.jar"/>
-    <include name="stax*.jar"/>
     <include name="commons-lang*.jar"/>
     <include name="commons-logging*.jar"/>
     <include name="torque-gen*.jar"/>
@@ -939,7 +938,7 @@
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <property name="model.name" value="testmodel"/>
-      <property name="objectstore.name" value="os.unittest"/>
+      <property name="db.name" value="db.unittest"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
     
