@@ -136,6 +136,9 @@
     <action path="/getAttributeAsFile"
             type="org.intermine.web.results.GetAttributeAsFileAction"/>
 
+    <action path="/exportTemplates"
+            type="org.intermine.web.TemplatesExportAction"/>
+            
     <!-- Actions invoked using links -->
     <action path="/modifyQueryChange"
             type="org.intermine.web.ModifyQueryChangeAction"
