@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
+<!-- restartQuery.jsp -->
 <c:if test="${(query != null) || (savedQueries != null)}">
   <html:form action="/restartQuery">
     <html:select property="queryName">
@@ -19,3 +20,4 @@
     </html:submit>
   </html:form>
 </c:if>
+<!-- /restartQuery.jsp -->

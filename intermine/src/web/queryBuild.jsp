@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
+<!-- queryBuild.jsp -->
 <c:if test="${cld != null}">
   <html:form action="/query">
 
@@ -92,5 +93,6 @@
 
   </html:form>      
 </c:if>
+<!-- /queryBuild.jsp -->
 
   
