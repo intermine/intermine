@@ -1,11 +1,37 @@
-body {	font-size: 8pt;
+body {	font-family: arial, helvetica, sans-serif;
+        font-size: 8pt;
 	color: #000000; 
-	background: #FFFFFF}
+	background: #f4eeff}
 p {	color: #000000;}
-A:link {color: #003399;
+a:link {color: #220077;
 	text-decoration: none}
-A:visited {color: #003399;
+a:visited {color: #220077;
 	text-decoration: none}
-A:active {color: #003399;}
+a:active {color: #220077;
 	text-decoration: none}
-.cell { background: #f5f5ff}
+a:hover {color: #220077;
+	text-decoration: underline}
+.sidebar {
+    font-size: small;
+    background-color: #ccaaff;
+}
+.footer {
+    font-size: x-small;
+    background-color: #ccaaff;
+}
+.menu-heading {
+    font-weight: bold;
+}
+.title {
+    font-size: x-large;
+    font-weight: bold;
+    color: #220077;
+}
+.subtitle {
+    font-size: large;
+    font-weight: normal;
+}
+.main {
+    font-size: normal;
+    font-weight: normal;
+}
