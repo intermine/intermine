@@ -162,7 +162,7 @@ public class StringUtilTest extends TestCase
         list.add("three");
         assertEquals("one, two, three", StringUtil.join(list, ", "));
     }
-    
+
     public void testTokenize() throws Exception {
         try {
             StringUtil.tokenize(null);
@@ -174,4 +174,15 @@ public class StringUtilTest extends TestCase
         assertEquals(StringUtil.tokenize(" one"), Arrays.asList(new Object[] {"one"}));
         assertEquals(StringUtil.tokenize(" one  two"), Arrays.asList(new Object[] {"one", "two"}));
     }
+
+
+    public void testAllDigits() throws Exception {
+        assertTrue(StringUtil.allDigits("123456"));
+        assertFalse(StringUtil.allDigits("1.23456"));
+        assertFalse(StringUtil.allDigits("text"));
+        assertFalse(StringUtil.allDigits("1234text"));
+        assertFalse(StringUtil.allDigits(""));
+        assertFalse(StringUtil.allDigits(null));
+    }
+
 }
