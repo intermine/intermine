@@ -488,6 +488,9 @@ public class EnsemblDataTranslator extends DataTranslator
                     synonym.addReference(getFlyBaseRef());
                     synonyms.add(synonym);
                 }
+                if (dbname.equals("flybase_gene")) {
+                    tgtItem.addAttribute(new Attribute("organismDbId", accession));
+                }
             }
         }
         return synonyms;

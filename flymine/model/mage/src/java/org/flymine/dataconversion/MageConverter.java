@@ -17,8 +17,8 @@ import java.util.LinkedHashMap;
 import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.BufferedReader;
 import java.io.Writer;
+import java.io.Reader;
 
 import org.biomage.tools.xmlutils.MAGEReader;
 
@@ -46,15 +46,14 @@ public class MageConverter extends FileConverter
     /**
      * @see FileConverter#FileConverter
      */
-    public MageConverter(BufferedReader reader, ItemWriter writer) {
-        super(reader, writer);
+    public MageConverter(ItemWriter writer) {
+        super(writer);
     }
         
     /**
-     * Read a MAGE-ML file and convert to Item objects.
-     * @throws Exception if io or reflection problems occur
+     * @see FileConverter#process
      */
-    public void process() throws Exception {
+    public void process(Reader reader) throws Exception {
         seenMap = new LinkedHashMap();
         id = 0;
         File f = File.createTempFile("mageconvert", ".xml");

@@ -13,7 +13,7 @@ package org.flymine.dataconversion;
 import junit.framework.*;
 
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -39,13 +39,13 @@ public class MageConverterTest extends TestCase
     String ns = "http://www.biomage.org#";
 
     public void setUp() {
-        converter = new MageConverter(null, null);
+        converter = new MageConverter(null);
     }
 
     public void testConvertMageML() throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/mage_ml_example.xml")));
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/mage_ml_example.xml"));
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        new MageConverter(reader, itemWriter).process();
+        new MageConverter(itemWriter).process(reader);
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/MAGEConverterTest.xml")));
         assertEquals(expected, itemWriter.getItems());

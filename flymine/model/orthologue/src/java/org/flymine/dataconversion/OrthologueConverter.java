@@ -10,6 +10,7 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -47,67 +48,65 @@ public class OrthologueConverter extends FileConverter
 
     /**
      * Constructor
-     * @param reader Reader of input data in 5-column tab delimited format
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public OrthologueConverter(BufferedReader reader, ItemWriter writer)
-        throws ObjectStoreException {
-        super(reader, writer);
+    public OrthologueConverter(ItemWriter writer) throws ObjectStoreException {
+        super(writer);
     }
-
-
 
     /**
      * @see DataConverter#process
      */
-    public void process() throws Exception {
-        try {
-            String line = reader.readLine();
-            organism1 = createOrganism(param1);
-            organism2 = createOrganism(param2);
-
-            // throw an exception if organisms not set
-            while ((line = reader.readLine()) != null) {
-                String[] array = line.split("\t");
-                Set items = new HashSet();
-
-                Item gene1 = createGene(array[0], organism1);
-                Item gene2 = createGene(array[1], organism2);
-                Item result = createResult(getAnalysis(array[2], array[3], array[4]),
-                                           getSource(array[5]));
-                items.add(ItemHelper.convert(result));
-                Item orth1 = createOrthologue(gene1, gene2, result, getSource(array[5]));
-                items.add(ItemHelper.convert(orth1));
-                Item orth2 = createOrthologue(gene2, gene1, result, getSource(array[5]));
-                items.add(ItemHelper.convert(orth2));
-                addToCollection(gene1, "objects", orth2.getIdentifier());
-                addToCollection(gene1, "subjects", orth1.getIdentifier());
-                addToCollection(gene2, "objects", orth1.getIdentifier());
-                addToCollection(gene2, "subjects", orth2.getIdentifier());
-
-                writer.storeAll(items);
-            }
-
-            Set extras = new HashSet();
-            Iterator iter = genes.values().iterator();
-            while (iter.hasNext()) {
-                extras.add(ItemHelper.convert((Item) iter.next()));
-            }
-            iter = sources.values().iterator();
-            while (iter.hasNext()) {
-                extras.add(ItemHelper.convert((Item) iter.next()));
-            }
-            iter = analyses.values().iterator();
-            while (iter.hasNext()) {
-                extras.add(ItemHelper.convert((Item) iter.next()));
-            }
-            extras.add(ItemHelper.convert(organism1));
-            extras.add(ItemHelper.convert(organism2));
-            writer.storeAll(extras);
-        } finally {
-            writer.close();
+    public void process(Reader reader) throws Exception {
+        if (id > 0) {
+            throw new RuntimeException("Cannot run process() more than one");
         }
+
+        BufferedReader br = new BufferedReader(reader);
+        String line = br.readLine();
+
+        organism1 = createOrganism(param1);
+        organism2 = createOrganism(param2);
+
+        // throw an exception if organisms not set
+        while ((line = br.readLine()) != null) {
+            String[] array = line.split("\t");
+            Set items = new HashSet();
+
+            Item gene1 = createGene(array[0], organism1);
+            Item gene2 = createGene(array[1], organism2);
+            Item result = createResult(getAnalysis(array[2], array[3], array[4]),
+                                       getSource(array[5]));
+            items.add(ItemHelper.convert(result));
+            Item orth1 = createOrthologue(gene1, gene2, result, getSource(array[5]));
+            items.add(ItemHelper.convert(orth1));
+            Item orth2 = createOrthologue(gene2, gene1, result, getSource(array[5]));
+            items.add(ItemHelper.convert(orth2));
+            addToCollection(gene1, "objects", orth2.getIdentifier());
+            addToCollection(gene1, "subjects", orth1.getIdentifier());
+            addToCollection(gene2, "objects", orth1.getIdentifier());
+            addToCollection(gene2, "subjects", orth2.getIdentifier());
+
+            writer.storeAll(items);
+        }
+
+        Set extras = new HashSet();
+        Iterator iter = genes.values().iterator();
+        while (iter.hasNext()) {
+            extras.add(ItemHelper.convert((Item) iter.next()));
+        }
+        iter = sources.values().iterator();
+        while (iter.hasNext()) {
+            extras.add(ItemHelper.convert((Item) iter.next()));
+        }
+        iter = analyses.values().iterator();
+        while (iter.hasNext()) {
+            extras.add(ItemHelper.convert((Item) iter.next()));
+        }
+        extras.add(ItemHelper.convert(organism1));
+        extras.add(ItemHelper.convert(organism2));
+        writer.storeAll(extras);
     }
 
     /**
@@ -122,6 +121,7 @@ public class OrthologueConverter extends FileConverter
         item.setImplementations("");
         return item;
     }
+
     private String newId(String className) {
         Integer id = (Integer) ids.get(className);
         if (id == null) {

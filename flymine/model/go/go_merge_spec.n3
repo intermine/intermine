@@ -6,6 +6,16 @@
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-
 :GOTerm a owl:Class;
     rdfs:subClassOf :DagTerm.
+
+:GOEvidence a owl:Class;
+    rdfs:subClassOf :Evidence.
+
+:GOEvidence__code a owl:DatatypeProperty;
+    rdfs:domain :GOEvidence;
+    rdfs:range xsd:string.
+
+:Gene__organismDbId a owl:DatatypeProperty;
+    rdfs:domain :Gene;
+    rdfs:range xsd:string.
