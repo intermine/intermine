@@ -620,7 +620,7 @@
   <!-- convert MAGE-OM xmi to FlyMine model -->
   <target name="convert-mage" depends="compile-main">
     <ant antfile="build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
-      <property name="model.src" value="/home/rns/resources/mage/"/>
+      <property name="model.src" value="${model}/mage"/>
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
