@@ -946,7 +946,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Statement s = c.createStatement();
             registerStatement(s);
             try {
-                sqlResults = c.createStatement().executeQuery(sql);
+                sqlResults = s.executeQuery(sql);
             } finally {
                 deregisterStatement(s);
             }
@@ -1021,7 +1021,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Statement s = c.createStatement();
             registerStatement(s);
             try {
-                sqlResults = c.createStatement().executeQuery(sql);
+                sqlResults = s.executeQuery(sql);
             } finally {
                 deregisterStatement(s);
             }
