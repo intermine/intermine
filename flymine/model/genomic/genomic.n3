@@ -349,7 +349,7 @@
 
 :Publication__year a owl:DatatypeProperty;
     rdfs:domain :Publication;
-    rdfs:range xsd:string.
+    rdfs:range xsd:integer.
 
 :Publication__pages a owl:DatatypeProperty;
     rdfs:domain :Publication;
