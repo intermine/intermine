@@ -239,7 +239,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         // navigate from a lazy collection to a field that is a lazy reference
         Address a = ((Employee) e.get(0)).getAddress();
         assertTrue(a instanceof LazyReference);
-        assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
+        assertEquals(((Employee) data.get("EmployeeA1")).getAddress(), a);
     }
 
     public void testLazyCollectionMtoN() throws Exception {
@@ -260,14 +260,14 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         List expected1 = new ArrayList();
         expected1.add(data.get("ContractorA"));
         expected1.add(data.get("ContractorB"));
-        assertEquals(contractors, expected1);
+        assertEquals(expected1, contractors);
 
         List companies = ((Contractor) contractors.get(0)).getCompanys();
         assertTrue(companies instanceof Results);
         List expected2 = new ArrayList();
         expected2.add(data.get("CompanyA"));
         expected2.add(data.get("CompanyB"));
-        assertEquals(companies, expected2);
+        assertEquals(expected2, companies);
     }
 
     public void testLazyReference() throws Exception {
@@ -288,10 +288,10 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         assertTrue(c1 instanceof LazyReference);
         assertTrue(c1.equals(c2));
         assertTrue(c2.equals(c1));
-        assertEquals(c1.getId(), c2.getId());
-        assertEquals(c1.hashCode(), c2.hashCode());
+        assertEquals(c2.getId(), c1.getId());
+        assertEquals(c2.hashCode(), c1.hashCode());
         assertFalse(((LazyReference) c1).isMaterialised());
-        assertEquals(c1.getName(), c2.getName());
+        assertEquals(c2.getName(), c1.getName());
         assertTrue(((LazyReference) c1).isMaterialised());
     }
 
@@ -320,7 +320,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         Employee e1 = (Employee) e.get(0);
         Address a = e1.getAddress();
         assertTrue(a instanceof LazyReference);
-        assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
+        assertEquals(((Employee) data.get("EmployeeA1")).getAddress(), a);
     }
 
     public void testLazyReferenceRef() throws Exception {
@@ -342,7 +342,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         // navigate from a lazy reference to a field that is a lazy reference
         Address a = c.getAddress();
         assertTrue(a instanceof LazyReference);
-        assertEquals(a, ((Company) data.get("CompanyA")).getAddress());
+        assertEquals(((Company) data.get("CompanyA")).getAddress(), a);
     }
 
     // setDistinct tests
@@ -351,21 +351,21 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(false);
         int count = os.count(q);
-        assertEquals(count, 8);
+        assertEquals(8, count);
     }
 
     public void testCountNoGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
         q.setDistinct(true);
         int count = os.count(q);
-        assertEquals(count, 4);
+        assertEquals(4, os.execute(q).size());
     }
 
    public void testCountGroupByNotDistinct() throws Exception {
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(false);
         int count = os.count(q);
-        assertEquals(count, 2);
+        assertEquals(2, count);
     }
 
     public void testCountGroupByDistinct() throws Exception {
@@ -373,7 +373,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         Query q = (Query) queries.get("SimpleGroupBy");
         q.setDistinct(true);
         int count = os.count(q);
-        assertEquals(count, 2);
+        assertEquals(2, count);
     }
 
     // getObjectByExample tests
