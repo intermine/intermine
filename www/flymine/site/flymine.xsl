@@ -17,7 +17,7 @@ version="1.0">
 <xsl:value-of select="concat($basedir, '/flymine.css')"/>
 </xsl:attribute>
 </link>
-<meta name="keywords" content="microarray, bioinformatics, drosophila, genomics" />
+<meta name="keywords" content="microarray, bioinformatics, drosophila, genomics, OQL, integration, query optimiser" />
 <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics" />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
