@@ -249,7 +249,7 @@
   <c:if test="${editingNode != null}">
     <tr>
       <td valign="top">
-        <div class="heading"><fmt:message key="query.constrain"/></div>
+        <div class="heading"><fmt:message key="query.constrain"/><im:helplink key="query.help.constrain"/></div>
         <div class="body">
           <c:choose>
             <c:when test="${empty editingNode.fieldName}">
