@@ -12,7 +12,7 @@
 <im:box helpUrl="${helpUrl}"
         titleKey="objectDetails.heading.details">
 
-Trail: <tiles:get name="objectTrail.tile"/>
+<tiles:get name="objectTrail.tile"/>
         
 <c:if test="${!empty object}">
         
