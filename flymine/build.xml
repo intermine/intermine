@@ -493,6 +493,15 @@
     </ant>
   </target>
 
+  <target name="create-indexes-anoph-test" depends="build-db-anoph-test">
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-anoph-test"/>
+    </ant>
+  </target>
+
   <!-- Data Translation targets -->
 
   <!-- Build Chado target items database -->
