@@ -205,8 +205,9 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //pw.flush();
         //LOG.error(sw.toString());
         synchronized (cache) {
-            LOG.warn("Probable inefficiency: internalGetObjectById called for "
-                    + retval.getClass().toString() + " with id " + id
+            LOG.warn("Probable inefficiency: internalGetObjectById called "
+                    + (retval == null ? "" : "for " + retval.getClass().toString())
+                    + " with id " + id + ", class " + clazz.toString()
                     + ", cache size = " + cache.size() + " - maybe you should use"
                     + " ObjectStoreFastCollectionsForTranslatorImpl");
         }
