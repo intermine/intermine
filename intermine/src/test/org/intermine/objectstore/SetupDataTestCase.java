@@ -168,7 +168,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, obj1);
         cs1.addConstraint(cc1);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
-        ContainsConstraint con1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint con1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         cs1.addConstraint(con1);
 
         Query subquery = new Query();
@@ -178,7 +178,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         subquery.addFrom(qc3);
         subquery.addToSelect(qc3);
         subquery.setConstraint(cc2);
-        SubqueryConstraint sc1 = new SubqueryConstraint(subquery, SubqueryConstraint.CONTAINS, qc2);
+        SubqueryConstraint sc1 = new SubqueryConstraint(subquery, ConstraintOp.CONTAINS, qc2);
         cs1.addConstraint(sc1);
         q1.setConstraint(cs1);
         return q1;

@@ -64,19 +64,19 @@ public class PrintableConstraintTest extends TestCase
         q.addFrom(qc2, "department1");
         q.addFrom(qc3, "department2");
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        SimpleConstraint simpleConstraint1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, value1);
+        SimpleConstraint simpleConstraint1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, value1);
         cs1.addConstraint(simpleConstraint1);
-        SimpleConstraint simpleConstraint2 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, qf3);
+        SimpleConstraint simpleConstraint2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, qf3);
         cs1.addConstraint(simpleConstraint2);
         ClassConstraint classConstraint1 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, qc3);
         cs1.addConstraint(classConstraint1);
         ClassConstraint classConstraint2 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, new Department());
         cs1.addConstraint(classConstraint2);
-        ContainsConstraint containsConstraint1 = new ContainsConstraint(qcr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint containsConstraint1 = new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qc2);
         cs1.addConstraint(containsConstraint1);
-        SubqueryConstraint subqueryConstraint1 = new SubqueryConstraint(subquery, SubqueryConstraint.CONTAINS, qc2);
+        SubqueryConstraint subqueryConstraint1 = new SubqueryConstraint(subquery, ConstraintOp.CONTAINS, qc2);
         cs1.addConstraint(subqueryConstraint1);
-        SimpleConstraint simpleConstraint3 = new SimpleConstraint(expr1, SimpleConstraint.EQUALS, expr2);
+        SimpleConstraint simpleConstraint3 = new SimpleConstraint(expr1, ConstraintOp.EQUALS, expr2);
         cs1.addConstraint(simpleConstraint1);
         q.setConstraint(cs1);
 

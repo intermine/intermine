@@ -217,7 +217,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
         QueryField f2 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f2);
@@ -235,7 +235,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
         QueryField f2 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.NOT_EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.NOT_EQUALS, v1);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f2);
@@ -253,7 +253,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
         QueryField f2 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         sc1.setNegated(true);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -271,7 +271,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("Company%");
         QueryField f1 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.MATCHES, v1);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f1);
@@ -288,7 +288,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue("CompanyA");
         QueryField f1 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f1);
@@ -308,8 +308,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        SimpleConstraint sc2 = new SimpleConstraint(f2, SimpleConstraint.GREATER_THAN, v2);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.MATCHES, v1);
+        SimpleConstraint sc2 = new SimpleConstraint(f2, ConstraintOp.GREATER_THAN, v2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
         cs1.addConstraint(sc1);
         cs1.addConstraint(sc2);
@@ -332,8 +332,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        SimpleConstraint sc2 = new SimpleConstraint(f2, SimpleConstraint.GREATER_THAN, v2);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.MATCHES, v1);
+        SimpleConstraint sc2 = new SimpleConstraint(f2, ConstraintOp.GREATER_THAN, v2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.OR);
         cs1.addConstraint(sc1);
         cs1.addConstraint(sc2);
@@ -356,8 +356,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        SimpleConstraint sc2 = new SimpleConstraint(f2, SimpleConstraint.GREATER_THAN, v2);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.MATCHES, v1);
+        SimpleConstraint sc2 = new SimpleConstraint(f2, ConstraintOp.GREATER_THAN, v2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
         cs1.addConstraint(sc1);
         cs1.addConstraint(sc2);
@@ -383,7 +383,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(f1);
         QueryClass c2 = new QueryClass(Department.class);
         QueryField f2 = new QueryField(c2, "name");
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, f2);
+        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, f2);
         Query q2 = new Query();
         q2.addFrom(c2);
         q2.addToSelect(c2);
@@ -404,9 +404,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
-        q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
+        q1.setConstraint(new SimpleConstraint(f1, ConstraintOp.EQUALS, v1));
         QueryClass c2 = new QueryClass(Company.class);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
+        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, c2);
         Query q2 = new Query();
         q2.addFrom(c2);
         q2.addToSelect(c2);
@@ -426,9 +426,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
-        q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
+        q1.setConstraint(new SimpleConstraint(f1, ConstraintOp.EQUALS, v1));
         QueryClass c2 = new QueryClass(Company.class);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.DOES_NOT_CONTAIN, c2);
+        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, ConstraintOp.DOES_NOT_CONTAIN, c2);
         Query q2 = new Query();
         q2.addFrom(c2);
         q2.addToSelect(c2);
@@ -448,9 +448,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
-        q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
+        q1.setConstraint(new SimpleConstraint(f1, ConstraintOp.EQUALS, v1));
         QueryClass c2 = new QueryClass(Company.class);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
+        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, c2);
         sqc1.setNegated(true);
         Query q2 = new Query();
         q2.addFrom(c2);
@@ -526,14 +526,14 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
         QueryValue v1 = new QueryValue("DepartmentA1");
         QueryField qf1 = new QueryField(qc1, "name");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addToSelect(qc2);
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
         cs1.addConstraint(cc1);
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
@@ -553,14 +553,14 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
         QueryValue v1 = new QueryValue("DepartmentA1");
         QueryField qf1 = new QueryField(qc1, "name");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.DOES_NOT_CONTAIN, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.DOES_NOT_CONTAIN, qc2);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addToSelect(qc2);
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
         cs1.addConstraint(cc1);
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
@@ -580,7 +580,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
         QueryValue v1 = new QueryValue("DepartmentA1");
         QueryField qf1 = new QueryField(qc1, "name");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         cc1.setNegated(true);
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -588,7 +588,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
         cs1.addConstraint(cc1);
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
@@ -605,7 +605,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         QueryValue v1 = new QueryValue("CompanyA");
         QueryField qf1 = new QueryField(qc1, "name");
         Query q1 = new Query();
@@ -614,7 +614,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
         cs1.addConstraint(cc1);
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
@@ -631,7 +631,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "company");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         QueryValue v1 = new QueryValue("CompanyA");
         QueryField qf1 = new QueryField(qc2, "name");
         Query q1 = new Query();
@@ -640,7 +640,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
         cs1.addConstraint(cc1);
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
@@ -657,7 +657,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "companys");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         QueryValue v1 = new QueryValue("ContractorA");
         QueryField qf1 = new QueryField(qc1, "name");
         Query q1 = new Query();
@@ -666,7 +666,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        Constraint c1 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, v1);
+        Constraint c1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, v1);
         cs1.addConstraint(cc1);
         cs1.addConstraint(c1);
         q1.setConstraint(cs1);
@@ -682,7 +682,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "oldComs");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addToSelect(qc2);
@@ -702,7 +702,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS,  qc2);
+        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS,  qc2);
         Query q1 = new Query();
         q1.addToSelect(qc1);
         q1.addToSelect(new QueryFunction());
@@ -742,10 +742,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc3);
         q1.addFrom(qc4);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2));
-        cs1.addConstraint(new ContainsConstraint(qr2, ContainsConstraint.CONTAINS, qc3));
-        cs1.addConstraint(new ContainsConstraint(qr3, ContainsConstraint.CONTAINS, qc4));
-        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, qv1));
+        cs1.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qc2));
+        cs1.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qc3));
+        cs1.addConstraint(new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qc4));
+        cs1.addConstraint(new SimpleConstraint(qf1, ConstraintOp.EQUALS, qv1));
         q1.setConstraint(cs1);
         return q1;
     }
@@ -870,8 +870,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc2);
         q.addToSelect(qc2);
         ConstraintSet qs = new ConstraintSet(ConstraintSet.AND);
-        qs.addConstraint(new SimpleConstraint(new QueryField(qc1, "name"), SimpleConstraint.EQUALS, new QueryValue("CompanyA")));
-        qs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ContainsConstraint.CONTAINS, qc2));
+        qs.addConstraint(new SimpleConstraint(new QueryField(qc1, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyA")));
+        qs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ConstraintOp.CONTAINS, qc2));
         q.setConstraint(qs);
         return q;
     }

@@ -148,12 +148,12 @@ public class ContainsConstraint extends Constraint
     /**
      * QueryCollection does contain the specified QueryClass.
      */
-    public static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
+    protected static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
 
     /**
      * QueryCollection does not contain the specified QueryClass.
      */
-    public static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
+    protected static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
 
     protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {CONTAINS,
                                                                           DOES_NOT_CONTAIN};

@@ -26,6 +26,7 @@ import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.sql.query.ExplainResult;
@@ -54,7 +55,7 @@ public class JdbcAccessFlyMineImplTest extends SetupDataTestCase
         q1.addFrom(company);
         q1.addToSelect(company);
         QueryField f1 = new QueryField(company, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, new QueryValue("CompanyA"));
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, new QueryValue("CompanyA"));
         q1.setConstraint(sc1);
 
         // Get db and writer in order to store data

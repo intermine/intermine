@@ -178,7 +178,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
             QueryCollectionReference qr
                 = new QueryCollectionReference(qcThis, cod.getAttributeName());
             ContainsConstraint cc2 =
-                new ContainsConstraint(qr, ContainsConstraint.CONTAINS, qcCol);
+                new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcCol);
             constraints.addConstraint(cc2);
 
             query.setConstraint(constraints);
@@ -231,7 +231,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 // constrain that this.reference <to item> is item
                 QueryReference qr = new QueryObjectReference(qcThis, rds.getAttributeName());
                 ContainsConstraint cc2 =
-                    new ContainsConstraint(qr, ContainsConstraint.CONTAINS, qcRef);
+                    new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcRef);
                 constraints.addConstraint(cc2);
 
                 query.setConstraint(constraints);

@@ -671,10 +671,10 @@ public class FqlQueryParser
                 rightb.setDistinct(false);
                 processFqlStatementAST(subAST, rightb, modelPackage, iterator);
                 if (leftb instanceof QueryClass) {
-                    return new SubqueryConstraint(rightb, SubqueryConstraint.CONTAINS,
+                    return new SubqueryConstraint(rightb, ConstraintOp.CONTAINS,
                             (QueryClass) leftb);
                 } else {
-                    return new SubqueryConstraint(rightb, SubqueryConstraint.CONTAINS,
+                    return new SubqueryConstraint(rightb, ConstraintOp.CONTAINS,
                             (QueryEvaluable) leftb);
                 }
             case FqlTokenTypes.CONTAINS_CONSTRAINT:
@@ -717,7 +717,7 @@ public class FqlQueryParser
                         // Now we have a collection or object reference. Now we need a class.
                         QueryNode qc = processNewQueryNode(subAST.getNextSibling(), q);
                         if (qc instanceof QueryClass) {
-                            return new ContainsConstraint(ref, ContainsConstraint.CONTAINS,
+                            return new ContainsConstraint(ref, ConstraintOp.CONTAINS,
                                     (QueryClass) qc);
                         } else {
                             throw new IllegalArgumentException("Collection or object reference "
@@ -769,41 +769,41 @@ public class FqlQueryParser
         ConstraintOp op = null;
         switch (subAST.getType()) {
             case FqlTokenTypes.EQ:
-                op = SimpleConstraint.EQUALS;
+                op = ConstraintOp.EQUALS;
                 break;
             case FqlTokenTypes.NOT_EQ:
-                op = SimpleConstraint.NOT_EQUALS;
+                op = ConstraintOp.NOT_EQUALS;
                 break;
             case FqlTokenTypes.LT:
-                op = SimpleConstraint.LESS_THAN;
+                op = ConstraintOp.LESS_THAN;
                 break;
             case FqlTokenTypes.LE:
-                op = SimpleConstraint.LESS_THAN_EQUALS;
+                op = ConstraintOp.LESS_THAN_EQUALS;
                 break;
             case FqlTokenTypes.GT:
-                op = SimpleConstraint.GREATER_THAN;
+                op = ConstraintOp.GREATER_THAN;
                 break;
             case FqlTokenTypes.GE:
-                op = SimpleConstraint.GREATER_THAN_EQUALS;
+                op = ConstraintOp.GREATER_THAN_EQUALS;
                 break;
             case FqlTokenTypes.LITERAL_like:
-                op = SimpleConstraint.MATCHES;
+                op = ConstraintOp.MATCHES;
                 break;
             case FqlTokenTypes.NOTLIKE:
-                op = SimpleConstraint.DOES_NOT_MATCH;
+                op = ConstraintOp.DOES_NOT_MATCH;
                 break;
             case FqlTokenTypes.ISNULL:
-                op = SimpleConstraint.IS_NULL;
+                op = ConstraintOp.IS_NULL;
                 break;
             case FqlTokenTypes.ISNOTNULL:
-                op = SimpleConstraint.IS_NOT_NULL;
+                op = ConstraintOp.IS_NOT_NULL;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText()
                         + " [" + ast.getType() + "]");
         }
         subAST = subAST.getNextSibling();
-        if ((op == SimpleConstraint.IS_NULL) || (op == SimpleConstraint.IS_NOT_NULL)) {
+        if ((op == ConstraintOp.IS_NULL) || (op == ConstraintOp.IS_NOT_NULL)) {
             if (subAST != null) {
                 throw new IllegalArgumentException("IS (NOT) NULL only takes one argument");
             } else if (left instanceof QueryClass) {
@@ -819,10 +819,10 @@ public class FqlQueryParser
                 if (FqlTokenTypes.QUESTION_MARK == subAST.getType()) {
                     if (left instanceof QueryClass) {
                         try {
-                            if (op == SimpleConstraint.EQUALS) {
+                            if (op == ConstraintOp.EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
                                                            ConstraintOp.EQUALS, iterator.next());
-                            } else if (op == SimpleConstraint.NOT_EQUALS) {
+                            } else if (op == ConstraintOp.NOT_EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
                                                            ConstraintOp.NOT_EQUALS,
                                                            iterator.next());
@@ -842,10 +842,10 @@ public class FqlQueryParser
                     QueryNode right = processNewQueryNode(subAST, q);
                     if (left instanceof QueryClass) {
                         if (right instanceof QueryClass) {
-                            if (op == SimpleConstraint.EQUALS) {
+                            if (op == ConstraintOp.EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
                                         ConstraintOp.EQUALS, (QueryClass) right);
-                            } else if (op == SimpleConstraint.NOT_EQUALS) {
+                            } else if (op == ConstraintOp.NOT_EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
                                         ConstraintOp.NOT_EQUALS, (QueryClass) right);
                             } else {

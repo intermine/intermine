@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
@@ -48,7 +49,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         QueryBuildForm form = new QueryBuildForm();
         form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", String.valueOf(SimpleConstraint.EQUALS));
+        form.setFieldOp("name", ConstraintOp.EQUALS.toString());
         setActionForm(form);
 
         actionPerform();
@@ -68,7 +69,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         QueryBuildForm form = new QueryBuildForm();
         form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", String.valueOf(SimpleConstraint.EQUALS));
+        form.setFieldOp("name", ConstraintOp.EQUALS.toString());
         setActionForm(form);
 
         actionPerform();
@@ -88,7 +89,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         QueryBuildForm form = new QueryBuildForm();
         form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", String.valueOf(SimpleConstraint.EQUALS));
+        form.setFieldOp("name", ConstraintOp.EQUALS);
         setActionForm(form);
 
         actionPerform();

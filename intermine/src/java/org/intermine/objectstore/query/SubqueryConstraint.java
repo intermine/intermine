@@ -244,12 +244,12 @@ public class SubqueryConstraint extends Constraint
     /**
      * require that argument is contained within select of subquery
      */
-    public static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
+    protected static final ConstraintOp CONTAINS = ConstraintOp.CONTAINS;
 
     /**
      * require that argument is not contained in select of subquery
      */
-    public static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
+    protected static final ConstraintOp DOES_NOT_CONTAIN = ConstraintOp.DOES_NOT_CONTAIN;
 
     protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {CONTAINS,
                                                                           DOES_NOT_CONTAIN};

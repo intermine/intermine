@@ -39,13 +39,13 @@ public class QueryBuildControllerTest extends MockStrutsTestCase
         QueryClass qc2 = new QueryClass(Department.class);
 
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                  SimpleConstraint.NOT_EQUALS,
+                                                  ConstraintOp.NOT_EQUALS,
                                                   new QueryValue("name1"));
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc1, "name"),
-                                                  SimpleConstraint.EQUALS,
+                                                  ConstraintOp.EQUALS,
                                                   new QueryValue("name2"));
         ContainsConstraint cc1 = new ContainsConstraint(new QueryCollectionReference(qc1, "departments"),
-                                                        ContainsConstraint.DOES_NOT_CONTAIN,
+                                                        ConstraintOp.DOES_NOT_CONTAIN,
                                                         qc2);
 
         List constraints = Arrays.asList(new Object[] {sc1, sc2, cc1});

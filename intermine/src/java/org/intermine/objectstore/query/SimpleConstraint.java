@@ -208,52 +208,52 @@ public class SimpleConstraint extends Constraint
     /**
      * require that the two arguments are either equal numerically or are identical strings
      */
-    public static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
+    protected static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
 
     /**
      * require that the two arguments are not equal numerically or not identical strings
      */
-    public static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
+    protected static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
 
     /**
      * require that the first argument is less than the second (numeric only)
      */
-    public static final ConstraintOp LESS_THAN = ConstraintOp.LESS_THAN;
+    protected static final ConstraintOp LESS_THAN = ConstraintOp.LESS_THAN;
 
     /**
      * require that the first argument is less than or equal to the second (numeric only)
      */
-    public static final ConstraintOp LESS_THAN_EQUALS = ConstraintOp.LESS_THAN_EQUALS;
+    protected static final ConstraintOp LESS_THAN_EQUALS = ConstraintOp.LESS_THAN_EQUALS;
 
     /**
      * require that the first argument is greater than the second (numeric only)
      */
-    public static final ConstraintOp GREATER_THAN = ConstraintOp.GREATER_THAN;
+    protected static final ConstraintOp GREATER_THAN = ConstraintOp.GREATER_THAN;
 
     /**
      * require that the first argument is greater than or equal to the second (numeric only)
      */
-    public static final ConstraintOp GREATER_THAN_EQUALS = ConstraintOp.GREATER_THAN_EQUALS;
+    protected static final ConstraintOp GREATER_THAN_EQUALS = ConstraintOp.GREATER_THAN_EQUALS;
 
     /**
      * require that the first argument is a substring of the second (string only)
      */
-    public static final ConstraintOp MATCHES = ConstraintOp.MATCHES;
+    protected static final ConstraintOp MATCHES = ConstraintOp.MATCHES;
 
     /**
      * require that the first argument is not a substring of the second (string only)
      */
-    public static final ConstraintOp DOES_NOT_MATCH = ConstraintOp.DOES_NOT_MATCH;
+    protected static final ConstraintOp DOES_NOT_MATCH = ConstraintOp.DOES_NOT_MATCH;
 
     /**
      * require that the specified argument is null
      */
-    public static final ConstraintOp IS_NULL = ConstraintOp.IS_NULL;
+    protected static final ConstraintOp IS_NULL = ConstraintOp.IS_NULL;
 
     /**
      * require that the specified argument is not null
      */
-    public static final ConstraintOp IS_NOT_NULL = ConstraintOp.IS_NOT_NULL;
+    protected static final ConstraintOp IS_NOT_NULL = ConstraintOp.IS_NOT_NULL;
 
     protected static final ConstraintOp[] NUMBER_OPS = {
         EQUALS,

@@ -413,7 +413,7 @@ public class ObjectStoreWriterTestCase extends TestCase
         QueryClass qcAddress = new QueryClass(Address.class);
         QueryField qf = new QueryField(qcAddress, "address");
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.OR);
-        cs1.addConstraint(new SimpleConstraint(qf, SimpleConstraint.MATCHES, new QueryValue("Address%")));
+        cs1.addConstraint(new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue("Address%")));
         q.addToSelect(qcAddress);
         q.addFrom(qcAddress);
         q.addToOrderBy(qf);
@@ -456,7 +456,7 @@ public class ObjectStoreWriterTestCase extends TestCase
         QueryClass qcAddress = new QueryClass(Address.class);
         QueryField qf = new QueryField(qcAddress, "address");
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.OR);
-        cs1.addConstraint(new SimpleConstraint(qf, SimpleConstraint.MATCHES, new QueryValue("Address%")));
+        cs1.addConstraint(new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue("Address%")));
         q.addToSelect(qcAddress);
         q.addFrom(qcAddress);
         q.addToOrderBy(qf);

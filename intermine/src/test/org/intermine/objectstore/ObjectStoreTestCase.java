@@ -251,7 +251,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("EmployeeB1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         q1.setConstraint(sc1);
         List l1 = os.execute(q1);
         CEO ceo = (CEO) (((ResultsRow) l1.get(0)).get(0));
@@ -284,7 +284,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("CompanyA");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         q1.setConstraint(sc1);
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
@@ -312,7 +312,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         q1.addToSelect(qc1);
         QueryField f1 = new QueryField(qc1, "name");
         QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         q1.setConstraint(sc1);
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
@@ -336,7 +336,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         q1.setConstraint(sc1);
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
@@ -364,7 +364,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
         QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
         q1.setConstraint(sc1);
         List r  = os.execute(q1);
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
