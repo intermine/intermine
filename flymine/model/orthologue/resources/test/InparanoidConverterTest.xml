@@ -1,16 +1,31 @@
 <items>
-  <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="object" ref_id="3_4"/>
-    <reference name="subject" ref_id="3_3"/>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Paralogue">
+    <reference name="object" ref_id="4_1"/>
+    <reference name="subject" ref_id="4_2"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
-      <reference ref_id="5_3"/>
+      <reference ref_id="5_1"/>
     </collection>
   </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="4_4" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="identifier" value="TOR1_YEAST"/>
+    <attribute name="swissProtId" value="TOR1_YEAST"/>
+    <reference name="organism" ref_id="3_2"/>
+    <collection name="objects">
+      <reference ref_id="6_3"/>
+    </collection>
+    <collection name="subjects">
+      <reference ref_id="6_4"/>
+    </collection>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+    <attribute name="algorithm" value="INPARANOID"/>
+    <reference name="publication" ref_id="0_1"/>
+  </item>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="identifier" value="O01438"/>
     <attribute name="swissProtId" value="O01438"/>
-    <reference name="organism" ref_id="4_1"/>
+    <reference name="organism" ref_id="3_1"/>
     <collection name="objects">
       <reference ref_id="6_2"/>
       <reference ref_id="7_2"/>
@@ -20,27 +35,28 @@
       <reference ref_id="7_1"/>
     </collection>
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
-    <attribute name="algorithm" value="INPARANOID"/>
-    <reference name="publication" ref_id="0_1"/>
-  </item>
-  <item id="6_3" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="object" ref_id="3_3"/>
-    <reference name="subject" ref_id="3_4"/>
-    <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="5_3"/>
-    </collection>
-  </item>
   <item id="5_3" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="confidence" value="0.566"/>
     <reference name="analysis" ref_id="1_1"/>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="7_2" class="http://www.flymine.org/model/genomic#Orthologue">
+    <reference name="object" ref_id="4_3"/>
+    <reference name="subject" ref_id="4_1"/>
+    <collection name="evidence">
+      <reference ref_id="2_1"/>
+      <reference ref_id="5_2"/>
+    </collection>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="abbreviation" value="SC"/>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="abbreviation" value="CE"/>
+  <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
+    <reference name="object" ref_id="4_4"/>
+    <reference name="subject" ref_id="4_3"/>
+    <collection name="evidence">
+      <reference ref_id="2_1"/>
+      <reference ref_id="5_3"/>
+    </collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Database">
     <attribute name="title" value="INPARANOID"/>
@@ -49,21 +65,10 @@
     <attribute name="confidence" value="1.000"/>
     <reference name="analysis" ref_id="1_1"/>
   </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="identifier" value="Q95Q95"/>
-    <attribute name="swissProtId" value="Q95Q95"/>
-    <reference name="organism" ref_id="4_1"/>
-    <collection name="objects">
-      <reference ref_id="6_1"/>
-    </collection>
-    <collection name="subjects">
-      <reference ref_id="6_2"/>
-    </collection>
-  </item>
-  <item id="3_3" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="4_3" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="identifier" value="TOR2_YEAST"/>
     <attribute name="swissProtId" value="TOR2_YEAST"/>
-    <reference name="organism" ref_id="4_1"/>
+    <reference name="organism" ref_id="3_2"/>
     <collection name="objects">
       <reference ref_id="7_1"/>
       <reference ref_id="6_4"/>
@@ -74,47 +79,31 @@
     </collection>
   </item>
   <item id="7_1" class="http://www.flymine.org/model/genomic#Orthologue">
-    <reference name="object" ref_id="3_1"/>
-    <reference name="subject" ref_id="3_3"/>
+    <reference name="object" ref_id="4_1"/>
+    <reference name="subject" ref_id="4_3"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_2"/>
+    </collection>
+  </item>
+  <item id="6_3" class="http://www.flymine.org/model/genomic#Paralogue">
+    <reference name="object" ref_id="4_3"/>
+    <reference name="subject" ref_id="4_4"/>
+    <collection name="evidence">
+      <reference ref_id="2_1"/>
+      <reference ref_id="5_3"/>
     </collection>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="confidence" value="0.997"/>
     <reference name="analysis" ref_id="1_1"/>
   </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="CE"/>
+  </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="object" ref_id="3_2"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="5_1"/>
-    </collection>
-  </item>
-  <item id="7_2" class="http://www.flymine.org/model/genomic#Orthologue">
-    <reference name="object" ref_id="3_3"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="5_2"/>
-    </collection>
-  </item>
-  <item id="3_4" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="identifier" value="TOR1_YEAST"/>
-    <attribute name="swissProtId" value="TOR1_YEAST"/>
-    <reference name="organism" ref_id="4_2"/>
-    <collection name="objects">
-      <reference ref_id="6_3"/>
-    </collection>
-    <collection name="subjects">
-      <reference ref_id="6_4"/>
-    </collection>
-  </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="object" ref_id="3_1"/>
-    <reference name="subject" ref_id="3_2"/>
+    <reference name="object" ref_id="4_2"/>
+    <reference name="subject" ref_id="4_1"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
       <reference ref_id="5_1"/>
@@ -122,5 +111,16 @@
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="11743721"/>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="identifier" value="Q95Q95"/>
+    <attribute name="swissProtId" value="Q95Q95"/>
+    <reference name="organism" ref_id="3_1"/>
+    <collection name="objects">
+      <reference ref_id="6_1"/>
+    </collection>
+    <collection name="subjects">
+      <reference ref_id="6_2"/>
+    </collection>
   </item>
 </items>

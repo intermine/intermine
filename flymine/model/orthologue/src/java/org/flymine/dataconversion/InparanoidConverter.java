@@ -65,12 +65,11 @@ public class InparanoidConverter extends FileConverter
             if (!index.equals(oldIndex)) {
                 oldIndex = index;
                 species = array[2];
-                protein = newProtein(array[4], species);
+                protein = newProtein(array[4], getOrganism(species));
                 continue;
             }
 
-            Item organism = getOrganism(species);
-            Item newProtein = newProtein(array[4], species);
+            Item newProtein = newProtein(array[4], getOrganism(array[2]));
             Item result = newResult(array[3]);
 
             // create two organisms with subjects and objects reversed
@@ -134,18 +133,18 @@ public class InparanoidConverter extends FileConverter
     /**
      * Convenience method to create and cache proteins by SwissProt id
      * @param swissProtId SwissProt identifier for the new Protein
-     * @param species abbreviation of species
+     * @param organism the Organism for this protein
      * @return a new protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected Item newProtein(String swissProtId, String species) throws ObjectStoreException {
+    protected Item newProtein(String swissProtId, Item organism) throws ObjectStoreException {
         if (proteins.containsKey(swissProtId)) {
             return (Item) proteins.get(swissProtId);
         }
         Item item = newItem("Protein");
         item.addAttribute(new Attribute("swissProtId", swissProtId));
         item.addAttribute(new Attribute("identifier", swissProtId));
-        item.addReference(new Reference("organism", getOrganism(species).getIdentifier()));
+        item.addReference(new Reference("organism", organism.getIdentifier()));
         proteins.put(swissProtId, item);
         return item;
     }
@@ -162,17 +161,6 @@ public class InparanoidConverter extends FileConverter
         item.addReference(new Reference("analysis", analysis.getIdentifier()));
         writer.store(ItemHelper.convert(item));
         return item;
-    }
-
-    /**
-     * Create an Organism for the given species abbreviation
-     * @param abbrev species abbreviation
-     * @return a new Organism item
-     */
-    protected Item newOrganism(String abbrev) {
-        Item organism = newItem("Organism");
-        organism.addAttribute(new Attribute("abbreviation", abbrev));
-        return organism;
     }
 
     private Item getOrganism(String abbrev) {
