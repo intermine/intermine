@@ -22,6 +22,7 @@ import org.intermine.ontology.DagTerm;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
@@ -42,6 +43,7 @@ public class DagConverter extends DataConverter
     protected int uniqueId = 0;
     protected Map nameToTerm = new HashMap();
     protected Item ontology;
+    protected ItemFactory itemFactory = ItemFactory.NULL_MODEL_ITEM_FACTORY;
 
     /**
      * Constructor for this class.
@@ -56,8 +58,7 @@ public class DagConverter extends DataConverter
         this.dagFilename = dagFilename;
         this.termClass = termClass;
 
-        ontology = new Item();
-        ontology.setIdentifier("0_" + (uniqueId++));
+        ontology = itemFactory.makeItem("0_" + (uniqueId++));
         ontology.setClassName(ONTOLOGY);
         ontology.setImplementations("");
         ontology.addAttribute(new Attribute("title", dagName));
@@ -100,8 +101,7 @@ public class DagConverter extends DataConverter
         String termId = (term.getId() == null ? term.getName() : term.getId());
         Item item = (Item) nameToTerm.get(termId);
         if (item == null) {
-            item = new Item();
-            item.setIdentifier("0_" + (uniqueId++));
+            item = itemFactory.makeItem("0_" + (uniqueId++));
             item.setClassName(termClass);
             item.setImplementations("");
             item.addAttribute(new Attribute("name", term.getName()));
@@ -149,8 +149,7 @@ public class DagConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the ItemWriter
      */
     protected void relate(Item item, Item subItem, String type) throws ObjectStoreException {
-        Item relation = new Item();
-        relation.setIdentifier("0_" + (uniqueId++));
+        Item relation = itemFactory.makeItem("0_" + (uniqueId++));
         relation.setClassName(ONTOLOGY_RELATION);
         relation.setImplementations("");
         relation.addAttribute(new Attribute("type", type));

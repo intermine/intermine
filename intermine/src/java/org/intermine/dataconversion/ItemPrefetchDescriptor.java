@@ -180,6 +180,14 @@ public class ItemPrefetchDescriptor
         return clone;
     }
 
+    /**
+     * Get the display name of this descriptor.
+     * 
+     * @return the arbitrary display name
+     */
+    public String getDisplayName() {
+        return name;
+    }
 
     /**
      * @see Object#toString

@@ -15,6 +15,8 @@ import org.intermine.objectstore.query.Results;
 import java.io.Writer;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * RunQueryMonitor that writes repeatedly to an http response output stream
  * while a query runs and cancels the query if an error occurs while writing
@@ -24,8 +26,6 @@ import java.io.IOException;
  */
 public class RunQueryMonitorDots implements RunQueryMonitor
 {
-    /** Number of times queryProgress has been called. */
-    //protected int tickCount = 0;
     /** Writer to draw progress dots to. */
     protected Writer writer;
     
@@ -41,28 +41,16 @@ public class RunQueryMonitorDots implements RunQueryMonitor
     /**
      * Called intermittently while a query is run.
      *
-     * @param results  the Results object associated with the running query
+     * @see RunQueryMonitor#queryProgress(HttpServletRequest, Results)
      */
-    public void queryProgress(Results results) {
-        //tickCount++;
+    public boolean queryProgress(HttpServletRequest request, Results results) {
         try {
-            //if (tickCount % 40 == 0) {
-            //    writer.write("<br>");
-            //}
             writer.write(". ");
             writer.flush();
+            return true;
         } catch (IOException _) {
-            cancelQuery(results);
+            return false;
         }
-    }
-    
-    /**
-     * Cancel a query given a Results object.
-     *
-     * @param results  the Results object associated with the running query
-     */
-    public void cancelQuery(Results results) {
-        // write me
     }
     
     /**

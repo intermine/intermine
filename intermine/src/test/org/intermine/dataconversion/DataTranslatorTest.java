@@ -15,10 +15,11 @@ import junit.framework.TestCase;
 import java.io.StringReader;
 import java.util.*;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntClass;
-
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.ontology.SubclassRestriction;
 import org.intermine.xml.full.Attribute;
@@ -26,27 +27,28 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 
 public class DataTranslatorTest extends TestCase
 {
     private String srcNs = "http://www.intermine.org/source#";
-    private String nullNs = "http://www.intermine.org/null#";
     private String tgtNs = "http://www.intermine.org/target#";
     private DataTranslator translator;
     protected Map itemMap;
+    private ItemFactory itemFactory = new ItemFactory();
 
     public void setUp() throws Exception {
         itemMap = new HashMap();
     }
 
     public void testTranslateItems() throws Exception {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        Item src2 = new Item();
+        Item src2 = itemFactory.makeItem();
         src2.setIdentifier("2");
         src2.setClassName(srcNs + "Address");
-        Item src3 = new Item();
+        Item src3 = itemFactory.makeItem();
         src3.setIdentifier("3");
         src3.setClassName(srcNs + "Department");
 
@@ -56,38 +58,38 @@ public class DataTranslatorTest extends TestCase
         srcItems.add(ItemHelper.convert(src3));
         new MockItemWriter(itemMap).storeAll(srcItems);
 
-        Item tgt1 = new Item();
+        Item tgt1 = itemFactory.makeItem();
         tgt1.setIdentifier("1");
         tgt1.setClassName(tgtNs + "Company");
-        Item tgt2 = new Item();
+        Item tgt2 = itemFactory.makeItem();
         tgt2.setIdentifier("2");
         tgt2.setClassName(tgtNs + "Address");
-        Item tgt3 = new Item();
+        Item tgt3 = itemFactory.makeItem();
         tgt3.setIdentifier("3");
         tgt3.setClassName(tgtNs + "Department");
         Set expected = new HashSet(Arrays.asList(new Object[] {tgt1, tgt2, tgt3}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getMergeSpec(), getSrcModel(), getTgtModel());
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
         assertEquals(expected, tgtIs.getItems());
     }
 
     public void testTranslateItemSimple() throws Exception {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
 
-        Item expected = new Item();
+        Item expected = itemFactory.makeItem();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
 
-        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemAttributes() throws Exception {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
         Attribute a1 = new Attribute();
@@ -95,7 +97,7 @@ public class DataTranslatorTest extends TestCase
         a1.setValue("testname");
         src1.addAttribute(a1);
 
-        Item expected = new Item();
+        Item expected = itemFactory.makeItem();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
         Attribute a2 = new Attribute();
@@ -103,12 +105,12 @@ public class DataTranslatorTest extends TestCase
         a2.setValue("testname");
         expected.addAttribute(a2);
 
-        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemNullAttributes() throws Exception {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
         Attribute a1 = new Attribute();
@@ -120,9 +122,7 @@ public class DataTranslatorTest extends TestCase
         a2.setValue("10");
         src1.addAttribute(a2);
 
-
-
-        Item expected = new Item();
+        Item expected = itemFactory.makeItem();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
         Attribute ea1 = new Attribute();
@@ -130,16 +130,15 @@ public class DataTranslatorTest extends TestCase
         ea1.setValue("testname");
         expected.addAttribute(ea1);
 
-        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
-
     public void testTranslateItemReferences() throws Exception {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        Item src2 = new Item();
+        Item src2 = itemFactory.makeItem();
         src2.setIdentifier("2");
         src2.setClassName(srcNs + "Address");
         Reference r1 = new Reference();
@@ -147,7 +146,7 @@ public class DataTranslatorTest extends TestCase
         r1.setRefId("2");
         src1.addReference(r1);
 
-        Item expected = new Item();
+        Item expected = itemFactory.makeItem();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
         Reference r2 = new Reference();
@@ -155,12 +154,12 @@ public class DataTranslatorTest extends TestCase
         r2.setRefId("2");
         expected.addReference(r2);
 
-        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemCollections() throws Exception {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
 
@@ -170,7 +169,7 @@ public class DataTranslatorTest extends TestCase
         r1.addRefId("3");
         src1.addCollection(r1);
 
-        Item expected = new Item();
+        Item expected = itemFactory.makeItem();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
         ReferenceList r2 = new ReferenceList();
@@ -179,147 +178,44 @@ public class DataTranslatorTest extends TestCase
         r2.addRefId("3");
         expected.addCollection(r2);
 
-        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemSubclass() throws Exception {
-        String ENDL = System.getProperty("line.separator");
+        Properties mergeSpec = new Properties();
+        mergeSpec.put("Organisation", "Organisation");
+        mergeSpec.put("Organisation.name", "Organisation.name");
+        mergeSpec.put("Company", "LtdCompany");
+        //hoping that Company.name -> LtdCompany.name as Company subclasses Organisation
 
-        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
-            + "@prefix src: <" + srcNs + "> ." + ENDL
-            + "@prefix null: <" + nullNs + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + ENDL
-            + ":Organisation a owl:Class ;" + ENDL
-            + "              owl:equivalentClass src:Organisation ." + ENDL
-            + "src:Organisation a owl:Class." + ENDL
-            + "src:Organisation__name a owl:DatatypeProperty;" + ENDL
-            + "       rdfs:domain src:Organisation;" + ENDL
-            + "       rdfs:range xsd:string." + ENDL
-            + ":Organisation__name a owl:DatatypeProperty;" + ENDL
-            + "    rdfs:domain :Organisation;" + ENDL
-            + "    rdfs:range xsd:string;" + ENDL
-            + "    owl:equivalentProperty src:Organisation__name." + ENDL
-            + ":Company a owl:Class ;" + ENDL
-            + "    rdfs:subClassOf :Organisation ;" + ENDL
-            + "    owl:equivalentClass src:LtdCompany ." + ENDL
-            + "src:LtdCompany a owl:Class;" + ENDL
-            + "    rdfs:subClassOf src:Organisation." + ENDL;
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(new StringReader(owl), null, "N3");
-
-
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
         Attribute a1 = new Attribute("name", "LtdCompanyName");
         src1.addAttribute(a1);
 
-        Item expected = new Item();
+        Item expected = itemFactory.makeItem();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
         Attribute aa1 = new Attribute("name", "LtdCompanyName");
         expected.addAttribute(a1);
 
-        translator = new DataTranslator(null, ont, tgtNs);
-
-        System.out.println("templateMap: " + translator.templateMap.toString());
-        System.out.println("restrictionMap: " + translator.restrictionMap.toString());
-        System.out.println("equivMap: " + translator.equivMap.toString());
-        System.out.println("clsPropMap: " + translator.clsPropMap.toString());
+        translator = new DataTranslator(null, mergeSpec, getSrcModel(), getTgtModel());
 
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemRestrictedSubclassSingleLevel() throws Exception {
-        String ENDL = System.getProperty("line.separator");
-
-        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
-            + "@prefix src: <" + srcNs + "> ." + ENDL + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL + ENDL
-
-            + "src:Organisation a owl:Class ." + ENDL
-            + ":Organisation a owl:Class ;" + ENDL
-            + "    owl:equivalentClass src:Organisation ." + ENDL
-            + ":Company a owl:Class ; " + ENDL
-            + "    rdfs:subClassOf src:Organisation ;" + ENDL
-            + "    rdfs:subClassOf" + ENDL
-            + "    [ a owl:Restriction ;" + ENDL
-            + "        owl:onProperty src:Organisation__organisationType ;" + ENDL
-            + "        owl:hasValue \"business\" ] ." + ENDL
-            + ":Charity a owl:Class ; " + ENDL
-            + "    rdfs:subClassOf src:Organisation ;" + ENDL
-            + "    rdfs:subClassOf" + ENDL
-            + "    [ a owl:Restriction ;" + ENDL
-            + "        owl:onProperty src:Organisation__organisationType ;" + ENDL
-            + "        owl:hasValue \"charity\" ] ;" + ENDL
-            + "        rdfs:subClassOf" + ENDL
-            + "        [ a owl:Restriction ;" + ENDL
-            + "            owl:onProperty src:Organisation__otherProp ;" + ENDL
-            + "            owl:hasValue \"value\" ] ." + ENDL
-
-            + "src:Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain src:Organisation ;" + ENDL
-            + "      rdfs:range rdfs:Literal ." + ENDL
-            + ":Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain :Organisation ;" + ENDL
-            + "      rdfs:range rdfs:Literal ;" + ENDL
-            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
-            + ":Charity__organisationType a owl:DatatypeProperty ;" + ENDL
-            + "                          rdfs:domain :Charity ; " + ENDL
-            + "                          rdfs:range rdfs:Literal ;" + ENDL
-            + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "       owl:equivalentProperty src:Organisation__organisationType ." + ENDL
-            + ":Company__organisationType a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain :Company ; " + ENDL
-            + "       rdfs:range rdfs:Literal ;" + ENDL
-            + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "       owl:equivalentProperty src:Organisation__organisationType ." + ENDL
-
-            + "src:Organisation__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "    rdfs:domain src:Organisation ;" + ENDL
-            + "    rdfs:range rdfs:Literal ." + ENDL
-            + ":Organisation__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "    rdfs:domain :Organisation ;" + ENDL
-            + "    rdfs:range rdfs:Literal ;" + ENDL
-            + "    owl:equivalentProperty src:Organisation__otherProp ." + ENDL
-            + ":Charity__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "    rdfs:domain :Charity ; " + ENDL
-            + "    rdfs:range rdfs:Literal ;" + ENDL
-            + "    rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
-            + "    owl:equivalentProperty src:Organisation__otherProp ." + ENDL
-            + ":Company__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "    rdfs:domain :Company ; " + ENDL
-            + "    rdfs:range rdfs:Literal ;" + ENDL
-            + "    rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
-            + "    owl:equivalentProperty src:Organisation__otherProp ." + ENDL;
-
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new StringReader(owl), null, "N3");
-
-        Map classesMap = new HashMap();
-        Iterator clsIter = model.listClasses();
-        while (clsIter.hasNext()) {
-            OntClass cls = (OntClass) clsIter.next();
-            if (!cls.isAnon()) {
-                Set subs = OntologyUtil.findRestrictedSubclasses(model, cls);
-                if (subs.size() > 0) {
-                    classesMap.put(cls, subs);
-                }
-            }
-        }
+        Properties mergeSpec = new Properties();
+        mergeSpec.put("Organisation", "Organisation");
+        mergeSpec.put("Organisation.organisationType", "Organisation.organisationType");
+        mergeSpec.put("Organisation.otherProp", "Organisation.otherProp");
+        mergeSpec.put("Company", "Organisation [organisationType=business]");
+        mergeSpec.put("Charity", "Organisation [organisationType=charity] [otherProp=value]");
 
         // maps to business
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "Organisation");
         src1.setImplementations("");
@@ -329,7 +225,7 @@ public class DataTranslatorTest extends TestCase
         src1.addAttribute(a1);
 
         // maps to charity
-        Item src2 = new Item();
+        Item src2 = itemFactory.makeItem();
         src2.setIdentifier("2");
         src2.setClassName(srcNs + "Organisation");
         src2.setImplementations("");
@@ -343,7 +239,7 @@ public class DataTranslatorTest extends TestCase
         src2.addAttribute(a2a);
 
         // remain as organisation, only has one of Charity restrictions
-        Item src3 = new Item();
+        Item src3 = itemFactory.makeItem();
         src3.setIdentifier("3");
         src3.setClassName(srcNs + "Organisation");
         src3.setImplementations("");
@@ -353,7 +249,7 @@ public class DataTranslatorTest extends TestCase
         src3.addAttribute(a3);
 
         // remain as organisation, organisationType has 'unspecified' value
-        Item src4 = new Item();
+        Item src4 = itemFactory.makeItem();
         src4.setIdentifier("4");
         src4.setClassName(srcNs + "Organisation");
         src4.setImplementations("");
@@ -369,14 +265,14 @@ public class DataTranslatorTest extends TestCase
         new MockItemWriter(itemMap).storeAll(srcItems);
 
         // expected items
-        Item exp1 = new Item();
+        Item exp1 = itemFactory.makeItem();
         exp1.setIdentifier("1");
         exp1.setClassName(tgtNs + "Company");
         Attribute ea1 = new Attribute();
         ea1.setName("organisationType");
         ea1.setValue("business");
         exp1.addAttribute(ea1);
-        Item exp2 = new Item();
+        Item exp2 = itemFactory.makeItem();
         exp2.setIdentifier("2");
         exp2.setClassName(tgtNs + "Charity");
         Attribute ea2 = new Attribute();
@@ -387,14 +283,14 @@ public class DataTranslatorTest extends TestCase
         ea2a.setValue("value");
         exp2.addAttribute(ea2);
         exp2.addAttribute(ea2a);
-        Item exp3 = new Item();
+        Item exp3 = itemFactory.makeItem();
         exp3.setIdentifier("3");
         exp3.setClassName(tgtNs + "Organisation");
         Attribute ea3 = new Attribute();
         ea3.setName("organisationType");
         ea3.setValue("charity");
         exp3.addAttribute(ea3);
-        Item exp4 = new Item();
+        Item exp4 = itemFactory.makeItem();
         exp4.setIdentifier("4");
         exp4.setClassName(tgtNs + "Organisation");
         Attribute ea4 = new Attribute();
@@ -403,12 +299,8 @@ public class DataTranslatorTest extends TestCase
         exp4.addAttribute(ea4);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3, exp4}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), model, tgtNs);
-
-//          System.out.println("templateMap: " + translator.templateMap.toString());
-//          System.out.println("restrictionMap: " + translator.restrictionMap.toString());
-//          System.out.println("equivMap: " + translator.equivMap.toString());
-//          System.out.println("clsPropMap: " + translator.clsPropMap.toString());
+        translator = new DataTranslator(new MockItemReader(itemMap), mergeSpec,
+                                        getSrcModel(), getTgtModel2());
 
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
@@ -416,119 +308,42 @@ public class DataTranslatorTest extends TestCase
     }
 
     public void testGetRestrictionSubclassNested() throws Exception {
-        String ENDL = System.getProperty("line.separator");
+        Properties mergeSpec = new Properties();
+        mergeSpec.put("Organisation", "Organisation");
+        mergeSpec.put("Business", "Organisation [organisationType.type=business]");
+        mergeSpec.put("PrivateBusiness", "Organisation [organisationType.companyModel.model=limited] [organisationType.type=business]");
+        mergeSpec.put("Organisation.organisationType", "Organisation.organisationType");
+        mergeSpec.put("OrganisationType", "OrganisationType");
+        mergeSpec.put("OrganisationType.type", "OrganisationType.type");
+        mergeSpec.put("OrganisationType.companyModel", "OrganisationType.companyModel");
+        mergeSpec.put("CompanyModel", "CompanyModel");
+        mergeSpec.put("CompanyModel.model", "CompanyModel.model");
 
-        // add max cardinality one restrictions
-        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
-            + "@prefix src: <" + srcNs + "> ." + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + ENDL
-
-            + "src:Organisation a owl:Class ." + ENDL
-            + "src:Organisation__organisationType a owl:ObjectProperty ;" + ENDL
-            + "    rdfs:domain src:Organisation ;" + ENDL
-            + "    rdfs:range src:OrganisationType ." + ENDL
-            + "src:CompanyModel a owl:Class ." + ENDL
-            + "src:CompanyModel__model a owl:DatatypeProperty ;" + ENDL
-            + "    rdfs:domain src:CompanyModel ;" + ENDL
-            + "    rdfs:range xsd:String ." + ENDL
-            + "src:OrganisationType a owl:Class ." + ENDL
-            + "src:OrganisationType__companyModel a owl:ObjectProperty ;" + ENDL
-            + "    rdfs:domain src:OrganisationType ;" + ENDL
-            + "    rdfs:range src:CompanyModel ." + ENDL
-            + "src:OrganisationType__type a owl:DatatypeProperty ;" + ENDL
-            + "    rdfs:domain src:OrganisationType ;" + ENDL
-            + "    rdfs:range xsd:String ." + ENDL
-
-
-            + ":Organisation a owl:Class ;" + ENDL
-            + "      owl:equivalentClass src:Organisation ." + ENDL
-            + ":OrganisationType a owl:Class ;" + ENDL
-            + "      owl:equivalentClass src:OrganisationType ." + ENDL
-            + ":CompanyModel a owl:Class ;" + ENDL
-            + "      owl:equivalentClass src:CompanyModel ." + ENDL
-            + ":Business a owl:Class ; " + ENDL
-            + "          rdfs:subClassOf src:Organisation ;" + ENDL
-            + "          rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:Organisation__organisationType ;" + ENDL
-            + "              owl:hasValue" + ENDL
-            + "                [  rdfs:subClassOf src:OrganisationType ;" + ENDL
-            + "                  rdfs:subClassOf" + ENDL
-            + "                    [ a owl:Restriction ;" + ENDL
-            + "                      owl:onProperty src:OrganisationType__type ;" + ENDL
-            + "                      owl:hasValue \"business\"" + ENDL
-            + "                    ] " + ENDL
-            + "               ] " + ENDL
-            + "            ] ." + ENDL
-            + ":PrivateBusiness a owl:Class ; " + ENDL
-            + "          rdfs:subClassOf src:Organisation ;" + ENDL
-            + "          rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:Organisation__organisationType ;" + ENDL
-            + "              owl:hasValue" + ENDL
-            + "                [  rdfs:subClassOf src:OrganisationType ;" + ENDL
-            + "                   rdfs:subClassOf" + ENDL
-            + "                     [ a owl:Restriction ;" + ENDL
-            + "                       owl:onProperty src:OrganisationType__companyModel ;" + ENDL
-            + "                       owl:hasValue"
-            + "                         [ rdfs:subClassOf src:CompanyModel ;" + ENDL
-            + "                           rdfs:subClassOf" + ENDL
-            + "                             [ a owl:Restriction ;" + ENDL
-            + "                               owl:onProperty src:CompanyModel__model ;" + ENDL
-            + "                               owl:hasValue \"limited\"" + ENDL
-            + "                             ] " + ENDL
-            + "                         ] " + ENDL
-            + "                     ] ;" + ENDL
-            + "                   rdfs:subClassOf" + ENDL
-            + "                     [ a owl:Restriction ;" + ENDL
-            + "                       owl:onProperty src:OrganisationType__type ;" + ENDL
-            + "                       owl:hasValue \"business\"" + ENDL
-            + "                     ] " + ENDL
-            + "                ] " + ENDL
-            + "            ] ." + ENDL
-
-            + ":Organisation__organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain :Organisation ;" + ENDL
-            + "      rdfs:range :OrganisationType ;" + ENDL
-            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
-            + ":Business__organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain :Business ;" + ENDL
-            + "      rdfs:range :OrganisationType ;" + ENDL
-            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
-            + ":PrivateBusiness__organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain :PrivateBusiness ;" + ENDL
-            + "      rdfs:range :OrganisationType ;" + ENDL
-            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
-
-            + ":OrganisationType__type a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain :OrganisationType ;" + ENDL
-            + "      rdfs:range xsd:String ;" + ENDL
-            + "      owl:equivalentProperty src:OrganisationType__type ." + ENDL
-            + ":OrganisationType__companyModel a owl:ObjectProperty ;" + ENDL
-            + "              rdfs:domain :OrganisationType ;" + ENDL
-            + "              rdfs:range :CompanyModel ;" + ENDL
-            + "              owl:equivalentProperty src:OrganisationType__companyModel ." + ENDL
-
-            + ":CompanyModel__model a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain :CompanyModel ;" + ENDL
-            + "       rdfs:range xsd:String ;" + ENDL
-            + "      owl:equivalentProperty src:CompanyModel__model ." + ENDL;
-
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new StringReader(owl), null, "N3");
+        ReferenceDescriptor ref1 = new ReferenceDescriptor("organisationType", "org.intermine.source.OrganisationType", null);
+        ClassDescriptor cld1 = new ClassDescriptor("org.intermine.source.Organisation", null, false,
+                                                   new HashSet(),
+                                                   new HashSet(Arrays.asList(new Object[] {ref1})),
+                                                   new HashSet());
+        AttributeDescriptor att1 = new AttributeDescriptor("model", "java.lang.String");
+        ClassDescriptor cld2 = new ClassDescriptor("org.intermine.source.CompanyModel", null, false,
+                                                   new HashSet(Arrays.asList(new Object[] {att1})),
+                                                   new HashSet(),
+                                                   new HashSet());
+        AttributeDescriptor att2 = new AttributeDescriptor("type", "java.lang.String");
+        ReferenceDescriptor ref2 = new ReferenceDescriptor("companyModel", "org.intermine.source.CompanyModel", null);
+        ClassDescriptor cld3 = new ClassDescriptor("org.intermine.source.OrganisationType", null, false,
+                                                   new HashSet(Arrays.asList(new Object[] {att2})),
+                                                   new HashSet(Arrays.asList(new Object[] {ref2})),
+                                                   new HashSet());
+        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3}));
+        Model srcModel = new Model("modelname", srcNs, clds);
 
         // maps to business
-        Item src11 = new Item();
+        Item src11 = itemFactory.makeItem();
         src11.setIdentifier("11");
         src11.setClassName(srcNs + "Organisation");
         src11.setImplementations("");
-        Item src12 = new Item();
+        Item src12 = itemFactory.makeItem();
         src12.setIdentifier("12");
         src12.setClassName(srcNs + "OrganisationType");
         src12.setImplementations("");
@@ -542,7 +357,7 @@ public class DataTranslatorTest extends TestCase
         src12.addAttribute(a11);
 
         // maps to private business
-        Item src21 = new Item();
+        Item src21 = itemFactory.makeItem();
         src21.setIdentifier("21");
         src21.setClassName(srcNs + "Organisation");
         src21.setImplementations("");
@@ -551,7 +366,7 @@ public class DataTranslatorTest extends TestCase
         r21.setRefId("22");
         src21.addReference(r21);
 
-        Item src22 = new Item();
+        Item src22 = itemFactory.makeItem();
         src22.setIdentifier("22");
         src22.setClassName(srcNs + "OrganisationType");
         src22.setImplementations("");
@@ -564,7 +379,7 @@ public class DataTranslatorTest extends TestCase
         r22.setRefId("23");
         src22.addReference(r22);
 
-        Item src23 = new Item();
+        Item src23 = itemFactory.makeItem();
         src23.setIdentifier("23");
         src23.setClassName(srcNs + "CompanyModel");
         src23.setImplementations("");
@@ -582,11 +397,11 @@ public class DataTranslatorTest extends TestCase
         new MockItemWriter(itemMap).storeAll(srcItems);
 
         // expected items
-        Item exp11 = new Item();
+        Item exp11 = itemFactory.makeItem();
         exp11.setIdentifier("11");
         exp11.setClassName(tgtNs + "Business");
         exp11.setImplementations("");
-        Item exp12 = new Item();
+        Item exp12 = itemFactory.makeItem();
         exp12.setIdentifier("12");
         exp12.setClassName(tgtNs + "OrganisationType");
         exp12.setImplementations("");
@@ -599,15 +414,15 @@ public class DataTranslatorTest extends TestCase
         ea11.setValue("business");
         exp12.addAttribute(ea11);
 
-        Item exp21 = new Item();
+        Item exp21 = itemFactory.makeItem();
         exp21.setIdentifier("21");
         exp21.setClassName(tgtNs + "PrivateBusiness");
         exp21.setImplementations("");
-        Item exp22 = new Item();
+        Item exp22 = itemFactory.makeItem();
         exp22.setIdentifier("22");
         exp22.setClassName(tgtNs + "OrganisationType");
         exp22.setImplementations("");
-        Item exp23 = new Item();
+        Item exp23 = itemFactory.makeItem();
         exp23.setIdentifier("23");
         exp23.setClassName(tgtNs + "CompanyModel");
         exp23.setImplementations("");
@@ -629,18 +444,12 @@ public class DataTranslatorTest extends TestCase
         exp22.addAttribute(ea22);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), model, tgtNs);
-
-//         System.out.println("templateMap: " + translator.templateMap.toString());
-//         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
-//         System.out.println("equivMap: " + translator.equivMap.toString());
-//         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
+        translator = new DataTranslator(new MockItemReader(itemMap), mergeSpec, srcModel, getTgtModel());
 
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
         assertEquals(expected, tgtIs.getItems());
     }
-
 
     public void testBuildRestriction() throws Exception {
         Map srcItems = getSrcItems();
@@ -652,7 +461,7 @@ public class DataTranslatorTest extends TestCase
         String path = "Organisation.organisationType";
         StringTokenizer t = new StringTokenizer(path, ".");
         t.nextToken();
-        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), new Properties(), null, null);
         assertEquals("business", translator.buildRestriction(t, (Item) srcItems.get("src1")));
 
         path = "Organisation.organisationType.type";
@@ -680,7 +489,7 @@ public class DataTranslatorTest extends TestCase
         }
 
         // model we use here is irrelevant
-        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), new Properties(), null, null);
 
         SubclassRestriction template1 = new SubclassRestriction();
         template1.addRestriction("Organisation.organisationType", null);
@@ -704,35 +513,29 @@ public class DataTranslatorTest extends TestCase
 
     }
 
-
     public void testPromoteField() throws Exception {
-        Item src1 = new Item("1", srcNs + "src1", "");
-
-        Item src2 = new Item("2", srcNs + "src2", "");
-
+        Item src1 = itemFactory.makeItem("1", srcNs + "src1", "");
+        Item src2 = itemFactory.makeItem("2", srcNs + "src2", "");
         Attribute a1 = new Attribute("a1", "attribute a1");
         src2.addAttribute(a1);
-
         Reference r1 = new Reference("r1", "3");
         src2.addReference(r1);
-
         ReferenceList c1 = new ReferenceList("c1", Collections.singletonList("3"));
         src2.addCollection(c1);
-
         Reference toSrc2 = new Reference("toSrc2", "2");
         src1.addReference(toSrc2);
 
-        Item exp1 = new Item("1", srcNs + "src1", "");
+        Item exp1 = itemFactory.makeItem("1", srcNs + "src1", "");
         exp1.addReference(toSrc2);
         exp1.addAttribute(a1);
 
-        Item tgt = new Item("1", srcNs + "src1", "");
+        Item tgt = itemFactory.makeItem("1", srcNs + "src1", "");
         tgt.addReference(toSrc2);
 
         ItemWriter itemWriter = new MockItemWriter(itemMap);
         itemWriter.store(ItemHelper.convert(src1));
         itemWriter.store(ItemHelper.convert(src2));
-        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), new Properties(), null, null);
         translator.promoteField(tgt, src1, "a1", "toSrc2", "a1");
         assertEquals(exp1, tgt);
 
@@ -745,49 +548,38 @@ public class DataTranslatorTest extends TestCase
         assertEquals(exp1, tgt);
     }
 
-
     public void testMoveField() throws Exception {
-        Item src1 = new Item("2", srcNs + "src1", "");
-
+        Item src1 = itemFactory.makeItem("2", srcNs + "src1", "");
         Attribute a1 = new Attribute("a1", "attribute a1");
         src1.addAttribute(a1);
-
         Reference r1 = new Reference("r1", "3");
         src1.addReference(r1);
-
         ReferenceList c1 = new ReferenceList("c1", Collections.singletonList("3"));
         src1.addCollection(c1);
 
-        ItemWriter itemWriter = new MockItemWriter(itemMap);
-        itemWriter.store(ItemHelper.convert(src1));
-        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
-
-
-        Item exp1 = new Item("1", srcNs + "src1", "");
+        Item exp1 = itemFactory.makeItem("1", srcNs + "src1", "");
         exp1.addAttribute(new Attribute("new_a1", "attribute a1"));
 
-        Item tgt = new Item("1", srcNs + "src1", "");
+        Item tgt = itemFactory.makeItem("1", srcNs + "src1", "");
 
-        translator.moveField(src1, tgt, "a1", "new_a1");
+        DataTranslator.moveField(src1, tgt, "a1", "new_a1");
         assertEquals(exp1, tgt);
 
         // test with field name that does not exist
-        translator.moveField(src1, tgt, "not_a_field", "not_a_field");
+        DataTranslator.moveField(src1, tgt, "not_a_field", "not_a_field");
         assertEquals(exp1, tgt);
 
         exp1.addReference(new Reference("new_r1", "3"));
-        translator.moveField(src1, tgt, "r1", "new_r1");
+        DataTranslator.moveField(src1, tgt, "r1", "new_r1");
         assertEquals(exp1, tgt);
 
         exp1.addCollection(new ReferenceList("new_c1", Collections.singletonList("3")));
-        translator.moveField(src1, tgt, "c1", "new_c1");
+        DataTranslator.moveField(src1, tgt, "c1", "new_c1");
         assertEquals(exp1, tgt);
     }
 
-
-
     public Map getSrcItems() {
-        Item src1 = new Item();
+        Item src1 = itemFactory.makeItem();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "Organisation");
         src1.setImplementations("");
@@ -796,12 +588,11 @@ public class DataTranslatorTest extends TestCase
         a1.setValue("business");
         src1.addAttribute(a1);
 
-
-        Item src11 = new Item();
+        Item src11 = itemFactory.makeItem();
         src11.setIdentifier("11");
         src11.setClassName(srcNs + "Organisation");
         src11.setImplementations("");
-        Item src12 = new Item();
+        Item src12 = itemFactory.makeItem();
         src12.setIdentifier("12");
         src12.setClassName(srcNs + "OrganisationType");
         src12.setImplementations("");
@@ -814,16 +605,15 @@ public class DataTranslatorTest extends TestCase
         a11.setValue("business");
         src12.addAttribute(a11);
 
-
-        Item src21 = new Item();
+        Item src21 = itemFactory.makeItem();
         src21.setIdentifier("21");
         src21.setClassName(srcNs + "Organisation");
         src21.setImplementations("");
-        Item src22 = new Item();
+        Item src22 = itemFactory.makeItem();
         src22.setIdentifier("22");
         src22.setClassName(srcNs + "OrganisationType");
         src22.setImplementations("");
-        Item src23 = new Item();
+        Item src23 = itemFactory.makeItem();
         src23.setIdentifier("23");
         src23.setClassName(srcNs + "CompanyModel");
         src23.setImplementations("");
@@ -851,71 +641,145 @@ public class DataTranslatorTest extends TestCase
         srcItems.put("src21", src21);
         srcItems.put("src22", src22);
         srcItems.put("src23", src23);
-
         return srcItems;
     }
 
-    private OntModel getInterMineOwl() {
-        String ENDL = System.getProperty("line.separator");
+    private Properties getMergeSpec() {
+        Properties mergeSpec = new Properties();
+        mergeSpec.put("Organisation", "Organisation");
+        mergeSpec.put("Company", "LtdCompany");
+        mergeSpec.put("Company.address", "LtdCompany.address");
+        mergeSpec.put("Company.departments", "LtdCompany.departments");
+        mergeSpec.put("Company.name", "LtdCompany.name");
+        mergeSpec.put("Address", "Address");
+        mergeSpec.put("Department", "Department");
+        return mergeSpec;
+    }
 
-        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
-            + "@prefix src: <" + srcNs + "> ." + ENDL
-            + "@prefix null: <" + nullNs + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-            + ENDL
-            + ":Organisation a owl:Class;" + ENDL
-            + "    owl:equivalentClass src:Organisation." + ENDL
-            + ":Company a owl:Class;" + ENDL
-            + "         rdfs:subClassOf :Organisation ;" + ENDL
-            + "         rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:maxCardinality \"1\" ;" + ENDL
-            + "              owl:onProperty :Company_address ] ;" + ENDL
-            + "         owl:equivalentClass src:LtdCompany ." + ENDL
-            + ":Company__name a owl:DatatypeProperty ;" + ENDL
-            + "              rdfs:domain :Company ;" + ENDL
-            + "              rdfs:range xsd:string ;" + ENDL
-            + "              owl:equivalentProperty src:LtdCompany__name ." + ENDL
-            + "null:LtdCompany__vatNumber a owl:DatatypeProperty ;" + ENDL
-            + "              owl:equivalentProperty src:LtdCompany__vatNumber ." + ENDL
-            + ":Address a owl:Class ;" + ENDL
-            + "         owl:equivalentClass src:Address ." + ENDL
-            + ":Department a owl:Class ;" + ENDL
-            + "            owl:equivalentClass src:Department ." + ENDL
-            + ":Company__address a owl:ObjectProperty ;" + ENDL
-            + "                 rdfs:domain :Company ;" + ENDL
-            + "                 rdfs:range :Address ;" + ENDL
-            + "                 owl:equivalentProperty src:LtdCompany__address ." + ENDL
-            + ":Company__departments a owl:ObjectProperty ;" + ENDL
-            + "                     rdfs:domain :Company ;" + ENDL
-            + "                     rdfs:range :Address ;" + ENDL
-            + "                     owl:equivalentProperty src:LtdCompany__departments ." + ENDL
-            + "src:Organisation a owl:Class." + ENDL
-            + "src:Address a owl:Class." + ENDL
-            + "src:LtdCompany a owl:Class;" + ENDL
-            + "    rdfs:subClassOf" + ENDL
-            + "       [ a owl:Restriction ;" + ENDL
-            + "           owl:maxCardinality \"1\" ;" + ENDL
-            + "           owl:onProperty :Company_address ] ." + ENDL
-            + "src:LtdCompany__name a owl:DatatypeProperty;" + ENDL
-            + "    rdfs:domain src:LtdCompany;" + ENDL
-            + "    rdfs:range xsd:string." + ENDL
-            + "src:LtdCompany__vatNumber a owl:DatatypeProperty;" + ENDL
-            + "    rdfs:domain src:LtdCompany;" + ENDL
-            + "    rdfs:range xsd:integer." + ENDL
-            + "src:LtdCompany__address a owl:ObjectProperty;" + ENDL
-            + "    rdfs:domain :Company;" + ENDL
-            + "    rdfs:range :Address." + ENDL
-            + "src:LtdCompany__departments a owl:ObjectProperty;" + ENDL
-            + "    rdfs:domain :Company;" + ENDL
-            + "    rdfs:range :Address." + ENDL;
+    private Model getSrcModel() throws Exception {
+        AttributeDescriptor att1 = new AttributeDescriptor("name", "java.lang.String");
+        AttributeDescriptor att2 = new AttributeDescriptor("organisationType", "java.lang.String");
+        AttributeDescriptor att3 = new AttributeDescriptor("otherProp", "java.lang.String");
+        ClassDescriptor cld1 =
+            new ClassDescriptor("org.intermine.source.Organisation", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att1, att2, att3})),
+                                new HashSet(),
+                                new HashSet());
+        ReferenceDescriptor ref1 =
+            new ReferenceDescriptor("address", "org.intermine.source.Address", null);
+        CollectionDescriptor col1 =
+            new CollectionDescriptor("departments", "org.intermine.source.Department", null, false);
+        ClassDescriptor cld2 =
+            new ClassDescriptor("org.intermine.source.LtdCompany",
+                                "org.intermine.source.Organisation", false,
+                                new HashSet(),
+                                new HashSet(Arrays.asList(new Object[] {ref1})),
+                                new HashSet(Arrays.asList(new Object[] {col1})));
+        ClassDescriptor cld3 =
+            new ClassDescriptor("org.intermine.source.Address", null, false,
+                                new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld4 =
+            new ClassDescriptor("org.intermine.source.Department", null, false,
+                                new HashSet(), new HashSet(), new HashSet());
+        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4}));
+        return new Model("modelname", srcNs, clds);
+    }
 
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(new StringReader(owl), null, "N3");
-        return ont;
+    private Model getTgtModel() throws Exception {
+        AttributeDescriptor att1 = new AttributeDescriptor("name", "java.lang.String");
+        ReferenceDescriptor ref1 =
+            new ReferenceDescriptor("address", "org.intermine.target.Address", null);
+        CollectionDescriptor col1 =
+            new CollectionDescriptor("departments", "org.intermine.target.Department", null, false);
+        ClassDescriptor cld1 =
+            new ClassDescriptor("org.intermine.target.Company", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att1})),
+                                new HashSet(Arrays.asList(new Object[] {ref1})),
+                                new HashSet(Arrays.asList(new Object[] {col1})));
+        ClassDescriptor cld2 =
+            new ClassDescriptor("org.intermine.target.Address", null, false,
+                                new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld3 =
+            new ClassDescriptor("org.intermine.target.Department", null, false,
+                                new HashSet(), new HashSet(), new HashSet());
+        AttributeDescriptor att2 = new AttributeDescriptor("type", "java.lang.String");
+        ReferenceDescriptor ref2 =
+            new ReferenceDescriptor("companyModel", "org.intermine.target.CompanyModel", null);
+        ClassDescriptor cld4 =
+            new ClassDescriptor("org.intermine.target.OrganisationType", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att2})),
+                                new HashSet(Arrays.asList(new Object[] {ref2})),
+                                new HashSet());
+        ReferenceDescriptor ref3 =
+            new ReferenceDescriptor("organisationType", "org.intermine.target.OrganisationType",
+                                    null);
+        ClassDescriptor cld5 =
+            new ClassDescriptor("org.intermine.target.PrivateBusiness", null, false,
+                                new HashSet(),
+                                new HashSet(Arrays.asList(new Object[] {ref3})),
+                                new HashSet());
+        ReferenceDescriptor ref4 =
+            new ReferenceDescriptor("organisationType", "org.intermine.target.OrganisationType",
+                                    null);
+        AttributeDescriptor att4 = new AttributeDescriptor("otherProp", "java.lang.String");
+        ClassDescriptor cld6 =
+            new ClassDescriptor("org.intermine.target.Charity", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att4})),
+                                new HashSet(Arrays.asList(new Object[] {ref4})),
+                                new HashSet());
+        AttributeDescriptor att5 = new AttributeDescriptor("model", "java.lang.String");
+        ClassDescriptor cld7 =
+            new ClassDescriptor("org.intermine.target.CompanyModel", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att5})),
+                                new HashSet(),
+                                new HashSet());
+        ReferenceDescriptor ref5 =
+            new ReferenceDescriptor("organisationType", "org.intermine.target.OrganisationType",
+                                    null);
+        ClassDescriptor cld8 =
+            new ClassDescriptor("org.intermine.target.Business", null, false,
+                                new HashSet(),
+                                new HashSet(Arrays.asList(new Object[]{ref5})),
+                                new HashSet());
+        Set clds =
+            new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4,
+                                                    cld5, cld6, cld7, cld8}));
+        return new Model("target", tgtNs, clds);
+    }
+
+    // for testTranslateItemRestrictedSubclassSingleLevel()
+    private Model getTgtModel2() throws Exception {
+        AttributeDescriptor att0 = new AttributeDescriptor("organisationType", "java.lang.String");
+        AttributeDescriptor att1 = new AttributeDescriptor("name", "java.lang.String");
+        ReferenceDescriptor ref1 =
+            new ReferenceDescriptor("address", "org.intermine.target.Address", null);
+        CollectionDescriptor col1 =
+            new CollectionDescriptor("departments", "org.intermine.target.Department", null, false);
+        ClassDescriptor cld1 =
+            new ClassDescriptor("org.intermine.target.Company", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att0, att1})),
+                                new HashSet(Arrays.asList(new Object[] {ref1})),
+                                new HashSet(Arrays.asList(new Object[] {col1})));
+         ClassDescriptor cld2 =
+             new ClassDescriptor("org.intermine.target.Address", null, false,
+                                 new HashSet(), new HashSet(), new HashSet());
+         ClassDescriptor cld3 =
+             new ClassDescriptor("org.intermine.target.Department", null, false,
+                                 new HashSet(), new HashSet(), new HashSet());
+        AttributeDescriptor att2 = new AttributeDescriptor("organisationType", "java.lang.String");
+        ClassDescriptor cld4 =
+            new ClassDescriptor("org.intermine.target.Organisation", null, false,
+                                new HashSet(Arrays.asList(new Object[] {att2})),
+                                new HashSet(),
+                                new HashSet());
+         AttributeDescriptor att4 = new AttributeDescriptor("otherProp", "java.lang.String");
+         AttributeDescriptor att5 = new AttributeDescriptor("organisationType", "java.lang.String");
+         ClassDescriptor cld6 =
+             new ClassDescriptor("org.intermine.target.Charity", null, false,
+                                 new HashSet(Arrays.asList(new Object[] {att4, att5})),
+                                 new HashSet(Arrays.asList(new Object[] {})),
+                                 new HashSet());
+        Set clds = new HashSet(Arrays.asList(new Object[] { cld1, cld2, cld3, cld4, cld6 }));
+        return new Model("target", tgtNs, clds);
     }
 }

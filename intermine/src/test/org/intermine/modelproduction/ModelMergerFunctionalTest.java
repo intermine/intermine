@@ -79,6 +79,45 @@ public class ModelMergerFunctionalTest extends TestCase
 
     }
 
+    // Test removal of duplicate attribute
+    //
+    //  model:  A <-- C
+    // addition: A <-- B <-- C
+    // target should remove A <-- C
+    //
+    // Attribute, collection and reference should move from A to B
+    public void testRedundancy() throws Exception {
+        String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\">"
+                            + "<class name=\"A\" extends=\"C\" is-interface=\"false\">"
+                              + "<attribute name=\"name\" type=\"java.lang.String\"/>"
+                              + "<collection name=\"col\" referenced-type=\"C\"/>"
+                              + "<reference name=\"ref\" referenced-type=\"C\"/>"
+                            + "</class>"
+                            + "<class name=\"C\" is-interface=\"false\"></class>"
+                         + "</model>";
+        Model model = parser.process(new StringReader(modelStr));
+        String addition = "<model name=\"testmodel\" namespace=\"testmodel#\">"
+                            + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
+                            + "<class name=\"B\" extends=\"C\" is-interface=\"false\">"
+                              + "<attribute name=\"name\" type=\"java.lang.String\"/>"
+                              + "<collection name=\"col\" referenced-type=\"C\"/>"
+                              + "<reference name=\"ref\" referenced-type=\"C\"/>"
+                            + "</class>"
+                         + "</model>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        
+        String expected = "<model name=\"testmodel\" namespace=\"testmodel#\">"
+                            + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
+                            + "<class name=\"B\" extends=\"C\" is-interface=\"false\">"
+                              + "<attribute name=\"name\" type=\"java.lang.String\"/>"
+                              + "<collection name=\"col\" referenced-type=\"C\"/>"
+                              + "<reference name=\"ref\" referenced-type=\"C\"/>"
+                            + "</class>"
+                            + "<class name=\"C\" is-interface=\"false\"></class>"
+                          + "</model>";
+        assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
+    }
+
 
     // test adding subclass
     public void testSubclassExisting() throws Exception {

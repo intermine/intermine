@@ -30,7 +30,7 @@ import org.intermine.objectstore.query.SingletonResults;
  * @author Matthew Wakeling
  * @author Richard Smith
  */
-public class ObjectStoreItemReader implements ItemReader
+public class ObjectStoreItemReader extends AbstractItemReader
 {
     private ObjectStoreItemPathFollowingImpl os;
     private int defaultBatchSize = 1000;

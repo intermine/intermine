@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,14 +63,17 @@ public class ViewAction extends InterMineAction
         
         String destUrl = null;
         
-        if (SessionMethods.runQuery (this, session, request, true, monitor)) {
+        if (SessionMethods.runQuery(this, session, request, true, monitor)) {
             destUrl = mapping.findForward("results").getPath();
         } else {
             destUrl = mapping.findForward("query").getPath();
         }
         
-        monitor.forwardClient(request.getContextPath() + destUrl);
-        
+        try {
+            monitor.forwardClient(request.getContextPath() + destUrl);
+        } catch (IOException _) {
+            // user cancelled - swallow
+        }
         return null;
     }
 }

@@ -30,6 +30,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -48,6 +49,7 @@ public class DefinitiveOwlTest extends XMLTestCase
     private final static String src2Ns = "http://www.intermine.org/model/source2#";
     private final static String nullNs = "http://www.intermine.org/model/null#";
     protected Map itemMap;
+    private ItemFactory itemFactory = new ItemFactory();
 
     public void setUp() throws Exception {
         itemMap = new HashMap();
@@ -386,7 +388,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         // Items conforming to source2 model
 
         // maps to company
-        Item src11 = new Item();
+        Item src11 = itemFactory.makeItem();
         src11.setIdentifier("11");
         src11.setClassName(src2Ns + "Org");
         src11.setImplementations("");
@@ -403,7 +405,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r11.setRefId("12");
         src11.addReference(r11);
 
-        Item src12 = new Item();
+        Item src12 = itemFactory.makeItem();
         src12.setIdentifier("12");
         src12.setClassName(src2Ns + "OrganisationType");
         src12.setImplementations("");
@@ -413,7 +415,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         src12.addAttribute(a13);
 
         // maps to LtdCompany
-        Item src21 = new Item();
+        Item src21 = itemFactory.makeItem();
         src21.setIdentifier("21");
         src21.setClassName(src2Ns + "Org");
         src21.setImplementations("");
@@ -430,7 +432,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r21.setRefId("22");
         src21.addReference(r21);
 
-        Item src22 = new Item();
+        Item src22 = itemFactory.makeItem();
         src22.setIdentifier("22");
         src22.setClassName(src2Ns + "OrganisationType");
         src22.setImplementations("");
@@ -443,7 +445,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r22.setRefId("23");
         src22.addReference(r22);
 
-        Item src23 = new Item();
+        Item src23 = itemFactory.makeItem();
         src23.setIdentifier("23");
         src23.setClassName(src2Ns + "CompanyModel");
         src23.setImplementations("");
@@ -453,7 +455,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         src23.addAttribute(a24);
 
         // remain as Organisation
-        Item src31 = new Item();
+        Item src31 = itemFactory.makeItem();
         src31.setIdentifier("31");
         src31.setClassName(src2Ns + "Org");
         src31.setImplementations("");
@@ -470,7 +472,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r31.setRefId("32");
         src31.addReference(r31);
 
-        Item src32 = new Item();
+        Item src32 = itemFactory.makeItem();
         src32.setIdentifier("32");
         src32.setClassName(src2Ns + "OrganisationType");
         src32.setImplementations("");
@@ -484,7 +486,7 @@ public class DefinitiveOwlTest extends XMLTestCase
 
     private Set getSrc2TgtItems() {
         // Company
-        Item exp11 = new Item();
+        Item exp11 = itemFactory.makeItem();
         exp11.setIdentifier("11");
         exp11.setClassName(tgtNs + "Company");
         exp11.setImplementations("");
@@ -501,7 +503,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         er11.setRefId("12");
         exp11.addReference(er11);
 
-        Item exp12 = new Item();
+        Item exp12 = itemFactory.makeItem();
         exp12.setIdentifier("12");
         exp12.setClassName(tgtNs + "OrganisationType");
         exp12.setImplementations("");
@@ -511,7 +513,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp12.addAttribute(a13);
 
         // LtdCompany
-        Item exp21 = new Item();
+        Item exp21 = itemFactory.makeItem();
         exp21.setIdentifier("21");
         exp21.setClassName(tgtNs + "LtdCompany");
         exp21.setImplementations("");
@@ -528,7 +530,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r21.setRefId("22");
         exp21.addReference(r21);
 
-        Item exp22 = new Item();
+        Item exp22 = itemFactory.makeItem();
         exp22.setIdentifier("22");
         exp22.setClassName(tgtNs + "OrganisationType");
         exp22.setImplementations("");
@@ -541,7 +543,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r22.setRefId("23");
         exp22.addReference(r22);
 
-        Item exp23 = new Item();
+        Item exp23 = itemFactory.makeItem();
         exp23.setIdentifier("23");
         exp23.setClassName(tgtNs + "CompanyModel");
         exp23.setImplementations("");
@@ -551,7 +553,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp23.addAttribute(a24);
 
         // Organisation
-        Item exp31 = new Item();
+        Item exp31 = itemFactory.makeItem();
         exp31.setIdentifier("31");
         exp31.setClassName(tgtNs + "Organisation");
         exp31.setImplementations("");
@@ -568,7 +570,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         r31.setRefId("32");
         exp31.addReference(r31);
 
-        Item exp32 = new Item();
+        Item exp32 = itemFactory.makeItem();
         exp32.setIdentifier("32");
         exp32.setClassName(tgtNs + "OrganisationType");
         exp32.setImplementations("");

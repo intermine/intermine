@@ -109,7 +109,7 @@ public class FullRendererTest extends XMLTestCase
         ref.setRefId("5678");
         exp1.addReference(ref);
 
-        assertEquals(exp1, FullRenderer.toItem(e, model));
+        assertEquals(exp1, new ItemFactory(model).makeItem(e));
     }
 
     public void testToItemDynamic() throws Exception {
@@ -149,7 +149,7 @@ public class FullRendererTest extends XMLTestCase
         refList1.addRefId("6789");
         exp1.addCollection(refList1);
 
-        assertEquals(exp1, FullRenderer.toItem(b, model));
+        assertEquals(exp1, new ItemFactory(model).makeItem(b));
     }
 
     public void testToItems() throws Exception {

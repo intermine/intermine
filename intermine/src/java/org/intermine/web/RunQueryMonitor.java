@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.intermine.objectstore.query.Results;
 
 /**
@@ -25,7 +27,9 @@ public interface RunQueryMonitor
     /**
      * Called intermittently while a query is run.
      *
-     * @param results  the Results object associated with the running query
+     * @param results the Results object associated with the running query
+     * @param request the http servlet request
+     * @return false if the query should be cancelled, otherwise true
      */
-    public void queryProgress(Results results);
+    public boolean queryProgress(HttpServletRequest request, Results results);
 }

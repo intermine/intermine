@@ -1,4 +1,4 @@
-<company name="Company1">
+<company xmlns="nampespace" name="Company1">
   <vatNumber>1234</vatNumber>
   <department name="Department1">
     <manager name="Manager1" age="40">
@@ -20,5 +20,5 @@
   <addressBook>
     <address ref="address_1"/>
   </addressBook>
-  <address id="address_1" addressString="Company Street"/>
+  <address id="address_1" address="Company Street"/>
 </company>

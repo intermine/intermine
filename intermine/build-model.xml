@@ -24,7 +24,8 @@
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
   <property name="model.lib" location="${model}/${model.name}/lib"/>
   <property name="model.web.template.queries" location="${model}/${model.name}/resources/web/template-queries.xml"/>
-
+  <property name="model.mapping" location="${model}/${model.name}/${model.name}_mappings"/>
+  
   <!-- Summarise object store properties -->
   <property name="os.summary.properties.file"
             value="${build.model.dir}/objectstoresummary.config.properties" />
@@ -130,6 +131,7 @@
     <model-generation type="xmi"
                       modelName="${model.name}"
                       nameSpace="${namespace}"
+                      pkg="${packagename}.${model.name}"
                       source="${build.model.dir.tmp}/${model.name}_.xmi"
                       destDir="${build.model.dir}"/>
   </target>
@@ -224,6 +226,7 @@
   </target>
 
   <target name="test-java" depends="compile-test">
+    <copy file="${model.mapping}" toDir="${build.model.dir}" failonerror="false"/>
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <formatter type="xml" />
       <classpath refid="test.class.path"/>

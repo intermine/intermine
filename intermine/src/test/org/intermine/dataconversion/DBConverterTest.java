@@ -34,6 +34,7 @@ import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.Database;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 
 public class DBConverterTest extends TestCase {
     private Model model;
@@ -42,6 +43,7 @@ public class DBConverterTest extends TestCase {
     private ArrayList blank;
     private Map map;
     private DBReader reader;
+    private ItemFactory itemFactory = new ItemFactory();
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
@@ -69,7 +71,7 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setIdentifier(converter.alias("Department") + "_12");
         item.setClassName(model.getNameSpace() + "Department");
         Attribute attr = new Attribute();
@@ -93,7 +95,7 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Department");
         item.setIdentifier(converter.alias("Department") + "_12");
         Reference ref = new Reference();
@@ -117,7 +119,7 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Department");
         item.setIdentifier(converter.alias("Department") + "_12");
 
@@ -144,7 +146,7 @@ public class DBConverterTest extends TestCase {
 
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", rows2);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Department");
         item.setIdentifier(converter.alias("Department") + "_12");
         ReferenceList refs = new ReferenceList();
@@ -176,7 +178,7 @@ public class DBConverterTest extends TestCase {
 
         map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 12", rows2);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Company");
         item.setIdentifier(converter.alias("Company") + "_12");
         ReferenceList refs = new ReferenceList();
@@ -206,7 +208,7 @@ public class DBConverterTest extends TestCase {
 
         map.put("SELECT Company_id FROM Contractor_Company WHERE Contractor_id = 12", blank);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Contractor");
         item.setIdentifier(converter.alias("Contractor") + "_12");
         Reference ref = new Reference();
@@ -234,7 +236,7 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 13", blank);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Department");
         item.setIdentifier(converter.alias("Department") + "_12");
         Attribute attr = new Attribute();
@@ -242,7 +244,7 @@ public class DBConverterTest extends TestCase {
         attr.setValue("DepartmentA1");
         item.addAttribute(attr);
 
-        Item item2 = new Item();
+        Item item2 = itemFactory.makeItem();
         item2.setClassName(model.getNameSpace() + "Department");
         item2.setIdentifier(converter.alias("Department") + "_13");
         Attribute attr2 = new Attribute();
@@ -272,7 +274,7 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
-        Item item = new Item();
+        Item item = itemFactory.makeItem();
         item.setClassName(model.getNameSpace() + "Department");
         item.setIdentifier(converter.alias("Department") + "_12");
         Attribute attribute = new Attribute();
@@ -289,7 +291,7 @@ public class DBConverterTest extends TestCase {
         map.put("SELECT Department_id FROM Department WHERE company_id = 13", blank);
         map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 13", blank);
 
-        Item item2 = new Item();
+        Item item2 = itemFactory.makeItem();
         item2.setClassName(model.getNameSpace() + "Company");
         item2.setIdentifier(converter.alias("Company") + "_13");
 
@@ -350,7 +352,7 @@ public class DBConverterTest extends TestCase {
         Reference ref = new Reference();
         ref.setName("company");
         ref.setRefId(converter.alias("Company") + "_14");
-        Item item1 = new Item();
+        Item item1 = itemFactory.makeItem();
         item1.setClassName(model.getNameSpace() + "Department");
         item1.setIdentifier(converter.alias("Department") + "_3");
         item1.addReference(ref);
@@ -358,7 +360,7 @@ public class DBConverterTest extends TestCase {
         att1.setName("nonUniqueId");
         att1.setValue("1_1");
         item1.addAttribute(att1);
-        Item item2 = new Item();
+        Item item2 = itemFactory.makeItem();
         item2.setClassName(model.getNameSpace() + "Department");
         item2.setIdentifier(converter.alias("Department") + "_4");
         item2.addReference(ref);
