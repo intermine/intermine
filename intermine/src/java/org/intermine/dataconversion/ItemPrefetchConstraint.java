@@ -40,4 +40,11 @@ public interface ItemPrefetchConstraint
      * @return a Set of FieldNameAndValue objects
      */
     public Set getConstraintFromTarget(Item item);
+
+
+    /**
+     * Perform a deep clone on this object.
+     * @return a deep cloned ItemPrefetchConstraint
+     */
+    public ItemPrefetchConstraint deepClone();
 }
