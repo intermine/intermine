@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE descriptor-repository SYSTEM "repository.dtd" [
+
+<!DOCTYPE descriptor-repository PUBLIC
+       "-//Apache Software Foundation//DTD OJB Repository//EN"
+       "http://db.apache.org/ojb/dtds/1.0/repository.dtd"
+[
 <!ENTITY internal SYSTEM "repository_internal.xml">
 ]>
 
