@@ -103,7 +103,7 @@ Full details<br/><br/>
           <span class="attributeField">${entry.key}</span>
         </td>
         <td>
-          <c:set var="maxLength" value="32"/>
+          <c:set var="maxLength" value="60"/>
           <c:choose>
             <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
               <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
