@@ -181,7 +181,7 @@
     <fileset dir="${lib}">
       <patternset refid="lib.checkstyle"/>
     </fileset>
- </path>
+  </path>
 
   <path id="test.class.path">
     <path refid="project.class.path"/>
@@ -195,6 +195,8 @@
     <pathelement location="${build.model}/so"/>
     <pathelement location="${build.model}/genomic"/>
     <pathelement location="${build.model}/ensembl"/>
+    <pathelement location="${build.model}/rnai"/>
+    <pathelement location="${build.model}/orthologue"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -362,7 +364,7 @@
   </target>
 
   <!-- Datatracking -->
-  <target name="build-db-datatracking" depends="compile-datatracking">
+  <target name="build-db-datatracking" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="datatracking"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -371,7 +373,7 @@
   </target>
   
   <!-- Fulldata -->
-   <target name="build-db-fulldatatest" depends="compile-fulldata">
+   <target name="build-db-fulldatatest" depends="compile-main">
      <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
        <property name="model.name" value="fulldata"/>
        <reference torefid="class.path" refid="test.class.path"/>
@@ -380,25 +382,34 @@
    </target>
 
   <!-- Ensembl items -->
-    <target name="build-db-ensembl-items" depends="convert-ensembl">
+    <target name="build-db-ensembl-items" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.ensembl-items"/>
+      <property name="db.name" value="db.ensembl-src-items"/>
     </ant>
   </target>
 
   <!-- Orthologue items -->
-  <target name="build-db-orthologue-items" depends="convert-ensembl">
-    <ant antfile="build-model.xml" target="build-db">
+  <target name="build-db-orthologue-tgt-items" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.orthologue-items"/>
+      <property name="db.name" value="db.orthologue-tgt-items"/>
+    </ant>
+  </target>
+
+  <!-- RNAi items -->
+  <target name="build-db-rnai-src-items" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.rnai-src-items"/>
     </ant>
   </target>
 
   <!-- Chado items -->
-  <target name="build-db-chado-src-items" depends="convert-chado">
+  <target name="build-db-chado-src-items" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -407,7 +418,7 @@
   </target>
 
   <!-- Chado main -->
-  <target name="build-db-chado-test" depends="convert-chado">
+  <target name="build-db-chado-test" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -648,7 +659,7 @@
   </target>
 
   <!-- load orthologue/paralogue data -->
-  <target name="retrieve-orthologue" depends="build-db-orthologue-items">
+  <target name="retrieve-orthologue" depends="build-db-orthologue-tgt-items">
     <taskdef name="retrieve-orthologue" classname="org.flymine.dataconversion.FileConverterTask">
       <classpath refid="test.class.path"/>
     </taskdef>
@@ -659,7 +670,16 @@
       </path>
     </concat>
 
-    <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-items"/>
+    <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-tgt-items"/>
+  </target>
+
+  <!-- load rnai data -->
+  <target name="retrieve-rnai" depends="build-db-rnai-src-items">
+    <taskdef name="retrieve-rnai" classname="org.flymine.dataconversion.FileConverterTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+
+    <retrieve-rnai file="/shared/data/RNAi/CE_RNAi.txt" source="rnai" osName="osw.rnai-src-items"/>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
