@@ -6,12 +6,14 @@
         <item><ulink url="/funding">Funding</ulink></item>
     </section>
     <section>
+    	<heading>Documentation</heading>
+        <item><ulink url="/system/">System</ulink></item>
+        <item><ulink url="/user/">User</ulink></item>
+    </section>
+    <section>
         <heading><ulink url="http://mailman.flymine.org/listinfo/">Mailing lists</ulink></heading>
     </section>
     <section>
         <heading><ulink url="/internal/index">Internal</ulink></heading>
     </section>
-    <section>
-        <heading><ulink url="/system/query_spec/spec">Query Specification</ulink></heading>
-    </section>	
 </menu>

@@ -1,0 +1,17 @@
+<menu>
+	<section>
+		<heading>Use Cases</heading>
+		<item><ulink url="use_case_1">Use case 1</ulink></item>
+		<item><ulink url="use_case_2">Use case 2</ulink></item>
+		<item><ulink url="use_case_3">Use case 3</ulink></item>
+		<item><ulink url="use_case_4">Use case 4</ulink></item>
+		<item><ulink url="use_case_5">Use case 5</ulink></item>
+		<item><ulink url="use_case_6">Use case 6</ulink></item>
+		<item><ulink url="use_case_7">Use case 7</ulink></item>
+		<item><ulink url="use_case_8">Use case 8</ulink></item>
+		<item><ulink url="use_case_9">Use case 9</ulink></item>
+		<item><ulink url="use_case_10">Use case 10</ulink></item>
+		<item><ulink url="use_case_11">Use case 11</ulink></item>
+	</section>
+</menu>
+
