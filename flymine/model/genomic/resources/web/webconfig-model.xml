@@ -15,6 +15,14 @@
       <displayer src="/model/organism.jsp"/>
     </longdisplayers>
   </class>
+  <class name="org.flymine.model.genomic.Gene">
+    <shortdisplayers>
+      <displayer src="/model/geneShort.jsp"/>
+    </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/model/geneLong.jsp"/>
+    </longdisplayers>
+  </class>
 <!--
   - ignored until oneField.jsp can handle the fieldName parameter
   <class name="org.flymine.model.genomic.Gene">
