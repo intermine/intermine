@@ -38,7 +38,7 @@ import org.flymine.model.testmodel.*;
  * TestCase for all ObjectStores
  *
  */
-public abstract class ObjectStoreTestCase extends SetupDataTestCase
+public abstract class ObjectStoreTestCase extends StoreDataTestCase
 {
     protected static ObjectStore os;
 
@@ -47,7 +47,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     }
 
     public static void oneTimeSetUp() throws Exception {
-        SetupDataTestCase.oneTimeSetUp();
+        StoreDataTestCase.oneTimeSetUp();
         setUpResults();
     }
 

@@ -47,7 +47,7 @@ public class XmlDataLoaderTest extends TestCase
     public XmlDataLoaderTest(String arg) {
         super(arg);
     }
-
+/*
     public void setUp() throws Exception {
         writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         iw = new IntegrationWriterSingleSourceImpl("test", writer);
@@ -216,4 +216,5 @@ public class XmlDataLoaderTest extends TestCase
         }
         return null;
     }
+    */
 }

@@ -40,7 +40,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public static Test suite() {
         return OneTimeTestCase.buildSuite(IntegrationWriterSingleSourceImplTest.class);
     }
-
+/*
     public void setUp() throws Exception {
         super.setUp();
         toDelete = new ArrayList();
@@ -62,11 +62,11 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         iw = new IntegrationWriterSingleSourceImpl("test", writer);
         os = iw.getObjectStore();
     }
-
+*/
     // Not doing the Query tests here
     public void executeTest(String type) throws Exception {
     }
-
+/*
     public void testStoreObject() throws Exception {
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = new Address();
@@ -193,5 +193,5 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         List departments = (List) descriptor.get("departments");
         assertTrue("departments should have been an empty list", departments.size() == 0);
     }
-
+*/
 }

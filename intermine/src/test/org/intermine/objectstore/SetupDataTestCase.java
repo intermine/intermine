@@ -26,6 +26,7 @@ import java.util.Set;
 import java.io.FileWriter;
 import java.io.File;
 
+import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ConstraintOp;
@@ -44,106 +45,40 @@ import org.flymine.sql.Database;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.XmlBinding;
 import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
 
 import org.apache.log4j.Logger;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
     protected static final Logger LOG = Logger.getLogger(SetupDataTestCase.class);
-    protected static ObjectStoreWriter writer;
     protected static Map data = new LinkedHashMap();
+    protected static Model model;
 
     public SetupDataTestCase(String arg) {
         super(arg);
     }
 
     public static void oneTimeSetUp() throws Exception {
-        try {
-            ObjectStoreQueriesTestCase.oneTimeSetUp();
-            if (writer == null) {
-                writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-            }
-            setUpData();
-            storeData();
-            // These queries are here because they require objects with IDs
-            queries.put("WhereClassObject", whereClassObject());
-            queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
-            queries.put("BagConstraint2", bagConstraint2());
-            queries.put("InterfaceReference", interfaceReference());
-            queries.put("InterfaceCollection", interfaceCollection());
-        } catch (Exception e) {
-            if (writer != null) {
-                writer.close();
-            }
-            throw e;
-        }
-    }
-
-    public static void oneTimeTearDown() throws Exception {
-        ObjectStoreQueriesTestCase.oneTimeTearDown();
-        removeDataFromStore();
-        writer.close();
-        writer = null;
-    }
-
-    /**
-     * Set up any data needed
-     *
-     * @throws Exception if an error occurs
-     */
-    public static void storeData() throws Exception {
-        System.out.println("Storing data");
-        if (writer == null) {
-            throw new NullPointerException("writer must be set before trying to store data");
-        }
-        long start = new Date().getTime();
-        try {
-            writer.beginTransaction();
-            Iterator iter = data.entrySet().iterator();
-            while (iter.hasNext()) {
-                writer.store((FlyMineBusinessObject) ((Map.Entry) iter.next()).getValue());
-            }
-            writer.commitTransaction();
-        } catch (Exception e) {
-            writer.abortTransaction();
-            throw new Exception(e);
-        }
-
-        Database db = DatabaseFactory.getDatabase("db.unittest");
-        java.sql.Connection con = db.getConnection();
-        java.sql.Statement s = con.createStatement();
-        con.setAutoCommit(true);
-        s.execute("vacuum analyze");
-        con.close();
-        System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
-    }
-
-    public static void removeDataFromStore() throws Exception {
-        System.out.println("Removing data");
-        if (writer == null) {
-            throw new NullPointerException("writer must be set before trying to store data");
-        }
-        try {
-            writer.beginTransaction();
-            Iterator iter = data.keySet().iterator();
-            while (iter.hasNext()) {
-                writer.delete((FlyMineBusinessObject) data.get(iter.next()));
-            }
-            writer.commitTransaction();
-        } catch (Exception e) {
-            writer.abortTransaction();
-            throw new Exception(e);
-        }
+        ObjectStoreQueriesTestCase.oneTimeSetUp();
+        model = Model.getInstanceByName("testmodel");
+        setUpData();
+        // These queries are here because they require objects with IDs
+        queries.put("WhereClassObject", whereClassObject());
+        queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
+        queries.put("BagConstraint2", bagConstraint2());
+        queries.put("InterfaceReference", interfaceReference());
+        queries.put("InterfaceCollection", interfaceCollection());
     }
 
     public static void setUpData() throws Exception {
-        XmlBinding binding = new XmlBinding(writer.getModel());
-        map((List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml")));
+        XmlBinding binding = new XmlBinding(model);
+        List col = (List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"));
+        setIds(col);
+        map(col);
     }
 
     public static void main(String[] args) throws Exception {
-        XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
+        XmlBinding binding = new XmlBinding(model);
         setUpDataObjects();
         Collection col = data.values();
         setIds(col);

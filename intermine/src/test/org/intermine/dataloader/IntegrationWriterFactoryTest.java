@@ -23,13 +23,13 @@ public class IntegrationWriterFactoryTest extends TestCase
     }
 
     public void testValidAlias() throws Exception {
-        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest", "source1");
+        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest");
         assertNotNull(iw);        
     }
 
     public void testInvalidAlias() throws Exception {
         try {
-            IntegrationWriterFactory.getIntegrationWriter("integration.wrong", "source1");
+            IntegrationWriterFactory.getIntegrationWriter("integration.wrong");
             fail("Expected ObjectStoreException");
         } catch (ObjectStoreException e) {
         }

@@ -38,7 +38,7 @@ public class DataLoaderTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest", "source1");
+        iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest");
         Model model = iw.getModel();
         loader = new DataLoader(iw);
     }
