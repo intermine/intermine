@@ -337,14 +337,9 @@
                   <c:choose>
                     <c:when test="${editingNode.type == 'boolean'}">
                       <td valign="top">
-                        = <input type="hidden" name="attributeOp" value="0"/>
-                        <input type="radio" name="attributeValue" value="true" checked />True
-                        <input type="radio" name="attributeValue" value="false"/>False
-                      </td>
-                      <td valign="top">
-                        <html:submit property="attribute">
-                          <fmt:message key="query.submitConstraint"/>
-                        </html:submit>
+                        <input type="hidden" name="attributeOp" value="0"/>
+                        <input type="radio" name="attributeValue" value="true" checked /><fmt:message key="query.constraint.true"/>
+                        <input type="radio" name="attributeValue" value="false"/><fmt:message key="query.constraint.false"/>
                       </td>
                     </c:when>
                     <c:otherwise>
@@ -360,6 +355,12 @@
                       <td valign="top" align="center">
                         <span id="operandEditSpan">
                           <html:text property="attributeValue"/><br/>
+                          <%-- might want to show up arrow --%>
+                          <c:if test="${!empty attributeOptions}">
+                            <im:vspacer height="5"/><br/>
+                            <img src="images/move-up-arrow.gif" alt="^^^" border="0"/><br/>
+                            <im:vspacer height="5"/><br/>
+                          </c:if>
                         </span>
                         <c:if test="${!empty attributeOptions}">
                           <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
@@ -371,13 +372,13 @@
                           </select>
                         </c:if>
                       </td>
-                      <td valign="top">
-                        <html:submit property="attribute">
-                          <fmt:message key="query.submitConstraint"/>
-                        </html:submit>
-                      </td>
                     </c:otherwise>
                   </c:choose>
+                  <td valign="top">&nbsp;
+                    <html:submit property="attribute">
+                       <fmt:message key="query.submitConstraint"/>
+                    </html:submit>
+                  </td>
                 </tr>
               </table>
             </c:when>
