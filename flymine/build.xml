@@ -2521,7 +2521,7 @@
       <arg value="n" />
     </java>
 
-    <!-- merge ensembl model with target genomic model -->
+    <!-- merge ensembl human model with target genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
           maxmemory="800m" failonerror="true">
       <classpath refid="models.class.path" />
@@ -2534,41 +2534,26 @@
     </java>
   </target>
 
-  <!-- MERGED GENOMIC HUMAN MODEL  -->
-
-  <!-- create merged model from all source OWL ontologies -->
+  <!-- MERGED GENOMIC HUMAN MODEL  -->  
+  
+ <!-- create merged model from all source OWL ontologies -->
   <target name="create-human-production-model" depends="remove-genomic, prepare-build-model,
-                                                        merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                                                        merge-ensembl-human-model, merge-phenotype-model,
-                                                        merge-go-model, merge-uniprot-model,
-                                                        merge-protein_structure-model, merge-so-model">
-    <antcall target="create-genomic-human-model"/>
-  </target>
-
-  <!-- create genomic InterMine model from currently merged OWL ontologies -->
-  <target name="create-genomic-human-model" depends="remove-genomic, prepare-build-model,
-                                                     merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                                                     merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
-                                                     merge-uniprot-model, merge-protein_structure-model, merge-so-model">    
+                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
+                merge-uniprot-model, merge-protein_structure-model, merge-so-model">   
+    <antcall target="create-genomic-model"/> 
   </target>
   
   <!-- create java objects for the genomic human model-->
-  <target name="compile-genomic-human-model" depends="create-genomic-human-model">
+  <target name="compile-genomic-human-model" depends="create-human-production-model">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target> 
 
-  <target name="jar-genomic-human" depends="create-genomic-human-model"
-          description="create a jar of the genomic human model">
-    <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
-  <!-- ENSEMBL HUMAN PIPELINE -->
+ 
+  <!-- DATA LOADING PIPELINE -->
 
   <!-- build ensembl human src items database -->
   <target name="build-db-ensembl-human-src-items" depends="prepare-build-model">
@@ -2636,13 +2621,29 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human" /> <!--queryClass="org.flymine.model.genomic.TRNA"/-->
+    <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human" /><!--queryClass="org.flymine.model.genomic.Synonym"/-->
   </target>
 
-  <!-- ensembl human production  -->
+  <!--LOAD PRODUCTION DATA  -->
   <target name="build-ensembl-human-production" depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
 
-  <!--POST PROCESSING -->
+   <!-- build production database - assumes that ensembl databases already retrieved -->
+  <target name="human-production-build" depends="create-production-model, compile-genomic-model, 
+                                           jar-genomic,
+                                           build-db-production,create-indexes-production,
+                                           load-static,
+                                           build-ensembl-human-production,
+                                           build-psi-production,
+                                           build-orthologues-production,
+                                           build-rnai-production,
+                                           build-phenotype-production,
+                                           build-go-human-production,
+                                           build-protein_structure-production,
+                                           build-uniprot-production,
+                                           analyse-db-production,
+                                           grant-db-production"/>
+
+  <!--POST PROCESSING 
   <target name="post-process-human">    
     <antcall target="create-references"/>
     <antcall target="analyse-db-production"/>
@@ -2651,7 +2652,21 @@
     <antcall target="transfer-sequences"/>
     <antcall target="create-indexes-production-attribute"/>
     <antcall target="analyse-db-production"/>
+  </target>-->
+
+   <!--POST PROCESSING -->
+   <target name="fetch-contig-sequences" depends="compile-genomic-java">
+    <taskdef name="fetch-sequences" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <fetch-sequences alias="osw.production" ensemblDb="db.ensembl-human" type="fetch-sequences"/>
   </target>
+
+  <target name="post-process-human">   
+      <antcall target="fetch-contig-sequences"/>
+      <antcall target="transfer-sequences"/>
+    </target>
 
   <!--COMPILATION AND TESTING TARGETS -->
   <target name="compile-ensembl-human-java">
@@ -2667,14 +2682,7 @@
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
-
-  <target name="compile-genomic-human-java" depends="jar-genomic-human">
-    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target> 
-
+  
   <target name="test-human-models-inc"
           depends="ensembl-human-test, rnai-test, psi-test, orthologue-test, go-test,
                    taxonomy-test, uniprot-test, protein_structure-test">
@@ -2700,5 +2708,40 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
+
+  <!-- GO ANNOTATION -->
+  <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.go-dag-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <convert-file osName="osw.go-annotation-tgt-items"
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic">
+      <fileset dir="/shared/data/go-annotation/human">
+        <include name="gene_association*"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="build-go-human-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation-human, load-go-annotation"/>
+
 </project>
 
