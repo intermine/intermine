@@ -257,3 +257,15 @@ span.collectionDescription {
   padding: 4px;
   margin-top: 5px;
 }
+
+
+/* object details trail navigator styles */
+
+.objectTrail {
+  font-size: 11px;
+}
+
+.objectTrailLink {
+  white-space: nowrap;
+}
+
