@@ -78,6 +78,8 @@ public class PrecomputeTask extends Task
     protected Properties precomputeProperties = null;
     protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
+    private static final String TEST_QUERY_PREFIX = "test.query.";
+    private String operation;
 
     /**
      * Set the ObjectStore alias
@@ -114,6 +116,17 @@ public class PrecomputeTask extends Task
     }
 
     /**
+     * Set the type of pre-compute:
+     * model - read configuration file for model and pre-compute appropriate tables.
+     * template - create pre-computed tables for all template queries defined for model.
+     * all - both template and model
+     * @param operation 'model', 'template' or 'all'
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    /**
      * @see Task#execute
      */
     public void execute() throws BuildException {
@@ -127,6 +140,10 @@ public class PrecomputeTask extends Task
 
         if (minRows == -1) {
             throw new BuildException("minRows attribute is not set");
+        }
+
+        if (operation == null) {
+            throw new BuildException("operation attribte was not set");
         }
 
         ObjectStore objectStore;
@@ -143,7 +160,16 @@ public class PrecomputeTask extends Task
 
         oss = createObjectStoreSummary();
 
-        precomputeAll(objectStore, oss);
+        if (operation.equals("all")) {
+            precomputeModel(objectStore, oss);
+            precomputeTemplates(objectStore, oss);
+        } else if (operation.equals("model")) {
+            precomputeModel(objectStore, oss);
+        } else if (operation.equals("template")) {
+            precomputeTemplates(objectStore, oss);
+        } else {
+            throw new BuildException("invalied operation specified: " + operation);
+        }
     }
 
     /**
@@ -152,7 +178,7 @@ public class PrecomputeTask extends Task
      * @param os the ObjectStore to precompute in
      * @param oss the ObjectStoreSummary for os
      */
-    protected void precomputeAll(ObjectStore os, ObjectStoreSummary oss) {
+    protected void precomputeModel(ObjectStore os, ObjectStoreSummary oss) {
         this.oss = oss;
         this.os = os;
 
@@ -171,16 +197,22 @@ public class PrecomputeTask extends Task
                                  + " seconds");
         }
 
-        Iterator iter = getPrecomputeQueries().entrySet().iterator();
+        Map pq = getPrecomputeQueries();
+        LOG.info("pq.size(): " + pq.size());
+        Iterator iter = pq.entrySet().iterator();
+        //Iterator iter = getPrecomputeQueries().entrySet().iterator();
 
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String key = (String) entry.getKey();
 
             List queries = (List) entry.getValue();
+            LOG.error("queries: " + queries.size());
             Iterator queriesIter = queries.iterator();
             while (queriesIter.hasNext()) {
                 Query query = (Query) queriesIter.next();
+
+                LOG.info("key: " + key);
 
                 ResultsInfo resultsInfo;
 
@@ -207,16 +239,34 @@ public class PrecomputeTask extends Task
                 }
             }
         }
-        
-        iter = getPrecomputeTemplateQueries().entrySet().iterator();
-        
+
+        if (testMode) {
+            PrintStream outputStream = System.out;
+            long start = System.currentTimeMillis();
+            outputStream.println("Running tests after all precomputes");
+            runTestQueries();
+            outputStream.println("tests took: "
+                                 + (System.currentTimeMillis() - start) / 1000
+                                 + " seconds");
+        }
+    }
+
+
+    /**
+     * Create precomputed tables for all template queries in the given ObjectStore.
+     * @param os the ObjectStore to precompute in
+     * @param oss the ObjectStoreSummary for os
+     */
+    protected void precomputeTemplates(ObjectStore os, ObjectStoreSummary oss) {
+        Iterator iter = getPrecomputeTemplateQueries().entrySet().iterator();
+
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             ArrayList indexes = new ArrayList();
             HashMap pathToQueryNode = new HashMap();
             TemplateQuery template = (TemplateQuery) entry.getValue();
             Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
-            
+
             Iterator niter = template.getNodes().iterator();
             while (niter.hasNext()) {
                 PathNode node = (PathNode) niter.next();
@@ -233,7 +283,7 @@ public class PrecomputeTask extends Task
                     }
                 }
             }
-            
+
             ResultsInfo resultsInfo;
 
             try {
@@ -247,20 +297,8 @@ public class PrecomputeTask extends Task
                 precompute(os, query, indexes);
             }
         }
-
-        if (testMode) {
-            PrintStream outputStream = System.out;
-            long start = System.currentTimeMillis();
-            outputStream.println("Running tests after all precomputes");
-            runTestQueries();
-            outputStream.println("tests took: "
-                                 + (System.currentTimeMillis() - start) / 1000
-                                 + " seconds");
-        }
     }
 
-
-    private static final String TEST_QUERY_PREFIX = "test.query.";
 
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
@@ -284,7 +322,7 @@ public class PrecomputeTask extends Task
                  + (System.currentTimeMillis() - start) / 1000
                  + " seconds for: " + query);
     }
-    
+
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
      * @param os the ObjectStore to call precompute() on
@@ -304,7 +342,7 @@ public class PrecomputeTask extends Task
                  + (System.currentTimeMillis() - start) / 1000
                  + " seconds for: " + query);
     }
-    
+
     /**
      * Get the built-in template queries.
      * @return Map from template name to TemplateQuery
@@ -317,7 +355,7 @@ public class PrecomputeTask extends Task
         Map templates = binding.unmarshal(new InputStreamReader(sin));
         return templates;
     }
-    
+
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
      * @return a Map of keys to Query objects
@@ -381,7 +419,6 @@ public class PrecomputeTask extends Task
                 }
             }
         }
-
         return returnMap;
     }
 

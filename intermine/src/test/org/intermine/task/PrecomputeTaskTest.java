@@ -38,11 +38,11 @@ public class PrecomputeTaskTest extends StoreDataTestCase
     public PrecomputeTaskTest (String arg) {
         super(arg);
     }
-    
+
     public void setUp() throws Exception {
         super.setUp();
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
@@ -56,7 +56,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
     }
 
     /**
-     * Test that PrecomputeTask creates the 
+     * Test that PrecomputeTask creates the
      */
     public void testExecute() throws Exception {
         DummyPrecomputeTask task = new DummyPrecomputeTask();
@@ -70,19 +70,19 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         String configFile = "objectstoresummary.config.properties";
 
         InputStream is = PrecomputeTask.class.getClassLoader().getResourceAsStream(configFile);
-        
+
         if (is == null) {
             throw new Exception("Cannot find " + configFile + " in the class path");
         }
-        
+
         summaryProperties = new Properties();
         summaryProperties.load(is);
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, summaryProperties);
 
-        task.precomputeAll(os, oss);
-        
+        task.precomputeModel(os, oss);
+
         assertEquals(118, task.queries.size());
 
         String[] expectedQueries = new String[] {
@@ -210,9 +210,9 @@ public class PrecomputeTaskTest extends StoreDataTestCase
             assertEquals(expectedQueries[i], "" + task.queries.get(i));
         }
     }
-    
+
     public void testQueries() {
-        
+
     }
 
     class DummyPrecomputeTask extends PrecomputeTask {
