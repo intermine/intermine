@@ -30,7 +30,7 @@
       <head>
         <title><xsl:value-of select="$brand/title"/></title>
         <xsl:for-each select="$brand/stylesheet">
-          <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}" media="screen,screen"/>
+          <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}" media="screen,printer"/>
         </xsl:for-each>
         <xsl:for-each select="$brand/meta">
           <meta>
