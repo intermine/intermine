@@ -74,8 +74,9 @@ public class MergeOwl
      * @param sourceOwl a Reader pointing to the source OWL document
      * @param srcNs string represencting the URI namespace of source OWL document
      * @param format the format of sourceOwl, must be: RDF/XML, N-TRIPLE or N3
+     * @throws Exception if problem renaming properties
      */
-    protected void addToTargetOwl(Reader sourceOwl, String srcNs, String format) {
+    protected void addToTargetOwl(Reader sourceOwl, String srcNs, String format) throws Exception {
         if (!(format.equals("RDF/XML") || format.equals("N-TRIPLE") || format.equals("N3"))) {
             throw new IllegalArgumentException(" format must be one of: RDF/XML. N-TRIPLE or N3."
                                                + "(was: " + format + ")");
@@ -93,8 +94,9 @@ public class MergeOwl
      * to new namespace in target model.
      * @param srcModel a Jena OntModel representing the source OWL
      * @param srcNs the namespace of the source OWL ontology
+     * @throws Exception if problem renaming properties
      */
-    protected void mergeByEquivalence(OntModel srcModel, String srcNs) {
+    protected void mergeByEquivalence(OntModel srcModel, String srcNs) throws Exception {
         LOG.error("building equivalence map");
         equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
 

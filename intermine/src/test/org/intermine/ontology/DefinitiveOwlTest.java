@@ -72,7 +72,7 @@ public class DefinitiveOwlTest extends XMLTestCase
 
     public void testMergeOwl() throws Exception {
         OntModel ont = runMergeOwl();
-        //ont.write(new FileWriter(new File("targetModel")), "N3");
+        ont.write(new FileWriter(new File("targetModel")), "N3");
 
         // target namespace should contain only these classes
         OntClass orgCls = ont.getOntClass(tgtNs + "Organisation");
@@ -133,7 +133,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         DataTranslator translator = new DataTranslator(new MockItemReader(itemMap), runMergeOwl(), tgtNs);
         MockItemWriter tgtItemWriter = new MockItemWriter(new HashMap());
         translator.translate(tgtItemWriter);
-        
+
         assertEquals(getSrc2TgtItems(), tgtItemWriter.getItems());
     }
 
@@ -206,6 +206,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         // name is inherited by Company from organisation but need to alter prefix accordingly
         // src1:Busines__companyName -> :Company__name
         owl.append(":Company__name a owl:DatatypeProperty ;" + ENDL
+                   + "     rdfs:subPropertyOf :Organisation__name ;" + ENDL
                    + "     rdfs:domain :Company ;" + ENDL
                    + "     rdfs:range xsd:string ;" + ENDL
                    + "      owl:equivalentProperty src1:Business__companyName ." + ENDL);
@@ -257,6 +258,12 @@ public class DefinitiveOwlTest extends XMLTestCase
                    + "         ] ." + ENDL);
                    //+ "      owl:equivalentClass src2:Organisation ." + ENDL);
 
+//         owl.append(":LtdCompany__name a owl:DatatypeProperty ;" + ENDL
+//                    + "     rdfs:subPropertyOf :Company__name ;" + ENDL
+//                    + "     rdfs:domain :LtdCompany ;" + ENDL
+//                    + "     rdfs:range xsd:string ;" + ENDL
+//                    + "     owl:equivalentProperty src2:Org__organisationName ." + ENDL);
+
         // Charity is a restricted subclass of src2:Organisation
         //      where src2:Organisation.organisationType.type = charity
         //      and   src2:Organsisation.profitable = false
@@ -298,7 +305,7 @@ public class DefinitiveOwlTest extends XMLTestCase
             + "            [ a owl:Restriction ;" + ENDL
             + "              owl:maxCardinality \"1\" ;" + ENDL
             + "              owl:onProperty :Business__address ] ." + ENDL
-            + ":Business__companyName a owl:DatatpyeProperty ;" + ENDL
+            + ":Business__companyName a owl:DatatypeProperty ;" + ENDL
             + "             rdfs:domain :Business ;" + ENDL
             + "             rdfs:range xsd:string ." + ENDL
             + ":Business__address a owl:ObjectProperty ;" + ENDL

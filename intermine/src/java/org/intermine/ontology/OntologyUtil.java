@@ -435,13 +435,12 @@ public class OntologyUtil
     /**
      * Prepare format of OWL properties for generation of a FlyMine model:
      * a) change names of properties to be <domain>__<property>.
-     * b) where properties are inherited from a superclass add property
-     *    specifically to subclass.  This will be ignored by model generation
-     *    but is required for merging to be sufficiently flexible.
+     * b) if multiple ranges that inherit from one another choose correct one
      * @param model the model to alter proerties in
      * @param ns the namespace within model that we are interested in
+     * @throws Exception if property has invalid range
      */
-    public static void reorganiseProperties(OntModel model, String ns) {
+    public static void reorganiseProperties(OntModel model, String ns) throws Exception {
 
         // get set of all properties, excluding those defined as owl:inverseOf
         Set props = new HashSet();
@@ -473,9 +472,11 @@ public class OntologyUtil
      * @param model parent OntModel
      * @param ns namespace to create property name in
      * @return the renamed property
+     * @throws Exception if property has invalid range
      */
     protected static OntProperty renameProperty(OntProperty prop, OntResource domain,
-                                         OntModel model, String ns) {
+                                         OntModel model, String ns) throws Exception {
+
         OntProperty newProp;
         if (isObjectProperty(prop)) {
             newProp = model.createObjectProperty(ns + generatePropertyName(prop, domain));
@@ -488,7 +489,7 @@ public class OntologyUtil
         if (prop.getInverseOf() != null) {
             newProp.setRange(prop.getInverseOf().getDomain());
         } else {
-            newProp.setRange(prop.getRange());
+            newProp.setRange(pickRange(prop));
         }
         transferEquivalenceStatements(prop, newProp, model);
         Iterator labelIter = prop.listLabels(null);
@@ -525,13 +526,13 @@ public class OntologyUtil
         }
 
         // apply property to direct subclasses
-        if (domain.canAs(OntClass.class)) {
-            Iterator subIter = ((OntClass) domain.as(OntClass.class)).listSubClasses(true);
-            while (subIter.hasNext()) {
-                newProp.addSubProperty(renameProperty(newProp, (OntResource) subIter.next(),
-                                                      model, ns));
-            }
-        }
+        //if (domain.canAs(OntClass.class)) {
+        //    Iterator subIter = ((OntClass) domain.as(OntClass.class)).listSubClasses(true);
+        //    while (subIter.hasNext()) {
+        //        newProp.addSubProperty(renameProperty(newProp, (OntResource) subIter.next(),
+        //                                              model, ns));
+        //    }
+        //}
 
         return newProp;
     }
@@ -546,6 +547,52 @@ public class OntologyUtil
         i.next();
         return i.hasNext();
     }
+
+    /**
+     * Return true if the given OntProperty has more than one defined range.
+     * @param prop the OntProperty to examine
+     * @return true if prop has more than one range
+     */
+    public static boolean hasMultipleRanges(OntProperty prop) {
+        Iterator i = prop.listRange();
+        i.next();
+        return i.hasNext();
+    }
+
+    /**
+     * If property has multiple ranges that inherit from one another return the highest
+     * in inheritance hierarchy.  If ranges do not all inherit from one another,
+     * throw an Exception.
+     * @param prop property to examine
+     * @return the chosen range
+     * @throws Exception if ranges are invalid
+     */
+    public static Resource pickRange(OntProperty prop) throws Exception {
+        if (hasMultipleRanges(prop)) {
+            OntClass cls = null;
+            ExtendedIterator i = prop.listRange();
+            while (i.hasNext()) {
+                RDFNode node = (RDFNode) i.next();
+                if (node instanceof Resource && ((Resource) node).canAs(OntClass.class)) {
+                    OntClass current = (OntClass) node.as(OntClass.class);
+                    if (cls == null) {
+                        cls = current;
+                    } else if (current.hasSubClass(cls, false)) {
+                        cls = current;
+                    } else if (!(current.equals(cls)) && !(cls.hasSubClass(current, false))) {
+                        throw new Exception("Property (" + prop.getURI()
+                                            + ") has ranges that are not compatible.");
+                    }
+                } else {
+                    throw new Exception("Property (" + prop.getURI() + ") has more than one range");
+                }
+            }
+            i.close();
+            return cls;
+        }
+        return prop.getRange();
+    }
+
 
     /**
      * Move equivalence statements from one property to another, removes statements

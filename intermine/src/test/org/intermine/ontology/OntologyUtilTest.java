@@ -614,62 +614,62 @@ public class OntologyUtilTest extends TestCase
         assertTrue(comName.getLabel(null).equals("a label"));
     }
 
+    // call that applies all properties to subclasses is no longer used
+//     public void testReorganisePropertiesSubclasses() throws Exception {
+//         String owl = "@prefix : <" + ns + "> ." + ENDL
+//             + ENDL
+//             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+//             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+//             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+//             + "@prefix null:  <http://www.flymine.org.model/null#> ." + ENDL
+//             + ENDL
+//             + ":Company a owl:Class ;" + ENDL
+//             + "         rdfs:subClassOf" + ENDL
+//             + "            [ a owl:Restriction ;" + ENDL
+//             + "              owl:maxCardinality \"1\" ;" + ENDL
+//             + "              owl:onProperty :address ] ." + ENDL
+//             + ":address a owl:ObjectProperty ;" + ENDL
+//             + "           rdfs:domain :Company ;" + ENDL
+//             + "           rdfs:range :Address ." + ENDL
+//             + ":name a owl:DatatypeProperty ;" + ENDL
+//             + "      rdfs:domain :Company ;" + ENDL
+//             + "      rdfs:range rdfs:Literal ." + ENDL
+//             + ":LtdCompany a owl:Class ;" + ENDL
+//             + "      rdfs:subClassOf :Company ." + ENDL
+//             + ":BigLtdCompany a owl:Class ;" + ENDL
+//             + "      rdfs:subClassOf :LtdCompany ." + ENDL
+//             + ":Address a owl:Class ." + ENDL;
 
-    public void testReorganisePropertiesSubclasses() throws Exception {
-        String owl = "@prefix : <" + ns + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix null:  <http://www.flymine.org.model/null#> ." + ENDL
-            + ENDL
-            + ":Company a owl:Class ;" + ENDL
-            + "         rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:maxCardinality \"1\" ;" + ENDL
-            + "              owl:onProperty :address ] ." + ENDL
-            + ":address a owl:ObjectProperty ;" + ENDL
-            + "           rdfs:domain :Company ;" + ENDL
-            + "           rdfs:range :Address ." + ENDL
-            + ":name a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain :Company ;" + ENDL
-            + "      rdfs:range rdfs:Literal ." + ENDL
-            + ":LtdCompany a owl:Class ;" + ENDL
-            + "      rdfs:subClassOf :Company ." + ENDL
-            + ":BigLtdCompany a owl:Class ;" + ENDL
-            + "      rdfs:subClassOf :LtdCompany ." + ENDL
-            + ":Address a owl:Class ." + ENDL;
+//         OntModel model = ModelFactory.createOntologyModel();
+//         model.read(new StringReader(owl), null, "N3");
 
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new StringReader(owl), null, "N3");
+//         OntologyUtil.reorganiseProperties(model, ns);
+//         //        model.write(new FileWriter(File.createTempFile("props", "")), "N3");
 
-        OntologyUtil.reorganiseProperties(model, ns);
-        //        model.write(new FileWriter(File.createTempFile("props", "")), "N3");
+//         assertNotNull(model.getOntClass(ns + "Company"));
+//         assertNotNull(model.getOntClass(ns + "LtdCompany"));
+//         assertNotNull(model.getOntClass(ns + "BigLtdCompany"));
+//         assertNull(model.getOntProperty(ns + "address"));
+//         assertNull(model.getOntProperty(ns + "name"));
+//         assertNotNull(model.getOntProperty(ns + "Company__address"));
+//         assertNotNull(model.getOntProperty(ns + "LtdCompany__address"));
+//         assertNotNull(model.getOntProperty(ns + "BigLtdCompany__address"));
+//         assertNotNull(model.getOntProperty(ns + "Company__name"));
+//         assertNotNull(model.getOntProperty(ns + "LtdCompany__name"));
+//         assertNotNull(model.getOntProperty(ns + "BigLtdCompany__name"));
 
-        assertNotNull(model.getOntClass(ns + "Company"));
-        assertNotNull(model.getOntClass(ns + "LtdCompany"));
-        assertNotNull(model.getOntClass(ns + "BigLtdCompany"));
-        assertNull(model.getOntProperty(ns + "address"));
-        assertNull(model.getOntProperty(ns + "name"));
-        assertNotNull(model.getOntProperty(ns + "Company__address"));
-        assertNotNull(model.getOntProperty(ns + "LtdCompany__address"));
-        assertNotNull(model.getOntProperty(ns + "BigLtdCompany__address"));
-        assertNotNull(model.getOntProperty(ns + "Company__name"));
-        assertNotNull(model.getOntProperty(ns + "LtdCompany__name"));
-        assertNotNull(model.getOntProperty(ns + "BigLtdCompany__name"));
+//         OntClass com = model.getOntClass(ns + "Company");
+//         OntProperty comAdd = model.getOntProperty(ns + "Company__address");
+//         assertTrue(OntologyUtil.hasMaxCardinalityOne(model, comAdd, com));
 
-        OntClass com = model.getOntClass(ns + "Company");
-        OntProperty comAdd = model.getOntProperty(ns + "Company__address");
-        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, comAdd, com));
+//         OntClass ltd = model.getOntClass(ns + "LtdCompany");
+//         OntProperty ltdAdd = model.getOntProperty(ns + "LtdCompany__address");
+//         assertTrue(OntologyUtil.hasMaxCardinalityOne(model, ltdAdd, ltd));
 
-        OntClass ltd = model.getOntClass(ns + "LtdCompany");
-        OntProperty ltdAdd = model.getOntProperty(ns + "LtdCompany__address");
-        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, ltdAdd, ltd));
-
-        OntClass big = model.getOntClass(ns + "BigLtdCompany");
-        OntProperty bigAdd = model.getOntProperty(ns + "BigLtdCompany__address");
-        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, bigAdd, big));
-    }
+//         OntClass big = model.getOntClass(ns + "BigLtdCompany");
+//         OntProperty bigAdd = model.getOntProperty(ns + "BigLtdCompany__address");
+//         assertTrue(OntologyUtil.hasMaxCardinalityOne(model, bigAdd, big));
+//     }
 
 
     public void testTranferEquivalenceStatements() throws Exception {
@@ -705,6 +705,51 @@ public class OntologyUtilTest extends TestCase
         assertTrue(hasStatement(model, newProp, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp1));
         assertTrue(hasStatement(model, newProp, OntologyUtil.OWL_NAMESPACE + "equivalentProperty", srcProp2));
     }
+
+    public void testPickRange() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":name a owl:DatatypeProperty ;" + ENDL
+            + "        rdfs:domain :Company ;" + ENDL
+            + "        rdfs:range rdfs:Literal, xsd:integer ." + ENDL
+            + ":ref1 a owl:ObjectProperty ;" + ENDL
+            + "    rdfs:domain :Company ;" + ENDL
+            + "    rdfs:range :Cls1, :Cls2, :Cls3 ." + ENDL
+            + ":ref2 a owl:ObjectProperty ;" + ENDL
+            + "    rdfs:domain :Company ;" + ENDL
+            + "    rdfs:range :Cls1, :Cls4, :Cls3 ." + ENDL
+            + ":Cls1 a owl:Class ." + ENDL
+            + ":Cls2 a owl:Class ;" + ENDL
+            + "    rdfs:subClassOf :Cls1." + ENDL
+            + ":Cls3 a owl:Class ;" + ENDL
+            + "    rdfs:subClassOf :Cls2." + ENDL
+            + ":Cls4 a owl:Class ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+
+        OntClass cls1 = model.getOntClass(ns + "Cls1");
+        assertEquals(cls1, OntologyUtil.pickRange(model.getOntProperty(ns + "ref1")));
+
+        try {
+            OntologyUtil.pickRange(model.getOntProperty(ns + "ref2"));
+            fail("Expected an Exception ");
+        } catch (Exception e) {
+        }
+
+        try {
+            OntologyUtil.pickRange(model.getOntProperty(ns + "name"));
+            fail("Expected an Exception ");
+        } catch (Exception e) {
+        }
+    }
+
 
 
     private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {

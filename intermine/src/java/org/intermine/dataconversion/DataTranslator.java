@@ -468,9 +468,12 @@ public class DataTranslator
                 || stmt.getPredicate().getLocalName().equals("sameAs")) {
                 Resource res = stmt.getResource();
                 String tgtURI = stmt.getSubject().getURI();
-                if (!subs.contains(tgtURI)) {
-                    equivMap.put(res.getURI(), stmt.getSubject().getURI());
-                }
+                // no longer cascade properties to subclasses, if a subproperty is mentioned
+                // specifically in merge spec it will be in clsPropMap and so will be accessed
+                // first, otherwise the superclass property will be found in equivMap
+                //if (!subs.contains(tgtURI)) {
+                equivMap.put(res.getURI(), stmt.getSubject().getURI());
+                //}
             }
         }
         stmtIter.close();
