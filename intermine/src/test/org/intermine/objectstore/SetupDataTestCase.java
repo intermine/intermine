@@ -78,7 +78,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static void main(String[] args) throws Exception {
-        XmlBinding binding = new XmlBinding(model);
+        XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
         setUpDataObjects();
         Collection col = data.values();
         setIds(col);
@@ -283,11 +283,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         set.add(address7);
         set.add(address8);
         set.add(types1);
-
-        System.out.println(set);
-
         map(set);
-        System.out.println(data);
     }
 
     private static void map(Collection c) throws Exception {
