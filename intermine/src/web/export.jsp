@@ -4,12 +4,13 @@
 
 <!-- export.jsp -->
 <div>
-  <%-- disabling excel export as whole file must be built in-memory --%>
-  <%--div>
-    <html:link action="/exportAction?type=excel">
-      <fmt:message key="export.excel"/>
-    </html:link--%>
-  </div--%>
+  <%-- disabling excel export as whole file must be built in-memory
+      <div>
+        <html:link action="/exportAction?type=excel">
+          <fmt:message key="export.excel"/>
+        </html:link>
+     </div>
+  --%>
   <ul>
     <li>
       <html:link action="/exportAction?type=csv">
