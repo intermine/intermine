@@ -55,8 +55,8 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
     }
 
     public void testObject() throws Exception {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectView");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
@@ -66,13 +66,13 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         actionPerform();
         
         verifyNoActionErrors();
-        assertNotNull(context.getAttribute("object"));
-        assertTrue(context.getAttribute("object") instanceof Department);
+        assertNotNull(componentContext.getAttribute("object"));
+        assertTrue(componentContext.getAttribute("object") instanceof Department);
     }
     
     public void testField() throws Exception {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectView");
         
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
@@ -83,13 +83,13 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         actionPerform();
         
         verifyNoActionErrors();
-        assertNotNull(context.getAttribute("object"));
-        assertTrue(context.getAttribute("object") instanceof Company);
+        assertNotNull(componentContext.getAttribute("object"));
+        assertTrue(componentContext.getAttribute("object") instanceof Company);
     }
     
     public void testBusinessObject() throws Exception {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectView");
 
         getRequest().setAttribute("object", new Department());
@@ -97,11 +97,11 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         actionPerform();
 
         Model model = Model.getInstanceByName("testmodel");
-        assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((Collection) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
-        assertFalse(((Collection) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
-        assertFalse(((Collection) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
-        Map primaryKeyFields = (Map) context.getAttribute("primaryKeyFields");
+        assertNotNull(componentContext.getAttribute("leafClds"));
+        assertTrue(((Collection) componentContext.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
+        assertFalse(((Collection) componentContext.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
+        assertFalse(((Collection) componentContext.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
+        Map primaryKeyFields = (Map) componentContext.getAttribute("primaryKeyFields");
         assertNotNull(primaryKeyFields);
         LinkedHashMap testFieldNames = new LinkedHashMap();
         testFieldNames.put("name","name");
@@ -109,13 +109,13 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
     }
 
     public void testNonBusinessObject() throws Exception {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectView");
 
         getRequest().setAttribute("object", "test string");
         actionPerform();
 
-        assertEquals(0, ((Collection) context.getAttribute("leafClds")).size());
+        assertEquals(0, ((Collection) componentContext.getAttribute("leafClds")).size());
     }
 }

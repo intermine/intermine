@@ -31,8 +31,8 @@ public class TreeControllerTest extends MockStrutsTestCase
     }
 
     public void testExecute() throws Exception {
-        ComponentContext context = new ComponentContext();
-        ComponentContext.setContext(context, getRequest());
+        ComponentContext componentContext = new ComponentContext();
+        ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initTree");
 
         String model = "org.intermine.model.testmodel.";
@@ -56,6 +56,6 @@ public class TreeControllerTest extends MockStrutsTestCase
         expected.add(new TreeNode(model + "Employee", "", 2, false, false, false));
 
         assertEquals(openClasses, getSession().getAttribute("openClasses"));
-        assertEquals(expected, context.getAttribute("nodes"));
+        assertEquals(expected, componentContext.getAttribute("nodes"));
     }
 }
