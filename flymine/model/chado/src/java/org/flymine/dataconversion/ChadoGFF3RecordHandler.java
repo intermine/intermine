@@ -102,21 +102,21 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             if (!feature.hasAttribute("organismDbId")) {
                 // if no FBgn found look in dbxref_2nd - does not seem to be in order but
                 // nothing else we can do
-                fbgnIter = parseFlyBaseId((List) record.getAttributes().get("dbxref_2nd"),
-                                          "FBgn").iterator();
-                while (fbgnIter.hasNext()) {
-                    String organismDbId = (String) fbgnIter.next();
-                    if (!feature.hasAttribute("organismDbId")) {
-                        feature.setAttribute("organismDbId", organismDbId);
-                    }
-                    addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
-                }
+//                 fbgnIter = parseFlyBaseId((List) record.getAttributes().get("dbxref_2nd"),
+//                                           "FBgn").iterator();
+//                 while (fbgnIter.hasNext()) {
+//                     String organismDbId = (String) fbgnIter.next();
+//                     if (!feature.hasAttribute("organismDbId")) {
+//                         feature.setAttribute("organismDbId", organismDbId);
+//                     }
+//                     addItem(createSynonym(feature, "identifier", organismDbId, "FlyBase"));
+//                 }
                 // if still no FBgn then don't create the gene!
-                if (!feature.hasAttribute("organismDbId")) {
-                    LOG.warn("FlyBase gene with no FBgn: "
-                             + feature.getAttribute("identifier").getValue());
-                    storeItems = false;
-                }
+                //if (!feature.hasAttribute("organismDbId")) {
+                LOG.warn("FlyBase gene with no FBgn: "
+                         + feature.getAttribute("identifier").getValue());
+                storeItems = false;
+                //}
             }
 
             // if no name set for gene then use CGxx (FlyBase symbol rules)
