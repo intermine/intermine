@@ -74,7 +74,6 @@ public class SummariseObjectStoreTask extends Task
             outputProperties.store(fos, "automatically generated from " + alias
                                    + " with settings from " + inputFile);
         } catch (Exception e) {
-            org.intermine.web.LogMe.log("i", e);
             throw new BuildException(e);
         }
     }
