@@ -239,9 +239,11 @@ public class ItemToObjectTranslator extends Translator
                 Attribute attr = (Attribute) i.next();
                 FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
-                    throw new MetaDataException("Attribute not found in model: "
+                    String message = "Attribute not found in model: "
                                                 + DynamicUtil.decomposeClass(obj.getClass())
-                                                + "." + attr.getName());
+                                                + "." + attr.getName();
+                    LOG.error(message);
+                    throw new MetaDataException(message);
                 }
                 Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
@@ -256,9 +258,11 @@ public class ItemToObjectTranslator extends Translator
                 if (TypeUtil.getFieldInfo(obj.getClass(), ref.getName()) != null) {
                     TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier));
                 } else {
-                    throw new MetaDataException("Reference not found in model: "
-                                                + DynamicUtil.decomposeClass(obj.getClass())
-                                                + "." + ref.getName());
+                    String message = "Reference not found in model: "
+                        + DynamicUtil.decomposeClass(obj.getClass())
+                        + "." + ref.getName();
+                    LOG.error(message);
+                    throw new MetaDataException(message);
                 }
             }
 
@@ -277,9 +281,11 @@ public class ItemToObjectTranslator extends Translator
                     TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os,
                                                                              os.getSequence()));
                 } else {
-                    throw new MetaDataException("Collection not found in model: "
-                                                + DynamicUtil.decomposeClass(obj.getClass())
-                                                + "." + refs.getName());
+                    String message = "Collection not found in model: "
+                        + DynamicUtil.decomposeClass(obj.getClass())
+                        + "." + refs.getName();
+                    LOG.error(message);
+                    throw new MetaDataException(message);
                 }
             }
         } catch (IllegalAccessException e) {
