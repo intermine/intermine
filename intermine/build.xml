@@ -407,7 +407,7 @@
   </target>
 
   <!-- load default global template queries -->
-  <target name="load-default-templates" depends="compile-main">
+  <target name="load-default-templates" depends="compile-main, compile-webapp">
     <!-- insert default template queries. this will also create the superuser account. -->
     <taskdef name="insert-default-templates" classname="org.intermine.web.task.LoadDefaultTemplatesTask">
       <classpath refid="test.class.path"/>
@@ -602,7 +602,7 @@
   </target>
 
   <target name="test-webapp"
-          depends="build-db-userprofile, build-testable-webapp, compile-webapp-tests"
+          depends="compile-webapp, build-db-userprofile, build-testable-webapp, compile-webapp-tests"
           description="perform JUnit tests on web application" >
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" reloading="false">
       <classpath refid="webapptest.class.path"/>
