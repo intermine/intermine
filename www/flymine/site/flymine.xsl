@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 
 <xsl:stylesheet
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-xmlns="http://www.w3.org/TR/REC-html40"
+xmlns="http://www.w3.org/1999/xhtml"
 version="1.0">
 
-<xsl:output method="html"/>
+<xsl:output method="xml" encoding="iso-8859-1" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd"/>
 <xsl:param name="basedir" />
 
 <xsl:template match="/">
@@ -19,7 +19,7 @@ version="1.0">
 </link>
 <meta name="keywords" content="microarray, bioinformatics, drosophila, genomics" />
 <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
 <body>
 
@@ -33,7 +33,7 @@ version="1.0">
     </tr>
 
     <tr>
-        <td class="sidebar" height="10%" width="15%" align="left" valign="top" vspace="0" hspace="0">
+        <td class="sidebar" height="10%" width="15%" align="left" valign="top">
             <xsl:apply-templates select="document('sidebar.xml')/*" />
         </td>
         <td class="main" align="left" valign="top" rowspan="2">
@@ -45,29 +45,16 @@ version="1.0">
         </td>
     </tr>
 
-    <tr vspace="0" hspace="0">
-        <td class="footer" align="center" colspan="2" border="0" hspace="0" vspace="0">
+    <tr>
+        <td class="footer" align="center" colspan="2">
 	    <table class="footer">
                 <tr>
                     <td align="left" width="10%">
                         <table class="footer">
                             <tr>
-                                <td>
+                                <td align="center">
                                     <a href="http://www.wellcome.ac.uk">
-                                        <img>
-                                            <xsl:attribute name="src">
-                                                <xsl:value-of select="concat($basedir, '/wellcome.gif')"/>
-                                            </xsl:attribute>
-                                            <xsl:attribute name="align">
-                                                <xsl:value-of select="center"/>
-                                            </xsl:attribute>
-                                            <xsl:attribute name="border">
-                                                <xsl:value-of select="0"/>
-                                            </xsl:attribute>
-                                            <xsl:attribute name="hspace">
-                                                <xsl:value-of select="10"/>
-                                            </xsl:attribute>
-                                        </img>
+                                        <img src="{concat($basedir, '/wellcome.gif')}" border="0" hspace="10" alt="Wellcome Trust Logo"/>
                                     </a>
                                 </td>
                                 <td>
@@ -181,9 +168,11 @@ version="1.0">
     </xsl:otherwise>
 </xsl:choose>
 </xsl:attribute>
-<xsl:attribute name="align">
-    <xsl:value-of select="@align"/>
-</xsl:attribute>
+<xsl:if test="string-length(@align)!=0">
+    <xsl:attribute name="align">
+        <xsl:value-of select="@align"/>
+    </xsl:attribute>
+</xsl:if>
 <xsl:attribute name="border">0</xsl:attribute>
 <xsl:apply-templates/>
 </img>
@@ -244,7 +233,7 @@ version="1.0">
 </xsl:template>
 
 <xsl:template match="menu/section/heading">
-<div><font class="menu-heading"><xsl:apply-templates/></font></div>
+<font class="menu-heading"><xsl:apply-templates/></font><br />
 </xsl:template>
 
 <xsl:template match="menu/section/item">
