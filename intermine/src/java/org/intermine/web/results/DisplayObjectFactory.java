@@ -30,7 +30,7 @@ public class DisplayObjectFactory extends CacheMap
      * Create a new DisplayObjectCache for the given session.
      * @param session the HTTP session
      */
-    public DisplayObjectCache(HttpSession session) {
+    public DisplayObjectFactory(HttpSession session) {
         this.session = session;
     }
     
