@@ -6,11 +6,6 @@
 
 <web-app>
   <display-name>Apache-Axis</display-name>
-
-  <listener>
-    <listener-class>org.intermine.objectstore.webservice.ContextListener</listener-class>
-  </listener>
-
   <servlet>
     <servlet-name>AxisServlet</servlet-name>
     <display-name>Apache-Axis Servlet</display-name>
