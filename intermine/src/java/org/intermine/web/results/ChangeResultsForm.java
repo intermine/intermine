@@ -25,6 +25,9 @@ public class ChangeResultsForm extends ActionForm
 
     protected String pageSize = "10";
     protected String[] selectedObjects = {};
+    protected String bagName;
+    protected String newBagName;
+
 
     /**
      * Set the page size
@@ -61,6 +64,42 @@ public class ChangeResultsForm extends ActionForm
      */
     public String[] getSelectedObjects() {
         return selectedObjects;
+    }
+
+    /**
+     * Set the bag name (existing bags)
+     *
+     * @param bagName the bag name to save to
+     */
+    public void setBagName(String bagName) {
+        this.bagName = bagName;
+    }
+
+    /**
+     * Get the bag name (existing bags)
+     *
+     * @return the bag name
+     */
+    public String getBagName() {
+        return bagName;
+    }
+
+    /**
+     * Set the bag name (new bag)
+     *
+     * @param bagName the bag name to save to
+     */
+    public void setNewBagName(String bagName) {
+        this.newBagName = bagName;
+    }
+
+    /**
+     * Get the bag name (new bag)
+     *
+     * @return the bag name
+     */
+    public String getNewBagName() {
+        return newBagName;
     }
 
     /**
