@@ -1,21 +1,9 @@
 package org.flymine.objectstore.ojb;
 
-import junit.framework.TestCase;
-
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.math.BigDecimal;
 
-import org.apache.ojb.broker.metadata.DescriptorRepository;
-
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
-import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreTestCase;
 import org.flymine.objectstore.proxy.LazyReference;
@@ -23,13 +11,9 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.sql.query.ExplainResult;
 
 import org.flymine.model.testmodel.*;
 
@@ -44,17 +28,17 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         os = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBrokerFlyMineImpl pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         db = pb.getDatabase();
-        DescriptorRepository dr = pb.getDescriptorRepository();
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         storeData();
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
     }
-
+    
     public void tearDown() throws Exception {
         removeDataFromStore();
     }
 
+    // select manager with name=EmployeeB1 (actually a CEO)
     public void testCEOWhenSearchingForManager() throws Exception {
         QueryClass c1 = new QueryClass(Manager.class);
         Query q1 = new Query();
@@ -64,7 +48,7 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         QueryValue v1 = new QueryValue("EmployeeB1");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
         q1.setConstraint(sc1);
-        List l1 = os.execute(q1, 0, 10);
+        List l1 = os.execute(q1);
         //System.out.println(l1.toString());
         //System.out.println(l1.get(0).getClass());
         //System.out.println(((ResultsRow) l1.get(0)).get(0).getClass());
@@ -99,7 +83,6 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
     }
 
-
     public void testLazyCollectionMtoN() throws Exception {
         // query for company and check contractors
         QueryClass c1 = new QueryClass(Company.class);
@@ -128,7 +111,7 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         assertEquals(companies, expected2);
     }
 
-
+    // select department from department where department.name="DepartmentA1"
     public void testLazyReference() throws Exception {
         QueryClass c1 = new QueryClass(Department.class);
         Query q1 = new Query();
@@ -142,11 +125,10 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         ResultsRow rr = (ResultsRow) r.get(0);
         Department d = (Department) rr.get(0);
         Company c = d.getCompany();
-        assertTrue(c instanceof org.flymine.objectstore.proxy.LazyReference);
+        assertTrue(c instanceof LazyReference);
         assertTrue(c.equals(data.get("CompanyA")));
         assertTrue(data.get("CompanyA").equals(c));
     }
-
 
     public void testLazyCollectionRef() throws Exception {
         QueryClass c1 = new QueryClass(Department.class);
@@ -172,12 +154,11 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         assertEquals(expected, e);
         Employee e1 = (Employee) e.get(0);
         Address a = e1.getAddress();
-        assertTrue(a instanceof org.flymine.objectstore.proxy.LazyReference);
+        assertTrue(a instanceof LazyReference);
         assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
     }
 
     public void testLazyReferenceRef() throws Exception {
-
         QueryClass c1 = new QueryClass(Department.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -220,7 +201,6 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         assertEquals(count, 2);
     }
 
-
     // distinct doesn't actually do anything to group by reuslt
     public void testCountGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("SimpleGroupBy");
@@ -228,5 +208,4 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
         int count = os.count(q);
         assertEquals(count, 2);
     }
-
 }
