@@ -724,7 +724,7 @@
     </jar>
   </target>
 
-  <target name="jar" depends="jar-intermine"
+  <target name="jar" depends="jar-intermine, jar-intermine-webapp"
           description="Makes a JAR file of intermine and essential lib jars">
     <mkdir dir="${build.tmp}/jars"/>
 
@@ -738,6 +738,7 @@
 
     <jar destfile="${dist}/intermine-all.jar" manifest="${build.tmp}/MANIFEST.MF">
       <zipfileset src="${dist}/intermine.jar"/>
+      <zipfileset src="${dist}/intermine-webapp.jar"/>
       <fileset dir="${build.tmp}/jars"/>
     </jar>
     
