@@ -6,7 +6,7 @@
   </artheader>
 
  <sect1>
-     <para>The tutorial demonstrates how to create a database of your own using the flymine software, and assumes that you have created the tutorial model.</para>
+     <para>The tutorial demonstrates how to create a database of your own using the intermine software, and assumes that you have created the tutorial model.</para>
 
 
 <para>
@@ -39,15 +39,15 @@
 	</orderedlist>
 </para>
 <para>
-<listitem>The data will need to be extracted from the file it is currently stored in and put into a format that the Flymine software can use - this is either XML or Java objects.  It is recommended that you write a program using java to perform this task. In this program you should add in the code fom the example included here: <command>src/java/org/flymine/tutorial/SimpleDataLoader</command>. The example demonstrates how to read and write to the database using the objectstore writer.</listitem>
+<listitem>The data will need to be extracted from the file it is currently stored in and put into a format that the InterMine software can use - this is either XML or Java objects.  It is recommended that you write a program using java to perform this task. In this program you should add in the code fom the example included here: <command>src/java/org/intermine/tutorial/SimpleDataLoader</command>. The example demonstrates how to read and write to the database using the objectstore writer.</listitem>
 </para>
 <para>
-<listitem>Personalise the settings in the Flymine program files to accomodate your data:</listitem>
+<listitem>Personalise the settings in the InterMine program files to accomodate your data:</listitem>
 
 	 <orderedlist>
-	 <listitem>In the tutorial directory, modify the <command>flymine.properties</command> configuration file using any simple text editor you are comfortable with (e.g. emacs or notepad). The modifications should contain your database username (and password if necessary), and the name of your database should replace the tutorial one on the following line <command>db.tutorial.datasource.databaseName=tutorial</command> to become <command>db.tutorial.datasource.databaseName=yourdb</command>.</listitem>
+	 <listitem>In the tutorial directory, modify the <command>intermine.properties</command> configuration file using any simple text editor you are comfortable with (e.g. emacs or notepad). The modifications should contain your database username (and password if necessary), and the name of your database should replace the tutorial one on the following line <command>db.tutorial.datasource.databaseName=tutorial</command> to become <command>db.tutorial.datasource.databaseName=yourdb</command>.</listitem>
 
-	 <listitem>Also in the <command>flymine.properties</command> file the line <command>os.tutorial.model=<italic>tutorial</italic></command> should be changed so that it equals the name of your ArgoUML model.</listitem>
+	 <listitem>Also in the <command>intermine.properties</command> file the line <command>os.tutorial.model=<italic>tutorial</italic></command> should be changed so that it equals the name of your ArgoUML model.</listitem>
 
 	 <listitem>In <command>build.xml</command> you need to follow the instructions on how to build a model from a zargo file in the code comments and using the comment marks comment out the <command>build-from-xml-model</command> area of code.</listitem>
 
