@@ -81,7 +81,6 @@ public class DataTranslator
         this.restrictionMap = OntologyUtil.getRestrictionSubclassMap(model, subMap);
         buildPropertiesMap(model);
         buildEquivalenceMap(model);  // use local version instead of OntologyUtil
-        model.close();
     }
 
     /**
@@ -115,7 +114,6 @@ public class DataTranslator
      * @throws FlyMineException if no target class/property name can be found
      */
     protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
-
         // see if there are any SubclassRestriction template for this class
         String tgtClsName = null;
         Set templates = (Set) templateMap.get(srcItem.getClassName());
@@ -140,7 +138,6 @@ public class DataTranslator
             return null;
         }
 
-        LOG.error("translating: " + srcItem.getIdentifier() + ": " + srcItem.getClassName() + " -> " + tgtClsName);
         // if class is not in target namespace then don't bother translating it
         if (!OntologyUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
             return null;
@@ -275,7 +272,6 @@ public class DataTranslator
      * @param model the OntModel
      */
     protected void buildPropertiesMap(OntModel model) {
-        LOG.error("started buildPropertiesMap()");
         clsPropMap = new HashMap();
         impMap = new HashMap();
 
@@ -314,7 +310,6 @@ public class DataTranslator
             }
         }
         clsIter.close();
-        LOG.error("finished buildPropertiesMap()");
     }
 
 
@@ -324,7 +319,6 @@ public class DataTranslator
      * @param model the OntModel
      */
     protected void buildEquivalenceMap(OntModel model) {
-        LOG.error("Started buildEquivalenceMap()");
         // build a set of all restricted subclass URIs and their properties
         Set subs = new HashSet(restrictionMap.values());
         Iterator i = clsPropMap.values().iterator();
@@ -349,7 +343,6 @@ public class DataTranslator
             }
         }
         stmtIter.close();
-        LOG.error("Finished buildEquivalenceMap()");
     }
 
     private void buildImplementationsMap(OntModel model) {
@@ -389,14 +382,10 @@ public class DataTranslator
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
         ItemWriter tgtItemWriter = new BufferedItemWriter(new ObjectStoreItemWriter(oswTgt));
 
-        LOG.error("reading in model");
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        LOG.error("constructing DataTranslator");
         DataTranslator dt = new DataTranslator(srcItemReader, model, namespace);
         model = null;
-        LOG.error("Calling DataTranslator.translate()");
         dt.translate(tgtItemWriter);
     }
-
 }
