@@ -209,8 +209,8 @@ written to stout or sterr.</listitem>
 <listitem>Make use of the different logging levels available.</listitem>
 
 <listitem>Log messages must be descriptive. For example,
-<code>log.info("Exon count: "+exonCount)</code> and not
-<code>log.info(exonCount)</code>.</listitem>
+<synopsis>log.info("Exon count: "+exonCount)</synopsis> and not
+<synopsis>log.info(exonCount)</synopsis>.</listitem>
 
 </itemizedlist>
 
