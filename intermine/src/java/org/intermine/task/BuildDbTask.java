@@ -43,7 +43,8 @@ import org.apache.log4j.Logger;
 public class BuildDbTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(BuildDbTask.class);
-    protected static final String SEQUENCE_NAME = "serial";
+    protected static final String SERIAL_SEQUENCE_NAME = "serial";
+    protected static final String OS_SEQUENCE_NAME = "objectstore_unique_integer";
     protected File tempDir;
     protected Database database;
     protected String schemaFile;
@@ -173,7 +174,8 @@ public class BuildDbTask extends Task
         try {
             c = database.getConnection();
             c.setAutoCommit(true);
-            c.createStatement().execute("create sequence " + SEQUENCE_NAME);
+            c.createStatement().execute("CREATE SEQUENCE " + SERIAL_SEQUENCE_NAME);
+            c.createStatement().execute("CREATE SEQUENCE " + OS_SEQUENCE_NAME);
         } catch (SQLException e) {
         } finally {
             if (c != null) {
