@@ -115,7 +115,7 @@ public class CreateReferencesTest extends TestCase {
         cr.insertGeneAnnotationReferences();
         compareInsertGeneAnnotationReferencesToExpected();
     }
-    
+
     public void testGeneGOTermsCollection() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
         cr.insertGeneAnnotationReferences();
@@ -163,7 +163,8 @@ public class CreateReferencesTest extends TestCase {
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
         cr.insertReferences();
-        
+        cr.populateOrthologuesCollection();
+
         compareResultsToExpected();
     }
 
@@ -355,7 +356,7 @@ public class CreateReferencesTest extends TestCase {
         Protein expectedProtein =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
-            
+
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
@@ -452,7 +453,7 @@ public class CreateReferencesTest extends TestCase {
             (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
         expectedPhenotypeAnnotation.setId(storedPhenotypeAnnotation.getId());
 
-        Protein expectedProtein = 
+        Protein expectedProtein =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
 
@@ -520,7 +521,7 @@ public class CreateReferencesTest extends TestCase {
 
         Gene resGene = (Gene) row.get(0);
         Item resGeneItem = toItem(resGene);
-        
+
         List resGOTerms = resGene.getGOTerms();
 
         assertEquals(1, resGOTerms.size());
@@ -541,15 +542,15 @@ public class CreateReferencesTest extends TestCase {
         Annotation expectedGOTermAnnotation =
             (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
         expectedGOTermAnnotation.setId(storedGOTermAnnotation.getId());
-        
+
         Annotation expectedPhenotypeAnnotation =
             (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
         expectedPhenotypeAnnotation.setId(storedPhenotypeAnnotation.getId());
-        
+
         Phenotype expectedPhenotype =
             (Phenotype) DynamicUtil.createObject(Collections.singleton(Phenotype.class));
         expectedPhenotype.setId(storedPhenotype.getId());
-        
+
         GOTerm expectedGOTerm =
             (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
         expectedGOTerm.setId(storedGOTerm.getId());
@@ -660,7 +661,7 @@ public class CreateReferencesTest extends TestCase {
         SimpleConstraint sc2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                                     new QueryValue("gene0"));
         q.setConstraint(sc2);
-        
+
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -741,7 +742,7 @@ public class CreateReferencesTest extends TestCase {
             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
         expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
 
-        Protein expectedProtein = 
+        Protein expectedProtein =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
 
@@ -749,7 +750,7 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
         expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
-        expectedGene.setSubjects(Arrays.asList(new Object[] {expectedOrthologue1, 
+        expectedGene.setSubjects(Arrays.asList(new Object[] {expectedOrthologue1,
                                                              expectedTranscriptRelation}));
         expectedGene.setTranscripts(Arrays.asList(new Object[] {expectedTranscript}));
         expectedGene.setAnnotations(Arrays.asList(new Object[] {expectedPhenotypeAnnotation,
@@ -878,7 +879,7 @@ public class CreateReferencesTest extends TestCase {
 
         storedPhenotypeEvidence =
             (Evidence) DynamicUtil.createObject(Collections.singleton(Evidence.class));
-        
+
         storedPhenotypeAnnotation =
             (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
         storedPhenotypeAnnotation.setEvidence(Arrays.asList(new Object[]{storedPhenotypeEvidence}));
@@ -917,7 +918,7 @@ public class CreateReferencesTest extends TestCase {
         storedTranscript1.setProtein(storedProtein1);
         storedTranscript2.setProtein(storedProtein2);
         storedTranscript3.setProtein(storedProtein3);
-        
+
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     storedGene, storedGene1, storedGene2,
                                                     storedTranscriptRelation,
@@ -939,7 +940,7 @@ public class CreateReferencesTest extends TestCase {
             InterMineObject object = (InterMineObject) i.next();
             osw.store(object);
         }
-        
+
         osw.commitTransaction();
         LOG.info("committed transaction in createData()");
     }
