@@ -49,7 +49,7 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
      * Set up all the results expected for a given subset of queries
      */
     public static void setUpResults() {
-        results.put("SelectSimpleObject", new FqlQuery("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", null));
+        results.put("SelectSimpleObject", new FqlQuery("SELECT Company FROM org.flymine.model.testmodel.Company AS Company", null));
         results.put("SubQuery", new FqlQuery("SELECT a1_.a1_.name AS a2_, a1_.a2_ AS a3_ FROM (SELECT a1_, 5 AS a2_ FROM org.flymine.model.testmodel.Company AS a1_) AS a1_", null));
         results.put("WhereSimpleEquals", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber = 1234", null));
         results.put("WhereSimpleNotEquals", new FqlQuery("SELECT a1_.name AS a2_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber != 1234", null));

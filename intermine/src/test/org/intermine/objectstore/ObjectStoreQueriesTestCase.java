@@ -129,12 +129,13 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
-      select company
+      select Company
       from Company
     */
     public static Query selectSimpleObject() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
+        q1.alias(c1, "Company");
         q1.addFrom(c1);
         q1.addToSelect(c1);
         return q1;

@@ -200,7 +200,9 @@ public class FlyMineSqlSelectStatement implements SqlStatement
                 retval += ", ";
             }
             needComma = true;
-            retval += alias + "." + fieldname + (aliases ? " AS " + alias + fieldname : "");
+            retval += alias + "." + fieldname + (aliases ? " AS "
+                    + (alias.equals(alias.toLowerCase()) ? alias + fieldname : "\"" + alias
+                        + fieldname + "\"") : "");
         }
         return retval;
     }
