@@ -470,6 +470,15 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Overrides Object.toString().
+     *
+     * @return a String representation of this Query
+     */
+    public String toString() {
+        return getSQLString();
+    }
+
+    /**
      * Processes a SQL_STATEMENT AST node produced by antlr.
      *
      * @param ast an AST node to process
