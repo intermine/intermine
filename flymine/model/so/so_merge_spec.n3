@@ -16,8 +16,9 @@ null:Transcript__genes a owl:ObjectProperty;
     owl:equivalentProperty so:Transcript__genes.
 
 :Transcript__gene a owl:ObjectProperty;
-    rdfs:domain :Transcript;
-    rdfs:range :Gene.
+    owl:inverseOf :Gene__transcripts.
+
+:Gene__transcripts a owl:ObjectProperty.
 
 :Transcript a owl:Class;
     rdfs:subClassOf 
