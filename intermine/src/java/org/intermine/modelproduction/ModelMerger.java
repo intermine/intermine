@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -26,7 +25,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 
 /**
- * Merge 'layers' or additions into a source model to produce a new model.
+ * Merge model additions into a source model to produce a new larger model.
  *
  * @author Thomas Riley
  */
@@ -111,7 +110,8 @@ public class ModelMerger
      * </pre>
      *
      * @param model the resultant model to check
-     * @returns fixed model (if no change occured, returns same model)
+     * @return fixed model (if no change occured, returns same model)
+     * @throws ModelMergerException if an error occurs during model merging
      */
     protected static Model checkInheritance(Model model) throws ModelMergerException {
         
@@ -199,7 +199,8 @@ public class ModelMerger
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
                 }
-                if (!merg.getReverseReferenceFieldName().equals(orig.getReverseReferenceFieldName())) {
+                if (!merg.getReverseReferenceFieldName()
+                                .equals(orig.getReverseReferenceFieldName())) {
                     String fldName = original.getName() + "." + orig.getName();
                     throw new ModelMergerException("mismatch between reverse reference field name: "
                             + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
@@ -243,7 +244,8 @@ public class ModelMerger
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
                 }
-                if (!merg.getReverseReferenceFieldName().equals(orig.getReverseReferenceFieldName())) {
+                if (!merg.getReverseReferenceFieldName()
+                                  .equals(orig.getReverseReferenceFieldName())) {
                     String fldName = original.getName() + "." + orig.getName();
                     throw new ModelMergerException("mismatch between reverse reference field name: "
                             + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
@@ -258,6 +260,12 @@ public class ModelMerger
         return newSet;
     }
     
+    /**
+     * Clone a set of ReferenceDescriptors.
+     *
+     * @param refs a set of ReferenceDescriptors
+     * @return cloned set of ReferenceDescriptors
+     */
     protected static Set cloneReferenceDescriptors(Set refs) {
         Set copy = new HashSet();
         for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
@@ -268,6 +276,12 @@ public class ModelMerger
         return copy;
     }
     
+    /**
+     * Clone a set of CollectionDescriptors.
+     *
+     * @param refs a set of CollectionDescriptors
+     * @return cloned set of CollectionDescriptors
+     */
     protected static Set cloneCollectionDescriptors(Set refs) {
         Set copy = new HashSet();
         for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
@@ -278,6 +292,12 @@ public class ModelMerger
         return copy;
     }
     
+    /**
+     * Clone a set of AttributeDescriptors.
+     *
+     * @param refs a set of AttributeDescriptors
+     * @return cloned set of AttributeDescriptors
+     */
     protected static Set cloneAttributeDescriptors(Set refs) {
         Set copy = new HashSet();
         for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
@@ -290,7 +310,9 @@ public class ModelMerger
     /**
      * Construct a ClassDescriptor that takes on all the properties of <code>cld</code>
      * without attaching to a particular Model.
+     *
      * @param cld the ClassDescriptor to clone
+     * @return cloned ClassDescriptor
      */
     protected static ClassDescriptor cloneClassDescriptor(ClassDescriptor cld) {
         return new ClassDescriptor(cld.getName(), cld.getSupers(), cld.isInterface(),
