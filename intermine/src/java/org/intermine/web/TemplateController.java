@@ -40,7 +40,6 @@ public class TemplateController extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        org.intermine.Logger.log("controller");
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
