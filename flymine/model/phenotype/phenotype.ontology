@@ -1,11 +1,50 @@
 ! produced from FlyBase controlled vocabulary (http://flybase.bio.indiana.edu/docs/lk/controlled-vocabularies.txt) on 18/02/04
 $phenotype ; FlyMine:phenotype
+ %growth defective ; FlyMine:phenotype:1
+  %slow growth ; FlyMine:phenotype:2 %slow ; FBbt:0010183
+   %slow post embryonic growth ; FlyMine:phenotype:15  %post embryonic ; FlyMine:phenotypeQualifier:2
+ %arrest ; FlyMine:phenotype:3
+  %larval arrest ; FlyMine:phenotype:19 %larval ; FBbt:0010166
+  %one cell arrest ; FlyMine:phenotype:26 %one cell ; FlyMine:phenotypeQualifier:3
+ %abnormal spindle ; FlyMine:phenotype:4
+  %abnormal spindle positioning ; FlyMine:phenotype:5
+  %abnormal spindle embryonic ; FlyMine:phenotype:36 %embryonic ; FBbt:0010158
+  %abnormal spindle orientation ; FlyMine:phenotype:37
+   %abnormal embryonic spindle positioning and orientation ; FlyMine:phenotype:38 %abnormal spindle positioning ; FlyMine:phenotype:5 %embryonic ; FBbt:0010158
+ %blistering of cuticle ; FlyMine:phenotype:7
+ %body morphological defects ; FlyMine:phenotype:8
+ %clear ; FlyMine:phenotype:9
+ %cytoplasmic appearance alteration in early embryo ; FlyMine:phenotype:10 %early embryonic ; FlyMine:phenotypeQualifier:7
+ %dumpy ; FlyMine:phenotype:11
+ %egg laying defective ; FlyMine:phenotype:12
+ %high incidence of males ; FlyMine:phenotype:16
+ %late embryo defect ; FlyMine:phenotype:17 %late embryonic ; FlyMine:phenotypeQualifier:5
+ %long body ; FlyMine:phenotype:18
+ %nuclear position alteration in early embryo ; FlyMine:phenotype:21 %early embryonic ; FlyMine:phenotypeQualifier:7
+ %moult defects ; FlyMine:phenotype:22
+ %multiple nuclei in early embryo ; FlyMine:phenotype:23 %early embryonic ; FlyMine:phenotypeQualifier:7
+ %multi vulva ; FlyMine:phenotype:24
+ %nuclear morphology alteration in early embryo ; FlyMine:phenotype:25 %early embryonic ; FlyMine:phenotypeQualifier:7
+ %patchy appearance ; FlyMine:phenotype:27
+ %pronuclear envelope alteration ; FlyMine:phenotype:28
+ %pronuclear migration alteration in early embryo ; FlyMine:phenotype:29 %early embryonic ; FlyMine:phenotypeQualifier:7
+ %protruding vulva ; FlyMine:phenotype:30
+ %roller ; FlyMine:phenotype:31
+ %ruptured ; FlyMine:phenotype:32
+ %sick ; FlyMine:phenotype:33
+ %sluggish movement ; FlyMine:phenotype:35
+ %unclassified ; FlyMine:phenotype:39
+ %vulvaless ; FlyMine:phenotype:40
  %wild-type ; FBbt:0010186
  %viable ; FBbt:0010187
   %semi-viable ; FBbt:0010188
+   %embryonic terminal arrest viable ; FlyMine:phenotype:14 %embryonic ; FBbt:0010158
  %lethal ; FBbt:0010189
   %semi-lethal ; FBbt:0010190
   %cell lethal ; FBbt:0010191
+  %adult lethal ; FlyMine:phenotype:6 %adult ; FBbt:0010170
+  %embryonic lethal ; FlyMine:phenotype:13 %embryonic ; FBbt:0010158
+  %larval lethal ; FlyMine:phenotype:20 %larval ; FBbt:0010166
  %visible ; FBbt:0010192
   %eye colour defective ; FBbt:0010193
   %body colour defective ; FBbt:0010194
@@ -98,9 +137,16 @@ $phenotype ; FlyMine:phenotype
  %immune response defective ; FBbt:0010281
  %tissue polarity ; FBbt:0010282
  %developmental rate defective ; FBbt:0010283
+  %slow embryonic development ; FlyMine:phenotype:41 %embryonic ; FBbt:0010158
  %wound healing defective ; FBbt:0010284
 
-$phenotype qualifier ; FlyMine:phenotypeQualifier
+$phenotype qualifier ; FlyMine:phenotypeQualifier:1
+ %post embryonic ; FlyMine:phenotypeQualifier:2
+ %one cell ; FlyMine:phenotypeQualifier:3
+ %late ; FlyMine:phenotypeQualifier:4
+  %late embryonic ; FlyMine:phenotypeQualifier:5 %embryonic ; FBbt:0010158
+ %early ; FlyMine:phenotypeQualifier:6
+  %early embryonic ; FlyMine:phenotypeQualifier:7 %embryonic ; FBbt:0010158
  %recessive ; FBbt:0010141
  %dominant ; FBbt:0010142
  %codominant ; FBbt:0010143
