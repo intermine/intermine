@@ -45,6 +45,10 @@
     <put name="body" value="templates.tile"/>
     <put name="pageName" value="templates"/>
   </definition>
+  <definition name="templateBuilder.page" extends="layout.template">
+    <put name="body" value="templateBuilder.tile"/>
+    <put name="pageName" value="templateBuilder"/>
+  </definition>
   <definition name="examples.page" extends="layout.template">
     <put name="body" value="examples.jsp"/>
     <put name="pageName" value="examples"/>
@@ -99,7 +103,10 @@
   </definition>
   <!--tiles-->
   <definition name="classDescription.tile" path="/classDescription.jsp" controllerUrl="/initClassDescription.do"/>
-  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
+  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do">
+    <put name="usertemplates" value="templateList.jsp"/>
+    <put name="globaltemplates" value="templateList.jsp"/>
+  </definition>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
@@ -108,6 +115,7 @@
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
   <definition name="view.tile" path="/view.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
+    <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition> 
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
   <definition name="history.tile" path="/history.jsp">
@@ -122,4 +130,7 @@
   <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="templates.tile" path="/templates.jsp" controllerUrl="/initTemplates.do"/>
+  <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
+    <put name="preview" value="template.tile"/>
+  </definition>
 </tiles-definitions>
