@@ -54,10 +54,10 @@ table.results td td {
 }
 
 th {
-  background: #ccaaff;
+  background: #caf;
 }
 tr.even { 
-  background: #ccaaff;
+  background: #edf;
 }
 .type {
   color: gray;
