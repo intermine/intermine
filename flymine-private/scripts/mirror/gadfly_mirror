@@ -2,13 +2,21 @@
 
 FILE=gadfly.tar.gz
 DBHOST=localhost
-DBUSER=gadfly_dba
-DBPASSWD=123qwe
+DBUSER=flymine
+DBPASSWD=getmydata
+
+TMPDIR=/tmp/gadfly-$$
+
+dir=`pwd`
+
+echo "--- Creating a directory for download (${TMPDIR})..."
+
+mkdir $TMPDIR
+cd $TMPDIR
 
 echo --- Downloading the latest version...
-#rm -f $FILE
-rm -rf gadfly/
-#wget http://www.fruitfly.org/~cjm/mysql/$FILE
+
+wget http://www.fruitfly.org/~cjm/mysql/$FILE
 
 echo --- Checking...
 if ! gunzip -t $FILE
@@ -38,7 +46,9 @@ cd gadfly
 cat *.sql | mysql -h$DBHOST -u$DBUSER -p$DBPASSWD $DBNAME
 mysqlimport --local -h$DBHOST -u$DBUSER -p$DBPASSWD $DBNAME *.txt
 
-rm -r gadfly/
+
+cd $dir
+rm -r $TMPDIR
 
 echo --- Completed.
 
