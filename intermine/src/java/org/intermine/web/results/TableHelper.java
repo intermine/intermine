@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 
 /**
@@ -40,7 +41,13 @@ public abstract class TableHelper
         PagedResults pr = new PagedResults(os.execute(query), view);
 
         // call this so that if an exception occurs we notice now rather than in the JSP code
-        pr.getResults().size();
+        try {
+            pr.getResults().size();
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ObjectStoreQueryDurationException) {
+                throw (ObjectStoreQueryDurationException) e.getCause();
+            }
+        }
 
         return pr;
     }

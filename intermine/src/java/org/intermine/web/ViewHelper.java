@@ -24,6 +24,7 @@ import org.apache.struts.Globals;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.results.TableHelper;
@@ -78,7 +79,10 @@ public abstract class ViewHelper
                 errors = new ActionErrors();
                 request.setAttribute(Globals.ERROR_KEY, errors);
             }
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.query.objectstoreerror"));
+            String key = (e instanceof ObjectStoreQueryDurationException)
+                ? "errors.query.estimatetimetoolong"
+                : "errors.query.objectstoreerror";
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
         }
         return pr;
     }
