@@ -107,8 +107,6 @@ public class FlymineSqlSelectStatement implements SqlStatement
 {
     private Query query;
     private DescriptorRepository dr;
-    private int start;
-    private int limit;
     private boolean isSubQuery;
     private boolean isAConstraint;
 
@@ -124,24 +122,6 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * a column name of "CLASS".
      */
     public static final String OJB_CONCRETE_CLASS_COLUMN = "CLASS";
-    
-    /**
-     * Constructor requires a FlyMine Query and associated array of ClassDescriptors.
-     * Should be a ClassDescriptor for each class in FROM clause of query.
-     *
-     * @param query a flymine query
-     * @param dr DescriptorRepository for the database
-     * @param start the number of rows to skip at the beginning
-     * @param limit the maximum number of rows to return
-     */
-    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, int start, int limit) {
-        this.query = query;
-        this.dr = dr;
-        this.start = start;
-        this.limit = limit;
-        this.isSubQuery = false;
-        this.isAConstraint = false;
-    }
 
     /**
      * Constructor requires a FlyMine Query and associated array of ClassDescriptors.
@@ -151,7 +131,10 @@ public class FlymineSqlSelectStatement implements SqlStatement
      * @param dr DescriptorRepository for the database
      */
     public FlymineSqlSelectStatement(Query query, DescriptorRepository dr) {
-        this(query, dr, false);
+        this.query = query;
+        this.dr = dr;
+        this.isSubQuery = false;
+        this.isAConstraint = false;
     }
 
     /**
@@ -165,8 +148,6 @@ public class FlymineSqlSelectStatement implements SqlStatement
     public FlymineSqlSelectStatement(Query query, DescriptorRepository dr, boolean isAConstraint) {
         this.query = query;
         this.dr = dr;
-        this.start = 0;
-        this.limit = 0;
         this.isSubQuery = true;
         this.isAConstraint = isAConstraint;
     }
@@ -849,7 +830,7 @@ public class FlymineSqlSelectStatement implements SqlStatement
         buildWhereClause();
         return "SELECT " + (query.isDistinct() ? "DISTINCT " : "") + buildSelectComponent()
             + " FROM " + fromText + whereText + buildGroupBy()
-            + (isSubQuery ? "" : buildOrderBy() + " LIMIT " + limit + " OFFSET " + start);
+            + (isSubQuery ? "" : buildOrderBy());
     }
 
 }
