@@ -84,6 +84,7 @@ public class TemplateSearchAction extends InterMineAction
             }
             
             request.setAttribute("results", hitMap);
+            request.setAttribute("querySeconds", new Float(time / 1000f));
             request.setAttribute("queryString", queryString);
             request.setAttribute("resultCount", new Integer(hitMap.size()));
         }
