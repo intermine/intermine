@@ -237,8 +237,6 @@ public class WriteGFFTask extends Task
         } else {
             if (bioEntity.getIdentifier() == null) {
                 identifiers.add(unqualifiedName + "_" + index);
-                org.intermine.web.LogMe.log("i", "identifier was null using: " +
-                                            unqualifiedName + "_" + index);
             } else {
                 identifiers.add(bioEntity.getIdentifier());
             }
