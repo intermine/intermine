@@ -39,7 +39,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.DynamicUtil;
 
-import org.flymine.postprocess.CalculateLocationsUtil;
+import org.flymine.postprocess.PostProcessUtil;
 
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
@@ -98,47 +98,43 @@ public class WriteGFFTask extends Task
     private void writeGFF(ObjectStore os, File destinationDirectory)
         throws ObjectStoreException, IOException, ChangeVetoException, IllegalArgumentException,
                IllegalSymbolException {
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Chromosome.class, BioEntity.class, false);
+        Results results =
+            PostProcessUtil.findLocations(os, Chromosome.class, BioEntity.class, false);
 
-        Map processedChromosomes = new LinkedHashMap();
+        Iterator resIter = results.iterator();
 
         PrintWriter gffWriter = null;
 
         // a Map of object classes to counts
         Map objectCounts = null;
 
-        // the Gene reference from the last Exon seen
-        Gene lastExonGene = null;
-
         // the last Chromosome seen
-        Chromosome chr = null;
+        Integer currentChrId = null;
+        Chromosome currentChr = null;
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            Integer chrId = (Integer) rr.get(0);
+            Integer resultChrId = (Integer) rr.get(0);
             BioEntity feature = (BioEntity) rr.get(1);
             Location loc = (Location) rr.get(2);
 
-            if (processedChromosomes.containsKey(chrId)) {
-                chr = (Chromosome) processedChromosomes.get(chrId);
-            } else {
-                chr = (Chromosome) os.getObjectById(chrId);
-                processedChromosomes.put(chrId, chr);
-                writeChromosomeFasta(destinationDirectory, chr);
+            if (currentChrId == null || currentChrId != resultChrId) {
+                currentChr = (Chromosome) os.getObjectById(resultChrId);
+                writeChromosomeFasta(destinationDirectory, currentChr);
 
-                File gffFile = chromosomeGFFFile(destinationDirectory, chr);
+                File gffFile = chromosomeGFFFile(destinationDirectory, currentChr);
                 if (gffWriter != null) {
                     gffWriter.close();
                 }
                 gffWriter = new PrintWriter(new FileWriter(gffFile));
 
-                writeFeature(gffWriter, chr, chr, null, new Integer(0));
+                writeFeature(gffWriter, currentChr, currentChr, null, new Integer(0));
 
                 objectCounts = new HashMap();
+                currentChrId = resultChrId;
             }
 
-            writeFeature(gffWriter, chr, feature, loc,
+            writeFeature(gffWriter, currentChr, feature, loc,
                          (Integer) objectCounts.get(feature.getClass()));
             incrementCount(objectCounts, feature);
         }
@@ -252,6 +248,19 @@ public class WriteGFFTask extends Task
         indexList.add(index.toString());
         attributes.put("Index", indexList);
 
+        if (bioEntity instanceof Exon) {
+            // add the parent transcript ID
+            ArrayList transcriptIdList = new ArrayList();
+            Exon exon = (Exon) bioEntity;
+            List transcripts = exon.getTranscripts();
+            Iterator transcriptIter = transcripts.iterator();
+            while (transcriptIter.hasNext()) {
+                Transcript transcript = (Transcript) transcriptIter.next();
+                transcriptIdList.add(transcript.getIdentifier());
+            }
+            attributes.put("Transcript", transcriptIdList);
+        }
+        
         lineBuffer.append(SimpleGFFRecord.stringifyAttributes(attributes));
 
         gffWriter.println(lineBuffer.toString());
@@ -259,19 +268,22 @@ public class WriteGFFTask extends Task
 
     private void writeChromosomeFasta(File destinationDirectory, Chromosome chr)
         throws IOException, ChangeVetoException, IllegalArgumentException, IllegalSymbolException {
-
-        // commented out until Chromosome sequences sorted
-//         FileOutputStream outputStream =
-//             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
-
-//         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-
-//         if (sequence != null) {
-//             sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-//                                                  chromosomeFileNamePrefix(chr));
-//             SeqIOTools.writeFasta(outputStream, sequence);
-//         }
+        try {
+            FileOutputStream outputStream =
+                new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
+            
+            FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
+            
+            if (sequence != null) {
+                sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                                     chromosomeFileNamePrefix(chr));
+                SeqIOTools.writeFasta(outputStream, sequence);
+            }
+        } catch (org.biojava.bio.symbol.IllegalSymbolException e) {
+            org.intermine.web.LogMe.log("i", "chr: " + chr.getSequence().getSequence());
+        }
     }
+    
 
     private File chromosomeFastaFile(File destinationDirectory, Chromosome chr) {
         return new File(destinationDirectory, chromosomeFileNamePrefix(chr) + ".fa");
