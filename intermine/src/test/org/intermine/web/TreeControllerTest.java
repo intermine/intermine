@@ -41,11 +41,11 @@ public class TreeControllerTest extends MockStrutsTestCase
         verifyNoActionErrors();
 
         List expected = new ArrayList();
-        expected.add(new TreeNode(model + "Thing", 0, false, false, true));
-        expected.add(new TreeNode(model + "Employable", 1, false, false, true));
-        expected.add(new TreeNode(model + "Contractor", 2, false, true, false));
-        expected.add(new TreeNode(model + "Employee", 2, false, false, false));
-        expected.add(new TreeNode(model + "Address", 1, false, true, false));
+        expected.add(new TreeNode(model + "Thing", "", 0, false, false, true));
+        expected.add(new TreeNode(model + "Employable", "", 1, false, false, true));
+        expected.add(new TreeNode(model + "Contractor", "", 2, false, true, false));
+        expected.add(new TreeNode(model + "Employee", "", 2, false, false, false));
+        expected.add(new TreeNode(model + "Address", "", 1, false, true, false));
 
         assertEquals(openClasses, getSession().getAttribute("openClasses"));
         assertEquals(expected, context.getAttribute("nodes"));
