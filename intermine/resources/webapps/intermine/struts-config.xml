@@ -182,6 +182,7 @@
             scope="request"
             input="query"
             parameter="action">
+      <forward name="classChooser" path="classChooser.page"/>
       <forward name="query" path="query.page"/>
       <forward name="tree" path="tree.page"/>
     </action>

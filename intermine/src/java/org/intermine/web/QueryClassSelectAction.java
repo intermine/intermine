@@ -20,6 +20,8 @@ import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 
 /**
  * Implementation of <strong>Action</strong> that processes
@@ -46,16 +48,24 @@ public class QueryClassSelectAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward addClass(ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward selectClass(ActionMapping mapping,
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
         throws Exception {
 
         String className = ((QueryClassSelectForm) form).getClassName();
 
-        request.setAttribute("class", className);
-        return mapping.findForward("query");
+        if (className == null) {
+            ActionErrors actionErrors = new ActionErrors();
+            actionErrors.add(ActionErrors.GLOBAL_ERROR,
+                             new ActionError("errors.queryClassSelect.noClass"));
+            saveErrors(request, actionErrors);
+            return mapping.findForward("classChooser");
+        } else {
+            request.setAttribute("class", className);
+            return mapping.findForward("query");
+        }
     }
 
     /**
@@ -91,7 +101,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("button.addclass", "addClass");
+        map.put("button.selectClass", "selectClass");
         map.put("button.browse", "browse");
         return map;
     }
