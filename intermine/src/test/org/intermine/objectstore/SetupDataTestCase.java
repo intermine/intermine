@@ -21,6 +21,11 @@ import org.xml.sax.InputSource;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ClassConstraint;
+import org.flymine.objectstore.query.ContainsConstraint;
+import org.flymine.objectstore.query.ConstraintSet;
+import org.flymine.objectstore.query.SubqueryConstraint;
+import org.flymine.objectstore.query.QueryCollectionReference;
+import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.sql.DatabaseFactory;
@@ -41,7 +46,9 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         setUpData();
         storeData();
+        // These queries are here because they require objects with IDs
         queries.put("WhereClassObject", whereClassObject());
+        queries.put("SelectClassObjectSubquery", selectClassObjectSubquery());
     }
 
     public static void oneTimeTearDown() throws Exception {
@@ -133,6 +140,43 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
         q1.setConstraint(cc1);
+        return q1;
+    }
+
+    /*
+      select company,
+      from Company, Department
+      where c1 = <company object>
+      and Company.departments = Department
+      and Department CONTAINS (select department
+                               from Department
+                               where department = <department object>)
+    */
+    public static Query selectClassObjectSubquery() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        Object obj1 = data.get("CompanyA");
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        Query q1 = new Query();
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addToSelect(qc1);
+        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj1);
+        cs1.addConstraint(cc1);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
+        ContainsConstraint con1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
+        cs1.addConstraint(con1);
+
+        Query subquery = new Query();
+        QueryClass qc3 = new QueryClass(Department.class);
+        Object obj2 = data.get("DepartmentA1");
+        ClassConstraint cc2 = new ClassConstraint(qc3, ClassConstraint.EQUALS, obj2);
+        subquery.addFrom(qc3);
+        subquery.addToSelect(qc3);
+        subquery.setConstraint(cc2);
+        SubqueryConstraint sc1 = new SubqueryConstraint(subquery, SubqueryConstraint.CONTAINS, qc2);
+        cs1.addConstraint(sc1);
+        q1.setConstraint(cs1);
         return q1;
     }
 
