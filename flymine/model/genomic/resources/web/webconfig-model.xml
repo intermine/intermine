@@ -1,2 +1,18 @@
 <webconfig>
+  <class name="org.flymine.model.genomic.Database">
+    <shortdisplayers>
+      <displayer src="/model/database.jsp"/>
+    </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/model/database.jsp"/>
+    </longdisplayers>
+  </class>
+  <class name="org.flymine.model.genomic.Organism">
+    <shortdisplayers>
+      <displayer src="/model/organism.jsp"/>
+    </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/model/organism.jsp"/>
+    </longdisplayers>
+  </class>
 </webconfig>
