@@ -11,6 +11,7 @@ package org.flymine.sql.precompute;
  */
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * A class that provides an implementation of a cache line, encapsulating several pieces of data.
@@ -31,6 +32,9 @@ public class OptimiserCacheLine
     private int offset;
     private int expectedRows;
     protected Date expires;
+    private Set lineSet;
+    private String original;
+    
 
     /**
      * Constructor for this object.
@@ -39,12 +43,17 @@ public class OptimiserCacheLine
      * @param limit the limit that was used to generate optimised
      * @param offset the offset that was used to generate optimised
      * @param expectedRows the expected number of rows in the query results
+     * @param lineSet the lineSet parent of this line
+     * @param original the original sql query
      */
-    public OptimiserCacheLine(String optimised, int limit, int offset, int expectedRows) {
+    public OptimiserCacheLine(String optimised, int limit, int offset, int expectedRows,
+            Set lineSet, String original) {
         this.optimised = optimised;
         this.limit = limit;
         this.offset = offset;
         this.expectedRows = expectedRows;
+        this.lineSet = lineSet;
+        this.original = original;
         expires = new Date((new Date()).getTime() + CACHE_LINE_LIFETIME);
     }
 
@@ -82,6 +91,33 @@ public class OptimiserCacheLine
      */
     public String getOptimised() {
         return optimised;
+    }
+
+    /**
+     * Returns the expiry date of this cache line.
+     *
+     * @return the expiry date
+     */
+    public Date getExpiry() {
+        return expires;
+    }
+
+    /**
+     * Returns the lineSet that this line is a member of.
+     *
+     * @return the lineSet
+     */
+    public Set getLineSet() {
+        return lineSet;
+    }
+
+    /**
+     * Returns the original SQL string.
+     *
+     * @return the original SQL string
+     */
+    public String getOriginal() {
+        return original;
     }
 }
 
