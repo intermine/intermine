@@ -1,0 +1,101 @@
+! produced from FlyBase controlled vocabulary (http://flybase.bio.indiana.edu/docs/lk/controlled-vocabularies.txt) on 18/02/04
+$phenotype ; null
+ %wild-type ; FBbt:0010186
+ %viable ; FBbt:0010187
+  %semi-viable ; FBbt:0010188
+ %lethal ; FBbt:0010189
+  %semi-lethal ; FBbt:0010190
+  %cell lethal ; FBbt:0010191
+ %visible ; FBbt:0010192
+  %eye colour defective ; FBbt:0010193
+  %body colour defective ; FBbt:0010194
+  %size defective ; FBbt:0010195
+   %small body ; FBbt:0010196
+    %reduced cell number ; FBbt:0010197
+    %reduced cell size ; FBbt:0010198
+   %large body ; FBbt:0010199
+    %increased cell number ; FBbt:0010200
+    %increased cell size ; FBbt:0010201
+ %sterile ; FBbt:0010202
+  %semi-sterile ; FBbt:0010203
+  %female sterile ; FBbt:0010204
+   %female semi-sterile ; FBbt:0010205
+   %female sterile germ-line-dependent ; FBbt:0010206
+   %female sterile soma-dependent ; FBbt:0010207
+  %male sterile ; FBbt:0010208
+   %male semi-sterile ; FBbt:0010209
+   %male sterile germ-line-dependent ; FBbt:0010210
+   %male sterile soma-dependent ; FBbt:0010211
+ %fertile ; FBbt:0010212
+  %semi-fertile ; FBbt:0010213
+  %male fertile ; FBbt:0010214
+  %female fertile ; FBbt:0010215
+ %grandchildless ; FBbt:0010216
+ %enhancer of variegation ; FBbt:0010217
+ %non-enhancer of variegation ; FBbt:0010218
+ %suppressor of variegation ; FBbt:0010219
+ %non-suppressor of variegation ; FBbt:0010220
+ %auxotroph ; FBbt:0010221
+ %aging defective ; FBbt:0010222
+  %short lived ; FBbt:0010223
+  %long lived ; FBbt:0010224
+ %behavioural ; FBbt:0010225
+  %paralytic ; FBbt:0010226
+  %hypoactive ; FBbt:0010227
+  %bang sensitive ; FBbt:0010228
+  %hyperactive ; FBbt:0010229
+  %circadian rhythm defective ; FBbt:0010230
+   %locomotor rhythm defective ; FBbt:0010231
+   %eclosion rhythm defective ; FBbt:0010232
+  %learning defective ; FBbt:0010233
+  %memory defective ; FBbt:0010234
+  %courtship defective ; FBbt:0010235
+   %mating defective ; FBbt:0010236
+   %mating rhythm defective ; FBbt:0010237
+   %song defective ; FBbt:0010238
+  %chemosensitive behaviour defective ; FBbt:0010239
+   %olfaction defective ; FBbt:0010240
+   %gustation defective ; FBbt:0010241
+   %tarsal response defective ; FBbt:0010242
+  %auditory system defective ; FBbt:0010243
+  %environmental stress response defective ; FBbt:0010244
+   %osmotic stress response defective ; FBbt:0010245
+   %heat stress response defective ; FBbt:0010246
+  %visual behaviour defective ; FBbt:0010247
+   %optomotor behaviour defective ; FBbt:0010248
+   %phototaxis behaviour defective ; FBbt:0010249
+  %locomotor behaviour defective ; FBbt:0010250
+   %jumpless ; FBbt:0010251
+   %uncoordinated ; FBbt:0010252
+  %flight behaviour defective ; FBbt:0010253
+   %flightless ; FBbt:0010254
+  %feeding behaviour defective ; FBbt:0010255
+  %grooming behaviour defective ; FBbt:0010256
+  %touch sensitivity defective ; FBbt:0010257
+  %photoperiod response variant ; FBbt:0010258
+ %DNA repair defective ; FBbt:0010259
+ %cell death defective ; FBbt:0010260
+  %cell death increase ; FBbt:0010261
+  %cell death decrease ; FBbt:0010262
+ %cell polarity ; FBbt:0010263
+ %meiotic ; FBbt:0010264
+ %mitotic ; FBbt:0010265
+ %cytokinesis defective ; FBbt:0010266
+ %neurophysiology defective ; FBbt:0010267
+ %neuroanatomy defective ; FBbt:0010268
+ %sex-determination defective ; FBbt:0010269
+ %dosage compensation defective ; FBbt:0010270
+ %electrophoretic variant ; FBbt:0010271
+ %chemical resistant ; FBbt:0010272
+ %chemical sensitive ; FBbt:0010273
+ %radiation resistant ; FBbt:0010274
+ %radiation sensitive ; FBbt:0010275
+ %Minute ; FBbt:0010276
+ %hyperplastic ; FBbt:0010277
+ %tumorigenic ; FBbt:0010278
+ %melanotic 'tumor' ; FBbt:0010279
+ %melanotic necrosis ; FBbt:0010280
+ %immune response defective ; FBbt:0010281
+ %tissue polarity ; FBbt:0010282
+ %developmental rate defective ; FBbt:0010283
+ %wound healing defective ; FBbt:0010284
