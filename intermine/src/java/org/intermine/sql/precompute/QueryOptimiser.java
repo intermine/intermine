@@ -438,6 +438,7 @@ public class QueryOptimiser
                                 precomputedSqlTable);
                         Field firstPrecompOrderBy = nextPrecompOrderBy;
                         int inARow = 0;
+                        Field orderByField = null;
                         Iterator orderByIter = tempOrderBy.iterator();
                         while (orderByIter.hasNext()) {
                             AbstractValue origValue = (AbstractValue) orderByIter.next();
@@ -451,8 +452,9 @@ public class QueryOptimiser
                                 }
                             } else {
                                 if (inARow >= 1) {
-                                    newOrderBy.add(new Field(precomputedTable.getOrderByField(),
-                                                precomputedSqlTable));
+                                    orderByField = new Field(precomputedTable.getOrderByField(),
+                                                precomputedSqlTable);
+                                    newOrderBy.add(orderByField);
                                 }
                                 inARow = 0;
                                 precompOrderByIter = precompOrderBy.iterator();
@@ -464,8 +466,12 @@ public class QueryOptimiser
                                     precomputedSqlTable);
                         }
                         if (inARow >= 1) {
-                            newOrderBy.add(new Field(precomputedTable.getOrderByField(),
-                                        precomputedSqlTable));
+                            orderByField = new Field(precomputedTable.getOrderByField(),
+                                        precomputedSqlTable);
+                            newOrderBy.add(orderByField);
+                        }
+                        if ((orderByField != null) && currentQuery.isDistinct()) {
+                            newQuery.addSelect(new SelectValue(orderByField, "orderby_field"));
                         }
                     }
 
