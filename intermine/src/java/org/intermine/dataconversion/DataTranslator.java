@@ -109,7 +109,9 @@ public class DataTranslator
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
             for (Iterator j = translateItem(srcItem).iterator(); j.hasNext();) {
-                tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
+                if (j != null) {
+                    tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
+                }
             }
         }
     }
@@ -143,6 +145,11 @@ public class DataTranslator
                 throw new FlyMineException("Could not find a target class name for class: "
                                            + srcItem.getClassName());
             }
+        }
+
+        // if class is not in target namespace then don't bother translating it
+        if (!OntologyUtil.getNamespaceFromURI(tgtClsName).equals(tgtNs)) {
+            return null;
         }
 
         Item tgtItem = new Item();
