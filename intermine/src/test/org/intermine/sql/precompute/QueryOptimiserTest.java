@@ -4,6 +4,7 @@ import junit.framework.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -484,7 +485,17 @@ public class QueryOptimiserTest extends TestCase
         eset.add(ec3);
         eset.add(ec4);
         Set newSet = new HashSet();
-        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet);
+        Set constraintEqualsSet = new HashSet();
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet);
+        assertEquals(eset, newSet);
+
+        newSet = new HashSet();
+        eset = new HashSet();
+        eset.add(ec1);
+        eset.add(ec2);
+        eset.add(ec4);
+        constraintEqualsSet.add(c3);
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet);
         assertEquals(eset, newSet);
     }
 
@@ -564,6 +575,210 @@ public class QueryOptimiserTest extends TestCase
         Set eSet = new HashSet();
 
         Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByWithUselessConstraint() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d HAVING table3.d = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P42_.sahjg AS t1_a, P42_.aytq AS t1_b, P42_.hksf AS stuff from precomp1 AS P42_ ORDER BY P42_.sahjg LIMIT 100 OFFSET 0");
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testAddNonCoveredFrom() throws Exception {
+        Set input = new HashSet();
+        Set subtract = new HashSet();
+        input.add("item1");
+        input.add("item2");
+        input.add("item3");
+        subtract.add("item2");
+        Set output = new HashSet();
+        QueryOptimiser.addNonCoveredFrom(input, subtract, output);
+
+        Set expectedOutput = new HashSet();
+        expectedOutput.add("item1");
+        expectedOutput.add("item3");
+
+        assertEquals(expectedOutput, output);
+    }
+
+    public void testMergeSimple() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
+        Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeOkayDistinct1() throws Exception {
+        Query q1 = new Query("SELECT DISTINCT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
+        Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT DISTINCT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeOkayDistinct2() throws Exception {
+        Query q1 = new Query("SELECT DISTINCT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
+        Query pq1 = new Query("SELECT DISTINCT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT DISTINCT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeWrongDistinct() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
+        Query pq1 = new Query("SELECT DISTINCT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeWrongWhere() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five'");
+        Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.b = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeWrongSelect() throws Exception {
+        Query q1 = new Query("SELECT table1.c AS t1_c, table1.b AS t1_b from table as table1");
+        Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeOkayGroupBy() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b from table as table1 WHERE table1.c = 'five' GROUP BY table1.a, table1.b HAVING table1.a = 'six'");
+        Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P42_.kjfd AS t1_a, P42_.ddfw AS t1_b FROM precomp1 AS P42_ GROUP BY P42_.kjfd, P42_.ddfw HAVING P42_.kjfd = 'six'");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeOkayOverlapping() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b from table as table1, table as table2 WHERE table1.c = 'five' AND table2.c = 'five'");
+        Query pq1 = new Query("SELECT table3.a AS kjfd, table3.b AS ddfw FROM table as table3 WHERE table3.c = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P44_.kjfd AS t1_a, P44_.ddfw AS t1_b, P46_.kjfd AS t2_a, P46_.ddfw AS t2_b FROM precomp1 AS P44_, precomp1 AS P46_");
+        Query eq2 = new Query("SELECT P49_.a AS t1_a, P49_.b AS t1_b, P50_.kjfd AS t2_a, P50_.ddfw AS t2_b FROM table AS P49_, precomp1 AS P50_ WHERE P49_.c = 'five'");
+        Query eq3 = new Query("SELECT P48_.kjfd AS t1_a, P48_.ddfw AS t1_b, table3.a AS t2_a, table3.b AS t2_b FROM precomp1 AS P48_, table AS table3 WHERE table3.c = 'five'");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+        eSet.add(eq2);
+        eSet.add(eq3);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+/*
+        String expected = "";
+        Iterator expectedIter = eSet.iterator();
+        boolean needComma = false;
+        while (expectedIter.hasNext()) {
+            expected += (needComma ? ", " : "");
+            needComma = true;
+            expected += ((Query) expectedIter.next()).getSQLString();
+        }
+
+        String got = "";
+        Iterator gotIter = newSet.iterator();
+        needComma = false;
+        while (gotIter.hasNext()) {
+            got += (needComma ? ", " : "");
+            needComma = true;
+            got += ((Query) gotIter.next()).getSQLString();
+        }
+
+        assertEquals(expected, got);*/
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeOkayNonOverlapping() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b, table4.a AS t4_a from table as table1, table as table2, anothertable AS table4 WHERE table1.c = 'five' AND table2.c = 'five' AND table4.a = table1.a AND table4.a = table2.a");
+        Query pq1 = new Query("SELECT table3.a AS kjfd, table3.b AS ddfw, table5.a AS fhds FROM table as table3, anothertable AS table5 WHERE table3.c = 'five' AND table3.a = table5.a");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P46_.kjfd AS t1_a, P46_.ddfw AS t1_b, P45_.a AS t2_a, P45_.b AS t2_b, P46_.fhds AS t4_a FROM precomp1 AS P46_, table AS P45_ WHERE P45_.a = P46_.fhds AND P45_.c = 'five'");
+        Query eq2 = new Query("SELECT table3.a AS t1_a, table3.b AS t1_b, P44_.kjfd AS t2_a, P44_.ddfw AS t2_b, P44_.fhds AS t4_a FROM table AS table3, precomp1 AS P44_ WHERE table3.a = P44_.fhds AND table3.c = 'five'");
+
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+        eSet.add(eq2);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.merge(pt1, q1, q1);
+
+        String expected = "";
+        Iterator expectedIter = eSet.iterator();
+        boolean needComma = false;
+        while (expectedIter.hasNext()) {
+            expected += (needComma ? ", " : "");
+            needComma = true;
+            expected += ((Query) expectedIter.next()).getSQLString();
+        }
+
+        String got = "";
+        Iterator gotIter = newSet.iterator();
+        needComma = false;
+        while (gotIter.hasNext()) {
+            got += (needComma ? ", " : "");
+            needComma = true;
+            got += ((Query) gotIter.next()).getSQLString();
+        }
+
+        //assertEquals(expected, got);
+        System.out.println(expected);
+        System.out.println(got);
 
         assertEquals(eSet, newSet);
     }
