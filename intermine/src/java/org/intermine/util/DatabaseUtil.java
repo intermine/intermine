@@ -399,13 +399,36 @@ public class DatabaseUtil
         ResultSet res = con.getMetaData().getTables(null, null, tableName, null);
 
         while (res.next()) {
-            if (res.getString(3).equals(tableName)) {
+            if (res.getString(3).equals(tableName) && "TABLE".equals(res.getString(4))) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Removes every single table from the database given.
+     *
+     * @param con the Connection to the database
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    public static void removeAllTables(Connection con) throws SQLException {
+        ResultSet res = con.getMetaData().getTables(null, null, "%", null);
+        Set tablenames = new HashSet();
+        while (res.next()) {
+            String tablename = res.getString(3);
+            if ("TABLE".equals(res.getString(4))) {
+                tablenames.add(tablename);
+            }
+        }
+        Iterator tablenameIter = tablenames.iterator();
+        while (tablenameIter.hasNext()) {
+            String tablename = (String) tablenameIter.next();
+            LOG.info("Dropping table " + tablename);
+            con.createStatement().execute("DROP TABLE " + tablename);
+        }
+    }
+            
     /**
      * Creates a table name for a class descriptor
      *
