@@ -25,7 +25,7 @@ import org.flymine.FlyMineException;
  *
  * @author Richard Smith
  */
-public class QueryCreator
+public abstract class QueryCreator
 {
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
@@ -50,6 +50,8 @@ public class QueryCreator
             throw new NullPointerException("fieldValues parameter is null");
         } else if (fieldOps == null) {
             throw new NullPointerException("fieldOps parameter is null");
+        } else if (model == null) {
+            throw new NullPointerException("model parameter is null");
         }
 
         try {
@@ -93,22 +95,20 @@ public class QueryCreator
                 FieldDescriptor field = cld.getFieldDescriptorByName((String) fieldEntry.getKey());
                 Integer opCode = Integer.valueOf((String) fieldOps.get(field.getName()));
                 ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
-                Constraint c = null;
                 if (field instanceof AttributeDescriptor) {
                     QueryField qf = new QueryField(qc, field.getName());
                     QueryValue qv = createQueryValue(qf.getType(), fieldValue);
-                    c = new SimpleConstraint(qf, op, qv);
+                    constraints.addConstraint(new SimpleConstraint(qf, op, qv));
+//                 } else if (field instanceof CollectionDescriptor) {
                 } else if (field instanceof ReferenceDescriptor) {
                     QueryReference qr = new QueryObjectReference(qc, field.getName());
-                    // queryclass implements fromelement and querynode
-                    c = new ContainsConstraint(qr, op, (QueryClass) aliases.get(fieldValue));
+                    QueryClass qc2 = (QueryClass) aliases.get(fieldValue);
+                    constraints.addConstraint(new ContainsConstraint(qr, op, qc2));
                 }
-                constraints.addConstraint(c);
             }
         }
         return constraints;
     }
-
 
     /**
      * Adds the constraints in a ConstraintSet to those present in a Query
@@ -117,9 +117,14 @@ public class QueryCreator
      * @param constraints the new constraints
      */
     protected static void addConstraint(Query q, ConstraintSet constraints) {
+        if (q == null) {
+            throw new NullPointerException("q cannot be null");
+        }
+
         if (constraints == null) {
             throw new NullPointerException("constraints cannot be null");
         }
+
         if (constraints.getConstraints().size() > 0) {
             Constraint c = q.getConstraint();
             if (c == null) {
@@ -136,7 +141,6 @@ public class QueryCreator
             }
         }
     }
-
 
     /**
      * Remove all constraints related to a given QueryClass.
@@ -167,7 +171,6 @@ public class QueryCreator
         }
     }
 
-
     /**
      * Create a QueryValue by parsing a string for the appropriate class type
      * (common java.lang complex types and java.util.Date supported).
@@ -175,11 +178,10 @@ public class QueryCreator
      * @param type java type of the QueryValue to be created
      * @param value string to be parsed for value
      * @return a new QueryValue
-     * @throws IllegalArgumentException if type is not supported
      * @throws ParseException if an error occurs parsing date string
      */
     protected static QueryValue createQueryValue(Class type, String value)
-        throws IllegalArgumentException, ParseException {
+        throws ParseException {
         QueryValue qv = null;
         if (type.equals(Integer.class)) {
             qv = new QueryValue(Integer.valueOf(value));
