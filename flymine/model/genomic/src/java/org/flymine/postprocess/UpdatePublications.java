@@ -139,7 +139,7 @@ public class UpdatePublications
         public Handler(Set toStore) {
             this.toStore = toStore;
         }
-         
+
         /**
          * @see DefaultHandler#startElement
          */
@@ -173,7 +173,14 @@ public class UpdatePublications
                 toStore.add(publication);
                 publication.setAttribute("pubMedId", characters.toString());
             } else if ("PubDate".equals(name)) {
-                publication.setAttribute("year", characters.toString().split(" ")[0]);
+                String year = characters.toString().split(" ")[0];
+                try {
+                    Integer.parseInt(year);
+                    publication.setAttribute("year", year);
+                } catch (NumberFormatException e) {
+                    LOG.warn("Publication: " + publication + " has a year that cannot be parsed"
+                             " to an Integer: " + year);
+                }
             } else if ("Source".equals(name)) {
                 publication.setAttribute("journal", characters.toString());
             } else if ("Title".equals(name)) {
@@ -194,7 +201,7 @@ public class UpdatePublications
             name = null;
         }
     }
-    
+
     /**
      * Main method
      * @param args the arguments
