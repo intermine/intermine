@@ -147,6 +147,7 @@
     <include name="poi*.jar"/>
     <include name="commons-beanutils*"/>
     <include name="commons-digester*"/>
+    <include name="commons-fileupload*"/>
     <include name="commons-validator*"/>
     <!-- splitting OntologyUtil will avoid needing jena -->
     <include name="jena*"/>
@@ -668,10 +669,10 @@
 
   <target name="build-webapp" depends="jar-intermine"
           description="Build webapp without including a model">
-      <ant antfile="build-webapp.xml" target="build-webapp" inheritRefs="true">
-       <property name="war" value="${dist.webapp}/intermine.war"/>
-       <reference torefid="class.path" refid="project.class.path"/>
-      </ant>
+    <ant antfile="build-webapp.xml" target="build-webapp" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/intermine.war"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>
   </target>
 
   <target name="build-testmodel-webapp"
