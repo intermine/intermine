@@ -12,10 +12,9 @@ package org.intermine.web.results;
 
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.Collection;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.SingletonResults;
 
 /**
  * Class to represent a collection field of an object for the webapp
@@ -27,19 +26,20 @@ public class DisplayCollection
     int size;
     Map classes = new LinkedHashMap();
     boolean verbose = false;
+    InlineResultsTable table;
 
     /**
      * Constructor
-     * @param c the actual collection
+     * @param collection the actual collection
      * @param cld the type of this collection
-     * @param model the metadata for the collection
      * @throws Exception if an error occurs
      */
-    public DisplayCollection(Collection c, ClassDescriptor cld, Model model) throws Exception {
+    public DisplayCollection(SingletonResults collection, ClassDescriptor cld) throws Exception {
         this.cld = cld;
-        size = c.size();
+        size = collection.getInfo().getRows();
+        table = new InlineResultsTable(collection);
 //         for (Iterator i = c.iterator(); i.hasNext();) {
-//             Set clds = ObjectViewController.getLeafClds(i.next().getClass(), model);
+//             Set clds = ObjectViewController.getLeafClds(i.next().getClass(), cld.getModel());
 //             if (clds.size() == 1 && clds.iterator().next().equals(cld)) {
 //                 break;
 //             }
@@ -51,6 +51,14 @@ public class DisplayCollection
 //         }
     }
 
+    /**
+     * Get the inline results table for this collection
+     * @return the results table
+     */
+    public InlineResultsTable getTable() {
+        return table;
+    }
+    
     /**
      * Get the class descriptor for this collection
      * @return the class descriptor
