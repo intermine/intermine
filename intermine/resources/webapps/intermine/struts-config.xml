@@ -446,6 +446,10 @@
             type="org.intermine.web.results.CollectionDetailsController"
             name="changeResultsSizeForm"/>
 
+    <action path="/initTable"
+            type="org.intermine.web.results.TableController"
+            name="changeResultsSizeForm"/>
+            
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
 

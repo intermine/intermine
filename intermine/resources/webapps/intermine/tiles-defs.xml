@@ -74,7 +74,7 @@
     <put name="pageName" value="classChooser"/>
   </definition>
   <definition name="results.page" extends="layout.template">
-    <put name="body" value="table.jsp"/>
+    <put name="body" value="table.tile"/>
     <put name="pageName" value="results"/>
   </definition>
   <definition name="error.page" extends="layout.template">
@@ -134,8 +134,11 @@
   <definition name="bagDetailsPage.tile" path="/table.jsp" controllerUrl="/initBagDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
   <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
+  <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
     <put name="preview" value="template.tile"/>
   </definition>
 </tiles-definitions>
+
+
