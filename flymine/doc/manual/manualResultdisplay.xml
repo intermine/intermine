@@ -21,7 +21,7 @@
       </item>
       <item>From the results page you can save your data to a bag (see <ulink url= "manualSavingdata.xml">Saving bags of data</ulink>) and export your data in various formats (see <ulink url= "manualExportingdata.xml">Exporting data</ulink>).
       </item>
-      <item>If there are any objects in your results (rather than fields) you can click on the objects to view it in detail.</item>
+      <item>If there are any objects in your results (rather than fields) you can click on an object to view it in detail.</item>
         
   </section>
 

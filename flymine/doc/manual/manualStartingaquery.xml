@@ -8,7 +8,10 @@
     <section>
       <heading>Start a new query with a particular class</heading>
       <item>
-      To start a new FlyMine query you must choose the class from which you want to start your query in the <ulink url="manualClasschooser.xml">class chooser</ulink>
+      To start a new FlyMine query you must choose the class from which you want to start your query in the <ulink url="manualClasschooser.xml">class chooser</ulink>.
+       </item>
+       <item>
+       For an explanation of the concept of classes see <ulink url = "manualCOF.xml">Classes, objects and fields.</ulink>
        </item>
     </section>
            

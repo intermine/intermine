@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Use an example query</heading>
+      <item>A number of example queries are available.  Selecting this option will take you to the <ulink url = "manualExamplequeries.xml">example queries</ulink> page.
+      </item>
+      <item>
+       Click on an example query to display it in the query builder, where it can be edited or run as it is.
+     </item>
+      
+   </section>
+
+</index>
+
+</article>
+

@@ -6,16 +6,18 @@
 
     <sect1>
        <title>Query Tutorials</title>
-        <para>The following tutorials will guide you through gradually more complex queries</para>
+        <para>The following tutorials will guide you through gradually more complex queries.  NOTE: It is recommended that you read the <ulink url = "../manual/manualQuickstart.xml">quick start guide</ulink> before you attempt these tutorials.</para>
 
 
 
         <para>
           <orderedlist>
-             <listitem><ulink url="queryTutorial1.xml">Selecting all the objects in a particlular class</ulink></listitem>
-             <listitem><ulink url="queryTutorial2.xml">Constraining the objects of a particular class</ulink></listitem>
-             <listitem><ulink url="queryTutorial3.xml">Combining and constraining objects from 2 classes</ulink></listitem>
-          </orderedlist>
+
+             <listitem><ulink url="queryTutorial1.xml">Tutorial1</ulink>: Show the names of all genes in FlyMine</listitem>
+             <listitem><ulink url="queryTutorial3.xml">Tutorial2</ulink>: Show the names of all the genes from Drosophila melanogaster</listitem>
+             <listitem><ulink url="queryTutorial4.xml">Tutorial3</ulink>: Show the Orthologues between Drosophila melanogaster and Anophelese gambiae and how these were determined</listitem>
+              </orderedlist>
+
         </para>
 
      

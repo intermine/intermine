@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+
+    <sect1>
+       <title>Tutorial3: Show all the orthologues between Drosophila melanogaster and Anophelese gambiae and the method used to determine them</title>
+
+
+       <para>This page will guide you through the query: Show all the orthologues between Drosophila melanogaster and Anophelese gambiae and the method used to determine them.  The aim of this query tutorial is to show you how relations between BioEntities (eg genes) are linked via a subject and an object class and how to get information form the Evidence class.  This query involves: 
+</para>
+
+   
+        <para>
+          <orderedlist>
+             <listitem>Selecting the Orthologue class.</listitem>
+             <listitem>Constraining the objects of the relations to Drosophila melanogaster and constraining the subjects of the relations to Anophelese gambiae.</listitem>
+             <listitem>Constraining and adding fields from the Evidence class to show how the orthologues were determined.</listitem>
+          </orderedlist>
+        </para>
+
+
+    <para>
+         <orderedlist>
+            <listitem>Select the starting point for your query. In this case, Orthologue.</listitem>
+          
+	  <entry>
+	      <inlinegraphic fileref="classSelection2" format="PNG"/>
+	  </entry>
+
+
+          <listitem>The model browser will now be displaying the Orthologue class and it's fields.  The orthologue class is a subclass (specialization) of the Relation class. The Relation class links two BioEntities that have some type of relationship with each other. Every relation has a subject and an object. If two genes are orthologues, one of the genes will be the subject of the relation and the other the object. You need to add constraints to specify that you want the objects of the orthologue relations to be BioEntities (in this case genes) from Drosohpila melanogaster and the subjects of the relation to be BioEntities from Anophelese gambie.  The Relation class has three fields: evidence, object and subject.  Expand the object field.  The object field has a link (reference) to the Organism class.  Expand the organism class.  Click on the constrain arrow next to the name field of the Organism class and add the constraint: LIKE %melanogaster.  Click on 'Add to results' to add this to the constraints list.  In the same way, constrain the Organism name field of the subject to: LIKE %gambiae.</listitem>  
+
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="constrainRelation1" format="PNG"/>
+	  </entry>
+
+
+          
+
+          <listitem>You want to display the name of the object and the subject in your results.  In this case the object and the subject are genes, so the name fields will refer to the gene name.  Select the name fields of the object and the subject to show in the results.</listitem>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="showFields2" format="PNG"/>
+	  </entry>
+
+
+
+
+         <listitem>You now need to add fields to show how the orthologues were determined.  The Evidence class links relation data to an AnalysisResult class.  Click on the constrain arrow next to the evidence field of the Relation class.  Constrain this to type: AnalysisResult, and press 'Add to query' to add the constraint to the constraints list.</listitem>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="constrainEvidence1" format="PNG"/>
+	  </entry>
+
+
+
+        <listitem>As you constrained the Evidence class to type = AnalysisResult above, the AnalysisResult class will now be displayed in the model browser.  You want to show the analysis in your results.  Click on show next to the analysis field to add this to the 'Fields selected for output'</listitem>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="showFields3" format="PNG"/>
+	  </entry>
+
+
+
+
+         <listitem>Press 'Show results' to view your results in the results page:</listitem>
+
+
+	  <entry>
+	      <inlinegraphic fileref="resultsQuery4" format="PNG"/>
+	  </entry>
+
+
+
+  </orderedlist>
+  </para>
+</sect1>
+</article>
+
+
+

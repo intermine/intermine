@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Example queries</heading>
+      <item>A number of example queries are available to help you construct your own queries.
+      </item>
+      <item>
+       Click on the query name to display the query in the query builder interface.  From here you can edit the query or run it again.
+      </item>
+
+
+ </section>
+
+</index>
+
+</article>

@@ -5,7 +5,7 @@
 
 
       <sect1>
-       <title>Select all objects of a class</title>
+       <title>Tutorial1: show all the gene names of the genes in FlyMine</title>
         <para>This page will guide you through the query: show
 all the gene names of the genes in FlyMine.  The aim of this query tutorial is to illustrate how to show a particular field for all the objects in a particular class.  This query involves:
 </para>
@@ -13,7 +13,7 @@ all the gene names of the genes in FlyMine.  The aim of this query tutorial is t
 
         <para>
           <orderedlist>
-             <listitem>Selecting the Gene class</listitem>
+             <listitem>Selecting the Gene class.</listitem>
              <listitem>Selecting the gene name field to show in the output.</listitem>
           </orderedlist>
         </para>
@@ -25,23 +25,23 @@ all the gene names of the genes in FlyMine.  The aim of this query tutorial is t
             <listitem>Select the starting point for your query. In this case, Gene.</listitem>
           
 	  <entry>
-	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	      <inlinegraphic fileref="classSelection1" format="PNG"/>
 	  </entry>
 
 
-            <listitem>The model browser will now be displaying the Gene class and it's fields.  Navigate to the Name field and press show.  The Gene.name field will appear at the bottom of the query builder in the Fields for output list.</listitem>     
+            <listitem>The model browser will now be displaying the Gene class and it's fields.  Navigate to the name field and press show.  The gene name field will appear at the bottom of the query builder in the 'Fields selected for output' list.</listitem>     
 
 
 	  <entry>
-	      <inlinegraphic fileref="geneClass1.gif" format="GIF"/>
+	      <inlinegraphic fileref="geneClass1" format="PNG"/>
 	  </entry>
 
 
-              <listitem>Press 'Show results' to display the name of the genes in FlyMine</listitem> 
+              <listitem>Press 'Show results' to display the name of the genes in FlyMine:</listitem> 
 
 
 	  <entry>
-	      <inlinegraphic fileref="runQuery3.gif" format="GIF"/>
+	      <inlinegraphic fileref="resultsQuery1" format="PNG"/>
 	  </entry>
 
 
