@@ -4,10 +4,10 @@ import junit.framework.*;
 import java.sql.*;
 import javax.sql.*;
 import java.io.IOException;
+import org.flymine.sql.ConnectionFactory;
 
 public class DatabaseWriterTest extends TestCase
 {
-    DataSource source;
     Connection con;
     DatabaseWriter writer;
 
@@ -16,15 +16,7 @@ public class DatabaseWriterTest extends TestCase
     }
 
     protected void setUp() throws Exception {
-        // Get a connection from the pool
-        org.postgresql.jdbc3.Jdbc3PoolingDataSource source = new org.postgresql.jdbc3.Jdbc3PoolingDataSource();
-        source.setServerName("galadriel.flymine.org");
-        source.setDatabaseName("test");
-        source.setUser("andy");
-        source.setPassword("abc1");
-        source.setMaxConnections(1);
-        con = source.getConnection();
-
+        con = ConnectionFactory.getConnection("db.unittest");
         writer = new DatabaseWriter(con, "table1");
     }
 
