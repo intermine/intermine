@@ -346,16 +346,6 @@ A.bred            { color: #FFFFFF;
   font-size: 12px;
 }
 
-.heading > .help {
-  float: right;
-  padding: 1px;
-}
-
-/* force help link in heading to be blue */
-.help > a {
-  color: blue;
-}
-
 .boxbody {
   background-color: white;
 }
