@@ -33,6 +33,7 @@
   <!-- build directories -->
   <property name="build" location="build"/>
   <property name="build.resources" location="${build}/resources"/>
+  <property name="build.resources.test" location="${build.resources}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
@@ -102,6 +103,7 @@
 
   <path id="models.class.path">
     <path refid="base.class.path"/>
+    <pathelement path="${build.resources.test}"/>
     <pathelement location="${build.model}/acedb"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
@@ -123,6 +125,7 @@
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.resources}"/>
+    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
@@ -135,6 +138,11 @@
     <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties"/>
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
+    </copy>
+    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
+      <fileset dir="${resources}/test/">
+        <include name="**/*"/>
+      </fileset>
     </copy>
   </target>
 
