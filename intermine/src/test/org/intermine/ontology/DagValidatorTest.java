@@ -114,7 +114,8 @@ public class DagValidatorTest extends TestCase
             + " %term1 ; id1\n";
 
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        parser.readTerms(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.terms;
         assertTrue(validator.orphanPartOfs(root1));
     }
 
@@ -125,7 +126,8 @@ public class DagValidatorTest extends TestCase
             + "  <term2 ; id2\n"
             + "  %term3 ; id3\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        parser.readTerms(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.terms;
         assertFalse(validator.orphanPartOfs(root1));
     }
 

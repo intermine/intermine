@@ -41,7 +41,7 @@ public class DagParserTest extends TestCase
         assertEquals(1, terms.size());
 
         DagTerm domain = (DagTerm) terms.iterator().next();
-        assertEquals(0, domain.getChildren().size());
+        assertEquals(2, domain.getChildren().size());
         assertEquals(1, domain.getComponents().size());
     }
 
@@ -55,7 +55,6 @@ public class DagParserTest extends TestCase
             + "  %term5 ; id5\n";
 
         parser.readTerms(new BufferedReader(new StringReader(test)));
-
         assertEquals(1, parser.terms.size());
 
         DagTerm domain = (DagTerm) parser.terms.iterator().next();

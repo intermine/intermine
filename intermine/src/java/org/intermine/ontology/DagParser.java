@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.Iterator;
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -35,6 +36,7 @@ public class DagParser
     protected HashSet terms = new HashSet();
     protected HashMap seenTerms = new HashMap();
     private File tmpFile;
+    private DagTerm domainTerm = null;
 
     private final String comment = "!";
     private final String domain = "$";
@@ -50,6 +52,13 @@ public class DagParser
      */
     public Set process(Reader in) throws Exception {
         readTerms(new BufferedReader(replaceRelationStrings(in)));
+
+        if (domainTerm != null) {
+            Iterator iter = findOrphans().iterator();
+            while (iter.hasNext()) {
+                domainTerm.addChild((DagTerm) iter.next());
+            }
+        }
         return terms;
     }
 
@@ -119,6 +128,7 @@ public class DagParser
         term = dagTermFromString(termStr);
 
         if (token.equals(domain)) {
+            domainTerm = term;
             terms.add(term);
         } else if (token.equals(isa)) {
             DagTerm parent = (DagTerm) parents.peek();
@@ -232,22 +242,34 @@ public class DagParser
         return new StringReader(writer.toString());
     }
 
-    /**
-     * temporary main method to aid evaluation
-     * @param args dagFile
-     */
-//     public static void main(String[] args) {
-//         String dagFilename = args[0];
-//         try {
-//             File dagFile = new File(dagFilename);
-//             DagParser parser = new DagParser();
-//             FileReader reader = new FileReader(dagFile);
-//             Set terms = parser.process(reader);
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//         }
-//     }
 
+    private Set findOrphans() {
+        Set isas = new HashSet();
+        Set partofs = new HashSet();
+
+        Iterator iter = terms.iterator();
+        while (iter.hasNext()) {
+            readTree((DagTerm) iter.next(), isas, partofs);
+        }
+
+        partofs.removeAll(isas);
+        // rest have no isa relationship -> orphans
+        return partofs;
+    }
+
+    private void readTree(DagTerm term, Set isas, Set partofs) {
+        isas.addAll(term.getChildren());
+        Iterator iter = term.getChildren().iterator();
+        while (iter.hasNext()) {
+            readTree((DagTerm) iter.next(), isas, partofs);
+        }
+
+        partofs.addAll(term.getComponents());
+        iter = term.getComponents().iterator();
+        while (iter.hasNext()) {
+            readTree((DagTerm) iter.next(), isas, partofs);
+        }
+    }
 
     /**
      * Inner class to identify a DagTerm by its name and id.  If the same id has two different
