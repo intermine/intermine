@@ -15,7 +15,8 @@ import org.flymine.util.TypeUtil;
  *
  * @author Andrew Varley
  */
-public class QueryHelper {
+public class QueryHelper
+{
 
     protected static final Logger LOG = Logger.getLogger(QueryHelper.class);
 
@@ -54,7 +55,7 @@ public class QueryHelper {
      * and combinations thereof, for keys containing a mixture of
      * attributes, references and collections
      *
-     * @param the a set of Objects to query for
+     * @param orig the set of Objects to query for
      * @return a Query that will retrieve these objects from the data store
      */
 
@@ -88,8 +89,9 @@ public class QueryHelper {
 
             Object obj = i.next();
             // Check it is of the same class
-            if (! obj.getClass().equals(clazz)) {
-                throw new IllegalArgumentException("The objects in the given set are not of the same type");
+            if (!obj.getClass().equals(clazz)) {
+                throw new IllegalArgumentException("The objects in the given set "
+                                                   + "are not of the same type");
             }
 
             // Get the primary keys for this object
@@ -116,14 +118,16 @@ public class QueryHelper {
                         QueryReference qr = new QueryObjectReference(qc, key);
                         q.addFrom(new QueryClass(otherClass));
                         // And add a ClassConstraint for it
-                        csCombining.addConstraint(new ContainsConstraint(qr, ContainsConstraint.CONTAINS,
-                                                                         otherQueryClass));
-                        Constraint c = new ClassConstraint(otherQueryClass, ClassConstraint.EQUALS, obj);
+                        csCombining.addConstraint(new ContainsConstraint(qr,
+                                                    ContainsConstraint.CONTAINS, otherQueryClass));
+                        Constraint c = new ClassConstraint(otherQueryClass,
+                                                           ClassConstraint.EQUALS, obj);
                         csThisObject.addConstraint(c);
                     } else if (type == ModelUtil.COLLECTION) {
 
                         // Get the class that this reference refers to
-                        Class otherClass = TypeUtil.getElementType((Collection) TypeUtil.getFieldValue(clazz, key));
+                        Class otherClass = TypeUtil.getElementType(
+                                    (Collection) TypeUtil.getFieldValue(clazz, key));
 
                         // Add this to the from list of the query (if it is not already there)
                         QueryClass otherQueryClass = new QueryClass(otherClass);
@@ -132,10 +136,11 @@ public class QueryHelper {
                             collectionClasses.add(key);
                             q.addFrom(new QueryClass(otherClass));
                             // And add a ClassConstraint for it
-                            csCombining.addConstraint(new ContainsConstraint(qr, ContainsConstraint.CONTAINS,
-                                                                             otherQueryClass));
+                            csCombining.addConstraint(new ContainsConstraint(qr,
+                                    ContainsConstraint.CONTAINS, otherQueryClass));
                         }
-                        Constraint c = new ClassConstraint(otherQueryClass, ClassConstraint.EQUALS, obj);
+                        Constraint c = new ClassConstraint(otherQueryClass,
+                                                           ClassConstraint.EQUALS, obj);
                         csThisObject.addConstraint(c);
                     }
                 } catch (NoSuchFieldException e) {
