@@ -82,6 +82,25 @@ null:Confidence_InteractionElementType a owl:Class;
     rdfs:domain :ProteinInteraction;
     rdfs:range :Protein.
 
+:ProteinInteraction__comments a owl:ObjectProperty;
+    rdfs:domain :ProteinInteractionExperiment;
+    rdfs:range :Comment.
+
+:ProteinInteraction__baitIsTagged a owl:DatatypeProperty;
+   rdfs:domain :ProteinInteraction;
+   rdfs:range xsd:boolean.
+
+:ProteinInteraction__baitIsOverexpressed a owl:DatatypeProperty;
+   rdfs:domain :ProteinInteraction;
+   rdfs:range xsd:boolean.
+
+:ProteinInteraction__preyIsTagged a owl:DatatypeProperty;
+   rdfs:domain :ProteinInteraction;
+   rdfs:range xsd:boolean.
+
+:ProteinInteraction__preyIsOverexpressed a owl:DatatypeProperty;
+   rdfs:domain :ProteinInteraction;
+   rdfs:range xsd:boolean.
 
 # ------------------- ExperimentType details -------------------- #
 
@@ -100,7 +119,7 @@ null:ExperimentType__identifier a owl:DatatypeProperty;
     rdfs:domain :ProteinInteractionExperiment;
     rdfs:range :Comment.
 
-null:ExperimentType__attributeLlist a owl:ObjectProperty;
+null:ExperimentType__attributeList a owl:ObjectProperty;
     owl:equivalentProperty psi:ExperimentType__attributeList.
 
 null:ExperimentType__names a owl:ObjectProperty;
