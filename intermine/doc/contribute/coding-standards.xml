@@ -20,8 +20,10 @@ FlyMine project should adhere.</para>
 
 <itemizedlist>
 
-<listitem>All revisions must be checked in with a corresponding
-short comment describing the changes made to that file.</listitem>
+<listitem>All revisions must be checked in with a corresponding short
+comment describing the changes made to that file. General comments
+such as <synopsis>Corrected error</synopsis> should be
+avoided.</listitem>
 
 <listitem>No paths, usernames, passwords etc to be hardcoded in to the
 code. Where necessary, these should be in a properties
