@@ -7,8 +7,10 @@
   model.name: the name of the model
   model.src: the source location for the model
   class.path: the classpath to use
+  db.name: the name of the database to build, if actually building the schema
   build.model: the location of the model build directory
   build.tmp: the location to store temporary files
+  resources: the location of any static resource files
   -->
 
   <!-- Create the directory that this model will be built to -->
@@ -18,7 +20,7 @@
   </target>
 
 
-  <!-- has XMI model been unzipped? -->
+  <!-- has .zargo been unzipped? -->
   <target name="unpack-xmi-model.check" depends="prepare">
     <uptodate property="unpack-xmi-model.uptodate">
       <srcfiles dir="${model.src}" includes="${model.name}.zargo" />
@@ -26,7 +28,7 @@
     </uptodate>
   </target>
   
-  <!-- unzip testmodel -->
+  <!-- unzip .zargo file -->
   <target name="unpack-xmi-model" depends="unpack-xmi-model.check"
           description="unpacks an XMI model from .zargo file"
           unless="unpack-xmi-model.uptodate">
@@ -40,5 +42,138 @@
   </target>
 
 
+  <!-- Model generation targets -->
+  <target name="generate-xmi-model" depends="unpack-xmi-model"
+          description="Generate FlyMine model from an XMI file">
+
+    <taskdef name="model-generation" classname="org.flymine.task.ModelGenerationTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+
+    <model-generation
+      type="xmi"
+      modelname="${model.name}"
+      source="${build.tmp}/${model.name}_.xmi"
+      destdir="${build.model}/${model.name}"
+      />   
+  </target>
+
+
+  <target name="generate-acedb-model" depends="prepare"
+          description="Generate a FlyMine model file from an AceDB model file">
+    <taskdef
+      name="model-generation"
+      classname="org.flymine.task.ModelGenerationTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+
+    <model-generation
+      type="acedb"
+      modelname="${model.name}"
+      source="${model.src}"
+      destdir="${build.model}/${model.name}"/>
+
+  </target>
+
+
+  <!-- Code generation targets -->
+
+  <target name="generate-java" depends="prepare"
+          description="Generate Java files from a FlyMine model file">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="class.path" />
+    </taskdef>
+
+    <model-output type="java" model="${model.name}" destdir="${build.model}/${model.name}"/>
+  </target>
+
+
+  <target name="generate-ojb-mapping"
+          description="Generate OJB mapping files from a FlyMine model file">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="class.path" />
+    </taskdef>
+
+    <model-output type="ojb" model="${model.name}" destdir="${build.model}/${model.name}"/>
+
+    <copy todir="${build.model}/${model.name}" flatten="true">
+      <fileset dir="${resources}">
+        <include name="**/repository*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="generate-xml-mapping"
+          description="Generate Castor (XML) mapping files from a FlyMine model file">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="class.path" />
+    </taskdef>
+
+    <model-output type="castor" model="${model.name}" destdir="${build.model}/${model.name}"/>
+
+    <copy todir="${build.model}/${model.name}" flatten="true">
+      <fileset dir="${resources}">
+        <include name="**/castor*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="generate-torque"
+          description="Generate Torque schema description from a FlyMine model file">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="class.path" />
+    </taskdef>
+
+    <model-output type="torque" model="${model.name}" destdir="${build.model}/${model.name}"/>
+    <copy todir="${build.model}/${model.name}">
+      <fileset dir="${src.schema}">
+        <include name="**/*-schema.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- compile java source -->
+  <target name="compile-java" depends="generate-java">
+    <javac destdir="${build.model}/${model.name}" listfiles="yes">
+      <classpath refid="class.path"/>
+      <src path="${build.model}/${model.name}" />
+    </javac>
+  </target>
+
+  <target name="build-db" depends="generate-torque"
+          description="Build database tables from a Torque description">
+    <taskdef
+      name="build-db"
+      classname="org.flymine.task.BuildDbTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    
+    <build-db
+      database="${db.name}"
+      destdir="${build.model}/${model.name}">
+      <fileset dir="${build.model}/${model.name}">
+        <include name="*-schema.xml" />
+      </fileset>
+    </build-db>
+  </target>
+
+  <!-- Targets that could be called from another build script -->
+
+  <target name="build-model-from-zargo" depends="generate-xmi-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
+          description="Build a usable model from a .zargo file">
+  </target>
+
+  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
+          description="Build a usable model from an AceDB .wrm file">
+  </target>
+
+  <target name="jar" depends="compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
+          description="create a jar of a model">
+    <jar destfile="${dist}/flymine-${model.name}.jar">
+      <fileset dir="${build.model}/${model.name}" >
+        <exclude name="**/*.java"/>
+      </fileset>
+    </jar>
+  </target>
 
 </project>
