@@ -25,56 +25,20 @@
   <xsl:param name="sourceref"/>
 
   <xsl:template match="article">
-    <table>
-      <tr>
-        <td height="100%">
-          <table class="box" width="100%" cellspacing="0" cellpadding="6" border="0" align="center">
-            <tr>
-              <th class="title">
-                <xsl:apply-templates select="sect1[position()=1]/title"/>
-              </th>
-            </tr>
-            <tr>
-              <td class="boxbody" height="100%">
-                <xsl:apply-templates select="sect1[position()=1]/para"/>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td height="100%">
-          <table class="box" width="100%" cellspacing="0" cellpadding="6" border="0" align="center">
-            <tr>
-              <th class="title">
-                <xsl:apply-templates select="sect1[position()=2]/title"/>
-              </th>
-            </tr>
-            <tr>
-              <td class="boxbody" height="100%">
-                <xsl:apply-templates select="sect1[position()=2]/para"/>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td height="100%">
-          <table class="box" width="100%" cellspacing="0" cellpadding="6" border="0" align="center">
-            <tr>
-              <th class="title">
-                <xsl:apply-templates select="sect1[position()=3]/title"/>
-              </th>
-            </tr>
-            <tr>
-              <td class="boxbody" height="100%">
-                <xsl:apply-templates select="sect1[position()=3]/para"/>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    <div class="docbook-page">
+      <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="sect1">
+    <div class="box">
+      <div class="heading">
+        <xsl:apply-templates select="title"/>
+      </div>
+      <div class="body">
+        <xsl:apply-templates select="para"/>
+      </div>
+    </div>
   </xsl:template>
 
   <xsl:template match="para">
