@@ -13,7 +13,6 @@ package org.flymine.web.results;
 import java.util.HashMap;
 import java.util.Map;
 
-import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.objectstore.ObjectStore;
@@ -21,6 +20,8 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.web.Constants;
+
+import servletunit.struts.MockStrutsTestCase;
 
 public class ResultsViewControllerTest extends MockStrutsTestCase
 {
@@ -33,13 +34,14 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initResultsView");
 
-        Query q = new Query();
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-
-        getSession().setAttribute("results", new Results(q, os, os.getSequence()));
+        Results results = new Results(new Query(), os, os.getSequence());
+        getRequest().setAttribute("results", results);
         actionPerform();
-        assertNotNull(getRequest().getSession().getAttribute(Constants.RESULTS_TABLE));
-        assertNotNull(getRequest().getSession().getAttribute(Constants.SAVED_BAGS));
+
+        verifyNoActionErrors();
+        DisplayableResults dr = (DisplayableResults) getSession().getAttribute(Constants.RESULTS_TABLE);
+        assertTrue(results == dr.getResults());
     }
 
     public void testExisting() throws Exception {
@@ -47,11 +49,17 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initResultsView");
 
-        Map savedBags = new HashMap();
-
-        getSession().setAttribute(Constants.SAVED_BAGS, savedBags);
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        Results results = new Results(new Query(), os, os.getSequence());
+        getRequest().setAttribute("results", results);
+        DisplayableResults dr = new DisplayableResults(results);
+        dr.setStart(3);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         actionPerform();
-        assertTrue(savedBags == getRequest().getSession().getAttribute(Constants.SAVED_BAGS));
-    }
 
+        verifyNoActionErrors();
+        dr = (DisplayableResults) getSession().getAttribute(Constants.RESULTS_TABLE);
+        assertTrue(results == dr.getResults());
+        assertEquals(3, dr.getStart());
+    }
 }
