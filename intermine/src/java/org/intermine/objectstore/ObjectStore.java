@@ -1,5 +1,7 @@
 package org.flymine.objectstore;
 
+import java.util.List;
+
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 
@@ -28,9 +30,9 @@ public interface ObjectStore
      * @param q the Query to execute
      * @param start the start row
      * @param end the end row
-     * @return the results of the Query
+     * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public Results execute(Query q, int start, int end) throws ObjectStoreException;
+    public List execute(Query q, int start, int end) throws ObjectStoreException;
 
 }
