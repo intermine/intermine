@@ -87,14 +87,16 @@ public class TypeUtil
         try {
             return getGetter(o.getClass(), fieldName).invoke(o, new Object[] {});
         } catch (Exception e) {
-            String type = null;
+            String type = "";
             try {
-                type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
+                type = " (a " + getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType()
+                    .getName() + ")";
             } catch (Exception e3) {
+                type = " (available fields are " + getFieldInfos(o.getClass()).keySet() + ")";
             }
             IllegalAccessException e2 = new IllegalAccessException("Couldn't get field \""
                     + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""
-                    + (type == null ? "" : " (a " + type + ")"));
+                    + type);
             e2.initCause(e);
             throw e2;
         }
