@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
 public class DataLoaderHelper
 {
@@ -65,7 +66,8 @@ public class DataLoaderHelper
     private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
 
     /**
-     * Compare the priorities of two sources over a field
+     * Compare the priorities of two sources over a field.
+     *
      * @param fd FieldDescriptor for the field
      * @param src1 the first Source
      * @param src2 the second Source
@@ -105,8 +107,8 @@ public class DataLoaderHelper
     }
 
     /**
-     * Build a map from model to a list of the Class- and FieldDescriptors for which priority
-     * information is available
+     * Build a map from class and field names to a priority-ordered List of source name Strings.
+     *
      * @param model the Model
      * @return the Map
      */
