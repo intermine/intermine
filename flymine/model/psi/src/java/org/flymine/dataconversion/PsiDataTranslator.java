@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class PsiDataTranslator extends DataTranslator
     private Item db = null;
     private Item swissProt = null;
     private Map pubs = new HashMap();
+    private Set noPubs = new HashSet();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -145,7 +147,7 @@ public class PsiDataTranslator extends DataTranslator
                                                                 .getRefId()));
                     Item dbXref = ItemHelper.convert(srcItemReader
                                                      .getItemById(xref.getReference("primaryRef")
-                                                                  .getRefId())); 
+                                                                  .getRefId()));
                     tgtItem.addAttribute(new Attribute("identifier",
                                                        dbXref.getAttribute("id").getValue()));
                 }
@@ -166,7 +168,7 @@ public class PsiDataTranslator extends DataTranslator
 
         Item pub = null;
         if (dbrefType != null && dbrefType.getAttribute("db").getValue().equals("pubmed")) {
-            pub = getPub(exptType.getIdentifier());
+            pub = getPub(exptType);
             pub.addAttribute(new Attribute("pubMedId", dbrefType.getAttribute("id").getValue()));
         }
         return pub;
@@ -179,8 +181,12 @@ public class PsiDataTranslator extends DataTranslator
         Item experimentList = ItemHelper.convert(srcItemReader
                                  .getItemById(intElType.getReference("experimentList").getRefId()));
         String experimentId = experimentList.getReference("experimentRef").getRefId();
-        //addReferencedItem(interaction, getPub(experimentId), "evidence", true, "", false);
-
+        Item exptType = ItemHelper.convert(srcItemReader
+                            .getItemById(experimentList.getReference("experimentRef").getRefId()));
+        Item pub = getPub(exptType);
+        if (pub != null) {
+            addReferencedItem(interaction, pub, "evidence", true, "", false);
+        }
         Item participants = ItemHelper.convert(srcItemReader
                               .getItemById(intElType.getReference("participantList").getRefId()));
         Iterator iter = participants.getCollection("proteinParticipants").getRefIds().iterator();
@@ -200,15 +206,47 @@ public class PsiDataTranslator extends DataTranslator
         return interaction;
     }
 
-    private Item getPub(String experimentId) {
+    // find a publication for the experiment - if no experiment return null
+    private Item getPub(Item exptType) throws ObjectStoreException {
+        String experimentId = exptType.getIdentifier();
+
+        if (noPubs.contains(experimentId)) {
+            return null;
+        }
+
         Item pub = (Item) pubs.get(experimentId);
         if (pub == null) {
-            pub = createItem(tgtNs + "Publication", "");
-            pubs.put(experimentId, pub);
+            String pubmedId = null;
+            Item bibRefType = ItemHelper.convert(srcItemReader
+                  .getItemById(exptType.getReference("bibref").getRefId()));
+            if (bibRefType != null) {
+                Item xRefType = ItemHelper.convert(srcItemReader
+                  .getItemById(bibRefType.getReference("xref").getRefId()));
+                if (xRefType != null) {
+                    Item dbReferenceType = ItemHelper.convert(srcItemReader
+                      .getItemById(xRefType.getReference("primaryRef").getRefId()));
+                    if (dbReferenceType != null) {
+                        Attribute dbAttr = dbReferenceType.getAttribute("db");
+                        if (dbAttr != null && dbAttr.getValue().equals("pubmed")) {
+                            Attribute idAttr = dbReferenceType.getAttribute("id");
+                            if (idAttr != null) {
+                                pubmedId = idAttr.getValue();
+                            }
+                        }
+                    }
+                }
+            }
+            if (pubmedId != null) {
+                pub = createItem(tgtNs + "Publication", "");
+                pubs.put(experimentId, pub);
+            } else {
+                noPubs.add(experimentId);
+                return null;
+            }
         }
         return pub;
     }
-    
+
     private Item getDb() {
         if (db == null) {
             db = createItem(tgtNs + "Database", "");
