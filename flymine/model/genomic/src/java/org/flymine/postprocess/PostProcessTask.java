@@ -20,6 +20,8 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.Exon;
 
+import org.apache.log4j.Logger;
+
 /**
  * Run operations on genomic model database after DataLoading
  *
@@ -27,6 +29,7 @@ import org.flymine.model.genomic.Exon;
  */
 public class PostProcessTask extends Task
 {
+    private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
     protected String type, alias;
 
@@ -62,18 +65,28 @@ public class PostProcessTask extends Task
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(alias);
             if ("calculate-locations".equals(type)) {
                 CalculateLocations cl = new CalculateLocations(osw);
+                LOG.info("Starting CalculateLocations.fixPartials()");
                 cl.fixPartials();
+                LOG.info("Starting CalculateLocations.createLocations()");
                 cl.createLocations();
+                LOG.info("Starting CalculateLocations.createSpanningLocations()");
                 cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
+                LOG.info("Finished calculate-locations");
             } else if ("create-references".equals(type)) {
                 CreateReferences cr = new CreateReferences(osw);
+                LOG.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
+                LOG.info("Finsihed create-references");
             } else if ("transfer-sequences".equals(type)) {
                 TransferSequences ts = new TransferSequences(osw);
+                LOG.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
+                LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
+                LOG.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
+                LOG.info("Finished transfer-sequences");
             } else {
                 throw new BuildException("unknown type: " + type);
             }
