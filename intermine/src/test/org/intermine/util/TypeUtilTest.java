@@ -33,6 +33,13 @@ public class TypeUtilTest extends TestCase
         assertNotNull(TypeUtil.getFieldValue(new Company(), "key"));
     }
 
+    public void testSetFieldValue() throws Exception {
+        Manager m = new Manager();
+        String fieldValue = "Accountant";
+        TypeUtil.setFieldValue(m, "title", fieldValue);
+        assertEquals(fieldValue, m.getTitle());
+    }
+
     public void testGetElementTypeNull() throws Exception {
         Collection c = null;
         try {
