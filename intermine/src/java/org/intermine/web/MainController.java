@@ -63,7 +63,7 @@ public class MainController extends TilesAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        
+
         // set up the metadata
         context.putAttribute("nodes",
                              MainHelper.makeNodes((String) session.getAttribute("path"), model));
@@ -87,7 +87,7 @@ public class MainController extends TilesAction
                     }
                 }
                 request.setAttribute("subclasses", subclasses);
-                
+
                 // loop query arguments
                 ArrayList paths = new ArrayList();
                 Map displayPaths = new HashMap();
@@ -99,7 +99,7 @@ public class MainController extends TilesAction
                         displayPaths.put(anode.getPath(), anode.getPath());
                     }
                 }
-                
+
                 Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
@@ -114,7 +114,8 @@ public class MainController extends TilesAction
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         request.setAttribute("viewPaths", listToMap(query.getView()));
-        
+        request.setAttribute("viewPathTypes", getViewPathTypes(query));
+
         // set up the navigation links (eg. Department > employees > department)
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
@@ -130,7 +131,7 @@ public class MainController extends TilesAction
 
         return null;
     }
-    
+
     /**
      * Get a list of paths that should not be removed from the query by the
      * user. This is usually because they are involved in a loop query constraint.
@@ -163,10 +164,30 @@ public class MainController extends TilesAction
         }
         return paths;
     }
-    
+
+    /**
+     * Return a Map from paths in the view list of the given PathQuery to their types.
+     * @param pathquery the PathQuery containing the paths
+     * @return the path Map
+     */
+    protected static Map getViewPathTypes(PathQuery pathquery) {
+        Map viewPathTypes = new HashMap();
+
+        Iterator iter = pathquery.getView().iterator();
+
+        while (iter.hasNext()) {
+            String path = (String) iter.next();
+            String unqualifiedName =
+                TypeUtil.unqualifiedName(MainHelper.getTypeForPath(path, pathquery));
+            viewPathTypes.put(path, unqualifiedName);
+        }
+
+        return viewPathTypes;
+    }
+
     /**
      * Returns a map where every item in <code>list</code> maps to Boolean TRUE.
-     * 
+     *
      * @param list  the list of map keys
      * @return      a map that maps every item in list to Boolean.TRUE
      */
@@ -178,7 +199,7 @@ public class MainController extends TilesAction
         }
         return map;
     }
-    
+
     /**
      * Get the names of the type of this ClassDescriptor and all its descendents
      * @param cld the ClassDescriptor
@@ -189,7 +210,7 @@ public class MainController extends TilesAction
         getChildren(cld, children);
         return children;
     }
-    
+
     /**
      * Add the names of the descendents of a ClassDescriptor to a Set
      * @param cld the ClassDescriptor
