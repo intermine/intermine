@@ -140,7 +140,7 @@ public class GFF3Converter
     public void process(GFF3Record record) throws ObjectStoreException {
         // get rid of previous record Items from handler
         handler.clear();
-        List records = record.getNames();
+        List names = record.getNames();
         List parents = record.getParents();
 
         Item seq = getSeq(record.getSequenceID());
@@ -149,32 +149,25 @@ public class GFF3Converter
         String className = TypeUtil.javaiseClassName(term);
 
         Item feature;
-        Item synonym1, synonym2;
+
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
-            synonym1 = createItem("Synonym");
-            synonym1.addReference(new Reference("subject", feature.getIdentifier()));
-            synonym1.addAttribute(new Attribute("value", record.getId()));
-            synonym1.addAttribute(new Attribute("type", "identifier"));
-            synonym1.addReference(new Reference("source", infoSource.getIdentifier()));
-            handler.addItem(synonym1);
-
         } else {
             feature = createItem(className);
         }
 
-        if (records != null) {
-            feature.addAttribute(new Attribute("name", (String) records.get(0)));
-            for (Iterator i = records.iterator(); i.hasNext(); ) {
+        if (names != null) {
+            feature.addAttribute(new Attribute("name", (String) names.get(0)));
+            for (Iterator i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
-                synonym2 = createItem("Synonym");
-                synonym2.addReference(new Reference("subject", feature.getIdentifier()));
-                synonym2.addAttribute(new Attribute("value", recordName));
-                synonym2.addAttribute(new Attribute("type", "name"));
-                synonym2.addReference(new Reference("source", infoSource.getIdentifier()));
-                handler.addItem(synonym2);
+                Item synonym = createItem("Synonym");
+                synonym.addReference(new Reference("subject", feature.getIdentifier()));
+                synonym.addAttribute(new Attribute("value", recordName));
+                synonym.addAttribute(new Attribute("type", "name"));
+                synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+                handler.addItem(synonym);
             }
         }
         feature.addReference(getOrgRef());
@@ -220,14 +213,14 @@ public class GFF3Converter
                 computationalResult.addAttribute(new Attribute("score",
                                                                String.valueOf(record.getScore())));
             }
-            if (record.getSource() != null) {
 
+            if (record.getSource() != null) {
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
                                                           computationalAnalysis.getIdentifier()));
                 handler.setAnalysis(computationalAnalysis);
-
             }
+
             handler.setResult(computationalResult);
             evidence.addRefId(computationalResult.getIdentifier());
         }
@@ -236,6 +229,16 @@ public class GFF3Converter
         handler.setFeature(feature);
 
         handler.process(record);
+
+        if (feature.hasAttribute("identifier")) {
+            Item synonym = createItem("Synonym");
+            synonym.addReference(new Reference("subject", feature.getIdentifier()));
+            String value = feature.getAttribute("identifier").getValue();
+            synonym.addAttribute(new Attribute("value", value));
+            synonym.addAttribute(new Attribute("type", "identifier"));
+            synonym.addReference(new Reference("source", infoSource.getIdentifier()));
+            handler.addItem(synonym);
+        }
 
         try {
             Iterator iter = handler.getItems().iterator();
