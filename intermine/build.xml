@@ -401,10 +401,22 @@
                      sourceName="testsource"/>
   </target>
 
+  <!-- drop all precomputed tables -->
+  <target name="drop-precomputed-tables-testmodel" depends="compile-main">
+    <taskdef name="drop-precomputed-tables"
+             classname="org.intermine.task.DropPrecomputedTablesTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+
+    <drop-precomputed-tables alias="os.unittest"/>
+  </target>
+
   <!-- create selected precomputed tables -->
-  <target name="precompute-testmodel-queries" depends="compile-main">
+  <target name="precompute-testmodel-queries" 
+          depends="compile-main, drop-precomputed-tables-testmodel">
     <ant antfile="build-model.xml" target="precompute-queries" inheritRefs="true">
       <property name="objectstore.name" value="os.unittest"/>
+      <property name="db.name" value="db.unittest"/>
       <property name="model.name" value="testmodel"/>
       <property name="precompute.minRows" value="2"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -412,9 +424,11 @@
   </target>
 
   <!-- create selected precomputed tables and test the speed of queries -->
-  <target name="precompute-testmodel-queries-test" depends="compile-main">
+  <target name="precompute-testmodel-queries-test"
+          depends="compile-main, drop-precomputed-tables-testmodel">
     <ant antfile="build-model.xml" target="precompute-queries-test" inheritRefs="true">
       <property name="objectstore.name" value="os.unittest"/>
+      <property name="db.name" value="db.unittest"/>
       <property name="model.name" value="testmodel"/>
       <property name="precompute.minRows" value="2"/>
       <reference torefid="class.path" refid="test.class.path"/>
