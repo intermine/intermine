@@ -293,11 +293,11 @@ public class CalculateLocations
             ResultsRow rr = (ResultsRow) resIter.next();
             Location locBioOnContig = (Location) rr.get(2);
             //org.intermine.web.LogMe.log("i", "0: " + rr.get(0).getClass().getName() + " " +
-            //                            ((InterMineObject) rr.get(0)).getId());
+            //((InterMineObject) rr.get(0)).getId());
             //org.intermine.web.LogMe.log("i", "1: " + rr.get(1).getClass().getName() + " " +
-            //                            ((InterMineObject) rr.get(1)).getId());
+            //((InterMineObject) rr.get(1)).getId());
             //org.intermine.web.LogMe.log("i", "2: " + rr.get(2).getClass().getName() + " " +
-            //                            ((InterMineObject) rr.get(2)).getId());
+            //((InterMineObject) rr.get(2)).getId());
             Contig contig = (Contig) rr.get(0);
             BioEntity bio = (BioEntity) rr.get(1);
             SimpleLoc bioOnContig = new SimpleLoc(contig.getId().intValue(),
@@ -348,7 +348,7 @@ public class CalculateLocations
 
                         if (bioOnScLoc instanceof PartialLocation) {
                             //org.intermine.web.LogMe.log("i", "found PartialLocation "
-                            //                            + "on Supercontig: " + bioOnScLoc);
+                            //+ "on Supercontig: " + bioOnScLoc);
                             addToMapOfLists(partialsOnSupercontigs, bio, bioOnScLoc);
                         } else {
                             //org.intermine.web.LogMe.log("i", "storing");
@@ -379,14 +379,14 @@ public class CalculateLocations
 
                         if (bioOnBandLoc instanceof PartialLocation) {
                             //org.intermine.web.LogMe.log("i", "found PartialLocation "
-                            //                            + "on ChromosomeBand: " + bioOnBandLoc);
+                            //+ "on ChromosomeBand: " + bioOnBandLoc);
                             addToMapOfLists(partialsOnChromosomeBands, bio, bioOnBandLoc);
                         } else {
                             //org.intermine.web.LogMe.log("i", "storing");
                             osw.store(bioOnBandLoc);
                         }
                         k++;
-    }
+                    }
                 }
             }
             if (i % 100 == 0) {
@@ -397,11 +397,14 @@ public class CalculateLocations
                          + ((60000L * i) / (now - start)) + " per minute)");
             }
         }
-        //org.intermine.web.LogMe.log("i", "map: " + partialsOnChromosomes);
+        //org.intermine.web.LogMe.log("i", "partialsOnChromosome: " + partialsOnChromosomes);
 
         // process partials Locations
+        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomes):");
         processPartials(partialsOnChromosomes);
+        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnSupercontigs):");
         processPartials(partialsOnSupercontigs);
+        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomeBands):");
         processPartials(partialsOnChromosomeBands);
 
         osw.commitTransaction();
@@ -428,6 +431,8 @@ public class CalculateLocations
      * Process the Partial Locations in mapOfPartials and merge PartialLocations
      */
     private void processPartials(Map mapOfPartials) throws ObjectStoreException {
+        //org.intermine.web.LogMe.log("i", "processPartials - mapOfPartials: " + mapOfPartials);
+
         Iterator mapOfPartialsIter = mapOfPartials.keySet().iterator();
         while (mapOfPartialsIter.hasNext()) {
             int minBioStart = Integer.MAX_VALUE;
@@ -440,9 +445,9 @@ public class CalculateLocations
             BioEntity newLocationObject = null;
 
             BioEntity bioEntity = (BioEntity) mapOfPartialsIter.next();
-            //org.intermine.web.LogMe.log("i", "bioEntity: " + bioEntity);
+            //org.intermine.web.LogMe.log("i", "processPartials bioEntity: " + bioEntity);
             List partialLocList = (List) mapOfPartials.get(bioEntity);
-            //org.intermine.web.LogMe.log("i", "list: " + partialLocList.size());
+            //org.intermine.web.LogMe.log("i", "processPartials list: " + partialLocList.size());
 
             Iterator partialLocListIter = partialLocList.iterator();
             while (partialLocListIter.hasNext()) {
@@ -454,13 +459,13 @@ public class CalculateLocations
                 // createChromosomeLocation() doesn't set subjectStart or subjectEnd yet
                 //                 if (pl.getSubjectStart().intValue() < minBioStart) {
                 //                     minBioStart = pl.getSubjectStart().intValue();
-                //                     //org.intermine.web.LogMe.log("i", "setting minBioStart "
+                //                     org.intermine.web.LogMe.log("i", "setting minBioStart "
                 //                                                   + "to " + minBioStart);
                 //                 }
 
                 //                 if (pl.getSubjectEnd().intValue() > maxBioEnd) {
                 //                     maxBioEnd = pl.getSubjectEnd().intValue();
-                //                     //org.intermine.web.LogMe.log("i", "setting maxBioEnd "
+                //                     org.intermine.web.LogMe.log("i", "setting maxBioEnd "
                 //                                                   + "to " + maxBioEnd);
                 //                 }
 
@@ -628,16 +633,22 @@ public class CalculateLocations
                 childOnParent = pl;
             }
         } else {
-            //  ------------------  parent
-            //      |        |
-            //      ----------      child
-            childOnParent = (Location)
-                DynamicUtil.createObject(Collections.singleton(Location.class));
+            if (childOnChr.isPartial()) {
+                // start or end of childOnParent is partial so the new location must be partial too
+                childOnParent = (PartialLocation)
+                    DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
+
+            } else {
+                //  ------------------  parent
+                //      |        |
+                //      ----------      child
+                childOnParent = (Location)
+                    DynamicUtil.createObject(Collections.singleton(Location.class));
+            }
         }
+
         childOnParent.setObject(parent);
         childOnParent.setSubject(child);
-        childOnParent.setStartIsPartial(startIsPartial ? Boolean.TRUE : Boolean.FALSE);
-        childOnParent.setEndIsPartial(endIsPartial ? Boolean.TRUE : Boolean.FALSE);
 
         int newChildOnParentStart;
         int newChildOnParentEnd;
@@ -670,6 +681,28 @@ public class CalculateLocations
         } else {
             childOnParent.setStrand(new Integer(-1));
         }
+
+        if (parentOnChr.getStrand() == -1) {
+            if (childOnChr.endIsPartial()) {
+                startIsPartial = true;
+            }
+            if (childOnChr.startIsPartial()) {
+                endIsPartial = true;
+           }
+        } else {
+            if (childOnChr.startIsPartial()) {
+                //org.intermine.web.LogMe.log("i", "          XXXXXXXXXXXXXXXXXXXXX");
+                startIsPartial = true;
+            }
+            if (childOnChr.endIsPartial()) {
+                //org.intermine.web.LogMe.log("i", "          YYYYYYYYYYYYYYYYYYYYY");
+                endIsPartial = true;
+            }
+        }
+
+        childOnParent.setStartIsPartial(startIsPartial ? Boolean.TRUE : Boolean.FALSE);
+        childOnParent.setEndIsPartial(endIsPartial ? Boolean.TRUE : Boolean.FALSE);
+
         // TODO evidence?
 
         //LOG.info("Created Location " + childOnParent + " for parent: " + parent + " and child: "
