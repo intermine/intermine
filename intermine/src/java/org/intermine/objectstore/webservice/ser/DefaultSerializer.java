@@ -74,10 +74,6 @@ public class DefaultSerializer implements Serializer
 
             QName qname = new QName(name.getNamespaceURI(), field.getName());
             QName xmlType = context.getQNameForClass(field.getType());
-//             if (field.getType().equals(java.util.List.class)) {
-//                 LOG.warn("found a list");
-//                 xmlType = new QName("http://soapinterop.org/xsd", "list");
-//             }
             context.serialize(qname, null, fieldValue, xmlType, true, null);
         }
         
