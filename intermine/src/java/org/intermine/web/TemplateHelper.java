@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -126,8 +128,8 @@ public class TemplateHelper
                     String key = "" + (j + 1);
                     String desc = (String) tf.getConstraintLabel(key);
                     boolean editable = tf.getConstraintEditable(key);
-                    
-                    c = new Constraint(c.getOp(), c.getValue(), editable, desc, "c" + key);
+                    String id = (String) tf.getConstraintIdentifier(key);
+                    c = new Constraint(c.getOp(), c.getValue(), editable, desc, id);
                     citer.set(c);
                     
                     j++;
@@ -150,7 +152,7 @@ public class TemplateHelper
      * @return  all template queries serialised as XML
      * @see  TemplateQuery
      */
-    public static String templateMapToXML(Map templates) {
+    public static String templateMapToXml(Map templates) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         TemplateQueryBinding binding = new TemplateQueryBinding();
@@ -168,5 +170,18 @@ public class TemplateHelper
         }
         
         return sw.toString();
+    }
+    
+    /**
+     * Parse templates in XML format and return a map from template name to
+     * TemplateQuery.
+     *
+     * @param xml  the template queries in xml format
+     * @return     Map from template name to TemplateQuery
+     * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
+     */
+    public static Map xmlToTemplateMap(String xml) throws Exception {
+        Reader templateQueriesReader = new StringReader(xml);
+        return new TemplateQueryBinding().unmarshal(templateQueriesReader);
     }
 }
