@@ -599,7 +599,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getTremblRef());
                         synonyms.add(synonym);
-                    } else if (dbname.equals("protein_id") ||dbname.equals("prediction_SPTREMBL")) {
+                    } else if (dbname.equals("protein_id")
+                        || dbname.equals("prediction_SPTREMBL")) {
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonym.addAttribute(new Attribute("value", accession));
