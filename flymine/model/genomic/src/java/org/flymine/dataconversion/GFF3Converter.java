@@ -14,6 +14,11 @@ import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -47,9 +52,11 @@ public class GFF3Converter
     protected ItemWriter writer;
     private String seqClsName;
     private String orgAbbrev;
-    private String infoSourceTitle;
+    private Item infoSource;
     private String targetNameSpace;
     private int itemid = 0;
+    private Map analyses = new HashMap();
+    private Map seqs = new HashMap();
 
 
     /**
@@ -68,48 +75,57 @@ public class GFF3Converter
         this.writer = writer;
         this.seqClsName = seqClsName;
         this.orgAbbrev = orgAbbrev;
-        this.infoSourceTitle = infoSourceTitle;
         this.targetNameSpace = targetNameSpace;
+
+        this.organism = getOrganism();
+        this.infoSource = createItem(targetNameSpace + "InfoSource", "");
+        infoSource.addAttribute(new Attribute("title", infoSourceTitle));
     }
 
     /**
      * parse a bufferedReader and process GFF3 record
      * @param bReader BufferedReader
-     * @throws java.io.IOException if an error occurs during processing
+     * @throws java.io.IOException if an error occurs reading GFF
+     * @throws ObjectStoreException if an error occurs storing items
      */
-    public void parse(BufferedReader bReader) throws java.io.IOException {
+    public void parse(BufferedReader bReader) throws java.io.IOException, ObjectStoreException {
         List list = new ArrayList();
         GFF3Record record;
         list = parser.parse(bReader);
-        try {
-            organism = getOrganism();
-            writer.store(ItemHelper.convert(organism));
-        } catch (ObjectStoreException e) {
-            LOG.error("Problem writing organism to the itemwriter");
-                //throw e;
-        }
+        writer.store(ItemHelper.convert(organism));
+        writer.store(ItemHelper.convert(infoSource));
 
         for (int i = 0; i < list.size(); i++) {
             record = (GFF3Record) list.get(i);
             process(record);
+        }
+
+        // write ComputationalAnalysis items
+        Iterator iter = analyses.values().iterator();
+        while (iter.hasNext()) {
+            writer.store(ItemHelper.convert((Item) iter.next()));
+        }
+
+        // write seq items
+        iter = seqs.values().iterator();
+        while (iter.hasNext()) {
+            writer.store(ItemHelper.convert((Item) iter.next()));
         }
     }
 
     /**
      * process GFF3 record and give a xml presentation
      * @param record GFF3Record
+     * @throws ObjectStoreException if an error occurs storing items
      */
-    public void process(GFF3Record record) {
-        Item infoSource = createItem(targetNameSpace + "InfoSource", "", itemid++);
-        infoSource.addAttribute(new Attribute("title", infoSourceTitle));
+    public void process(GFF3Record record) throws ObjectStoreException {
+        Set result = new HashSet();
 
-        Item seq = createItem(targetNameSpace + seqClsName, "", itemid++);
-        seq.addAttribute(new Attribute("identifier", record.getSequenceID()));
-        seq.addReference(getOrgRef());
+        Item seq = getSeq(record.getSequenceID());
 
         String term = record.getType();
         String className = TypeUtil.javaiseClassName(term);
-        Item feature = createItem(targetNameSpace + className, "", itemid++);
+        Item feature = createItem(targetNameSpace + className, "");
         if (record.getId() != null) {
             feature.addAttribute(new Attribute("identifier", record.getId()));
         }
@@ -117,8 +133,9 @@ public class GFF3Converter
             feature.addAttribute(new Attribute("name", record.getName()));
         }
         feature.addReference(getOrgRef());
+        result.add(feature);
 
-        Item location = createItem(targetNameSpace + "Location", "", itemid++);
+        Item location = createItem(targetNameSpace + "Location", "");
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
         if (record.getStrand().equals("+")) {
@@ -133,35 +150,30 @@ public class GFF3Converter
         location.addReference(new Reference("subject", feature.getIdentifier()));
         location.addCollection(new ReferenceList("evidence",
                             Arrays.asList(new Object[] {infoSource.getIdentifier()})));
+        result.add(location);
 
-        Item computationalAnalysis = new Item();
-        Item computationalResult = new Item();
         if (String.valueOf(record.getScore()) != null) {
-            computationalAnalysis = createItem(targetNameSpace + "ComputationalAnalysis", "",
-                            itemid++);
-            computationalAnalysis.addAttribute(new Attribute("algorithm",
-                                                             record.getSource()));
+            Item computationalAnalysis = getComputationalAnalysis(record.getSource());
 
-            computationalResult = createItem(targetNameSpace + "ComputationalResult", "", itemid++);
+            Item computationalResult = createItem(targetNameSpace + "ComputationalResult", "");
             computationalResult.addAttribute(new Attribute("score",
-                                    String.valueOf(record.getScore())));
+                                                           String.valueOf(record.getScore())));
             computationalResult.addReference(new Reference("analysis",
-                                    computationalAnalysis.getIdentifier()));
+                                                           computationalAnalysis.getIdentifier()));
             ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
-                    {computationalResult.getIdentifier(), infoSource.getIdentifier()}));
-                feature.addCollection(evidence);
-            }
+                {computationalResult.getIdentifier(), infoSource.getIdentifier()}));
+            feature.addCollection(evidence);
+            result.add(computationalResult);
+        }
 
         try {
-            writer.store(ItemHelper.convert(infoSource));
-            writer.store(ItemHelper.convert(seq));
-            writer.store(ItemHelper.convert(location));
-            writer.store(ItemHelper.convert(feature));
-            writer.store(ItemHelper.convert(computationalAnalysis));
-            writer.store(ItemHelper.convert(computationalResult));
+            Iterator iter = result.iterator();
+            while (iter.hasNext()) {
+                writer.store(ItemHelper.convert((Item) iter.next()));
+            }
         } catch (ObjectStoreException e) {
             LOG.error("Problem writing item to the itemwriter");
-                //throw e;
+            throw e;
         }
 
     }
@@ -178,7 +190,7 @@ public class GFF3Converter
      */
     private Item getOrganism() {
         if (organism == null) {
-            organism = createItem(targetNameSpace + "Organism", "", -1);
+            organism = createItem(targetNameSpace + "Organism", "");
             organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
         }
         return organism;
@@ -195,17 +207,43 @@ public class GFF3Converter
     }
 
     /**
+     * @return ComputationalAnalysis item created/from map
+     */
+    private Item getComputationalAnalysis(String algorithm) {
+        Item analysis = (Item) analyses.get(algorithm);
+        if (analysis == null) {
+            analysis = createItem(targetNameSpace + "ComputationalAnalysis", "");
+            analysis.addAttribute(new Attribute("algorithm", algorithm));
+            analyses.put(algorithm, analysis);
+        }
+        return analysis;
+    }
+
+    /**
+     * @return return/create item of class seqClsName for given identifier
+     */
+    private Item getSeq(String identifier) {
+        Item seq = (Item) seqs.get(identifier);
+        if (seq == null) {
+            seq = createItem(targetNameSpace + seqClsName, "");
+            seq.addAttribute(new Attribute("identifier", identifier));
+            seqs.put(identifier, seq);
+        }
+        return seq;
+    }
+
+    /**
      * Create an item with given className, implementation and item identifier
      * @param className
      * @param implementations
      * @param identifier
      * @return the created item
      */
-    private Item createItem(String className, String implementations, int identifier) {
+    private Item createItem(String className, String implementations) {
         Item item = new Item();
         item.setClassName(className);
         item.setImplementations(implementations);
-        item.setIdentifier("0_" + identifier);
+        item.setIdentifier("0_" + itemid++);
         return item;
     }
 
