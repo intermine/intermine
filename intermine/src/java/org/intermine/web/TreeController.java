@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
@@ -63,7 +64,9 @@ public class TreeController extends TilesAction
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
-        context.putAttribute("nodes", makeNodes(root, openClasses, 0));
+        Map classCounts = (Map) servletContext.getAttribute("classCounts");
+
+        context.putAttribute("nodes", makeNodes(root, openClasses, 0, classCounts));
 
         return null;
     }
@@ -74,16 +77,20 @@ public class TreeController extends TilesAction
      * @param parent the root class
      * @param openClasses the Set of open classes
      * @param depth the current depth from the root
+     * @param classCounts the classCounts attribute from the ServletContext
      * @return a List of nodes
      */
-    protected List makeNodes(ClassDescriptor parent, Set openClasses, int depth) {
+    protected List makeNodes(ClassDescriptor parent, Set openClasses, int depth,
+                             Map classCounts) {
         List nodes = new ArrayList();
-        nodes.add(new TreeNode(parent.getName(), depth, false,
+        nodes.add(new TreeNode(parent.getName(), classCounts.get(parent.getName()).toString(),
+                               depth, false,
                                parent.getSubDescriptors().size() == 0,
                                openClasses.contains(parent.getName())));
         if (openClasses.contains(parent.getName())) {
             for (Iterator i = parent.getSubDescriptors().iterator(); i.hasNext();) {
-                nodes.addAll(makeNodes((ClassDescriptor) i.next(), openClasses, depth + 1));
+                nodes.addAll(makeNodes((ClassDescriptor) i.next(), openClasses, depth + 1,
+                                       classCounts));
             }
         }
         return nodes;
