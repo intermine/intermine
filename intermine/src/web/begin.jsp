@@ -118,17 +118,16 @@
   </im:box>
 </c:if>
   
-<c:if test="${!empty PROFILE.savedTemplates && IS_SUPERUSER}">
+<c:if test="${IS_SUPERUSER}">
   <span class="smallnote">
-    <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
-      <fmt:message key="begin.exportTemplates"/>
-    </html:link><br/>
+    <c:if test="${!empty PROFILE.savedTemplates}">
+      <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
+        <fmt:message key="begin.exportTemplates"/>
+      </html:link><br/>
+    </c:if>
     <html:link action="/import" titleKey="begin.importTemplatesDesc">
       <fmt:message key="begin.importTemplates"/>
     </html:link>
   </span>
 </c:if>
-
-
-
 <!-- /begin.jsp -->
