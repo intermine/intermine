@@ -53,29 +53,53 @@
                 <nobr>
                   <%-- right/left --%>
                   <c:if test="${not status.first}">
-                    [<html:link action="/changeResults?method=moveColumnLeft&index=${status.index}">
-                    <fmt:message key="results.moveLeft"/>
-                    </html:link>]
+                    <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
+                      <fmt:param value="${column.name}"/>
+                    </fmt:message>
+                    [
+                    <html:link action="/changeResults?method=moveColumnLeft&index=${status.index}"
+                               title="${moveLeftTitle}">
+                      <fmt:message key="view.moveLeftSymbol"/>
+                    </html:link>
+                    ]
                   </c:if>
                   <c:if test="${not status.last}">
-                    [<html:link action="/changeResults?method=moveColumnRight&index=${status.index}">
-                    <fmt:message key="results.moveRight"/>
-                    </html:link>]
+                    <fmt:message key="results.moveRightHelp" var="moveRightTitle">
+                      <fmt:param value="${column.name}"/>
+                    </fmt:message>
+                    [
+                    <html:link action="/changeResults?method=moveColumnRight&index=${status.index}"
+                               title="${moveRightTitle}">
+                      <fmt:message key="view.moveRightSymbol"/>
+                    </html:link>
+                    ]
                   </c:if>
 
                   <%-- show/hide --%>
                   <c:choose>
                     <c:when test="${column.visible}">
                       <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
-                        [<html:link action="/changeResults?method=hideColumn&index=${status.index}">
-                        <fmt:message key="results.hideColumn"/>
-                        </html:link>]
+                        <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
+                          <fmt:param value="${column.name}"/>
+                        </fmt:message>
+                        [
+                        <html:link action="/changeResults?method=hideColumn&index=${status.index}"
+                                   title="${hideColumnTitle}">
+                          <fmt:message key="results.hideColumn"/>
+                        </html:link>
+                        ]
                       </c:if>
                     </c:when>
                     <c:otherwise>
-                      [<html:link action="/changeResults?method=showColumn&index=${status.index}">
-                      <fmt:message key="results.showColumn"/>
-                      </html:link>]
+                      <fmt:message key="results.showColumnHelp" var="showColumnTitle">
+                        <fmt:param value="${column.name}"/>
+                      </fmt:message>
+                      [
+                      <html:link action="/changeResults?method=showColumn&index=${status.index}"
+                                 title="${showColumnTitle}">
+                        <fmt:message key="results.showColumn"/>
+                      </html:link>
+                      ]
                     </c:otherwise>
                   </c:choose>
                 </nobr>
