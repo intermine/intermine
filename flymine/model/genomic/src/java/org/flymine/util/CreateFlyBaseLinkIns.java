@@ -32,7 +32,7 @@ import org.flymine.model.genomic.Organism;
 public class CreateFlyBaseLinkIns
 {
     private static final String DBID = "FlyMine";
-    private static final String BURL = "http://www.flymine.org/query/portal?class=Gene&externalid=";
+    private static final String BURL = "http://www.flymine.org/release/portal.do?origin=flybase&class=Gene&externalid=";
     private static final String NAM = "FlyMine - integrated genomics and proteomics";
     private static final String ICO = "";
     private static final String LKNA = "FlyMine";
@@ -70,6 +70,7 @@ public class CreateFlyBaseLinkIns
             String fbgn = ((Gene) iter.next()).getOrganismDbId();
             if (fbgn.startsWith("FBgn") && (fbgn.indexOf("flymine") == -1)) {
                 writer.write(fbgn + "\t" + DBID + "\t" + fbgn + "\t" + fbgn + ENDL);
+                System.out.println("written something");
             }
         }
     }
