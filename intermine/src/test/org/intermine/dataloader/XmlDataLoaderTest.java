@@ -17,18 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
-import java.io.Writer;
 import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
-
-import org.exolab.castor.mapping.Mapping;
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.Unmarshaller;
-
 import org.xml.sax.InputSource;
 
 import org.flymine.objectstore.ObjectStore;
@@ -38,6 +32,7 @@ import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ListBean;
+import org.flymine.util.XmlBinding;
 import org.flymine.model.testmodel.*;
 
 public class XmlDataLoaderTest extends TestCase
@@ -47,7 +42,7 @@ public class XmlDataLoaderTest extends TestCase
     protected IntegrationWriter iw;
     protected int fakeId = 0;
     protected File file;
-    protected Mapping map;
+    protected XmlBinding binding;
     protected ArrayList toDelete;
 
     public XmlDataLoaderTest(String arg) {
@@ -59,9 +54,7 @@ public class XmlDataLoaderTest extends TestCase
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         iw = new IntegrationWriterSingleSourceImpl("test", writer);
 
-        URL mapFile = getClass().getClassLoader().getResource("castor_xml_testmodel.xml");
-        map = new Mapping();
-        map.loadMapping(mapFile);
+        binding = new XmlBinding("castor_xml_testmodel.xml");
         toDelete = new ArrayList();
     }
 
@@ -164,10 +157,8 @@ public class XmlDataLoaderTest extends TestCase
         assertEquals(5678, c2.getVatNumber());
 
         // Read in the file again in order to delete the objects in it
-        InputStream testData2 = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
-        Unmarshaller unmarshaller = new Unmarshaller(map);
-        unmarshaller.setMapping(map);
-        List objects = (List) unmarshaller.unmarshal(new InputSource(testData2));
+        testData = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
+        List objects = (List) binding.unmarshal(new InputSource(testData));
 
         Iterator iter = objects.iterator();
         while (iter.hasNext()) {
@@ -179,17 +170,11 @@ public class XmlDataLoaderTest extends TestCase
     }
 
     private void marshalList(List list, File file) throws Exception {
-        Writer writer = new FileWriter(file);
-        Marshaller marshaller = new Marshaller(writer);
-        marshaller.setMapping(map);
-
         List flat = TypeUtil.flatten(list);
         setIds(flat);
         ListBean bean = new ListBean();
         bean.setItems(flat);
-        //LOG.warn("testSimpleObject..." + bean.getItems().toString());
-        marshaller.marshal(bean);
-
+        binding.marshal(bean, new BufferedWriter(new FileWriter(file)));
         stripIds(flat);
     }
 

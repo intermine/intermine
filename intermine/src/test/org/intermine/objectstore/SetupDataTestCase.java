@@ -10,19 +10,14 @@ package org.flymine.objectstore;
  *
  */
 
-import java.io.Reader;
-import java.io.FileReader;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.exolab.castor.mapping.Mapping;
-import org.exolab.castor.xml.Unmarshaller;
+import org.xml.sax.InputSource;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ClassConstraint;
@@ -30,7 +25,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
-import org.flymine.util.TypeUtil;
+import org.flymine.util.XmlBinding;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
@@ -105,17 +100,8 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static void setUpData() throws Exception {
-        URL mapFile = ObjectStoreQueriesTestCase.class.getClassLoader().getResource("castor_xml_testmodel.xml");
-        Mapping map = new Mapping();
-        map.loadMapping(mapFile);
-
-        URL testdataUrl = ObjectStoreQueriesTestCase.class.getClassLoader()
-            .getResource("test/testmodel_data.xml");
-
-        Reader reader = new FileReader(testdataUrl.getFile());
-        Unmarshaller unmarshaller = new Unmarshaller(map);
-        List result = (List)unmarshaller.unmarshal(reader);
-        map(TypeUtil.flatten(result));
+        XmlBinding binding = new XmlBinding("castor_xml_testmodel.xml");
+        map((List) binding.unmarshal(new InputSource(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"))));
     }
 
     private static void map(Collection c) throws Exception {
