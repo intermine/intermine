@@ -4,7 +4,7 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix owl:  <http://www.w3.org/2002/07/owl#>.
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
-@prefix null:	 <http://www.flymine.org/model/null#> .
+@prefix null:	 <http://www.flymine.org/model/null#>.
 
 :Gene a owl:Class;
     rdfs:subClassOf :BioEntity.
@@ -15,18 +15,14 @@
 :RNAiExperiment a owl:Class;
     rdfs:subClassOf :Experiment.
 
-null:Phenotype a owl:Class;
-    owl:equivalentClass rnai:Phenotype.
-
-null:WildType__code a owl:DatatypeProperty;
-    owl:equivalentProperty :WildType_code.
-
 null:Phenotype__code a owl:DatatypeProperty;
     owl:equivalentProperty rnai:Phenotype_code.
 
-#TODO: remove subClassOf BioProperty, and merge in phenotype ontology
+:Phenotype a owl:Class.
+
+#Mapping from phenotype code -> phenotype ontology class
 :WildType a owl:Class;
-    rdfs:subClassOf :BioProperty;
+    rdfs:subClassOf :Phenotype;
     rdfs:subClassOf rnai:Phenotype;
     rdfs:subClassOf
       [ a owl:Restriction;
