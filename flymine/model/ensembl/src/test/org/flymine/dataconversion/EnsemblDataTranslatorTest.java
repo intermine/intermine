@@ -40,7 +40,7 @@ public class EnsemblDataTranslatorTest extends DataConversionTestCase {
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
         DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
-                                                              getOwlModel(), tgtNs, "wildebeast", "W. beast", "1001");
+                                                              getOwlModel(), tgtNs, "WB");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
