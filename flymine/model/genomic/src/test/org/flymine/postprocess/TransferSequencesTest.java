@@ -52,6 +52,7 @@ public class TransferSequencesTest extends TestCase
     private Chromosome storedChromosome;
     private Supercontig storedSupercontig;
     private Contig [] storedContigs;
+    private Sequence [] storedContigSequences;
     private Exon [] storedExons;
     private RepeatRegion [] storedRepeatRegions;
     private Model model;
@@ -78,7 +79,7 @@ public class TransferSequencesTest extends TestCase
         //osw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            LOG.error("deleting: " +o.getId());
+            LOG.error("deleting: " + o.getId());
             osw.delete(o);
         }
         //osw.commitTransaction();
@@ -94,7 +95,6 @@ public class TransferSequencesTest extends TestCase
         TransferSequences ts = new TransferSequences(osw);
         ts.transferSequences();
         checkSequences();
-
     }
 
     public void checkSequences() throws Exception {
@@ -172,27 +172,23 @@ public class TransferSequencesTest extends TestCase
             "tacaccccgtcatcccccctcacacgctcaccaccgcacaaaacaccccgcagacacaca"+
             "acgcctcaacgggcagactaagtgccgtcacgacgcgctgagacgctgaaaaaatacaat"+
             "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
-// enable when Chromosome has a residues field
-//        assertEquals(expectedChrSequence, resChromosome.getResidues());
+        assertEquals(expectedChrSequence, resChromosome.getSequence().getSequence());
 
         String expectedExonSequence0 =
             "tatgactgtaacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatct" +
             "cttttccgagtaagacgttttccagtc";
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence0, resExon0.getResidues());
+        assertEquals(expectedExonSequence0, resExon0.getSequence().getSequence());
         String expectedExonSequence4 =
             "caagtagtaagaaagacggatataaaaaaatagcctacagcaccccggattcccatgttg" +
             "tctccaaccatagtactaacgaggccctcagacgcttaactgcagtgatcggacgggaac" +
             "tggtgttttcgcctaggtatggccgtagacat";
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence4, resExon4.getResidues());
+        assertEquals(expectedExonSequence4, resExon4.getSequence().getSequence());
         String expectedExonSequence1 =
             "caaaaatcttctagtttttttttagaaaggatacaccaagta";
         Exon resExon1 = (Exon) os.getObjectById(storedExons[1].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence1, resExon1.getResidues());
+        assertEquals(expectedExonSequence1, resExon1.getSequence().getSequence());
         String expectedExonSequence2 =
             "agacgattgtttactttacacgccggaaatgaaaaccgcaatggtgctcaaggcaaaaga" +
             "cgttatccgccgtggctgtctggaatacgacgtcagcgccaccgacatcaccagctcgtt" +
@@ -200,16 +196,14 @@ public class TransferSequencesTest extends TestCase
             "cagcgaggaagccagccacgccgacctcgcctgggcgaccatgcacgccctgttaaatga" +
             "gccactcaccgccggtatcagcaccccgctgacatccaccattctggagttttac";
         Exon resExon2 = (Exon) os.getObjectById(storedExons[2].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence2, resExon2.getResidues());
+        assertEquals(expectedExonSequence2, resExon2.getSequence().getSequence());
         String expectedExonSequence5 =
             "cagggcgtgcatggtcgcccaggcgaggtcggcgtggctggcttcctcgctgcggctggc" +
             "ctcataggtggcgctgcgtccgctgctggtcatggtcttgcggatagccataaacgagct" +
             "ggtgatgtcggtggcgctgacgtcgtattccagacagccacggcggataacgtcttttgc" +
             "cttgagcaccattgcggttttcatttccggcgtgtaaag";
         Exon resExon5 = (Exon) os.getObjectById(storedExons[5].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence5, resExon5.getResidues());
+        assertEquals(expectedExonSequence5, resExon5.getSequence().getSequence());
         String expectedExonSequence3 =
             "cgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgaccg" +
             "ccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccggt" +
@@ -221,41 +215,38 @@ public class TransferSequencesTest extends TestCase
             "cggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccgga" +
             "atatctcagcgcccttaactctgcctggc";
         Exon resExon3 = (Exon) os.getObjectById(storedExons[3].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence3, resExon3.getResidues());
+        assertEquals(expectedExonSequence3, resExon3.getSequence().getSequence());
         String expectedExonSequence6 =
             "aaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttgatattaaaaaaa" +
             "tcgtccttcgtcgccacttcactgagggggataattttaatgccgtcggctttcccctgt" +
             "ggggca";
         Exon resExon6 = (Exon) os.getObjectById(storedExons[6].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence6, resExon6.getResidues());
+        assertEquals(expectedExonSequence6, resExon6.getSequence().getSequence());
         String expectedExonSequence7 =
-            "gcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctc" +
-            "agcgcgtcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgtttt" +
-            "gtgcggtggtgagcgtg";
+            "cggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctcagcgcg" +
+            "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
+            "tggtgagcgtg";
         Exon resExon7 = (Exon) os.getObjectById(storedExons[7].getId());
-// enable when Exon has a residues field
-//        assertEquals(expectedExonSequence7, resExon7.getResidues());
+        assertEquals(expectedExonSequence7, resExon7.getSequence().getSequence());
 
         RepeatRegion resRepeatRegion0 =
             (RepeatRegion) os.getObjectById(storedRepeatRegions[0].getId());
-        assertEquals("gctatttttttatatccgtctttcttactacttgcc", resRepeatRegion0.getResidues());
+        assertEquals("gctatttttttatatccgtctttcttactacttgcc", resRepeatRegion0.getSequence().getSequence());
 
         RepeatRegion resRepeatRegion1 =
             (RepeatRegion) os.getObjectById(storedRepeatRegions[1].getId());
         assertEquals("atttttgttactgtacttgaaaatacctattataatctgtggctacaa",
-                     resRepeatRegion1.getResidues());
+                     resRepeatRegion1.getSequence().getSequence());
 
         RepeatRegion resRepeatRegion2 =
             (RepeatRegion) os.getObjectById(storedRepeatRegions[2].getId());
         assertEquals("gccagaccggtaaagctgaccggtggctcataccatctgccgtta",
-                     resRepeatRegion2.getResidues());
+                     resRepeatRegion2.getSequence().getSequence());
 
         RepeatRegion resRepeatRegion3 =
             (RepeatRegion) os.getObjectById(storedRepeatRegions[3].getId());
         assertEquals("tggcgacgaaggacgatttttttaatatcaaaaaagccagcgccg",
-                     resRepeatRegion3.getResidues());
+                     resRepeatRegion3.getSequence().getSequence());
     }
 
     private void createData() throws Exception {
@@ -264,11 +255,14 @@ public class TransferSequencesTest extends TestCase
         storedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setLength(new Integer(4000));
+        storedChromosome.setId(new Integer(101));
 
         storedSupercontig =
             (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
+        storedSupercontig.setId(new Integer(201));
 
         storedContigs = new Contig[3];
+        storedContigSequences = new Sequence[3];
         storedExons = new Exon[3];
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
@@ -277,9 +271,12 @@ public class TransferSequencesTest extends TestCase
                                                 }));
         toStore.add(createLocation(storedChromosome, storedSupercontig, 1, 501, 4000));
 
+        storedContigSequences[0] =
+            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         storedContigs[0] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         storedContigs[0].setIdentifier("contig0");
+        storedContigs[0].setId(new Integer(300));
         storedContigs[0].setLength(new Integer(1000));
         String contigResidues0 =
             "tatatataatttaataaatacattccgacgatactgcctctatggcttagtggtacagca" +
@@ -299,12 +296,17 @@ public class TransferSequencesTest extends TestCase
             "aactgtcaacttcggtaaaactttgggcataagtagtgtgggagcaagtttaactaaaat" +
             "tctattcagatgtcgaatccaaaccgctaattttgctcaactagcttttcataaaaacca" +
             "attcatagtttcatactaataaagacgattgtttacttta";
-        storedContigs[0].setResidues(contigResidues0);
+        storedContigSequences[0].setSequence(contigResidues0);
+        storedContigs[0].setSequence(storedContigSequences[0]);
+
         toStore.add(createLocation(storedSupercontig, storedContigs[0], 1, 1001, 2000));
 
+        storedContigSequences[1] =
+            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         storedContigs[1] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         storedContigs[1].setIdentifier("contig1");
+        storedContigs[1].setId(new Integer(301)); 
         storedContigs[1].setLength(new Integer(1500));
         String contigResidues1 =
             "ggcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtct" +
@@ -332,12 +334,17 @@ public class TransferSequencesTest extends TestCase
             "tggctggcttcctcgctgcggctggcctcataggtggcgctgcgtccgctgctggtcatg" +
             "gtcttgcggatagccataaacgagctggtgatgtcggtggcgctgacgtcgtattccaga" +
             "cagccacggcggataacgtcttttgccttgagcaccattgcggttttcatttccggcgtg";
-        storedContigs[1].setResidues(contigResidues1);
+        storedContigSequences[1].setSequence(contigResidues1);
+        storedContigs[1].setSequence(storedContigSequences[1]);
+
         toStore.add(createLocation(storedSupercontig, storedContigs[1], -1, 2001, 3500));
 
+        storedContigSequences[2] =
+            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         storedContigs[2] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         storedContigs[2].setIdentifier("contig2");
+        storedContigs[2].setId(new Integer(302));
         storedContigs[2].setLength(new Integer(1000));
         String contigResidues2 =
             "gttaacagctaaaaacataactcgattacttacaattgttgattctttactcccagaacg" +
@@ -357,7 +364,9 @@ public class TransferSequencesTest extends TestCase
             "gcgatgtaaatgatatgcttgtcaagtattaactgctctccaccaaccgccggtttaact" +
             "gattattgttgaaaagcgcagacgaagtttagagaattactagcgtattttaaatttaat" +
             "caacggactattttttattcctttgagatccgactttatc";
-        storedContigs[2].setResidues(contigResidues2);
+        storedContigSequences[2].setSequence(contigResidues2);
+        storedContigs[2].setSequence(storedContigSequences[2]);
+
         toStore.add(createLocation(storedSupercontig, storedContigs[2], -1, 1, 1000));
 
         storedExons = new Exon [8];
@@ -404,6 +413,9 @@ public class TransferSequencesTest extends TestCase
         osw.store(storedContigs[0]);
         osw.store(storedContigs[1]);
         osw.store(storedContigs[2]);
+        osw.store(storedContigSequences[0]);
+        osw.store(storedContigSequences[1]);
+        osw.store(storedContigSequences[2]);
         osw.commitTransaction();
     }
 
