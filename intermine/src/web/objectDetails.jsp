@@ -139,7 +139,10 @@ Attributes:<br/>
 </c:forEach>
 <br/>
 
-<html:link action="/changeResults?method=reset">
-  <fmt:message key="results.return"/>
-</html:link>
+<c:if test="${RESULTS_TABLE != null && RESULTS_TABLE.size > 0}">
+  <html:link action="/changeResults?method=reset">
+    <fmt:message key="results.return"/>
+  </html:link>
+</c:if>
+
 <!-- /objectDetails.jsp -->
