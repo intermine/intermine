@@ -108,6 +108,7 @@
     <put name="body" value="empty.jsp"/>
     <put name="pageName" value="contextHelp"/>
   </definition>
+  <definition name="waiting.page" path="/waiting.jsp"/>
   <!--tiles-->
   <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
