@@ -138,6 +138,11 @@ public class SimpleConstraint implements Constraint
                   || type == EQUALS || type == NOT_EQUALS)) {
                 throw (new IllegalArgumentException("Invalid type for string arguments: " + type));
             }
+        } else if (Boolean.class.isAssignableFrom(qe1Type)
+                   && Boolean.class.isAssignableFrom(qe2Type)) {
+            if (!(type == EQUALS || type == NOT_EQUALS)) {
+                throw (new IllegalArgumentException("Invalid type for boolean arguments: " + type));
+            }
         } else {
             throw (new IllegalArgumentException("Invalid pair of arguments: " + qe1Type + qe2Type));
         }
