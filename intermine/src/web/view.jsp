@@ -12,10 +12,15 @@
   </c:when>
   <c:otherwise>
     <div class="view">
-      <div>
-        <fmt:message key="view.notempty.description"/>
-        <br/>
+      <div class="paneTitle">
+        <fmt:message key="view.notEmpty.description"/>
       </div>
+<%--      <c:if test="${QUERY.view.size > 1}">--%>  <%-- FIXME with JSTL fn:length --%>
+        <div>
+          <fmt:message key="view.columnOrderingTip"/>
+        </div>
+<%--      </c:if>--%>
+      <br/>
       <div>
         <table class="results" cellspacing="0">
           <tr>
