@@ -128,5 +128,37 @@ public class ClassConstraintTest extends TestCase {
         }
     }
 
+    public void testEqualsHashCode() throws Exception {
+        Constraint c1 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1);
+        Constraint c2 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1);
+        Constraint c3 = new ClassConstraint(company1, ClassConstraint.EQUALS, company2);
+        Constraint c4 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
+        Constraint c5 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
+        Constraint c6 = new ClassConstraint(company1, ClassConstraint.NOT_EQUALS, company1Object);
+        assertEquals(c1, c1);
+        assertEquals(c1, c2);
+        assertTrue(!c1.equals(c3));
+        assertTrue(!c1.equals(c4));
+        assertTrue(!c1.equals(c6));
+
+        assertTrue(!c4.equals(c1));
+        assertEquals(c4, c4);
+        assertEquals(c4, c5);
+        assertTrue(!c4.equals(c6));
+
+
+        assertEquals(c1.hashCode(), c1.hashCode());
+        assertEquals(c1.hashCode(), c2.hashCode());
+        assertTrue(c1.hashCode() != c3.hashCode());
+        assertTrue(c1.hashCode() != c4.hashCode());
+        assertTrue(c1.hashCode() != c6.hashCode());
+
+        assertEquals(c4.hashCode(), c4.hashCode());
+        assertEquals(c4.hashCode(), c5.hashCode());
+        assertTrue(c4.hashCode() != c6.hashCode());
+
+    }
+
+
 }
 
