@@ -1,11 +1,14 @@
 package org.flymine.objectstore.ojb;
 
+import junit.framework.Test;
+
 import java.util.List;
 import java.util.ArrayList;
 
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreTestCase;
+import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
@@ -19,23 +22,25 @@ import org.flymine.model.testmodel.*;
 
 public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
 {
-    public ObjectStoreOjbImplTest(String arg) {
+    //protected static final org.apache.log4j.Logger LOG
+    //    = org.apache.log4j.Logger.getLogger(ObjectStoreOjbImplTest.class);
+
+    public ObjectStoreOjbImplTest(String arg) throws Exception {
         super(arg);
     }
 
+    public static Test suite() {
+        return SetupDataTestCase.buildSuite(ObjectStoreOjbImplTest.class);
+    }
+
     public void setUp() throws Exception {
-        super.setUp();
         os = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        PersistenceBrokerFlyMine pb = (PersistenceBrokerFlyMine) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
-        db = pb.getDatabase();
-        writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
-        storeData();
+
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
     }
-    
+
     public void tearDown() throws Exception {
-        removeDataFromStore();
     }
 
     // select manager with name=EmployeeB1 (actually a CEO)

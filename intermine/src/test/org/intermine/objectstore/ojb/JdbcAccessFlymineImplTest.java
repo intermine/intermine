@@ -1,6 +1,6 @@
 package org.flymine.objectstore.ojb;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
@@ -20,7 +20,7 @@ import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Employee;
 import org.flymine.model.testmodel.Address;
 
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
+import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
@@ -35,19 +35,22 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
 
-public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
+public class JdbcAccessFlymineImplTest extends SetupDataTestCase
 {
     private JdbcAccessFlymineImpl ja;
     private Query q1, q2;
     private PersistenceBrokerFlyMine pb;
+    private static ResultsHolder rh1, rh2, rh3;
 
     public JdbcAccessFlymineImplTest(String arg) {
         super(arg);
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
+   public static Test suite() {
+        return SetupDataTestCase.buildSuite(JdbcAccessFlymineImplTest.class);
+    }
 
+    public void setUp() throws Exception {
         // simple query
         q1 = new Query();
         QueryClass company = new QueryClass(Company.class);
@@ -60,11 +63,8 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
         // Get db and writer in order to store data
         ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         pb = (PersistenceBrokerFlyMine) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
-        db = pb.getDatabase();
         DescriptorRepository dr = pb.getDescriptorRepository();
-        writer = new ObjectStoreWriterOjbImpl(os);
 
-        storeData();
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
 
@@ -73,28 +73,26 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
     }
 
     public void tearDown() throws Exception {
-        removeDataFromStore();
-        super.tearDown();
     }
 
 
-    public void setUpResults() throws Exception {
+    public static void setUpResults() throws Exception {
         // SubQuery
-        ResultsHolder rh1 = new ResultsHolder(2);
+        rh1 = new ResultsHolder(2);
         rh1.colNames = new String[] {"a2_", "a3_"};
         rh1.colTypes = new int[] {Types.VARCHAR, Types.INTEGER};
         rh1.rows = 2;
         results.put("SubQuery", rh1);
 
         // WhereClassClass
-        ResultsHolder rh2 = new ResultsHolder(10);
+        rh2 = new ResultsHolder(10);
         rh2.colNames = new String[] {"a1_ceoid", "a1_id", "a1_addressid", "a1_name", "a1_vatnumber", "a2_ceoid", "a2_id", "a2_addressid", "a2_name", "a2_vatnumber"};
         rh2.colTypes = new int[] {Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER};
         rh2.rows = 2;
         results.put("WhereClassClass", rh2);
 
         // WhereSimpleEquals
-        ResultsHolder rh3 = new ResultsHolder(1);
+        rh3 = new ResultsHolder(1);
         rh3.colNames = new String[] {"a2_"};
         rh3.colTypes = new int[] {Types.VARCHAR};
         rh3.rows = 1;
@@ -155,7 +153,7 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
     }
 
 
-    class ResultsHolder {
+    static class ResultsHolder {
         protected int columns;  // number of columns
         protected String colNames[];
         protected int colTypes[];

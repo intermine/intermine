@@ -1,5 +1,7 @@
 package org.flymine.objectstore.ojb;
 
+import junit.framework.Test;
+
 import java.util.Date;
 import java.util.Vector;
 import java.util.Iterator;
@@ -10,7 +12,7 @@ import org.apache.ojb.broker.metadata.*;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
+import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.Query;
@@ -21,22 +23,28 @@ import org.flymine.util.TypeUtil;
 
 import org.flymine.model.testmodel.*;
 
-public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
+public class FlymineSqlSelectStatementTest extends SetupDataTestCase
 {
+    //protected static final org.apache.log4j.Logger LOG
+    //    = org.apache.log4j.Logger.getLogger(FlymineSqlSelectStatementTest.class);
+
     protected DescriptorRepository dr;
 
     public FlymineSqlSelectStatementTest(String arg1) {
         super(arg1);
     }
 
+    public static Test suite() {
+        return SetupDataTestCase.buildSuite(FlymineSqlSelectStatementTest.class);
+    }
+
     public void setUp() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
-        super.setUp();
     }
 
-    public void setUpResults() throws Exception {
+    public static void setUpResults() throws Exception {
         results.put("SelectSimpleObject", "SELECT DISTINCT a1_.CEOId AS a1_CEOId, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.ID");
         results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_.CEOId AS a1_CEOId, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS a2_ FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.a2_");
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
