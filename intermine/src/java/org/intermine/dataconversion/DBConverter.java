@@ -53,13 +53,14 @@ public class DBConverter extends DataConverter
      *
      * @param model the Model
      * @param db the Database
+     * @param reader the DBReader used to retrieve Items
      * @param writer the ItemWriter used to handle the resultant Items
      */
-    protected DBConverter(Model model, Database db, ItemWriter writer) {
+    protected DBConverter(Model model, Database db, DBReader reader, ItemWriter writer) {
         super(writer);
         this.model = model;
         this.db = db;
-        reader = new DirectDBReader(db);
+        this.reader = reader;
     }
 
     /**

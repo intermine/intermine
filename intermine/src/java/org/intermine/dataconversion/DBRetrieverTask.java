@@ -75,7 +75,7 @@ public class DBRetrieverTask extends Task
             Database db = DatabaseFactory.getDatabase(database);
             Model m = Model.getInstanceByName(model);
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
-            new DBConverter(m, db,
+            new DBConverter(m, db, new DirectDBReader(db),
                             new BufferedItemWriter(
                                                    new ObjectStoreItemWriter(osw))).process();
         } catch (Exception e) {
