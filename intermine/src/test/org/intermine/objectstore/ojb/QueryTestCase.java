@@ -151,6 +151,10 @@ public abstract class QueryTestCase extends TestCase
         }
     }
 
+    /*
+      select subquery.company.name, subquery.alias
+      from (select company, 5 as alias from Company) as subquery
+    */
     public Query subQuery() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue(new Integer(5));
@@ -167,33 +171,50 @@ public abstract class QueryTestCase extends TestCase
         return q2;
     }
 
+    /*
+      select name
+      from Company
+      where vatNumber = 1234
+    */
     public Query whereSimpleEquals() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue(new Integer(5));
+        QueryValue v1 = new QueryValue(new Integer(1234));
         QueryField f1 = new QueryField(c1, "vatNumber");
+        QueryField f2 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
         Query q1 = new Query();
         q1.addFrom(c1);
-        q1.addToSelect(f1);
+        q1.addToSelect(f2);
         q1.setConstraint(sc1);
         return q1;
     }
 
+    /*
+      select name
+      from Company
+      where vatNumber! = 1234
+    */
     public Query whereSimpleNotEquals() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue(new Integer(5));
         QueryField f1 = new QueryField(c1, "vatNumber");
+        QueryField f2 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.NOT_EQUALS, v1);
         Query q1 = new Query();
         q1.addFrom(c1);
-        q1.addToSelect(f1);
+        q1.addToSelect(f2);
         q1.setConstraint(sc1);
         return q1;
     }
 
+    /*
+      select name
+      from Company
+      where name like "company"
+    */
     public Query whereSimpleLike() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
+        QueryValue v1 = new QueryValue("company");
         QueryField f1 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
         Query q1 = new Query();
@@ -203,9 +224,14 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select name
+      from Company
+      where name = "companyA"
+    */
     public Query whereEqualString() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
+        QueryValue v1 = new QueryValue("companyA");
         QueryField f1 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
         Query q1 = new Query();
@@ -215,10 +241,16 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select name
+      from Company
+      where name LIKE "company"
+      and vatNumber > 2000
+    */
     public Query whereAndSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryValue v2 = new QueryValue(new Integer(5));
+        QueryValue v1 = new QueryValue("company");
+        QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
@@ -233,10 +265,16 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      select name
+      from Company
+      where name LIKE "companyA"
+      or vatNumber > 2000
+    */
     public Query whereOrSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryValue v2 = new QueryValue(new Integer(5));
+        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
