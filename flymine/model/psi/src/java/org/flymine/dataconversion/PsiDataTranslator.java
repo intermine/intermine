@@ -179,7 +179,7 @@ public class PsiDataTranslator extends DataTranslator
         Item experimentList = ItemHelper.convert(srcItemReader
                                               .getItemById(intElType.getReference("experimentList").getRefId()));
         String experimentId = experimentList.getReference("experimentRef").getRefId();
-        addReferencedItem(interaction, getPub(experimentId), "evidence", true, "", false);
+        //addReferencedItem(interaction, getPub(experimentId), "evidence", true, "", false);
 
         Item participants = ItemHelper.convert(srcItemReader
                               .getItemById(intElType.getReference("participantList").getRefId()));
