@@ -14,7 +14,7 @@
   <property name="namespace" value="http://www.intermine.org/model"/>
 
   <!-- used by build-model.xml -->
-  <property name="packagename" value="org.flymine.model"/>
+  <property name="packagename" value="org.intermine.model"/>
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>

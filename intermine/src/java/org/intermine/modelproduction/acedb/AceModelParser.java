@@ -47,13 +47,14 @@ public class AceModelParser implements ModelParser
      * Constructor that takes the modelName - required because not available from wrm file
      * but necessary to name ClassDescriptors correctly
      *
-     * @param nameSpace the XML name space
      * @param modelName the name of the model to produce
+     * @param pkgName the name of package in model
+     * @param nameSpace the XML name space
      */
-    public AceModelParser(String nameSpace, String modelName) {
-        this.nameSpace = nameSpace;
+    public AceModelParser(String modelName, String pkgName, String nameSpace) {
         this.modelName = modelName;
-        pkgName = "org.intermine.model." + modelName + ".";
+        this.pkgName = pkgName;
+        this.nameSpace = nameSpace;
     }
 
     /**
@@ -86,41 +87,41 @@ public class AceModelParser implements ModelParser
         Set refs = Collections.EMPTY_SET;
         Set cols = Collections.EMPTY_SET;
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
-        l.add(new ClassDescriptor(pkgName + "Colour", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Colour"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         atts.add(new AttributeDescriptor("sequence", "java.lang.String"));
-        l.add(new ClassDescriptor(pkgName + "DNA", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("DNA"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.util.Date"));
-        l.add(new ClassDescriptor(pkgName + "DateType", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("DateType"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.Float"));
-        l.add(new ClassDescriptor(pkgName + "Float", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Float"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.Integer"));
-        l.add(new ClassDescriptor(pkgName + "Int", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Int"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         refs = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         //refs.add(new ReferenceDescriptor("Quoted_in", false, "org.intermine.model.acedb.Paper",
         //            null));
-        l.add(new ClassDescriptor(pkgName + "Keyword", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Keyword"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         refs = Collections.EMPTY_SET;
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         atts.add(new AttributeDescriptor("text", "java.lang.String"));
-        l.add(new ClassDescriptor(pkgName + "LongText", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("LongText"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
         atts.add(new AttributeDescriptor("peptide", "java.lang.String"));
-        l.add(new ClassDescriptor(pkgName + "Peptide", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Peptide"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
-        l.add(new ClassDescriptor(pkgName + "Text", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Text"), null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
-        l.add(new ClassDescriptor(pkgName + "Comment", null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(qualified("Comment"), null, false, atts, refs, cols));
     }
 
     /**
@@ -254,7 +255,7 @@ public class AceModelParser implements ModelParser
             Set cols = new LinkedHashSet();
             atts.add(new AttributeDescriptor("identifier", "java.lang.String"));
             nodeToSets(node.getChild(), "value", true, atts, refs, cols);
-            return new ClassDescriptor(pkgName + formatAceName(node.getName().substring(1)),
+            return new ClassDescriptor(qualified(formatAceName(node.getName().substring(1))),
                                        null, false, atts, refs, cols);
         } else {
             throw new IllegalArgumentException("Not a class");
@@ -337,7 +338,7 @@ public class AceModelParser implements ModelParser
             type = type.substring(1);
         }
         if (collection) {
-            cols.add(new CollectionDescriptor(fieldName, pkgName + formatAceName(type),
+            cols.add(new CollectionDescriptor(fieldName, qualified(formatAceName(type)),
                                               formatAceName(xref), false));
         } else if ("Text".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, "java.lang.String"));
@@ -348,7 +349,7 @@ public class AceModelParser implements ModelParser
         } else if ("DateType".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, "java.util.Date"));
         } else {
-            refs.add(new ReferenceDescriptor(fieldName, pkgName + formatAceName(type),
+            refs.add(new ReferenceDescriptor(fieldName, qualified(formatAceName(type)),
                                              formatAceName(xref)));
         }
         if (nextNode != null) {
@@ -418,6 +419,8 @@ public class AceModelParser implements ModelParser
         return name;
     }
 
-
+    private String qualified(String clsName) {
+        return pkgName + "." + clsName;
+    }
 
 }
