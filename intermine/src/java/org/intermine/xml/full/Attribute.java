@@ -21,6 +21,22 @@ public class Attribute
     private String value = "";
 
     /**
+     * Constructor
+     */
+    public Attribute() {
+    }
+
+    /**
+     * Construnctor
+     * @param name the name
+     * @param value the value
+     */
+    public Attribute(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    /**
      * Set the name of this field
      *
      * @param name the name

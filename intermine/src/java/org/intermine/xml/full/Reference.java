@@ -20,6 +20,22 @@ public class Reference
 {
     private String name = "";
     private String refId = "";
+    
+    /**
+     * Constructor
+     */
+    public Reference() {
+    }
+
+    /**
+     * Construnctor
+     * @param name the name
+     * @param refId the refId
+     */
+    public Reference(String name, String refId) {
+        this.name = name;
+        this.refId = refId;
+    }
 
     /**
      * Set the name of this field

@@ -24,6 +24,22 @@ public class ReferenceList
     protected List refIds = new ArrayList();
 
     /**
+     * Constructor
+     */
+    public ReferenceList() {
+    }
+
+    /**
+     * Constructor
+     * @param name the name
+     * @param refIds the refIds
+     */
+    public ReferenceList(String name, List refIds) {
+        this.name = name;
+        this.refIds = refIds;
+    }
+
+    /**
      * Set the name of this field.
      *
      * @param name the name
