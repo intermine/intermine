@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import org.flymine.modelproduction.AbstractModelParser;
+import org.flymine.modelproduction.ModelParser;
 import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
@@ -24,31 +24,17 @@ import org.flymine.metadata.MetaDataException;
  *
  * @author Matthew Wakeling
  */
-public class AceModelParser extends AbstractModelParser
+public class AceModelParser implements ModelParser
 {
     private static final String PACKAGE = "org.flymine.model.acedb.";
 
     /**
-     * Takes a single argument - the file to parse.
+     * Read source model information in Ace model format and
+     * construct a FlyMine Model object.
      *
-     * @param args the command-line
-     * @throws Exception sometimes
-     */
-    /*    public static void main(String args[]) throws Exception {
-        PrintStream out = System.out;
-        PrintStream err = System.err;
-        if (args.length != 1) {
-            err.println("Usage: java org.flymine.modelproduction.acedb.ParseAceModel <file>");
-        } else {
-            BufferedReader in = new BufferedReader(new FileReader(args[0]));
-            Model m = readerToModel(in);
-            out.print(m.toString());
-        }
-    }
-    */
-    /**
-     * @see ModelParser#process
-     * @throws Exception
+     * @param is the AceDBsource model to parse
+     * @return the FlyMine Model created
+     * @throws Exception if Model not created successfully
      */
     public Model process(InputStream is) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -64,7 +50,7 @@ public class AceModelParser extends AbstractModelParser
      * @throws IOException if the BufferedReader does
      * @throws MetaDataException if the model is inconsistent
      */
-    public Model readerToModel(BufferedReader in) throws IOException, MetaDataException {
+    protected Model readerToModel(BufferedReader in) throws IOException, MetaDataException {
         Set classes = parse(in);
         Set classDescriptors = new LinkedHashSet();
         addBuiltinClasses(classDescriptors);
@@ -81,7 +67,7 @@ public class AceModelParser extends AbstractModelParser
      *
      * @param l a Set of ClassDescriptors to add to
      */
-    public void addBuiltinClasses(Set l) {
+    protected void addBuiltinClasses(Set l) {
         Set atts = new LinkedHashSet();
         Set refs = Collections.EMPTY_SET;
         Set cols = Collections.EMPTY_SET;
@@ -123,7 +109,7 @@ public class AceModelParser extends AbstractModelParser
      * @return a Set of ModelNodes, each representing a class
      * @throws IOException when the file has a problem
      */
-    public Set parse(BufferedReader in) throws IOException {
+    protected Set parse(BufferedReader in) throws IOException {
         PrintStream out = System.out;
         PrintStream err = System.err;
         Stack indents = new Stack();
@@ -216,7 +202,7 @@ public class AceModelParser extends AbstractModelParser
      *
      * @param node a ModelNode to print
      */
-    public void printModelNode(ModelNode node) {
+    protected void printModelNode(ModelNode node) {
         printModelNode(node, 0);
     }
 
@@ -240,7 +226,7 @@ public class AceModelParser extends AbstractModelParser
      * @param node a ModelNode to convert
      * @return a ClassDescriptor for the ModelNode
      */
-    public ClassDescriptor nodeClassToDescriptor(ModelNode node) {
+    protected ClassDescriptor nodeClassToDescriptor(ModelNode node) {
         if (node.getAnnotation() == ModelNode.ANN_CLASS) {
             Set atts = new LinkedHashSet();
             Set refs = new LinkedHashSet();
@@ -265,7 +251,7 @@ public class AceModelParser extends AbstractModelParser
      * @param refs a Set of ReferenceDescriptors to add to
      * @param cols a Set of CollectionDescriptors to add to
      */
-    public void nodeToSets(ModelNode node, String parent, boolean collection, Set atts,
+    protected void nodeToSets(ModelNode node, String parent, boolean collection, Set atts,
             Set refs, Set cols) {
         if (node.getAnnotation() == ModelNode.ANN_TAG) {
             if (node.getChild() != null) {
@@ -305,7 +291,7 @@ public class AceModelParser extends AbstractModelParser
      * @param refs a Set of ReferenceDescriptors to add to
      * @param cols a Set of CollectionDescriptors to add to
      */
-    public void nodeRefToSets(ModelNode node, String parent, boolean collection,
+    protected void nodeRefToSets(ModelNode node, String parent, boolean collection,
             int number, Set atts, Set refs, Set cols) {
         if (node.getSibling() != null) {
             throw new IllegalArgumentException("Another node next to a reference");
