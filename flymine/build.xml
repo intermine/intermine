@@ -593,7 +593,6 @@
           </depend>
           <exclude name="org/flymine/dataloader/DataLoaderTest*" />
           <exclude name="org/flymine/dataloader/XmlDataLoaderTest*" />
-          <exclude name="org/flymine/dataloader/IntegrationWriterSingleSourceImplTest*" />
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
         </fileset>
