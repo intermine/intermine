@@ -3,36 +3,54 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>Starting a FlyMine query</title>
+    <title>Constructing a FlyMine query</title>
 
-    <para>The following options are available to start a FlyMine query:</para>
+    <para>The following points provide a basic outline of the steps
+    involved in building a query with links to where you can find more
+    detailed information:</para>
 
-    <itemizedlist>
-      <listitem>
-        <para><ulink url="manualStartingaquery.xml">Start a new query with a
-        particular class</ulink></para>
-      </listitem>
+   
+       <orderedlist>
+          <listitem>
+            <para>Choose the starting point for your query either from
+            the classes displayed (which have been divided into
+            biologically meaniful categories) or by selecting the
+            'List all classes' link.  This will take you to the main
+            query builder page. See <ulink
+            url="manualClasschooser.xml">Choosing a starting
+            point</ulink> for more details.</para>
+          </listitem>
 
-      <listitem>
-        <para><ulink url="manualStartpreviousquery.xml">Begin a query using a
-        previous query</ulink> (Only available if you have queries stored in
-        your query history)</para>
-      </listitem>
+          <listitem>
+            <para>In the model browser of the query builder, browse to
+            the classes and fields you are interested in. See <ulink url="manualModelbrowser.xml">The model
+        browser</ulink> for more details.</para>
+          </listitem>
 
-      <listitem>
-        <para><ulink url="manualStartidentifiers.xml">Search using a list of
-        identifiers</ulink></para>
-      </listitem>
+          <listitem>
+            <para>Select the classes and/or fields you wish to
+            constrain using the -&gt; constrain arrows. Specify your
+            constraints in the right hand constraints list.See <ulink
+            url="manualConstraintslist.xml">Applying constraints to
+            your query</ulink> for more details.</para>
+          </listitem>
 
-      <listitem>
-        <para><ulink url="manualStartexample.xml">Use an example
-        query</ulink></para>
-      </listitem>
+          <listitem>
+            <para>Select the classes and/or fields you wish to show in
+            the results output using the "show" buttons. The
+            classes/fields selected will appear in the output fields
+            list. See <ulink url="manualOutputfields.xml">Selecting
+            what to show in your results</ulink> for more
+            details.</para>
+          </listitem>
 
-      <listitem>
-        <para><ulink url="manualStartIQL.xml">Perform a query using
-        IQL</ulink> (advanced usage.)</para>
-      </listitem>
-    </itemizedlist>
+          <listitem>
+            <para>Press 'show results' to view your results in the
+            results page.  See <ulink
+            url="manualShowresults.xml">Viewing results</ulink> for
+            more details.</para>
+          </listitem>
+        </orderedlist>
+  
   </section>
 </article>

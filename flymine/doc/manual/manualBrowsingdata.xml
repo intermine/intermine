@@ -54,13 +54,17 @@
         <itemizedlist>
            <listitem>
             <para>Queries can be constructed using the FlyMine query
-               builder in such a way that the results are browsable.
-               If you select an entire class to 'show' in the output
-               (as opposed to selecting attributes of a class, see
-               screenshot below), your result will provide a link to a
-               details page for the objects returned from that
-               class. See <ulink url="manualObjectDetails.xml">Object
-               details pages </ulink>for more details.</para>
+               builder in such a way that the results are
+               browsable. (see <ulink
+               url="manualStartingquery.xml">Constructing your own
+               queries</ulink> for detials on using the query
+               builder). If you select an entire class to 'show' in
+               the output (as opposed to selecting attributes of a
+               class, see screenshot below), your result will provide
+               a link to a details page for the objects returned from
+               that class. See <ulink
+               url="manualObjectDetails.xml">Object details pages
+               </ulink>for more details.</para>
          
 
          <mediaobject>

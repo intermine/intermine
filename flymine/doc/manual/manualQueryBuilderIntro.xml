@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>The FlyMine Query Builder</title>
+
+    <itemizedlist>
+      <listitem>
+          <para>The FlyMine query builder allows you to construct queries on the data in the FlyMine database.  The query-builder interface enables you to browse through classes and fields of the object model, selecting those that you wish to constrain and those that you wish to include in your results.  See <ulink url="manualStartingquery.xml">Constructing your own queries</ulink> for detailed information on constructing queries using the query builder.</para>
+       </listitem>
+     </itemizedlist>
+
+  </section>
+
+</article>
+
+  

@@ -3,7 +3,7 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>Show results</title>
+    <title>Viewing results</title>
 
     <itemizedlist>
       <listitem>
@@ -16,7 +16,7 @@
 
       <listitem>
         <para>When your query has run, your results will be displayed on the
-        <ulink url="manualResultdisplay.xml">results page</ulink></para>
+        <ulink url="manualResultdisplay.xml">results page.</ulink></para>
       </listitem>
     </itemizedlist>
   </section>
