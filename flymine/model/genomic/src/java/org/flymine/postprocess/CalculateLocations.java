@@ -96,7 +96,7 @@ public class CalculateLocations
 
         osw.beginTransaction();
 
-        Iterator resIter = results.iterator();        
+        Iterator resIter = results.iterator();
 
         Set batch = new HashSet();
 
@@ -278,7 +278,7 @@ public class CalculateLocations
             PostProcessUtil.findLocations(os, Contig.class, BioEntity.class, false);
         results.setBatchSize(500);
 
-        Iterator resIter = results.iterator();        
+        Iterator resIter = results.iterator();
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -289,7 +289,7 @@ public class CalculateLocations
             idBands.put(band.getId(), band);
         }
         LOG.info("built ChromosomeBand id map, size = " + idBands.keySet().size());
-        
+
         // create map of Supercontigs to avoid calling getObjectById
         // need to keep running query after each commit transaction
         Map idScs = new HashMap();
@@ -556,7 +556,7 @@ public class CalculateLocations
             }
 
             parentObjectSimpleLoc.setStrand(location.getStrand().intValue());
-            
+
             // TODO XXX FIXME: deal with partial locations and do consistency checks (eg. make
             // sure all exons are on the same strand)
         }
@@ -728,9 +728,9 @@ public class CalculateLocations
 
             if (startIsPartial) {
                 if (parentOnChr.getStrand() == -1) {
-                    //  <--------------      parent
+                    //  <--------+-----      parent
                     //           |
-                    //           ----------  child
+                    //           +---------  child
                     if (childOnChr.getStrand () == -1) {
                         pl.setSubjectStart(new Integer(childOnChr.getEnd()
                                                        - parentOnChr.getEnd() + 1));
@@ -739,9 +739,9 @@ public class CalculateLocations
                                                      - childOnChr.getStart() + 1));
                     }
                 } else {
-                    //      -------------->  parent
+                    //      ------+------->  parent
                     //            |
-                    //   ----------          child
+                    //   ---------+          child
                     if (childOnChr.getStrand () == -1) {
                         pl.setSubjectEnd(new Integer(childOnChr.getEnd()
                                                      - parentOnChr.getStart() + 1));
@@ -755,9 +755,9 @@ public class CalculateLocations
 
             if (endIsPartial) {
                 if (parentOnChr.getStrand() == -1) {
-                    //       <------------  parent
+                    //       <----+-------  parent
                     //            |
-                    //  -----------         child
+                    //  ----------+         child
                     if (childOnChr.getStrand() == -1) {
                         pl.setSubjectEnd(new Integer(childOnChr.getEnd()
                                                      - parentOnChr.getStart() + 1));
@@ -766,9 +766,9 @@ public class CalculateLocations
                                                        - childOnChr.getStart() + 1));
                     }
                 } else {
-                    //   ------------>        parent
+                    //   -------+---->        parent
                     //          |
-                    //          -----------   child
+                    //          +----------   child
                     if (childOnChr.getStrand() == -1) {
                         pl.setSubjectStart(new Integer(childOnChr.getEnd()
                                                        - parentOnChr.getEnd() + 1));
@@ -786,9 +786,9 @@ public class CalculateLocations
                     DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
 
             } else {
-                //  ------------------  parent
+                //  ----+--------+----  parent
                 //      |        |
-                //      ----------      child
+                //      +--------+      child
                 childOnParent = (Location)
                     DynamicUtil.createObject(Collections.singleton(Location.class));
             }
@@ -886,7 +886,7 @@ public class CalculateLocations
             PostProcessUtil.findLocations(os, Chromosome.class, ChromosomeBand.class, true);
         results.setBatchSize(500);
 
-        Iterator resIter = results.iterator();        
+        Iterator resIter = results.iterator();
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -912,7 +912,7 @@ public class CalculateLocations
             PostProcessUtil.findLocations(os, Chromosome.class, Supercontig.class, true);
         results.setBatchSize(500);
 
-        Iterator resIter = results.iterator();        
+        Iterator resIter = results.iterator();
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -965,7 +965,7 @@ public class CalculateLocations
             PostProcessUtil.findLocations(os, Supercontig.class, Contig.class, true);
         results.setBatchSize(500);
 
-        Iterator resIter = results.iterator();        
+        Iterator resIter = results.iterator();
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -993,7 +993,7 @@ public class CalculateLocations
             SimpleLoc scOnChr = (SimpleLoc) scToChr.get(scId);
             Chromosome chr = (Chromosome) chrById.get(new Integer(scOnChr.getParentId()));
             Location contigOnChrLoc = createChromosomeLocation(scOnChr, contigOnSc, chr, contig);
-            
+
             SimpleLoc contigOnChr = new SimpleLoc(chr.getId().intValue(),
                                                   contig.getId().intValue(),
                                                   contigOnChrLoc);
