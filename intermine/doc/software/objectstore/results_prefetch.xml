@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+
+<article>
+
+	<artheader>
+		<date>2003-04-01</date>
+		<title>Flymine - Prefetch in the Results object</title>
+		<authorgroup>
+			<author>
+				<firstname>Matthew</firstname>
+				<surname>Wakeling</surname>
+			</author>
+		</authorgroup>
+	</artheader>
+
+	<sect1>
+		<title>Introduction</title>
+		<para>This document is an attempt to describe the prefetch mechanism in the org.flymine.objectstore.query.Results object.
+			The prefetch mechanism is managed by a class - org.flymine.objectstore.query.PrefetchManager.</para>
+	</sect1>
+
+	<sect1>
+		<title>External interfaces</title>
+		<para>The PrefetchManager object has two publically available methods:
+			<itemizedlist>
+				<listitem><highlights>addRequest(Results result, int batchNo)</highlights>.
+					This method adds a request for a prefetch onto a list of jobs to do.
+					The method then returns immediately - the request will be done in another thread at some point.</listitem>
+				<listitem><highlights>doRequest(Results result, int batchNo)</highlights>.
+					This method will not return until the request is finished.
+					The request will also be treated with a little more urgency than requests merely added to the list of jobs to do.
+					When this method is called, there are four possibilities:
+					<itemizedlist>
+						<listitem>This is the first that the PrefetchManager has heard of this request.
+							The request can be serviced in the thread that called the doRequest method.</listitem>
+						<listitem>The request was added a little while ago, but hasn't been started yet.
+							The request can again be serviced in the thread that called the doRequest method.</listitem>
+						<listitem>The request was added a little while ago, and another thread has started servicing it.
+							The other thread may be a helper thread that does prefetching, or it may be another thread that called doRequest with the same request.
+							This thread should wait for the other thread to finish before returning from the doRequest method.
+							When the other thread has finished, it must wake up <highlights>all</highlights> threads that are waiting for the request.</listitem>
+						<listitem>The request has been done in the past.
+							This would be most likely to happen if a thread is in the middle of servicing the request, and gets to the bit where it locks the PrefetchManager to notify all waiting threads, when another thread checks to see if the request needs to be made then calls doRequest.
+							The Second thread needs to take out a lock on the PrefetchManager before it can get into the doRequest method, by which time the first thread has finished servicing the request.
+							In this case, the method should just return immediately.
+							The reason why the Results object does a preliminary check to see if the request has been serviced in the past is to avoid having to wait for a lock on the PrefetchManager object.</listitem>
+					</itemizedlist></listitem>
+			</itemizedlist>
+			So the addRequest method is called when our code thinks it may benefit from a prefetch, and doRequest is called when the system actually needs the request done.</para>
+	</sect1>
+
+	<sect1>
+		<title>Internal workings</title>
+		<para>The internal workings of the PrefetchManager object are non-trivial.
+			They involve concurrency control, including locks on multiple objects.
+			It may be a good idea to recap on Object.wait(), Object.notify(), and Object.notifyAll():
+			<itemizedlist>
+				<listitem><highlights>Object.wait()</highlights>.
+					The current thread must already have a lock on the Object.
+					The wait() method releases the lock, then suspends the thread until notification.
+					When the thread is notified, it wakes up, re-obtains the lock on the Object (which it will naturally not be able to do until the thread that called notify() or notifyAll() releases the lock), and returns.</listitem>
+				<listitem><highlights>Object.notify()</highlights>.
+					The current thread must already have a lock on the Object.
+					The notify() method wakes up a single thread that is waiting for notification in the Object.wait() method.
+					If there are multiple threads waiting, then there is no guarantee at all of which thread is notified.</listitem>
+				<listitem><highlights>Object.notifyAll()</highlights>.
+					This method behaves similarly to notify(), except that it wakes up every single thread waiting in the Object.wait() method.</listitem>
+			</itemizedlist></para>
+
+		<para>The two public methods of the PrefetchManager object take a Results object as one of the arguments, along with a batch number to fetch.
+			The method used to service the request is to call a method in the Results object - <highlights>fetchBatchFromObjectStore(int batchNo)</highlights>.</para>
+
+		<para>The Map that the Results object contains, which holds the batches that have been fetched, is a synchronised Map, produced by Collections.synchronizedMap().
+			This is one of the multiple locks that we have to handle, but luckily it just sorts itself out, meaning that as long as we synchronise inside the PrefetchManager for read-modify-write cycles, we can let multiple readers at the Map.</para>
+
+		<para>To allow prefetch to actually take place, we will need at least one thread which will focus on performing prefetches.
+			This Thread object can be an inner class of PrefetchManager.
+			The thread would do a tight infinite loop, asking the PrefetchManager for a request to service, then servicing it, and finally informing the PrefetchManager that it has finished.
+			Therefore, the PrefetchManager becomes an arbitrator between request providers (Results objects), and request consumers (these Threads).</para>
+
+		<para>The PrefetchManager object needs a set of requests that are pending (i.e. are in the list of jobs to do, but aren't being handled yet).
+			Also, a set of requests that are currently being serviced.</para>
+
+		<para>Therefore, addRequest method should follow the following sequence:
+			<itemizedlist>
+				<listitem>Synchronise on the PrefetchManager.</listitem>
+				<listitem>Check if the request is in the set of requests being serviced.</listitem>
+				<listitem>If not, then add the request to the set of requests that are pending - assuming if the request is already there, there will not be two copies.</listitem>
+				<listitem>If there are more items in the pending set than there are service threads, then create another service thread.
+					Otherwise, notify a thread.</listitem>
+				<listitem>Release the lock on the PrefetchManager.</listitem>
+			</itemizedlist>
+			The doRequest method should follow the following sequence:
+			<itemizedlist>
+				<listitem>Find out what it should be doing, which should follow the following sequence:
+					<itemizedlist>
+						<listitem>Synchronise on the PrefetchManager.</listitem>
+						<listitem>Check if the request is in the list of requests being serviced.</listitem>
+						<listitem></listitem>
+					</itemizedlist>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</sect1>
+</article>
