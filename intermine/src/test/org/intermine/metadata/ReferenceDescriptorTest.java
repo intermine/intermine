@@ -98,7 +98,7 @@ public class ReferenceDescriptorTest extends TestCase {
         }
     }
 
-    public void testRevereseReferenceValid() throws Exception {
+    public void testReverseReferenceValid() throws Exception {
         // rfd1 in Class1 points to Class2, rfd2 in Class2 points to Class1
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", "rfd2");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", false, "Class1", "rfd1");
@@ -108,7 +108,7 @@ public class ReferenceDescriptorTest extends TestCase {
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), refs2, new ArrayList());
         Model model = new Model("model", Arrays.asList(new Object[] {cld1, cld2}));
         try {
-            ReferenceDescriptor rfdReverse = rfd1.getReverseReference();
+            ReferenceDescriptor rfdReverse = rfd1.getReverseReferenceDescriptor();
             assertEquals(rfd2, rfdReverse);
             assertEquals(cld1, rfdReverse.getReferencedClassDescriptor());
 
