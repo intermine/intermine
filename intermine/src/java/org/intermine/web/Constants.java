@@ -31,7 +31,13 @@ public interface Constants
      * ServletContext attribute used to store the template queries
      */
     public static final String TEMPLATE_QUERIES = "TEMPLATE_QUERIES";
-
+    
+    /**
+     * ServletContext attribute, provides an interface for actions and
+     * controllers to query some model meta-data like class counts and
+     * field enumerations.
+     */
+    public static final String OBJECT_STORE_SUMMARY = "OBJECT_STORE_SUMMARY";
     /**
      * ServletContext attribute used to store the Map of class names to Displayer objects and
      * className+"."+fieldName to Displayer objects.
@@ -52,12 +58,12 @@ public interface Constants
      * ServletContext attribute used to store the ProfileManager
      */
     public static final String PROFILE_MANAGER = "PROFILE_MANAGER";
-
+    
     /**
      * Session attribute used to store the user's Profile
      */
     public static final String PROFILE = "PROFILE";
-
+    
     /**
      * Session attribute used to store the current query
      */
