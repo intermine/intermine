@@ -189,10 +189,16 @@
   <c:if test="${editingNode != null}">
     <tr>
       <td valign="top">
+        <fmt:message key="query.constrain"/>
         <span class="metadata">
-          <fmt:message key="query.constrain">
-            <fmt:param value="${editingNode.fieldName}"/>
-          </fmt:message>
+          <c:choose>
+            <c:when test="${empty editingNode.fieldName}">
+              <c:out value="${editingNode.path}"/>
+            </c:when>
+            <c:otherwise>
+              <c:out value="${editingNode.fieldName}"/>
+            </c:otherwise>
+          </c:choose>
         </span>
         <span class="type">
           <c:choose>
