@@ -157,8 +157,6 @@
   </item>
   <item id="-1_20" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="QP1234"/>
-    <attribute name="translationEnd" value="489"/>
-    <attribute name="translationStart" value="1"/>
     <reference name="endExon" ref_id="0_2"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="startExon" ref_id="0_1"/>

@@ -110,7 +110,7 @@ public class EnsemblDataTranslator extends DataTranslator
             Item supercontig = (Item) i.next();
             if (supercontig.hasAttribute("identifier")) {
                 Item synonym = createSynonym(supercontig.getIdentifier(), "identifier",
-                                 supercontig.getAttribute("identifier").getValue(), getEnsemblRef());
+                        supercontig.getAttribute("identifier").getValue(), getEnsemblRef());
                 addReferencedItem(supercontig, synonym, "synonyms", true, "subject", false);
                 tgtItemWriter.store(ItemHelper.convert(synonym));
             }
@@ -160,7 +160,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     if (tgtItem.hasAttribute("identifier")) {
                         Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
-                                       tgtItem.getAttribute("identifier").getValue(), getEnsemblRef());
+                                tgtItem.getAttribute("identifier").getValue(), getEnsemblRef());
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
                     }
@@ -273,7 +273,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     if (tgtItem.hasAttribute("identifier")) {
                         Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
-                                       tgtItem.getAttribute("identifier").getValue(), getEnsemblRef());
+                                tgtItem.getAttribute("identifier").getValue(), getEnsemblRef());
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
                     }
@@ -504,14 +504,6 @@ public class EnsemblDataTranslator extends DataTranslator
 
             // set up additional references/collections
             protein.addReference(getOrgRef());
-            if (translation.hasAttribute("seq_start")) {
-                protein.addAttribute(new Attribute("translationStart",
-                            translation.getAttribute("seq_start").getValue()));
-            }
-            if (translation.hasAttribute("seq_end")) {
-                protein.addAttribute(new Attribute("translationEnd",
-                            translation.getAttribute("seq_end").getValue()));
-            }
             if (translation.hasReference("start_exon")) {
                 protein.addReference(new Reference("startExon",
                             translation.getReference("start_exon").getRefId()));
