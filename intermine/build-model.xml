@@ -24,15 +24,15 @@
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
   <property name="model.lib" location="${model}/${model.name}/lib"/>
   <property name="model.web.template.queries" location="${model}/${model.name}/resources/web/template-queries.xml"/>
-  
+
   <!-- Summarise object store properties -->
-  <property name="os.summary.properties.file" 
+  <property name="os.summary.properties.file"
             value="${build.model.dir}/objectstoresummary.config.properties" />
   <property name="summarise.output.properties.filename" value="objectstoresummary.properties"/>
-  <property name="summarise.output.properties" 
+  <property name="summarise.output.properties"
             value="${build.model.dir}/${summarise.output.properties.filename}"/>
-  
-  
+
+
   <path id="compile.class.path">
     <path refid="class.path"/>
     <fileset dir="${model.lib}">
@@ -46,24 +46,24 @@
     <pathelement location="${build.model.dir.resources}"/>
   </path>
 
-  
+
   <!-- object store summary targets -->
   <target name="check-objectstore-summary">
     <uptodate property="objectstore-is-summarised"
               srcfile="${os.summary.properties.file}"
               targetfile="${summarise.output.properties}"/>
   </target>
-  
+
   <target name="summarise-objectstore" depends="prepare, check-objectstore-summary, build-model-from-db" unless="objectstore-is-summarised">
     <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
       <classpath refid="class.path"/>
     </taskdef>
     <echo message="Summarising object store ${objectstore.name}..."/>
-    <summarise-objectstore alias="${objectstore.name}" 
+    <summarise-objectstore alias="${objectstore.name}"
                            outputFile="${summarise.output.properties}"
                            inputFile="${os.summary.properties.file}"/>
   </target>
-  
+
   <!-- create the directory that this model will be built to -->
   <target name="prepare"
           description="Create a directory that this model will be built to">
@@ -80,7 +80,7 @@
       <mapper type="glob" from="*.zargo" to="${build.model.dir.tmp}/*_.xmi" />
     </uptodate>
   </target>
-  
+
   <!-- unzip .zargo file -->
   <target name="unpack-xmi-model" depends="unpack-xmi-model.check"
           description="unpacks an XMI model from .zargo file"
@@ -144,7 +144,7 @@
                       pkg="${packagename}.${model.name}"
                       namespace="${namespace}"
                       source="${model}/${model.name}/${model.name}.xsd"
-                      destDir="${build.model}/${model.name}" />   
+                      destDir="${build.model}/${model.name}" />
   </target>
 
   <target name="generate-owl-model"
@@ -186,33 +186,38 @@
   </target>
 
   <target name="compile-model-java" depends="generate-model-java">
-    <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+    <javac source="1.4" destdir="${build.model.dir}" listfiles="yes"
+           debuglevel="lines,vars,source" debug="on">
       <classpath refid="class.path"/>
       <src path="${build.model.dir}" />
     </javac>
   </target>
 
   <target name="compile-java" depends="prepare">
-    <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+    <javac source="1.4" destdir="${build.model.dir}" listfiles="yes"
+           debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
       <src path="${model}/${model.name}/src/java"/>
     </javac>
   </target>
 
   <target name="compile-webapp-java" depends="prepare">
-    <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+    <javac source="1.4" destdir="${build.model.dir}" listfiles="yes"
+           debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
       <src path="${model}/${model.name}/src/web/java"/>
     </javac>
   </target>
 
   <target name="compile-test" depends="compile-java, copy-test-resources">
-    <depend srcdir="${model}/${model.name}/src/test" destdir="${build.model.dir.tmp}" closure="yes" dump="yes">
+    <depend srcdir="${model}/${model.name}/src/test" destdir="${build.model.dir.tmp}"
+            closure="yes" dump="yes">
       <classpath>
         <pathelement path="${build.model.dir}"/>
       </classpath>
     </depend>
-    <javac destdir="${build.model.dir.tmp}/" listfiles="yes" debuglevel="lines,vars,source" debug="on">
+    <javac source="1.4" destdir="${build.model.dir.tmp}/" listfiles="yes"
+           debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
       <src path="${model}/${model.name}/src/test"/>
     </javac>
@@ -250,7 +255,7 @@
               schemafile="${objectstore.name}-schema.xml">
     </build-db>
 
-    <taskdef name="db-insert-model" 
+    <taskdef name="db-insert-model"
              classname="org.intermine.objectstore.intermine.StoreMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
@@ -281,13 +286,13 @@
           depends="copy-xmi, generate-xmi-model, copy-keydefs"
           description="Generate a InterMine xml model from a xmi file">
   </target>
-  
+
   <target name="generate-model-from-xmlschema"
           depends="generate-xmlschema-model, copy-keydefs"
           description="Build a usable model from an xmlschema">
   </target>
 
-  <target name="generate-model-from-owl" 
+  <target name="generate-model-from-owl"
           depends="generate-owl-model, copy-keydefs"
           description="Generate a InterMine xml model from an OWL file">
   </target>
@@ -300,8 +305,8 @@
   <target name="build-model-from-zargo" depends="generate-model-from-zargo, compile-model-java"
           description="Build a usable model from a .zargo file">
   </target>
- 
-  <target name="build-model-from-ace" 
+
+  <target name="build-model-from-ace"
           depends="generate-acedb-model, compile-model-java, copy-keydefs"
           description="Build a usable model from an AceDB .wrm file">
   </target>
@@ -330,7 +335,7 @@
     <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-queries alias="${objectstore.name}" 
+    <precompute-queries alias="${objectstore.name}"
                         summaryPropertiesFile="${summarise.output.properties.filename}"
                         minRows="${precompute.minRows}"
                         operation="model"/>
@@ -341,7 +346,7 @@
       <classpath refid="class.path"/>
     </taskdef>
     <precompute-queries alias="${objectstore.name}" testMode="true"
-                        summaryPropertiesFile="${summarise.output.properties.filename}" 
+                        summaryPropertiesFile="${summarise.output.properties.filename}"
                         minRows="${precompute.minRows}"
                         operation="model"/>
   </target>
@@ -351,7 +356,7 @@
     <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <precompute-queries alias="${objectstore.name}" 
+    <precompute-queries alias="${objectstore.name}"
                         summaryPropertiesFile="${summarise.output.properties.filename}"
                         minRows="${precompute.minRows}"
                         operation="template"/>
@@ -359,10 +364,10 @@
 
   <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"
           description="Add a model to the webapp">
-    <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
-    <unwar src="${war}" dest="${build.tmp}">   
+    <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>
+    <unwar src="${war}" dest="${build.tmp}">
       <patternset>
-        <include name="**/struts-config.xml"/>        
+        <include name="**/struts-config.xml"/>
       </patternset>
     </unwar>
     <replace file="${build.tmp}/WEB-INF/struts-config.xml" value="${model.struts.config}">
