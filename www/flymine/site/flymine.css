@@ -57,3 +57,12 @@ a:hover {color: #220077;
 .queryViewConstraintExtra {
     color: #880088;
 }
+.resultsHeader {
+    background: #880088;
+}
+.resultsOddRow {
+    background: #ccaaff;
+}
+.resultsEvenRow {
+    background: #f4eeff;
+}
