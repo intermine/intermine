@@ -154,8 +154,8 @@ public class TemplateForm extends ActionForm
      * @param errors a place to store any parse errors
      */
     protected void parseAttributeValues(TemplateQuery template, HttpSession session, ActionErrors errors) {
-    	Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-    	int j = 0;
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        int j = 0;
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
