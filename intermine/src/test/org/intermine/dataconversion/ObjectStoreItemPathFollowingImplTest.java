@@ -49,50 +49,32 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) osw.getObjectStore();
         try {
-            Item i1 = new Item();
-            i1.setIdentifier("1_0");
-            i1.setClassName("flibble");
-            i1.setImplementations("flobble");
+            Item i1 = createItem("1_0", "flibble", "flobble");
             Reference r1 = new Reference();
             i1.addReferences(r1);
             r1.setItem(i1);
             r1.setName("a");
             r1.setRefId("1_1");
-            Item i2 = new Item();
-            i2.setIdentifier("1_1");
-            i2.setClassName("fish");
-            i2.setImplementations("fosh");
+            Item i2 = createItem("1_1", "fish", "fosh");
             Reference r2 = new Reference();
             i2.addReferences(r2);
             r2.setItem(i2);
             r2.setName("b");
             r2.setRefId("1_2");
-            Item i3 = new Item();
-            i3.setIdentifier("1_2");
-            i3.setClassName("floible");
-            i3.setImplementations("flooble");
-            Item i4 = new Item();
-            i4.setIdentifier("2_0");
-            i4.setClassName("flibble");
-            i4.setImplementations("flobble");
+            Item i3 = createItem("1_2", "floible", "flooble");
+            Item i4 = createItem("2_0", "flibble", "flobble");
             Reference r4 = new Reference();
             i4.addReferences(r4);
             r4.setItem(i4);
             r4.setName("a");
             r4.setRefId("2_1");
-            Item i5 = new Item();
-            i5.setIdentifier("2_1");
-            i5.setClassName("fish");
-            i5.setImplementations("fosh");
+            Item i5 = createItem("2_1", "fish", "fosh");
             Reference r5 = new Reference();
             i5.addReferences(r5);
             r5.setItem(i5);
             r5.setName("b");
             r5.setRefId("2_2");
-            Item i6 = new Item();
-            i6.setIdentifier("2_2");
-            i6.setClassName("floible");
-            i6.setImplementations("flooble");
+            Item i6 = createItem("2_2", "floible", "flooble");
             osw.beginTransaction();
             osw.store(i1);
             osw.store(r1);
@@ -104,7 +86,7 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             osw.store(i5);
             osw.store(r5);
             osw.store(i6);
-            
+
             Query q = new Query();
             QueryClass qc1 = new QueryClass(Item.class);
             q.addFrom(qc1);
@@ -187,27 +169,15 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) osw.getObjectStore();
         try {
-            Item i1 = new Item();
-            i1.setIdentifier("1_0");
-            i1.setClassName("flibble");
-            i1.setImplementations("flobble");
+            Item i1 = createItem("1_0", "flibble", "flobble");
             ReferenceList r1 = new ReferenceList();
             i1.addCollections(r1);
             r1.setItem(i1);
             r1.setName("a");
             r1.setRefIds("1_1 1_2");
-            Item i2 = new Item();
-            i2.setIdentifier("1_1");
-            i2.setClassName("fish");
-            i2.setImplementations("fosh");
-            Item i3 = new Item();
-            i3.setIdentifier("1_2");
-            i3.setClassName("floible");
-            i3.setImplementations("flooble");
-            Item i4 = new Item();
-            i4.setIdentifier("2_0");
-            i4.setClassName("flibble");
-            i4.setImplementations("flobble");
+            Item i2 = createItem("1_1", "fish", "fosh");
+            Item i3 = createItem("1_2", "floible", "flooble");
+            Item i4 = createItem("2_0", "flibble", "flobble");
             ReferenceList r4 = new ReferenceList();
             i4.addCollections(r4);
             r4.setItem(i4);
@@ -220,7 +190,7 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             osw.store(i3);
             osw.store(i4);
             osw.store(r4);
-            
+
             Query q = new Query();
             QueryClass qc1 = new QueryClass(Item.class);
             q.addFrom(qc1);
@@ -283,32 +253,20 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) osw.getObjectStore();
         try {
-            Item i1 = new Item();
-            i1.setIdentifier("1_0");
-            i1.setClassName("flibble");
-            i1.setImplementations("flobble");
-            Item i2 = new Item();
-            i2.setIdentifier("1_1");
-            i2.setClassName("fish");
-            i2.setImplementations("fosh");
+            Item i1 = createItem("1_0", "flibble", "flobble");
+            Item i2 = createItem("1_1", "fish", "fosh");
             Reference r2 = new Reference();
             i2.addReferences(r2);
             r2.setItem(i2);
             r2.setName("a");
             r2.setRefId("1_0");
-            Item i3 = new Item();
-            i3.setIdentifier("1_2");
-            i3.setClassName("floible");
-            i3.setImplementations("flooble");
+            Item i3 = createItem("1_2", "floible", "flooble");
             Reference r3 = new Reference();
             i3.addReferences(r3);
             r3.setItem(i3);
             r3.setName("a");
             r3.setRefId("1_0");
-            Item i4 = new Item();
-            i4.setIdentifier("2_0");
-            i4.setClassName("flibble");
-            i4.setImplementations("flobble");
+            Item i4 = createItem("2_0", "flibble", "flobble");
             osw.beginTransaction();
             osw.store(i1);
             osw.store(i2);
@@ -373,32 +331,20 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) osw.getObjectStore();
         try {
-            Item i1 = new Item();
-            i1.setIdentifier("1_0");
-            i1.setClassName("flibble");
-            i1.setImplementations("flobble");
-            Item i2 = new Item();
-            i2.setIdentifier("1_1");
-            i2.setClassName("fish");
-            i2.setImplementations("fosh");
+            Item i1 = createItem("1_0", "flibble", "flobble");
+            Item i2 = createItem("1_1", "fish", "fosh");
             Reference r2 = new Reference();
             i2.addReferences(r2);
             r2.setItem(i2);
             r2.setName("a");
             r2.setRefId("1_0");
-            Item i3 = new Item();
-            i3.setIdentifier("1_2");
-            i3.setClassName("floible");
-            i3.setImplementations("flooble");
+            Item i3 = createItem("1_2", "floible", "flooble");
             Reference r3 = new Reference();
             i3.addReferences(r3);
             r3.setItem(i3);
             r3.setName("a");
             r3.setRefId("1_0");
-            Item i4 = new Item();
-            i4.setIdentifier("2_0");
-            i4.setClassName("flibble");
-            i4.setImplementations("flobble");
+            Item i4 = createItem("2_0", "flibble", "flobble");
             osw.beginTransaction();
             osw.store(i1);
             osw.store(i2);
@@ -455,5 +401,13 @@ public class ObjectStoreItemPathFollowingImplTest extends TestCase {
             osw.abortTransaction();
             osw.close();
         }
+    }
+
+    private Item createItem(String identifier, String className, String implementations) {
+        Item item = new Item();
+        item.setIdentifier(identifier);
+        item.setClassName(className);
+        item.setImplementations(implementations);
+        return item;
     }
 }

@@ -222,6 +222,9 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 while (descIter.hasNext()) {
                     ItemPrefetchDescriptor desc = (ItemPrefetchDescriptor) descIter.next();
                     try {
+                        // causes getConstraint to be called on ItemPrefetchConstraints in
+                        // descriptors, for ItemPrefetchConstraintDynamic this sets up an
+                        // internal map for that item that needs to be accessed later
                         Set constraint = desc.getConstraint(item);
                         Set constraints = (Set) descriptorToConstraints.get(desc);
                         if (constraints == null) {
@@ -363,6 +366,11 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                         + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
                         + (now - afterExecute) + " ms to process results for " + dac.descriptor);
             }
+        }
+        // finished batch so can clear local maps held in prefetch constraints
+        Iterator finIter = descriptorToConstraints.keySet().iterator();
+        while (finIter.hasNext()) {
+            ((ItemPrefetchDescriptor) finIter.next()).finishedBatch();
         }
     }
 
