@@ -10,10 +10,27 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import java.util.Date;
+import java.util.Locale;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
 
 /**
  * The main form, using for editing constraints
@@ -94,6 +111,51 @@ public class MainForm extends ActionForm
         this.path = path;
     }
 
+    /**
+     * @see ActionForm#validate
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+
+        ActionErrors errors = new ActionErrors();
+
+        FieldDescriptor fd = MainHelper.getFieldDescriptor(path, model);
+        if (fd.isAttribute()) {
+            AttributeDescriptor attr = (AttributeDescriptor) fd;
+            Class fieldClass = TypeUtil.instantiate(attr.getType());
+            if (Date.class.equals(fieldClass)) {
+                try {
+                    DateFormat.getDateTimeInstance(DateFormat.SHORT,
+                                                   DateFormat.SHORT,
+                                                   locale).parse(constraintValue);
+                } catch (ParseException e) {
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                               new ActionError("errors.date",
+                                               constraintValue,
+                                               new GregorianCalendar().getTime()));
+                }
+            } else {
+                try {
+                    TypeUtil.stringToObject(fieldClass, constraintValue);
+                } catch (NumberFormatException e) {
+                    String shortName = TypeUtil.unqualifiedName(fieldClass.getName()).toLowerCase();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                               new ActionError("errors." + shortName,
+                                               constraintValue));
+                }
+            }
+        }
+        
+        if (errors.size() > 0) {
+            request.setAttribute("editingNode",
+                                 ((Map) session.getAttribute(Constants.QUERY)).get(path));
+        }
+        
+        return errors;
+    }
     /**
      * @see ActionForm#reset
      */

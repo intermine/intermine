@@ -78,7 +78,8 @@
     <action path="/mainAction"
             type="org.intermine.web.MainAction"
             name="mainForm"
-            parameter="action">
+            parameter="action"
+            input="query">
       <forward name="query" path="query.page"/>
     </action>
 
