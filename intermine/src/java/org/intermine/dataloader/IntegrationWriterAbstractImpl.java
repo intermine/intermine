@@ -109,10 +109,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                 throw new ObjectStoreException(e);
             }
             //System//.out.println(" --------------------------- " + q);
-            SingletonResults result = new SingletonResults(q,
-                    (obj.getId() == null ? this : osw.getObjectStore()),
-                    (obj.getId() == null ? getSequence() : osw.getObjectStore().getSequence()));
-            //SingletonResults retval = new SingletonResults(q, this, getSequence());
+            //SingletonResults result = new SingletonResults(q,
+            //        (obj.getId() == null ? this : osw.getObjectStore()),
+            //        (obj.getId() == null ? getSequence() : osw.getObjectStore().getSequence()));
+            SingletonResults result = new SingletonResults(q, this, getSequence());
             result.setNoOptimise();
             result.setNoExplain();
             return result;
