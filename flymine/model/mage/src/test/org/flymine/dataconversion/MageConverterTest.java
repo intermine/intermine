@@ -35,6 +35,7 @@ import org.biomage.DesignElement.FeatureLocation;
 import org.biomage.QuantitationType.MeasuredSignal;
 import org.biomage.BioAssayData.QuantitationTypeDimension;
 import org.biomage.BioAssayData.MeasuredBioAssayData;
+import org.biomage.BioAssayData.DerivedBioAssayData;
 import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.DataExternal;
 import org.biomage.Common.MAGEJava;
@@ -189,12 +190,13 @@ public class MageConverterTest extends TestCase
         fw.flush();
         fw.close();
 
-        MeasuredBioAssayData mbad=new MeasuredBioAssayData();
+        DerivedBioAssayData dbad=new DerivedBioAssayData();
         BioDataCube bdc=new BioDataCube();
         DataExternal df=new DataExternal();
         bdc.setDataExternal(df);
         df.setFilenameURI("test/mage_example_data");
-        mbad.setBioDataValues(bdc);
+        dbad.setBioDataValues(bdc);
+
 
         QuantitationTypeDimension qtd = new QuantitationTypeDimension();
         MeasuredSignal qt1 = new MeasuredSignal();
@@ -205,9 +207,9 @@ public class MageConverterTest extends TestCase
         MeasuredSignal qt2 = new MeasuredSignal();
         OntologyEntry oe2=new OntologyEntry();
         oe2.setValue("col2");
-        qt1.setDataType(oe2);
+        qt2.setDataType(oe2);
         qtd.addToQuantitationTypes(qt2);
-        mbad.setQuantitationTypeDimension(qtd);
+        dbad.setQuantitationTypeDimension(qtd);
 
         FeatureDimension fd = new FeatureDimension();
         FeatureLocation fl1 = new FeatureLocation();
@@ -215,57 +217,59 @@ public class MageConverterTest extends TestCase
         fl1.setColumn(new Integer(1));
         Feature f1 = new Feature();
         f1.setFeatureLocation(fl1);
+        f1.setIdentifier("f1");
         fd.addToContainedFeatures(f1);
         FeatureLocation fl2 = new FeatureLocation();
         fl2.setRow(new Integer(1));
         fl2.setColumn(new Integer(2));
         Feature f2 = new Feature();
         f2.setFeatureLocation(fl2);
+        f2.setIdentifier("f2");
         fd.addToContainedFeatures(f2);
-        mbad.setDesignElementDimension(fd);
+        dbad.setDesignElementDimension(fd);
 
         Item expected = new Item();
-        expected.setClassName(ns + "MeasuredBioAssayData");
+        expected.setClassName(ns + "DerivedBioAssayData");
         expected.setIdentifier("0_0");
-        expected.addReference(createReference("bioDataValues","0_12"));
+        expected.addReference(createReference("bioDataValues","0_13"));
         expected.addReference(createReference("quantitationTypeDimension", "6_8"));
         expected.addReference(createReference("designElementDimension", "1_1"));
+        assertEquals(expected, ItemHelper.convert(converter.createItem(dbad)));
 
-        assertEquals(expected, ItemHelper.convert(converter.createItem(mbad)));
-
-        Item d=createItems(ns+"BioDataTuples","0_12", "");
+        Item d=createItems(ns+"BioDataTuples","0_13", "");
         ReferenceList rl=new ReferenceList();
         rl.setName("bioAssayTupleData");
 
-        Item d1=createItems(ns+"BioAssayDatum", "0_13","" );
-        d1.addReference(createReference("designElement", "2_2"));
+        Item d1=createItems(ns+"BioAssayDatum", "0_14","" );
+        d1.addReference(createReference("designElement", "3_3"));
         d1.addReference(createReference("quantitationType", "7_9"));
         d1.addAttribute(createAttribute("value", "1.006"));
-        d1.addAttribute(createAttribute("normalised", "false"));
+        d1.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d1.getIdentifier());
 
 
-        Item d2=createItems(ns+"BioAssayDatum", "0_14","" );
-        d2.addReference(createReference("designElement", "2_2"));
+        Item d2=createItems(ns+"BioAssayDatum", "0_15","" );
+        d2.addReference(createReference("designElement", "3_3"));
         d2.addReference(createReference("quantitationType", "7_11"));
         d2.addAttribute(createAttribute("value", "3.456"));
-        d2.addAttribute(createAttribute("normalised", "false"));
+        d2.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d2.getIdentifier());
 
-        Item d3=createItems(ns+"BioAssayDatum", "0_15","" );
-        d3.addReference(createReference("designElement", "2_4"));
+        Item d3=createItems(ns+"BioAssayDatum", "0_16","" );
+        d3.addReference(createReference("designElement", "3_5"));
         d3.addReference(createReference("quantitationType", "7_9"));
         d3.addAttribute(createAttribute("value", "435.223"));
-        d3.addAttribute(createAttribute("normalised", "false"));
+        d3.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d3.getIdentifier());
 
-        Item d4=createItems(ns+"BioAssayDatum", "0_16","" );
-        d4.addReference(createReference("designElement", "2_4"));
+        Item d4=createItems(ns+"BioAssayDatum", "0_17","" );
+        d4.addReference(createReference("designElement", "3_5"));
         d4.addReference(createReference("quantitationType", "7_11"));
         d4.addAttribute(createAttribute("value", "1.004"));
-        d4.addAttribute(createAttribute("normalised", "false"));
+        d4.addAttribute(createAttribute("normalised", "true"));
         rl.addRefId(d4.getIdentifier());
         d.addCollection(rl);
+
 
         Set expSet = new HashSet(Arrays.asList(new Object[] {d, d1, d2, d3, d4}));
         Set results = new HashSet();
