@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -175,16 +176,17 @@ public class LiteParser
             }
 
             // Set the data for every given reference
+            Map fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
             Iterator refIter = item.getReferences().iterator();
             while (refIter.hasNext()) {
                 Field field = (Field) refIter.next();
                 Integer id = new Integer(Integer.parseInt(field.getValue()));
-                TypeUtil.setFieldValue(obj, field.getName(),
-                                       new ProxyReference(os, id));
+                ReferenceDescriptor ref = (ReferenceDescriptor) fields.get(field.getName());
+                TypeUtil.setFieldValue(obj, field.getName(), new ProxyReference(os, id,
+                            ref.getReferencedClassDescriptor().getType()));
             }
 
             // Set the data for every given Collection
-            Map fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
             Iterator collIter = fields.entrySet().iterator();
             while (collIter.hasNext()) {
                 Map.Entry collEntry = (Map.Entry) collIter.next();

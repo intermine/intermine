@@ -88,9 +88,16 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectById
+     * @see ObjectStore#getObjectById(Integer)
      */
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
+        return getObjectById(id, InterMineObject.class);
+    }
+    
+    /**
+     * @see ObjectStore#getObjectById(Integer, Class)
+     */
+    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
         getObjectOps++;
         if (getObjectOps % 1000 == 0) {
             LOG.info("getObjectById called " + getObjectOps + " times. Cache hits: "
@@ -108,7 +115,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             getObjectHits++;
             return cached;
         }
-        InterMineObject fromDb = internalGetObjectById(id);
+        InterMineObject fromDb = internalGetObjectById(id, clazz);
         synchronized (cache) {
             cached = (InterMineObject) cache.get(id);
             if (cached == null) {
@@ -127,11 +134,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * Internal service method for getObjectById.
      *
      * @param id the ID of the object to get
+     * @param clazz a class of the object
      * @return an object from the database
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        Results results = execute(QueryCreator.createQueryForId(id));
+    protected InterMineObject internalGetObjectById(Integer id,
+            Class clazz) throws ObjectStoreException {
+        Results results = execute(QueryCreator.createQueryForId(id, clazz));
         results.setNoOptimise();
         results.setNoExplain();
 

@@ -34,11 +34,12 @@ public class QueryCreator
      * Create a query that will retrieve an object from the objectstore, given an ID.
      *
      * @param id the ID of the object to fetch
+     * @param clazz a Class in the object
      * @return a Query
      */
-    public static Query createQueryForId(Integer id) {
+    public static Query createQueryForId(Integer id, Class clazz) {
         Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
+        QueryClass qc = new QueryClass(clazz);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,

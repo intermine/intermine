@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -146,7 +147,13 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                             .iterator().next())
                                                         && qf.getFieldName().equals("id")) {
                                                     Collection bag = bc.getBag();
-                                                    fromColls.put(fieldName, bag);
+                                                    if (((CollectionDescriptor) field)
+                                                            .getCollectionClass()
+                                                            .equals(HashSet.class)) {
+                                                        fromColls.put(fieldName, new HashSet(bag));
+                                                    } else {
+                                                        fromColls.put(fieldName, bag);
+                                                    }
                                                     toIds.addAll(bag);
                                                 }
                                             }
@@ -252,16 +259,19 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 Map.Entry collectionEntry = (Map.Entry) collectionIter.next();
                                 String collectionName = (String) collectionEntry.getKey();
                                 Object contents = collectionEntry.getValue();
-                                if (contents instanceof List) {
+                                if (contents instanceof Collection) {
                                     List collectionContents = (List) collectionEntry.getValue();
-                                    Collection substituteCollection = new ArrayList();
+                                    Collection substituteCollection = (contents instanceof List
+                                            ? (Collection) new ArrayList()
+                                            : (Collection) new HashSet());
                                     Iterator contentIter = collectionContents.iterator();
                                     while (contentIter.hasNext()) {
                                         Integer idToAdd = (Integer) contentIter.next();
                                         InterMineObject objToAdd = (InterMineObject)
                                             idToObj.get(idToAdd);
                                         if (objToAdd == null) {
-                                            objToAdd = new ProxyReference(os, idToAdd);
+                                            objToAdd = new ProxyReference(os, idToAdd,
+                                                    InterMineObject.class);
                                         }
                                         substituteCollection.add(objToAdd);
                                     }

@@ -45,7 +45,7 @@ public class QueryCreatorTest extends QueryTestCase
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
                     new QueryValue(new Integer(5))));
 
-        assertEquals(q, QueryCreator.createQueryForId(new Integer(5)));
+        assertEquals(q, QueryCreator.createQueryForId(new Integer(5), InterMineObject.class));
     }
 
 

@@ -186,8 +186,9 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * @see ObjectStoreAbstractImpl#internalGetObjectById
      */
-    public InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        InterMineObject retval = super.internalGetObjectById(id);
+    public InterMineObject internalGetObjectById(Integer id,
+            Class clazz) throws ObjectStoreException {
+        InterMineObject retval = super.internalGetObjectById(id, clazz);
         //Exception e = new Exception("internalGetObjectById called for "
         //        + retval.getClass().toString() + " with id " + id);
         //e.fillInStackTrace();

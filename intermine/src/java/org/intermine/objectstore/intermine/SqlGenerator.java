@@ -90,11 +90,19 @@ public class SqlGenerator
      * Generates a query to retrieve a single object from the database, by id.
      *
      * @param id the id of the object to fetch
+     * @param clazz a Class of the object - if unsure use InterMineObject
+     * @param model the model
      * @return a String suitable for passing to an SQL server
+     * @throws ObjectStoreException if the given class is not in the model
      */
-    public static String generateQueryForId(Integer id) {
-        return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM InterMineObject AS a1_ WHERE a1_.id"
-            + " = " + id.toString() + " LIMIT 2";
+    public static String generateQueryForId(Integer id, Class clazz,
+            Model model) throws ObjectStoreException {
+        ClassDescriptor cld = model.getClassDescriptorByName(clazz.getName());
+        if (cld == null) {
+            throw new ObjectStoreException(clazz.toString() + " is not in the model");
+        }
+        return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM " + DatabaseUtil.getTableName(cld)
+            + " AS a1_ WHERE a1_.id = " + id.toString() + " LIMIT 2";
     }
 
     /**

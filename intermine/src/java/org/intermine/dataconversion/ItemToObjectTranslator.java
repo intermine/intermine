@@ -259,7 +259,8 @@ public class ItemToObjectTranslator extends Translator
                 Reference ref = (Reference) i.next();
                 Integer identifier = identifierToId(ref.getRefId());
                 if (TypeUtil.getFieldInfo(obj.getClass(), ref.getName()) != null) {
-                    TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier));
+                    TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier,
+                                InterMineObject.class));
                 } else {
                     String message = "Reference not found in model: "
                         + DynamicUtil.decomposeClass(obj.getClass())

@@ -57,6 +57,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     protected Database db;
     protected boolean everOptimise = true;
     protected Set writers = new HashSet();
+    protected Set missingTables = new HashSet();
+    protected Set noObjectTables = new HashSet();
 
     /**
      * Constructs an ObjectStoreInterMineImpl.
@@ -134,7 +136,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             throw new ObjectStoreException("No 'db' property specified for InterMine"
                                            + " objectstore (check properties file)");
         }
-        String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName();
+        String missingTablesString = props.getProperty("missingTables");
+        String noObjectTablesString = props.getProperty("noObjectTables");
+        String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName()
+            + (missingTablesString == null ? "" : ", missingTables = " + missingTablesString)
+            + (noObjectTablesString == null ? "" : ", noObjectTables = " + noObjectTablesString);
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
@@ -148,6 +154,18 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                             + " ObjectStore", e);
                 }
                 os = new ObjectStoreInterMineImpl(db, model);
+                if (missingTablesString != null) {
+                    String tables[] = missingTablesString.split(",");
+                    for (int i = 0; i < tables.length; i++) {
+                        os.missingTables.add(tables[i]);
+                    }
+                }
+                if (noObjectTablesString != null) {
+                    String tables[] = noObjectTablesString.split(",");
+                    for (int i = 0; i < tables.length; i++) {
+                        os.noObjectTables.add(tables[i]);
+                    }
+                }
                 instances.put(objectStoreDescription, os);
             }
             return os;
@@ -368,11 +386,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      * This method is overridden in order to improve the performance of the operation - this
      * implementation does not bother with the EXPLAIN call to the underlying SQL database.
      */
-    protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
+    protected InterMineObject internalGetObjectById(Integer id,
+            Class clazz) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
-            return internalGetObjectByIdWithConnection(c, id);
+            return internalGetObjectByIdWithConnection(c, id, clazz);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
         } finally {
@@ -385,12 +404,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      *
      * @param c the Connection
      * @param id the id
+     * @param clazz a Class of the object
      * @return the object
      * @throws ObjectStoreException if an error occurs
      */
     protected InterMineObject internalGetObjectByIdWithConnection(Connection c,
-            Integer id) throws ObjectStoreException {
-        String sql = SqlGenerator.generateQueryForId(id);
+            Integer id, Class clazz) throws ObjectStoreException {
+        String sql = SqlGenerator.generateQueryForId(id, clazz, model);
         String currentColumn = null;
         try {
             //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);

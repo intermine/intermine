@@ -137,7 +137,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                 return retval;
             }
         } else {
-            return Collections.singleton(new ProxyReference(osw, destId));
+            return Collections.singleton(new ProxyReference(osw, destId, InterMineObject.class));
         }
     }
 
@@ -336,6 +336,18 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return osw.getObjectById(id);
+    }
+
+    /**
+     * Search database for object matching the given object id and class
+     *
+     * @param id the object ID
+     * @param clazz a Class of the object
+     * @return the retrieved object
+     * @throws ObjectStoreException if an error occurs retrieving the object
+     */
+    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
+        return osw.getObjectById(id, clazz);
     }
 
     /**

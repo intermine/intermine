@@ -23,16 +23,19 @@ public class ProxyReference implements InterMineObject
 {
     private ObjectStore os;
     private Integer id;
+    private Class clazz;
 
     /**
      * Construct a ProxyReference object.
      *
      * @param os the ObjectStore to retrieve the object from
      * @param id the internal id of the real object
+     * @param clazz a hint of the class that this object is - use InterMineObject if unsure
      */
-    public ProxyReference(ObjectStore os, Integer id) {
+    public ProxyReference(ObjectStore os, Integer id, Class clazz) {
         this.os = os;
         this.id = id;
+        this.clazz = clazz;
     }
 
     /**
@@ -42,7 +45,7 @@ public class ProxyReference implements InterMineObject
      */
     public InterMineObject getObject() {
         try {
-            return os.getObjectById(id);
+            return os.getObjectById(id, clazz);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("ObjectStoreException while materialising proxy: "
                                        + e.getMessage());
@@ -64,6 +67,6 @@ public class ProxyReference implements InterMineObject
      * @param id the id
      */
     public void setId(Integer id) {
-        this.id = id;
+        throw new IllegalArgumentException("Cannot change the id of a ProxyReference");
     }
 }

@@ -54,10 +54,17 @@ public class ObjectStorePassthruImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectById
+     * @see ObjectStore#getObjectById(Integer)
      */
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return os.getObjectById(id);
+    }
+
+    /**
+     * @see ObjectStore#getObjectById(Integer, Class)
+     */
+    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
+        return os.getObjectById(id, clazz);
     }
 
     /**

@@ -56,14 +56,26 @@ public interface ObjectStore
             int sequence) throws ObjectStoreException;
 
     /**
-     * Get an object from the ObjectStore by giving an example. The returned object
-     * (if present) will have the same primary keys as the example object.
+     * Get an object from the ObjectStore by giving an ID.
      *
      * @param id the ID of the object to fetch
      * @return the object from the ObjectStore or cache, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException;
+
+    /**
+     * Get an object from the ObjectStore by giving an ID and a hint of the Class of the object.
+     * WARNING: If you provide the wrong class hint, this method will negatively cache the
+     * non-presence of the object which will cause other getObjectById calls to return null even
+     * if the object exists in another class.
+     *
+     * @param id the ID of the object to fetch
+     * @param clazz a class of the object
+     * @return the object from the ObjectStore or the cache, or null if none exists
+     * @throws ObjectStoreException if an error occurs during the retrieval of the object
+     */
+    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException;
 
     /**
      * Prefetches an object into the objectstore getObjectById cache. This method doesn't

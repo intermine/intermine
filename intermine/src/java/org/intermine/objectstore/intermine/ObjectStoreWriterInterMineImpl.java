@@ -674,12 +674,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      *
      * This method is overridden in order to flush matches properly before the read.
      */
-    protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
+    protected InterMineObject internalGetObjectById(Integer id,
+            Class clazz) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
             batch.flush(c);
-            return internalGetObjectByIdWithConnection(c, id);
+            return internalGetObjectByIdWithConnection(c, id, clazz);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
         } finally {
