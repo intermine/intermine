@@ -100,8 +100,6 @@ null:meta_coord a owl:Class ;
 :Sequence a owl:Class;
     owl:equivalentClass e:dna.
 
-null:dna__created a owl:DatatypeProperty;
-    owl:equivalentProperty e:dna__created.
 
 # EnsemblConverter needs to move embl_acc to :Synonym
 
@@ -498,3 +496,30 @@ null:density_type a owl:Class ;
 
 null:alt_allele a owl:Class ;
     owl:equivalentClass e:alt_allele.
+
+:Chromosome a owl:Class ;
+    rdfs:subClassOf :BioEntity .
+:Chromosome__length a owl:DatatypeProperty;
+    rdfs:domain :Chromosome;
+    rdfs:range xsd:integer.
+
+:Supercontig a owl:Class ;
+    rdfs:subClassOf :BioEntity .
+:Supercontig__length a owl:DatatypeProperty;
+    rdfs:domain :Supercontig;
+    rdfs:range xsd:integer.
+
+
+:Clone a owl:Class ;
+    rdfs:subClassOf :BioEntity.
+:Clone__length a owl:DatatypeProperty;
+    rdfs:domain :Clone;
+    rdfs:range xsd:integer.
+
+
+:Contig a owl:Class ;
+    rdfs:subClassOf :BioEntity.
+:Contig__length a owl:DatatypeProperty;
+    rdfs:domain :Contig;
+    rdfs:range xsd:integer.
+
