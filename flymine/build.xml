@@ -494,7 +494,7 @@
                 merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-model, merge-phenotype-model,
                 merge-go-model, merge-uniprot-model,
-                merge-protein_structure-model, merge-so-model, 
+                merge-protein_structure-model, merge-so-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-chado-model, merge-shortcuts">
   </target>
@@ -720,7 +720,7 @@
                     model ="genomic"
                     handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
       <fileset dir="${build.tmp}">
-        <include name ="dmel-4-r4.0.gff"/>       
+        <include name ="dmel-4-r4.0.gff"/>
         <!--include name ="*.gff"/-->
       </fileset>
     </convert-file>
@@ -1317,7 +1317,7 @@
   <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation"/>
 
   <!--load GFF3 data for flyreg -->
-  <target name="retrieve-flyreg" 
+  <target name="retrieve-flyreg"
           depends="prepare-build-model, compile-flyreg-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1355,7 +1355,8 @@
     </ant>
   </target>
 
-  <target name="load-flyreg"  depends="copy-genomic-config">
+  <target name="load-flyreg"
+          depends="copy-genomic-config, prepare-build-model, compile-flyreg-java, compile-genomic-java">
     <taskdef name="load-flyreg" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1369,7 +1370,7 @@
   <target name="build-flyreg-production" depends="retrieve-flyreg, load-flyreg"/>
 
   <!--load GFF3 data for long_oligo -->
-  <target name="retrieve-long_oligo" 
+  <target name="retrieve-long_oligo"
           depends="prepare-build-model, compile-long_oligo-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1384,12 +1385,12 @@
 
     <retrieve-file converter="org.flymine.dataconversion.GFF3Converter"
                    target="osw.long_oligo-tgt-items"
-                   seqClsName="Chromosome"
+                   seqClsName="Transcript"
                    orgAbbrev="DM"
                    infoSourceTitle="LongOligo"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
-      <fileset dir ="/shared/data/long_oligo">
+      <fileset dir ="/tmp/shared/data/long_oligo">
         <include name ="*.gff3"/>
         <include name ="*.GFF3"/>
       </fileset>
@@ -1407,7 +1408,8 @@
     </ant>
   </target>
 
-  <target name="load-long_oligo"  depends="copy-genomic-config">
+  <target name="load-long_oligo"
+          depends="copy-genomic-config, prepare-build-model, compile-long_oligo-java, compile-genomic-java">
     <taskdef name="load-long_oligo" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1421,7 +1423,7 @@
   <target name="build-long_oligo-production" depends="retrieve-long_oligo, load-long_oligo"/>
 
   <!--load GFF3 data for tiling_path -->
-  <target name="retrieve-tiling_path" 
+  <target name="retrieve-tiling_path"
           depends="prepare-build-model, compile-tiling_path-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1459,7 +1461,8 @@
     </ant>
   </target>
 
-  <target name="load-tiling_path"  depends="copy-genomic-config">
+  <target name="load-tiling_path"
+          depends="copy-genomic-config, prepare-build-model, compile-tiling_path-java, compile-genomic-java">
     <taskdef name="load-tiling_path" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1527,7 +1530,7 @@
 
   <target name="build-gff3-production" depends="retrieve-gff3, load-gff3"/-->
 
-  
+
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
@@ -1648,7 +1651,7 @@
     </ant>
   </target>
 
-  <target name="create-indexes-production" 
+  <target name="create-indexes-production"
           depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1658,7 +1661,7 @@
     </ant>
   </target>
 
-  <target name="create-indexes-production-attribute" 
+  <target name="create-indexes-production-attribute"
           depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1844,7 +1847,7 @@
     <antcall target="analyse-db-production"/>
     <antcall target="make-spanning-locations"/>
     <antcall target="analyse-db-production"/>
-    
+
     <!-- removed due to running out of memory -->
     <!--antcall target="transfer-sequences"/-->
     <!--antcall target="create-indexes-production-attribute"/-->
@@ -1990,7 +1993,7 @@
     </ant>
   </target>
 
-  <target name="compile-flyreg-java" 
+  <target name="compile-flyreg-java"
           depends="prepare-build-model, compile-flymine-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="flyreg"/>
@@ -1998,7 +2001,7 @@
     </ant>
   </target>
 
-  <target name="compile-long_oligo-java" 
+  <target name="compile-long_oligo-java"
           depends="prepare-build-model, compile-flymine-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="long_oligo"/>
@@ -2006,7 +2009,7 @@
     </ant>
   </target>
 
-  <target name="compile-tiling_path-java" 
+  <target name="compile-tiling_path-java"
           depends="prepare-build-model, compile-flymine-java, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="tiling_path"/>
@@ -2135,7 +2138,7 @@
   <!-- create Sequence objects for BioEntitys from a FASTA file -->
 
 
-  <target name="read-flybase-chromosome-fasta" 
+  <target name="read-flybase-chromosome-fasta"
           depends="compile-genomic-java, compile-flymine-java">
     <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
       <classpath refid="models.class.path"/>
@@ -2148,7 +2151,7 @@
     </read-fasta>
   </target>
 
-  <target name="read-flybase-gene-fasta" 
+  <target name="read-flybase-gene-fasta"
           depends="compile-genomic-java, compile-flymine-java">
     <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
       <classpath refid="models.class.path"/>
@@ -2161,7 +2164,7 @@
     </read-fasta>
   </target>
 
-  <target name="read-flybase-cds-fasta" 
+  <target name="read-flybase-cds-fasta"
           depends="compile-genomic-java, compile-flymine-java">
     <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
       <classpath refid="models.class.path"/>
@@ -2852,10 +2855,10 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
-      <!--fileset dir ="/shared/data/human/tfbs">        
+      <!--fileset dir ="/shared/data/human/tfbs">
         <include name ="tfbsConsSitesNew.gff"/>
       </fileset-->
-      <fileset dir ="/shared/data/gff3">        
+      <fileset dir ="/shared/data/gff3">
         <include name ="tfbs.gff"/>
       </fileset>
     </retrieve-file>
