@@ -91,6 +91,12 @@ public interface Constants
     public static final String TEMPLATE_PATHQUERY = "TEMPLATE_PATHQUERY";
     
     /**
+     * Session attriute used to store the original of the template being edited
+     * in the query builder.
+     */
+    public static final String EDITING_TEMPLATE = "EDITING_TEMPLATE";
+    
+    /**
      * Session attribute used to store the results of running the current query
      */
     public static final String QUERY_RESULTS = "QUERY_RESULTS";
@@ -111,4 +117,11 @@ public interface Constants
      * system).
      */
     public static final String SUPERUSER_ACCOUNT = "SUPERUSER_ACCOUNT";
+    
+    /**
+     * Session attribute that temporarily holds a message that will be displayed by the
+     * errorMessages.jsp on the next page viewed by the user and then removed (allows message
+     * after redirect).
+     */
+    public static final String MESSAGE = "MESSAGE";
 }
