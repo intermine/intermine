@@ -96,7 +96,7 @@ public class SaveQueryAction extends Action
                                  ResultsInfo resultsInfo) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 

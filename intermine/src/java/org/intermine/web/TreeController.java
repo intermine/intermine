@@ -62,7 +62,7 @@ public class TreeController extends TilesAction
             rootClass = "org.intermine.model.InterMineObject";
         }
         ServletContext servletContext = session.getServletContext();
-	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);

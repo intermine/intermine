@@ -56,7 +56,7 @@ public class MainController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
 
         //set up the path-based query

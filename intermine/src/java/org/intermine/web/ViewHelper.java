@@ -82,7 +82,7 @@ public abstract class ViewHelper
 
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         List view = (List) session.getAttribute(Constants.VIEW);
-	ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
 
