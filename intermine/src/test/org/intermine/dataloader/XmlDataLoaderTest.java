@@ -22,8 +22,9 @@ import org.flymine.util.ListBean;
 import org.flymine.model.testmodel.*;
 import org.flymine.metadata.Model;
 
-public class XmlDataLoaderTest extends TestCase {
-
+public class XmlDataLoaderTest extends TestCase
+{
+    protected ObjectStore os;
     protected ObjectStoreWriter writer;
     protected IntegrationWriter iw;
     protected int fakeId = 0;
@@ -36,9 +37,9 @@ public class XmlDataLoaderTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
-        iw = new IntegrationWriterSingleSourceImpl("test", writer);
+        iw = new IntegrationWriterSingleSourceImpl("test", os, writer);
 
         URL mapFile = getClass().getClassLoader().getResource("castor_xml_testmodel.xml");
         map = new Mapping();
@@ -77,12 +78,12 @@ public class XmlDataLoaderTest extends TestCase {
         dl.processXml(source);
 
         // check address was stored
-        Address a2 = (Address) writer.getObjectByExample(a1);
+        Address a2 = (Address) os.getObjectByExample(a1);
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
 
         // check company was stored
-        Company c2 = (Company) writer.getObjectByExample(c1);
+        Company c2 = (Company) os.getObjectByExample(c1);
         assertNotNull("Expected company to be retieved from DB", c2);
         assertTrue("company id should be set", (c2.getId().intValue() != 0));
 

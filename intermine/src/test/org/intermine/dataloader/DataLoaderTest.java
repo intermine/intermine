@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
@@ -15,7 +16,8 @@ import org.flymine.metadata.Model;
 public class DataLoaderTest extends TestCase
 {
     protected DataLoader loader;
-    protected ObjectStoreWriterOjbImpl writer;
+    protected ObjectStore os;
+    protected ObjectStoreWriter writer;
     protected ArrayList toDelete = new ArrayList();
 
     public DataLoaderTest(String arg) {
@@ -23,10 +25,10 @@ public class DataLoaderTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         Model model = Model.getInstanceByName("testmodel");
-        IntegrationWriter iw = IntegrationWriterAbstractImpl.getInstance("source1", os, "dataloader.unittest");
+        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("dataloader.unittest", "source1", os);
         loader = new DataLoader(model, iw);
     }
 
@@ -46,7 +48,7 @@ public class DataLoaderTest extends TestCase
 
         loader.store(a);
 
-        Address a2 = (Address) writer.getObjectByExample(a);
+        Address a2 = (Address) os.getObjectByExample(a);
 
         assertNotNull("Expected addess to be retrieved from DB", a2);
         assertTrue("address id sould be set", (a2.getId().intValue() != 0));
@@ -67,13 +69,13 @@ public class DataLoaderTest extends TestCase
         loader.store(c);
 
         // check address was stored
-        Address a2 = (Address) writer.getObjectByExample(a);
+        Address a2 = (Address) os.getObjectByExample(a);
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
         assertEquals(a, a2);
 
         // check company
-        Company c2 = (Company) writer.getObjectByExample(c);
+        Company c2 = (Company) os.getObjectByExample(c);
         assertNotNull("Expected company to be retieved from DB", c2);
         assertTrue("company id should be set", (c2.getId().intValue() != 0));
         assertEquals(c, c2);
@@ -98,19 +100,19 @@ public class DataLoaderTest extends TestCase
         loader.store(d);
 
         // check address was stored
-        Address a2 = (Address) writer.getObjectByExample(a);
+        Address a2 = (Address) os.getObjectByExample(a);
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
         assertEquals(a, a2);
 
         // check company
-        Company c2 = (Company) writer.getObjectByExample(c);
+        Company c2 = (Company) os.getObjectByExample(c);
         assertNotNull("Expected company to be retieved from DB", c2);
         assertTrue("company id should be set", (c2.getId().intValue() != 0));
         assertEquals(c, c2);
 
         // check department
-        Department d2 = (Department) writer.getObjectByExample(d);
+        Department d2 = (Department) os.getObjectByExample(d);
         assertNotNull("Expected department to be retieved from DB", d2);
         assertTrue("department id should be set", (d2.getId().intValue() != 0));
         assertEquals(d, d2);
@@ -138,13 +140,13 @@ public class DataLoaderTest extends TestCase
         loader.store(c);
 
         // check address was stored, an exception is thrown by getByExample if same addess was stored twice
-        Address a2 = (Address) writer.getObjectByExample(a);
+        Address a2 = (Address) os.getObjectByExample(a);
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
         assertEquals(a, a2);
 
         // check company
-        Company c2 = (Company) writer.getObjectByExample(c);
+        Company c2 = (Company) os.getObjectByExample(c);
         assertNotNull("Expected company to be retieved from DB", c2);
         assertTrue("company id should be set", (c2.getId().intValue() != 0));
         assertEquals(c, c2);
@@ -178,7 +180,7 @@ public class DataLoaderTest extends TestCase
         // Now store the ceo, check that company is stored
         loader.store(ceo);
 
-        Company ex1 = (Company) writer.getObjectByExample(c1);
+        Company ex1 = (Company) os.getObjectByExample(c1);
         assertNotNull("Expected company to be retieved from DB", ex1);
         assertTrue("company id should be set", (ex1.getId().intValue() != 0));
         assertEquals(c1, ex1);
@@ -193,7 +195,7 @@ public class DataLoaderTest extends TestCase
         loader.store(c2);
 
         // check that vatNumber got set in company in database
-        Company ex2 = (Company) writer.getObjectByExample(c2);
+        Company ex2 = (Company) os.getObjectByExample(c2);
         assertNotNull("Expected company to be retieved from DB", ex2);
         assertTrue("company id should be set", (ex2.getId().intValue() != 0));
         assertTrue("Expect vatNumber to be set", (ex2.getVatNumber() == 1000));
@@ -225,18 +227,18 @@ public class DataLoaderTest extends TestCase
         loader.store(c);
 
         // Now check that the two departments were stored.
-        Department gotD1 = (Department) writer.getObjectByExample(d1);
+        Department gotD1 = (Department) os.getObjectByExample(d1);
         assertNotNull("Expected department to be retrieved from DB", gotD1);
         assertTrue("Department id should be set", gotD1.getId().intValue() != 0);
         assertEquals(d1, gotD1);
 
-        Department gotD2 = (Department) writer.getObjectByExample(d2);
+        Department gotD2 = (Department) os.getObjectByExample(d2);
         assertNotNull("Expected department to be retrieved from DB", gotD2);
         assertTrue("Department id should be set", gotD2.getId().intValue() != 0);
         assertEquals(d2, gotD2);
 
         // check company
-        Company gotC = (Company) writer.getObjectByExample(c);
+        Company gotC = (Company) os.getObjectByExample(c);
         assertNotNull("Expected company to be retieved from DB", gotC);
         assertTrue("company id should be set", (gotC.getId().intValue() != 0));
         assertEquals(c, gotC);
@@ -294,7 +296,7 @@ public class DataLoaderTest extends TestCase
         loader.store(c1);
 
         // Check company 1.
-        Company gotC1 = (Company) writer.getObjectByExample(c1);
+        Company gotC1 = (Company) os.getObjectByExample(c1);
         assertNotNull("Expected company to be retrieved from DB", gotC1);
         assertTrue("Expected retrieved company to be a separate instance from the stored one", c1 != gotC1);
         assertTrue("Company id should be set", gotC1.getId().intValue() != 0);
@@ -302,7 +304,7 @@ public class DataLoaderTest extends TestCase
         assertEquals(2, gotC1.getContractors().size());
 
         // Check company 2.
-        Company gotC2 = (Company) writer.getObjectByExample(c2);
+        Company gotC2 = (Company) os.getObjectByExample(c2);
         assertNotNull("Expected company to be retrieved from DB", gotC2);
         assertTrue("Expected retrieved company to be a separate instance from the stored one", c2 != gotC2);
         assertTrue("Company id should be set", gotC2.getId().intValue() != 0);
@@ -310,7 +312,7 @@ public class DataLoaderTest extends TestCase
         assertEquals(1, gotC2.getContractors().size());
 
         // Check contractor 1.
-        Contractor gotD1 = (Contractor) writer.getObjectByExample(d1);
+        Contractor gotD1 = (Contractor) os.getObjectByExample(d1);
         assertNotNull("Expected contractor to be retrieved from DB", gotD1);
         assertTrue("Expected retrieved contractor to be a separate instance from the stored one", d1 != gotD1);
         assertTrue("Department id should be set", gotD1.getId().intValue() != 0);
@@ -318,7 +320,7 @@ public class DataLoaderTest extends TestCase
         assertEquals(2, gotD1.getCompanys().size());
 
         // Check contractor 2.
-        Contractor gotD2 = (Contractor) writer.getObjectByExample(d2);
+        Contractor gotD2 = (Contractor) os.getObjectByExample(d2);
         assertNotNull("Expected contractor to be retrieved from DB", gotD2);
         assertTrue("Expected retrieved contractor to be a separate instance from the stored one", d2 != gotD2);
         assertTrue("Department id should be set", gotD2.getId().intValue() != 0);

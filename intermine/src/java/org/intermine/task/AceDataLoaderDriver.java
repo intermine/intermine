@@ -39,7 +39,7 @@ public class AceDataLoaderDriver
             ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(os);
 
             //Model model = Model.getInstance();
-            IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, writer);
+            IntegrationWriter iw = new IntegrationWriterSingleSourceImpl(null, os, writer);
 
             AceURL aceURL = new AceURL("acedb://" + user + ':' + password + '@'
                                        + host + ':' + port);
