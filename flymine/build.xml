@@ -626,7 +626,7 @@
     </ant>
   </target>
 
-  <target name="jar-genomic" depends="prepare, create-genomic-model"
+  <target name="jar-genomic" depends="create-genomic-model"
           description="create a jar of the genomic model">
     <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -1413,7 +1413,7 @@
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
 
-  <target name="compute-mappings" depends="prepare, compile-genomic-java">
+  <target name="compute-mappings" depends="compile-genomic-java">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
