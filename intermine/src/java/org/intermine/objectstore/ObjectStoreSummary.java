@@ -61,7 +61,7 @@ public class ObjectStoreSummary
             classCountsMap.put(cld.getName(), new Integer(os.count(q, os.getSequence())));
         }
         //fieldValues
-        String maxValuesString = (String) configuration.get("max.field.value");
+        String maxValuesString = (String) configuration.get("max.field.values");
         int maxValues =
             (maxValuesString == null ? Integer.MAX_VALUE : Integer.parseInt(maxValuesString));
         for (Iterator i = configuration.entrySet().iterator(); i.hasNext();) {
