@@ -1,0 +1,87 @@
+@prefix :     <http://flymine.org/model/rnai#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix owl:  <http://www.w3.org/2002/07/owl#>.
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
+
+:Gene a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction;
+        owl:maxCardinality "1";
+        owl:onProperty :Gene__organism ].
+
+:Gene__identifier a owl:DatatypeProperty;
+    rdfs:domain :Gene;
+    rdfs:range xsd:string.
+
+:Gene__organism a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Organism.
+
+:Gene__phenotype a owl:ObjectProperty;
+    rdfs:domain :Gene;
+    rdfs:range :Phenotype.
+
+:Phenotype a owl:Class.
+
+:Phenotype__code a owl:DatatypeProperty;
+    rdfs:domain :Phenotype;
+    rdfs:range xsd:string.
+
+:RNAiExperiment a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction;
+        owl:maxCardinality "1";
+        owl:onProperty :RNAiExperiment__publication ].
+
+:RNAiExperiment__publication a owl:ObjectProperty;
+    rdfs:domain :RNAiExperiment;
+    rdfs:range :Publication.
+
+:Organism a owl:Class.
+
+:Organism__name a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Organism__shortName a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Organism__taxonId a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Publication a owl:Class.
+
+:Publication__title a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
+:Publication__authors a owl:ObjectProperty;
+    rdfs:domain :Publication;
+    rdfs:range :Author.
+
+:Publication__journal  a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
+:Publication__volume a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
+:Publication__issue a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
+:Publication__year a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
+:Publication__pages a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
+:Publication__pubMedId a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
