@@ -70,7 +70,7 @@ public class JdbcAccessFlymineImplTest extends SetupDataTestCase
 
         ja = (JdbcAccessFlymineImpl) pb.serviceJdbcAccess();
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
 
@@ -87,7 +87,7 @@ public class JdbcAccessFlymineImplTest extends SetupDataTestCase
 
         // WhereClassClass
         ResultsHolder rh2 = new ResultsHolder(10);
-        rh2.colNames = new String[] {"a1_ceoid", "a1_id", "a1_addressid", "a1_name", "a1_vatnumber", "a2_ceoid", "a2_id", "a2_addressid", "a2_name", "a2_vatnumber"};
+        rh2.colNames = new String[] {"a1_id", "a1_addressid", "a1_ceoid", "a1_name", "a1_vatnumber", "a2_id", "a2_addressid", "a2_ceoid", "a2_name", "a2_vatnumber"};
         rh2.colTypes = new int[] {Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER};
         rh2.rows = 2;
         results.put("WhereClassClass", rh2);

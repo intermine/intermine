@@ -30,7 +30,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public static Test suite() {
         return OneTimeTestCase.buildSuite(IntegrationWriterSingleSourceImplTest.class);
     }
-    
+
     protected static IntegrationWriterSingleSourceImpl iw;
     protected static ArrayList toDelete;
 
@@ -180,8 +180,8 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         assertEquals(company.getName(), name);
 
         // rest should be empty
-        CEO ceo = (CEO) descriptor.get(Company.class.getDeclaredField("CEO"));
-        assertNull("CEO should not have been filled in", ceo);
+        CEO ceo = (CEO) descriptor.get(Company.class.getDeclaredField("cEO"));
+        assertNull("cEO should not have been filled in", ceo);
 
         List departments = (List) descriptor.get(Company.class.getDeclaredField("departments"));
         assertTrue("departments should have been an empty list", departments.size() == 0);

@@ -19,7 +19,7 @@ public class QueryParserTest extends ObjectStoreQueriesTestCase
     public static Test suite() {
         return OneTimeTestCase.buildSuite(QueryParserTest.class);
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreQueriesTestCase.oneTimeSetUp();
 
@@ -242,8 +242,8 @@ public class QueryParserTest extends ObjectStoreQueriesTestCase
     }
 
     public void testValidConstraints() throws Exception {
-        Query q = new Query("select c_, d_, e_ from Company as c_, Department as d_, CEO as e_ where c_.departments does not contain d_ and c_.CEO contains e_ and (c_.vatNumber < 5 or c_.name like 'fish%') and e_.salary is not null and c_.vatNumber > e_.age and c_.name in (select Company.name as name from Company)", "org.flymine.model.testmodel");
-        assertEquals("SELECT c_, d_, e_ FROM org.flymine.model.testmodel.Company AS c_, org.flymine.model.testmodel.Department AS d_, org.flymine.model.testmodel.CEO AS e_ WHERE (c_.departments DOES NOT CONTAIN d_ AND c_.CEO CONTAINS e_ AND (c_.vatNumber < 5 OR c_.name LIKE fish%) AND e_.salary IS NOT NULL AND c_.vatNumber > e_.age AND c_.name IN (SELECT Company.name AS name FROM org.flymine.model.testmodel.Company AS Company))", q.toString());
+        Query q = new Query("select c_, d_, e_ from Company as c_, Department as d_, CEO as e_ where c_.departments does not contain d_ and c_.cEO contains e_ and (c_.vatNumber < 5 or c_.name like 'fish%') and e_.salary is not null and c_.vatNumber > e_.age and c_.name in (select Company.name as name from Company)", "org.flymine.model.testmodel");
+        assertEquals("SELECT c_, d_, e_ FROM org.flymine.model.testmodel.Company AS c_, org.flymine.model.testmodel.Department AS d_, org.flymine.model.testmodel.CEO AS e_ WHERE (c_.departments DOES NOT CONTAIN d_ AND c_.cEO CONTAINS e_ AND (c_.vatNumber < 5 OR c_.name LIKE fish%) AND e_.salary IS NOT NULL AND c_.vatNumber > e_.age AND c_.name IN (SELECT Company.name AS name FROM org.flymine.model.testmodel.Company AS Company))", q.toString());
     }
 
     public void testInvalidConstraint() throws Exception {
@@ -332,10 +332,10 @@ public class QueryParserTest extends ObjectStoreQueriesTestCase
             assertEquals("Field departments is a collection type", e.getMessage());
         }
         try {
-            Query q = new Query("select Company from Company where Company.CEO = Company.vatNumber", "org.flymine.model.testmodel");
+            Query q = new Query("select Company from Company where Company.cEO = Company.vatNumber", "org.flymine.model.testmodel");
             fail("Expected: IllegalArgumentException, because CEO is an object reference");
         } catch (IllegalArgumentException e) {
-            assertEquals("Field CEO is an object reference", e.getMessage());
+            assertEquals("Field cEO is an object reference", e.getMessage());
         }
     }
 }
