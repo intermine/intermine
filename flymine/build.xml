@@ -413,7 +413,22 @@
 
   <!-- Production build targets (currently uses testmodel) -->
 
-  <target name="load-production" depends="build-db-production,create-indexes-production,load-ensembl-drosophila,load-ensembl-anopheles"/>
+  <target name="load-production" depends="build-db-production,create-indexes-production,load-organisms,load-ensembl-drosophila,load-ensembl-anopheles"/>
+
+  <!-- Load organism XML data into productiondatabase -->
+  <target name="load-organisms" depends="prepare-build-model">
+    <taskdef
+      name="insert-xml-data"
+      classname="org.intermine.dataloader.InsertXmlDataTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <copy file="/shared/data/organisms/organisms.xml" todir="${build.tmp}"/>
+
+    <insert-xml-data integrationWriter="integration.production" file="${build.tmp}/organisms.xml">
+      <classpath refid="models.class.path"/>
+    </insert-xml-data>
+  </target>
 
   <!-- Load data from chado-items into chado-test -->
   <target name="load-chado" depends="prepare-build-model">
@@ -473,6 +488,21 @@
     </taskdef>
 
     <load-chado integrationWriter="integration.chado-test" source="os.chado-translated" sourceName="chado"/>
+  </target>
+
+  <!-- Load organism XML data into test database -->
+  <target name="load-organisms-test" depends="prepare-build-model, build-db-organism-test">
+    <taskdef
+      name="insert-xml-data"
+      classname="org.intermine.dataloader.InsertXmlDataTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <copy file="/shared/data/organisms/organisms.xml" todir="${build.tmp}"/>
+
+    <insert-xml-data integrationWriter="integration.organism-test" file="${build.tmp}/organisms.xml">
+      <classpath refid="models.class.path"/>
+    </insert-xml-data>
   </target>
 
 
@@ -558,6 +588,15 @@
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-test"/>
+    </ant>
+  </target>
+
+  <!-- Build temporary flymine database to hold organism data -->
+  <target name="build-db-organism-test" depends="create-genomic-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.organism-test"/>
     </ant>
   </target>
 
