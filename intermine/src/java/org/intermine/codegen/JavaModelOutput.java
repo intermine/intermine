@@ -356,7 +356,10 @@ public class JavaModelOutput extends ModelOutput
 
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public boolean equals(Object o) { return o instanceof " + cls.getName() + " && ");
+            sb.append(INDENT + "public boolean equals(Object o) {\n")
+                .append(INDENT+INDENT+"if (!(o instanceof " + cls.getName() + ")) return false;\n")
+                .append(INDENT+INDENT+"if (id!=0 && id==(("+cls.getName()+")o).id) return true;\n")
+                .append(INDENT+INDENT+"return ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
@@ -364,12 +367,12 @@ public class JavaModelOutput extends ModelOutput
                     && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
                     sb.append("((" + cls.getName() + ")o)." + field + "==" + field);
                 } else {
-                    //sb.append("((" + cls.getName() + ")o)." + field + ".equals(" + field + ")");
+                    //sb.append(field + ".equals(((" + cls.getName() + ")o).get" + generateCapitalName(field) + "())");
                     //TODO use the previous line in preference to the following two...
                     //our "key" fields can be null at present - if they are then don't do comparison
-                    String thisField = "((" + cls.getName() + ")o)." + field;
-                    sb.append("(" + thisField + " == null ? (" + field + " == null) : "
-                              + thisField + ".equals(" + field + "))");
+                    String thatField = "((" + cls.getName() + ")o).get" + generateCapitalName(field) + "()";
+                    sb.append("(" + thatField + " == null ? (" + field + " == null) : "
+                              + thatField + ".equals(" + field + "))");
                 }
                 if (iter.hasNext()) {
                     sb.append(" && ");
@@ -386,25 +389,26 @@ public class JavaModelOutput extends ModelOutput
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
             sb.append(INDENT + "public int hashCode() { return ");
-            Iterator iter = keyFields.iterator();
-            while (iter.hasNext()) {
-                String field = (String) iter.next();
-                if (getAllAttributes(cls).containsKey(field) 
-                    && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
-                    if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
-                        sb.append("(" + field + " ? 0 : 1)");
-                    } else {
-                        sb.append(field);
-                    }
-                } else {
-                    //sb.append(field + ".hashCode()");
-                    //TODO same as above
-                    sb.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
-                }
-                if (iter.hasNext()) {
-                    sb.append(" ^ ");
-                }
-            }
+            sb.append("id");
+//             Iterator iter = keyFields.iterator();
+//             while (iter.hasNext()) {
+//                 String field = (String) iter.next();
+//                 if (getAllAttributes(cls).containsKey(field) 
+//                     && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
+//                     if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
+//                         sb.append("(" + field + " ? 0 : 1)");
+//                     } else {
+//                         sb.append(field);
+//                     }
+//                 } else {
+//                     //sb.append(field + ".hashCode()");
+//                     //TODO same as above
+//                     sb.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
+//                 }
+//                 if (iter.hasNext()) {
+//                     sb.append(" ^ ");
+//                 }
+//             }
             sb.append("; }\n");
         }
         return sb.toString();
