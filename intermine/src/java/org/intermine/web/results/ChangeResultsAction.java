@@ -209,7 +209,7 @@ public class ChangeResultsAction extends DispatchAction
         HttpSession session = request.getSession();
         session.setAttribute(Constants.RESULTS_TABLE,
                              session.getAttribute(Constants.QUERY_RESULTS));
-        
+        //SessionMethods.getObjectDetailsTrail(session).reset();
         return mapping.findForward("results");
     }
 }

@@ -11,6 +11,7 @@ package org.intermine.web.results;
  */
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import org.intermine.web.ForwardParameters;
  */
 public class ModifyDetails extends DispatchAction
 {
+    
     /**
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -53,12 +55,12 @@ public class ModifyDetails extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
-        DisplayObject object = (DisplayObject) session.getAttribute("object");
+        String trail = request.getParameter("trail");
+        DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
         object.setVerbosity(fieldName, true);
         
-        return new ForwardParameters(mapping.findForward("objectDetails"))
-            .addParameter("id", "" + object.getId()).forward();
+        return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
     }
 
     /**
@@ -77,14 +79,14 @@ public class ModifyDetails extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
-        DisplayObject object = (DisplayObject) session.getAttribute("object");
+        String trail = request.getParameter("trail");
+        DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
         object.setVerbosity(fieldName, false);
 
-        return new ForwardParameters(mapping.findForward("objectDetails"))
-            .addParameter("id", "" + object.getId()).forward();
+        return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
     }
-
+    
     /**
      * Filter a collection by selecting only the elements of certain types
      * @param mapping The ActionMapping used to select this instance
@@ -160,5 +162,27 @@ public class ModifyDetails extends DispatchAction
             }
         }
         return null;
+    }
+    
+    /**
+     * Construct an ActionForward to the object details page.
+     */
+    private ActionForward forwardToObjectDetails(ActionMapping mapping, String id, String trail) {
+        ForwardParameters forward = new ForwardParameters(mapping.findForward("objectDetails"));
+        forward.addParameter("id", id);
+        forward.addParameter("trail", trail);
+        return forward.forward();
+    }
+    
+    /**
+     * Get a DisplayObject from the session given the object id as a string.
+     *
+     * @param session the current http session
+     * @param idString intermine object id
+     * @return DisplayObject for the intermine object
+     */
+    protected DisplayObject getDisplayObject(HttpSession session, String idString) {
+        Map displayObjects = (Map) session.getAttribute("displayObjects");
+        return (DisplayObject) displayObjects.get(new Integer(idString));
     }
 }

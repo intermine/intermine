@@ -125,6 +125,7 @@
     <put name="historyBagView" value="historyBagView.jsp"/>
     <put name="historyQueryView" value="historyQueryView.jsp"/>
   </definition>
+  <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="collectionDetailsPage.tile" path="/table.jsp" controllerUrl="/initCollectionDetails.do"/>

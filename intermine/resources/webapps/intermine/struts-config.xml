@@ -54,10 +54,7 @@
     
     <form-bean name="feedbackForm"
                type="org.intermine.web.FeedbackForm"/>
-               
-    <!--<form-bean name="createTemplateForm"
-               type="org.intermine.web.CreateTemplateForm"/>
--->
+
     <form-bean name="buildTemplateForm"
                type="org.intermine.web.BuildTemplateForm"/>
     
@@ -244,6 +241,7 @@
     
     <action path="/changeResultsSize"
             name="changeResultsSizeForm"
+            scope="request"
             type="org.intermine.web.results.ChangeResultsSizeAction">
       <forward name="results" path="/results.do" redirect="true"/>
     </action>
@@ -379,11 +377,11 @@
     <!-- Other actions -->
     
     <action path="/portal"
-	        type="org.intermine.web.PortalQuery">
-	  <forward name="failure" path="begin.page"/>
-	  <forward name="results" path="results.page"/>
-	</action>
-          
+            type="org.intermine.web.PortalQuery">
+      <forward name="failure" path="begin.page"/>
+      <forward name="results" path="results.page"/>
+    </action>
+    
 
     <!-- Controllers -->
     <action path="/initMain"
@@ -398,6 +396,9 @@
 
     <action path="/initObjectView"
             type="org.intermine.web.results.ObjectViewController"/>
+            
+    <action path="/initObjectTrail"
+            type="org.intermine.web.results.ObjectTrailController"/>
 
     <action path="/initCollectionDetails"
             type="org.intermine.web.results.CollectionDetailsController"

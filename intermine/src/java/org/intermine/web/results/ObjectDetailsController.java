@@ -28,8 +28,10 @@ import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 
 /**
- * Implementation of <strong>Action</strong> that assembles data for viewing an object
+ * Implementation of <strong>Action</strong> that assembles data for viewing an object.
+ *
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class ObjectDetailsController extends InterMineAction
 {
@@ -45,6 +47,7 @@ public class ObjectDetailsController extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map displayObjects = (Map) session.getAttribute("displayObjects");
+        
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
             displayObjects = new HashMap();

@@ -67,7 +67,10 @@ public class ObjectViewController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         Object o = request.getAttribute("object");
-
+        
+        // Make sure there is an ObjectDetailsTrail in the session
+        //SessionMethods.getObjectDetailsTrail(session);
+        
         if (o == null) {
             String objectId = (String) request.getParameter("id");
             if (objectId != null) {
