@@ -589,7 +589,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected List executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, int sequence) throws ObjectStoreException {
-        checkStartLimit(start, limit);
+        checkStartLimit(start, limit, q);
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
         String sql = generateSql(c, q, start, limit);

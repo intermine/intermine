@@ -105,7 +105,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
-        checkStartLimit(start, limit);
+        checkStartLimit(start, limit, q);
         if (executeTime > maxTime) {
             throw new ObjectStoreException("Query will take longer than " + maxTime);
         }
