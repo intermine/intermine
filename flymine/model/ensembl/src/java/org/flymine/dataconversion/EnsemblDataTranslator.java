@@ -243,7 +243,6 @@ public class EnsemblDataTranslator extends DataTranslator
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
                     if (className.endsWith("translation_stable_id")) {
-                        System.out.println("translation_stable_id: " + srcItem.getIdentifier());
                         storeTgtItem = false;
                     } else {
                         tgtItem.addReference(getEnsemblRef());
