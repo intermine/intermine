@@ -63,7 +63,7 @@
 			This implementation is particularly vulnerable to safety problems, so it is highly recommended that you wrap it in an ObjectStoreSafeImpl.
 			However, it is then very vulnerable to performance problems if the end user calls ObjectStore.count() and ObjectStore.estimate(), or ObjectStore.execute() multiple times.
 			Therefore, make sure you write your software to follow the guidelines above if it may use the ObjectStoreClientImpl.</para>
-		<para>If you are writing software that generates Query objects from FQL (like our org.intermine.objectstore.webservice.ObjectStoreServerImpl - which is not an ObjectStore, but the server that ObjectStoreClientImpl uses), then it is likely that it does not need the ObjectStoreSafeImpl.</para>
+		<para>If you are writing software that generates Query objects from IQL (like our org.intermine.objectstore.webservice.ObjectStoreServerImpl - which is not an ObjectStore, but the server that ObjectStoreClientImpl uses), then it is likely that it does not need the ObjectStoreSafeImpl.</para>
 		<para>If your software only runs a single Query, or if it is guaranteed to never modify a Query object once it has been handed to the ObjectStore, then it does not need the ObjectStoreSafeImpl.</para>
 	</sect1>
 </article>
