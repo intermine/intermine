@@ -121,20 +121,27 @@ public class ModelMerger
     /**
      * Merge the attributes, collections and references from ClassDescriptor <code>merge</code>
      * into the ClassDescriptor <code>original</code>. The two are different in that inheritance
-     * settings on the merge class can override the inheritance present in the original class. 
+     * settings on the merge class can override the inheritance present in the original class.
+     * This method will throw a ModelMergerException if the two class descriptors return different
+     * values from <code>isInterface</code>.
      *
      * @param original the original ClassDescriptor
      * @param merge the ClassDescriptor to merge into the original
      * @return ClassDescriptor merge "merged" into ClassDescriptor original
-     * @throws ModelMergerException if an error occurs during model mergining
+     * @throws ModelMergerException if an error occurs during model merging
      */
     public static ClassDescriptor mergeClass(ClassDescriptor original, ClassDescriptor merge)
             throws ModelMergerException {
+        if (merge.isInterface() != original.isInterface()) {
+            throw new ModelMergerException(original.getName() + ".isInterface/"
+                    + original.isInterface() + " != " + merge.getName() + ".isInterface/"
+                    + merge.isInterface());
+        }
         Set attrs = mergeAttributes(original, merge);
         Set cols = mergeCollections(original, merge);
         Set refs = mergeReferences(original, merge);
-        return new ClassDescriptor(original.getName(), original.getSupers(),
-                original.isInterface(), attrs, refs, cols);
+        return new ClassDescriptor(original.getName(), merge.getSupers(),
+                merge.isInterface(), attrs, refs, cols);
     }
     
     /**
@@ -192,6 +199,18 @@ public class ModelMerger
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
                 }
+                if (!merg.getReverseReferenceFieldName().equals(orig.getReverseReferenceFieldName())) {
+                    String fldName = original.getName() + "." + orig.getName();
+                    throw new ModelMergerException("mismatch between reverse reference field name: "
+                            + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
+                            + fldName + "<-" + orig.getReverseReferenceFieldName());
+                }
+                if (merg.isOrdered() != orig.isOrdered()) {
+                    String fldName = original.getName() + "." + orig.getName();
+                    throw new ModelMergerException("mismatch between ordering of same collections: "
+                            + fldName + ":" + merg.isOrdered() + " != "
+                            + fldName + ":" + orig.isOrdered());
+                }
             }
         }
         
@@ -223,6 +242,12 @@ public class ModelMerger
                     throw new ModelMergerException("type mismatch between reference types: "
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
+                }
+                if (!merg.getReverseReferenceFieldName().equals(orig.getReverseReferenceFieldName())) {
+                    String fldName = original.getName() + "." + orig.getName();
+                    throw new ModelMergerException("mismatch between reverse reference field name: "
+                            + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
+                            + fldName + "<-" + orig.getReverseReferenceFieldName());
                 }
             }
         }
