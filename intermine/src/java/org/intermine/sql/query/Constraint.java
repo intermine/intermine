@@ -193,9 +193,11 @@ public class Constraint extends AbstractConstraint
                                     return INDEPENDENT;
                                 }
                             }
+                            break;
                         case LIKE:
                             return INDEPENDENT;
                     }
+                    break;
                 case LIKE:
                     switch (objC.operation) {
                         case EQ:
