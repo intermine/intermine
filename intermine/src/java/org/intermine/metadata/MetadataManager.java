@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * Class to handle persistence of an intermine objectstore's metadata to the objectstore's database
@@ -64,7 +65,8 @@ public class MetadataManager
         try {
             connection.setAutoCommit(true);
             connection.createStatement().execute("INSERT INTO " + METADATA_TABLE + " (key, value) "
-                                                 + "VALUES('" + key + "', '" + value + "')");
+                                                 + "VALUES('" + key + "', '"
+                                                 + StringUtil.duplicateQuotes(value) + "')");
         } finally {
             connection.setAutoCommit(autoCommit);
             connection.close();
