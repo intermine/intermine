@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+  <article>
+    <sect1>
+      <title>Technology talks</title>
+      <para>Each month a developer gives an informal talk on a topic
+      of interest.
+      </para>
+      <sect2>
+        <title>Forthcoming talks</title>
+        <table>
+          <tbody>
+            <row>
+              <entry>28th February 2003</entry>
+              <entry>Richard</entry>
+              <entry>EJBs</entry>
+            </row>
+            <row>
+              <entry>28th March 2003</entry>
+              <entry>Matthew</entry>
+              <entry></entry>
+            </row>
+            <row>
+              <entry>25th April 2003</entry>
+              <entry>Raj</entry>
+              <entry>PostgreSQL</entry>
+            </row>
+            <row>
+              <entry>30th May 2003</entry>
+              <entry>Mark</entry>
+              <entry>Demystifying XML</entry>
+            </row>
+          </tbody>
+        </table>
+      </sect2>
+      <sect2>
+        <title>Previous talks</title>
+        <table>
+          <tbody>
+            <row>
+              <entry>31st January 2003</entry>
+              <entry>Andy</entry>
+              <entry><ulink url="techtalks/extreme-programming.sxi">Extreme Programming</ulink></entry>
+            </row>
+          </tbody>
+        </table>
+      </sect2>
+    </sect1>
+  </article>
