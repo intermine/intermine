@@ -37,8 +37,8 @@ doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd"/>
         </meta>
     </xsl:for-each>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <!-- The space below is for Netscape 4 (to avoid generating <script/>) -->
-    <script type="text/javascript" src="{$basedir}/style/footer.js"> </script>
+    <!-- The ; below is for Netscape 4 (to avoid generating <script/>) -->
+    <script type="text/javascript" src="{$basedir}/style/footer.js">;</script>
     </head>
 
     <body>
