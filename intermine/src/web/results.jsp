@@ -10,10 +10,10 @@
 <table border="1px" width="90%">
   <%-- The headers --%>
   <tr>
-    <c:forEach var="column" items="${query.select}" varStatus="status">
+    <c:forEach var="column" items="${results.columnAliases}" varStatus="status">
       <c:if test="${resultsTable.columns[status.index].visible}">
         <th align="center" class="resultsHeader">
-          <c:out value="${query.aliases[column]}"/>
+          <c:out value="${results.columnAliases[column]}"/>
         </th>
       </c:if>
     </c:forEach>
