@@ -6,7 +6,8 @@
 <!-- queryBuild.jsp -->
 <html:form action="/query">
   <fmt:message key="query.current"/>
-  <br/><br/>
+  <br/>
+  <div class="queryBuildCurrentQuery">
   <c:forEach items="${queryClasses}" var="entry" varStatus="classStatus">
     <c:set var="alias" value="${entry.key}"/>
     <c:set var="queryClass" value="${entry.value}"/>
@@ -25,15 +26,22 @@
 [<html:link action="/changequery?method=removeClass&alias=${alias}"><fmt:message key="button.remove"/></html:link>]
     </c:if>
     <br/>
-    
     <c:choose>
       <c:when test="${alias == editingAlias}">
 
         <c:choose>
 
           <c:when test="${allFieldNames != null}">
+          <div class="queryBuildQueryClasses">
+            <table>
             <c:forEach items="${queryClass.constraintNames}" var="constraintName">
+              <tr>
+                <td class="queryBuildFirstCell">
+                </td>
+                <td>
               <c:out value="${queryClass.fieldNames[constraintName]}"/>
+                </td>
+                <td>
               <html:select property="fieldOps(${constraintName})">
                 <c:forEach items="${validOps[queryClass.fieldNames[constraintName]]}" var="validOp">
                   <html:option value="${validOp.key}">
@@ -41,14 +49,19 @@
                   </html:option>
                 </c:forEach>
               </html:select> 
+                </td>
+                <td>
               <html:text property="fieldValues(${constraintName})"/>
               <c:if test="${constraintErrors != null}">
                 <c:if test="${null != constraintErrors[constraintName]}">
                   <c:out value="${constraintErrors[constraintName]}"/>
                 </c:if>
               </c:if>
-              <br/>
+                </td>
+              </tr>
             </c:forEach>
+            </table>
+            </div>
             <fmt:message key="query.addconstraint"/>
             <html:select property="newFieldName">
               <c:forEach items="${allFieldNames}" var="fieldName">
@@ -56,40 +69,59 @@
               </c:forEach>
             </html:select>
             <html:submit property="action"><fmt:message key="button.add"/></html:submit>
-            <br/>
           </c:when>
 
           <c:otherwise>
             <fmt:message key="query.nofield"/>
           </c:otherwise>
         </c:choose>
+
         <br/>
+
         <html:submit property="action"><fmt:message key="button.update"/></html:submit>
-      
+
+        <br/>
+
       </c:when>
       <c:otherwise>
   
+        <div class="queryBuildQueryClasses">
+        <table>
         <c:forEach items="${queryClass.constraintNames}" var="constraintName" 
                    varStatus="constraintStatus">
+          <tr>
+            <td class="queryBuildFirstCell">
+            </td>
+            <td>
           <font class="queryViewConstraintLeft">
             <c:out value="${queryClass.fieldNames[constraintName]}"/>
           </font>
+            </td>
+            <td>
           <font class="queryViewConstraintOp">
             <c:out value="${queryClass.fieldOps[constraintName]}"/>
           </font>
+            </td>
+            <td>
           <font class="queryViewConstraintRight">
             <c:out value="${queryClass.fieldValues[constraintName]}"/>
           </font>
-            <br/>
+            </td>
+          </tr>
         </c:forEach>
-        
+        </table>
+        </div>
       </c:otherwise>
     </c:choose>
+
     <c:if test="${!classStatus.last}"><hr/></c:if>
+
   </c:forEach>
+  </div>
+
   <%-- only display the run query button if at least one queryclass is present --%>
   <c:if test="${queryClass != null}">
-    <br/><br/>
+    <br/>
     <html:submit property="action"><fmt:message key="query.reset"/></html:submit>
     <html:submit property="action"><fmt:message key="query.run"/></html:submit>
   </c:if>
