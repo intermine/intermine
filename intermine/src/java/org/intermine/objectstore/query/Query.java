@@ -181,7 +181,7 @@ public class Query implements FromElement
      *
      * @return the value of distinct
      */
-    public boolean getDistinct() {
+    public boolean isDistinct() {
         return distinct;
     }
 
