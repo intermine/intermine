@@ -52,10 +52,10 @@ public class FqlQueryAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward submit(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward run(ActionMapping mapping,
+                             ActionForm form,
+                             HttpServletRequest request,
+                             HttpServletResponse response)
         throws Exception {
 
         // Extract attributes we will need
@@ -128,7 +128,7 @@ public class FqlQueryAction extends LookupDispatchAction
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("button.submit", "submit");
+        map.put("button.run", "run");
         map.put("button.view", "view");
         return map;
     }

@@ -33,7 +33,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testSubmitSuccessfulQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","select a1_ from Company as a1_");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("results");
         assertNotNull((List) getRequest().getAttribute("results"));
@@ -43,7 +43,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testSubmitEmptyQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("error");
         assertNull((String) getRequest().getAttribute("results"));
@@ -52,7 +52,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testSubmitRubbishQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","some rubbish");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("error");
         assertNull((String) getRequest().getAttribute("results"));
