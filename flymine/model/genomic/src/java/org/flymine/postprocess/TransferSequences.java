@@ -41,7 +41,7 @@ public class TransferSequences
 {
     protected ObjectStoreWriter osw;
 
-    private static final Logger LOG = Logger.getLogger(CreateReferences.class);
+    private static final Logger LOG = Logger.getLogger(TransferSequences.class);
 
     /**
      * Create a new TransferSequences object from the given ObjectStoreWriter
