@@ -217,6 +217,10 @@
       <include name="intermine.war"/>
     </fileset>
   </path>
+  
+  <path id="debug.src.path">
+    <pathelement path="${src.java}"/>
+  </path>
 
   <!-- Initialisation targets -->
 
@@ -1053,31 +1057,7 @@
             value="${model}/testmodel/resources/objectstoresummary.config.properties" />
   <property name="summarise.output.properties" 
             value="${build.model}/testmodel/objectstoresummary.properties"/>
-<!--
-  <target name="check-testmodel-objectstore-summary">
-    <uptodate property="testmodel-objectstore-is-summarised"
-              srcfile="${os.summary.properties.file}"
-              targetfile="${summarise.output.properties}"/>
-  </target>
-  
-  <target name="summarise-testmodel-objectstore-slow"
-          depends="compile-main, compile-testmodel">
-    <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
-      <classpath refid="test.class.path"/>
-    </taskdef>
-    <summarise-objectstore alias="os.unittest" 
-                           outputFile="${summarise.output.properties}"
-                           inputFile="${os.summary.properties.file}"/>
-  </target>
-          
-  <target name="summarise-testmodel-objectstore" 
-          depends="check-testmodel-objectstore-summary"
-          unless="testmodel-objectstore-is-summarised">
-    
-    <antcall target="summarise-testmodel-objectstore-slow"/>
-  </target>
-  
--->
+
   <!-- Model diagrams -->
   
   <target name="dot-main" depends="compile-main">
@@ -1148,4 +1128,15 @@
     </taskdef>
     <antdoc destination="${results.antdoc}" buildfile="${ant.file}"/>
   </target>
+  
+  <!-- Debugging with NetBeans -->
+  
+  <target name="debug" depends="" if="netbeans.home" description="debug intermine with netbeans debugger">
+    <nbjpdaconnect name="intermine" host="localhost" address="8000" transport="dt_socket">
+      <classpath refid="project.class.path"/>
+      <sourcepath refid="debug.src.path"/>
+    </nbjpdaconnect>
+    <nbbrowse url="${www.location}"/>
+  </target>
+
 </project>
