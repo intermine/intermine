@@ -334,6 +334,10 @@ null:FeatureReporterMap__propertySets a owl:ObjectProperty;
      rdfs:domain :Reporter;
      rdfs:range xsd:string.
 
+:Reporter__failType a owl:DatatypeProperty;
+    rdfs:domain :Reporter;
+    rdfs:range xsd:string.
+   
 null:Reporter__warningType a owl:ObjectProperty;
     owl:equivalentProperty mage:Reporter__warningType.
 null:Reporter__featureReporterMaps a owl:ObjectProperty;
@@ -352,8 +356,8 @@ null:Reporter__descriptions a owl:ObjectProperty;
     owl:equivalentProperty mage:Reporter__descriptions.
 null:Reporter__propertySets a owl:ObjectProperty;
     owl:equivalentProperty mage:Reporter__propertySets.
-null:Reporter__immobilizedCharacteristiecs a owl:ObjectProperty;
-    owl:equivalentProperty mage:Reporter__immobilizedCharacteristiecs.
+null:Reporter__immobilizedCharacteristics a owl:ObjectProperty;
+    owl:equivalentProperty mage:Reporter__immobilizedCharacteristics.
 
 :LabeledExtract a owl:Class;
     rdfs:subClassOf :BioEntity;
@@ -455,16 +459,20 @@ null:BioSource__propertySets a owl:ObjectProperty;
 :BioEntity a owl:Class;
     owl:equivalentClass mage:BioSequence.
 
-:BioEntity__residues a owl:DatatypeProperty;
-    owl:equivalentProperty mage:BioSequence__sequence.
+#:BioEntity__residues a owl:DatatypeProperty;
+#    owl:equivalentProperty mage:BioSequence__sequence.
 
-:BioEntity__microArrayExperimentalResult a owl:ObjectProperty;
+:BioEntity__microArrayExperimentalResults a owl:ObjectProperty;
     rdfs:domain :BioEntity;
     rdfs:range :MicroArrayExperimentalResult.
 
 
 :CDNAClone a owl:Class;
     rdfs:subClassOf :BioEntity.
+
+#:CDNAClone__organismDbId a owl:DatatypePropoerty;
+#   rdfs:domain :CDNAClone;
+#   rdfs:range xsd:string.
 
 :NuclearDNA a owl:Class;
     rdfs:subClassOf :BioEntity.
@@ -475,6 +483,13 @@ null:BioSource__propertySets a owl:ObjectProperty;
 :Gene__organismDbId a owl:DatatypePropoerty;
    rdfs:domain :Gene;
    rdfs:range xsd:string.
+
+:Vector a owl:Class;
+    rdfs:subClassOf :BioEntity.
+
+#:Vector__organismDbId a owl:DatatypePropoerty;
+#   rdfs:domain :Vector;
+#   rdfs:range xsd:string.
 
 null:BioSequence__name a owl:DatatypeProperty;
     owl:equivalentProperty mage:BioSequence__name.
@@ -506,29 +521,6 @@ null:BioSequence__descriptions a owl:ObjectProperty;
     owl:equivalentProperty mage:BioSequence__descriptions.
 null:BioSequence__propertySets a owl:ObjectProperty;
     owl:equivalentProperty mage:BioSequence__propertySets.
-
-
-:Synonym a owl:Class;
-    owl:equivalentClass mage:DatabaseEntry.
-
-:Synonym__source a owl:ObjectProperty;
-    owl:equivalentProperty mage:DatabaseEntry__database.
-
-:Synonym__value a owl:DatatypeProperty;
-    owl:equivalentProperty mage:DatabaseEntry__accession.
-
-:Synonym__type a owl:DatatypeProperty;
-    rdfs:domain :Synonym;
-    rdfs:range xsd:string.
-
-null:DatabaseEntry__accessionVersion a owl:DatatypeProperty;
-    owl:equivalentClass mage:DatabaseEntry__accessVersion.
-null:DatabaseEntry__URI a owl:DatatypeProperty;
-    owl:equivalentClass mage:DatabaseEntry__URI.
-null:DatabaseEntry__type a owl:ObjectProperty;
-    owl:equivalentClass mage:DatabaseEntry__type.
-null:DatabaseEntry__propertySets a owl:ObjectProperty;
-    owl:equivalentClass mage:DatabaseEntry__propertySets.
 
 :Database a owl:Class; 
     owl:equivalentClass mage:Database.
@@ -752,4 +744,8 @@ null:Extendable a owl:Class; owl:equivalentClass mage:Extendable.
 null:NameValueType a owl:Class; owl:equivalentClass mage:NameValueType.
 
 null:DataExternal a owl:Class; owl:equivalentClass mage:DataExternal.
+null:DatabaseEntry a owl:Class; owl:equivalentClass mage:DatabaseEntry.
+
+
+
 
