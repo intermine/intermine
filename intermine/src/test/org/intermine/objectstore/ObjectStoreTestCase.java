@@ -43,7 +43,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
     }
-    
+
     /**
      * Set up all the results expected for a given subset of queries
      *
@@ -134,9 +134,9 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA1"), ((Employee)data.get("EmployeeA1")).getAddress() } };
         results.put("MultiJoin", toList(r));
 
-        r = new Object[][] { { new BigDecimal("3476.0000000000"), "DepartmentA1", data.get("DepartmentA1") },
-                             { new BigDecimal("3476.0000000000"), "DepartmentB1", data.get("DepartmentB1") },
-                             { new BigDecimal("3476.0000000000"), "DepartmentB2", data.get("DepartmentB2") } };
+        r = new Object[][] { { new BigDecimal("3476.0000000000000"), "DepartmentA1", data.get("DepartmentA1") },
+                             { new BigDecimal("3476.0000000000000"), "DepartmentB1", data.get("DepartmentB1") },
+                             { new BigDecimal("3476.0000000000000"), "DepartmentB2", data.get("DepartmentB2") } };
         results.put("SelectComplex", toList(r));
 
         r = new Object[][] { { data.get("EmployeeA1") },
