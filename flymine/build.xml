@@ -283,7 +283,7 @@
     </delete>
   </target>
 
-  <target name="fulltest" depends="prepare,junit-clean,test-main,checkstyle"
+  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,checkstyle"
           description="do a full test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
@@ -491,6 +491,17 @@
     </delete>
   </target>
 
+  <target name="clean-code"
+          description="clean up all generated and compiled code">
+    <delete dir="${build.java}"/>
+    <delete dir="${build.src.java}"/>
+    <delete dir="${build.test}"/>
+    <delete dir="${build.src.test}"/>
+    <delete dir="${build.resources}"/>
+    <delete dir="${build.schema}"/>
+    <antcall target="prepare" />
+  </target>
+  
   <target name="distclean" depends="clean"
           description="clean up all distribution files">
     <delete dir="${dist}"/>
