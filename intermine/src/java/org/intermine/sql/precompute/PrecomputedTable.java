@@ -115,8 +115,9 @@ public class PrecomputedTable implements SQLStringable, Comparable
                                 }
                             } else {
                                 useOrderByField = false;
-                                LOG.info("Cannot generate order field for precomputed table - column "
-                                        + column.getSQLString() + " does not belong to a Table");
+                                LOG.info("Cannot generate order field for precomputed table -"
+                                        + "column " + column.getSQLString()
+                                        + " does not belong to a Table");
                             }
                         } else {
                             useOrderByField = false;

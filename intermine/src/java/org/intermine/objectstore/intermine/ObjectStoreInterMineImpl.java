@@ -22,7 +22,6 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -320,30 +319,34 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 }
             }
 
-            long time = (new Date()).getTime();
+            long preExecute = System.currentTimeMillis();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            long postExecute = System.currentTimeMillis();
             List objResults = ResultsConverter.convert(sqlResults, q, this);
-            long now = (new Date()).getTime();
+            long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) - 100 + start + (150 * q.getFrom().size())
                     + (sql.length() / 20);
-            if (now - time > permittedTime) {
-                if (now - time > sql.length()) {
+            if (postExecute - preExecute > permittedTime) {
+                if (postExecute - preExecute > sql.length()) {
                     LOG.info(getModel().getName() + ": Executed SQL (time = "
-                            + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
-                            + "): " + sql);
+                            + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
+                            + objResults.size() + "): " + sql);
                 } else {
                     LOG.info(getModel().getName() + ": Executed SQL (time = "
-                            + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
-                            + "): " + (sql.length() > 1000 ? sql.substring(0, 1000) : sql));
+                            + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
+                            + objResults.size() + "): " + (sql.length() > 1000
+                            ? sql.substring(0, 1000) : sql));
                 }
             }
             if (estimatedTime > 0) {
                 Writer executeLog = getLog();
                 if (executeLog != null) {
                     try {
-                        executeLog.write("EXECUTE\t" + estimatedTime + "\t" + (now - time) + "\t"
-                                + permittedTime + "\t" + (endOptimiseTime - startOptimiseTime)
-                                + "\t" + q + "\t" + sql + "\n");
+                        executeLog.write("EXECUTE\toptimise: " + (endOptimiseTime
+                                    - startOptimiseTime) + "\testimated: " + estimatedTime
+                                + "\texecute: " + (postExecute - preExecute) + "\tpermitted: "
+                                + permittedTime + "\tconvert: " + (postConvert - postExecute) + "\t"
+                                + q + "\t" + sql + "\n");
                     } catch (IOException e) {
                         LOG.error("Error writing to execute log " + e);
                     }

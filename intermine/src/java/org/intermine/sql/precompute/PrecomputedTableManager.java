@@ -23,6 +23,8 @@ import org.intermine.sql.query.Query;
 import org.intermine.sql.query.AbstractValue;
 import org.intermine.sql.query.SelectValue;
 
+import org.apache.log4j.Logger;
+
 /**
  * Manages all the Precomputed tables in a given database.
  *
@@ -30,6 +32,7 @@ import org.intermine.sql.query.SelectValue;
  */
 public class PrecomputedTableManager
 {
+    private static final Logger LOG = Logger.getLogger(PrecomputedTableManager.class);
 
     protected Set precomputedTables = new HashSet();
     protected Database database = null;
@@ -185,10 +188,12 @@ public class PrecomputedTableManager
 
             // Create the table
             Statement stmt = con.createStatement();
+            LOG.info("Creating new precomputed table " + pt.getName());
             stmt.execute(pt.getSQLString());
 
             String orderByField = pt.getOrderByField();
             if (orderByField != null) {
+                LOG.info("Creating orderby_field index on precomputed table " + pt.getName());
                 addIndex(pt.getName(), orderByField, con);
             } else {
                 List orderBy = pt.getQuery().getOrderBy();
@@ -197,11 +202,13 @@ public class PrecomputedTableManager
                     SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap()
                             .get(firstOrderBy));
                     if (firstOrderByValue != null) {
+                        LOG.info("Creating index on precomputed table " + pt.getName());
                         addIndex(pt.getName(), firstOrderByValue.getAlias(), con);
                     }
                 }
             }
 
+            LOG.info("ANALYSEing precomputed table " + pt.getName());
             con.createStatement().execute("ANALYSE " + pt.getName());
 
             // Create the entry in the index table
@@ -213,6 +220,7 @@ public class PrecomputedTableManager
             if (!con.getAutoCommit()) {
                 con.commit();
             }
+            LOG.error("Finished creating precomputed table " + pt.getName());
         } finally {
             if ((con != null) && (conn == null)) {
                 con.close();
