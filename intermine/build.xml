@@ -254,8 +254,9 @@
     <mkdir dir="${tutorial}/model/tutorial/resources"/>
     <mkdir dir="${tutorial}/resources"/>
     <mkdir dir="${tutorial}/src/java/org/intermine/tutorial"/>
-
-    <copy todir="${build.resources}">
+    
+    <filter token="LOG_DIR" value="${basedir}"/>
+    <copy todir="${build.resources}" filtering="true" overwrite="true">
       <fileset dir="${resources}/runtime"/>
     </copy>
     <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false" failonerror="false">
@@ -509,7 +510,6 @@
         <pathelement path="${build.java}"/>
       </classpath>
     </depend>
-    <!--<copy todir="${build.resources.test}" file="${summarise.output.properties}"/>-->
   </target>
 
   <target name="compile-test" depends="prepare-test"
@@ -957,11 +957,16 @@
       </fileset>
       <fileset dir="${dist}" includes="intermine.jar intermine-webapp.jar"/>
     </copy>
+    
     <copy todir="${build.webapp}/intermine/WEB-INF/classes">
       <fileset dir="${resources}/webapps/intermine">
         <include name="InterMineWebApp*.properties"/>
         <include name="default.intermine.properties"/>
       </fileset>
+    </copy>
+    
+    <filter token="LOG_DIR" value="${webapp.logdir}"/>
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes" filtering="true" overwrite="true">
       <fileset dir="${resources}/runtime/">
         <include name="log4j.properties"/>
         <include name="commons-logging.properties"/>
