@@ -4,6 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- historyQueryView.jsp -->
+<html:xhtml/>
 <c:if test="${!empty PROFILE.savedQueries}">
   <html:form action="/modifyQuery">
     <im:heading id="queryHistory">
@@ -30,7 +31,7 @@
             </html:multibox>
           </td>
           <td align="left">
-            <html:link action="/modifyQueryChange?method=load&name=${savedQuery.key}">
+            <html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}">
               <c:out value="${savedQuery.key}"/>
             </html:link>
           </td>

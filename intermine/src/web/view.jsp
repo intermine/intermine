@@ -8,6 +8,8 @@
 <tiles:importAttribute/>
 
 <!-- view.jsp -->
+<html:xhtml/>
+
   <div class="heading">
     <fmt:message key="view.notEmpty.description"/><im:helplink key="view.help.output"/>
   </div>
@@ -30,55 +32,51 @@
       <div>
         <c:forEach var="path" items="${QUERY.view}" varStatus="status">
           <div class="viewpath" id="showing${fn:replace(path,".","")}"
-                          onMouseOver="enterPath('${fn:replace(path,".","")}')"
-                          onMouseOut="exitPath('${fn:replace(path,".","")}')">
-            <div>
-              <nobr>
-                <c:if test="${not fn:contains(path, '.')}">
-                  ${path}
-                </c:if>
-                <c:if test="${fn:contains(path, '.')}">
-                  ${fn:substringBefore(path, ".")}.${fn:substringAfter(path, ".")}
-                </c:if>
-              </nobr>
+                          onmouseover="enterPath('${fn:replace(path,".","")}')"
+                          onmouseout="exitPath('${fn:replace(path,".","")}')">
+            <div style="white-space:nowrap">
+              <c:if test="${not fn:contains(path, '.')}">
+                ${path}
+              </c:if>
+              <c:if test="${fn:contains(path, '.')}">
+                ${fn:substringBefore(path, ".")}.${fn:substringAfter(path, ".")}
+              </c:if>
             </div>
             <div>
               <span class="type"><small>${viewPathTypes[path]}</small></span>
             </div>
-            <div>
-              <nobr>
-                <c:if test="${!status.first}">
-                  <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
-                    <fmt:param value="${path}"/>
-                  </fmt:message>
-                  [
-                  <html:link action="/viewChange?method=moveLeft&index=${status.index}"
-                    title="${moveLeftTitle}">
-                    <fmt:message key="view.moveLeftSymbol"/>
-                  </html:link>
-                  ]
-                </c:if>
-                <c:if test="${!status.last}">
-                  <fmt:message key="view.moveRightHelp" var="moveRightTitle">
-                    <fmt:param value="${path}"/>
-                  </fmt:message>
-                  [
-                  <html:link action="/viewChange?method=moveRight&index=${status.index}"
-                    title="${moveRightTitle}">
-                    <fmt:message key="view.moveRightSymbol"/>
-                  </html:link>
-                  ]
-                </c:if>
-                <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
+            <div style="white-space:nowrap">
+              <c:if test="${!status.first}">
+                <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
                   <fmt:param value="${path}"/>
                 </fmt:message>
                 [
-                <html:link action="/viewChange?method=removeFromView&path=${path}"
-                  title="${removeFromViewTitle}">
-                  <fmt:message key="view.removeFromViewSymbol"/>
+                <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
+                  title="${moveLeftTitle}">
+                  <fmt:message key="view.moveLeftSymbol"/>
                 </html:link>
                 ]
-              </nobr>
+              </c:if>
+              <c:if test="${!status.last}">
+                <fmt:message key="view.moveRightHelp" var="moveRightTitle">
+                  <fmt:param value="${path}"/>
+                </fmt:message>
+                [
+                <html:link action="/viewChange?method=moveRight&amp;index=${status.index}"
+                  title="${moveRightTitle}">
+                  <fmt:message key="view.moveRightSymbol"/>
+                </html:link>
+                ]
+              </c:if>
+              <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
+                <fmt:param value="${path}"/>
+              </fmt:message>
+              [
+              <html:link action="/viewChange?method=removeFromView&amp;path=${path}"
+                title="${removeFromViewTitle}">
+                <fmt:message key="view.removeFromViewSymbol"/>
+              </html:link>
+              ]
             </div>
           </div>
         </c:forEach>

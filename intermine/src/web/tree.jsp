@@ -6,6 +6,7 @@
 <tiles:importAttribute/>
 
 <!-- tree.jsp -->
+<html:xhtml/>
 <div class="body modelBrowser">
   <c:forEach var="node" items="${nodes}">
     <div>
@@ -14,15 +15,15 @@
       </c:forEach>
       <c:choose>
         <c:when test="${node.leaf}">
-          <img src="images/blank.gif"/>
+          <img src="images/blank.gif" alt=" "/>
         </c:when>
         <c:when test="${node.open}">
-          <html:link action="/changeTree?method=collapse&node=${node.object}" anchor="${node.object}">
+          <html:link action="/changeTree?method=collapse&amp;node=${node.object}" anchor="${node.object}">
             <img border="0" src="images/minus.gif" alt="-"/>
           </html:link>
         </c:when>
         <c:otherwise>
-          <html:link action="/changeTree?method=expand&node=${node.object}" anchor="${node.object}">
+          <html:link action="/changeTree?method=expand&amp;node=${node.object}" anchor="${node.object}">
             <img border="0" src="images/plus.gif" alt="+"/>
           </html:link>
         </c:otherwise>
@@ -38,7 +39,7 @@
          </c:if>
       >
       <a name="${node.object}"/>
-      <html:link action="/changeTree?method=select&node=${node.object}">
+      <html:link action="/changeTree?method=select&amp;node=${node.object}">
         <im:unqualify className="${node.object}" var="name"/>${name}
       </html:link>
       <im:typehelp type="${name}"/>

@@ -6,6 +6,7 @@
 
 <!-- templateBuilder.jsp -->
 
+<html:xhtml/>
 <div class="body">
   <fmt:message key="templateBuilder.intro"/>
   <p style="text-align:center"> 
@@ -32,12 +33,12 @@
     </p><br/>
     <table border="0" width="10%" cellspacing="0" class="templateBuilder" align="center">
       <tr>
-        <th width="1%" align="center">
+        <th width="1%" align="center" nowrap="nowrap">
           &nbsp;<fmt:message key="templateBuilder.editable"/>&nbsp;
         </th>
         <th width="1%" align="center">
           <fmt:message key="templateBuilder.constraint"/>
-        </td>
+        </th>
         <th width="97%" align="center">
           <fmt:message key="templateBuilder.label"/>
         </th>
@@ -54,10 +55,10 @@
           <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
             <c:set var="index" value="${index+1}"/>
             <tr>
-              <td align="center" nowrap>
+              <td align="center" nowrap="nowrap">
                 <html:checkbox property="constraintEditable(${index})"/>
               </td>
-              <td align="center" nowrap>
+              <td align="center" nowrap="nowrap">
                 ${node.path}
                 <%-- maybe we should have a tag to display constraints? --%>
                 <span class="constraint">
@@ -72,11 +73,11 @@
                   </c:choose>
                 </span>
               </td>
-              <td align="center" nowrap>
+              <td align="center" nowrap="nowrap">
                 <html:text property="constraintLabel(${index})" size="35"/>
               </td>
               <c:if test="${IS_SUPERUSER}">
-                <td align="center" nowrap>
+                <td align="center" nowrap="nowrap">
                   <html:text property="constraintIdentifier(${index})" size="10"/>
                 </td>
               </c:if>
@@ -107,18 +108,18 @@
         </c:choose>
       </html:submit>
     </p>
-    <br/><br/>
-    <c:if test="${showPreview}">
-      <div align="center">
-        <div id="tmplPreview">
-          <div class="previewTitle">
-            <fmt:message key="templateBuilder.previewtitle"/>
-          </div><br/>
-          <tiles:get name="preview"/>
-        </div>
-      </div>
-    </c:if>
   </html:form>
+  <br/><br/>
+  <c:if test="${showPreview}">
+    <div align="center">
+      <div id="tmplPreview">
+        <div class="previewTitle">
+          <fmt:message key="templateBuilder.previewtitle"/>
+        </div><br/>
+        <tiles:get name="preview"/>
+      </div>
+    </div>
+  </c:if>
 </div>
 
 <!-- /templateBuilder.jsp -->

@@ -3,6 +3,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- error.jsp -->
+<html:xhtml/>
+
 <h2>
   <fmt:message key="error.title"/>
 </h2>

@@ -5,6 +5,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- historyBagView.jsp -->
+<html:xhtml/>
+
 <c:if test="${!empty PROFILE.savedBags}">
   <html:form action="/modifyBag">
     <im:heading id="bagHistory">

@@ -8,6 +8,7 @@
 <tiles:importAttribute/>
 
 <!-- main.jsp -->
+<html:xhtml/>
 <table class="query" width="100%" cellspacing="0">
   <tr>
     <td rowspan="2" valign="top" width="50%" class="modelbrowse">
@@ -26,7 +27,7 @@
             <fmt:param value="${entry.key}"/>
           </fmt:message>
           <im:viewable path="${entry.value}" viewPaths="${viewPaths}" idPrefix="nav">
-            <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY.nodes[entry.value].type}"
+            <html:link action="/mainChange?method=changePath&amp;prefix=${entry.value}&amp;path=${QUERY.nodes[entry.value].type}"
                        title="${changePathTitle}">
               <c:out value="${entry.key}"/>
             </html:link>
@@ -36,8 +37,8 @@
         <br/><br/>
       </c:if>
       <c:forEach var="node" items="${nodes}">
-        <div id="browser">
-          <nobr>
+        
+          <div class="browserline">
             <c:if test="${node.indentation > 0}">
               <c:forEach begin="1" end="${node.indentation}">
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -45,12 +46,12 @@
             </c:if>
             <c:choose>
               <c:when test="${node.button == '+'}">
-                <html:link action="/mainChange?method=changePath&path=${node.path}">
+                <html:link action="/mainChange?method=changePath&amp;path=${node.path}">
                   <img border="0" src="images/plus.gif" alt="+"/>
                 </html:link>
               </c:when>
               <c:when test="${node.button == '-'}">
-                <html:link action="/mainChange?method=changePath&path=${node.prefix}">
+                <html:link action="/mainChange?method=changePath&amp;path=${node.prefix}">
                   <img border="0" src="images/minus.gif" alt="-"/>
                 </html:link>
               </c:when>
@@ -113,7 +114,7 @@
               </c:choose>
             </im:viewable>
             <c:if test="${viewPaths[fullpath] == null}">
-              <html:link action="/mainChange?method=addToView&path=${node.path}"
+              <html:link action="/mainChange?method=addToView&amp;path=${node.path}"
                          title="${selectNodeTitle}">
                 <fmt:message key="query.showNode"/>
               </html:link>
@@ -121,12 +122,12 @@
             <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
               <fmt:param value="${node.fieldName}"/>
             </fmt:message>
-            <html:link action="/mainChange?method=addPath&path=${node.path}"
+            <html:link action="/mainChange?method=addPath&amp;path=${node.path}"
                        title="${addConstraintToTitle}">
               <img class="arrow" src="images/right-arrow.gif" alt="->"/>
             </html:link>
-          </nobr>
-        </div>
+          </div>
+        
       </c:forEach>
       </div>
     </td>
@@ -149,7 +150,7 @@
         <c:otherwise>
           <c:forEach var="entry" items="${QUERY.nodes}" varStatus="status">
             <div>
-              <nobr>
+              <div style="white-space: nowrap">
                 <div>
                   <c:set var="node" value="${entry.value}"/>
                   <c:if test="${node.indentation > 0}">
@@ -169,7 +170,7 @@
                         <fmt:message key="query.changePath" var="changePathTitle">
                           <fmt:param value="${node.type}"/>
                         </fmt:message>
-                        <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}"
+                        <html:link action="/mainChange?method=changePath&amp;prefix=${node.path}&amp;path=${node.type}"
                                    title="${changePathTitle}">
                           <im:viewable path="${node.path}" viewPaths="${viewPaths}" test="${empty node.fieldName}" idPrefix="query">
                             <span class="type"><c:out value="${node.type}"/></span>
@@ -193,7 +194,7 @@
                       </fmt:message>
                     </c:otherwise>
                   </c:choose>
-                  <html:link action="/mainChange?method=addConstraint&path=${node.path}"
+                  <html:link action="/mainChange?method=addConstraint&amp;path=${node.path}"
                              title="${addConstraintToTitle}">
                     <fmt:message key="query.addConstraint"/>
                   </html:link>
@@ -201,7 +202,7 @@
                     <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
                       <fmt:param value="${node.fieldName}"/>
                     </fmt:message>
-                    <html:link action="/mainChange?method=removeNode&path=${node.path}"
+                    <html:link action="/mainChange?method=removeNode&amp;path=${node.path}"
                                title="${removeNodeTitle}">
                       <img border="0" src="images/cross.gif" alt="x"/>
                     </html:link>
@@ -227,13 +228,13 @@
                       </c:choose>
                     </span>
                     <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
-                    <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}"
+                    <html:link action="/mainChange?method=removeConstraint&amp;path=${node.path}&amp;index=${status.index}"
                                title="${removeConstraintTitle}">
                       <img border="0" src="images/cross.gif" alt="x"/>
                     </html:link>
                   </div>
                 </c:forEach>
-              </nobr>
+              </div>
             </div>
           </c:forEach>
         </c:otherwise>

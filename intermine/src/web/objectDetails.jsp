@@ -6,6 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- objectDetails.jsp -->
+<html:xhtml/>
 <c:set var="helpUrl" 
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
 
@@ -43,7 +44,7 @@
                 <tr>
                   <c:if test="${status.first}">
                     <td rowspan="${fn:length(object.references[referenceName].keyAttributes)}">
-                      <html:link action="/objectDetails?id=${object.references[referenceName].id}&trail=${param.trail}_${object.id}">
+                      <html:link action="/objectDetails?id=${object.references[referenceName].id}&amp;trail=${param.trail}_${object.id}">
                         <span class="referenceField">${referenceName}</span>
                       </html:link>
                     </td>
@@ -74,10 +75,10 @@
                     <c:set var="maxLength" value="60"/>
                     <c:choose>
                       <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
-                        <nobr>
+                        <span style="white-space:nowrap">
                           <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
-                          <html:link action="/getAttributeAsFile?object=${object.id}&field=${entry.key}">...</html:link>
-                        </nobr>
+                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">...</html:link>
+                        </span>
                       </c:when>
                       <c:otherwise>
                         <span class="value">${entry.value}</span>
@@ -93,7 +94,7 @@
         <c:forEach items="${object.clds}" var="cld">
           <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
             <im:heading id="further">
-              <nobr>Further information for this ${cld.unqualifiedName}</nobr>
+              <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
             </im:heading>
             <im:body id="further">
               <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
@@ -120,16 +121,16 @@
                 <c:set var="fieldName" value="${entry.key}"/>
                 <tr>
                   <td width="10px">
-                    <nobr>
+                    <div style="white-space:nowrap">
                       <c:choose>
                         <c:when test="${verbose}">
-                          <html:link action="/modifyDetails?method=unverbosify&field=${fieldName}&id=${object.id}&trail=${param.trail}">
+                          <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
                             <img border="0" src="images/minus.gif" alt="-"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
                         </c:when>
                         <c:when test="${collection.size > 0}">
-                          <html:link action="/modifyDetails?method=verbosify&field=${fieldName}&id=${object.id}&trail=${param.trail}">
+                          <html:link action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
                             <img border="0" src="images/plus.gif" alt="+"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
@@ -138,14 +139,14 @@
                           <img border="0" src="images/blank.gif" alt=" "/>
                         </c:otherwise>
                       </c:choose>
-                    </nobr>
+                    </div>
                   </td>
                   <td>
                     <span class="collectionDescription">
                       ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
                     </span>
                     <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
-                      [<html:link action="/objectDetails?id=${collection.table.ids[0]}&trail=${param.trail}_${collection.table.ids[0]}">
+                      [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}_${collection.table.ids[0]}">
                         <fmt:message key="results.details"/>
                       </html:link>]
                     </c:if>
@@ -202,7 +203,7 @@
                                     </td>
                                   </c:forEach>
                                   <td width="10px">
-                                    [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&trail=${param.trail}_${collection.table.ids[status.index]}">
+                                    [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}_${collection.table.ids[status.index]}">
                                       <fmt:message key="results.details"/>
                                     </html:link>]
                                   </td>
@@ -214,7 +215,7 @@
                       </table>
                       <c:if test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
                         <div class="refSummary">
-                          [<html:link action="/collectionDetails?id=${object.id}&field=${fieldName}&pageSize=25&trail=${param.trail}">
+                          [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
                             <fmt:message key="results.showall"/>
                           </html:link>]
                         </div>

@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- examples.jsp -->
+<html:xhtml/>
 <fmt:setBundle basename="model"/>
 
 <div class="body">
@@ -22,7 +23,7 @@
           </span>
         </c:if>
         <span class="link">
-          <html:link action="/loadExampleQuery?method=load&name=${exampleQuery.key}">
+          <html:link action="/loadExampleQuery?method=load&amp;name=${exampleQuery.key}">
             <img class="arrow" src="images/right-arrow.gif" alt="->"/>
           </html:link>
         </span>

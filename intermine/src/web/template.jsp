@@ -2,8 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+
+<!-- template.jsp -->
+
 
 <tiles:importAttribute/>
+<html:xhtml/>
 
 <script type="text/javascript">
   <!--
@@ -62,15 +67,6 @@
           <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
           <c:set var="options" value="${displayConstraints[con].optionsList}"/>
           
-          <script type="text/javascript">
-            <!--
-              fixedOps[${index-1}] = new Array();
-              <c:forEach items="${fixedOps}" var="op" varStatus="oi">
-                fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
-              </c:forEach>
-            //-->
-          </script>
-          
           <c:if test="${!empty con.description}">
             <tr>
               <td align="right" valign="top" rowspan="2">
@@ -82,6 +78,16 @@
             </tr>
           </c:if>
           <tr>
+            
+            <script type="text/javascript">
+              <!--
+                fixedOps[${index-1}] = new Array();
+                <c:forEach items="${fixedOps}" var="op" varStatus="oi">
+                  fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
+                </c:forEach>
+              //-->
+            </script>
+          
             <c:if test="${empty con.description}">
               <td align="right">
                 <c:out value="[${index}]"/>
@@ -99,14 +105,14 @@
                 </c:forEach>
               </html:select>
             </td>
-            <td valign="top" align="left">
+            <td valign="top" align="left" nowrap="nowrap">
               <span id="operandEditSpan${index-1}">
                <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
-                  <im:vspacer width="5"/>
+                  <im:hspacer width="3"/>
                   <img src="images/left-arrow.gif" alt="&lt;-" border="0" height="13" width="13"/>
-                  <im:vspacer width="5"/>
+                  <im:hspacer width="3"/>
                 </c:if>
               </span>
               <c:if test="${!empty options}">

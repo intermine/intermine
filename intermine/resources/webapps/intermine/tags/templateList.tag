@@ -30,10 +30,10 @@
     <c:forEach items="${CLASS_TEMPLATE_EXPRS[className][templateQuery.name]}" var="fieldExpr">
       <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
       <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
-      <c:set var="extra" value="${extra}&${fieldExpr}_value=${fieldValue}"/>
+      <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
     </c:forEach>
   </c:if>
-  <html:link action="/template?name=${templateQuery.name}&type=${type}${extra}" 
+  <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
              title="${linkTitle}">
     <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
   </html:link>
@@ -48,7 +48,7 @@
     <%-- map of parameters to pass to the confirm action --%>
     <jsp:useBean id="deleteParams" scope="page" class="java.util.TreeMap">
       <c:set target="${deleteParams}" property="message" value="${confirmMessage}" />
-      <c:set target="${deleteParams}" property="confirmAction" value="/userTemplateAction?method=delete&name=${templateQuery.name}&type=${templateType}" />
+      <c:set target="${deleteParams}" property="confirmAction" value="/userTemplateAction?method=delete&amp;name=${templateQuery.name}&amp;type=${templateType}" />
       <c:set target="${deleteParams}" property="cancelAction" value="/begin" />
     </jsp:useBean>
     <html:link action="/confirm" name="deleteParams" title="${linkTitle}">

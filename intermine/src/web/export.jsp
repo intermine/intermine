@@ -4,6 +4,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- export.jsp -->
+<html:xhtml/>
+
 <div class="heading">
   <fmt:message key="export.export"/><im:helplink key="results.help.export"/>
 </div>

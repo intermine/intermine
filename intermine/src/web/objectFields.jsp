@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- objectFields.jsp -->
+<html:xhtml/>
 <c:forEach items="${cld.allFieldDescriptors}" var="fieldDescriptor">
   <c:set var="fieldName" value="${fieldDescriptor.name}"/>
   <c:if test="${viewType eq 'detail' || primaryKeyFields[fieldName] != null}">

@@ -7,7 +7,7 @@
 <tiles:importAttribute/>
 
 <!-- objectView.jsp -->
-
+<html:xhtml/>
 <div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
@@ -23,14 +23,14 @@
       </c:choose>
     </c:when>
     <c:otherwise>
-      <nobr>
+      <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
         </c:forEach>
-        [<html:link action="/objectDetails?id=${object.id}&trail=${param.trail}_${object.id}">
+        [<html:link action="/objectDetails?id=${object.id}&amp;trail=${param.trail}_${object.id}">
           <fmt:message key="results.details"/>
         </html:link>]
-      </nobr>
+      </span>
       <br/>
       <div style="margin-left: 8px">
         <c:forEach var="cld" items="${leafClds}">
