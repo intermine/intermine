@@ -10,17 +10,7 @@
         <table>
           <tbody>
             <row>
-              <entry>28th March 2003</entry>
-              <entry>Matthew</entry>
-              <entry>What's new in Java 1.5</entry>
-            </row>
-            <row>
               <entry>25th April 2003</entry>
-              <entry>Raj</entry>
-              <entry>PostgreSQL</entry>
-            </row>
-            <row>
-              <entry>30th May 2003</entry>
               <entry>Mark</entry>
               <entry>Demystifying XML</entry>
             </row>
@@ -31,6 +21,16 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>28th March 2003</entry>
+              <entry>Matthew</entry>
+              <entry><ulink url="JDK1_5.sxi">What's new in Java 1.5</ulink></entry>
+            </row>
+            <row>
+              <entry>7th March 2003</entry>
+              <entry>Raj</entry>
+              <entry><ulink url="Postgresql.sxi">PostgreSQL</ulink></entry>
+            </row>
             <row>
               <entry>28th February 2003</entry>
               <entry>Richard</entry>
