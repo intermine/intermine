@@ -60,6 +60,7 @@ public class BagDetailsController extends TilesAction
             bag = new InterMineBag();
         }
 
+        request.setAttribute("bagName", bagName);
         session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(bagName, bag));
 
         return null;
