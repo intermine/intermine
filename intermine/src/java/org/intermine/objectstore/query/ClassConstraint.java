@@ -144,6 +144,7 @@ public class ClassConstraint implements Constraint
      * Tests whether two ClassConstraints are equal.
      *
      * @param obj the object to compare with
+     * @return true if objects are equal
      */
     public boolean equals(Object obj) {
         if (obj instanceof ClassConstraint) {
