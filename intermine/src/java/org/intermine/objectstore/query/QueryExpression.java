@@ -117,6 +117,7 @@ public class QueryExpression implements QueryEvaluable
                 throw (new IllegalArgumentException("Invalid pos argument less than or equal to"
                             + " zero for substring"));
             }
+            this.type = String.class;
         } else {
             throw new IllegalArgumentException("Invalid operation for specified arguments");
         }
