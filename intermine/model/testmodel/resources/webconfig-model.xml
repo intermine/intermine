@@ -4,5 +4,9 @@
       <displayer src="/pkFields.jsp"/>
       <displayer src="/model/CompaniesHouseIcon.jsp"/>
     </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/pkFields.jsp"/>
+      <displayer src="/model/CompaniesHouseIcon.jsp"/>
+    </longdisplayers>
   </class>
 </webconfig>
