@@ -26,73 +26,75 @@ import org.flymine.model.testmodel.*;
 
 public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
 {
-    protected static ObjectStoreAbstractImpl os;
-
+    protected static ObjectStoreAbstractImpl osai;
+    
     public ObjectStoreAbstractImplTestCase(String arg) {
         super(arg);
     }
 
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreTestCase.oneTimeSetUp();
-        os = (ObjectStoreAbstractImpl) ObjectStoreTestCase.os;
+        if (os instanceof ObjectStoreAbstractImpl) {
+            osai = (ObjectStoreAbstractImpl) os;
+        }
     }
 
     public void testCheckStartLimit() throws Exception {
-        int oldOffset = os.maxOffset;
-        os.maxOffset = 10;
+        int oldOffset = osai.maxOffset;
+        osai.maxOffset = 10;
         try {
-            os.checkStartLimit(11,0);
+            osai.checkStartLimit(11,0);
             fail("Expected ObjectStoreLimitReachedException");
         } catch (ObjectStoreLimitReachedException e) {
         }
-        os.maxOffset = oldOffset;
+        osai.maxOffset = oldOffset;
 
-        int oldLimit = os.maxLimit;
-        os.maxLimit = 10;
+        int oldLimit = osai.maxLimit;
+        osai.maxLimit = 10;
         try {
-            os.checkStartLimit(0,11);
+            osai.checkStartLimit(0,11);
             fail("Expected ObjectStoreLimitReachedException");
         } catch (ObjectStoreLimitReachedException e) {
         }
-        os.maxLimit = oldLimit;
+        osai.maxLimit = oldLimit;
     }
 
     public void testLimitTooHigh() throws Exception {
         // try to run query with limit higher than imposed maximum
-        int before = os.maxLimit;
-        os.maxLimit = 99;
+        int before = osai.maxLimit;
+        osai.maxLimit = 99;
         try{
-            os.execute((Query) queries.get("SelectSimpleObject"), 10, 100, true);
+            osai.execute((Query) queries.get("SelectSimpleObject"), 10, 100, true);
             fail("Expected: ObjectStoreException");
         } catch (IndexOutOfBoundsException e) {
         } finally {
-            os.maxLimit = before;
+            osai.maxLimit = before;
         }
     }
 
     public void testOffsetTooHigh() throws Exception {
         // try to run query with offset higher than imposed maximum
-        int before = os.maxOffset;
-        os.maxOffset = 99;
+        int before = osai.maxOffset;
+        osai.maxOffset = 99;
         try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 100, 50, true);
+            osai.execute((Query) queries.get("SelectSimpleObject"), 100, 50, true);
             fail("Expected: ObjectStoreException");
         } catch (IndexOutOfBoundsException e) {
         } finally {
-            os.maxOffset = before;
+            osai.maxOffset = before;
         }
     }
 
     public void testTooMuchTime()  throws Exception {
         // try to run a query that takes longer than max amount of time
-        long before = os.maxTime;
-        os.maxTime = 0;
+        long before = osai.maxTime;
+        osai.maxTime = 0;
         try {
-            os.execute((Query) queries.get("SelectSimpleObject"), 0, 1, true);
+            osai.execute((Query) queries.get("SelectSimpleObject"), 0, 1, true);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         } finally {
-            os.maxTime = before;
+            osai.maxTime = before;
         }
     }
 
@@ -101,7 +103,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         Department dept = getDeptExampleObject();
         assertTrue(dept.getEmployees() instanceof LazyCollection);
 
-        os.promoteProxies(dept);
+        osai.promoteProxies(dept);
 
         // Employees should now have become a Results object
         Collection col = dept.getEmployees();
@@ -115,7 +117,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         Example ex = getExampleObjectWithSet();
         assertTrue(ex.getSet() instanceof LazyCollection);
 
-        os.promoteProxies(ex);
+        osai.promoteProxies(ex);
 
         // Employees should now have become a Results object
         Collection col = ex.getSet();
@@ -129,7 +131,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         Department dept = getDeptExampleObject();
         assertTrue(dept.getCompany() instanceof LazyReference);
 
-        os.promoteProxies(dept);
+        osai.promoteProxies(dept);
 
         // Company should now be materialized
         Object obj = dept.getCompany();

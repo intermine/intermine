@@ -12,16 +12,19 @@ package org.flymine.objectstore.webservice;
 
 import junit.framework.*;
 
+import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.objectstore.safe.ObjectStoreSafeImpl;
 
 public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        ObjectStoreTestCase.os = (ObjectStoreClient) ObjectStoreFactory.getObjectStore("os.unittest-client");
+        osai = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest-client");
+        os = new ObjectStoreSafeImpl(osai);
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 
