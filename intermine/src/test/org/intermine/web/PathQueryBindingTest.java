@@ -67,7 +67,8 @@ public class PathQueryBindingTest extends TestCase
         view.add("Employee.department.manager.age");
         employeesWithOldManagers.setView(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
-        age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10)));
+        age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
+                                                "age is greater than 10", "age_gt_10"));
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
 
         //vatNumberInBag
