@@ -15,7 +15,7 @@
 
 <html:link action="/contextHelp" name="linkParams"
    
-onclick="document.getElementById('ctxHelpTxt').innerHTML='${fn:replace(text,'\"','&quo;')}';document.getElementById('ctxHelpDiv').style.display='';return false"
+onclick="document.getElementById('ctxHelpTxt').innerHTML='${fn:replace(text,'\"','&quot;')}';document.getElementById('ctxHelpDiv').style.display='';return false"
    title="${text}">
   <jsp:doBody/>
 </html:link>
