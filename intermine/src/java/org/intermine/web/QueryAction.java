@@ -62,11 +62,12 @@ public class QueryAction extends LookupDispatchAction
             query = new Query();
         }
 
-        QueryCreator qc = new QueryCreator(query);
+
         ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld"))
             .getClassDescriptor();
         QueryForm queryForm = (QueryForm) form;
-        qc.generateConstraints(cld.getName(), queryForm.getFields());
+        QueryCreator.addToQuery(query, cld.getName(), queryForm.getFields());
+
         session.setAttribute("query", query);
         session.removeAttribute("cld");
 
