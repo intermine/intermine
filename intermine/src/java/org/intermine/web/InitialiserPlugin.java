@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.io.IOException;
+import java.util.TreeMap;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
@@ -290,7 +291,7 @@ public class InitialiserPlugin implements PlugIn
         if (superuser != null && pm.hasProfile(superuser)) {
             Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
             if (profile != null) {
-                templateMap = Collections.synchronizedMap(new HashMap(profile.getSavedTemplates()));
+                templateMap = Collections.synchronizedMap(new TreeMap(profile.getSavedTemplates()));
             } else {
                 LOG.warn("failed to getch profile for superuser " + superuser);
             }
@@ -307,9 +308,10 @@ public class InitialiserPlugin implements PlugIn
         // names/expressions are the ones that should be set when a template is linked to from the
         // object details page eg. Gene.identifier
         Map classTemplateExprs = new HashMap();
-        Iterator iter = templateMap.values().iterator();
+        Iterator iter = templateMap.entrySet().iterator();
         while (iter.hasNext()) {
-            TemplateQuery template = (TemplateQuery) iter.next();
+            Map.Entry entry = (Map.Entry) iter.next();
+            TemplateQuery template = (TemplateQuery) entry.getValue();
             List list = (List) categoryTemplates.get(template.getCategory());
             if (list == null) {
                 list = new ArrayList();
