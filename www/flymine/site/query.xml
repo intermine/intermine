@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+
+   <section>
+       <heading>The query Builder Page</heading>
+         <item>The FlyMine query builder page is composed of 3 sections:  a model browser (left), a constraints list (right) and an output fields list (bottom). The output fields list will initially say 'No fields selected for output'. </item>
+         <item>Building a FyMine query involves the following steps (described in more detail below)</item>
+         <item>1. Select classes and/or fields to constrain.</item>
+         <item>2. Select classes and /or fields you wish to include in the results.</item>
+         <item>3. Show Results. </item>
+         
+   </section>
+
+
+    <section>
+        <heading>The model browser</heading>
+        <item>The model browser initially displays the class you selected and its fields. Some of the fields are references (links) from this class to other classes. Class references can be identified by the + box to the left, allowing you to expand the class. Expanding a referenced class will show the fields associated with that class. </item>
+        <item>Using the model browser you can navigate a path through the FlyMine classes to combine the information you require in different ways, depending on your starting point</item>
+        <item>For each class and field in the model browser there are two options:  show and -> (constrain). Use these to select fields from the model browser to constrain (in the constraint list) and/or 'show' (in the output fields)</item> 
+    </section>
+
+
+
+    <section>
+         <heading>The constraints list</heading>
+         <item>Constraints are applied to a particular class or field in the right hand constraint pane. To add a class or a field to this pane so that it can be constrained click on the -> next to the class or field.  A box allowing you to specify your constraint will appear at the bottom of this pane.  Add your constraint here and press 'Add to query' to add the constraint to the constraint display.</item>
+        <item>Constraints you have applied are listed in the right hand constraints pane. If you are constraining items from more than one class, the constraints from a referenced class will be indented relative to the parent class.  When you select a referenced class to constrain, the view in the model browser will change to display the fields of that class.  The path you have taken through the classes is shown at the top of the model browser. You can change the class displayed in the browser by clicking on a class name here or on the class name in the constraint pane. </item>
+       <item>If you are constraining a referenced class you will be given the option to constrain the class to any of the subtypes of that class.  E.g. The transcript class can be constrained to a number of subtypes of transcript (e.g. primary transcript, processed transcript, tRNA etc.)</item>
+       <item>To remove a constraint click on the red x next to the constraint. To add another constraint to a field already constrained (or to change the current constraint) click on 'constrain' next to that field.  The constraint options will appear at the bottom of the pane as before.</item>
+     </section>
+
+
+
+
+     <section>
+          <heading>The output fields list</heading>
+          <item>The output fields list is found at the bottom of the page, below the model browser.  Initially this list will be empty and will say 'No fields selected for output'. To display a particular field in the results, it must be added to the output fields list by clicking on 'show', next to the field, in the model browser. To display all the fields of a particular class in the results, click on the 'show' next to the class name.</item>
+     </section>
+
+
+
+      <section>
+           <heading>Show results</heading>
+              <item>Press the 'Show Results' button to view the results of your query.</item>
+              <item>All queries run are saved in the query history.  If you do not give your query a particular name (in the 'Save query' box at the bottom of the query builder page), it will be saved as query_x (where x increments for each query run).  To access your query history, click on History in the menu bar.  Here you can select a query to run again or modify in the query builder page. You can also delete any queries you no longer wish to keep.</item>
+      </section>
+
+
+
+</index>
+</article>
