@@ -1245,7 +1245,7 @@
     <load-go-dag integrationWriter="integration.production" source="os.go-dag-translated" sourceName="go"/>
   </target>
 
-  <target name="retrieve-go-annotation" depends="prepare-build-model">
+  <target name="retrieve-go-annotation" depends="prepare-build-model, compile-go-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
