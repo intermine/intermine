@@ -169,6 +169,7 @@ table.box th.title {
 }
 
 .admin-msg {
+  text-align: center;
 }
 
 /* override flymine2.css */
