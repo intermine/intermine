@@ -354,13 +354,13 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             ResultSet r = s.executeQuery("SELECT value FROM " + tableName);
             r.first();
 
-            Set results = new HashSet();
+            Set resultStrings = new HashSet();
 
-            results.add(r.getString(1));
+            resultStrings.add(r.getString(1));
             r.next();
-            results.add(r.getString(1));
+            resultStrings.add(r.getString(1));
             r.next();
-            results.add(r.getString(1));
+            resultStrings.add(r.getString(1));
 
             try {
                 r.next();
@@ -368,7 +368,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
                 // expected
             }
 
-            assertEquals(expected, results);
+            assertEquals(expected, resultStrings);
         } finally {
             if (con != null) {
                 con.commit();

@@ -791,13 +791,14 @@ public class SqlGenerator
                 }
                 state.addToWhere(c.getOp() == ConstraintOp.IN ? "))" : ")))");
             } else {
-                state.addToWhere(leftHandSide);
-
                 if (c.getOp() == ConstraintOp.IN) {
-                    state.addToWhere("SELECT value FROM ");
+                    state.addToWhere(leftHandSide);
                 } else {
-                    state.addToWhere("NOT (SELECT value FROM ");
+                    state.addToWhere("NOT (");
+                    state.addToWhere(leftHandSide);
                 }
+
+                state.addToWhere("SELECT value FROM ");
 
                 state.addToWhere((String) state.getBagTableNames().get(c));
 
