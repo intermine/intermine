@@ -23,9 +23,9 @@ import java.io.*;
 public class MergeOwlTest extends TestCase
 {
     public static final String ENDL = "\n";
-    private final String tgtNamespace = "http://www.flymine.org/target/";
-    private final String src1Namespace = "http://www.flymine.org/source1/";
-    private final String src2Namespace = "http://www.flymine.org/source2/";
+    private final String tgtNamespace = "http://www.flymine.org/target#";
+    private final String src1Namespace = "http://www.flymine.org/source1#";
+    private final String src2Namespace = "http://www.flymine.org/source2#";
 
     public MergeOwlTest(String arg) {
         super(arg);

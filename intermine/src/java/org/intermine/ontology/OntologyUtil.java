@@ -220,4 +220,20 @@ public class OntologyUtil
         return uri;
     }
 
+
+    /**
+     * If a given namespace uri does not end in a '#' add one, rmoving trailing '/' if present.
+     * @param ns the namespace uri
+     * @return the corrected namespace
+     */
+    public static String correctNamespace(String ns) {
+        if (ns.indexOf('#') >= 0) {
+            return ns.substring(0, ns.indexOf('#') + 1);
+        } else if (ns.endsWith("/")) {
+            return ns.substring(0, ns.length() - 1) + "#";
+        } else {
+            return ns + "#";
+        }
+    }
+
 }

@@ -38,10 +38,7 @@ public class Dag2Owl
      * @param namespace the namespace to use in generating URI-based identifiers
      */
     public Dag2Owl(String namespace) {
-        if (namespace.indexOf("#") != -1) {
-            throw new IllegalArgumentException("namespace shouldn't contain '#'");
-        }
-        this.namespace = namespace;
+        this.namespace = OntologyUtil.correctNamespace(namespace);
         ontModel = ModelFactory.createOntologyModel();
     }
 
@@ -100,7 +97,7 @@ public class Dag2Owl
      * @return the generated class name
      */
     public String generateClassName(DagTerm term) {
-        return namespace + "#" + filter(term.getId());
+        return namespace + filter(term.getId());
     }
 
     /**
@@ -110,7 +107,7 @@ public class Dag2Owl
      * @return the generated property name
      */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
-        return namespace + "#" + filter(domain.getId() + "_" + range.getId());
+        return namespace + filter(domain.getId() + "_" + range.getId());
     }
 
     /**
@@ -129,33 +126,33 @@ public class Dag2Owl
      * @throws Exception if anthing goes wrong
      */
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            throw new Exception("Usage: Dag2Owl dagfile owlfile errorfile");
+        if (args.length < 3) {
+            throw new Exception("Usage: Dag2Owl dagfile owlfile tgt_namespace errorfile");
         }
 
         String dagFilename = args[0];
         String owlFilename = args[1];
-        String errorFilename = args[2];
+        String tgtNamespace = args[2];
+        String errorFilename = (args.length > 3) ? args[3] : "";
 
         try {
             File dagFile = new File(dagFilename);
             File owlFile = new File(owlFilename);
-            File errorFile = new File(errorFilename);
 
             DagParser parser = new DagParser();
             Set rootTerms = parser.process(new FileReader(dagFile));
 
             DagValidator validator = new DagValidator();
-            if (!validator.validate(rootTerms)) {
-                 BufferedWriter out = new BufferedWriter(new FileWriter(errorFile));
-                 out.write(validator.getOutput());
-                 out.flush();
+            if (!validator.validate(rootTerms) && errorFilename != "") {
+                BufferedWriter out = new BufferedWriter(new FileWriter(new File(errorFilename)));
+                out.write(validator.getOutput());
+                out.flush();
             }
 
-            Dag2Owl owler = new Dag2Owl("http://www.flymine.org/namespace");
+            Dag2Owl owler = new Dag2Owl(tgtNamespace);
             BufferedWriter out = new BufferedWriter(new FileWriter(owlFile));
             owler.process(rootTerms);
-            owler.getOntModel().write(out);
+            owler.getOntModel().write(out, "N3");
         } catch (Exception e) {
             e.printStackTrace();
         }

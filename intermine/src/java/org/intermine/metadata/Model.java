@@ -29,6 +29,8 @@ import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
 import org.flymine.util.TypeUtil;
+import org.flymine.ontology.OntologyUtil;
+
 /**
  * Represents a named business model, makes available metadata for each class
  * within model.
@@ -104,7 +106,7 @@ public class Model
 
         this.name = name;
 
-        this.nameSpace = new URI(nameSpace);
+        this.nameSpace = new URI(OntologyUtil.correctNamespace(nameSpace));
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
 
         ClassDescriptor flymineBusinessObject = new ClassDescriptor(

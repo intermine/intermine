@@ -22,7 +22,7 @@ import java.util.Set;
 public class ModelTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
-    private String uri = "http://www.flymine.org/model/testmodel";
+    private String uri = "http://www.flymine.org/model/testmodel#";
 
     public ModelTest(String arg) {
         super(arg);
@@ -115,7 +115,7 @@ public class ModelTest extends TestCase
         Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("model", uri, clds);
 
-        String expected = "<model name=\"model\" namespace=\"http://www.flymine.org/model/testmodel\">"
+        String expected = "<model name=\"model\" namespace=\"http://www.flymine.org/model/testmodel#\">"
             + "<class name=\"Class1\" is-interface=\"false\"></class>"
             + "<class name=\"Class2\" is-interface=\"false\"></class>"
             + "</model>";

@@ -34,9 +34,8 @@ import java.io.File;
 public class Daml2Owl extends URL2Model
 {
     protected static final String DAML_NS_PATTERN = "http://www.daml.org/2001/03/daml[+]oil#";
-    protected static final String OWL_NS = "http://www.w3.org/2002/07/owl#";
     protected static final String ENDL = System.getProperty("line.separator");
-    protected String baseURI = "http://www.flymine.org/daml";
+    protected String baseURI = "http://www.flymine.org/daml#";
 
 
     /**
@@ -47,7 +46,7 @@ public class Daml2Owl extends URL2Model
      * @throws IOException if something goes wrong in accessing the input
      */
     protected OntModel process(Reader in, String baseURI) throws IOException {
-        this.baseURI = baseURI;
+        this.baseURI = OntologyUtil.correctNamespace(baseURI);
         return process(in);
     }
 
@@ -62,7 +61,7 @@ public class Daml2Owl extends URL2Model
         StringBuffer sb = new StringBuffer();
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             line = line.replaceAll("xmlns:daml=\"" + DAML_NS_PATTERN + "\"",
-                                   "xmlns:owl=\"" + OWL_NS + "\"");
+                                   "xmlns:owl=\"" + OntologyUtil.OWL_NAMESPACE + "\"");
             line = line.replaceAll("daml:differentIndividualFrom", "owl:differentFrom");
             line = line.replaceAll("daml:equivalentTo", "owl:sameAs");
             line = line.replaceAll("daml:sameClassAs", "owl:equivalentClass");

@@ -20,32 +20,24 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 
 public class Dag2OwlTest extends TestCase{
-    String namespace = "http://www.flymine.org/namespace";
-
-    public void testConstuctorInvalid() throws Exception {
-        try {
-            new Dag2Owl(namespace + "#");
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-    }
+    String namespace = "http://www.flymine.org/namespace#";
 
     public void testGenerateClassName() throws Exception {
         DagTerm a = new DagTerm("SO:42", "");
         Dag2Owl owler = new  Dag2Owl(namespace);
-        assertEquals(namespace + "#SO_42", owler.generateClassName(a));
+        assertEquals(namespace + "SO_42", owler.generateClassName(a));
     }
 
     public void testPropertyName() throws Exception {
         DagTerm a = new DagTerm("SO:42", "");
         DagTerm b = new DagTerm("SO:56", "");
         Dag2Owl owler = new  Dag2Owl(namespace);
-        assertEquals(namespace + "#SO_42_SO_56", owler.generatePropertyName(a, b));
+        assertEquals(namespace + "SO_42_SO_56", owler.generatePropertyName(a, b));
     }
 
     public void testProcessSimple() {
         OntModel model = ModelFactory.createOntologyModel();
-        OntClass cls = model.createClass(namespace + "#A");
+        OntClass cls = model.createClass(namespace + "A");
         Dag2Owl owler = new  Dag2Owl(namespace);
         DagTerm a = new DagTerm("A", "");
         OntClass result = owler.process(a);
@@ -55,8 +47,8 @@ public class Dag2OwlTest extends TestCase{
 
     public void testProcessChild() {
         OntModel model = ModelFactory.createOntologyModel();
-        OntClass clsA = model.createClass(namespace + "#A");
-        OntClass clsB = model.createClass(namespace + "#B");
+        OntClass clsA = model.createClass(namespace + "A");
+        OntClass clsB = model.createClass(namespace + "B");
 
         Dag2Owl owler = new  Dag2Owl(namespace);
         DagTerm a = new DagTerm("A", "");
@@ -70,15 +62,15 @@ public class Dag2OwlTest extends TestCase{
 
     public void testProcessComponent() {
         OntModel model = ModelFactory.createOntologyModel();
-        OntClass clsA = model.createClass(namespace + "#A");
-        OntClass clsB = model.createClass(namespace + "#B");
+        OntClass clsA = model.createClass(namespace + "A");
+        OntClass clsB = model.createClass(namespace + "B");
 
         Dag2Owl owler = new  Dag2Owl(namespace);
         DagTerm a = new DagTerm("A", "");
         DagTerm b = new DagTerm("B", "");
         a.getComponents().add(b);
         owler.process(a);
-        OntProperty prop = (OntProperty) owler.getOntModel().getOntClass(namespace + "#B").listDeclaredProperties().next();
+        OntProperty prop = (OntProperty) owler.getOntModel().getOntClass(namespace + "B").listDeclaredProperties().next();
 
         assertEquals(clsB, prop.getDomain());
         assertEquals(clsA, prop.getRange());

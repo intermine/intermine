@@ -75,8 +75,8 @@ public class MergeOwl
                                                + "(was: " + format + ")");
         }
         OntModel source = ModelFactory.createOntologyModel();
-        source.read(sourceOwl, "owl", format);
-        mergeByEquivalence(source, srcNamespace);
+        source.read(sourceOwl, null, format);
+        mergeByEquivalence(source, OntologyUtil.correctNamespace(srcNamespace));
     }
 
     /**

@@ -196,5 +196,15 @@ public class OntologyUtilTest extends TestCase
     }
 
 
+    public void testCorrectNamespace() throws Exception {
+        assertEquals("http://www.flymine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.flymine.org/test#junk"));
+        assertEquals("http://www.flymine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.flymine.org/test#junk#morejunk"));
+        assertEquals("http://www.flymine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.flymine.org/test/"));
+        assertEquals("http://www.flymine.org/test#",
+                     OntologyUtil.correctNamespace("http://www.flymine.org/test"));
+    }
 
 }

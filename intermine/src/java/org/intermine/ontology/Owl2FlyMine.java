@@ -65,6 +65,7 @@ public class Owl2FlyMine
      * @throws Exception if anything goes wrong
      */
     public Model process(OntModel ontModel, String tgtNamespace) throws Exception {
+        tgtNamespace = OntologyUtil.correctNamespace(tgtNamespace);
         attributes = new HashMap();
         references = new HashMap();
         collections = new HashMap();
