@@ -1488,7 +1488,7 @@
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165">
       <fileset dir="/shared/data/uniprot">
         <include name="uniprot_sprot.xml"/>
-        <include name="uniprot_trembl.xml"/>
+        <!--include name="uniprot_trembl.xml"/-->
       </fileset>
     </filter-uniprot>
   </target>
@@ -1946,7 +1946,7 @@
   </target>
 
   <target name="genomic-test" 
-          depends="prepare-build-model, prepare-test, compile-genomic-java-from-db">
+          depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="test.class.path"/>
