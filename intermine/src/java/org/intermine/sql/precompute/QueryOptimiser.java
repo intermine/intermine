@@ -20,7 +20,6 @@ import org.flymine.util.StringUtil;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -223,7 +222,7 @@ public class QueryOptimiser
                                                     new AbstractTableComparator()));
 
         // Create a map from AbstractValue to SelectValue for the PrecomputedTable
-        Map valueMap = createValueMap(precompQuery.getSelect());
+        Map valueMap = precomputedTable.getValueMap();
 
         // These are Maps where we can store away those structures we have built while checking the
         // precomputed table mapping.
@@ -388,7 +387,7 @@ public class QueryOptimiser
                                                     new AbstractTableComparator());
 
         // Create a map from AbstractValue to SelectValue for the PrecomputedTable
-        Map valueMap = createValueMap(precompQuery.getSelect());
+        Map valueMap = precomputedTable.getValueMap();
 
         // Iterate through the mappings and compare combinations. Note that each mapping is a case
         // where the precomputed table has the same set of tables as the Query.
@@ -678,23 +677,6 @@ public class QueryOptimiser
         } else {
             throw (new IllegalArgumentException("Unknown type of AbstractValue."));
         }
-    }
-
-    /**
-     * Constructs a Map from the SELECT list of a PrecomputedTable, mapping from the AbstractValue
-     * to the SelectValue for all SelectValue objects in the list.
-     *
-     * @param values a Collection of SelectValues
-     * @return a Map mapping AbstractValue onto SelectValue
-     */
-    protected static Map createValueMap(Collection values) {
-        Map retval = new HashMap();
-        Iterator valueIter = values.iterator();
-        while (valueIter.hasNext()) {
-            SelectValue value = (SelectValue) valueIter.next();
-            retval.put(value.getValue(), value);
-        }
-        return retval;
     }
 
     /**

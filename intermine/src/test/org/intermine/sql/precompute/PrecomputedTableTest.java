@@ -2,6 +2,10 @@ package org.flymine.sql.precompute;
 
 import junit.framework.*;
 import org.flymine.sql.query.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PrecomputedTableTest extends TestCase
 {
@@ -81,4 +85,27 @@ public class PrecomputedTableTest extends TestCase
         assertTrue("Expected pt1.hashCode() not to equal pt5.hashCode()",
                    !(pt3.hashCode() == pt4.hashCode()));
     }
+
+    public void testValueMap() throws Exception {
+        Set values = new HashSet();
+        AbstractValue v1 = new Constant("'c1'");
+        AbstractValue v2 = new Constant("'c2'");
+        AbstractValue v3 = new Constant("'c3'");
+        SelectValue s1 = new SelectValue(v1, "alias1");
+        SelectValue s2 = new SelectValue(v2, "alias2");
+        SelectValue s3 = new SelectValue(v3, "alias3");
+        values.add(s1);
+        values.add(s2);
+        values.add(s3);
+
+        Map result = new HashMap();
+        result.put(v1, s1);
+        result.put(v2, s2);
+        result.put(v3, s3);
+
+        Query q1 = new Query("SELECT 'c1' AS alias1, 'c2' AS alias2, 'c3' AS alias3 FROM table");
+        PrecomputedTable pt = new PrecomputedTable(q1, "name");
+        assertEquals(result, pt.getValueMap());
+    }
+
 }

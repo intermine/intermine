@@ -133,26 +133,6 @@ public class QueryOptimiserTest extends TestCase
         assertNull(QueryOptimiser.findTableForAlias("alias4", set));
     }
 
-    public void testCreateValueMap() throws Exception {
-        Collection values = new HashSet();
-        AbstractValue v1 = new Constant("c1");
-        AbstractValue v2 = new Constant("c2");
-        AbstractValue v3 = new Constant("c3");
-        SelectValue s1 = new SelectValue(v1, "alias1");
-        SelectValue s2 = new SelectValue(v2, "alias2");
-        SelectValue s3 = new SelectValue(v3, "alias3");
-        values.add(s1);
-        values.add(s2);
-        values.add(s3);
-
-        Map result = new HashMap();
-        result.put(v1, s1);
-        result.put(v2, s2);
-        result.put(v3, s3);
-
-        assertEquals(result, QueryOptimiser.createValueMap(values));
-    }
-
     public void testReconstructAbstractValue() throws Exception {
         Collection values = new HashSet();
         Table t1 = new Table("table1", "tablealias1");

@@ -1,10 +1,15 @@
 package org.flymine.sql.precompute;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.flymine.sql.query.Query;
+import org.flymine.sql.query.SelectValue;
 import org.flymine.sql.query.SQLStringable;
 
 /**
  * Represents a Precomputed table in a database. A precomputed table is a materialised SQL query.
+ * Note - the query encapsulated in this PrecomputedTable should not be altered.
  *
  * @author Andrew Varley
  */
@@ -12,6 +17,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
 {
     protected Query q;
     protected String name;
+    protected Map valueMap;
 
     /**
      * Construct a new PrecomputedTable
@@ -28,6 +34,14 @@ public class PrecomputedTable implements SQLStringable, Comparable
         }
         this.q = q;
         this.name = name;
+        // Now build the valueMap. Do not alter this Query from now on...
+        valueMap = new HashMap();
+        Iterator valueIter = q.getSelect().iterator();
+        while (valueIter.hasNext()) {
+            SelectValue value = (SelectValue) valueIter.next();
+            valueMap.put(value.getValue(), value);
+        }
+
     }
 
     /**
@@ -46,6 +60,15 @@ public class PrecomputedTable implements SQLStringable, Comparable
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets a Map from AbstractValue to SelectValue for the Query in this PrecomputedTable.
+     *
+     * @return the valueMap
+     */
+    public Map getValueMap() {
+        return valueMap;
     }
 
     /**
