@@ -92,7 +92,7 @@
 
 :Database__url a owl:DatatypeProperty;
     rdfs:domain :Database;
-    rdfs:range xsd:anyURI.
+    rdfs:range xsd:string.
 
 #Organism
 
