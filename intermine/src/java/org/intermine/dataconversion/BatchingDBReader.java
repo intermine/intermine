@@ -151,7 +151,7 @@ public class BatchingDBReader extends DirectDBReader
                     }
                     long end = System.currentTimeMillis();
                     oobTime += end - start;
-                    if (oobTime / 10000 > (oobTime - end + start) / 10000) {
+                    if (oobTime / 100000 > (oobTime - end + start) / 100000) {
                         LOG.info("Spent " + oobTime + " ms on out-of-band queries like ("
                                 + (afterExecute - start) + " + " + (end - afterExecute) + " ms) "
                                 + collSql);

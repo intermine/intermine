@@ -18,6 +18,8 @@ import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 
+import org.apache.log4j.Logger;
+
 /**
  * Stores Items in an objectstore.
  *
@@ -26,9 +28,12 @@ import org.intermine.objectstore.ObjectStoreWriter;
  */
 public class ObjectStoreItemWriter implements ItemWriter
 {
+    private static final Logger LOG = Logger.getLogger(ObjectStoreItemWriter.class);
+
     private ObjectStoreWriter osw;
     private int transactionCounter = 0;
-    private static final int TRANSACTION_BATCH_SIZE = 1000000;
+    private static final int TRANSACTION_BATCH_SIZE = 10000000;
+
     /**
      * Constructs the ItemWriter with an ObjectStoreWriter.
      *
@@ -59,6 +64,7 @@ public class ObjectStoreItemWriter implements ItemWriter
         osw.store(item);
         transactionCounter++;
         if (transactionCounter >= TRANSACTION_BATCH_SIZE) {
+            LOG.info("Committing transaction");
             osw.commitTransaction();
             osw.beginTransaction();
             transactionCounter = 0;

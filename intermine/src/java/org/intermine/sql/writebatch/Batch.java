@@ -43,6 +43,8 @@ public class Batch
     private List flushJobs = Collections.EMPTY_LIST;
     private SQLException problem = null;
     
+    private volatile int lastDutyCycle = 100;
+
     /**
      * Constructs an empty Batch, with no tables.
      *
@@ -145,7 +147,7 @@ public class Batch
         putFlushJobs(jobs);
         batchSize = 0;
         long end = System.currentTimeMillis();
-        if (end > middle + 10) {
+        if ((end > middle + 10) && (lastDutyCycle < 93)) {
             LOG.info("Enqueued batch to flush - took " + (middle - start) + " + "
                     + (end - middle) + " ms");
         }
@@ -262,6 +264,8 @@ public class Batch
         public void run() {
             long flusherStart = System.currentTimeMillis();
             long totalSpent = 0;
+            long timeAtLastMessage = flusherStart;
+            long spentAtLastMessage = totalSpent;
             while (true) {
                 try {
                     List jobs = getFlushJobs();
@@ -273,11 +277,17 @@ public class Batch
                     }
                     long end = System.currentTimeMillis();
                     totalSpent += end - start;
-                    if (totalSpent / 10000 > (totalSpent + start - end) / 10000) {
+                    if (totalSpent / 100000 > (totalSpent + start - end) / 100000) {
+                        int totalDutyCycle = (int) (((100 * totalSpent + ((end - flusherStart) / 2))
+                                    / (end - flusherStart)));
+                        lastDutyCycle = (int) (((100 * (totalSpent - spentAtLastMessage)
+                                        + ((end - timeAtLastMessage) / 2))
+                                    / (end - timeAtLastMessage)));
                         LOG.info("Batch flusher has spent " + totalSpent + " ms waiting for the"
-                                + " database (duty cycle " + ((100 * totalSpent + ((end
-                                                    - flusherStart) / 2))
-                                                      / (end - flusherStart)) + "%)");
+                                + " database (duty cycle " + totalDutyCycle
+                                + "%) (current duty cycle " + lastDutyCycle + "%)");
+                        timeAtLastMessage = end;
+                        spentAtLastMessage = totalSpent;
                     }
                     //LOG.error("Flushed batch at " + end + " - took " + (end - start)
                     //        + " ms, total " + totalSpent + " of " + (end - flusherStart)

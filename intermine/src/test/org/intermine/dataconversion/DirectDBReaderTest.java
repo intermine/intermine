@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 
 public class DirectDBReaderTest extends DBReaderTestCase
 {
@@ -38,21 +40,23 @@ public class DirectDBReaderTest extends DBReaderTestCase
         } catch (SQLException e) {
         }
         s.execute("CREATE TABLE testread (value int, id text)");
-        for (int i = 1202; i < 2500; i++) {
-            s.addBatch("INSERT INTO testread VALUES (" + i + ", '" + i + "')");
+        Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
+        String colNames[] = new String[] {"value", "id"};
+        for (int i = 20202; i < 21500; i++) {
+            batch.addRow(c, "testread", null, colNames, new Object[] {new Integer(i), "" + i});
         }
-        for (int i = 0; i < 1200; i++) {
-            s.addBatch("INSERT INTO testread VALUES (" + i + ", '" + i + "')");
+        for (int i = 0; i < 20200; i++) {
+            batch.addRow(c, "testread", null, colNames, new Object[] {new Integer(i), "" + i});
         }
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < 250000; i++) {
             sb.append("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
         }
-        s.addBatch("INSERT INTO testread VALUES (1200, '" + sb.toString() + "')");
+        batch.addRow(c, "testread", null, colNames, new Object[] {new Integer(20200), sb.toString()});
         sb.append("abcdefghijklmnopqrstuvwxyz");
-        s.addBatch("INSERT INTO testread VALUES (1201, '" + sb.toString() + "')");
+        batch.addRow(c, "testread", null, colNames, new Object[] {new Integer(20201), sb.toString()});
         sb = null;
-        s.executeBatch();
+        batch.flush(c);
         c.close();
 
         DBReader reader = getDBReader();
@@ -62,9 +66,9 @@ public class DirectDBReaderTest extends DBReaderTestCase
         while (iter.hasNext()) {
             Map row = (Map) iter.next();
             assertEquals(new Integer(v), row.get("value"));
-            if (v == 1200) {
+            if (v == 20200) {
                 assertEquals(13000000, ((String) row.get("id")).length());
-            } else if (v == 1201) {
+            } else if (v == 20201) {
                 assertEquals(13000026, ((String) row.get("id")).length());
             } else {
                 assertEquals("" + v, row.get("id"));
@@ -74,24 +78,21 @@ public class DirectDBReaderTest extends DBReaderTestCase
             if (v == 0) {
                 assertEquals(0, offset);
                 assertEquals(1, size);
-            } else if ((v >= 1) && (v <= 1000)) {
+            } else if ((v >= 1) && (v <= 20000)) {
                 assertEquals(1, offset);
-                assertEquals(1000, size);
-            } else if ((v >= 1001) && (v <= 1200)) {
-                assertEquals(1001, offset);
+                assertEquals(20000, size);
+            } else if ((v >= 20001) && (v <= 20200)) {
+                assertEquals(20001, offset);
                 assertEquals(200, size);
-            } else if (v == 1201) {
-                assertEquals(1201, offset);
+            } else if (v == 20201) {
+                assertEquals(20201, offset);
                 assertEquals(1, size);
-            } else if ((v >= 1202) && (v <= 2201)) {
-                assertEquals(1202, offset);
-                assertEquals(1000, size);
             } else {
-                assertEquals(2202, offset);
-                assertEquals(298, size);
+                assertEquals(20202, offset);
+                assertEquals(1298, size);
             }
             v++;
         }
-        assertEquals(2500, v);
+        assertEquals(21500, v);
     }
 }

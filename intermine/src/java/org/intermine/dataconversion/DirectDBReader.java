@@ -35,7 +35,7 @@ public class DirectDBReader implements DBReader
 {
     private static final Logger LOG = Logger.getLogger(DirectDBReader.class);
 
-    protected static final int BATCH_SIZE = 1000;
+    protected static final int BATCH_SIZE = 20000;
     protected static final int MAX_SIZE = 10000000;
     protected Database db;
     protected DBBatch batch;
@@ -95,7 +95,7 @@ public class DirectDBReader implements DBReader
         c.close();
         long end = System.currentTimeMillis();
         oobTime += end - start;
-        if (oobTime / 10000 > (oobTime - end + start) / 10000) {
+        if (oobTime / 100000 > (oobTime - end + start) / 100000) {
             LOG.info("Spent " + oobTime + " ms on out-of-band queries like (" + (end - start)
                     + " ms) " + sql);
         }
@@ -145,7 +145,7 @@ public class DirectDBReader implements DBReader
                 }
                 long end = System.currentTimeMillis();
                 iteratorTime += end - start;
-                if (iteratorTime / 10000 > (iteratorTime - end + start) / 10000) {
+                if (iteratorTime / 100000 > (iteratorTime - end + start) / 100000) {
                     LOG.info("Spent " + iteratorTime + " ms on iterator queries like ("
                             + (end - start) + " ms) " + tempSizeQuery);
                 }
@@ -180,7 +180,7 @@ public class DirectDBReader implements DBReader
             }
             long end = System.currentTimeMillis();
             iteratorTime += end - start;
-            if (iteratorTime / 10000 > (iteratorTime - end + start) / 10000) {
+            if (iteratorTime / 100000 > (iteratorTime - end + start) / 100000) {
                 LOG.info("Spent " + iteratorTime + " ms on iterator queries like ("
                         + (afterExecute - start) + " + " + (end - afterExecute) + " ms) "
                         + tempSql);

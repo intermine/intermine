@@ -214,23 +214,23 @@ public class DBConverter extends DataConverter
                 }
                 writer.store(item);
                 count++;
-                if (count % 1000 == 0) {
+                if (count % 10000 == 0) {
                     long now = System.currentTimeMillis();
-                    if (times[(count / 1000) % 20] == -1) {
+                    if (times[(count / 10000) % 20] == -1) {
                         LOG.info("Processed " + count + " rows - running at "
-                                + (60000000 / (now - time)) + " (avg "
+                                + (600000000L / (now - time)) + " (avg "
                                 + ((60000L * count) / (now - start))
                                 + ") rows per minute -- now on "
                                 + clsName);
                     } else {
                         LOG.info("Processed " + count + " rows - running at "
-                                + (60000000 / (now - time)) + " (20000 avg "
-                                + (1200000000 / (now - times[(count / 1000) % 20]))
+                                + (600000000L / (now - time)) + " (200000 avg "
+                                + (12000000000L / (now - times[(count / 10000) % 20]))
                                 + ") (avg " + ((60000L * count) / (now - start))
                                 + ") rows per minute -- now on " + clsName);
                     }
                     time = now;
-                    times[(count / 1000) % 20] = now;
+                    times[(count / 10000) % 20] = now;
                 }
             }
         } finally {

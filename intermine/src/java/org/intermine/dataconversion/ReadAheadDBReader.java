@@ -46,6 +46,10 @@ public class ReadAheadDBReader extends BatchingDBReader
         Thread thread = new Thread(workerThread);
         thread.setDaemon(true);
         thread.setName("ReadAheadDBReader WorkerThread");
+        int oldPriority = thread.getPriority();
+        thread.setPriority(Thread.MAX_PRIORITY);
+        LOG.info("Created ReadAheadDBReader WorkerThread with priority " + thread.getPriority()
+                + " (old priority = " + oldPriority + ")");
         thread.start();
     }
 
