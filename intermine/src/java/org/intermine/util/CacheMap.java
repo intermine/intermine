@@ -247,7 +247,7 @@ public class CacheMap implements Map
     /**
      * @see java.util.Map#equals
      */
-    public boolean equals() {
+    public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
 
