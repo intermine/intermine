@@ -4,7 +4,6 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- queryBuild.jsp -->
-<html:errors/>
 <html:form action="/query">
   <fmt:message key="query.current"/>
   <br/><br/>
