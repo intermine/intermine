@@ -13,7 +13,11 @@
 
       <c:if test="${!empty navigation}">
         <c:forEach items="${navigation}" var="entry" varStatus="status">
-          <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY[entry.value].type}">
+          <fmt:message key="query.changePath" var="changePathTitle">
+            <fmt:param value="${entry.key}"/>
+          </fmt:message>
+          <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY[entry.value].type}"
+                     title="${changePathTitle}">
             <c:out value="${entry.key}"/>
           </html:link>
           <c:if test="${!status.last}">&gt;</c:if>
@@ -111,7 +115,11 @@
                   <c:out value="${node.type}"/>
                 </c:when>
                 <c:otherwise>
-                  <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}">
+                  <fmt:message key="query.changePath" var="changePathTitle">
+                    <fmt:param value="${node.type}"/>
+                  </fmt:message>
+                  <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}"
+                             title="${changePathTitle}">
                     <c:out value="${node.type}"/>
                   </html:link>
                   <c:if test="${node.collection}">
