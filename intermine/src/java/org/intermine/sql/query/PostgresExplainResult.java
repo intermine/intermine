@@ -55,17 +55,8 @@ public class PostgresExplainResult extends ExplainResult
             query = "explain " + query;
         }
         s.execute(query);
-        SQLWarning warning = database.getWarnings();
-        if (warning.getNextWarning() != null) {
-            throw new SQLException("Database returned more than one warning while EXPLAINing");
-        }
-        database.clearWarnings();
-        String text = warning.toString();
-        try {
-            parseWarningString(text);
-        } catch (RuntimeException e) {
-            throw (new SQLException("Error parsing EXPLAIN string: " + e));
-        }
+        retrieveExplainString(s);
+        s.close();
     }
 
     /**
@@ -82,20 +73,35 @@ public class PostgresExplainResult extends ExplainResult
 
         Connection database = stmt.getConnection();
         if (database == null) {
-            throw (new NullPointerException("Failed to retrive Connection from PreparedStatement"));
+            throw (new NullPointerException("Failed to retrieve Connection"
+                                            + " from PreparedStatement"));
         }
 
         stmt.execute();
+        retrieveExplainString(stmt);
+        stmt.close();
+    }
 
-        SQLWarning warning = database.getWarnings();
-        if (warning == null) {
-            throw (new SQLException("Failed to get a valid warning string from database"));
+
+    /**
+     * Retrieve EXPLAIN String from post-7.3 databases
+     *
+     * @param stmt the Statement that ran the EXPLAIN
+     * @throws SQLException if a database error occurs
+     */
+    protected void retrieveExplainString(Statement stmt) throws SQLException {
+
+        ResultSet results = stmt.getResultSet();
+
+        if ((results == null) || !results.next()) {
+            throw (new SQLException("Failed to get a valid explain string from database"));
         }
-        if (warning.getNextWarning() != null) {
-            throw new SQLException("Database returned more than one warning while EXPLAINing");
+
+        if (stmt.getMoreResults()) {
+            throw new SQLException("Database returned more than ResultSet while EXPLAINing");
         }
-        database.clearWarnings();
-        String text = warning.toString();
+
+        String text = results.getString(1);
         try {
             parseWarningString(text);
         } catch (RuntimeException e) {
