@@ -27,7 +27,7 @@
 <c:set var="text" value="${fn:replace(text,'\"','&amp;quot;')}"/>
 
 <html:link action="/contextHelp" name="linkParams"
-   onclick="document.getElementById('ctxHelpTxt').innerHTML='${text}';document.getElementById('ctxHelpDiv').style.display='';location.href='${requestScope['javax.servlet.include.context_path']}${requestScope['javax.servlet.forward.servlet_path']}?${pageContext.request.queryString}#ctxHelpDiv';return false"
+   onclick="document.getElementById('ctxHelpTxt').innerHTML='${text}';document.getElementById('ctxHelpDiv').style.display='';window.scrollTo(0, 0);return false"
    titleKey="tag.helplink.title">
   <jsp:doBody/>
 </html:link>
