@@ -10,14 +10,12 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -158,11 +156,7 @@ public class SqlGenerator
                     if ((cacheEntry.getLastOffset() - start >= 100000)
                             || (start - cacheEntry.getLastOffset() >= 10000)) {
                         QueryNode firstOrderBy = null;
-                        try {
-                            firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
-                        } catch (NoSuchElementException e) {
-                            firstOrderBy = (QueryNode) q.getSelect().iterator().next();
-                        }
+                        firstOrderBy = (QueryNode) q.getEffectiveOrderBy().iterator().next();
                         if (firstOrderBy instanceof QueryClass) {
                             firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                         }
@@ -213,11 +207,7 @@ public class SqlGenerator
                     }
                 }
                 QueryNode firstOrderBy = null;
-                try {
-                    firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
-                } catch (NoSuchElementException e) {
-                    firstOrderBy = (QueryNode) q.getSelect().iterator().next();
-                }
+                firstOrderBy = (QueryNode) q.getEffectiveOrderBy().iterator().next();
                 if (firstOrderBy instanceof QueryClass) {
                     firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                 }
@@ -1176,9 +1166,7 @@ public class SqlGenerator
             throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
-        List orderBy = new ArrayList(q.getOrderBy());
-        orderBy.addAll(q.getSelect());
-        Iterator orderByIter = orderBy.iterator();
+        Iterator orderByIter = q.getEffectiveOrderBy().iterator();
         while (orderByIter.hasNext()) {
             QueryOrderable node = (QueryOrderable) orderByIter.next();
             if (!(node instanceof QueryValue)) {

@@ -288,6 +288,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             }
         }
         Map expectedIndexMap = new HashMap();
+        expectedIndexMap.put("index" + tableName + "_field_orderby_field", "CREATE INDEX index" + tableName + "_field_orderby_field ON " + tableName + " USING btree (orderby_field)");
         expectedIndexMap.put("index" + tableName + "_field_a1_id__a3___a4_", "CREATE INDEX index" + tableName + "_field_a1_id__a3___a4_ ON " + tableName + " USING btree (a1_id, a3_, a4_)");
         expectedIndexMap.put("index" + tableName + "_field_a3_", "CREATE INDEX index" + tableName + "_field_a3_ ON " + tableName + " USING btree (a3_)");
         expectedIndexMap.put("index" + tableName + "_field_a3__nulls", "CREATE INDEX index" + tableName + "_field_a3__nulls ON " + tableName + " USING btree (((a3_ IS NULL)))");

@@ -13,12 +13,15 @@ package org.intermine.objectstore.query;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.util.CombinedIterator;
 
 /**
  * This class provides an implementation-independent abstract representation of a query
@@ -185,6 +188,49 @@ public class Query implements FromElement
      */
     public List getOrderBy() {
         return Collections.unmodifiableList(orderBy);
+    }
+
+    /**
+     * Gets the effective ORDER BY clause of this Query, such as may be used to create SQL.
+     *
+     * @return a List of ORDER BY nodes
+     */
+    public List getEffectiveOrderBy() {
+        Set seenQueryClasses = new HashSet();
+        List retval = new ArrayList();
+        List iterators = new ArrayList();
+        iterators.add(orderBy.iterator());
+        iterators.add(select.iterator());
+        Iterator iter = new CombinedIterator(iterators);
+        while (iter.hasNext()) {
+            QueryOrderable node = (QueryOrderable) iter.next();
+            if (node instanceof QueryClass) {
+                if (!seenQueryClasses.contains(node)) {
+                    retval.add(node);
+                    seenQueryClasses.add(node);
+                }
+            } else if (node instanceof QueryField) {
+                FromElement qc = ((QueryField) node).getFromElement();
+                if (qc instanceof QueryClass) {
+                    if (!seenQueryClasses.contains(qc)) {
+                        if ("id".equals(((QueryField) node).getFieldName())) {
+                            seenQueryClasses.add(qc);
+                        }
+                        retval.add(node);
+                    }
+                } else if (qc instanceof Query) {
+                    retval.add(node);
+                }
+            } else if (node instanceof QueryObjectReference) {
+                QueryClass qc = ((QueryObjectReference) node).getQueryClass();
+                if (!seenQueryClasses.contains(qc)) {
+                    retval.add(node);
+                }
+            } else {
+                retval.add(node);
+            }
+        }
+        return Collections.unmodifiableList(retval);
     }
 
     /**
