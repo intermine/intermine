@@ -53,7 +53,7 @@
         </c:choose>
         <span class="type"><c:out value="${node.type}"/><c:if test="${node.collection}"> collection</c:if></span>
         <html:link action="/mainChange?method=addToView&path=${node.path}">
-          <fmt:message key="query.addtoview"/>
+          <fmt:message key="query.select"/>
         </html:link>
         <br/>
       </c:forEach>
@@ -87,11 +87,11 @@
           </c:choose>
         </span>
         <html:link action="/mainChange?method=addConstraint&path=${node.path}">
-          <fmt:message key="query.addconstraint"/>
+          <fmt:message key="query.addConstraint"/>
         </html:link>
         <c:if test="${node.indentation > 0}">
           <html:link action="/mainChange?method=removeNode&path=${node.path}">
-            <fmt:message key="query.removenode"/>
+            <fmt:message key="query.removeNode"/>
           </html:link>
         </c:if>
         <br/>
@@ -135,7 +135,7 @@
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0}">
-                <fmt:message key="query.subclassconstraint"/>
+                <fmt:message key="query.subclassConstraint"/>
                 <html:select property="subclass">
                   <c:forEach items="${subclasses}" var="subclass">
                     <html:option value="${subclass}">
@@ -146,7 +146,7 @@
               </c:if>
               <c:if test="${!empty SAVED_BAGS}">
                 <br/>
-                <fmt:message key="query.bagconstraint"/>
+                <fmt:message key="query.bagConstraint"/>
                 <html:select property="constraintOp">
                   <c:forEach items="${validOps}" var="validOp">
                     <html:option value="${validOp.key}">
