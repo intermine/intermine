@@ -108,10 +108,11 @@
       <classpath refid="class.path"/>
     </taskdef>
     <model-generation type="xmlschema"
-                      pkg="${pkg}"
+                      pkg="${package.prefix}.${model.name}"
                       modelName="${model.name}"
+                      namespace="${namespace}"
                       source="${model}/${model.name}/${model.name}.xsd"
-                      destDir="${build.model.dir}" />   
+                      destDir="${build.model}/${model.name}" />   
   </target>
 
   <target name="generate-owl-model"
