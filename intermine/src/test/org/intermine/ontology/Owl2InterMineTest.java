@@ -44,10 +44,10 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix junk: <http://www.flymine.org/junk#> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
-            + "junk:Test a owl:Class ." + ENDL;
+            + "null:Test a owl:Class ." + ENDL;
 
         ont.read(new StringReader(owl), null, "N3");
 
@@ -62,17 +62,17 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix junk: <http://www.flymine.org/junk#> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
             + ENDL
             + ":Parent1 a owl:Class ." + ENDL
             + ":Parent2 a owl:Class ." + ENDL
             + ":Parent3 a owl:Class ;" + ENDL
             + "         rdfs:subClassOf :Parent2 ." + ENDL
-            + "junk:Parent3 a owl:Class ." + ENDL
+            + "null:Parent3 a owl:Class ." + ENDL
             + ":Child a owl:Class ;" + ENDL
             + "       rdfs:subClassOf :Parent1 ;" + ENDL
             + "       rdfs:subClassOf :Parent3 ;" + ENDL
-            + "       rdfs:subClassOf junk:Parent3 ." + ENDL;
+            + "       rdfs:subClassOf null:Parent3 ." + ENDL;
 
         ont.read(new StringReader(owl), null, "N3");
 
@@ -121,7 +121,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix junk: <http://www.flymine.org/junk#> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ." + ENDL
             + ":Department a owl:Class ." + ENDL
@@ -146,7 +146,7 @@ public class Owl2FlyMineTest extends TestCase
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + "@prefix junk: <http://www.flymine.org/junk#> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
             + ENDL
             + ":Company a owl:Class ;" + ENDL
             + "         rdfs:subClassOf" + ENDL
@@ -189,10 +189,6 @@ public class Owl2FlyMineTest extends TestCase
 
 
         ont.read(new StringReader(owl), null, "N3");
-//         OntProperty ontProp1 = ont.getOntProperty(ns + "ceo");
-//         assertTrue(ontProp1.hasInverse());
-//         OntProperty ontProp2 = ont.getOntProperty(ns + "company");
-//         assertTrue(ontProp2.hasInverse());
 
         Model model = generator.process(ont, ns);
         assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
@@ -209,6 +205,118 @@ public class Owl2FlyMineTest extends TestCase
 
         assertEquals(cod2, cod1.getReverseReferenceDescriptor());
         assertEquals(cod1, cod2.getReverseReferenceDescriptor());
-
     }
+
+
+    public void testProcessPropertyMultipleDomain() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":Department a owl:Class ." + ENDL
+            + ":departments a rdf:Property ;" + ENDL
+            + "             rdfs:domain null:Company, null:Organisation ;" + ENDL
+            + "             rdfs:range :Department ." + ENDL
+            + ":secretarys a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company, null:Business ;" + ENDL
+            + "             rdfs:range :Department ." + ENDL;
+
+        ont.read(new StringReader(owl), null, "N3");
+
+        Model model = generator.process(ont, ns);
+        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Department"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertNull(cld.getCollectionDescriptorByName("departments"));
+        CollectionDescriptor cod = cld.getCollectionDescriptorByName("secretarys");
+        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.Department"));
+    }
+
+    public void testProcessPropertyMultipleDomainInvalid() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":Department a owl:Class ." + ENDL
+            + ":Organisation a owl:Class ." + ENDL
+            + ":departments a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company, :Organisation ;" + ENDL
+            + "             rdfs:range :Department ." + ENDL;
+
+        ont.read(new StringReader(owl), null, "N3");
+
+        try {
+            Model model = generator.process(ont, ns);
+            fail("Expected Exception to be thrown, property has more than one domain in target namespace");
+        } catch (Exception e) {
+        }
+    }
+
+
+
+    public void testProcessPropertyMultipleRangeValid() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":Department a owl:Class ." + ENDL
+            + ":departments a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company ;" + ENDL
+            + "             rdfs:range :Department, null:Section ." + ENDL
+            + ":secretarys a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company ;" + ENDL
+            + "             rdfs:range null:Secretary ." + ENDL;
+
+        ont.read(new StringReader(owl), null, "N3");
+
+        Model model = generator.process(ont, ns);
+        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Company"));
+        assertTrue(model.hasClassDescriptor("org.flymine.model.testmodel.Department"));
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
+        assertNotNull(cld.getCollectionDescriptorByName("departments"));
+        CollectionDescriptor cod = cld.getCollectionDescriptorByName("departments");
+        assertTrue(cod.getReferencedClassDescriptor().getName().equals("org.flymine.model.testmodel.Department"));
+
+        assertNull(cld.getCollectionDescriptorByName("secretarys"));
+    }
+
+    public void testProcessPropertyMultipleRangeInvalid() throws Exception {
+        String owl = "@prefix : <" + ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+            + "@prefix null: <http://www.flymine.org/null#> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ." + ENDL
+            + ":Department a owl:Class ." + ENDL
+            + ":departments a rdf:Property ;" + ENDL
+            + "             rdfs:domain :Company ;" + ENDL
+            + "             rdfs:range :Department, xsd:String ." + ENDL;
+
+        ont.read(new StringReader(owl), null, "N3");
+
+        try {
+            Model model = generator.process(ont, ns);
+            fail("Expected Exception to be thrown, property has more than one range");
+        } catch (Exception e) {
+        }
+    }
+
 }

@@ -10,6 +10,9 @@ package org.flymine.ontology;
  *
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileReader;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -21,6 +24,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.flymine.metadata.*;
 
@@ -77,9 +81,10 @@ public class Owl2FlyMine
                  continue;
             }
 
-            processProperty(ontModel, prop, false);
+            processProperty(ontModel, prop, tgtNamespace, false);
             if (prop.hasInverse()) {
-                processProperty(ontModel, (OntProperty) prop.listInverse().next(), true);
+                processProperty(ontModel, (OntProperty) prop.listInverse().next(),
+                                tgtNamespace, true);
             }
         }
 
@@ -123,10 +128,12 @@ public class Owl2FlyMine
      * to prevent isDatatypeProperty being called and attempting to examine a null domain.
      * @param ontModel the Jena ontology model
      * @param prop the OntProperty to convert to a FieldDescriptor
+     * @param tgtNs namespace within model that we are interested in
      * @param isInverse true if this property is an inverse
      * @throws Exception if error occurs processing property
      */
-    protected void processProperty(OntModel ontModel, OntProperty prop, boolean isInverse)
+    protected void processProperty(OntModel ontModel, OntProperty prop, String tgtNs,
+                                   boolean isInverse)
         throws Exception {
 
         Iterator r = prop.listRange();
@@ -153,30 +160,43 @@ public class Owl2FlyMine
             d = invProp.listRange();
         }
 
-        // we want properties to have exactly one domain
-        if (!d.hasNext()) {
-            throw new Exception("Property: " + prop.getURI().toString()
-                                + " does not have a defined domain.");
+        // we want properties to have exactly one domain in the target namespace
+        OntResource domain = null;
+        while (d.hasNext()) {
+            OntResource or = (OntResource) d.next();
+            if (or.getNameSpace() != null && or.getNameSpace().equals(tgtNs)) {
+                if (domain == null) {
+                    domain = or;
+                } else {
+                    throw new Exception("Property: " + prop.getURI().toString()
+                                        + " has more than one defined domain in tgtNs.");
+                }
+            }
         }
-        OntResource domain = (OntResource) d.next();
-        if (d.hasNext()) {
-            throw new Exception("Property: " + prop.getURI().toString()
-                                + " has more than one defined domain.");
+        if (domain == null) {
+            // property does not have a defined domain in the target namespace
+            return;
         }
 
-        //if (!domain.getNameSpace().equals(tgtNamespace)) {
-        //    continue;
-        //}
-
-        // we don't want heterogeneous collections/enumerations in our java
-        if (!r.hasNext()) {
-            throw new Exception("Property: " + prop.getURI().toString()
-                                + " does not have a defined range.");
+        // we don't want heterogeneous collections/enumerations in our java so check
+        // there is only one valid range
+        OntResource range = null;
+        while (r.hasNext()) {
+            OntResource or = (OntResource) r.next();
+            if (or.getNameSpace() != null && (or.getNameSpace().equals(tgtNs)
+                                  || or.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)
+                                  || or.getURI().equals(OntologyUtil.RDFS_NAMESPACE + "Literal"))) {
+                if (range == null) {
+                    range = or;
+                } else {
+                    throw new Exception("Property: " + prop.getURI().toString()
+                                        + " has more than one defined range.");
+                }
+            }
         }
-        OntResource range = (OntResource) r.next();
-        if (r.hasNext()) {
-            throw new Exception("Property: " + prop.getURI().toString()
-                                + " has more than one defined range.");
+        if (range == null) {
+            // ignore properties that don't have a range in a valid namespace
+            return;
         }
 
         if (invProp != null) {
@@ -185,8 +205,7 @@ public class Owl2FlyMine
 
         if (!isInverse && OntologyUtil.isDatatypeProperty((Property) prop)) {
             String javaType;
-            if (range.getNameSpace().equals(OntologyUtil.RDFS_NAMESPACE)
-                && range.getLocalName().equals("Literal")) {
+            if (range.getURI().equals(OntologyUtil.RDFS_NAMESPACE + "Literal")) {
                 javaType = "java.lang.String";
             } else if (range.getNameSpace().equals(OntologyUtil.XSD_NAMESPACE)) {
                 javaType = OntologyUtil.xmlToJavaType(range.getLocalName());
@@ -240,6 +259,32 @@ public class Owl2FlyMine
             fieldMap.put(className, fields);
         }
         return fields;
+    }
+
+    /**
+     * Main method to convert OWL to FlyMine model XML.
+     * @param args srcFilename, RDF format, tgtFilename, modelname, package, tgtNamespace
+     * @throws Exception if anything goes wrong
+     */
+    public static void main(String[] args) throws Exception {
+        if (args.length != 6) {
+            throw new IllegalArgumentException("Usage: FlyMine2Owl source_owl format"
+                                               + " target_xml model_name package namespace");
+        }
+        String srcFilename = args[0];
+        String format = args[1];
+        String tgtFilename = args[2];
+        String modelName = args[3];
+        String pkg = args[4];
+        String tgtNamespace = args[5];
+
+        Owl2FlyMine o2f = new Owl2FlyMine(modelName, pkg);
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new FileReader(new File(srcFilename)), null, format);
+        Model tgt = o2f.process(model, tgtNamespace);
+        FileWriter writer = new FileWriter(new File(tgtFilename));
+        writer.write(tgt.toString());
+        writer.close();
     }
 
 }
