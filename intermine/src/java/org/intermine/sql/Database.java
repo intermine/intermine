@@ -10,8 +10,6 @@ package org.intermine.sql;
  *
  */
 
-//import java.io.PrintWriter;
-//import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,9 +17,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
-//import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Date;
+import java.math.BigDecimal;
 import javax.sql.DataSource;
 
 import org.intermine.util.ShutdownHook;
@@ -319,5 +318,27 @@ public class Database implements Shutdownable
 
     }
 
+    private static final Map POSTGRESQL_TYPE_STRING_MAP = new HashMap();
+    
+    static {
+        POSTGRESQL_TYPE_STRING_MAP.put(Boolean.class, "boolean");
+        POSTGRESQL_TYPE_STRING_MAP.put(Float.class, "real");
+        POSTGRESQL_TYPE_STRING_MAP.put(Double.class, "double precision");
+        POSTGRESQL_TYPE_STRING_MAP.put(Short.class, "smallint");
+        POSTGRESQL_TYPE_STRING_MAP.put(Integer.class, "integer");
+        POSTGRESQL_TYPE_STRING_MAP.put(Long.class, "bigint");
+        POSTGRESQL_TYPE_STRING_MAP.put(BigDecimal.class, "numeric");
+        POSTGRESQL_TYPE_STRING_MAP.put(Date.class, "bigint");
+        POSTGRESQL_TYPE_STRING_MAP.put(String.class, "text");
+    }
 
+    /**
+     * Return the SQL type used to store objects of the given Class.  eg. return "double precision"
+     * for Double.class
+     * @param c the Class representing the java type
+     * @return the SQL type
+     */
+    public String getColumnTypeString(Class c) {
+        return (String) POSTGRESQL_TYPE_STRING_MAP.get(c);
+    }
 }
