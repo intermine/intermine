@@ -20,14 +20,14 @@ prepend MANPATH $JDK/man
 
 
 addjarstopath CLASSPATH $JDBC_HOME
+addjarstopath CLASSPATH /software/noarch/lib/java/
 addjarstopath CLASSPATH /software/noarch/biojava/
 addjarstopath CLASSPATH /software/noarch/jaxb/lib/
 addjarstopath CLASSPATH /software/noarch/mage/
 addjarstopath CLASSPATH /software/noarch/ojb/
 addjarstopath CLASSPATH /software/noarch/junit/
 addjarstopath CLASSPATH /software/noarch/castor/
-addjarstopath CLASSPATH /software/noarch/argouml/
-addjarstopath CLASSPATH /usr/share/java/
+#addjarstopath CLASSPATH /usr/share/java/
 
 append CLASSPATH .
 
@@ -42,4 +42,6 @@ fi
 
 # Aliases
 alias javac="jikes -depend"
-alias argouml="java -jar /software/noarch/argouml/argouml.jar"
+
+addjarstopath ARGOUMLCLASSPATH /software/noarch/argouml/
+alias argouml="java -classpath \$ARGOUMLCLASSPATH:\$CLASSPATH -jar /software/noarch/argouml/argouml.jar"
