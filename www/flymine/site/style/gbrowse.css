@@ -4,6 +4,8 @@
 
 .whiteboxwithborder {
   padding: 6px;
+  border: 1px solid grey;
+  background: white;
 }
 
 table td, table th {
@@ -18,9 +20,48 @@ table td, table th, .whiteboxwithborder {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
-#content {
-  padding: 15px;
-}
+.datatitle        {
+                    background-color: #FFFFFF;
+                    border: solid 1px grey; 
+                  }
+.databody         {
+                    border: solid 1px grey; 
+                  }
+.searchtitle      {
+                    background-color: white;
+                    border: solid 1px grey;
+                  }
+/*.searchbody       {
+	            font-size: small;
+                  }
+.settingstitle    {
+	            font-size: small;
+                  }
+.settingsbody     {                     
+	            font-size: small;
+                  }
+.uploadtitle      {
+	            font-size: small;
+                  }*/
+.uploadbody       {
+                    background-color: #FFFFFF;
+                    border: solid 1px grey; 
+                  }
+.technicalinfo    { background-color: #FFFFFF; }
+.toggle           { color: #3366FF; }
+.error            { color: red; }
+.note             { color: red; }
+.pre              { font-family: monospace; }
+.popup            { COLOR: #9F141A;
+                    CURSOR: help;
+                    TEXT-DECORATION: none
+                  }
 
-
-
+A.bblue           { color: #FFFFFF;
+                    background-color: #9999FF;
+                    text-align: center;
+                  }
+A.bred            { color: #FFFFFF;
+                    background-color: #FF6666;
+                    text-align: center;
+                  }
