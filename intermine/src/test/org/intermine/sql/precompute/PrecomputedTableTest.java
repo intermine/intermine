@@ -86,7 +86,7 @@ public class PrecomputedTableTest extends TestCase
     }
 
     public void testSQLString() throws Exception {
-        String createString = "CREATE TABLE precomp1 AS SELECT mytable.a FROM mytable WHERE mytable.a = 1";
+        String createString = "SELECT mytable.a FROM mytable WHERE mytable.a = 1";
         assertEquals(createString, pt1.getSQLString());
     }
 
