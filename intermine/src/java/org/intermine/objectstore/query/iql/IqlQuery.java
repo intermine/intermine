@@ -128,7 +128,7 @@ public class IqlQuery
             Iterator orderIter = q.getOrderBy().iterator();
             needComma = false;
             while (orderIter.hasNext()) {
-                QueryNode qn = (QueryNode) orderIter.next();
+                QueryOrderable qn = (QueryOrderable) orderIter.next();
                 if (needComma) {
                     retval += ", ";
                 }
@@ -140,13 +140,13 @@ public class IqlQuery
     }
 
     /**
-     * Converts a QueryNode into a String.
+     * Converts a QueryOrderable into a String.
      *
      * @param q a Query, to provide aliases
-     * @param qn a QueryNode to convert
+     * @param qn a QueryOrderable to convert
      * @return a String
      */
-    public static String nodeToString(Query q, QueryNode qn) {
+    public static String nodeToString(Query q, QueryOrderable qn) {
         if (qn instanceof QueryClass) {
             String nodeAlias = (String) q.getAliases().get(qn);
             return escapeReservedWord(nodeAlias);
@@ -227,6 +227,9 @@ public class IqlQuery
             String type = qn.getType().getName();
             return "(" + nodeToString(q, qc.getValue()) + ")::"
                 + type.substring(type.lastIndexOf('.') + 1);
+        } else if (qn instanceof QueryObjectReference) {
+            QueryObjectReference ref = (QueryObjectReference) qn;
+            return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
         } else {
             throw new IllegalArgumentException("Invalid QueryNode: " + qn.toString());
         }

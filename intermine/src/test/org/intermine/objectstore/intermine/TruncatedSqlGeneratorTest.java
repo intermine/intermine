@@ -124,6 +124,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results.put("IndexOf", "SELECT STRPOS(a1_.name, 'oy') AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY STRPOS(a1_.name, 'oy')");
         results.put("Substring", "SELECT SUBSTR(a1_.name, 2, 2) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY SUBSTR(a1_.name, 2, 2)");
         results.put("Substring2", "SELECT SUBSTR(a1_.name, 2) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY SUBSTR(a1_.name, 2)");
+        results.put("OrderByReference", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId, a1_.id");
     }
 
     protected DatabaseSchema getSchema() {

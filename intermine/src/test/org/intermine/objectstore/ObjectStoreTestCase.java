@@ -272,31 +272,39 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
             { "40" },
             { "50" },
             { "60" } };
-       results.put("TypeCast", toList(r));
+        results.put("TypeCast", toList(r));
 
-       r = new Object[][] { { new Integer(5) },
-           { new Integer(5) },
-           { new Integer(5) },
-           { new Integer(5) },
-           { new Integer(5) },
-           { new Integer(5) } };
-       results.put("IndexOf", toList(r));
+        r = new Object[][] { { new Integer(5) },
+            { new Integer(5) },
+            { new Integer(5) },
+            { new Integer(5) },
+            { new Integer(5) },
+            { new Integer(5) } };
+        results.put("IndexOf", toList(r));
 
-       r = new Object[][] { { "mp" },
-           { "mp" },
-           { "mp" },
-           { "mp" },
-           { "mp" },
-           { "mp" } };
-       results.put("Substring", toList(r));
+        r = new Object[][] { { "mp" },
+            { "mp" },
+            { "mp" },
+            { "mp" },
+            { "mp" },
+            { "mp" } };
+        results.put("Substring", toList(r));
 
-       r = new Object[][] { { "mployeeA1" },
-           { "mployeeA2" },
-           { "mployeeA3" },
-           { "mployeeB1" },
-           { "mployeeB2" },
-           { "mployeeB3" } };
-       results.put("Substring2", toList(r));
+        r = new Object[][] { { "mployeeA1" },
+            { "mployeeA2" },
+            { "mployeeA3" },
+            { "mployeeB1" },
+            { "mployeeB2" },
+            { "mployeeB3" } };
+        results.put("Substring2", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") },
+                             { data.get("EmployeeB1") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") } };
+        results.put("OrderByReference", toList(r));
     }
 
     /**

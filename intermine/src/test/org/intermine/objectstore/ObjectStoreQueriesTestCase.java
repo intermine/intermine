@@ -193,6 +193,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("IndexOf", indexOf());
         queries.put("Substring", substring());
         queries.put("Substring2", substring2());
+        queries.put("OrderByReference", orderByReference());
     }
 
     /*
@@ -1245,6 +1246,18 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryField f = new QueryField(qc, "name");
         QueryExpression e = new QueryExpression(f, QueryExpression.SUBSTRING, new QueryValue(new Integer(2)));
         q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * select a1_ FROM Employee AS a1_ ORDER BY a1_.department;
+     */
+    public static Query orderByReference() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToOrderBy(new QueryObjectReference(qc, "department"));
         return q;
     }
 }

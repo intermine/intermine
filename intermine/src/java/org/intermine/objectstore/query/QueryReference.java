@@ -11,7 +11,7 @@ package org.intermine.objectstore.query;
  */
 
 /**
- * Represents a field of a QueryClass that is a non-primitive type
+ * Represents a field of a QueryClass that is a non-primitive type.
  *
  * @author Mark Woodbridge
  * @author Richard Smith
@@ -23,7 +23,7 @@ public abstract class QueryReference
     protected Class type;
     
     /**
-     * Gets the QueryClass of which this reference is an member
+     * Gets the QueryClass of which this reference is an member.
      *
      * @return the QueryClass
      */    
@@ -32,7 +32,7 @@ public abstract class QueryReference
     }
 
     /**
-     * Gets the Java class of this QueryReference
+     * Gets the Java class of this QueryReference.
      *
      * @return the class name
      */    
@@ -41,7 +41,7 @@ public abstract class QueryReference
     }
 
     /**
-     * Gets the fieldname of this QueryReference
+     * Gets the fieldname of this QueryReference.
      *
      * @return the field name
      */

@@ -55,8 +55,8 @@ public class QueryCloner
             }
             Iterator orderIter = query.getOrderBy().iterator();
             while (orderIter.hasNext()) {
-                QueryNode origOrder = (QueryNode) orderIter.next();
-                QueryNode newOrder = (QueryNode) cloneThing(origOrder, fromElementMap);
+                QueryOrderable origOrder = (QueryOrderable) orderIter.next();
+                QueryOrderable newOrder = (QueryOrderable) cloneThing(origOrder, fromElementMap);
                 newQuery.addToOrderBy(newOrder);
             }
             Iterator groupIter = query.getGroupBy().iterator();
