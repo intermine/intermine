@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+
+    <sect1>
+        <para>This page will guide you through a very simple query: show all the Drosohila melanogaster gene names in FlyMine. </para>
+
+     <para>
+         <orderedlist>
+            <listitem>Select the starting point for your query. In this case, Gene.</listitem>
+          
+	  <entry>
+	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	  </entry>
+      
+
+            <listitem>You need to constrain the organism name so that you only get gene names from D. melanogaster.  Expand the organism information  and click on the -> next to name.  This adds the organism name to the right hand side of the page, where you can add your constraint.  In the box type Drosphila melanogaster and press add to query.</listitem>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="constrain1.gif" format="GIF"/>
+	  </entry>
+
+
+           <listitem>In your results output you want to view the gene names.  Click on 'show' next to name.  This adds the gene name field to the output. </listitem>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="show1.gif" format="GIF"/>
+	  </entry>
+
+
+           <listitem>You are now ready to run the query. </listitem>
+
+
+	  <entry>
+	      <inlinegraphic fileref="runQuery1.gif" format="GIF"/>
+	  </entry>
+
+           
+           <listitem>The output page shows the the first 10 rows of your results. </listitem>  
+
+
+	  <entry>
+	      <inlinegraphic fileref="runQuery3.gif" format="GIF"/>
+	  </entry>
+
+
+
+    </orderedlist>
+  </para>
+</sect1>
+
+
+</article>
