@@ -84,7 +84,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         DisplayQueryClass afterDisplayQueryClass =
             (DisplayQueryClass) afterQueryClasses.get(newAlias);
         assertNotNull(afterDisplayQueryClass);
-        Logger.log("fly2", afterDisplayQueryClass+"");
 
         DisplayQueryClass expected = new DisplayQueryClass();
         expected.setType("org.flymine.model.testmodel.Department");
