@@ -1516,7 +1516,7 @@
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic">
       <fileset dir="/shared/data/go-annotation">
-        <include name="gene_association.*"/>
+        <include name="gene_association*"/>
       </fileset>
     </convert-file>
 
