@@ -93,7 +93,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
 
-    private static final String[] LOG_TABLE_COLUMNS = new String[] {"optimise", "estimated",
+    private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise", "estimated",
         "execute", "permitted", "convert", "iql", "sql"};
 
     // see generateSql()
