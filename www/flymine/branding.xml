@@ -3,8 +3,17 @@
     <title>FlyMine</title>
     <stylesheet file="style/base.css"/>
     <stylesheet file="style/branding.css"/>
-    <meta name="keywords" content="microarray, bioinformatics, drosophila, genomics, OQL, integration, query optimiser"/>
-    <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics"/>
-    <headline>An integrated database for <span class="fly">Drosophila</span> and <span class="fly">Anopheles</span> genomics</headline>
-    <funding>FlyMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>.</funding>
+    <meta name="keywords" 
+          content="microarray, database, fly, proteomics, search, anopheles, gambiae,
+                   bioinformatics, drosophila, melanogaster, genomics, OQL, integration,
+                   query optimiser"/>  
+    <meta name="description" 
+          content="Integrated queryable database for Drosophila and Anopheles genomics"/> 
+
+    <headline>An integrated database for <span
+    class="organism-name">Drosophila</span> and <span
+    class="organism-name">Anopheles</span> genomics</headline>
+
+    <funding>FlyMine is funded by <a href="http://www.wellcome.ac.uk/">The
+    Wellcome Trust</a>.</funding> 
 </brand>
