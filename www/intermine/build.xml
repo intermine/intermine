@@ -95,13 +95,14 @@
   <taskdef
       name="insert-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
-      <classpath refid="test.class.path"/>
+      <classpath refid="demo.class.path"/>
   </taskdef>
 
   <insert-xml-data integrationWriter="integration.unittestsingle" xmlFile="../../intermine/resources/test/testmodel_data.xml" sourceName="demosource">
     <classpath refid="demo.class.path"/>
   </insert-xml-data>
 
+  <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
 </target>
 
 </project>
