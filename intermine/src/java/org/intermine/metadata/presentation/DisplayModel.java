@@ -11,6 +11,7 @@ package org.flymine.metadata.presentation;
  */
 
 import java.util.Collection;
+import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -54,7 +55,7 @@ public class DisplayModel
      * @return Collection of fully qualified class names
      */
     public Collection getClassNames() {
-        Collection collection = new ArrayList();
+        Collection collection = new TreeSet();
         Iterator iter = model.getClassDescriptors().iterator();
         while (iter.hasNext()) {
             collection.add(((ClassDescriptor) iter.next()).getName());
@@ -75,5 +76,4 @@ public class DisplayModel
         }
         return collection;
     }
-
 }
