@@ -14,10 +14,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Collections;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
@@ -45,6 +42,7 @@ public class CalculateLocations
     private static final Logger LOG = Logger.getLogger(CalculateLocations.class);
 
     protected ObjectStoreWriter osw;
+    protected ObjectStore os;
     protected Map chrById = new HashMap();
     protected Map bandToChr = new HashMap();
     protected Map chrToBand = new HashMap();
@@ -60,6 +58,7 @@ public class CalculateLocations
      */
     public CalculateLocations(ObjectStoreWriter osw) {
         this.osw = osw;
+        this.os = osw.getObjectStore();
     }
 
 
@@ -87,7 +86,6 @@ public class CalculateLocations
      * @throws Exception if anything goes wrong
      */
     public void createLocations() throws Exception  {
-        ObjectStore os = osw.getObjectStore();
 
         // 0. Hold Chromosomes in map by id
         Query q = new Query();
@@ -155,10 +153,7 @@ public class CalculateLocations
                             idBands.get(new Integer(bandOnChr.getChildId()));
                         Location scOnBandLoc = createLocation(band, bandOnChr, sc, scOnChr);
 
-                        Iterator storeIter = updateCollections(band, sc, scOnBandLoc).iterator();
-                        while (storeIter.hasNext()) {
-                            osw.store((InterMineObject) storeIter.next());
-                        }
+                        osw.store(scOnBandLoc);
                         i++;
                     }
                 }
@@ -184,6 +179,7 @@ public class CalculateLocations
         osw.beginTransaction();
         i = 0;
         j = 0;
+        long start = System.currentTimeMillis();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Location locContigOnSc = (Location) rr.get(2);
@@ -205,10 +201,7 @@ public class CalculateLocations
             contigToChr.put(contig.getId(), contigOnChr);
             contigToSc.put(contig.getId(), contigOnSc);
 
-            Iterator storeIter = updateCollections(chr, contig, contigOnChrLoc).iterator();
-            while (storeIter.hasNext()) {
-                osw.store((InterMineObject) storeIter.next());
-            }
+            osw.store(contigOnChrLoc);
             i++;
 
             // create location of contig on ChromosomeBand
@@ -225,13 +218,16 @@ public class CalculateLocations
                         Location contigOnBandLoc = createLocation(band, bandOnChr, contig,
                                                                   contigOnChr);
 
-                        storeIter = updateCollections(band, contig, contigOnBandLoc).iterator();
-                        while (storeIter.hasNext()) {
-                            osw.store((InterMineObject) storeIter.next());
-                        }
+                        osw.store(contigOnBandLoc);
                         j++;
                     }
                 }
+            }
+            if (i % 100 == 0) {
+                long now = System.currentTimeMillis();
+                LOG.info("Created " + i + " Contig/Chromosome and " + j
+                         + " Contig/ChromosomeBand locations (avg = "
+                         + ((60000L * i) / (now - start)) + " per minute)");
             }
         }
         osw.commitTransaction();
@@ -264,6 +260,7 @@ public class CalculateLocations
         i = 0;
         j = 0;
         k = 0;
+        start = System.currentTimeMillis();
         osw.beginTransaction();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -281,10 +278,7 @@ public class CalculateLocations
             Location bioOnChrLoc =
                 createChromosomeLocation(contigOnChr, bioOnContig, chr, bio);
 
-            Iterator storeIter = updateCollections(chr, bio, bioOnChrLoc).iterator();
-            while (storeIter.hasNext()) {
-                osw.store((InterMineObject) storeIter.next());
-            }
+            osw.store(bioOnChrLoc);
             i++;
 
             SimpleLoc bioOnChr = new SimpleLoc(chr.getId().intValue(),
@@ -300,15 +294,8 @@ public class CalculateLocations
                     if (overlap(scOnChr, bioOnChr)) {
                         Supercontig sc = (Supercontig) idScs.get(new Integer(scOnChr.getChildId()));
                         Location bioOnScLoc = createLocation(sc, scOnChr, bio, bioOnChr);
-                        LOG.error("scOnChr (" + sc.getId() + ", " + sc.getName() + "): "
-                                  + scOnChr.toString());
-                        LOG.error("bioOnChr (" + bio.getId() + ", " + bio.getName() + ", "
-                                  + DynamicUtil.decomposeClass(bio.getClass())
-                                  + ") : " + bioOnChr.toString());
-                        storeIter = updateCollections(sc, bio, bioOnScLoc).iterator();
-                        while (storeIter.hasNext()) {
-                            osw.store((InterMineObject) storeIter.next());
-                        }
+
+                        osw.store(bioOnScLoc);
                         j++;
                     }
                 }
@@ -324,22 +311,19 @@ public class CalculateLocations
                         ChromosomeBand band = (ChromosomeBand)
                             idBands.get(new Integer(bandOnChr.getChildId()));
                         Location bioOnBandLoc = createLocation(band, bandOnChr, bio, bioOnChr);
-                        LOG.error("bandOnChr (" + band.getId() + ", " + band.getName() + "): "
-                                  + bandOnChr.toString());
-                        LOG.error("bioOnChr (" + bio.getId() + ", " + bio.getName() + ", "
-                                  + DynamicUtil.decomposeClass(bio.getClass())
-                                  + ") : " + bioOnChr.toString());
 
-                        storeIter = updateCollections(band, bio, bioOnBandLoc).iterator();
-                        while (storeIter.hasNext()) {
-                            osw.store((InterMineObject) storeIter.next());
-                        }
+                        osw.store(bioOnBandLoc);
                         k++;
                     }
                 }
             }
-            LOG.info("feature: to Chromosome " + i + " to Supercontig " + j
-                      + " ChromsomeBand " + k);
+            if (i % 100 == 0) {
+                long now = System.currentTimeMillis();
+                LOG.info("Created " + i + " Chromosome, "
+                         + j + " SuperContig locations and "
+                         + k + " ChromosomeBand locations (avg = "
+                         + ((60000L * i) / (now - start)) + " per minute)");
+            }
         }
         osw.commitTransaction();
         LOG.info("Stored " + i + " Locations between features and Chromosome.");
@@ -498,8 +482,8 @@ public class CalculateLocations
         }
         // TODO evidence?
 
-        LOG.info("Created Location " + childOnParent + " for parent: " + parent + " and child: "
-                 + child);
+        //LOG.info("Created Location " + childOnParent + " for parent: " + parent + " and child: "
+        //         + child);
         return childOnParent;
     }
 
@@ -533,29 +517,6 @@ public class CalculateLocations
         return childOnChr;
     }
 
-
-    /**
-     * Given a Location and its subject and object add the location to the objects
-     * and subjects collections, put all three in a set and return.  Subject and
-     * object are actually cloned and new objects returned.
-     * @param object the object of the Location
-     * @param subject the subject of the Location
-     * @param loc the location
-     * @return a set of InterMineObjects to store
-     * @throws Exception if problem cloning InterMineObject
-     */
-    protected Set updateCollections(BioEntity object, BioEntity subject, Location loc)
-        throws Exception {
-        BioEntity newObj = (BioEntity) cloneInterMineObject(object);
-        List subjects = new ArrayList(newObj.getSubjects());
-        subjects.add(loc);
-        newObj.setSubjects(subjects);
-        BioEntity newSub = (BioEntity) cloneInterMineObject(subject);
-        List objects = new ArrayList(newSub.getObjects());
-        objects.add(loc);
-        newSub.setObjects(objects);
-        return new HashSet(Arrays.asList(new Object[] {newObj, newSub, loc}));
-    }
 
     /**
      * Return true if locations of two objects on some parent object
@@ -606,9 +567,9 @@ public class CalculateLocations
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
-
-        ObjectStore os = osw.getObjectStore();
+        //ObjectStore os = osw.getObjectStore();
         Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(10000);
         return res.iterator();
     }
 

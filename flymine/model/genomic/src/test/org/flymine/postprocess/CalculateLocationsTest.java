@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.io.InputStream;
 
 import org.intermine.objectstore.ObjectStore;
@@ -131,9 +132,6 @@ public class CalculateLocationsTest extends TestCase {
         Location result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, Supercontig.class).next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
-
-        org.intermine.web.LogMe.log("i", "expected: " + expItem);
-        org.intermine.web.LogMe.log("i", "result:   " + resItem);
 
         assertEquals(expItem, resItem);
     }
@@ -728,6 +726,75 @@ public class CalculateLocationsTest extends TestCase {
         assertEquals(toItem(exp4), toItem(res));
     }
 
+
+
+    // method removed - should test some other way
+//     public void testUpdateCollections() throws Exception {
+//         // Chromosome and ChromosomeBand in db with empty subjects/objects collections
+//         Chromosome chr = getChromosome();
+//         ChromosomeBand band = getChromosomeBand();
+//         Set toStore = new HashSet(Arrays.asList(new Object[] {chr, band}));
+//         Iterator i = toStore.iterator();
+//         while (i.hasNext()) {
+//             osw.store((InterMineObject) i.next());
+//         }
+
+//         // store updated objects
+//         Location loc = getBandOnChr();
+//         CalculateLocations cl = new CalculateLocations(osw);
+//         toStore = cl.updateCollections(chr, band, loc);;
+//         i = toStore.iterator();
+//         while (i.hasNext()) {
+//             osw.store((InterMineObject) i.next());
+//         }
+
+//         ObjectStore os = osw.getObjectStore();
+//         ChromosomeBand expBand = getChromosomeBand();
+//         expBand.setObjects(new ArrayList(Collections.singleton(loc)));
+//         expBand.setId(new Integer(0));
+//         Item expItem2 = FullRenderer.toItem(expBand, model);
+//         Query q2 = new Query();
+//         QueryClass qc2 = new QueryClass(ChromosomeBand.class);
+//         q2.addToSelect(qc2);
+//         q2.addFrom(qc2);
+//         SingletonResults sr2 = new SingletonResults(q2, os, os.getSequence());
+//         ChromosomeBand result2 = (ChromosomeBand) sr2.iterator().next();
+//         Item resItem2 = FullRenderer.toItem(result2, model);
+//         resItem2.setIdentifier("0");
+//         assertEquals(expItem2, resItem2);
+
+//         Chromosome expChr = getChromosome();
+//         expChr.setSubjects(new ArrayList(Collections.singleton(loc)));
+//         expChr.setId(new Integer(0));
+//         Item expItem1 = FullRenderer.toItem(expChr, model);
+//         Query q = new Query();
+//         QueryClass qc = new QueryClass(Chromosome.class);
+//         q.addToSelect(qc);
+//         q.addFrom(qc);
+//         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+//         Chromosome result = (Chromosome) sr.iterator().next();
+//         Item resItem = FullRenderer.toItem(result, model);
+//         resItem.setIdentifier("0");
+//         assertEquals(expItem1, resItem);
+
+// //         osw.flushObjectById();
+// //         os.flushObjectById();
+
+// //         ChromosomeBand expBand = getChromosomeBand();
+// //         expBand.setObjects(new ArrayList(Collections.singleton(loc)));
+// //         expBand.setId(new Integer(0));
+// //         Item expItem2 = FullRenderer.toItem(expBand, model);
+// //         Query q2 = new Query();
+// //         QueryClass qc2 = new QueryClass(ChromosomeBand.class);
+// //         q2.addToSelect(qc2);
+// //         q2.addFrom(qc2);
+// //         SingletonResults sr2 = new SingletonResults(q2, os, os.getSequence());
+// //         ChromosomeBand result2 = (ChromosomeBand) sr2.iterator().next();
+// //         Item resItem2 = FullRenderer.toItem(result2, model);
+// //         resItem2.setIdentifier("0");
+// //         assertEquals(expItem2, resItem2);
+//     }
+
     private Location createLocation(BioEntity object, BioEntity subject, int strand, int start, int end) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         loc.setObject(object);
@@ -740,28 +807,6 @@ public class CalculateLocationsTest extends TestCase {
         loc.setStrand(new Integer(strand));
         return loc;
     }
-
-
-//     public void testFindLocations() throws Exception {
-//         insertTestData();
-//         CalculateLocations cl = new CalculateLocations(osw);
-//         Map locs = new HashMap();
-//         Iterator iter = cl.findLocations(Chromosome.class, ChromosomeBand.class, locs);
-//         ResultsRow rr = (ResultsRow) iter.next();
-//         if (iter.hasNext()) {
-//             fail("expected only one object to be returned");
-//         }
-//         //o.setId(new Integer(0));
-//         //assertEquals(expected, result);
-//     }
-
-//     private void insertTestData() throws Exception {
-//         InputStream is = getClass().getClassLoader().getResourceAsStream("test/CalculateLocations_src.xml");
-//         XmlDataLoader dl = new XmlDataLoader(iw);
-//         Source source = iw.getMainSource("genomic-test");
-//         Source skelSource = iw.getSkeletonSource("genomic-test");
-//         dl.processXml(is, source, skelSource);
-//     }
 
 
     private Item toItem(InterMineObject o) {
