@@ -12,7 +12,6 @@
     <put name="header" value="/header.jsp"/>
     <put name="menu" value="/menu.jsp"/>
     <put name="errorMessages" value="/errorMessages.jsp"/>
-    <put name="description" value="/description.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
   </definition>
@@ -111,10 +110,7 @@
   </definition>
   <!--tiles-->
   <definition name="classDescription.tile" path="/classDescription.jsp" controllerUrl="/initClassDescription.do"/>
-  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do">
-    <put name="usertemplates" value="templateList.jsp"/>
-    <put name="globaltemplates" value="templateList.jsp"/>
-  </definition>
+  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
