@@ -187,7 +187,7 @@ public class MainHelper
         Map qNodes2 = new TreeMap(qNodes);
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
-            if (path.indexOf(".") != -1) {
+            if (path.indexOf(".") != -1 && !qNodes.containsKey(path)) {
                 addNode(qNodes2, path, model);
             }
         }

@@ -58,4 +58,11 @@ public class RightNode extends Node
     public void setConstraints(List constraints) {
         this.constraints = constraints;
     }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return super.toString() + " " + constraints;
+    }
 }
