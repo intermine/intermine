@@ -83,7 +83,7 @@ public class SerializationUtil
      */
     public static void registerMappings(TypeMapping tm) {
         registerDefaultMapping(tm, org.flymine.objectstore.query.fql.FqlQuery.class);
-        registerDefaultMapping(tm, org.flymine.sql.query.ExplainResult.class);
+        registerDefaultMapping(tm, org.flymine.objectstore.query.ResultsInfo.class);
         registerDefaultMapping(tm, ProxyBean.class);
         tm.register(org.flymine.metadata.Model.class,
                     new QName("", "model"),

@@ -37,7 +37,7 @@ import org.flymine.util.TypeUtil;
 
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.metadata.Model;
-import org.flymine.sql.query.ExplainResult;
+import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.model.testmodel.Address;
 import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Department;
@@ -97,12 +97,13 @@ public class SerializationFunctionalTest extends TestCase
         l.add("two");
         args.add(l);
 
-        ExplainResult e = new ExplainResult();
-        TypeUtil.setFieldValue(e, "rows", new Long(1));
-        TypeUtil.setFieldValue(e, "start", new Long(2));
-        TypeUtil.setFieldValue(e, "complete", new Long(3));
-        TypeUtil.setFieldValue(e, "width", new Long(4));
-        args.add(e);
+        ResultsInfo ri = new ResultsInfo();
+        TypeUtil.setFieldValue(ri, "rows", new Integer(1));
+        TypeUtil.setFieldValue(ri, "start", new Long(2));
+        TypeUtil.setFieldValue(ri, "complete", new Long(3));
+        TypeUtil.setFieldValue(ri, "min", new Integer(4));
+        TypeUtil.setFieldValue(ri, "max", new Integer(5));
+        args.add(ri);
 
         FqlQuery q = new FqlQuery("select c from Company as c", null);
         q.setParameters(l);

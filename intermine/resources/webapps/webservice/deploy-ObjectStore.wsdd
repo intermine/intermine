@@ -25,8 +25,8 @@
       serializer="org.flymine.objectstore.webservice.ser.DefaultSerializerFactory"
       deserializer="org.flymine.objectstore.webservice.ser.DefaultDeserializerFactory"
       encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-    <typeMapping qname="ExplainResult"
-      type="java:org.flymine.sql.query.ExplainResult"
+    <typeMapping qname="ResultsInfo"
+      type="java:org.flymine.objectstore.query.ResultsInfo"
       serializer="org.flymine.objectstore.webservice.ser.DefaultSerializerFactory"
       deserializer="org.flymine.objectstore.webservice.ser.DefaultDeserializerFactory"
       encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>

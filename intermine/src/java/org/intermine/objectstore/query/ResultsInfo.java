@@ -34,6 +34,12 @@ public class ResultsInfo
     public static final int ESTIMATE = 3;
     
     /**
+     * No-arg constructor to allow serialization
+     */
+    public ResultsInfo() {
+    }
+    
+    /**
      * Constructs an instance of ResultsInfo with all new parameters, without min and max.
      *
      * @param start the estimated amount of time required to fetch the first row of results, in
@@ -141,5 +147,31 @@ public class ResultsInfo
      */
     public int getMax() {
         return max;
+    }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        if (o instanceof ResultsInfo) {
+            ResultsInfo i = (ResultsInfo) o;
+            return i.start == start
+                && i.complete == complete
+                && i.rows == rows
+                && i.min == min
+                && i.max == max;
+        }
+        return false;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return  (int) (2 * start
+            +  3 * complete
+            + 5 * rows
+            + 7 * min
+            + 9 * max);
     }
 }
