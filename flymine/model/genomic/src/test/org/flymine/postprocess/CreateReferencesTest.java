@@ -113,10 +113,6 @@ public class CreateReferencesTest extends TestCase {
         Gene resGene = (Gene) row.get(0);
         Item resGeneItem = toItem(resGene);
   
-        org.intermine.web.LogMe.log("i", "ID: " + resGene.getId() + " - " + resGene);
-        org.intermine.web.LogMe.log("i", "Gene transcripts: " + resGene.getTranscripts());
-        org.intermine.web.LogMe.log("i", "Gene exons: " + resGene.getExons());
-
         assertEquals(expGeneItem, resGeneItem);
   
         q = new Query();
@@ -129,7 +125,6 @@ public class CreateReferencesTest extends TestCase {
   
         Transcript resTranscript = (Transcript) row.get(0);
         Item resTranscriptItem = toItem(resTranscript);
-        org.intermine.web.LogMe.log("i", "" + resTranscript);
         assertEquals(expTranscriptItem, resTranscriptItem);
   
         q = new Query();
@@ -142,7 +137,6 @@ public class CreateReferencesTest extends TestCase {
   
         Exon resExon = (Exon) row.get(0);
         Item resExonItem = toItem(resExon);
-        org.intermine.web.LogMe.log("i", "" + resExon);
         assertEquals(expExonItem, resExonItem);
         removeData();
     }
@@ -208,12 +202,6 @@ public class CreateReferencesTest extends TestCase {
 //         Gene resGene = (Gene) row.get(0);
 //         Item resGeneItem = toItem(resGene);
   
-//         org.intermine.web.LogMe.log("i", "------------------------------------------------------");
-//         org.intermine.web.LogMe.log("i", "gene from ObjectStore in test: "
-//                                     + resGene.getId() + " - " + resGene);
-//         org.intermine.web.LogMe.log("i", "Gene transcripts: " + resGene.getTranscripts());
-//         org.intermine.web.LogMe.log("i", "Gene exons: " + resGene.getExons());
-
 //         assertEquals(expGeneItem, resGeneItem);
   
 //         q = new Query();
@@ -226,7 +214,6 @@ public class CreateReferencesTest extends TestCase {
   
 //         Transcript resTranscript = (Transcript) row.get(0);
 //         Item resTranscriptItem = toItem(resTranscript);
-//         org.intermine.web.LogMe.log("i", "" + resTranscript);
 //         assertEquals(expTranscriptItem, resTranscriptItem);
   
 //         q = new Query();
@@ -239,7 +226,6 @@ public class CreateReferencesTest extends TestCase {
   
 //         Exon resExon = (Exon) row.get(0);
 //         Item resExonItem = toItem(resExon);
-//         org.intermine.web.LogMe.log("i", "" + resExon);
 //         assertEquals(expExonItem, resExonItem);
 //         removeData();
     }
