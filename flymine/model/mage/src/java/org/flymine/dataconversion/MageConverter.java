@@ -80,7 +80,6 @@ public class MageConverter extends FileConverter
     public void process(Reader reader) throws Exception {
         seenMap = new LinkedHashMap();
         dataItems = new LinkedHashSet();
-        id = 0;
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
@@ -102,22 +101,22 @@ public class MageConverter extends FileConverter
         long now = System.currentTimeMillis();
         writer.storeAll(seenMap.values());
         LOG.info("store seenMap " + seenMap.values().size()
-                  + "in " + (System.currentTimeMillis() - now) + " ms");
+                  + " in " + (System.currentTimeMillis() - now) + " ms");
 
         now = System.currentTimeMillis();
         writer.storeAll(dataItems);
         LOG.info("store dataItem " + dataItems.size()
-                 + "in " + (System.currentTimeMillis() - now) + " ms");
+                 + " in " + (System.currentTimeMillis() - now) + " ms");
 
         now = System.currentTimeMillis();
         writer.storeAll(padIdentifiers.values());
         LOG.info("store padIdentifiers " + padIdentifiers.values().size()
-                 + "in " + (System.currentTimeMillis() - now) + " ms");
+                 + " in " + (System.currentTimeMillis() - now) + " ms");
 
         now = System.currentTimeMillis();
         writer.storeAll(featureIdentifiers.values());
         LOG.info("store featureIdentifiers " + featureIdentifiers.values().size()
-                 + "in " + (System.currentTimeMillis() - now) + " ms");
+                 + " in " + (System.currentTimeMillis() - now) + " ms");
     }
 
 
@@ -142,6 +141,9 @@ public class MageConverter extends FileConverter
             if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")
                 && !cls.getName().equals("org.biomage.DesignElement.Feature")) {
                 item.setIdentifier(alias(className) + "_" + (id++));
+                if (cls.getName().endsWith("OntologyEntry")) {
+                    LOG.info("classname " + cls.getName() + " identifier: " + id);
+                }
                 seenMap.put(obj, item);
             }
         }
@@ -174,6 +176,7 @@ public class MageConverter extends FileConverter
                         if (sb.length() > 0) {
                             refs.setRefIds(sb.toString().trim());
                             item.addCollections(refs);
+                            refs.setItem(item);
                         }
                     } else if (m.getReturnType().getName().startsWith("org.biomage")) {
                         if (m.getReturnType().getName().startsWith(cls.getName() + "$")) {
@@ -184,6 +187,7 @@ public class MageConverter extends FileConverter
                             if (attValue != null) {
                                 attr.setValue(escapeQuotes(attValue));
                                 item.addAttributes(attr);
+                                attr.setItem(item);
                             } else {
                                 LOG.warn("Null value for attribute " + info.getName() + " in Item "
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
@@ -193,17 +197,20 @@ public class MageConverter extends FileConverter
                             ref.setName(info.getName());
                             ref.setRefId(createItem(value).getIdentifier());
                             item.addReferences(ref);
+                            ref.setItem(item);
                         }
                     } else if (!info.getName().equals("identifier")) {
                         Attribute attr = new Attribute();
                         attr.setName(info.getName());
                         attr.setValue(escapeQuotes(value.toString()));
                         item.addAttributes(attr);
+                        attr.setItem(item);
                         // TODO handle dates?
                     }
                 }
             }
         }
+
         if (className.equals("PhysicalArrayDesign")) {
             // if item does not have name set it is a placeholder do not want to store
             PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
@@ -268,20 +275,24 @@ public class MageConverter extends FileConverter
                     ref.setName("quantitationType");
                     ref.setRefId(createItem(qt).getIdentifier());
                     data.addReferences(ref);
+                    ref.setItem(data);
                     ref = new Reference();
                     ref.setName("designElement");
                     ref.setRefId(createItem(feature).getIdentifier());
                     data.addReferences(ref);
+                    ref.setItem(data);
                     Attribute attr = new Attribute();
                     attr.setName("value");
                     attr.setValue(value);
                     data.addAttributes(attr);
+                    attr.setItem(data);
                     // add normalised attribute - not actually in MAGE model, will be removed
                     // by MageDataTranslator before validating against model
                     Attribute norm = new Attribute();
                     norm.setName("normalised");
                     norm.setValue(normalised ? "true" : "false");
                     data.addAttributes(norm);
+                    norm.setItem(data);
                     //should create reference for bioAssay
                     //ref = new Reference();
                     //ref.setName("bioAssay");
@@ -292,6 +303,7 @@ public class MageConverter extends FileConverter
             }
             rl.setRefIds(sb.toString().trim());
             bdt.addCollections(rl);
+            rl.setItem(bdt);
             dataItems.add(bdt);
             Reference bdtRef = new Reference();
             bdtRef.setName("bioDataValues");
@@ -306,10 +318,10 @@ public class MageConverter extends FileConverter
             }
             newRefs.add(bdtRef);
             item.setReferences(newRefs);
+            bdtRef.setItem(item);
         }
         return item;
     }
-
 
 
 
