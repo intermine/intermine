@@ -1,10 +1,8 @@
 package org.flymine.dataloader;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.lang.reflect.Method;
 import java.io.File;
 import java.io.Writer;
 import java.io.FileWriter;
@@ -15,7 +13,6 @@ import org.exolab.castor.mapping.*;
 import org.exolab.castor.xml.*;
 
 import org.flymine.FlyMineException;
-import org.flymine.util.ModelUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ListBean;
 
@@ -65,7 +62,7 @@ public class XmlWriterCastorImpl implements XmlWriter
 
             List list = new ArrayList();
             list.add(obj);
-            List flat = (List) flatten(list);
+            List flat = TypeUtil.flatten(list);
 
             ListBean bean = new ListBean();
             bean.setItems(list);
@@ -76,9 +73,10 @@ public class XmlWriterCastorImpl implements XmlWriter
             throw new FlyMineException("IO problem. ", e);
         } catch (MappingException e) {
             throw new FlyMineException("Problem setting Castor mapping. ", e);
+        } catch (Exception e) {
+            throw new FlyMineException(e);
         }
     }
-
 
     /**
      * Marshal a collection of business objects to the given XML file.
@@ -93,7 +91,7 @@ public class XmlWriterCastorImpl implements XmlWriter
             Marshaller marshaller = new Marshaller(writer);
             marshaller.setMapping(map);
 
-            List flatList = (List) flatten(col);
+            List flatList = TypeUtil.flatten(col);
 
             ListBean bean = new ListBean();
             bean.setItems(flatList);
@@ -104,41 +102,8 @@ public class XmlWriterCastorImpl implements XmlWriter
             throw new FlyMineException("IO problem. ", e);
         } catch (MappingException e) {
             throw new FlyMineException("Problem setting Castor mapping. ", e);
-        }
-    }
-
-    // make all nested objects top-level in returned collection
-    private Collection flatten(Collection c) throws FlyMineException {
-        try {
-            List toStore = new ArrayList();
-            Iterator i = c.iterator();
-            while (i.hasNext()) {
-                flatten(i.next(), toStore);
-            }
-            return toStore;
         } catch (Exception e) {
-            throw new FlyMineException("Problem occurred flattening collection. ", e);
+            throw new FlyMineException(e);
         }
     }
-
-    private void flatten(Object o, Collection c) throws Exception {
-        if (o == null || c.contains(o)) {
-            return;
-        }
-        c.add(o);
-        Method[] getters = TypeUtil.getGetters(o.getClass());
-        for (int i = 0; i < getters.length; i++) {
-            Method getter = getters[i];
-            Class returnType = getter.getReturnType();
-            if (ModelUtil.isCollection(returnType)) {
-                Iterator iter = ((Collection) getter.invoke(o, new Object[] {})).iterator();
-                while (iter.hasNext()) {
-                    flatten(iter.next(), c);
-                }
-            } else if (ModelUtil.isReference(returnType)) {
-                flatten(getter.invoke(o, new Object[] {}), c);
-            }
-        }
-    }
-
 }
