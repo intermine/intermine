@@ -42,20 +42,20 @@ public class ClassConstraintTest extends TestCase {
 
     public void testInvalidTypeQCQC() throws Exception{
         try {
-            constraint = new ClassConstraint(company1, null, company2);
-            fail("An NullPointerException should have been thrown");
-        } catch (NullPointerException e) {
+            new ClassConstraint(company1, ConstraintOp.CONTAINS, company2);
+            fail("An IllegalArgumentException  should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
     }
 
     public void testValidTypeQCQC() throws Exception {
-        constraint = new ClassConstraint(company1, ClassConstraint.EQUALS, company2);
-        assertEquals(ClassConstraint.EQUALS, constraint.getType());
+        constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, company2);
+        assertEquals(ConstraintOp.EQUALS, constraint.getType());
     }
 
     public void testNullConstructor1QCQC() throws Exception {
         try {
-            constraint = new ClassConstraint(null, ClassConstraint.EQUALS, company2);
+            new ClassConstraint(null, ConstraintOp.EQUALS, company2);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -64,17 +64,25 @@ public class ClassConstraintTest extends TestCase {
 
     public void testNullConstructor2QCQC() throws Exception {
         try {
-            constraint = new ClassConstraint(company1, ClassConstraint.EQUALS, (QueryClass) null);
+            new ClassConstraint(company1, null, company2);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
         }
     }
 
+    public void testNullConstructor3QCQC() throws Exception {
+        try {
+            new ClassConstraint(company1, ConstraintOp.EQUALS, null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
 
     public void testInvalidClassTypesQCQC() throws Exception {
         try {
-            constraint = new ClassConstraint(employee, ClassConstraint.EQUALS, company1);
+            new ClassConstraint(employee, ConstraintOp.EQUALS, company1);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         }
@@ -82,7 +90,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testValidClassTypesSubclassQCQC() throws Exception {
         try {
-            constraint = new ClassConstraint(employee, ClassConstraint.EQUALS, manager);
+            new ClassConstraint(employee, ConstraintOp.EQUALS, manager);
         }
         catch (IllegalArgumentException e) {
             fail("IllegalArgumentException should not have been thrown");
@@ -98,13 +106,13 @@ public class ClassConstraintTest extends TestCase {
     }
 
     public void testValidTypeQCObj() throws Exception {
-        constraint = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
-        assertEquals(ClassConstraint.EQUALS, constraint.getType());
+        constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, company1Object);
+        assertEquals(ConstraintOp.EQUALS, constraint.getType());
     }
 
     public void testNullConstructor1QCObj() throws Exception {
         try {
-            constraint = new ClassConstraint(null, ClassConstraint.EQUALS, company1Object);
+            constraint = new ClassConstraint(null, ConstraintOp.EQUALS, company1Object);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -113,17 +121,16 @@ public class ClassConstraintTest extends TestCase {
 
     public void testNullConstructor2QCObj() throws Exception {
         try {
-            constraint = new ClassConstraint(company1, ClassConstraint.EQUALS, (Object) null);
+            constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, (Object) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
         }
     }
 
-
     public void testInvalidClassTypesQCObj() throws Exception {
         try {
-            constraint = new ClassConstraint(employee, ClassConstraint.EQUALS, company1Object);
+            constraint = new ClassConstraint(employee, ConstraintOp.EQUALS, company1Object);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         }
@@ -131,7 +138,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testValidClassTypesSubclassQCObj() throws Exception {
         try {
-            constraint = new ClassConstraint(employee, ClassConstraint.EQUALS, managerObject);
+            constraint = new ClassConstraint(employee, ConstraintOp.EQUALS, managerObject);
         }
         catch (IllegalArgumentException e) {
             fail("IllegalArgumentException should not have been thrown");
@@ -139,13 +146,13 @@ public class ClassConstraintTest extends TestCase {
     }
 
     public void testEqualsHashCode() throws Exception {
-        Constraint c1 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1);
-        Constraint c2 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1);
-        Constraint c3 = new ClassConstraint(company1, ClassConstraint.EQUALS, company2);
-        Constraint c4 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
-        Constraint c5 = new ClassConstraint(company1, ClassConstraint.EQUALS, company1Object);
-        Constraint c6 = new ClassConstraint(company1, ClassConstraint.NOT_EQUALS, company1Object);
-        Constraint c7 = new ClassConstraint(company1, ClassConstraint.NOT_EQUALS, company1Object, true);
+        Constraint c1 = new ClassConstraint(company1, ConstraintOp.EQUALS, company1);
+        Constraint c2 = new ClassConstraint(company1, ConstraintOp.EQUALS, company1);
+        Constraint c3 = new ClassConstraint(company1, ConstraintOp.EQUALS, company2);
+        Constraint c4 = new ClassConstraint(company1, ConstraintOp.EQUALS, company1Object);
+        Constraint c5 = new ClassConstraint(company1, ConstraintOp.EQUALS, company1Object);
+        Constraint c6 = new ClassConstraint(company1, ConstraintOp.NOT_EQUALS, company1Object);
+        Constraint c7 = new ClassConstraint(company1, ConstraintOp.NOT_EQUALS, company1Object, true);
 
         assertEquals(c1, c1);
         assertEquals(c1, c2);
@@ -172,7 +179,5 @@ public class ClassConstraintTest extends TestCase {
 
         assertTrue(c6.hashCode() != c7.hashCode());
     }
-
-
 }
 

@@ -9,13 +9,11 @@ package org.flymine.objectstore.query;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
 import junit.framework.TestCase;
 
 import org.flymine.model.testmodel.*;
 
 public class SubqueryConstraintTest extends TestCase {
-
     private SubqueryConstraint constraint;
     private QueryValue qe1;
     private QueryClass qc1;
@@ -33,12 +31,15 @@ public class SubqueryConstraintTest extends TestCase {
 
     public void testNullQueryConstructor() throws Exception {
         try {
-            constraint = new SubqueryConstraint(null, SubqueryConstraint.CONTAINS, qc1);
+            new SubqueryConstraint(null, ConstraintOp.CONTAINS, qe1);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
+    }
+    
+    public void testNullTypeConstructor() throws Exception {
         try {
-            constraint = new SubqueryConstraint(null, SubqueryConstraint.CONTAINS, qe1);
+            new SubqueryConstraint(subquery, null, qc1);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -46,30 +47,22 @@ public class SubqueryConstraintTest extends TestCase {
 
     public void testNullArgConstructor() throws Exception {
         try {
-            QueryEvaluable qe2 = null;
-            constraint = new SubqueryConstraint(subquery, SubqueryConstraint.DOES_NOT_CONTAIN, qe2);
+            new SubqueryConstraint(subquery, ConstraintOp.DOES_NOT_CONTAIN, (QueryClass) null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
         try {
-            QueryClass qc2 = null;
-            constraint = new SubqueryConstraint(subquery, SubqueryConstraint.DOES_NOT_CONTAIN, qc2);
+            new SubqueryConstraint(subquery, ConstraintOp.DOES_NOT_CONTAIN, (QueryValue) null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
-
     }
 
     public void testInvalidType() {
         try {
-            constraint = new SubqueryConstraint(subquery, null, qc1);
-            fail("An NullPointerException should have been thrown");
-        } catch (NullPointerException e) {
-        }
-        try {
-            constraint = new SubqueryConstraint(subquery, null, qe1);
-            fail("An NullPointerException should have been thrown");
-        } catch (NullPointerException e) {
+            new SubqueryConstraint(subquery, ConstraintOp.EQUALS, qe1);
+            fail("An IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
 
     }
@@ -77,7 +70,7 @@ public class SubqueryConstraintTest extends TestCase {
     public void testSelectListClass() throws Exception {
         Query q1 = new Query();
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
             fail("Expected: IllegalArgumentException - no items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
@@ -86,7 +79,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qc1);
 
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
             fail("Expected: IllegalArgumentException - no items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
@@ -95,7 +88,7 @@ public class SubqueryConstraintTest extends TestCase {
     public void testSelectListEvaluable() throws Exception {
         Query q1 = new Query();
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qe1);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qe1);
             fail("Expected: IllegalArgumentException - no items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
@@ -104,7 +97,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qc1);
 
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qe1);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qe1);
             fail("Expected: IllegalArgumentException - no items in subquery select");
         } catch ( IllegalArgumentException e) {
         }
@@ -118,7 +111,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qeStr);
 
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qeNum);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qeNum);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -130,7 +123,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qe1);
 
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -142,7 +135,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(qc1);
 
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qe1);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qe1);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -156,7 +149,7 @@ public class SubqueryConstraintTest extends TestCase {
         q1.addToSelect(manager);
 
         try {
-            constraint = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, department);
+            constraint = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, department);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -169,10 +162,10 @@ public class SubqueryConstraintTest extends TestCase {
         Query q2 = new Query();
         q2.addToSelect(qe1);
 
-        SubqueryConstraint sc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
-        SubqueryConstraint sc2 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
-        SubqueryConstraint sc3 = new SubqueryConstraint(q2, SubqueryConstraint.CONTAINS, qe1);
-        SubqueryConstraint sc4 = new SubqueryConstraint(q2, SubqueryConstraint.DOES_NOT_CONTAIN, qe1);
+        SubqueryConstraint sc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
+        SubqueryConstraint sc2 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
+        SubqueryConstraint sc3 = new SubqueryConstraint(q2, ConstraintOp.CONTAINS, qe1);
+        SubqueryConstraint sc4 = new SubqueryConstraint(q2, ConstraintOp.DOES_NOT_CONTAIN, qe1);
 
         assertEquals(sc1, sc1);
         assertEquals(sc1, sc2);
@@ -187,10 +180,10 @@ public class SubqueryConstraintTest extends TestCase {
         Query q2 = new Query();
         q2.addToSelect(qe1);
 
-        SubqueryConstraint sc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
-        SubqueryConstraint sc2 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
-        SubqueryConstraint sc3 = new SubqueryConstraint(q2, SubqueryConstraint.CONTAINS, qe1);
-        SubqueryConstraint sc4 = new SubqueryConstraint(q2, SubqueryConstraint.DOES_NOT_CONTAIN, qe1);
+        SubqueryConstraint sc1 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
+        SubqueryConstraint sc2 = new SubqueryConstraint(q1, ConstraintOp.CONTAINS, qc1);
+        SubqueryConstraint sc3 = new SubqueryConstraint(q2, ConstraintOp.CONTAINS, qe1);
+        SubqueryConstraint sc4 = new SubqueryConstraint(q2, ConstraintOp.DOES_NOT_CONTAIN, qe1);
 
         assertEquals(sc1.hashCode(), sc1.hashCode());
         assertEquals(sc1.hashCode(), sc2.hashCode());

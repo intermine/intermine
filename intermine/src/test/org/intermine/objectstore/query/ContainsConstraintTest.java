@@ -37,7 +37,7 @@ public class ContainsConstraintTest extends TestCase {
 
     public void testNullConstructor1() throws Exception {
         try {
-            constraint = new ContainsConstraint(null, ContainsConstraint.CONTAINS, qc3);
+            constraint = new ContainsConstraint(null, ConstraintOp.CONTAINS, qc1);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -45,7 +45,15 @@ public class ContainsConstraintTest extends TestCase {
 
     public void testNullConstructor2() throws Exception {
         try {
-            constraint = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, null);
+            constraint = new ContainsConstraint(collRef, null, qc1);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+
+    public void testNullConstructor3() throws Exception {
+        try {
+            constraint = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -53,26 +61,31 @@ public class ContainsConstraintTest extends TestCase {
 
     public void testInvalidType() {
         try {
-            constraint = new ContainsConstraint(collRef, null, qc3);
-            fail("An NullPointerException should have been thrown");
-        } catch (NullPointerException e) {
+            constraint = new ContainsConstraint(collRef, ConstraintOp.EQUALS, qc3);
+            fail("An IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
         }
+    }
+
+    public void testValidConstruction() {
+        new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc1);
+        new ContainsConstraint(collRef, ConstraintOp.DOES_NOT_CONTAIN, qc1);
     }
 
     public void testIncompatibleTypesReference() throws Exception {
         try {
             // objRef has type Manager, qc3 is type Employee
-            constraint = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc3);
+            constraint = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc3);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testEquals() throws Exception {
-        ContainsConstraint cc1 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
-        ContainsConstraint cc2 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
-        ContainsConstraint cc3 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2);
-        ContainsConstraint cc4 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2, true);
+        ContainsConstraint cc1 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
+        ContainsConstraint cc2 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
+        ContainsConstraint cc3 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2);
+        ContainsConstraint cc4 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2, true);
 
         assertEquals(cc1, cc1);
         assertEquals(cc1, cc2);
@@ -81,10 +94,10 @@ public class ContainsConstraintTest extends TestCase {
     }
 
         public void testHashCode() throws Exception {
-        ContainsConstraint cc1 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
-        ContainsConstraint cc2 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
-        ContainsConstraint cc3 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2);
-        ContainsConstraint cc4 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2, true);
+        ContainsConstraint cc1 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
+        ContainsConstraint cc2 = new ContainsConstraint(collRef, ConstraintOp.CONTAINS, qc3);
+        ContainsConstraint cc3 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2);
+        ContainsConstraint cc4 = new ContainsConstraint(objRef, ConstraintOp.CONTAINS, qc2, true);
 
         assertEquals(cc1.hashCode(), cc1.hashCode());
         assertEquals(cc1.hashCode(), cc2.hashCode());
