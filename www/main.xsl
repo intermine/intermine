@@ -23,6 +23,7 @@
 <!--  <xsl:variable name="source" select="substring-after(ni:systemId(),concat($sourceref,'/'))"/>-->
 
   <xsl:include href="menu.xsl"/>
+  <xsl:include href="rss.xsl"/>
   <xsl:include href="docbook.xsl"/>
   <xsl:include href="ulink.xsl"/>
   <xsl:include href="page_template.xsl"/>
@@ -40,6 +41,12 @@
       <div class="body">
         <xsl:apply-templates select="*[position()!=1]"/>
       </div>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="column">
+    <div style="width:50%;float:left">
+      <xsl:apply-templates/>
     </div>
   </xsl:template>
   
