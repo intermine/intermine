@@ -175,10 +175,28 @@ public class BuildDbTask extends Task
             c = database.getConnection();
             c.setAutoCommit(true);
             c.createStatement().execute("CREATE SEQUENCE " + SERIAL_SEQUENCE_NAME);
+        } catch (SQLException e) {
+            // probably happens because the SEQUENCE already exists
+            LOG.info("Failed to create SEQUENCE: " + e);
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+
+        c = null;
+
+        try {
+            c = database.getConnection();
+            c.setAutoCommit(true);
             c.createStatement().execute("CREATE SEQUENCE "
                                         + ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
         } catch (SQLException e) {
-            LOG.error("Failed to create SEQUENCE: " + e);
+            // probably happens because the SEQUENCE already exists
+            LOG.info("Failed to create SEQUENCE: " + e);
         } finally {
             if (c != null) {
                 try {
