@@ -123,6 +123,11 @@
   </ant>
 </target>
 
+<target name="release-production-webapp-nobuild">
+  <ant dir="../../flymine-www" target="release-webapp" inheritRefs="true">
+    <property name="intermine.dist.path" location="../../intermine-www/dist"/>
+  </ant>
+</target>
 
 <target name="clean">
   <delete dir="${build.www}"/>
