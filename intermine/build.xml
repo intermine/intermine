@@ -40,6 +40,7 @@
   <property name="build.test" location="${build}/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.src.java" location="${build}/javasrc"/>
+  <property name="build.src.web.java" location="${build}/webjavasrc"/>
   <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
@@ -227,6 +228,7 @@
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.src.java}"/>
+    <mkdir dir="${build.src.web.java}"/>
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
@@ -694,6 +696,15 @@
     <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
   </target>
 
+  <target name="compile-testmodel-web-java" depends="prepare-webapp"
+          description="Build the java code specific to the testmodel">
+    <ant antfile="build-model.xml" target="compile-webapp-java" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="model.src" value="${model}/testmodel"/>
+    </ant>    
+  </target>
+
   <target name="build-webapp" depends="prepare-webapp"
           description="Build webapp without including a model">
     <war destfile="${dist.webapp}/intermine.war"
@@ -702,8 +713,9 @@
     </war>
   </target>
 
-  <target name="build-testmodel-webapp" depends="prepare-webapp, jar-testmodel"
-    description="Build webapp including the test model">
+  <target name="build-testmodel-webapp" 
+          depends="prepare-webapp, jar-testmodel, compile-testmodel-web-java"
+          description="Build webapp including the test model">
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
