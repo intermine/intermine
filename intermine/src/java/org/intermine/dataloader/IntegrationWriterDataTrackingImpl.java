@@ -181,7 +181,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         sortedEquivalentObjects = new HashSet();
                     } else {
                         Comparator compare = new SourcePriorityComparator(dataTracker, field,
-                                (type == SOURCE ? source : skelSource), o);
+                                (type == SOURCE ? source : skelSource), o, dbIdsStored);
                         sortedEquivalentObjects = new TreeSet(compare);
                     }
 
@@ -197,15 +197,15 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                 && (fieldSource.equals(source) || (fieldSource.equals(skelSource)
                                         && (type != SOURCE)))) {
                             if (type == SOURCE) {
-                                LOG.error("Unequivalent objects have the same"
-                                        + " non-skeleton Source; o1 = \"" + o + "\", o2 = \"" + obj
-                                        + "\", source1 = \"" + source + "\", source2 = \""
-                                        + fieldSource + "\" for field \"" + field.getName() + "\"");
-                                throw new IllegalArgumentException("Unequivalent objects have the"
-                                        + " same non-skeleton Source; o1 = \"" + o
-                                        + "\", o2 = \"" + obj + "\", source1 = \"" + source
-                                        + "\", source2 = \"" + fieldSource + "\" for field \""
-                                        + field.getName() + "\"");
+                                String errMessage = "Unequivalent objects have the same"
+                                    + " non-skeleton Source; o1 = \"" + o
+                                    + "\" (from source), o2 = \"" + obj + "\"("
+                                    + (dbIdsStored.contains(obj.getId()) ? "stored in this run"
+                                            : "from database") + "), source1 = \"" + source
+                                    + "\", source2 = \"" + fieldSource + "\" for field \""
+                                    + field.getName() + "\"";
+                                LOG.error(errMessage);
+                                throw new IllegalArgumentException(errMessage);
                             }
                             if (type != FROM_DB) {
                                 assignMapping(o.getId(), obj.getId());

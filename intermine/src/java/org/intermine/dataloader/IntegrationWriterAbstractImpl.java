@@ -33,6 +33,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntToIntMap;
+import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -56,6 +57,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected static final int FROM_DB = 1;
     protected static final int SOURCE = 2;
     protected IntToIntMap idMap = new IntToIntMap();
+    protected IntPresentSet dbIdsStored = new IntPresentSet();
     protected int idMapOps = 0;
 
     /**
@@ -292,6 +294,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public void assignMapping(Integer source, Integer dest) {
         if ((source != null) && (dest != null)) {
             idMap.put(source, dest);
+            dbIdsStored.add(dest);
             idMapOps++;
             if (idMapOps % 100000 == 0) {
                 LOG.info("idMap size = " + idMap.size() + ", ops = " + idMapOps);

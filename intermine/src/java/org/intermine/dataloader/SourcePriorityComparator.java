@@ -15,6 +15,7 @@ import java.util.Comparator;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
+import org.intermine.util.IntPresentSet;
 
 import org.apache.log4j.Logger;
 
@@ -33,6 +34,7 @@ public class SourcePriorityComparator implements Comparator
     private FieldDescriptor field;
     private Source def;
     private InterMineObject defObj;
+    private IntPresentSet dbIdsStored;
 
     /**
      * Constructs a new Comparator for comparing objects for priority for a given field.
@@ -42,13 +44,15 @@ public class SourcePriorityComparator implements Comparator
      * @param def the default Source
      * @param defObj a InterMineObject that came from a data source, not from the destination
      * objectstore, and should be associated with the default source
+     * @param dbIdsStored the set of IDs stored in this dataloader run - improves error messages
      */
     public SourcePriorityComparator(DataTracker dataTracker, FieldDescriptor field,
-            Source def, InterMineObject defObj) {
+            Source def, InterMineObject defObj, IntPresentSet dbIdsStored) {
         this.dataTracker = dataTracker;
         this.field = field;
         this.def = def;
         this.defObj = defObj;
+        this.dbIdsStored = dbIdsStored;
     }
 
     /**
@@ -89,14 +93,16 @@ public class SourcePriorityComparator implements Comparator
             }
             int retval = DataLoaderHelper.comparePriority(field, source1, source2);
             if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
-                LOG.error("Unequivalent objects have the same"
-                        + " non-skeleton Source; o1 = \"" + o1 + "\", o2 = \"" + o2
-                        + "\", source1 = \"" + source1 + "\", source2 = \"" + source2
-                        + "\" for field \"" + field.getName() + "\"");
-                throw new IllegalArgumentException("Unequivalent objects have the same"
-                        + " non-skeleton Source; o1 = \"" + o1 + "\", o2 = \"" + o2
-                        + "\", source1 = \"" + source1 + "\", source2 = \"" + source2
-                        + "\" for field \"" + field.getName() + "\"");
+                String errMessage = "Unequivalent objects have the same"
+                    + " non-skeleton Source; o1 = \"" + o1 + "\" ("
+                    + (o1 == defObj ? "from source" : (dbIdsStored.contains(f1.getId())
+                                ? "stored in this run" : "from database")) + "), o2 = \"" + o2
+                    + "\"(" + (o2 == defObj ? "from source" : (dbIdsStored.contains(f2.getId())
+                                ? "stored in this run" : "from database")) + "), source1 = \""
+                    + source1 + "\", source2 = \"" + source2 + "\" for field \""
+                    + field.getName() + "\"";
+                LOG.error(errMessage);
+                throw new IllegalArgumentException(errMessage);
             }
             return retval;
         }
