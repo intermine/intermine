@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.List;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -110,6 +111,19 @@ public class ExportAction extends InterMineAction
         response.setHeader("Content-Disposition ", "inline; filename=results-table.xsl");
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+
+        int DEFAULT_MAX = 10000;
+
+        int maxExcelSize =
+            WebUtil.getIntSessionProperty(session, "max.excel.export.size", DEFAULT_MAX);
+
+        if (pt.getSize() > maxExcelSize) {
+            ActionMessage actionMessage =
+                new ActionMessage("export.excelExportTooBig", new Integer(maxExcelSize));
+            recordError(actionMessage, request);
+            
+            return mapping.getInputForward();
+        }
 
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("results");

@@ -27,8 +27,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 
-import org.apache.log4j.Logger;
-
 /**
  * An action that makes a bag from text.
  *
@@ -37,8 +35,6 @@ import org.apache.log4j.Logger;
 
 public class BuildBagAction extends InterMineLookupDispatchAction
 {
-    protected static final Logger LOG = Logger.getLogger(BuildBagAction.class);
-
     /**
      * Action for creating a bag of Strings from a text field.
      *
@@ -60,17 +56,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
-        Map webProperties =
-            (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-        String maxBagSizeString = (String) webProperties.get("max.bag.size");
-
-        int maxBagSize = 10000;
-
-        try {
-            maxBagSize = Integer.parseInt(maxBagSizeString);
-        } catch (NumberFormatException e) {
-            LOG.warn("Failed to parse max.bag.size: " + maxBagSizeString);
-        }
+        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
         InterMineBag bag = new InterMineBag();
         String trimmedText = buildBagForm.getText().trim();

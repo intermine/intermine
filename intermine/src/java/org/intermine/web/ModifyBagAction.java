@@ -22,16 +22,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
-import org.apache.log4j.Logger;
-
 /**
  * Implementation of <strong>Action</strong> to modify bags
  * @author Mark Woodbridge
  */
 public class ModifyBagAction extends InterMineAction
 {
-    protected static final Logger LOG = Logger.getLogger(ModifyBagAction.class);
-
     /**
      * Forward to the correct method based on the button pressed
      * @param mapping The ActionMapping used to select this instance
@@ -84,17 +80,9 @@ public class ModifyBagAction extends InterMineAction
             combined.addAll((Collection) savedBags.get(selectedBags[i]));
         }
 
-        Map webProperties =
-            (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-        String maxBagSizeString = (String) webProperties.get("max.bag.size");
+        int DEFAULT_MAX = 10000;
 
-        int maxBagSize = 10000;
-
-        try {
-            maxBagSize = Integer.parseInt(maxBagSizeString);
-        } catch (NumberFormatException e) {
-            LOG.warn("Failed to parse max.bag.size: " + maxBagSizeString);
-        }
+        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", DEFAULT_MAX);
 
         if (combined.size () > maxBagSize) {
             ActionMessage actionMessage =
