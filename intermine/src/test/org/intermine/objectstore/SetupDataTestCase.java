@@ -100,7 +100,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         map.loadMapping(mapFile);
 
         URL testdataUrl = ObjectStoreQueriesTestCase.class.getClassLoader()
-            .getResource("test/testmodel.xml");
+            .getResource("test/testmodel_data.xml");
 
         Reader reader = new FileReader(testdataUrl.getFile());
         Unmarshaller unmarshaller = new Unmarshaller(map);

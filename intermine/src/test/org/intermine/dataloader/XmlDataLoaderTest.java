@@ -129,7 +129,7 @@ public class XmlDataLoaderTest extends TestCase
 
     public void testStoreFromFile() throws Exception {
         XmlDataLoader dl = new XmlDataLoader(iw);
-        InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel.xml");
+        InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
         dl.processXml(new InputSource(testData));
 
         // Just test that a specific Company is there
@@ -145,7 +145,7 @@ public class XmlDataLoaderTest extends TestCase
         assertEquals(5678, c2.getVatNumber());
 
         // Read in the file again in order to delete the objects in it
-        InputStream testData2 = getClass().getClassLoader().getResourceAsStream("test/testmodel.xml");
+        InputStream testData2 = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
         Unmarshaller unmarshaller = new Unmarshaller(map);
         unmarshaller.setMapping(map);
         List objects = (List) unmarshaller.unmarshal(new InputSource(testData2));

@@ -131,6 +131,9 @@
     <copy todir="${build.resources.testxml}">
       <fileset dir="${resources}/test/xml" />
     </copy>
+    <copy todir="${build.resources.testxml}">
+      <fileset dir="${resources}/test" />
+    </copy>
 
   </target>
 
@@ -485,7 +488,7 @@
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <insert-xml-data integrationWriter="integration.unittest" file="${build.resources.testxml}/testmodel.xml">
+    <insert-xml-data integrationWriter="integration.unittest" file="${build.resources.testxml}/testmodel_data.xml">
       <classpath refid="test.class.path"/>
     </insert-xml-data>
 
