@@ -83,6 +83,8 @@ public abstract class QueryTestCase extends TestCase
         queries.put("Contains1N", contains1N());
         queries.put("ContainsMN", containsMN());
         queries.put("SimpleGroupBy", simpleGroupBy());
+        queries.put("MultiJoin", multiJoin());
+        queries.put("SelectComplex", selectComplex());
     }
 
     /**
@@ -214,11 +216,11 @@ public abstract class QueryTestCase extends TestCase
     /*
       select name
       from Company
-      where name like "company"
+      where name like "Company%"
     */
     public Query whereSimpleLike() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("company");
+        QueryValue v1 = new QueryValue("Company%");
         QueryField f1 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
         Query q1 = new Query();
@@ -231,11 +233,11 @@ public abstract class QueryTestCase extends TestCase
     /*
       select name
       from Company
-      where name = "companyA"
+      where name = "CompanyA"
     */
     public Query whereEqualString() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v1 = new QueryValue("CompanyA");
         QueryField f1 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
         Query q1 = new Query();
@@ -248,12 +250,12 @@ public abstract class QueryTestCase extends TestCase
     /*
       select name
       from Company
-      where name LIKE "company"
+      where name LIKE "Company%"
       and vatNumber > 2000
     */
     public Query whereAndSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("company");
+        QueryValue v1 = new QueryValue("Company%");
         QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
@@ -272,12 +274,12 @@ public abstract class QueryTestCase extends TestCase
     /*
       select name
       from Company
-      where name LIKE "companyA"
+      where name LIKE "CompanyA%"
       or vatNumber > 2000
     */
     public Query whereOrSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v1 = new QueryValue("CompanyA%");
         QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
@@ -296,12 +298,12 @@ public abstract class QueryTestCase extends TestCase
     /*
       select name
       from Company
-      where not (name LIKE "company"
+      where not (name LIKE "Company%"
       and vatNumber > 2000)
     */
     public Query whereNotSet() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("company");
+        QueryValue v1 = new QueryValue("Company%");
         QueryValue v2 = new QueryValue(new Integer(2000));
         QueryField f1 = new QueryField(c1, "name");
         QueryField f2 = new QueryField(c1, "vatNumber");
@@ -340,7 +342,7 @@ public abstract class QueryTestCase extends TestCase
     /*
       select department
       from Department
-      where (select company from Company where name = "companyA") contains department
+      where (select company from Company where name = "CompanyA") contains department
     */
     public Query whereSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -348,7 +350,7 @@ public abstract class QueryTestCase extends TestCase
         q1.addFrom(c1);
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v1 = new QueryValue("CompanyA");
         q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
         QueryClass c2 = new QueryClass(Department.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
@@ -362,7 +364,7 @@ public abstract class QueryTestCase extends TestCase
     /*
       select department
       from Department
-      where (select company from Company where name = "companyA") !contains department
+      where (select company from Company where name = "CompanyA") !contains department
     */
     public Query whereNotSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -370,7 +372,7 @@ public abstract class QueryTestCase extends TestCase
         q1.addFrom(c1);
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v1 = new QueryValue("CompanyA");
         q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
         QueryClass c2 = new QueryClass(Department.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.DOES_NOT_CONTAIN, c2);
@@ -384,7 +386,7 @@ public abstract class QueryTestCase extends TestCase
     /*
       select department
       from Department
-      where not (select company from Company where name = "companyA") contains department
+      where not (select company from Company where name = "CompanyA") contains department
     */
     public Query whereNegSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -392,7 +394,7 @@ public abstract class QueryTestCase extends TestCase
         q1.addFrom(c1);
         q1.addToSelect(c1);
         QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v1 = new QueryValue("CompanyA");
         q1.setConstraint(new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1));
         QueryClass c2 = new QueryClass(Department.class);
         SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
@@ -482,14 +484,14 @@ public abstract class QueryTestCase extends TestCase
       select department, manager
       from Department, Manager
       where department.manager contains manager
-      and department.name = "departmentA1"
+      and department.name = "DepartmentA1"
     */
 
       public Query contains11() throws Exception {
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Manager.class);
         QueryReference qr1 = new QueryObjectReference(qc1, "manager");
-        QueryValue v1 = new QueryValue("departmentA");
+        QueryValue v1 = new QueryValue("DepartmentA");
         QueryField qf1 = new QueryField(qc1, "name");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
         Query q1 = new Query();
@@ -509,14 +511,14 @@ public abstract class QueryTestCase extends TestCase
       select company, department
       from Company, Department
       where company contains department
-      and company.name = "companyA"
+      and company.name = "CompanyA"
     */
       public Query contains1N() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
-        QueryValue v1 = new QueryValue("companyA");
+        QueryValue v1 = new QueryValue("CompanyA");
         QueryField qf1 = new QueryField(qc1, "name");
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -535,15 +537,14 @@ public abstract class QueryTestCase extends TestCase
       select contractor, company
       from Contractor, Company
       where contractor.companys contains company
-      and contractor.name = "contractorA"
-
+      and contractor.name = "ContractorA"
     */
       public Query containsMN() throws Exception {
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
         QueryReference qr1 = new QueryCollectionReference(qc1, "companys");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
-        QueryValue v1 = new QueryValue("contractorA");
+        QueryValue v1 = new QueryValue("ContractorA");
         QueryField qf1 = new QueryField(qc1, "name");
         Query q1 = new Query();
         q1.addToSelect(qc1);
@@ -578,6 +579,65 @@ public abstract class QueryTestCase extends TestCase
         q1.addToGroupBy(qc1);
         return q1;
     }
+
+    /*
+      select company, department, manager, address
+      from Company, Department, Manager, Address
+      where company contains department
+      and department.manager = manager
+      and manager.address = address
+      and manager.name = "EmployeeA1"
+    */
+    public Query multiJoin() throws Exception {
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        QueryClass qc3 = new QueryClass(Manager.class);
+        QueryClass qc4 = new QueryClass(Address.class);
+        QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
+        QueryReference qr2 = new QueryObjectReference(qc2, "manager");
+        QueryReference qr3 = new QueryObjectReference(qc3, "address");
+        QueryField qf1 = new QueryField(qc3, "name");
+        QueryValue qv1 = new QueryValue("EmployeeA1");
+
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addToSelect(qc2);
+        q1.addToSelect(qc3);
+        q1.addToSelect(qc4);
+        q1.addFrom(qc1);
+        q1.addFrom(qc2);
+        q1.addFrom(qc3);
+        q1.addFrom(qc4);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2));
+        cs1.addConstraint(new ContainsConstraint(qr2, ContainsConstraint.CONTAINS, qc3));
+        cs1.addConstraint(new ContainsConstraint(qr3, ContainsConstraint.CONTAINS, qc4));
+        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, qv1));
+        return q1;
+    }
+
+    /*
+      select company, avg(company.vatNumber) + 20, department.name, department
+      from Company, Department
+    */
+    public Query selectComplex() throws Exception {
+        QueryClass c1 = new QueryClass(Company.class);
+        QueryClass c2 = new QueryClass(Department.class);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryField f2 = new QueryField(c1, "vatNumber");
+        QueryField f3 = new QueryField(c2, "name");
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addFrom(c2);
+        q1.addToSelect(c1);
+        QueryExpression e1 = new QueryExpression(new QueryFunction(f2, QueryFunction.AVERAGE),
+                QueryExpression.ADD, new QueryValue(new Integer(20)));
+        q1.addToSelect(e1);
+        q1.addToSelect(f3);
+        q1.addToSelect(c2);
+        return q1;
+    }
+
 
     private Collection data() throws Exception {
         Company p1 = p1(), p2 = p2();
