@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<article>
+  
+  <artheader>
+    <date>2003-10-14</date>
+    <title>An Expert-Controlled Method for Merging OWL Ontologies (Working Document)</title>
+    <authorgroup>
+      <author>
+        <firstname>Richard</firstname>
+        <surname>Smith</surname>
+      </author>
+      <author>
+        <firstname>Mark</firstname>
+        <surname>Woodbridge</surname>
+      </author>
+    </authorgroup>
+  </artheader>
+  
+
+  <para>
+    We describe a simple method to merge OWL ontologies given that points of intersection between source ontologies have been identified manually.  An expert in the field of interest can define classes/properties that are equivalent between any number of source OWL ontologies.  Using this definition automatic creation of a new target, merged ontology is performed using the equivalence terms in the OWL vocabulary.  Specifically, the user will define a merge specification listing names of intersecting resources in the target document.  This have an owl:equivalent or owl:sameAs statement associated with them for each source document they appear in.  Automatic merging is done by transferring each resource from source documents to the target space <emphasis>unless</emphasis> it is listed as an equivalence in the merge spec, in which case it maps to the given name.
+  </para>
+    <sect1>
+      <title>Introduction to concepts</title>
+      owl : properties are toplevel
+    </sect1>
+
+    <sect1>
+      <title>Problem Space</title>
+      We need a method of producing a merged ontology from any number of source ontologies.  As much of this task as possible should be automated but key job of identifying intersection points between them is done by one or more users who are familiar with the data in question.  We do not require an algorithm to [semi-]automate this procedure.  We do, however, wish to eliminate any labour for the user over and above deciding upon the equivalence of terms.  It is desirable to make the mapping between source and merged OWL files reversible, to allow retrieval of original ontologies and to retain knowledge of which terms are derived from which source.
+    </sect1>
+
+    <sect1>
+      <title>Merging by Equivalence</title>
+        A merge specification is produced by the user given the knowledge of the data source.  This describes the the following:
+        <itemizedlist>
+          <listitem>classes/properties that are part of more than one ontology</listitem>
+          <listitem>classes/properties from a single source that will map to a different local name in the target document</listitem>
+        </itemizedlist>
+        <para>
+          We define the terms: 'namesapce' as  the url location of an OWL document, 'local name' as the name of a resource within a particular namespace and 'full name' as a fully qualified resource name, i.e. namespace + local name.  Each resouce listed in the merge spec must give the information:
+       </para>
+       <para>
+         The namespace of the mergespce document
+
+       </para> 
+    </sect1>
+
+</article>

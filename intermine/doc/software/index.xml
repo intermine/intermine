@@ -23,7 +23,12 @@
   <section>
     <heading>Using FlyMine models</heading>
     <item><ulink url="metadata/model_creation">Creating a model</ulink></item>
-    <item><ulink url="ontology">FlyMine and Ontologies</ulink></item>
+  </section>
+
+  <section>
+    <heading>Ontologies</heading>
+    <item><ulink url="ontologies/ontology">Overview and Current Issues</ulink></item>
+    <item><ulink url="ontologies/owl_generation">Converting Source Ontologies to OWL</ulink></item>
   </section>
 
   <section>
