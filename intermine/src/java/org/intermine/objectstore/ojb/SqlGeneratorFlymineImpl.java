@@ -54,12 +54,12 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
-
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.accesslayer.sql.SqlGeneratorDefaultImpl;
 import org.apache.ojb.broker.platforms.Platform;
+
 import org.flymine.objectstore.query.Query;
-import org.apache.log4j.Logger;
+
 /**
  * SqlGeneratorFlymineImpl
  *
@@ -68,8 +68,8 @@ import org.apache.log4j.Logger;
 
 public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
 {
-
-    protected static final Logger LOG = Logger.getLogger(SqlGeneratorFlymineImpl.class);
+    protected static final org.apache.log4j.Logger LOG
+        = org.apache.log4j.Logger.getLogger(SqlGeneratorFlymineImpl.class);
 
     /**
      * Constructor, chains to SqlGeneratorDefaultImpl constructor
@@ -91,8 +91,9 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
     public String getPreparedSelectStatement(Query query, DescriptorRepository dr, int start,
             int limit) {
 
-        // TODO - if SQL statements are to be cached this is where to do it
-        // implemetation is awaiting a proper equals() method for org.flymine.objectstore.ojb.Query
+        // caching of generated sql statements requires that a proper equals() method
+        // is implemented for org.flymine.objectstore.Query.  Most queries tested take
+        // around 1ms to produce so a cache would be of limited value unless this changes.
 
         FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr);
         String result = sql.getStatement();
@@ -103,66 +104,4 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
         return result;
     }
 
-    // block execution of OJB queries (?) - currently need OJB queries to be used
-    // e.g. when doing a store or delete
-    /**
-     * Refuses to create a Select statement for the OJB-specific statement type.
-     *
-     * @param query an OJB query object
-     * @param cld its associated ClassDescriptor
-     * @return never
-     * @throws UnsupportedOperationException all the time
-     */
-    /*    public String getPreparedSelectStatement(org.apache.ojb.broker.query.Query query,
-            ClassDescriptor cld) {
-        throw (new UnsupportedOperationException("Method not "
-                    + "supported in SqlGeneratorFlymineImpl"));
-                    }
-    */
-
-    /**
-     * Refuses to create a Select statement for the OJB-specific statement type.
-     *
-     * @param query an OJB query object
-     * @param cld its associated ClassDescriptor
-     * @return never
-     * @throws UnsupportedOperationException all the time
-     */
-    /*
-    public String getSelectStatementDep(org.apache.ojb.broker.query.Query query,
-            ClassDescriptor cld) {
-        throw (new UnsupportedOperationException("Method not "
-                    + "supported in SqlGeneratorFlymineImpl"));
-                    }
-    */
-
-    /**
-     * Refuses to create a Select statement for the OJB-specific statement type.
-     *
-     * @param table the indirection table to be used
-     * @param selectColumns a list of columns in the select
-     * @param columns a list of other columns
-     * @return never
-     * @throws UnsupportedOperationException all the time
-     */
-    /*
-    public String getSelectMNStatement(String table, String[] selectColumns, String[] columns) {
-        throw (new UnsupportedOperationException("Method not "
-                    + "supported in SqlGeneratorFlymineImpl"));
-    }
-    */
-
-    /**
-     * Refuses to create a Select statement for the OJB-specific statement type.
-     *
-     * @param cld a ClassDescriptor
-     * @return never
-     * @throws UnsupportedOperationException all the time
-     */
-    /*
-    public String getPreparedSelectByPkStatement(ClassDescriptor cld) {
-        throw (new UnsupportedOperationException("Method not "
-                    + "supported in SqlGeneratorFlymineImpl"));
-    }
-    */
 }
