@@ -27,15 +27,14 @@ import org.flymine.objectstore.query.Query;
 public class ConstraintListCreator
 {
     /**
-     * Converts a constraint into a List of PrintableConstraint objects.
+     * Converts a constraint from a query into a List of PrintableConstraint objects.
      *
      * @param query a Query object to embed into PrintableConstraint objects
-     * @param constraint a Constraint
      * @return a List of PrintableConstraint objects
      */
-    public static List createList(Query query, Constraint constraint) {
+    public static List createList(Query query) {
         List retval = new ArrayList();
-        addToList(retval, query, constraint);
+        addToList(retval, query, query.getConstraint());
         return retval;
     }
 

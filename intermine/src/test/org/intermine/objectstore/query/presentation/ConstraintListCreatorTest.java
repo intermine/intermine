@@ -32,7 +32,7 @@ public class ConstraintListCreatorTest extends TestCase
         FqlQuery fq = new FqlQuery("select a from Company as a", "org.flymine.model.testmodel");
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
-        List got = ConstraintListCreator.createList(q, q.getConstraint());
+        List got = ConstraintListCreator.createList(q);
 
         assertEquals(expected, got);
     }
@@ -42,7 +42,7 @@ public class ConstraintListCreatorTest extends TestCase
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(new AssociatedConstraint(q, q.getConstraint()));
-        List got = ConstraintListCreator.createList(q, q.getConstraint());
+        List got = ConstraintListCreator.createList(q);
 
         assertEquals(expected, got);
     }
@@ -55,7 +55,7 @@ public class ConstraintListCreatorTest extends TestCase
         while (conIter.hasNext()) {
             expected.add(new AssociatedConstraint(q, (Constraint) conIter.next()));
         }
-        List got = ConstraintListCreator.createList(q, q.getConstraint());
+        List got = ConstraintListCreator.createList(q);
 
         assertEquals(expected, got);
     }
@@ -65,7 +65,7 @@ public class ConstraintListCreatorTest extends TestCase
         Query q = FqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(new PrintableConstraint(q, (ConstraintSet) q.getConstraint()));
-        List got = ConstraintListCreator.createList(q, q.getConstraint());
+        List got = ConstraintListCreator.createList(q);
 
         assertEquals(expected, got);
     }
