@@ -479,8 +479,10 @@ public class Query implements FromElement
     public static void main(String args[]) throws Exception {
         PrintStream out = System.out;
         if (args.length > 2) {
-            out.println("Usage: java org.flymine.objectstore.query.Query <objectstore alias> - to enter shell-mode");
-            out.println("       java org.flymine.objectstore.query.Query <objectstore alias> \"<FQL Query>\" - to run");
+            out.println("Usage: java org.flymine.objectstore.query.Query "
+                        + "<objectstore alias> - to enter shell-mode");
+            out.println("       java org.flymine.objectstore.query.Query "
+                        + "<objectstore alias> \"<FQL Query>\" - to run");
             out.println("                      a one-off query");
         } else {
             try {
