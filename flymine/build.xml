@@ -179,6 +179,7 @@
     <pathelement location="${build.test}"/>
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
+    <pathelement location="${build.model}/xmitest"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -312,10 +313,10 @@
   <!-- Models to build -->
 
   <!-- Testmodel -->
-  <target name="build-testmodel" depends="compile-main" >
-    <ant antfile="build-model.xml" target="build-model-from-zargo">
+  <target name="build-testmodel" depends="compile-main, copy-model-testmodel" >
+    <ant antfile="build-model.xml" target="build-model-from-xml">
       <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${model}/uml"/>
+      <property name="model.src" value="${model}/flymine"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
@@ -356,6 +357,17 @@
   <!-- copy original .wrm file to model directory for acedataloadertest -->
   <target name="copy-model-acedbtest" depends="build-acedbtest">
     <copy todir="${build.model}/acedbtest" file="${model}/acedb/acedbtest.wrm"/>
+  </target>
+
+  <!-- copy original flymine model file to model directory for testmodel -->
+  <target name="copy-model-testmodel">
+    <copy todir="${build.model}/testmodel" file="${model}/flymine/testmodel_model.xml"/>
+  </target>
+
+  <!-- copy original .xmi file to model directory for XmiParserFunctionalTest -->
+  <target name="copy-model-xmitest">
+    <copy todir="${build.model}/xmitest" file="${model}/uml/xmitest.xmi"/>
+    <copy todir="${build.model}/xmitest" file="${model}/uml/xmitest.xml"/>
   </target>
 
 
@@ -467,7 +479,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, copy-model-acedbtest"
+  <target name="test-main" depends="compile-test, build-db-testmodel, copy-model-acedbtest, copy-model-xmitest"
           description="perform JUnit tests on main source code" >
 
     <!-- this will cause every test to be re-run if any java file changes -->
