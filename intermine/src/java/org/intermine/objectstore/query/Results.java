@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreLimitReachedException;
 import org.intermine.util.CacheMap;
 
 /**
@@ -295,8 +294,6 @@ public class Results extends AbstractList
 
                 batches.put(key, rows);
             }
-        } catch (ObjectStoreLimitReachedException e) {
-            throw e;
         } catch (IndexOutOfBoundsException e) {
             synchronized (this) {
                 if (rows == null) {
