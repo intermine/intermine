@@ -1649,13 +1649,13 @@
                                            load-static,
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
+                                           build-uniprot-production,
                                            build-psi-production,
                                            build-orthologues-production,
                                            build-rnai-production,
                                            build-phenotype-production,
                                            build-go-production,
                                            build-protein_structure-production,
-                                           build-uniprot-production,
                                            analyse-db-production,
                                            grant-db-production"/>
 
@@ -1735,18 +1735,29 @@
     <mappings alias="osw.production" type="add-licences" integrationWriter="integration.production"/>
   </target>
 
+  <target name="update-orthologues" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <mappings alias="osw.production" type="update-orthologues"/>
+  </target>
+
   <target name="post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
     <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
     <antcall target="analyse-db-production"/>
+    <antcall target="update-orthologues"/>
+    <antcall target="analyse-db-production"/>
     <antcall target="make-spanning-locations"/>
     <antcall target="analyse-db-production"/>
-    <antcall target="transfer-sequences"/>
-    <antcall target="create-indexes-production-attribute"/>
-    <antcall target="analyse-db-production"/>
+    <!--antcall target="transfer-sequences"/-->
+    <!--antcall target="create-indexes-production-attribute"/-->
+    <!--antcall target="analyse-db-production"/-->
   </target>
+
 
   <!-- ========== OBJECTSTORE EXPORT TARGETS ========== -->
   <target name="write-gff" depends="compile-genomic-java-from-db">
