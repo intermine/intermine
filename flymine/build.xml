@@ -1329,18 +1329,10 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/databases.xml" sourceName="static">
-      <classpath refid="models.class.path"/>
-    </load-xml-data>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/organisms.xml" sourceName="static">
-      <classpath refid="models.class.path"/>
-    </load-xml-data>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/publications.xml" sourceName="static">
-      <classpath refid="models.class.path"/>
-    </load-xml-data>
-    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static">
-      <classpath refid="models.class.path"/>
-    </load-xml-data>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/databases.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/publications.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static"/>
   </target>
 
 
@@ -1433,6 +1425,17 @@
       <property name="objectstore.name" value="os.genomic-test"/>
     </ant>
   </target>
+
+  <target name="create-indexes-genomic-test">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.genomic-test"/>
+      <property name="objectstore.name" value="os.genomic-test"/>
+    </ant>
+  </target>
+
+
 
     <target name="build-db-fulldatatest" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
