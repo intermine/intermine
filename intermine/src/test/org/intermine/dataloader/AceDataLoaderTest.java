@@ -1,5 +1,7 @@
 package org.flymine.dataloader;
 
+import java.util.Collection;
+
 import junit.framework.TestCase;
 
 import org.acedb.*;
@@ -230,5 +232,26 @@ public class AceDataLoaderTest extends TestCase {
 
     }
 
+    public void testProcessObjects() throws Exception {
+        StaticAceSet set = new StaticAceSet(null, null, null);
+        StaticAceObject obj1 = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceNode node1 = new StaticAceNode("stringValue", obj1);
+        obj1.addNode(node1);
+        StaticStringValue value1 = new StaticStringValue("A string", node1);
+        node1.addNode(value1);
+        StaticAceObject obj2 = new StaticAceObject("AceTestObject2", null, AceTestObject.class.getName());
+        StaticAceNode node2 = new StaticAceNode("stringValue", obj2);
+        obj2.addNode(node2);
+        StaticStringValue value2 = new StaticStringValue("A second string", node2);
+        node2.addNode(value2);
+
+        set.add("1", obj1);
+        set.add("2", obj2);
+
+        Collection ret = AceDataLoader.processAceObjects(set, null);
+
+        assertEquals(2, ret.size());
+
+    }
 
 }
