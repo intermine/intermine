@@ -29,6 +29,7 @@
     </section>
     <section>
         <heading>Prototype</heading>
+        <item><ulink url="/internal/prototype/building">How to build</ulink></item>
         <item><ulink url="/internal/prototype/overview">Overview</ulink></item>
         <item><ulink url="/internal/prototype/data_model">Data model</ulink></item>
         <item><ulink url="/internal/prototype/objectstore_interface">ObjectStore interface</ulink></item>
