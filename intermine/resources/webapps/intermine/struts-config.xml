@@ -200,7 +200,7 @@
 
   <!-- ========== Controller Configuration ================================ -->
 
-  <controller>
+  <controller processorClass="org.intermine.web.InterMineRequestProcessor">
     <!-- The "input" parameter on "action" elements is the name of a
          local or global "forward" rather than a module-relative path -->
     <set-property property="inputForward" value="true"/>
