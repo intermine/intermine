@@ -299,6 +299,8 @@ public class DataTracker
             try {
                 conn.close();
                 storeConn.close();
+                conn = null;
+                storeConn = null;
             } catch (SQLException e) {
                 IllegalArgumentException e2 = new IllegalArgumentException();
                 e2.initCause(e);
