@@ -24,7 +24,9 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
     public void testSelectValidClassName() throws Exception {
         setRequestPathInfo("/queryClassSelect");
         getSession().setAttribute("queryClasses", new HashMap());
-        addRequestParameter("className", "org.flymine.model.testmodel.Company");
+        QueryClassSelectForm form = new QueryClassSelectForm();
+        form.setClassName("org.flymine.model.testmodel.Company");
+        setActionForm(form);
         addRequestParameter("action", "Add");
         actionPerform();
 
@@ -35,7 +37,6 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
     public void testSelectNullClassName() throws Exception {
         setRequestPathInfo("/queryClassSelect");
         getSession().setAttribute("queryClasses", new HashMap());
-        addRequestParameter("action", "Add");
         actionPerform();
 
         verifyForward("error");

@@ -56,9 +56,9 @@ public class QueryClassSelectAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
-        String className = (String) request.getParameter("className");
+        String className = ((QueryClassSelectForm) form).getClassName();
 
-        //in this case it's possible that someone hasn't selected a class from the list
+        //it's possible that someone has clicked the button without selecting a class from the list
         if (className != null) {
             QueryBuildHelper.addClass(queryClasses, className);
         }
