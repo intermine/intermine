@@ -148,6 +148,8 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise)
         throws ObjectStoreException {
+        checkStartLimit(start, limit);
+
         ResultsInfo estimate = estimate(q);
         if (estimate.getComplete() > maxTime) {
             throw new ObjectStoreException("Estimated time to run query ("
