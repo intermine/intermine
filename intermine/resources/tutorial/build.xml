@@ -68,15 +68,16 @@
   </target>
 
   <!-- Example of building model from an ArgoUML file -->
-  <!-- Note: The nsuml.jar file needs to be in your classpath (eg. in the lib/ directory) -->
-  <!-- for this step to work. nsuml.jar is distributed with the main FlyMine distribution. -->
-  <!-- The name of the project within the zargo file should be the same as ${model.name} here. -->
+  <!-- The name of the project within the zargo file should be the same as ${model.name} here, -->
+  <!-- and you need to make sure the constituent files in the .zargo file are correctly named -->
+  <!-- (modelname_.xmi, modelname.argo, etc) -->
 
   <!--
   <target name="build-model" depends="prepare" >
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
-      <property name="model.src" value="/path/to/directory/containing/zargo/file"/>
+      <!-- the following directory should contain the .zargo file -->
+      <property name="model.src" value="${model}/tutorial"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>
   </target>
