@@ -11,7 +11,9 @@ package org.flymine.objectstore.query;
  */
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -40,14 +42,10 @@ public class QueryObjectReference extends QueryReference
             throw new IllegalArgumentException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
-        if (java.util.Collection.class.isAssignableFrom(field.getReturnType())) {
+        if (Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
         }
-        if (Number.class.isAssignableFrom(field.getReturnType())
-                || String.class.isAssignableFrom(field.getReturnType())
-                || Boolean.class.isAssignableFrom(field.getReturnType())
-                || java.util.Date.class.isAssignableFrom(field.getReturnType())
-                || field.getReturnType().isPrimitive()) {
+        if (!FlyMineBusinessObject.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is not a separate database "
                     + "object");
         }

@@ -141,5 +141,9 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Employable, org.flymine.model.testmodel.Broke) AS a1_, (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.HasAddress) AS a2_ WHERE a1_ = a2_", null));
         res.add(new FqlQuery("SELECT DISTINCT a1_ FROM (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.Employable) AS a1_, (org.flymine.model.testmodel.Broke, org.flymine.model.testmodel.HasAddress) AS a2_ WHERE a1_ = a2_", null));
         results.put("DynamicClassConstraint", res);
+        results.put("ContainsConstraintNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NULL", null));
+        results.put("ContainsConstraintNotNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NOT NULL", null));
+        results.put("SimpleConstraintNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Manager AS a1_ WHERE a1_.title IS NULL", null));
+        results.put("SimpleConstraintNotNull", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Manager AS a1_ WHERE a1_.title IS NOT NULL", null));
     }
 }

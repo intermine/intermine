@@ -240,6 +240,23 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
         r = new Object[][] { { data.get("EmployeeB1") } };
         results.put("DynamicClassConstraint", toList(r));
+        
+        r = new Object[][] { { data.get("EmployeeB1") } };
+        results.put("ContainsConstraintNull", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") } };
+        results.put("ContainsConstraintNotNull", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeB3") } };
+        results.put("SimpleConstraintNull", toList(r));
+        
+        r = new Object[][] { { data.get("EmployeeB1") } };
+        results.put("SimpleConstraintNotNull", toList(r));
     }
 
     /**

@@ -129,6 +129,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1, HasAddress AS a2_, Broke AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
         res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1, Broke AS a2_, HasAddress AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
         results.put("DynamicClassConstraint", res);
+        results.put("ContainsConstraintNull", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NULL ORDER BY a1_.id");
+        results.put("ContainsConstraintNotNull", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NOT NULL ORDER BY a1_.id");
+        results.put("SimpleConstraintNull", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NULL ORDER BY a1_.id");
+        results.put("SimpleConstraintNotNull", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NOT NULL ORDER BY a1_.id");
     }
 
     public void executeTest(String type) throws Exception {

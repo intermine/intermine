@@ -336,6 +336,17 @@ public class FqlQueryParser
      * @return a QueryNode object corresponding to the input
      */
     private static QueryNode processNewQueryNode(AST ast, Query q) {
+        Object retval = processNewQueryNodeOrReference(ast, q);
+        if (retval instanceof QueryObjectReference) {
+            QueryObjectReference qor = (QueryObjectReference) retval;
+            throw new IllegalArgumentException("Object reference " + qor.getQueryClass().getType()
+                    .getName() + "." + qor.getFieldName() + " present where a QueryNode is"
+                    + " required.");
+        }
+        return (QueryNode) retval;
+    }
+
+    private static Object processNewQueryNodeOrReference(AST ast, Query q) {
         switch (ast.getType()) {
             case FqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild(), q);
@@ -357,6 +368,7 @@ public class FqlQueryParser
      * There are several possible arrangements:
      * 1. a     where a is a QueryClass.
      * 2. a.b   where a is a QueryClass, and b is a QueryField.
+     * 3. a.b   where a is a QueryClass, and b is a QueryObjectReference.
      * 3. a.b   where a is a Query, and b is a QueryEvaluable.
      * 4. a.b.c where a is a Query, b is a QueryClass, and c is a QueryField.
      *
@@ -364,7 +376,7 @@ public class FqlQueryParser
      * @param q the Query to build
      * @return a QueryNode object corresponding to the input
      */
-    private static QueryNode processNewField(AST ast, Query q) {
+    private static Object processNewField(AST ast, Query q) {
         if (ast.getType() != FqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                         + ast.getType() + "]");
@@ -378,7 +390,11 @@ public class FqlQueryParser
             } else {
                 AST thirdAst = secondAst.getNextSibling();
                 if (thirdAst == null) {
-                    return new QueryField((QueryClass) obj, secondAst.getText());
+                    try {
+                        return new QueryField((QueryClass) obj, secondAst.getText());
+                    } catch (IllegalArgumentException e) {
+                        return new QueryObjectReference((QueryClass) obj, secondAst.getText());
+                    }
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."
                             + secondAst.getText() + "." + thirdAst.getText() + " extends beyond a "
@@ -765,7 +781,7 @@ public class FqlQueryParser
 
     private static Constraint processSimpleConstraint(AST ast, Query q, Iterator iterator) {
         AST subAST = ast.getFirstChild();
-        QueryNode left = processNewQueryNode(subAST, q);
+        Object left = processNewQueryNodeOrReference(subAST, q);
         subAST = subAST.getNextSibling();
         ConstraintOp op = null;
         switch (subAST.getType()) {
@@ -809,8 +825,10 @@ public class FqlQueryParser
                 throw new IllegalArgumentException("IS (NOT) NULL only takes one argument");
             } else if (left instanceof QueryClass) {
                 throw new IllegalArgumentException("Cannot compare a class to null");
+            } else if (left instanceof QueryObjectReference) {
+                return new ContainsConstraint((QueryObjectReference) left, op);
             } else {
-                return new SimpleConstraint(((QueryEvaluable) left), op);
+                return new SimpleConstraint((QueryEvaluable) left, op);
             }
         } else {
             if (subAST == null) {
@@ -858,7 +876,7 @@ public class FqlQueryParser
                             throw new IllegalArgumentException("Cannot compare a class to a "
                                     + "value");
                         }
-                    } else {
+                    } else if (left instanceof QueryEvaluable) {
                         if (right instanceof QueryClass) {
                             throw new IllegalArgumentException("Cannot compare a value to a "
                                     + "class");
@@ -866,6 +884,10 @@ public class FqlQueryParser
                             return new SimpleConstraint((QueryEvaluable) left, op,
                                     (QueryEvaluable) right);
                         }
+                    } else {
+                        throw new IllegalArgumentException("Cannot compare a QueryObjectReference"
+                                + " using a SimpleConstraint - use CONTAINS or DOES NOT CONTAIN"
+                                + " instead");
                     }
                 }
             }

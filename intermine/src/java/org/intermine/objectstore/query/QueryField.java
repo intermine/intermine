@@ -12,8 +12,8 @@ package org.flymine.objectstore.query;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Date;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -51,11 +51,7 @@ public class QueryField implements QueryEvaluable
         if (Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
         }
-        if (!(Number.class.isAssignableFrom(field.getReturnType())
-                || String.class.isAssignableFrom(field.getReturnType())
-                || Boolean.class.isAssignableFrom(field.getReturnType())
-                || Date.class.isAssignableFrom(field.getReturnType())
-                || field.getReturnType().isPrimitive())) {
+        if (FlyMineBusinessObject.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
         }
         this.qc = qc;

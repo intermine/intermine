@@ -182,6 +182,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("DynamicClassRef3", dynamicClassRef3());
         queries.put("DynamicClassRef4", dynamicClassRef4());
         queries.put("DynamicClassConstraint", dynamicClassConstraint());
+        queries.put("ContainsConstraintNull", containsConstraintNull());
+        queries.put("ContainsConstraintNotNull", containsConstraintNotNull());
+        queries.put("SimpleConstraintNull", simpleConstraintNull());
+        queries.put("SimpleConstraintNotNull", simpleConstraintNotNull());
     }
 
     /*
@@ -1121,6 +1125,60 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(qc2);
         q1.addToSelect(qc1);
         q1.setConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, qc2));
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.address IS NULL;
+     */
+    public static Query containsConstraintNull() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(new QueryObjectReference(qc, "address"),
+                ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.address IS NOT NULL;
+     */
+    public static Query containsConstraintNotNull() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(new QueryObjectReference(qc, "address"),
+                ConstraintOp.IS_NOT_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Manager AS a1_ WHERE a1_.title IS NULL;
+     */
+    public static Query simpleConstraintNull() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Manager.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        SimpleConstraint c = new SimpleConstraint(new QueryField(qc, "title"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Manager AS a1_ WHERE a1_.title IS NOT NULL;
+     */
+    public static Query simpleConstraintNotNull() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Manager.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        SimpleConstraint c = new SimpleConstraint(new QueryField(qc, "title"), ConstraintOp.IS_NOT_NULL);
+        q1.setConstraint(c);
         return q1;
     }
 }

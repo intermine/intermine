@@ -346,7 +346,7 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select Company from Company where Company.cEO = Company.vatNumber", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because CEO is an object reference");
         } catch (IllegalArgumentException e) {
-            assertEquals("Field cEO is an object reference", e.getMessage());
+            assertEquals("Cannot compare a QueryObjectReference using a SimpleConstraint - use CONTAINS or DOES NOT CONTAIN instead", e.getMessage());
         }
     }
 }

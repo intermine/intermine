@@ -360,9 +360,15 @@ public class SqlGenerator
         if (arg1 instanceof QueryObjectReference) {
             String arg1Alias = (String) state.getFieldToAlias(arg1.getQueryClass()).get(arg1Desc
                     .getName());
-            state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
-                    + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
-            queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
+            if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
+                        .IS_NOT_NULL)) {
+                state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
+                        + " " + c.getOp().toString());
+            } else {
+                state.addToWhere(arg1Alias + "." + DatabaseUtil.getColumnName(arg1Desc)
+                        + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
+                queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
+            }
         } else if (arg1 instanceof QueryCollectionReference) {
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 String arg2Alias = (String) state.getFieldToAlias(arg2)

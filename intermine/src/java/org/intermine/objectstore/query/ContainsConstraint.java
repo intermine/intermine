@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.flymine.util.DynamicUtil;
+import org.flymine.util.Util;
 
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.
@@ -71,6 +72,30 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
+     * Constructor for ContainsConstraint.
+     *
+     * @param ref the target QueryObjectReference
+     * @param op specify IS_NULL or IS_NOT_NULL
+     */
+    public ContainsConstraint(QueryObjectReference ref, ConstraintOp op) {
+        if (ref == null) {
+            throw new NullPointerException("ref cannot be null");
+        }
+
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
+        }
+
+        if (!VALID_OPS_NULL.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
+        }
+
+        this.ref = ref;
+        this.op = op;
+        this.cls = null;
+    }
+
+    /**
      * Returns the QueryReference of the constraint.
      *
      * @return the QueryReference
@@ -99,7 +124,7 @@ public class ContainsConstraint extends Constraint
             ContainsConstraint cc = (ContainsConstraint) obj;
             return ref.equals(cc.ref)
                     && op == cc.op
-                    && cls.equals(cc.cls);
+                    && Util.equals(cls, cc.cls);
         }
         return false;
     }
@@ -112,10 +137,13 @@ public class ContainsConstraint extends Constraint
     public int hashCode() {
         return ref.hashCode()
             + 3 * op.hashCode()
-            + 7 * cls.hashCode();
+            + 7 * (cls == null ? 0 : cls.hashCode());
     }
 
     /** List of possible operations */
     public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.CONTAINS,
         ConstraintOp.DOES_NOT_CONTAIN});
+    /** List of possible null operations */
+    public static final List VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
 }

@@ -36,6 +36,7 @@ public class QueryTestCase extends OneTimeTestCase
      */
     protected void assertEquals(String msg, Query q1, Query q2) {
         if ((q1 != null) && (q2 != null)) {
+            msg += ": expected <" + q1.toString() + "> but was <" + q2.toString() + ">";
             //msg += ": q1 = " + q1.toString() + ", q2 = " + q2.toString();
 
             // Are the SELECT lists equal?

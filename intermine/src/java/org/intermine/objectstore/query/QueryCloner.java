@@ -137,9 +137,15 @@ public class QueryCloner
             return newC;
         } else if (orig instanceof ContainsConstraint) {
             ContainsConstraint origC = (ContainsConstraint) orig;
-            return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
-                        fromElementMap), origC.getOp(),
-                    (QueryClass) cloneThing(origC.getQueryClass(), fromElementMap));
+            if (origC.getOp().equals(ConstraintOp.IS_NULL) || origC.getOp().equals(
+                        ConstraintOp.IS_NOT_NULL)) {
+                return new ContainsConstraint((QueryObjectReference) cloneThing(
+                            origC.getReference(), fromElementMap), origC.getOp());
+            } else {
+                return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
+                            fromElementMap), origC.getOp(),
+                        (QueryClass) cloneThing(origC.getQueryClass(), fromElementMap));
+            }
         } else if (orig instanceof ClassConstraint) {
             ClassConstraint origC = (ClassConstraint) orig;
             if (origC.getArg2QueryClass() == null) {

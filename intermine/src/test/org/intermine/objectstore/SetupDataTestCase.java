@@ -297,7 +297,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         departmentB1.setEmployees(Arrays.asList(new Employee[] {employeeB1, employeeB2}));
 
         employeeB1.setDepartment(departmentB1);
-        employeeB1.setAddress(address4);
+        employeeB1.setAddress(null);
 
         employeeB2.setDepartment(departmentB1);
         employeeB2.setAddress(address4);

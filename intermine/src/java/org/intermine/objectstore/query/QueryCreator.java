@@ -156,7 +156,6 @@ public class QueryCreator
         } catch (Exception e) {
             throw new ObjectStoreException(e);
         }
-
         return q;
     }
 }

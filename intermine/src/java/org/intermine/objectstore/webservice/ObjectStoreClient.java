@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.webservice.ser.SerializationUtil;
+import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
@@ -35,6 +35,7 @@ import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
+import org.flymine.objectstore.webservice.ser.SerializationUtil;
 
 /**
  * ObjectStore implementation that accesses a remote ObjectStore via JAX-RPC.
@@ -42,7 +43,7 @@ import org.flymine.objectstore.webservice.ser.FlyMineBusinessString;
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class ObjectStoreClient extends ObjectStoreAbstractImpl
+public class ObjectStoreClient extends ObjectStoreAbstractImpl implements ObjectStore
 {
     protected static Map instances = new HashMap();
     protected Call call;
