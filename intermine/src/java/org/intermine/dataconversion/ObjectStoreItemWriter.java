@@ -76,10 +76,20 @@ public class ObjectStoreItemWriter implements ItemWriter
      */
     public void storeAll(Collection items) throws ObjectStoreException {
         Iterator i = items.iterator();
+        int count = 0;
+        Item item = new Item();
         while (i.hasNext()) {
-            store((Item) i.next());
+            item = (Item) i.next();
+            store(item);
+            count++;
+            if (count % 1000 ==0) {
+                LOG.info("transactionCounter has size of "+ transactionCounter
+                         + " is now on storing " + item.getClassName());
+            }
             //i.remove(); ?
         }
+
+
     }
 
     /**
