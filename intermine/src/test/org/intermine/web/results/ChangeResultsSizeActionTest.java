@@ -21,12 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;

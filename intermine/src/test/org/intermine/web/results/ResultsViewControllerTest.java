@@ -10,9 +10,6 @@ package org.flymine.web.results;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.objectstore.ObjectStore;
