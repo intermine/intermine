@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# This will make a release of FlyMine
+
+usage="Usage: $0 <nightly/official> <version>"
+
+if [ $# -lt 1 ]
+then
+    echo $usage
+    exit 1
+fi
+
+server=flymine@download.flymine.org
+tempdir=/tmp/flymine-release-$$
+
+destdirbase=/chroot/download
+
+if [ $1 == "nightly" ]
+then
+    destdir=$destdirbase/nightly
+    version=`date +%Y%m%d`
+else
+    destdir=$destdirbase/releases
+    version="noversion"
+fi
+
+if [ $# -eq 2 ]
+then
+    version=$2
+fi
+
+echo "Releasing $1 version $version of FlyMine"
+
+### Make a temporary directory
+mkdir $tempdir
+
+### Checkout a clean version of FlyMine
+
+cd $tempdir
+now=`date +"%d %b %Y %H:%M"`
+echo "Date is $now"
+command="cvs export -D \"$now\" flymine"
+eval $command
+mv flymine flymine-$version
+
+
+## Create the tarred source files from the clean checkout
+tar czvf flymine-src-$version.tar.gz flymine-$version
+zip -r flymine-src-$version.zip flymine-$version
+
+### Build the necessary jar files
+cd $tempdir/flymine-$version
+ant jar
+
+
+jarfilename=flymine-$version.jar
+
+
+### Remove releases older than 7 days
+command="ssh $server \"find $destdir -mtime +7 | xargs rm\""
+eval $command
+
+### Copy the jar file(s) to the destination
+command="scp dist/flymine.jar $server:$destdir/$jarfilename"
+eval $command
+
+### Copy the source archives to the destination
+cd $tempdir
+command="scp *.tar.gz *.zip $server:$destdir/"
+eval $command
+
+### Make sure all permissions are world-readable
+command="ssh $server \"find $destdir -type f | xargs chmod a+r\""
+eval $command
+
+cd $origdir
+rm -rf $tempdir
