@@ -309,6 +309,8 @@ public class CreateReferences
      * connectingClass.connectingClassFieldName
      * @param createFieldName the collection field in the secondClass - the
      * collection to create/set
+     * @param createInFirstClass if true create the new collection field in firstClass, otherwise
+     * create in secondClass
      * @throws Exception if anything goes wrong
      */
     protected void insertCollectionField(Class firstClass, String firstClassFieldName,
