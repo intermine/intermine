@@ -168,7 +168,12 @@ null:assembly_exception a owl:Class ;
 
 :ChromosomeBand a owl:Class ;
     rdfs:subClassOf :BioEntity ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :ChromosomeBand__chromosome ];
     owl:equivalentClass e:karyotype .
+
 
 :ChromosomeBand__identifier a owl:DatatypeProperty ;
     rdfs:subPropertyOf :BioEntity__identifier ;
