@@ -1743,8 +1743,6 @@
             value="${build.model}/genomic/objectstoresummary.properties"/>
 
   <target name="check-production-objectstore-summary">
-    <echo message="${os.summary.properties.file}"/>
-    <echo message="${summarise.output.properties}"/>
     <uptodate property="production-objectstore-is-summarised"
               srcfile="${os.summary.properties.file}"
               targetfile="${summarise.output.properties}"/>
@@ -1855,7 +1853,7 @@
     </ant>
   </target>
 
-  <target name="orthologue-test" depends ="prepare-build-model, prepare-test, build-db-fulldatatest">
+  <target name="orthologue-test" depends="prepare-build-model, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
       <reference torefid="class.path" refid="models.class.path"/>
