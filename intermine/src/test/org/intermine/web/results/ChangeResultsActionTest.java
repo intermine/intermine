@@ -17,6 +17,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
 
@@ -33,7 +34,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         super.setUp();
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d", "org.flymine.model.testmodel");
+        FqlQuery fq = new FqlQuery("select c, d from Company as c, Department as d order by c", "org.flymine.model.testmodel");
         results = os.execute(fq.toQuery());
         dr = new DisplayableResults(results);
         dr.setPageSize(10);
@@ -171,6 +172,30 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         assertEquals(dr.getColumn("d"), dr.getColumns().get(0));
         verifyForward("results");
+        verifyNoActionErrors();
+    }
+
+    public void testOrderByColumn() throws Exception {
+        setRequestPathInfo("/changeResults");
+        addRequestParameter("method", "orderByColumn");
+        addRequestParameter("columnAlias", "d");
+
+        getSession().setAttribute("resultsTable", dr);
+
+        Query q = results.getQuery();
+        QueryNode qnc = (QueryNode) q.getReverseAliases().get("c");
+        QueryNode qnd = (QueryNode) q.getReverseAliases().get("d");
+
+        assertEquals(1, q.getOrderBy().size());
+        assertEquals(qnc, q.getOrderBy().get(0));
+
+        actionPerform();
+
+        assertEquals(1, q.getOrderBy().size());
+        assertEquals(qnd, q.getOrderBy().get(0));
+
+        assertEquals(q, getSession().getAttribute("query"));
+        verifyForward("runquery");
         verifyNoActionErrors();
     }
 
