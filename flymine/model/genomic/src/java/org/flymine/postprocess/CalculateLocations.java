@@ -164,7 +164,7 @@ public class CalculateLocations
                 }
             }
         }
-        osw.abortTransaction();
+        osw.commitTransaction();
         LOG.info("Stored " + i + " Locations between Supercontig and ChromosomeBand.");
 
         // 3. hold offsets of Contigs on Supercontigs
@@ -234,7 +234,7 @@ public class CalculateLocations
                 }
             }
         }
-        osw.abortTransaction();
+        osw.commitTransaction();
         LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
         LOG.info("Stored " + j + " Locations between Contig and ChromosomeBand.");
 
@@ -341,7 +341,7 @@ public class CalculateLocations
             LOG.info("feature: to Chromosome " + i + " to Supercontig " + j
                       + " ChromsomeBand " + k);
         }
-        osw.abortTransaction();
+        osw.commitTransaction();
         LOG.info("Stored " + i + " Locations between features and Chromosome.");
         LOG.info("Stored " + j + " Locations between features and Supercontig.");
         LOG.info("Stored " + k + " Locations between features and ChromosomeBand.");
