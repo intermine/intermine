@@ -1,10 +1,10 @@
 
-@import "base.css";
-@import "branding.css";
+@import url(base.css);
+@import url(branding.css);
 
 .whiteboxwithborder {
   padding: 6px;
-  border: 1px solid grey;
+  border: 1px solid #888;
   background: white;
 }
 
@@ -22,14 +22,14 @@ table td, table th, .whiteboxwithborder {
 
 .datatitle        {
                     background-color: #FFFFFF;
-                    border: solid 1px grey; 
+                    border: solid 1px #888; 
                   }
 .databody         {
-                    border: solid 1px grey; 
+                    border: solid 1px #888; 
                   }
 .searchtitle      {
                     background-color: white;
-                    border: solid 1px grey;
+                    border: solid 1px #888;
                   }
 /*.searchbody       {
 	            font-size: small;
@@ -45,7 +45,7 @@ table td, table th, .whiteboxwithborder {
                   }*/
 .uploadbody       {
                     background-color: #FFFFFF;
-                    border: solid 1px grey; 
+                    border: solid 1px #888; 
                   }
 .technicalinfo    { background-color: #FFFFFF; }
 .toggle           { color: #3366FF; }
