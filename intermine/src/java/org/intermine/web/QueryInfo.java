@@ -64,4 +64,14 @@ public class QueryInfo
     public ResultsInfo getResultsInfo () {
         return resultsInfo;
     }
+
+    /**
+     * Return a string version of this QueryInfo object
+     *
+     * @return a String version of this object
+     */
+    public String toString() {
+        return "QueryInfo <query=" + query + ", view=" + view + ", resultsInfo="
+            + resultsInfo + ">";
+    }
 }
