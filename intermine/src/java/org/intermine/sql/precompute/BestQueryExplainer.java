@@ -36,6 +36,7 @@ public class BestQueryExplainer extends BestQuery
     protected Candidate bestCandidate;
     protected Connection con;
     protected Date start = new Date();
+    protected long timeLimit = 0;
 
     /**
      * Constructs an empty BestQueryExplainer for testing purposes
@@ -49,12 +50,14 @@ public class BestQueryExplainer extends BestQuery
      * Constructs a BestQueryExplainer that will use the given Connection to explain Queries.
      *
      * @param con the Connection to use
+     * @param timeLimit a time limit in milliseconds
      */
-    public BestQueryExplainer(Connection con) {
+    public BestQueryExplainer(Connection con, long timeLimit) {
         if (con == null) {
             throw (new NullPointerException());
         }
         this.con = con;
+        this.timeLimit = timeLimit;
     }
 
     /**
@@ -112,11 +115,16 @@ public class BestQueryExplainer extends BestQuery
             }
         }
 
+        long elapsed = System.currentTimeMillis() - start.getTime();
+        if ((timeLimit >= 0) && (elapsed > timeLimit)) {
+            System.out.println("Optimiser reached time limit");
+            throw new BestQueryException("Optimiser reached time limit");
+        }
         if (bestCandidate != null) {
             // throw BestQueryException if the bestQuery will take less time to run than the
             // amount of time we have spent optimising so far
-            long elapsed = System.currentTimeMillis() - start.getTime();
             if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
+                System.out.println("Giving up");
                 throw (new BestQueryException("Explain time: "
                             + bestCandidate.getExplain().getTime() + ", elapsed time: "
                             + elapsed));
@@ -208,7 +216,14 @@ public class BestQueryExplainer extends BestQuery
         while (iter.hasNext()) {
             if (bestCandidate != null) {
                 long elapsed = System.currentTimeMillis() - start.getTime();
+                if ((timeLimit >= 0) && (elapsed > timeLimit)) {
+                    System.out .println("QueryOptimiser: bailing out early: Time limit reached");
+                    return bestCandidate;
+                }
                 if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
+                    System.out .println("QueryOptimiser: bailing out early: Explain time: "
+                            + bestCandidate.getExplain().getTime() + ", elapsed time: " + elapsed
+                            + ", time limit: " + timeLimit);
                     return bestCandidate;
                 }
             }

@@ -55,6 +55,7 @@ import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
+import org.intermine.sql.precompute.QueryOptimiserContext;
 import org.intermine.sql.query.ExplainResult;
 //import org.intermine.sql.query.PostgresExplainResult;
 import org.intermine.sql.writebatch.Batch;
@@ -89,6 +90,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Connection logTableConnection = null;
     protected Batch logTableBatch = null;
     protected String logTableName = null;
+    protected QueryOptimiserContext limitedContext;
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
@@ -109,16 +111,18 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Constructs an ObjectStoreInterMineImpl.
      *
      * @param db the database in which the model resides
-      * @param model the model
-      * @throws NullPointerException if db or model are null
-      * @throws IllegalArgumentException if db or model are invalid
-      */
-     protected ObjectStoreInterMineImpl(Database db, Model model) {
-         super(model);
-         this.db = db;
-         schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
-         ShutdownHook.registerObject(new WeakReference(this));
-     }
+     * @param model the model
+     * @throws NullPointerException if db or model are null
+     * @throws IllegalArgumentException if db or model are invalid
+     */
+    protected ObjectStoreInterMineImpl(Database db, Model model) {
+        super(model);
+        this.db = db;
+        schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
+        ShutdownHook.registerObject(new WeakReference(this));
+        limitedContext = new QueryOptimiserContext();
+        limitedContext.setTimeLimit(getMaxTime() / 10);
+    }
 
     /**
      * Constructs an ObjectStoreInterMineImpl, with a schema.
@@ -133,6 +137,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         this.db = db;
         this.schema = schema;
         ShutdownHook.registerObject(new WeakReference(this));
+        limitedContext = new QueryOptimiserContext();
+        limitedContext.setTimeLimit(getMaxTime() / 10);
     }
 
     /**
@@ -607,7 +613,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long estimatedTime = 0;
             long startOptimiseTime = System.currentTimeMillis();
             if (optimise && everOptimise) {
-                sql = QueryOptimiser.optimise(sql, db);
+                sql = QueryOptimiser.optimise(sql, db, (explain ? limitedContext
+                            : QueryOptimiserContext.DEFAULT));
             }
             long endOptimiseTime = System.currentTimeMillis();
             sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");

@@ -47,7 +47,7 @@ public class BestQueryExplainerTest extends TestCase
     public void testNullConstructor() throws Exception {
         BestQueryExplainer bq;
         try {
-            bq = new BestQueryExplainer(null);
+            bq = new BestQueryExplainer(null, -1);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
