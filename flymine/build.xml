@@ -32,6 +32,7 @@
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
+  <property name="build.resources.testxml" location="${build}/resources/test"/>
   <property name="build.test" location="${build}/test"/>
   <property name="build.schema" location="${build}/schema" />
   <property name="build.src.java" location="${build}/javasrc"/>
@@ -97,6 +98,7 @@
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
+    <mkdir dir="${build.resources.testxml}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.schema}" />
     <mkdir dir="${build.src.java}"/>
@@ -114,6 +116,10 @@
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
     </copy>
+    <copy todir="${build.resources.testxml}">
+      <fileset dir="${resources}/test/xml" />
+    </copy>
+
   </target>
 
   <target name="prepare-dist">
