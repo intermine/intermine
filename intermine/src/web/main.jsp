@@ -224,7 +224,7 @@
               </html:submit>
             </c:when>
             <c:otherwise>
-              <c:if test="${editingNode.indentation != 0}">
+              <c:if test="${editingNode.indentation != 0 && !empty subclasses}">
                 <fmt:message key="query.subclassConstraint"/>
                 <html:select property="subclassValue">
                   <c:forEach items="${subclasses}" var="subclass">

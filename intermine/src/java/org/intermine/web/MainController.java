@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +84,7 @@ public class MainController extends TilesAction
                 request.setAttribute("attributeOps", attributeOps);
             } else {
                 ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
-                request.setAttribute("subclasses", new TreeSet(getChildren(cld)));
+                request.setAttribute("subclasses", new ArrayList(new TreeSet(getChildren(cld))));
             }
             if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
