@@ -112,10 +112,8 @@ public class GFF3Converter
             record = (GFF3Record) i.next();
             process(record);
             opCount++;
-            if (opCount % 1000 == 0) {
+            if (opCount % 10000 == 0) {
                 now = System.currentTimeMillis();
-                System.err .println("processed " + opCount + " lines --took "
-                                    + (now - start) + " ms");
                 LOG.info("processed " + opCount + " lines --took " + (now - start) + " ms");
                 start = System.currentTimeMillis();
             }
