@@ -11,6 +11,7 @@
     </section>
     <section>
         <heading>Design documents</heading>
+        <item><ulink url="/internal/design/dataflow.png">Data flow</ulink></item>
         <item><ulink url="/internal/design/initial_thoughts">Initial thoughts</ulink></item>
         <item><ulink url="/internal/design/design_issues">Design issues</ulink></item>
         <item><ulink url="/internal/design/usage_scenarios">Usage scenarios</ulink></item>
