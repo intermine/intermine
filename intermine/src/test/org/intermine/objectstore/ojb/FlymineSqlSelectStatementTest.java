@@ -33,7 +33,7 @@ import org.flymine.model.testmodel.CEO;
 import org.flymine.model.testmodel.RandomInterface;
 import org.flymine.model.testmodel.ImportantPerson;
 
-public class FlymineSqlSelectStatementTest extends QueryTestCase
+public class FlymineSqlSelectStatementTest extends ObjectStoreTestCase
 {
     public FlymineSqlSelectStatementTest(String arg1) {
         super(arg1);

@@ -28,7 +28,7 @@ import org.flymine.sql.query.ExplainResult;
 
 import org.flymine.model.testmodel.*;
 
-public class ObjectStoreOjbImplTest extends QueryTestCase
+public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
 {
     public ObjectStoreOjbImplTest(String arg) {
         super(arg);

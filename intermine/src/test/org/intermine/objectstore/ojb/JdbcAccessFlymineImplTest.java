@@ -33,7 +33,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
 
-public class JdbcAccessFlymineImplTest extends QueryTestCase
+public class JdbcAccessFlymineImplTest extends ObjectStoreTestCase
 {
     private JdbcAccessFlymineImpl ja;
     private Query q1, q2;
