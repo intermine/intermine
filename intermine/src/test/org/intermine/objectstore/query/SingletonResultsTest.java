@@ -66,22 +66,6 @@ public class SingletonResultsTest extends TestCase
 
     }
 
-    public void testConstructNonQueryClassQuery() throws Exception {
-        q = new Query();
-        QueryClass qc1 = new QueryClass(Department.class);
-        QueryField qf1 = new QueryField(qc1, "name");
-
-        q.addToSelect(qf1);
-        q.addFrom(qc1);
-
-        try {
-            Results res = new SingletonResults(q, os, os.getSequence());
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-
-    }
-
     public void testConstructNullQuery() throws Exception {
         try {
             Results res = new SingletonResults(null, new ObjectStoreDummyImpl(), 0);

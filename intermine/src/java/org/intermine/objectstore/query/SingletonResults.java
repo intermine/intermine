@@ -21,6 +21,7 @@ import org.intermine.objectstore.ObjectStoreException;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
 public class SingletonResults extends Results implements Set
 {
@@ -31,7 +32,7 @@ public class SingletonResults extends Results implements Set
      * @param os the ObjectStore that can be used to get results rows from
      * @param sequence a number representing the state of the ObjectStore, which should be quoted
      * back to the ObjectStore when requests are made
-     * @throws IllegalArgumentException if q does not return a single column of type QueryClass
+     * @throws IllegalArgumentException if q does not return a single column
      */
      public SingletonResults(Query q, ObjectStore os, int sequence) {
          super(q, os, sequence);
@@ -39,10 +40,6 @@ public class SingletonResults extends Results implements Set
          // Test that this Query returns a single column of type QueryClass
          if (q.getSelect().size() != 1) {
              throw new IllegalArgumentException("Query must return a single column");
-         }
-
-         if (!(q.getSelect().get(0) instanceof QueryClass)) {
-             throw new IllegalArgumentException("Query must select a QueryClass");
          }
      }
 
