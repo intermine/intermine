@@ -6,6 +6,7 @@ xmlns="http://www.w3.org/TR/REC-html40"
 version="1.0">
 
 <xsl:output method="html"/>
+<xsl:param name="basedir" />
 
 <xsl:template match="/">
 <html>
@@ -48,7 +49,22 @@ version="1.0">
                         <table class="footer">
                             <tr>
                                 <td>
-                                    <a href="http://www.wellcome.ac.uk"><img src="wellcome.gif" align="center" border="0" hspace="10" /></a>
+                                    <a href="http://www.wellcome.ac.uk">
+                                        <img>
+                                            <xsl:attribute name="src">
+                                                <xsl:value-of select="concat($basedir, '/wellcome.gif')"/>
+                                            </xsl:attribute>
+                                            <xsl:attribute name="align">
+                                                <xsl:value-of select="center"/>
+                                            </xsl:attribute>
+                                            <xsl:attribute name="border">
+                                                <xsl:value-of select="0"/>
+                                            </xsl:attribute>
+                                            <xsl:attribute name="hspace">
+                                                <xsl:value-of select="10"/>
+                                            </xsl:attribute>
+                                        </img>
+                                    </a>
                                 </td>
                                 <td>
                                     FlyMine is funded by<br/>The Wellcome Trust<br/>(Grant no. 067205)
@@ -72,6 +88,7 @@ version="1.0">
             </table>
         </td>
     </tr>
+
 </table>
 
 </body>
@@ -131,7 +148,17 @@ version="1.0">
 
 <xsl:template match="inlinegraphic">
 <img>
-<xsl:attribute name="src"><xsl:value-of select="@fileref"/></xsl:attribute>
+<xsl:attribute name="src">
+<xsl:choose>
+    <xsl:when test="substring(@fileref, 1, 1) = '/'">
+            <xsl:copy-of select="$basedir"/>
+            <xsl:value-of select="@fileref"/>
+    </xsl:when>
+    <xsl:otherwise>
+        <xsl:value-of select="@fileref"/>
+    </xsl:otherwise>
+</xsl:choose>
+</xsl:attribute>
 <xsl:attribute name="border">0</xsl:attribute>
 <xsl:apply-templates/>
 </img>
@@ -139,7 +166,20 @@ version="1.0">
 
 <xsl:template match="ulink">
 <a>
-<xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
+<xsl:attribute name="href">
+<xsl:choose>
+    <xsl:when test="substring(@url, 1, 1) = '/'">
+            <xsl:copy-of select="$basedir"/>
+            <xsl:value-of select="@url"/>
+    </xsl:when>
+    <xsl:otherwise>
+        <xsl:value-of select="@url"/>
+    </xsl:otherwise>
+</xsl:choose>
+</xsl:attribute>
+
+
+
     <xsl:choose>
       <xsl:when test="count(child::node())=0">
         <xsl:value-of select="@url"/>
