@@ -118,7 +118,7 @@ public class WriteGFFTask extends Task
             BioEntity feature = (BioEntity) rr.get(1);
             Location loc = (Location) rr.get(2);
 
-            if (currentChrId == null || currentChrId != resultChrId) {
+            if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 currentChr = (Chromosome) os.getObjectById(resultChrId);
                 writeChromosomeFasta(destinationDirectory, currentChr);
 
@@ -278,6 +278,8 @@ public class WriteGFFTask extends Task
                                                  chromosomeFileNamePrefix(chr));
             SeqIOTools.writeFasta(outputStream, sequence);
         }
+
+        outputStream.close();
     }
     
 
