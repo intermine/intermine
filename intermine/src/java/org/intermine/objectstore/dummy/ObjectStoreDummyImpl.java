@@ -16,6 +16,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
 {
     private List rows = new ArrayList();
     private int resultsSize = 0;
+    private int executeTime = 10;
     private int executeCalls = 0;
     private int poisonRowNo = -1;
 
@@ -83,6 +84,9 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit) throws ObjectStoreException {
         checkStartLimit(start, limit);
+        if (executeTime > maxTime) {
+            throw new ObjectStoreException("Query will take longer than " + maxTime);
+        }
 
         List results = new ArrayList();
 
@@ -123,6 +127,15 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      */
     public void setResultsSize(int size) {
         this.resultsSize = size;
+    }
+
+    /**
+     * Set the time it will take to do an execute
+     *
+     * @param time the time to do an execute
+     */
+    public void setExecuteTime(int time) {
+        this.executeTime = time;
     }
 
     /**
