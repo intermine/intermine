@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
   <item title="Main">
-      <item url="/index.xml" title="Home"/>
-      <item url="/begin.do" title="Start a query"/>
-      <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
-      <item url="/contact/index.xml" title="Contact"/>
+    <item url="/index.xml" title="Home"/>
+    <item url="/begin.do" title="Start a query"/>
+    <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
+    <item url="/contact/index.xml" title="Contact"/>
+  </item>
+
+  <item title="FlyMine releases">
+    <item url="/begin.do" title="Release 2.0 (current)"/>
+    <item url="/release-1.1/" title="Release 1.1"/>
   </item>
 
   <item title="Documentation">
