@@ -15,19 +15,24 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.flymine.objectstore.webservice.ser.SerializationUtil;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.encoding.TypeMapping;
 import javax.xml.namespace.QName;
-import javax.xml.rpc.ServiceException;
 
 /**
  * ObjectStore implementation that accesses a remote ObjectStore via JAX-RPC.
@@ -60,7 +65,15 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
             call = (Call) service.createCall();
             call.setMaintainSession(true);
             call.setTargetEndpointAddress(url);
-        } catch (ServiceException e) {
+
+            TypeMapping tm = call.getTypeMapping();
+            SerializationUtil.registerMappings(tm);
+            Iterator iter = model.getClassDescriptors().iterator();
+            while (iter.hasNext()) {
+                Class cls = Class.forName(((ClassDescriptor) iter.next()).getName());
+                SerializationUtil.registerDefaultMapping(tm, cls);
+            }
+        } catch (Exception e) {
             throw new ObjectStoreException("Calling remote service failed", e);
         }
     }
@@ -122,7 +135,8 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     protected int getQueryId(Query q) throws ObjectStoreException {
         synchronized (registeredQueries) {
             if (!registeredQueries.containsKey(q)) {
-                Integer queryId =  (Integer) remoteMethod("registerQuery", new Object [] {q});
+                Integer queryId =  (Integer) remoteMethod("registerQuery",
+                                                          new Object [] {new FqlQuery(q)});
                 registeredQueries.put(q, queryId);
             }
         }
@@ -145,10 +159,15 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     public List execute(Query q, int start, int limit, boolean optimise)
         throws ObjectStoreException {
         int queryId = getQueryId(q);
-        return (List) remoteMethod("execute", new Object [] {new Integer(queryId),
-                                                             new Integer(start),
-                                                             new Integer(limit),
-                                                             new Boolean(optimise)});
+        List results = (List) remoteMethod("execute", new Object [] {new Integer(queryId),
+                                                                     new Integer(start),
+                                                                     new Integer(limit)});
+        try {
+            Results.promoteProxies(results, this);
+        } catch (Exception e) {
+            throw new ObjectStoreException(e);
+        }
+        return results;
     }
 
     /**
@@ -184,12 +203,16 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     }
 
     /**
-     * Return the metadata associated with this ObjectStore
-     *
-     * @return the Model
+     * @see ObjectStore#getObjectByExample
      */
-    public Model getModel() {
-        return this.model;
+    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+        Object object = remoteMethod("getObjectByExample", new Object[] {obj});
+       try {
+           Results.promoteProxiesInObject(object, this);
+        } catch (Exception e) {
+            throw new ObjectStoreException(e);
+        }
+        return object;
     }
 }
 
