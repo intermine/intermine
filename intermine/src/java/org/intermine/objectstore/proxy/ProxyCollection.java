@@ -115,7 +115,7 @@ public class ProxyCollection extends AbstractList implements Set, Lazy
      *
      * @return a SingletonResults object
      */
-    private SingletonResults getCollection() {
+    public SingletonResults getCollection() {
         SingletonResults collection = null;
         // WARNING - read this following line very carefully.
         if ((collectionRef == null)
