@@ -166,12 +166,20 @@
 
   <!-- Models to build -->
 
-  <target name="prepare-build-model" depends="prepare">
+  <target name="new-intermine-jar" depends="prepare">
+    <uptodate property="new.intermine.jar"
+            targetfile="${intermine.jar.path}">
+      <srcfiles dir="${build}" includes="build-model.xml"/>
+    </uptodate>
+  </target>
+
+  <target name="prepare-build-model" depends="new-intermine-jar" if="new.intermine.jar">
     <unzip src="${intermine.jar.path}" dest="${build}">
       <patternset>
         <include name="build-model.xml"/>
       </patternset>
     </unzip>
+   <touch file="${build}/build-model.xml"/>
   </target>
 
   <!-- Ensembl anopheles src items -->
