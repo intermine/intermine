@@ -136,7 +136,9 @@ public class EnsemblDataTranslator extends DataTranslator
                 Item tgtItem = (Item) i.next();
                 if ("karyotype".equals(className)) {
                     tgtItem.addReference(getOrgRef());
-                    result.add(createLocation(srcItem, tgtItem, "chromosome", "chr", true));
+                    Item location = createLocation(srcItem, tgtItem, "chromosome", "chr", true);
+                    location.addAttribute(new Attribute("strand", "0"));
+                    result.add(location);
                 } else if ("exon".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
@@ -177,13 +179,6 @@ public class EnsemblDataTranslator extends DataTranslator
                     if (stableId != null) {
                          moveField(stableId, tgtItem, "stable_id", "name");
                     }
-                    // synonym already added by default
-//                         Item synonym = createItem(tgtNs + "Synonym", "");
-//                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-//                         moveField(stableId, synonym, "stable_id", "synonym");
-//                         synonym.addReference(getEnsemblRef());
-//                         result.add(synonym);
-//                     }
                     if (!tgtItem.hasAttribute("name")) {
                         tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
                     }
@@ -247,7 +242,10 @@ public class EnsemblDataTranslator extends DataTranslator
             Item sc = getSuperContig(srcItem.getAttribute("superctg_name").getValue(),
                                      srcItem.getReference("chromosome").getRefId(),
                                      Integer.parseInt(srcItem.getAttribute("chr_start").getValue()),
-                                     Integer.parseInt(srcItem.getAttribute("chr_end").getValue()));
+                                     Integer.parseInt(srcItem.getAttribute("chr_end").getValue()),
+                                     srcItem.getAttribute("superctg_ori").getValue());
+
+            // locate contig on supercontig
             Item location = createLocation(srcItem, sc, "contig", "superctg", false);
             result.add(location);
         }
@@ -317,7 +315,7 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
 
-    private Item getSuperContig(String name, String chrId, int start, int end) {
+    private Item getSuperContig(String name, String chrId, int start, int end, String strand) {
         Item supercontig = (Item) supercontigs.get(name);
         if (supercontig == null) {
             supercontig = createItem(tgtNs + "SuperContig", "");
@@ -326,6 +324,7 @@ public class EnsemblDataTranslator extends DataTranslator
             chrLoc.addAttribute(new Attribute("end", "" + Integer.MIN_VALUE));
             chrLoc.addAttribute(new Attribute("startIsPartial", "false"));
             chrLoc.addAttribute(new Attribute("endIsPartial", "false"));
+            chrLoc.addAttribute(new Attribute("strand", strand));
             chrLoc.addReference(new Reference("subject", supercontig.getIdentifier()));
             chrLoc.addReference(new Reference("object", chrId));
 
