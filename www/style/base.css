@@ -418,9 +418,18 @@ table.box th.title {
 .news-date {
   color: #888;
   font-size: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #bbb;
 }
 
 .news-item p {
   text-align: left;
-  margin-top: 6px;
+  margin-top: 5px;
+  margin-bottom: 1px;
 }
+
+.news-item {
+  padding: 3px;
+  padding-bottom: 9px;
+}
+
