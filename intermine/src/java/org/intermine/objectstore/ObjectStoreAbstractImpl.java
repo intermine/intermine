@@ -66,7 +66,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         maxTime = Long.parseLong((String) props.get("max-time"));
         java.util.Random rand = new java.util.Random();
         sequence = rand.nextInt();
-        LOG.error("Creating new " + getClass().getName() + " with sequence = " + sequence);
+        LOG.error("Creating new " + getClass().getName() + " with sequence = " + sequence
+                + ", model = \"" + model.getName() + "\"");
     }
 
     /**
