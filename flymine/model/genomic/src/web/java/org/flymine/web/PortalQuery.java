@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -31,7 +30,6 @@ import org.intermine.web.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.SessionMethods;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.TypeUtil;
 
 /**
  * The portal query action handles links into flymine from external sites.
