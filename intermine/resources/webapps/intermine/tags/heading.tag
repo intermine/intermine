@@ -5,7 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div class="heading">
-  <nobr>
   <c:if test="${!empty id}">
     <c:set var="uri" value="${requestScope['javax.servlet.forward.servlet_path']}?${pageContext.request.queryString}"/>
     <jsp:useBean id="linkParams" scope="page" class="java.util.TreeMap">
@@ -27,6 +26,5 @@
     </html:link>
   </c:if>
   <c:if test="${empty id}"><jsp:doBody/></c:if>
-  </nobr>
 </div>
 
