@@ -502,7 +502,6 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            LOG.info("next results....");
             ResultsRow rr = (ResultsRow) resIter.next();
             InterMineObject thisObject = (InterMineObject) rr.get(0);
             InterMineObject thisProperty = (InterMineObject) rr.get(1);
@@ -535,7 +534,6 @@ public class CreateReferences
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
             try {
-                LOG.info("set " + newCollectionName + " to " + newCollection);
                 TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
                 count += newCollection.size();
                 osw.store(tempObject);
