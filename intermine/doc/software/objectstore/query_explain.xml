@@ -10,6 +10,10 @@
         <firstname>Richard</firstname>
         <surname>Smith</surname>
       </author>
+      <author>
+        <firstname>Matthew</firstname>
+        <surname>Wakeling</surname>
+      </author>
     </authorgroup>
   </artheader>
 
@@ -44,10 +48,15 @@
     </itemizedlist>
     <para>Our implementation of paging dictates that these are two distinct operations.  When a query is run the <classname>Results</classname> object defines a LIMIT and OFFSET to restrict the number of rows returned at one time (e.g the first 1000).  It is when when this limited query is run that we need to restrict the amount of time it can take.  To estimate the total number of rows a query will return we obviously need to EXPLAIN it without a LIMIT.      
     </para>
-    <para>Thus, we need to run EXPLAIN on the original query and on each 'page' with OFFSET and LIMIT defined.  We need to implement:
+    <para>Thus, we need to run EXPLAIN on the original query and on each 'page' with OFFSET and LIMIT defined. This is done as follows:
       <itemizedlist>
-        <listitem>A publicly available <classname>ObjectStore</classname> method that, given a query, will return an estimated number of rows.  This is called as required by the client application and is not necessary for normal query execution.  In future this could be modified to provide an actual computed number of rows.  An EXPLAIN could check whether COUNT(*) for the query would be fast to run, if so run it and return the actual number of rows.</listitem>
-        <listitem>Change <function>ObjectStoreOjbImpl.execute(query, start, limit)</function> so that it runs an EXPLAIN on the row limited query and decides if it is faster or slower that the given threshold.  If it is too slow an Exception should be thrown, otherwise the query run as normal.  The threshold could be provided by the calling Results object so that users could set their own maximum execution time (such that it is less that out global threshold).</listitem>
+        <listitem><function>ObjectStore.estimate(query)</function> method that, given a query, will return an estimated number of rows.
+            This is called as required by the client application and is not necessary for normal query execution.
+            In future this could be modified to provide an actual computed number of rows.
+            An EXPLAIN could check whether COUNT(*) for the query would be fast to run, if so run it and return the actual number of rows.</listitem>
+        <listitem><function>ObjectStoreOjbImpl.execute(query, start, limit)</function> calls <function>Objectstore.explain(query, start, limit)</function> and decides if the query is faster or slower that the given threshold.
+            If the query is too slow an Exception is thrown, otherwise the query runs as normal.
+            The threshold is provided in the properties file, so that users could set their own maximum execution time (such that it is less than our global threshold).</listitem>
         </itemizedlist>
 </para>
 
@@ -55,24 +64,19 @@
 
   <sect1>
     <title>Caching SQL statements</title>
-<para>Our system of paging means that queries will often be run multiple times with different LIMIT and OFFSET parameters.  It is therefore desirable to run the code that generates an SQL string from a FlyMine query once and cache the result.  If we are running an EXPLAIN on every execution without caching in place the SQL generation will be performed twice every time.  To avoid this overhead we should implement caching of SQL statements at the same time as EXPLAINs.</para>
+    <para>Our system of paging means that queries will often be run multiple times with different LIMIT and OFFSET parameters.
+        It might be thought therefore that it would be beneficial to implement a cache of generated SQL text.
+        However, the Query.equals() and Query.hashCode() methods are relatively heavy methods, so looking up an entry in such a cache would take as much time as generating the SQL in the first place.</para>
   </sect1>
 
   <sect1>
-    <title>Proposed Implementation</title>
+    <title>Implementation</title>
     <para>Diagrammatic overview of implementation (see notes below)</para>
       <inlinegraphic fileref="ojb/explain_implementation"/>
     <highlights>NOTES</highlights>
     <itemizedlist>
-      <listitem><classname>ExplainResult</classname> is already used in <packagename>org.flymine.sql package</packagename>.  It will need to be adapted so it can be constructed with the <classname>PreparedStatement</classname> available in <classname>JdbcAccessFlymineImpl</classname>.</listitem>
-      <listitem>Caching is done using a <classname>WeakHashMap</classname> in <classname>SqlGeneratorFlymineImpl</classname>, implement clever hashcode generation?</listitem>
-      <listitem>Change <classname>FlymineSqlSelectStatement</classname> so that it no longer takes LIMIT and OFFSET.  These will by applied in <classname>SqlGeneratorFlymineImpl</classname> so that queries can be cached without them.</listitem>
-      <listitem><classname>Results</classname> could be constructed with a threshold value or retrieve it from a config file</listitem>
-      </itemizedlist>
-
-
-
+      <listitem><classname>ExplainResult</classname> is already used in <packagename>org.flymine.sql package</packagename>.
+        It can be constructed with the <classname>PreparedStatement</classname> available in <classname>JdbcAccessFlymineImpl</classname>.</listitem>
+    </itemizedlist>
   </sect1>
-
-
 </article>
