@@ -241,12 +241,12 @@ public class UniprotDataTranslator extends DataTranslator
                         if (srcProteinNameEvidence != null) {
                             srcProteinNameString += " (Evidence " + srcProteinNameEvidence + ")";
                         }
-                        Item comment = new Item(getUniqueIdentifier(), TGT_NS + "Synonym", "");
-                        comment.addAttribute(new Attribute("type", "name"));
-                        comment.addAttribute(new Attribute("text", srcProteinNameString));
-                        comment.addReference(new Reference("subject", protein.getIdentifier()));
-                        comment.addReference(new Reference("source", databaseId));
-                        retval.add(comment);
+                        Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym", "");
+                        synonym.addAttribute(new Attribute("type", "name"));
+                        synonym.addAttribute(new Attribute("value", srcProteinNameString));
+                        synonym.addReference(new Reference("subject", protein.getIdentifier()));
+                        synonym.addReference(new Reference("source", databaseId));
+                        retval.add(synonym);
                     }
                 }
                 Reference geneOrganismReference = null;
