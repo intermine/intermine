@@ -78,6 +78,15 @@
 
   <!-- Code generation targets -->
 
+  <target name="generate-wsdd" depends="prepare"
+          description="Generate wsdd file from a FlyMine model file">
+    <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">
+      <classpath refid="class.path" />
+    </taskdef>
+
+    <model-output type="wsdd" model="${model.name}" destdir="${build.model}/${model.name}"/>
+  </target>
+
   <target name="generate-java" depends="prepare"
           description="Generate Java files from a FlyMine model file">
     <taskdef name="model-output" classname="org.flymine.task.ModelOutputTask">

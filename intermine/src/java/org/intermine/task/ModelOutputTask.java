@@ -16,6 +16,7 @@ import org.apache.tools.ant.BuildException;
 import java.io.File;
 
 import org.flymine.metadata.Model;
+import org.flymine.codegen.AxisModelOutput;
 import org.flymine.codegen.OJBModelOutput;
 import org.flymine.codegen.JavaModelOutput;
 import org.flymine.codegen.ModelOutput;
@@ -80,7 +81,9 @@ public class ModelOutputTask extends Task
         ModelOutput mo = null;
 
         try {
-            if (type.equals("ojb")) {
+            if (type.equals("wsdd")) {
+                mo = new AxisModelOutput(model, destDir);
+            } else if (type.equals("ojb")) {
                 mo = new OJBModelOutput(model, destDir);
             } else if (type.equals("java")) {
                 mo = new JavaModelOutput(model, destDir);
