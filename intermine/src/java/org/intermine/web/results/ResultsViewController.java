@@ -55,16 +55,18 @@ public class ResultsViewController extends TilesAction
 
     Results results = (Results) session.getAttribute("results");
 
-    // Do we have a configuration object? If not, create one.
-    DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
-    if (dr == null) {
-        dr = new DisplayableResults(results);
+    // Do we already have a configuration object? If we do, update the
+    // new one to inherit properties off the old one
+    DisplayableResults drOrig = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+    DisplayableResults drNew = new DisplayableResults(results);
+    if (drOrig != null) {
+        drNew.update(drOrig);
     }
 
     // Put required things on the request or session or tile context
 
     // The DisplayableResults object
-    session.setAttribute(DISPLAYABLERESULTS_NAME, dr);
+    session.setAttribute(DISPLAYABLERESULTS_NAME, drNew);
 
     return null;
   }
