@@ -297,9 +297,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         String sql = SqlGenerator.generate(q, start, limit, schema, db);
         try {
             long estimatedTime = 0;
+            long startOptimiseTime = System.currentTimeMillis();
             if (optimise && everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
+            long endOptimiseTime = System.currentTimeMillis();
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
                 //long time = (new Date()).getTime();
@@ -340,7 +342,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 if (executeLog != null) {
                     try {
                         executeLog.write("EXECUTE\t" + estimatedTime + "\t" + (now - time) + "\t"
-                                + permittedTime + "\t" + q + "\t" + sql + "\n");
+                                + permittedTime + "\t" + (endOptimiseTime - startOptimiseTime)
+                                + "\t" + q + "\t" + sql + "\n");
                     } catch (IOException e) {
                         LOG.error("Error writing to execute log " + e);
                     }
@@ -608,7 +611,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             }
             String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
-                    "pt_" + tableNumber);
+                    "pt_" + tableNumber, c);
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
             ptm.add(pt);
         } catch (SQLException e) {

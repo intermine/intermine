@@ -10,12 +10,24 @@ package org.intermine.sql.precompute;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.intermine.sql.query.AbstractTable;
+import org.intermine.sql.query.AbstractValue;
+import org.intermine.sql.query.Field;
 import org.intermine.sql.query.Query;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SQLStringable;
+import org.intermine.sql.query.Table;
+
+import org.apache.log4j.Logger;
 
 /**
  * Represents a Precomputed table in a database. A precomputed table is a materialised SQL query.
@@ -25,9 +37,12 @@ import org.intermine.sql.query.SQLStringable;
  */
 public class PrecomputedTable implements SQLStringable, Comparable
 {
+    private static final Logger LOG = Logger.getLogger(PrecomputedTable.class);
     protected Query q;
     protected String name;
     protected Map valueMap;
+    protected String orderByField;
+    protected String generationSqlString;
 
     /**
      * Construct a new PrecomputedTable
@@ -35,7 +50,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
      * @param q the Query that this PrecomputedTable materialises
      * @param name the name of this PrecomputedTable
      */
-    public PrecomputedTable(Query q, String name) {
+    public PrecomputedTable(Query q, String name, Connection conn) {
         if (q == null) {
             throw (new NullPointerException("q cannot be null"));
         }
@@ -52,6 +67,86 @@ public class PrecomputedTable implements SQLStringable, Comparable
             valueMap.put(value.getValue(), value);
         }
 
+        // Now we should work out if we can create an order by field. First, we need to make sure
+        // that all the fields in the order by list are integer numbers (that is SMALLINT, INTEGER,
+        // and BIGINT).
+        boolean useOrderByField = (q.getOrderBy().size() > 1) && (q.getUnion().size() == 1);
+        try {
+            if (useOrderByField) {
+                Iterator orderByIter = q.getOrderBy().iterator();
+                while (orderByIter.hasNext() && useOrderByField) {
+                    AbstractValue column = (AbstractValue) orderByIter.next();
+                    if (column instanceof Field) {
+                        AbstractTable table = ((Field) column).getTable();
+                        if (table instanceof Table) {
+                            String tableName = ((Table) table).getName().toLowerCase();
+                            String columnName = ((Field) column).getName().toLowerCase();
+                            ResultSet r = conn.getMetaData().getColumns(null, null, tableName,
+                                    columnName);
+                            if (r.next()) {
+                                if (tableName.equals(r.getString(3))
+                                        && columnName.equals(r.getString(4))) {
+                                    int columnType = r.getInt(5);
+                                    if (!((columnType == Types.SMALLINT)
+                                                || (columnType == Types.INTEGER)
+                                                || (columnType == Types.BIGINT))) {
+                                        useOrderByField = false;
+                                        LOG.info("Cannot generate order field for precomputed"
+                                                + " table - column " + column.getSQLString()
+                                                + " is type " + columnType);
+                                    }
+                                } else {
+                                    useOrderByField = false;
+                                    LOG.error("getColumns returned wrong data for column "
+                                            + column.getSQLString());
+                                }
+                            } else {
+                                useOrderByField = false;
+                                LOG.error("getColumns return no data for column "
+                                        + column.getSQLString() + " in table " + tableName);
+                            }
+                            if (r.next()) {
+                                useOrderByField = false;
+                                LOG.error("getColumns returned too much data for column "
+                                        + column.getSQLString());
+                            }
+                        } else {
+                            useOrderByField = false;
+                            LOG.info("Cannot generate order field for precomputed table - column "
+                                    + column.getSQLString() + " does not belong to a Table");
+                        }
+                    } else {
+                        useOrderByField = false;
+                        LOG.info("Cannot generate order field for precomputed table - column "
+                                + column.getSQLString() + " is not a Field");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            useOrderByField = false;
+            LOG.error("Caught SQLException while examining order by fields: " + e);
+        }
+
+        if (useOrderByField) {
+            orderByField = "orderby_field";
+            List orderBy = q.getOrderBy();
+            StringBuffer extraBuffer = new StringBuffer();
+            for (int i = orderBy.size() - 1; i > 0; i--) {
+                extraBuffer.append("((" + ((SQLStringable) orderBy.get(orderBy.size() - 1 - i))
+                        .getSQLString() + "::numeric) * 1");
+                for (int o = 0; o < i; o++) {
+                    extraBuffer.append("00000000000000000000");
+                }
+                extraBuffer.append(") + ");
+            }
+            extraBuffer.append("(" + ((SQLStringable) orderBy.get(orderBy.size() - 1))
+                    .getSQLString() + "::numeric) AS orderby_field");
+            generationSqlString = "CREATE TABLE " + name + " AS "
+                + q.getSQLStringForPrecomputedTable(extraBuffer.toString());
+        } else {
+            orderByField = null;
+            generationSqlString = "CREATE TABLE " + name + " AS " + q.getSQLString();
+        }
     }
 
     /**
@@ -82,12 +177,21 @@ public class PrecomputedTable implements SQLStringable, Comparable
     }
 
     /**
-     * Get a "CREATE TABLE" SQL statement for this PrecomputedTable
+     * Get a "CREATE TABLE" SQL statement for this PrecomputedTable.
      *
      * @return this PrecomputedTable as an SQL statement
      */
     public String getSQLString() {
-        return "CREATE TABLE " + name + " AS " + q.getSQLString();
+        return generationSqlString;
+    }
+
+    /**
+     * Returns the name of the order by field, if it exists.
+     *
+     * @return orderByField
+     */
+    public String getOrderByField() {
+        return orderByField;
     }
 
     /**

@@ -128,7 +128,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 
     // Add some precomputed tables into the database
     public void setUpPrecomputedTables() throws Exception {
-
+        Connection con = getDatabase().getConnection();
         precomps.put("precomp_countTable2", "SELECT table2.col2 AS table2_col2, count(*) AS c FROM table2 GROUP BY table2.col2 ORDER BY table2.col2");
         precomps.put("precomp_avgTable2Table3", "SELECT table2.col1 AS table2_col1, avg(table2.col2 + table3.col2) AS a FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
         precomps.put("precomp_table2Table3onCol2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col2 = table3.col2 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
@@ -141,12 +141,11 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         while (precompsIter.hasNext()) {
             String name = (String) precompsIter.next();
             Query q = new Query((String) precomps.get(name));
-            PrecomputedTable pt = new PrecomputedTable(q, name);
+            PrecomputedTable pt = new PrecomputedTable(q, name, con);
             ptm.add(pt);
         }
 
         // Set up table statistics for the database
-        Connection con = getDatabase().getConnection();
         con.setAutoCommit(true);
         Statement stmt = con.createStatement();
         stmt.execute("ANALYZE");
@@ -166,13 +165,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 
     public void tearDownPrecomputedTables() throws Exception {
         PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(getDatabase());
-        Iterator precompsIter = precomps.keySet().iterator();
-        while (precompsIter.hasNext()) {
-            String name = (String) precompsIter.next();
-            Query q = new Query((String) precomps.get(name));
-            PrecomputedTable pt = new PrecomputedTable(q, name);
-            ptm.delete(pt);
-        }
+        ptm.dropEverything();
     }
 
 

@@ -187,14 +187,21 @@ public class PrecomputedTableManager
             Statement stmt = con.createStatement();
             stmt.execute(pt.getSQLString());
 
-            List orderBy = pt.getQuery().getOrderBy();
-            if (!orderBy.isEmpty()) {
-                AbstractValue firstOrderBy = ((AbstractValue) orderBy.get(0));
-                SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap().get(firstOrderBy));
-                if (firstOrderByValue != null) {
-                    addIndex(pt.getName(), firstOrderByValue.getAlias(), con);
+            String orderByField = pt.getOrderByField();
+            if (orderByField != null) {
+                addIndex(pt.getName(), orderByField, con);
+            } else {
+                List orderBy = pt.getQuery().getOrderBy();
+                if (!orderBy.isEmpty()) {
+                    AbstractValue firstOrderBy = ((AbstractValue) orderBy.get(0));
+                    SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap().get(firstOrderBy));
+                    if (firstOrderByValue != null) {
+                        addIndex(pt.getName(), firstOrderByValue.getAlias(), con);
+                    }
                 }
             }
+
+            con.createStatement().execute("ANALYSE " + pt.getName());
 
             // Create the entry in the index table
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
@@ -276,7 +283,7 @@ public class PrecomputedTableManager
             String tableName = res.getString(1);
             String queryString = res.getString(2);
             try {
-                precomputedTables.add(new PrecomputedTable(new Query(queryString), tableName));
+                precomputedTables.add(new PrecomputedTable(new Query(queryString), tableName, con));
             } catch (IllegalArgumentException e) {
                 // This would be a poor query string in the TABLE_INDEX
             }
