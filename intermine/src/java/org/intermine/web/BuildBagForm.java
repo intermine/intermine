@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 
 public class BuildBagForm extends ActionForm
 {
+    protected String bagName;
     protected FormFile formFile;
     protected String text;
 
@@ -56,5 +57,23 @@ public class BuildBagForm extends ActionForm
      */
     public FormFile getFormFile() {
         return formFile;
+    }
+
+    /**
+     * Set the bag name (existing bags)
+     *
+     * @param bagName the bag name to save to
+     */
+    public void setBagName(String bagName) {
+        this.bagName = bagName;
+    }
+
+    /**
+     * Get the bag name (existing bags)
+     *
+     * @return the bag name
+     */
+    public String getBagName() {
+        return bagName;
     }
 }
