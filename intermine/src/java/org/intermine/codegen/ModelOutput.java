@@ -331,6 +331,17 @@ public abstract class ModelOutput
         return result;
     }
     
+    protected List getParents(MClassifier cls) {
+        List parentList = new ArrayList();
+        Iterator parents = cls.getGeneralizations().iterator();
+        while (parents.hasNext()) {
+            MClassifier parent = (MClassifier) ((MGeneralization) parents.next()).getParent();
+            parentList.add(parent);
+            parents = parent.getGeneralizations().iterator();
+        }
+        return parentList;
+    }
+
     protected String generateQualified(MClassifier cls) {
         return getPackagePath(cls) + "." + cls.getName();
     }
