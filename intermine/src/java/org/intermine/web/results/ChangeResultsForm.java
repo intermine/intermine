@@ -170,7 +170,8 @@ public class ChangeResultsForm extends ActionForm
 
         ActionErrors errors = null;
 
-        if (selectedObjects.length == 0) {
+        if (("addToExistingBag".equals(getButton()) || "saveNewBag".equals(getButton()))
+            && selectedObjects.length == 0) {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                        new ActionError("errors.savebag.nothingSelected", newBagName));
