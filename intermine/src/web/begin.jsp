@@ -90,8 +90,8 @@
   <im:box helpUrl="${helpUrl}" titleKey="begin.heading.templates">
     <c:forEach items="${CATEGORIES}" var="category">
       <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-        <div class="heading">${category}</div>
-        <div class="body"><im:templateList type="global" category="${category}"/></div>
+        <im:heading id="globalTmpls${category}">${category}</im:heading>
+        <im:body id="globalTmpls${category}"><im:templateList type="global" category="${category}"/></im:body>
         <im:vspacer height="5"/>
       </c:if>
     </c:forEach>
@@ -106,8 +106,8 @@
   <im:box helpUrl="${helpUrl}" titleKey="begin.heading.mytemplates">
     <c:forEach items="${PROFILE.categoryTemplates}" var="entry">
       <c:if test="${!empty entry.value && !empty entry.key}">
-        <div class="heading">${entry.key}</div>
-        <div class="body"><im:templateList type="user" category="${entry.key}"/></div>
+        <im:heading id="userTmpls${entry.key}">${entry.key}</im:heading>
+        <im:body id="userTmpls${entry.key}"><im:templateList type="user" category="${entry.key}"/></im:body>
         <im:vspacer height="5"/>
       </c:if>
     </c:forEach>
