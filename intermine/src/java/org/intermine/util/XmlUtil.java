@@ -130,6 +130,8 @@ public class XmlUtil
             return "java.math.BigDecimal";
         } else if (xmlType.equals("ID")) {
             return "java.lang.String";
+        } else if (xmlType.equals("NMTOKEN")) {
+            return "java.lang.String";
         } else {
             throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
         }
