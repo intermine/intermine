@@ -186,7 +186,7 @@ public class QueryBuildAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
-        Map savedBags = (Map) session.getAttribute("savedBags");
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         ServletContext servletContext = session.getServletContext();
         Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
 

@@ -200,7 +200,7 @@ public class QueryBuildForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Map queryClasses = (Map) session.getAttribute("queryClasses");
-        Map savedBags = (Map) session.getAttribute("savedBags");
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         String editingAlias = (String) session.getAttribute("editingAlias");
 
         if (editingAlias == null) {
