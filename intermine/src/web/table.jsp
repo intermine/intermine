@@ -39,39 +39,42 @@ function unselectColumnCheckbox(column) {
         </th>
 
         <th align="center" width="1%">
-          <nobr>
-            <c:out value="${column.name}"/>
-          </nobr>
-          <br/>
-          <nobr>
-          <%-- right/left --%>
-          <c:if test="${not status.first}">
-            [<html:link action="/changeResults?method=moveColumnLeft&index=${status.index}">
-              <fmt:message key="results.moveLeft"/>
-            </html:link>]
-          </c:if>
-          <c:if test="${not status.last}">
-            [<html:link action="/changeResults?method=moveColumnRight&index=${status.index}">
-              <fmt:message key="results.moveRight"/>
-            </html:link>]
-          </c:if>
-
-          <%-- show/hide --%>
-          <c:choose>
-            <c:when test="${column.visible}">
-              <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
-                [<html:link action="/changeResults?method=hideColumn&index=${status.index}">
-                  <fmt:message key="results.hideColumn"/>
+          <div>
+            <nobr>
+              <c:out value="${column.name}"/>
+            </nobr>
+          </div>
+          <div>
+            <nobr>
+              <%-- right/left --%>
+              <c:if test="${not status.first}">
+                [<html:link action="/changeResults?method=moveColumnLeft&index=${status.index}">
+                  <fmt:message key="results.moveLeft"/>
                 </html:link>]
               </c:if>
-            </c:when>
-            <c:otherwise>
-              [<html:link action="/changeResults?method=showColumn&index=${status.index}">
-                <fmt:message key="results.showColumn"/>
-              </html:link>]
-            </c:otherwise>
-          </c:choose>
-          </nobr>
+              <c:if test="${not status.last}">
+                [<html:link action="/changeResults?method=moveColumnRight&index=${status.index}">
+                  <fmt:message key="results.moveRight"/>
+                </html:link>]
+              </c:if>
+
+              <%-- show/hide --%>
+              <c:choose>
+                <c:when test="${column.visible}">
+                  <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
+                    [<html:link action="/changeResults?method=hideColumn&index=${status.index}">
+                      <fmt:message key="results.hideColumn"/>
+                    </html:link>]
+                  </c:if>
+                </c:when>
+                <c:otherwise>
+                  [<html:link action="/changeResults?method=showColumn&index=${status.index}">
+                    <fmt:message key="results.showColumn"/>
+                  </html:link>]
+                </c:otherwise>
+              </c:choose>
+            </nobr>
+          </div>
         </th>
       </c:forEach>
     </tr>
