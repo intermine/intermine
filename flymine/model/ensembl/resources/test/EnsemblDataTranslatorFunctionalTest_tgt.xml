@@ -43,16 +43,14 @@
   <item id="11_2" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="RepeatMask"/>
   </item>
-  <item id="-1_35" class="http://www.flymine.org/model/genomic#PartialLocation">
+  <item id="-1_35" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="25020"/>
-    <attribute name="endIsPartial" value="true"/>
+    <attribute name="endIsPartial" value="false"/>
     <attribute name="endPhase" value="0"/>
     <attribute name="phase" value="0"/>
     <attribute name="start" value="22021"/>
     <attribute name="startIsPartial" value="false"/>
     <attribute name="strand" value="1"/>
-    <attribute name="subjectEnd" value="3000"/>
-    <attribute name="subjectStart" value="1"/>
     <reference name="object" ref_id="1_11168"/>
     <reference name="subject" ref_id="0_101"/>
   </item>
@@ -104,16 +102,14 @@
   <item id="11_4" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="tRNAscan-SE"/>
   </item>
-  <item id="-1_36" class="http://www.flymine.org/model/genomic#PartialLocation">
+  <item id="-1_36" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="7000"/>
     <attribute name="endIsPartial" value="false"/>
     <attribute name="endPhase" value="0"/>
     <attribute name="phase" value="0"/>
     <attribute name="start" value="1"/>
-    <attribute name="startIsPartial" value="true"/>
+    <attribute name="startIsPartial" value="false"/>
     <attribute name="strand" value="1"/>
-    <attribute name="subjectEnd" value="10000"/>
-    <attribute name="subjectStart" value="3001"/>
     <reference name="object" ref_id="1_11169"/>
     <reference name="subject" ref_id="0_101"/>
   </item>

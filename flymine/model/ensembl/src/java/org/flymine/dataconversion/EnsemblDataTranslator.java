@@ -72,7 +72,7 @@ public class EnsemblDataTranslator extends DataTranslator
     private Reference flybaseRef;
     private Map supercontigs = new HashMap();
     private Map scLocs = new HashMap();
-    private Map exonLocs = new LinkedHashMap();
+    private Set exonLocs = new HashSet();
     private Map exons = new HashMap();
     private String orgAbbrev;
     private Item organism;
@@ -104,15 +104,14 @@ public class EnsemblDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
-        i = exonLocs.values().iterator();
-        while (i.hasNext()) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
         i = exons.values().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
-
+        i = exonLocs.iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
         if (flybaseDb != null) {
             tgtItemWriter.store(ItemHelper.convert(flybaseDb));
         }
@@ -141,12 +140,14 @@ public class EnsemblDataTranslator extends DataTranslator
                     if (stableId != null) {
                         moveField(stableId, tgtItem, "stable_id", "name");
                     }
-                    storeTgtItem = false;
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
-                    Set locs = processExon(srcItem, tgtItem,
-                        createLocation(srcItem, tgtItem, "contig", "contig", true));
-                    if (!locs.isEmpty()) {
-                        result.addAll(locs);
+                    // more than one item representing same exon -> store up in map
+                    Item location = createLocation(srcItem, tgtItem, "contig", "contig", true);
+                    if (srcItem.hasAttribute("nonUniqueId")) {
+                        storeTgtItem = false;
+                        processExon(srcItem, tgtItem, location);
+                    } else {
+                        exonLocs.add(location);
                     }
                 } else if ("simple_feature".equals(className)) {
                     tgtItem.addReference(getOrgRef());
@@ -341,86 +342,6 @@ public class EnsemblDataTranslator extends DataTranslator
         return supercontig;
     }
 
-
-    private Set processExon(Item srcItem, Item exon, Item thisLoc) {
-        Set ret = new HashSet();
-
-        if (srcItem.hasAttribute("nonUniqueId")) {
-            String nonUniqueId = srcItem.getAttribute("nonUniqueId").getValue();
-
-            if (exonLocs.containsKey(nonUniqueId)) {
-                // already seen exon
-                // a) throw away second copy
-                // b) locations are partial
-                // c) make sure the exon in exons map has lowest identifier
-
-                Item chosenExon = null;
-                Item otherExon = null;
-                String oldIdentifier = ((Item) exons.get(nonUniqueId)).getIdentifier();
-                if (Integer.parseInt(oldIdentifier.substring(oldIdentifier.indexOf("_") + 1))
-                    > Integer.parseInt(exon.getIdentifier()
-                                     .substring(exon.getIdentifier().indexOf("_") + 1))) {
-                    // exon in map needs all parents in objects collection
-                    otherExon = (Item) exons.get(nonUniqueId);
-                    chosenExon = exon;
-                    exons.put(nonUniqueId, exon);
-                } else {
-                    chosenExon = (Item) exons.get(nonUniqueId);
-                    otherExon = exon;
-                }
-                Set objects = new HashSet();
-                objects.addAll(chosenExon.getCollection("objects").getRefIds());
-                objects.addAll(otherExon.getCollection("objects").getRefIds());
-                objects.add(thisLoc.getIdentifier());
-                chosenExon.addCollection(new ReferenceList("objects", new ArrayList(objects)));
-
-                Item prevLoc = (Item) exonLocs.get(nonUniqueId);
-                exonLocs.remove(nonUniqueId);
-                Item firstLoc = null;
-                Item secondLoc = null;
-                if (srcItem.getAttribute("sticky_rank").getValue().equals("1")) {
-                    firstLoc = thisLoc;
-                    secondLoc = prevLoc;
-                } else {
-                    firstLoc = prevLoc;
-                    secondLoc = thisLoc;
-                }
-
-                int lengthOnFirst = (Integer.parseInt(firstLoc.getAttribute("end").getValue())
-                                - Integer.parseInt(firstLoc.getAttribute("start").getValue())) + 1;
-                int lengthOnSecond = (Integer.parseInt(secondLoc.getAttribute("end").getValue())
-                                - Integer.parseInt(secondLoc.getAttribute("start").getValue())) + 1;
-
-                // add subjectStart and subjectEnd to firstLoc
-                firstLoc.setClassName(tgtNs + "PartialLocation");
-                firstLoc.addAttribute(new Attribute("subjectStart", "1"));
-                firstLoc.addAttribute(new Attribute("subjectEnd", "" + lengthOnFirst));
-                firstLoc.getAttribute("endIsPartial").setValue("true");
-                firstLoc.addReference(new Reference("subject", chosenExon.getIdentifier()));
-
-                // add subjectStart and subjectEnd to secondLoc
-                secondLoc.setClassName(tgtNs + "PartialLocation");
-                secondLoc.addAttribute(new Attribute("subjectStart", "" + (lengthOnFirst + 1)));
-                secondLoc.addAttribute(new Attribute("subjectEnd", "" + (lengthOnFirst
-                                                                         + lengthOnSecond)));
-                secondLoc.getAttribute("startIsPartial").setValue("true");
-                secondLoc.addReference(new Reference("subject", chosenExon.getIdentifier()));
-
-
-                ret.add(firstLoc);
-                ret.add(secondLoc);
-            } else {
-                // store this exon and keep Location
-                exonLocs.put(nonUniqueId, thisLoc);
-                exons.put(nonUniqueId, exon);
-            }
-        } else {
-            ret.add(thisLoc);
-            exons.put(exon.getIdentifier(), exon);
-        }
-        return ret;
-    }
-
     private Collection createSuperContigs() {
         Set results = new HashSet();
         Iterator i = supercontigs.values().iterator();
@@ -563,7 +484,39 @@ public class EnsemblDataTranslator extends DataTranslator
         return synonyms;
     }
 
+    // keep exon with the lowest identifier
+    private void processExon(Item srcItem, Item exon, Item loc) {
+        String nonUniqueId = srcItem.getAttribute("nonUniqueId").getValue();
+        if (exons.containsKey(nonUniqueId)) {
+            Item chosenExon = null;
+            Item otherExon = null;
+            String oldIdentifier = ((Item) exons.get(nonUniqueId)).getIdentifier();
+            if (Integer.parseInt(oldIdentifier.substring(oldIdentifier.indexOf("_") + 1))
+                > Integer.parseInt(exon.getIdentifier()
+                                   .substring(exon.getIdentifier().indexOf("_") + 1))) {
+                chosenExon = exon;
+                otherExon = (Item) exons.get(nonUniqueId);
+            } else {
+                chosenExon = (Item) exons.get(nonUniqueId);
+                otherExon = exon;
+            }
+            // exon in map needs all locations in objects collection
+            Set objects = new HashSet();
+            objects.addAll(chosenExon.getCollection("objects").getRefIds());
+            objects.addAll(otherExon.getCollection("objects").getRefIds());
+            objects.add(loc.getIdentifier());
+            chosenExon.addCollection(new ReferenceList("objects", new ArrayList(objects)));
 
+            // loc needs chosen exon as subject
+            loc.addReference(new Reference("subject", chosenExon.getIdentifier()));
+
+            exons.put(nonUniqueId, chosenExon);
+            exonLocs.add(loc);
+        } else {
+            exons.put(nonUniqueId, exon);
+            exonLocs.add(loc);
+        }
+    }
 
     // ensemblType should be part of name before _stable_id
     private Item getStableId(String ensemblType, String identifier, String srcNs) throws
