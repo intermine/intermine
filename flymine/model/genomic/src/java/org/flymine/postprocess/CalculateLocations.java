@@ -618,8 +618,6 @@ public class CalculateLocations
 
         q.setConstraint(cs);
 
-        org.intermine.web.LogMe.log("i", "running: " + q);
-
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(20000);
 
