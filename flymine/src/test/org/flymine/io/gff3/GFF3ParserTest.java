@@ -13,6 +13,7 @@ package org.flymine.io.gff3;
 import junit.framework.TestCase;
 
 import java.util.*;
+import java.io.StringReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -85,5 +86,17 @@ public class GFF3ParserTest extends TestCase
         for (int i = 0; i < 22; i++) {
             assertEquals(expected[i], ((GFF3Record) records.get(i)).toString());
         }
+    }
+
+
+    public void testToGFF3() throws Exception {
+        String original="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013:2;Parent=CG32013-RA\n"
+            + "4\t.\texon\t22335\t22528\t1000.0\t-\t1\tID=CG32013:2;Parent=CG32013-RA\n";
+        StringBuffer sb = new StringBuffer();
+        Iterator iter = GFF3Parser.parse(new BufferedReader(new StringReader(original))).iterator();
+        while (iter.hasNext()) {
+            sb.append(((GFF3Record) iter.next()).toGFF3());
+        }
+        assertEquals(original, sb.toString());
     }
 }
