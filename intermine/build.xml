@@ -76,6 +76,7 @@
     <include name="postgresql*.jar" />
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
+    <include name="jena*.jar" />
   </patternset>
 
   <!-- Ant tasks and unit testing stuff -->
