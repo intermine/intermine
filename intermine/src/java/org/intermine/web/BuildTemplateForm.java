@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -156,7 +157,8 @@ public class BuildTemplateForm extends ValidatorForm
         Map userTemplates = profile.getSavedTemplates();
         
         ActionErrors errors = super.validate(mapping, request);
-        if (shortName != null && userTemplates.containsKey(shortName)) {
+        if (shortName != null && session.getAttribute(Constants.EDITING_TEMPLATE) == null
+            && userTemplates.containsKey(shortName)) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
@@ -188,5 +190,36 @@ public class BuildTemplateForm extends ValidatorForm
         constraintLabels = new HashMap();
         templateDescription = "";
         shortName = "";
+    }
+    
+    /**
+     * Initialise this form bean with values taken from an existing
+     * template query.
+     *
+     * @param template  an existing template query
+     */
+    public void initFromTemplate(TemplateQuery template) {
+        setShortName(template.getName());
+        setCategory(template.getCategory());
+        setDescription(template.getDescription());
+        
+        int j = 0;
+        Iterator niter = template.getQuery().getNodes().entrySet().iterator();
+        
+        while (niter.hasNext()) {
+            Map.Entry entry = (Map.Entry) niter.next();
+            PathNode node = (PathNode) entry.getValue();
+            
+            if (node.isAttribute()) {
+                Iterator citer = node.getConstraints().iterator();
+                while (citer.hasNext()) {
+                    Constraint c = (Constraint) citer.next();
+                    String key = "" + (j + 1);
+                    setConstraintLabel(key, c.getDescription());
+                    setConstraintEditable(key, c.isEditable());
+                    j++;
+                }
+            }
+        }
     }
 }
