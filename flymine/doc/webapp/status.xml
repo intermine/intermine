@@ -18,30 +18,31 @@ value.
       <itemizedlist>
         <listitem>
           Genome Annotation for D. melanogaster and A. gambiae from Ensembl
-          (http://www.ensembl.org)
+          (<ulink url="http://www.ensembl.org"></ulink>)
         </listitem>
         <listitem>
           Orthologues between D. melanogaster and A. gambiae from Ensembl
-          (http://www.ensembl.org)
+          (<ulink url="http://www.ensembl.org"></ulink>)
         </listitem>
         <listitem>
           Orthologues and Paralogues between D. melanogaster and C. elegans from
-          inParanoid (http://inparanoid.cgb.ki.se/index.html) 
+          inParanoid (<ulink url="http://inparanoid.cgb.ki.se/index.html"></ulink>)
         </listitem>
         <listitem>
           2-hybrid protein-protein interactions for D. melanogaster: Curagen set
           (Giot et al (2003) Science 302 1727-1736) and Hybrigenics set
-          (http://pim.hybrigenics.com/pimrider/nologin/prhome.html) 
+          (<ulink url="http://pim.hybrigenics.com/pimrider/nologin/prhome.html"></ulink>)
         </listitem>
         <listitem>
           2-hybrid protein-protein interactions for C. elegans: (Li et al (2004)
           Science 303 540-543)
         </listitem>
         <listitem>
-          RNAi phenotypes for C. elegans from WormBase (http://www.wormbase.org)
+          RNAi phenotypes for C. elegans from WormBase (<ulink
+          url="http://www.wormbase.org"></ulink>)
         </listitem>
         <listitem>
-          GO Ontology
+          GO Ontology (<ulink url="http://www.geneontology.org">www.geneontology.org</ulink>)
         </listitem>
       </itemizedlist>
     </sect2>
@@ -52,7 +53,8 @@ value.
       </para>
       <itemizedlist>
         <listitem>
-          Drosophila microarray data via ArrayExpress
+          Drosophila microarray data via <ulink
+          url="http://www.ebi.ac.uk/arrayexpress">ArrayExpress</ulink>
         </listitem>
       </itemizedlist>
     </sect2>
