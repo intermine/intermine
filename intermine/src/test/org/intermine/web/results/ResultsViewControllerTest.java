@@ -20,6 +20,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
+import org.flymine.web.Constants;
 
 public class ResultsViewControllerTest extends MockStrutsTestCase
 {
@@ -37,8 +38,8 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", new Results(q, os, os.getSequence()));
         actionPerform();
-        assertNotNull(getRequest().getSession().getAttribute(ResultsViewController.DISPLAYABLERESULTS_NAME));
-        assertNotNull(getRequest().getSession().getAttribute(ResultsViewController.SAVEDBAGS_NAME));
+        assertNotNull(getRequest().getSession().getAttribute(Constants.RESULTS_TABLE));
+        assertNotNull(getRequest().getSession().getAttribute(Constants.SAVED_BAGS));
     }
 
     public void testExisting() throws Exception {
@@ -48,9 +49,9 @@ public class ResultsViewControllerTest extends MockStrutsTestCase
 
         Map savedBags = new HashMap();
 
-        getSession().setAttribute(ResultsViewController.SAVEDBAGS_NAME, savedBags);
+        getSession().setAttribute(Constants.SAVED_BAGS, savedBags);
         actionPerform();
-        assertTrue(savedBags == getRequest().getSession().getAttribute(ResultsViewController.SAVEDBAGS_NAME));
+        assertTrue(savedBags == getRequest().getSession().getAttribute(Constants.SAVED_BAGS));
     }
 
 }
