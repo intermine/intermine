@@ -59,20 +59,6 @@
       <reference ref_id="-1_33"/>
     </collection>
   </item>
-  <item id="-1_9" class="http://www.flymine.org/model/genomic#ComputationalResult">
-    <attribute name="score" value="416.0"/>
-    <reference name="analysis" ref_id="11_5"/>
-    <reference name="source" ref_id="-1_2"/>
-  </item>
-  <item id="-1_10" class="http://www.flymine.org/model/genomic#Location">
-    <attribute name="end" value="1200"/>
-    <attribute name="endIsPartial" value="false"/>
-    <attribute name="start" value="50"/>
-    <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="0"/>
-    <reference name="object" ref_id="1_11167"/>
-    <reference name="subject" ref_id="14_1"/>
-  </item>
   <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="synonym" value="TP1234"/>
     <reference name="source" ref_id="-1_4"/>
@@ -200,18 +186,6 @@
     <reference name="organism" ref_id="-1_1"/>
     <collection name="objects">
       <reference ref_id="-1_11"/>
-    </collection>
-  </item>
-  <item id="14_1" class="http://www.flymine.org/model/genomic#CpGIsland">
-    <attribute name="name" value="14_1"/>
-    <reference name="contig" ref_id="1_11167"/>
-    <reference name="organism" ref_id="-1_1"/>
-    <collection name="evidence">
-      <reference ref_id="-1_9"/>
-      <reference ref_id="-1_2"/>
-    </collection>
-    <collection name="objects">
-      <reference ref_id="-1_10"/>
     </collection>
   </item>
   <item id="-1_25" class="http://www.flymine.org/model/genomic#Synonym">
