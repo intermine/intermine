@@ -6,6 +6,7 @@
 
 <tiles:importAttribute/>
 
+
 <%-- The following should probably be turned into a tag at some stage --%>
 <table border="1px" width="90%">
   <%-- The headers --%>
@@ -107,3 +108,19 @@
     <bean:message key="results.last"/>
   </html:link>
 </c:if>
+
+<%-- Page size controls --%>
+<html:form action="/changeResultsSize">
+
+  <bean:message key="results.changepagesize"/>
+  <html:select property="pageSize">
+    <html:option value="10">10</html:option>
+    <html:option value="25">25</html:option>
+    <html:option value="50">50</html:option>
+    <html:option value="100">100</html:option>
+  </html:select>
+  <html:submit property="action">
+    <bean:message key="button.change"/>
+  </html:submit>
+
+</html:form>
