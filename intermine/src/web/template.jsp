@@ -3,11 +3,12 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
+<tiles:importAttribute/>
+
 <html:form action="/templateAction">
-  <html:hidden property="queryName" value="${queryName}"/>
   <c:out value="${templateQuery.indexedDescription}"/><br/><br/>
   <table>
-    <c:forEach items="${nodes}" var="node" varStatus="status">
+    <c:forEach items="${templateQuery.nodes}" var="node" varStatus="status">
       <tr>
         <td align="right">
           <c:out value="[${status.count}]"/>

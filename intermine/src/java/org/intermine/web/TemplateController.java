@@ -18,13 +18,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 import org.intermine.objectstore.query.SimpleConstraint;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Controller for the template page
@@ -35,7 +35,8 @@ public class TemplateController extends TilesAction
     /**
      * @see TilesAction#execute
      */
-    public ActionForward execute(ActionMapping mapping,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -45,32 +46,47 @@ public class TemplateController extends TilesAction
         Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
 
         String queryName = request.getParameter("name");
+        if (queryName == null) {
+            //validation failed last time
+            queryName = (String) session.getAttribute("queryName");
+        }
+
+        boolean populate = false;
+        TemplateForm templateForm = (TemplateForm) session.getAttribute("templateForm");
+        if (templateForm == null) {
+            templateForm = new TemplateForm();
+            session.setAttribute("templateForm", templateForm);
+            populate = true;
+        }
+
         TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
 
-        List nodes = new ArrayList();
         Map ops = new HashMap();
         Map names = new HashMap();
 
-        //build list of nodes with editable constraints, the valid ops for those constraints,
-        //and the human-readable "name" for each node (Department.company.name -> "Company name")
-        for (int i = 0; i < template.getPaths().size(); i++) {
-            String path = (String) template.getPaths().get(i);
-            PathNode node = (PathNode) template.getQuery().getNodes().get(path);
-            nodes.add(node);
+        //for each node with an editable constraint, store the valid ops for those constraints
+        //and the human-readable "name" for each node (Department.company.name -> "Company namae")
+        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+
             ops.put(node, MainHelper.mapOps(SimpleConstraint.validOps(MainHelper.
                                                                       getClass(node.getType()))));
-            Constraint c = (Constraint) node.getConstraints().get(0);
-            ((TemplateForm) form).setAttributeValues("" + (i + 1), "" + c.getValue());
-            ((TemplateForm) form).setAttributeOps("" + (i + 1), "" + c.getOp().getIndex());
 
             PathNode parent = (PathNode) template.getQuery().getNodes().
-                get(path.substring(0, path.lastIndexOf(".")));
-            names.put(node, parent.getType() + " " + path.substring(path.lastIndexOf(".") + 1));
+                get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
+            names.put(node, parent.getType() + " "
+                      + node.getPath().substring(node.getPath().lastIndexOf(".") + 1));
+            
+            if (populate) {
+                Constraint c = (Constraint) node.getConstraints().get(0);
+                int j = template.getNodes().indexOf(node);
+                templateForm.setAttributeValues("" + (j + 1), "" + c.getValue());
+                templateForm.setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
+            }
         }
 
-        request.setAttribute("queryName", queryName);
+        session.setAttribute("queryName", queryName);
         request.setAttribute("templateQuery", template);
-        request.setAttribute("nodes", nodes);
         request.setAttribute("ops", ops);
         request.setAttribute("names", names);
 

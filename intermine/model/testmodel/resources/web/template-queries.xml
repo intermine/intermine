@@ -1,10 +1,15 @@
 <query-list>
-  <query name='employeesFromCompanyAndDepartment' model='testmodel' view='Employee'>
-    <node path='Employee.department.company.name'>
-      <constraint op='=' value='CompanyA'/>
+  <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee">
+    <node path="Employee.department.company.name">
+      <constraint op="=" value="CompanyA"/>
     </node>
-    <node path='Employee.department.name'>
-      <constraint op='LIKE' value='Department%'/>
+    <node path="Employee.department.name">
+      <constraint op="LIKE" value="Department%"/>
+    </node>
+  </query>
+  <query name="employeesOfACertainAge" model="testmodel" view="Employee">
+    <node path="Employee.age">
+      <constraint op=">" value="35"/>
     </node>
   </query>
 </query-list>

@@ -181,27 +181,7 @@ public class MainForm extends ActionForm
         if (request.getParameter("attribute") != null) {
             PathNode node = (PathNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
-            if (Date.class.equals(fieldClass)) {
-                DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,
-                                                            locale);
-                try {
-                    parsedAttributeValue = df.parse(attributeValue);
-                } catch (ParseException e) {
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("errors.date",
-                                               attributeValue,
-                                               df.format(new Date())));
-                }
-            } else {
-                try {
-                    parsedAttributeValue = TypeUtil.stringToObject(fieldClass, attributeValue);
-                } catch (NumberFormatException e) {
-                    String shortName = TypeUtil.unqualifiedName(fieldClass.getName()).toLowerCase();
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("errors." + shortName,
-                                               attributeValue));
-                }
-            }
+            parsedAttributeValue = parseValue(attributeValue, fieldClass, locale, errors);
         }
 
         if (errors.size() > 0) {
@@ -210,6 +190,37 @@ public class MainForm extends ActionForm
         
         return errors;
     }
+    
+    /**
+     * Parse an attribute value
+     * @param value the value as a String
+     * @param type the type of the parsed value
+     * @param locale the user's locale
+     * @param errors ActionErrors to which any parse errors are added
+     * @return the parsed value
+     */
+    public static Object parseValue(String value, Class type, Locale locale, ActionErrors errors) {
+        Object parsedValue = null;
+        if (Date.class.equals(type)) {
+            DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            try {
+                parsedValue = df.parse(value);
+            } catch (ParseException e) {
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                           new ActionError("errors.date", value, df.format(new Date())));
+            }
+        } else {
+            try {
+                parsedValue = TypeUtil.stringToObject(type, value);
+            } catch (NumberFormatException e) {
+                String shortName = TypeUtil.unqualifiedName(type.getName()).toLowerCase();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                           new ActionError("errors." + shortName, value));
+            }
+        }
+        return parsedValue;
+    }
+
     /**
      * @see ActionForm#reset
      */
