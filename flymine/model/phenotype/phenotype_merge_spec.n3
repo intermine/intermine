@@ -7,4 +7,4 @@
 @prefix null:	 <http://www.flymine.org/model/null#>.
 
 :Phenotype a owl:Class;
-    rdfs:subClassOf :DagTerm .
+    rdfs:subClassOf :OntologyTerm .

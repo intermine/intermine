@@ -322,7 +322,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem.addAttribute(new Attribute("isBackground","false"));
         expectedItem.addReference(new Reference("analysis","-1_1"));
 
-        Item expectedItem2 = createItem(tgtNs+"DagTerm", "1_611", "");
+        Item expectedItem2 = createItem(tgtNs+"OntologyTerm", "1_611", "");
         expectedItem2.addAttribute(new Attribute("name","linear_scale"));
 
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2}));
@@ -443,7 +443,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem4.addReference(new Reference("source",  "-1_3"));
         expectedItem4.addReference(new Reference("subject", "0_11"));
 
-        Item expectedItem5 = createItem(tgtNs+"DagTerm", "1_13", "");
+        Item expectedItem5 = createItem(tgtNs+"OntologyTerm", "1_13", "");
         expectedItem5.addAttribute(new Attribute("name", "cDNA_clone"));
 
         Item expectedItem7 = createItem(tgtNs+"Database",  "-1_3", "");

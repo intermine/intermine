@@ -1113,7 +1113,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-phenotype file="${model}/phenotype/phenotype.ontology" osName="osw.phenotype-tgt-items" termClass="http://www.flymine.org/model/genomic#Phenotype" relationClass="http://www.flymine.org/model/genomic#DagRelation"/>
+    <retrieve-phenotype file="${model}/phenotype/phenotype.ontology" osName="osw.phenotype-tgt-items" termClass="http://www.flymine.org/model/genomic#Phenotype" relationClass="http://www.flymine.org/model/genomic#OntologyRelation"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1149,7 +1149,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-psi-dag file="${model}/psi/psi-mi.dag" osName="osw.psi-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#ProteinInteractionTerm" relationClass="http://www.flymine.org/model/genomic#DagRelation"/>
+    <retrieve-psi-dag file="${model}/psi/psi-mi.dag" osName="osw.psi-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#ProteinInteractionTerm" relationClass="http://www.flymine.org/model/genomic#OntologyRelation"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1426,7 +1426,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-go-dag file="${model}/go/go-combined.ontology" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" relationClass="http://www.flymine.org/model/genomic#DagRelation"/>
+    <retrieve-go-dag file="${model}/go/go-combined.ontology" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" relationClass="http://www.flymine.org/model/genomic#OntologyRelation"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>

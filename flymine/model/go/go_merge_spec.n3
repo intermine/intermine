@@ -7,7 +7,7 @@
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 :GOTerm a owl:Class;
-    rdfs:subClassOf :DagTerm.
+    rdfs:subClassOf :OntologyTerm.
 
 :GOEvidence a owl:Class;
     rdfs:subClassOf :Evidence.
