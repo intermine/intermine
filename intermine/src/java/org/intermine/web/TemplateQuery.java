@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * A template query, which consists of a PathQuery, description, category,
  * short name.
- * 
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
@@ -57,7 +57,7 @@ public class TemplateQuery
             this.name = name;
         }
         this.query = query;
-        
+
         // Find the editable constraints in the query.
         Iterator iter = query.getNodes().entrySet().iterator();
         while (iter.hasNext()) {
@@ -78,7 +78,7 @@ public class TemplateQuery
             }
         }
     }
-    
+
     /**
      * For a PathNode with editable constraints, get all the editable
      * constraints as a List.
@@ -89,6 +89,29 @@ public class TemplateQuery
     public List getConstraints(PathNode node) {
         return (List) constraints.get(node);
     }
+
+
+    /**
+     * Remove the editable constraints from the template query
+     */
+    public void removeEditableConstraints() {
+        // Find the editable constraints in the query.
+        Iterator iter = query.getNodes().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            PathNode node = (PathNode) entry.getValue();
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint c = (Constraint) citer.next();
+                if (c.isEditable()) {
+                    citer.remove();
+                }
+            }
+        }
+        constraints.clear();
+        nodes.clear();
+    }
+
 
     /**
      * Return a List of all the Constraints of fields in this template query.
@@ -113,7 +136,7 @@ public class TemplateQuery
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Get the query (eg. select c from Company as c where c.name = 'CompanyA')
      * @return the query
@@ -129,7 +152,7 @@ public class TemplateQuery
     public List getNodes() {
         return nodes;
     }
-    
+
     /**
      * Get the query short name.
      * @return the query identifier string
@@ -137,7 +160,7 @@ public class TemplateQuery
     public String getName() {
         return name;
     }
-    
+
     /**
      * Get the category that this template belongs to.
      * @return category for template

@@ -22,7 +22,7 @@ import org.intermine.metadata.Model;
 public class PathNode extends Node
 {
     List constraints = new ArrayList();
-    
+
     /**
      * Constructor for a root node
      * Constucting a PathNode is not usually necessary - use PathQuery#addNode
@@ -59,6 +59,15 @@ public class PathNode extends Node
      */
     public void setConstraints(List constraints) {
         this.constraints = constraints;
+    }
+
+
+    /**
+     * Removes a constraint from list
+     * @param constraint to remove
+     */
+    public void removeConstraint(Constraint constraint) {
+        this.constraints.remove(constraint);
     }
 
     /**

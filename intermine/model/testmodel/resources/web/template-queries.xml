@@ -28,6 +28,21 @@
     </query>
   </template>
   
+  <template name="employeesOverACertainAgeFromDepartmentA"
+            description="View all the employees of a certain age"
+            category="People">
+    <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee">
+      <node path="Employee.age">
+        <constraint op=">=" value="25" editable="true" description="Age constraint"
+                    identifier="Employee.age.NOT_EQUALS.1"/>
+      </node>
+      <node path="Employee.department.name">
+        <constraint op="=" value="DepartmentA" editable="false" description="" 
+                    identifier="Employee.department.name"/>
+      </node>
+    </query>
+  </template>
+
   <template name="employeeByName"
             description="View all the employees with certain name"
             category="People">
