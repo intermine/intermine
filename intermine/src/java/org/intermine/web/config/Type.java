@@ -10,10 +10,11 @@ package org.intermine.web.config;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 import java.util.Collections;
+
+import org.apache.commons.collections.set.ListOrderedSet;
 
 /**
  * Configuration object for displaying a class
@@ -25,8 +26,8 @@ public class Type
     // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
-    private List fieldConfigs = new ArrayList();
-    private List longDisplayers = new ArrayList();
+    private ListOrderedSet fieldConfigs = new ListOrderedSet();
+    private ListOrderedSet longDisplayers = new ListOrderedSet();
 
     /**
      * Set the fully-qualified class name for this Type
@@ -47,24 +48,6 @@ public class Type
     }
 
     /**
-     * Set the field name
-     *
-     * @param fieldName the field name of the Type
-     */
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    /**
-     * Get the field name
-     *
-     * @return the field name
-     */
-    public String getFieldName() {
-        return this.fieldName;
-    }
-
-    /**
      * Add a FieldConfig for this Type
      *
      * @param df the FieldConfig to add
@@ -78,8 +61,8 @@ public class Type
      *
      * @return the List of FieldConfig objects
      */
-    public List getFieldConfigs() {
-        return Collections.unmodifiableList(this.fieldConfigs);
+    public Set getFieldConfigs() {
+        return Collections.unmodifiableSet(this.fieldConfigs);
     }
 
    /**
@@ -96,8 +79,8 @@ public class Type
      *
      * @return the List of long Displayers
      */
-    public List getLongDisplayers() {
-        return Collections.unmodifiableList(this.longDisplayers);
+    public Set getLongDisplayers() {
+        return Collections.unmodifiableSet(this.longDisplayers);
     }
 
     /**
