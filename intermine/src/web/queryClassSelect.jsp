@@ -4,7 +4,7 @@
 
 <!-- queryClassSelect -->
 <html:form action="/queryClassSelect">
-  <font size="-1"><fmt:message key="query.addclass"/></font>
+  <fmt:message key="query.addclass"/>
 
   <br/>
 
