@@ -12,13 +12,24 @@
 </font>
 <br/>
 
-<c:forEach var="field" items="${cld.pkFieldDescriptors}" varStatus="status">
-  <font class="resultsCellName">
-    <c:out value="${field.name}"/>
-  </font>
-  =
-  <font class="resultsCellValue">
-    <c:out value="${object[field.name]}"/>
-  </font>
-  <br/>
-</c:forEach>
+
+<c:choose>
+  <c:when test="${cld != null}">
+    <c:forEach var="field" items="${cld.pkFieldDescriptors}" varStatus="status">
+      <font class="resultsCellName">
+        <c:out value="${field.name}"/>
+      </font>
+      =
+      <font class="resultsCellValue">
+        <c:out value="${object[field.name]}"/>
+      </font>
+      <br/>
+    </c:forEach>
+  </c:when>
+  <c:otherwise>
+    <font class="resultsCellValue">
+      <c:out value="${object}"/>
+    </font>
+  </c:otherwise>
+</c:choose>
+
