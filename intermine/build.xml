@@ -900,6 +900,7 @@
       <fileset dir="${resources}/webapps/intermine/images"/>
     </copy>
     <filter token="SITE_PREFIX" value="${www.location}"/>
+    <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
     <copy todir="${build.webapp}/intermine/WEB-INF" filtering="true">
       <fileset dir="${resources}/webapps/intermine"
                excludes="web.xml images/** InterMineWebApp*.properties default.intermine.properties *.css"/>
