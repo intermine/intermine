@@ -180,11 +180,20 @@
 :Analysis a owl:Class .
 
 :ComputationalAnalysis a owl:Class ;
-    rdfs:subClassOf :Analysis .
+    rdfs:subClassOf :Analysis ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :ComputationalAnalysis__publication ] .
 
 :ComputationalAnalysis__algorithm a owl:DatatypeProperty;
     rdfs:domain :ComputationalAnalysis;
     rdfs:range xsd:string.
+
+:ComputationalAnalysis__publication a owl:ObjectProperty;
+    rdfs:domain :ComputationalAnalysis;
+    rdfs:range :Publication.
+
 
 
 :Experiment a owl:Class ;
