@@ -22,6 +22,7 @@ import org.intermine.xml.full.ItemHelper;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -39,13 +40,22 @@ import org.intermine.metadata.Model;
  */
 public abstract class TargetItemsTestCase extends TestCase
 {
+    protected String oswAlias = "osw.fulldatatest";
+    protected ObjectStoreWriter osw;
+
+    /**
+     * @see TestCase#SetUp
+     */
+    public void setUp() throws Exception {
+        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter(oswAlias);
+    }
+
+
     /**
      * Delete items put in temporary objectstore.
      * @throws Exception if anything goes wrong
      */
     public void tearDown() throws Exception {
-        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.fulldatatest");
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
@@ -68,17 +78,7 @@ public abstract class TargetItemsTestCase extends TestCase
      * @throws Exception if anything goes wrong
      */
     public void testItemToObject() throws Exception {
-        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.fulldatatest");
-        ItemWriter iw = new ObjectStoreItemWriter(osw);
-
-        // store items
-        Iterator i = getExpectedItems().iterator();
-        while (i.hasNext()) {
-            Item item = (Item) i.next();
-            iw.store(ItemHelper.convert(item));
-        }
-        iw.close();
+        storeItems(getExpectedItems());
 
         ItemToObjectTranslator t
             = new ItemToObjectTranslator(Model.getInstanceByName(getModelName()),
@@ -111,6 +111,23 @@ public abstract class TargetItemsTestCase extends TestCase
             iw.store(ItemHelper.convert((Item) i.next()));
         }
         return itemMap;
+    }
+
+    /**
+     * Store collection of Items in the ObjectStore specified by this.oswAlias.
+     * @param a collection of Items to store
+     * @throws ObjectStoreException if problem storing
+     */
+    protected void storeItems(Collection items) throws ObjectStoreException {
+        ItemWriter iw = new ObjectStoreItemWriter(osw);
+
+        // store items
+        Iterator i = items.iterator();
+        while (i.hasNext()) {
+            Item item = (Item) i.next();
+            iw.store(ItemHelper.convert(item));
+        }
+        iw.close();
     }
 
     /**
