@@ -168,6 +168,10 @@
             type="org.flymine.web.QueryBuildController"
             name="queryBuildForm"/>
 
+    <action path="/initFqlQuery"
+            type="org.flymine.web.FqlQueryController"
+            name="fqlQueryForm"/>
+
     <action path="/initQueryView"
             type="org.flymine.web.QueryViewController"/>
 
