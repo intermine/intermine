@@ -18,6 +18,7 @@ package org.flymine.web.results;
 public class Column
 {
     protected boolean visible = true;
+    protected String alias = "";
 
     /**
      * Is the column visible
@@ -35,6 +36,24 @@ public class Column
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    /**
+     * Is the column visible
+     *
+     * @return true if the column is visible
+     */
+    public String getAlias() {
+        return alias;
+    }
+
+    /**
+     * Set the alias of the column
+     *
+     * @param visible the alias for the column
+     */
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
 }
