@@ -1,38 +1,50 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>Results page</title>
 
-<index>
+    <itemizedlist>
+      <listitem>
+        <para>The results page displays the first 10 objects returned by your
+        query.</para>
+      </listitem>
 
-    <section>
-      <heading>Results page</heading>
-      <item>
-        The results page displays the first 10 objects returned by your query.
-</item>
-     <item>
-       The number of objects displayed can be changed by changing the number in the Page size box and pressing Change.
-</item>
-      <item>
-      You can scroll though the objects using Next, or go to the last 10 objects using Last.
-</item>
-      <item>
-      The total number of objects returned by your query is estimated. An estimate is given because, for large queries, only a subset of the total number of objects is initially returned by the query.  This is to improve query run time for large queries.
-      </item>
-      <item>From the results page you can save your data to a bag (see <ulink url= "manualSavingdata.xml">Saving bags of data</ulink>) and export your data in various formats (see <ulink url= "manualExportingdata.xml">Exporting data</ulink>).
-      </item>
-      <item>If there are any objects in your results (rather than fields) you can click on an object to view it in detail.</item>
-        
+      <listitem>
+        <para>The number of objects displayed can be changed by changing the
+        number in the Page size box and pressing Change.</para>
+      </listitem>
+
+      <listitem>
+        <para>You can scroll though the objects using Next, or go to the last
+        10 objects using Last.</para>
+      </listitem>
+
+      <listitem>
+        <para>The total number of objects returned by your query is estimated.
+        An estimate is given because, for large queries, only a subset of the
+        total number of objects is initially returned by the query. This is to
+        improve query run time for large queries.</para>
+      </listitem>
+
+      <listitem>
+        <para>From the results page you can save your data to a bag (see
+        <ulink url="manualSavingdata.xml">Saving bags of data</ulink>) and
+        export your data in various formats (see <ulink
+        url="manualExportingdata.xml">Exporting data</ulink>).</para>
+      </listitem>
+
+      <listitem>
+        <para>If there are any objects in your results (rather than fields)
+        you can click on an object to view it in detail.</para>
+      </listitem>
+    </itemizedlist>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="../tutorials/resultsQuery1.png" />
+      </imageobject>
+    </mediaobject>
   </section>
-
-
-
-	  <entry>
-	      <inlinegraphic fileref="../tutorials/resultsQuery1"/>
-	  </entry>
-
-
-
-</index>
-
 </article>

@@ -1,68 +1,94 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-
-  <artheader>
+  <articleinfo>
     <title>Introducing InterMine: an example application</title>
-  </artheader>
+  </articleinfo>
 
-  <para>
-    InterMine provides flexible facilities to integrate, store and retrieve data in varying formats from muliple user-specified sources. For a demonstration of its capabilities, whilst neglecting most implementation details, consider the following example which concerns data describing the (simplified) structure of an enterprise. In this case no data integration is performed, as only one data source is used.
-  </para>
+  <para>InterMine provides flexible facilities to integrate, store and
+  retrieve data in varying formats from muliple user-specified sources. For a
+  demonstration of its capabilities, whilst neglecting most implementation
+  details, consider the following example which concerns data describing the
+  (simplified) structure of an enterprise. In this case no data integration is
+  performed, as only one data source is used.</para>
 
-  <para>
-    Assume that our organisation model is described using the following UML diagram, drawn using a graphical editor such as ArgoUML. InterMine is able to read such diagrams directly, and so this is often the best way to describe data for which no model has been predefined.
-  </para>
+  <para>Assume that our organisation model is described using the following
+  UML diagram, drawn using a graphical editor such as ArgoUML. InterMine is
+  able to read such diagrams directly, and so this is often the best way to
+  describe data for which no model has been predefined.</para>
 
-  <inlinegraphic fileref="example.png" align="center"/>
-  
-  <para>
- It is important to note that InterMine generates Java source code for the classes in the model, and transforms all data into instances of these classes prior to storage. The canonical form for data is Java objects, but InterMine does not favour any particular data file format. For the sake of simplicity consider the data to be in the following XML format, which should be fairly self-explanatory when read in conjunction with the diagram above.
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="example.png" />
+    </imageobject>
+  </mediaobject>
 
-    <programlisting>
-<![CDATA[
-<items>
-  <item id="1" class="http://www.intermine.org/model/testmodel#Department">
-    <attribute name="name" value="DepartmentA1"/>
-    <reference name="manager" ref_id="2"/>
-    <collection name="employees">
-      <reference ref_id="2"/>
-      <reference ref_id="3"/>
-    </collection>
-  </item>
-  <item id="2" class="http://www.intermine.org/model/testmodel#Manager">
-    <attribute name="name" value="EmployeeA1"/>
-    <attribute name="fullTime" value="true"/>
-    <attribute name="age" value="10"/>
-    <attribute name="title" value="Head of marketing"/>
-    <reference name="address" ref_id="4"/>
-    <reference name="department" ref_id="1"/>
-  </item>
-  <item id="3" class="http://www.intermine.org/model/testmodel#Employee">
-    <attribute name="name" value="EmployeeA2"/>
-    <attribute name="fullTime" value="true"/>
-    <attribute name="age" value="20"/>
-    <reference name="address" ref_id="4"/>
-    <reference name="department" ref_id="1"/>
-  </item>
-  <item id="4" class="http://www.intermine.org/model/testmodel#Address">
-    <attribute name="address" value="Employee Street, AVille"/>
-  </item>
-</items>
-]]>
+  <para>It is important to note that InterMine generates Java source code for
+  the classes in the model, and transforms all data into instances of these
+  classes prior to storage. The canonical form for data is Java objects, but
+  InterMine does not favour any particular data file format. For the sake of
+  simplicity consider the data to be in the following XML format, which should
+  be fairly self-explanatory when read in conjunction with the diagram
+  above.</para>
+
+  <programlisting>
+
+&lt;items&gt;
+  &lt;item id="1" class="http://www.intermine.org/model/testmodel#Department"&gt;
+    &lt;attribute name="name" value="DepartmentA1"/&gt;
+    &lt;reference name="manager" ref_id="2"/&gt;
+    &lt;collection name="employees"&gt;
+      &lt;reference ref_id="2"/&gt;
+      &lt;reference ref_id="3"/&gt;
+    &lt;/collection&gt;
+  &lt;/item&gt;
+  &lt;item id="2" class="http://www.intermine.org/model/testmodel#Manager"&gt;
+    &lt;attribute name="name" value="EmployeeA1"/&gt;
+    &lt;attribute name="fullTime" value="true"/&gt;
+    &lt;attribute name="age" value="10"/&gt;
+    &lt;attribute name="title" value="Head of marketing"/&gt;
+    &lt;reference name="address" ref_id="4"/&gt;
+    &lt;reference name="department" ref_id="1"/&gt;
+  &lt;/item&gt;
+  &lt;item id="3" class="http://www.intermine.org/model/testmodel#Employee"&gt;
+    &lt;attribute name="name" value="EmployeeA2"/&gt;
+    &lt;attribute name="fullTime" value="true"/&gt;
+    &lt;attribute name="age" value="20"/&gt;
+    &lt;reference name="address" ref_id="4"/&gt;
+    &lt;reference name="department" ref_id="1"/&gt;
+  &lt;/item&gt;
+  &lt;item id="4" class="http://www.intermine.org/model/testmodel#Address"&gt;
+    &lt;attribute name="address" value="Employee Street, AVille"/&gt;
+  &lt;/item&gt;
+&lt;/items&gt;
+
     </programlisting>
-  </para>
 
-  <para>
-    Given this data, the model, and some extra configuration information, InterMine is capable of storing the data in a relational database. The data is subsequently accessible using an object-oriented query language that returns Java objects representing the data. The system is capable of exposing the datastore to web users using a HTML interface, and other remote users using a SOAP interface. Ultimately this means that whilst the prerequisites for building an InterMine database include the installation of a relational database (eg. PostgreSQL) and a Java runtime environment, end users can simply use a web browser or a simple Java API (which accepts queries in either an <ulink url="../java_query/spec.xml">object-oriented</ulink> or <ulink url="../iql_query/spec.xml">OQL-like format</ulink>) to access the data.
-  </para>
+  <para>Given this data, the model, and some extra configuration information,
+  InterMine is capable of storing the data in a relational database. The data
+  is subsequently accessible using an object-oriented query language that
+  returns Java objects representing the data. The system is capable of
+  exposing the datastore to web users using a HTML interface, and other remote
+  users using a SOAP interface. Ultimately this means that whilst the
+  prerequisites for building an InterMine database include the installation of
+  a relational database (eg. PostgreSQL) and a Java runtime environment, end
+  users can simply use a web browser or a simple Java API (which accepts
+  queries in either an <ulink
+  url="../java_query/spec.xml">object-oriented</ulink> or <ulink
+  url="../iql_query/spec.xml">OQL-like format</ulink>) to access the
+  data.</para>
 
-  <para>
-    A <ulink url="/begin.do">demo</ulink> of the web interface, built using a superset of the data above, is publicly accessible. Help is available by clicking on the relevant links.
-  </para>
+  <para>A <ulink url="/begin.do">demo</ulink> of the web interface, built
+  using a superset of the data above, is publicly accessible. Help is
+  available by clicking on the relevant links.</para>
 
-  <para>
-    Also available is a Java client for a demo of the SOAP interface. If you have a Java runtime environment installed, simply add the .jar file to your CLASSPATH and run java org.intermine.objectstore.query.iql.IqlShell, which will display a shell to OQL-like queries remotely against the InterMine demo database. For some suitable queries to run consult <ulink url="../howto_query.xml">"How to query InterMine"</ulink>. It is also possible to use this .jar file to build and run queries from Java using the full API.
-  </para>
-
+  <para>Also available is a Java client for a demo of the SOAP interface. If
+  you have a Java runtime environment installed, simply add the .jar file to
+  your CLASSPATH and run java org.intermine.objectstore.query.iql.IqlShell,
+  which will display a shell to OQL-like queries remotely against the
+  InterMine demo database. For some suitable queries to run consult <ulink
+  url="../howto_query.xml">"How to query InterMine"</ulink>. It is also
+  possible to use this .jar file to build and run queries from Java using the
+  full API.</para>
 </article>

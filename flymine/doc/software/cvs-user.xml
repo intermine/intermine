@@ -1,36 +1,42 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-06-16</date>
 
-<artheader>
-<date>2003-06-16</date>
-<title>Obtaining FlyMine source code using CVS</title>
-</artheader>
+    <title>Obtaining FlyMine source code using CVS</title>
+  </articleinfo>
 
-<para>Anonymous CVS access to the FlyMine source code is via our
-public CVS server, cvs.flymine.org. This server contains a read-only
-snapshot of the CVS source the software developers are using, updated
-every 10 minutes.</para>
+  <para>Anonymous CVS access to the FlyMine source code is via our public CVS
+  server, cvs.flymine.org. This server contains a read-only snapshot of the
+  CVS source the software developers are using, updated every 10
+  minutes.</para>
 
-<sect1>
-<title>Instructions</title>
+  <section>
+    <title>Instructions</title>
 
-<itemizedlist>
+    <itemizedlist>
+      <listitem>
+        <para><command>cd</command> to the directory into which you intend to
+        check out the source.</para>
+      </listitem>
 
-<listitem><command>cd</command> to the directory into which you intend
-to check out the source.</listitem>
+      <listitem>
+        <para>Issue the command <command>cvs -d
+        :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No password
+        is needed.</para>
+      </listitem>
 
-<listitem>Issue the command <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs login</command>. No password is needed.</listitem>
+      <listitem>
+        <para>Then type <command>cvs -d
+        :pserver:anonymous@cvs.flymine.org:/cvs co flymine</command>.</para>
+      </listitem>
+    </itemizedlist>
 
-<listitem>Then type <command>cvs -d :pserver:anonymous@cvs.flymine.org:/cvs co flymine</command>.</listitem>
-
-</itemizedlist>
-
-<para>Once you have checked out the source from the CVS server, the
-command <command>cvs update</command> will obtain any updates to the
-code made by the development team. You should issue this command
-regularly.</para>
-
-</sect1>
-
+    <para>Once you have checked out the source from the CVS server, the
+    command <command>cvs update</command> will obtain any updates to the code
+    made by the development team. You should issue this command
+    regularly.</para>
+  </section>
 </article>

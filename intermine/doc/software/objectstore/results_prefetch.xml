@@ -1,143 +1,284 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-04-01</date>
 
-	<artheader>
-		<date>2003-04-01</date>
-		<title>InterMine - Prefetch in the Results object</title>
-		<authorgroup>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+    <title>InterMine - Prefetch in the Results object</title>
 
-	<sect1>
-		<title>Introduction</title>
-		<para>This document is an attempt to describe the prefetch mechanism in the org.intermine.objectstore.query.Results object.
-			The prefetch mechanism is managed by a class - org.intermine.objectstore.query.PrefetchManager.</para>
-	</sect1>
+    <authorgroup>
+      <author>
+        <firstname>Matthew</firstname>
 
-	<sect1>
-		<title>Requirements</title>
-		<para>The objective of the prefetch mechanism is to save time for a Thread that is accessing data.
-			The mechanism should never do anything that has any reasonable chance of holding back such a Thread.
-			The prefetch mechanism is a layer between the Results object and the database - the Results object calls the prefetch mechanism whenever a read access to the database is required.
-			When a read operation occurs, the data is placed into a small cache in the Results object, so that when the Results object actually requires the data it finds it in the cache.
-			Therefore, there are two types of read operation that the Results object may wish to perform:</para>
-		<itemizedlist>
-			<listitem><highlights>I'll probably need this data soon</highlights>.
-				This type of request means that the Results object is likely to use the data in the near future, but that point has not been reached.
-				This type of request is "for information only", and as such the prefetch mechanism does not delay the calling Thread any longer than it takes to make a note of the information.
-				The prefetch mechanism should then feel free to go and fetch the data in a Thread of its own, so that it doesn't hold anything else up.</listitem>
-			<listitem><highlights>I need this data NOW</highlights>.
-				This type of request requires the data as a return value (or of course an Exception).
-				This request is usually only made if the data is not already in the cache of the Results object.
-				The prefetch mechanism must block this Thread until the data is available to be returned.
-				This may be in the form of going and fetching the data in the current Thread, or waiting for another prefetcher-Thread to do the work first.</listitem>
-		</itemizedlist>
-		<para>Therefore, a completely valid prefetch manager would be one that completely ignores all of the first type of request, and simply services the second type of requests by retrieving the data in the current Thread.
-			However, the real prefetch manager is a little more optimistic - it does take note of the first kind of request, and keeps a set of Threads busy performing prefetches.</para>
-	</sect1>
-	
-	<sect1>
-		<title>External interfaces</title>
-		<para>The PrefetchManager object has two publically available methods:
-			<itemizedlist>
-				<listitem><highlights>addRequest(Results result, int batchNo)</highlights>.
-					This method adds a request for a prefetch onto a list of jobs to do.
-					The method then returns immediately - the request will be done in another thread at some point.</listitem>
-				<listitem><highlights>doRequest(Results result, int batchNo)</highlights>.
-					This method will not return until the request is finished.
-					The request will also be treated with a little more urgency than requests merely added to the list of jobs to do.
-					When this method is called, there are four possibilities:
-					<itemizedlist>
-						<listitem>This is the first that the PrefetchManager has heard of this request.
-							The request can be serviced in the thread that called the doRequest method.</listitem>
-						<listitem>The request was added a little while ago, but hasn't been started yet.
-							The request can again be serviced in the thread that called the doRequest method.</listitem>
-						<listitem>The request was added a little while ago, and another thread has started servicing it.
-							The other thread may be a helper thread that does prefetching, or it may be another thread that called doRequest with the same request.
-							This thread should wait for the other thread to finish before returning from the doRequest method.
-							When the other thread has finished, it must wake up <highlights>all</highlights> threads that are waiting for the request.</listitem>
-						<listitem>The request has been done in the past.
-							This would be most likely to happen if a thread is in the middle of servicing the request, and gets to the bit where it locks the PrefetchManager to notify all waiting threads, when another thread checks to see if the request needs to be made then calls doRequest.
-							The Second thread needs to take out a lock on the PrefetchManager before it can get into the doRequest method, by which time the first thread has finished servicing the request.
-							In this case, the method should just return immediately.
-							The reason why the Results object does a preliminary check to see if the request has been serviced in the past is to avoid having to wait for a lock on the PrefetchManager object.</listitem>
-					</itemizedlist></listitem>
-			</itemizedlist>
-			So the addRequest method is called when our code thinks it may benefit from a prefetch, and doRequest is called when the system actually needs the request done.</para>
-		<para>The two public methods of the PrefetchManager object take a Results object as one of the arguments, along with a batch number to fetch.
-			The method used to service the request is to call a method in the Results object - <highlights>fetchBatchFromObjectStore(int batchNo)</highlights>.</para>
-	</sect1>
+        <surname>Wakeling</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-	<sect1>
-		<title>Recap on Object Concurrency Control</title>
-		<para>The internal workings of the PrefetchManager object are non-trivial.
-			They involve concurrency control, including locks on multiple objects.
-			It may be a good idea to recap on Object.wait(), Object.notify(), and Object.notifyAll():
-			<itemizedlist>
-				<listitem><highlights>Object.wait()</highlights>.
-					The current thread must already have a lock on the Object.
-					The wait() method releases the lock, then suspends the thread until notification.
-					When the thread is notified, it wakes up, re-obtains the lock on the Object (which it will naturally not be able to do until the thread that called notify() or notifyAll() releases the lock), and returns.</listitem>
-				<listitem><highlights>Object.notify()</highlights>.
-					The current thread must already have a lock on the Object.
-					The notify() method wakes up a single thread that is waiting for notification in the Object.wait() method.
-					If there are multiple threads waiting, then there is no guarantee at all of which thread is notified.</listitem>
-				<listitem><highlights>Object.notifyAll()</highlights>.
-					This method behaves similarly to notify(), except that it wakes up every single thread waiting in the Object.wait() method.</listitem>
-			</itemizedlist></para>
-	</sect1>
+  <section>
+    <title>Introduction</title>
 
-	<sect1>
-		<title>Internal Workings</title>
-		<para>The Map that the Results object contains, which holds the cache of batches that have been fetched, is a synchronised Map, produced by Collections.synchronizedMap().
-			This is one of the multiple locks that we have to handle, but luckily it just sorts itself out, meaning that as long as we synchronise inside the PrefetchManager for read-modify-write cycles, we can let multiple readers at the Map.
-			However, one must be careful not to perform a Map.containsKey(), followed by a Map.get(), as a modification could occur between the two calls.
-			It is safe to perform a Map.get(), and then check that the result is non-null - assuming a null is not a useful value.</para>
+    <para>This document is an attempt to describe the prefetch mechanism in
+    the org.intermine.objectstore.query.Results object. The prefetch mechanism
+    is managed by a class -
+    org.intermine.objectstore.query.PrefetchManager.</para>
+  </section>
 
-		<para>To allow prefetch to actually take place, the PrefetchManager has at least one thread which focuses on performing prefetches.
-			This Thread object is an inner class of PrefetchManager.
-			The thread does a tight infinite loop, asking the PrefetchManager for a request to service, then servicing it, and finally informing the PrefetchManager that it has finished.
-			Therefore, the PrefetchManager becomes an arbitrator between request providers (Results objects), and request consumers (these Threads).</para>
+  <section>
+    <title>Requirements</title>
 
-		<para>The PrefetchManager object has a set of requests that are pending (i.e. are in the list of jobs to do, but aren't being handled yet).
-			Also, a set of requests that are currently being serviced.</para>
+    <para>The objective of the prefetch mechanism is to save time for a Thread
+    that is accessing data. The mechanism should never do anything that has
+    any reasonable chance of holding back such a Thread. The prefetch
+    mechanism is a layer between the Results object and the database - the
+    Results object calls the prefetch mechanism whenever a read access to the
+    database is required. When a read operation occurs, the data is placed
+    into a small cache in the Results object, so that when the Results object
+    actually requires the data it finds it in the cache. Therefore, there are
+    two types of read operation that the Results object may wish to
+    perform:</para>
 
-		<sect2>
-			<title>The addRequest method</title>
-			<para>This method is called by the Results object in order to report to the PrefetchManager the possibility of a certain item of data being required in the future.
-				The entire method runs synchronised on the system-wide lock, but this should not be a problem because the method does not perform any lengthy operations.</para>
-			<inlinegraphic fileref="results_prefetch_addRequest.png"/>
-		</sect2>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>I'll probably need this data soon</emphasis>. This
+        type of request means that the Results object is likely to use the
+        data in the near future, but that point has not been reached. This
+        type of request is "for information only", and as such the prefetch
+        mechanism does not delay the calling Thread any longer than it takes
+        to make a note of the information. The prefetch mechanism should then
+        feel free to go and fetch the data in a Thread of its own, so that it
+        doesn't hold anything else up.</para>
+      </listitem>
 
-		<sect2>
-			<title>The doRequest method</title>
-			<para>This method is called by the Results object when it needs some data.
-				The method's return value is the data required.
-				This method goes through two stages, the first stage synchronised on the system-wide lock, which performs fact-finding and telling everyone what it is going to do.
-				The method then releases all locks and enters the second stage, where it either locks and waits for notify on the Results-specific lock, or performs the data fetch by itself.</para>
-			<inlinegraphic fileref="results_prefetch_doRequest.png"/>
-		</sect2>
+      <listitem>
+        <para><emphasis>I need this data NOW</emphasis>. This type of request
+        requires the data as a return value (or of course an Exception). This
+        request is usually only made if the data is not already in the cache
+        of the Results object. The prefetch mechanism must block this Thread
+        until the data is available to be returned. This may be in the form of
+        going and fetching the data in the current Thread, or waiting for
+        another prefetcher-Thread to do the work first.</para>
+      </listitem>
+    </itemizedlist>
 
-		<sect2>
-			<title>The reportDone method</title>
-			<para>This method is called by the second stage of the doRequest() method (when the method performs a data fetch), and by the prefetch Thread, if it performs a data fetch.
-				The method records the fact that a particular request is no longer in progress - note that this does not necessarily mean that the request was successfully completed.
-				The method also notifies all threads which are waiting on the Results object lock, as these are the Threads that may benefit from the new data.</para>
-			<inlinegraphic fileref="results_prefetch_reportDone.png"/>
-		</sect2>
+    <para>Therefore, a completely valid prefetch manager would be one that
+    completely ignores all of the first type of request, and simply services
+    the second type of requests by retrieving the data in the current Thread.
+    However, the real prefetch manager is a little more optimistic - it does
+    take note of the first kind of request, and keeps a set of Threads busy
+    performing prefetches.</para>
+  </section>
 
-		<sect2>
-			<title>The getRequest method</title>
-			<para>This method is called by the prefetch Thread in order to get hold of a request to process.
-				The method synchronises on the system-wide lock, and waits for the request queue to be non-empty.
-				Having completed that wait, the method retrieves a request from the pending queue, adds it to the in-progress list, and removes it from the pending queue, before returning the request to the caller.</para>
-			<inlinegraphic fileref="results_prefetch_getRequest.png"/>
-		</sect2>
-		<para>These diagrams show that there is no possibility for a deadlock in the Prefetch Manager, as the locks are synchronised on in a strict order - left to right in the diagrams.</para>
-	</sect1>
+  <section>
+    <title>External interfaces</title>
+
+    <para>The PrefetchManager object has two publically available
+    methods:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>addRequest(Results result, int batchNo)</emphasis>.
+        This method adds a request for a prefetch onto a list of jobs to do.
+        The method then returns immediately - the request will be done in
+        another thread at some point.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>doRequest(Results result, int batchNo)</emphasis>.
+        This method will not return until the request is finished. The request
+        will also be treated with a little more urgency than requests merely
+        added to the list of jobs to do. When this method is called, there are
+        four possibilities:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>This is the first that the PrefetchManager has heard of this
+            request. The request can be serviced in the thread that called the
+            doRequest method.</para>
+          </listitem>
+
+          <listitem>
+            <para>The request was added a little while ago, but hasn't been
+            started yet. The request can again be serviced in the thread that
+            called the doRequest method.</para>
+          </listitem>
+
+          <listitem>
+            <para>The request was added a little while ago, and another thread
+            has started servicing it. The other thread may be a helper thread
+            that does prefetching, or it may be another thread that called
+            doRequest with the same request. This thread should wait for the
+            other thread to finish before returning from the doRequest method.
+            When the other thread has finished, it must wake up
+            <emphasis>all</emphasis> threads that are waiting for the
+            request.</para>
+          </listitem>
+
+          <listitem>
+            <para>The request has been done in the past. This would be most
+            likely to happen if a thread is in the middle of servicing the
+            request, and gets to the bit where it locks the PrefetchManager to
+            notify all waiting threads, when another thread checks to see if
+            the request needs to be made then calls doRequest. The Second
+            thread needs to take out a lock on the PrefetchManager before it
+            can get into the doRequest method, by which time the first thread
+            has finished servicing the request. In this case, the method
+            should just return immediately. The reason why the Results object
+            does a preliminary check to see if the request has been serviced
+            in the past is to avoid having to wait for a lock on the
+            PrefetchManager object.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+    <para>So the addRequest method is called when our code thinks it may
+    benefit from a prefetch, and doRequest is called when the system actually
+    needs the request done.</para>
+
+    <para>The two public methods of the PrefetchManager object take a Results
+    object as one of the arguments, along with a batch number to fetch. The
+    method used to service the request is to call a method in the Results
+    object - <emphasis>fetchBatchFromObjectStore(int
+    batchNo)</emphasis>.</para>
+  </section>
+
+  <section>
+    <title>Recap on Object Concurrency Control</title>
+
+    <para>The internal workings of the PrefetchManager object are non-trivial.
+    They involve concurrency control, including locks on multiple objects. It
+    may be a good idea to recap on Object.wait(), Object.notify(), and
+    Object.notifyAll():</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>Object.wait()</emphasis>. The current thread must
+        already have a lock on the Object. The wait() method releases the
+        lock, then suspends the thread until notification. When the thread is
+        notified, it wakes up, re-obtains the lock on the Object (which it
+        will naturally not be able to do until the thread that called notify()
+        or notifyAll() releases the lock), and returns.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Object.notify()</emphasis>. The current thread must
+        already have a lock on the Object. The notify() method wakes up a
+        single thread that is waiting for notification in the Object.wait()
+        method. If there are multiple threads waiting, then there is no
+        guarantee at all of which thread is notified.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Object.notifyAll()</emphasis>. This method behaves
+        similarly to notify(), except that it wakes up every single thread
+        waiting in the Object.wait() method.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Internal Workings</title>
+
+    <para>The Map that the Results object contains, which holds the cache of
+    batches that have been fetched, is a synchronised Map, produced by
+    Collections.synchronizedMap(). This is one of the multiple locks that we
+    have to handle, but luckily it just sorts itself out, meaning that as long
+    as we synchronise inside the PrefetchManager for read-modify-write cycles,
+    we can let multiple readers at the Map. However, one must be careful not
+    to perform a Map.containsKey(), followed by a Map.get(), as a modification
+    could occur between the two calls. It is safe to perform a Map.get(), and
+    then check that the result is non-null - assuming a null is not a useful
+    value.</para>
+
+    <para>To allow prefetch to actually take place, the PrefetchManager has at
+    least one thread which focuses on performing prefetches. This Thread
+    object is an inner class of PrefetchManager. The thread does a tight
+    infinite loop, asking the PrefetchManager for a request to service, then
+    servicing it, and finally informing the PrefetchManager that it has
+    finished. Therefore, the PrefetchManager becomes an arbitrator between
+    request providers (Results objects), and request consumers (these
+    Threads).</para>
+
+    <para>The PrefetchManager object has a set of requests that are pending
+    (i.e. are in the list of jobs to do, but aren't being handled yet). Also,
+    a set of requests that are currently being serviced.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>The addRequest method:</emphasis></para>
+
+        <para>This method is called by the Results object in order to report
+        to the PrefetchManager the possibility of a certain item of data being
+        required in the future. The entire method runs synchronised on the
+        system-wide lock, but this should not be a problem because the method
+        does not perform any lengthy operations.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="results_prefetch_addRequest.png" />
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>The doRequest method:</emphasis></para>
+
+        <para>This method is called by the Results object when it needs some
+        data. The method's return value is the data required. This method goes
+        through two stages, the first stage synchronised on the system-wide
+        lock, which performs fact-finding and telling everyone what it is
+        going to do. The method then releases all locks and enters the second
+        stage, where it either locks and waits for notify on the
+        Results-specific lock, or performs the data fetch by itself.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="results_prefetch_doRequest.png" />
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>The reportDone method:</emphasis></para>
+
+        <para>This method is called by the second stage of the doRequest()
+        method (when the method performs a data fetch), and by the prefetch
+        Thread, if it performs a data fetch. The method records the fact that
+        a particular request is no longer in progress - note that this does
+        not necessarily mean that the request was successfully completed. The
+        method also notifies all threads which are waiting on the Results
+        object lock, as these are the Threads that may benefit from the new
+        data.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="results_prefetch_reportDone.png" />
+          </imageobject>
+        </mediaobject>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>The getRequest method:</emphasis></para>
+
+        <para>This method is called by the prefetch Thread in order to get
+        hold of a request to process. The method synchronises on the
+        system-wide lock, and waits for the request queue to be non-empty.
+        Having completed that wait, the method retrieves a request from the
+        pending queue, adds it to the in-progress list, and removes it from
+        the pending queue, before returning the request to the caller.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="results_prefetch_getRequest.png" />
+          </imageobject>
+        </mediaobject>
+      </listitem>
+    </itemizedlist>
+
+    <para>These diagrams show that there is no possibility for a deadlock in
+    the Prefetch Manager, as the locks are synchronised on in a strict order -
+    left to right in the diagrams.</para>
+  </section>
 </article>

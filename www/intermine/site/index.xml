@@ -1,29 +1,45 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-
-  <artheader>
+  <articleinfo>
     <title>InterMine</title>
-  </artheader>
+  </articleinfo>
 
-  <para>
-    InterMine is an general-purpose object-oriented data warehouse system developed as part of the <ulink url="http://www.flymine.org">FlyMine</ulink> project and made available as stand-alone open-source software.
-  </para>
+  <para>InterMine is an general-purpose object-oriented data warehouse system
+  developed as part of the <ulink url="http://www.flymine.org">FlyMine</ulink>
+  project and made available as stand-alone open-source software.</para>
 
-  <para>
-    InterMine is capable of efficiently storing and retrieving large (multi-gigabyte) quantities of data from user-defined sources, performing integration where necessary. The data from each source should conform to a model description which can be provided in one of many formats such as UML, OWL and XML Schema. However, the system can be easily extended to handle data, and models, in any format required. The source of each piece of merged data can be tracked so that the system can prioritise information from sources that are considered reliable.
-  </para>
+  <para>InterMine is capable of efficiently storing and retrieving large
+  (multi-gigabyte) quantities of data from user-defined sources, performing
+  integration where necessary. The data from each source should conform to a
+  model description which can be provided in one of many formats such as UML,
+  OWL and XML Schema. However, the system can be easily extended to handle
+  data, and models, in any format required. The source of each piece of merged
+  data can be tracked so that the system can prioritise information from
+  sources that are considered reliable.</para>
 
-  <para>
-    The resultant database can be queried through a Java API or via an OQL-like query language. Both approaches can be used transparently by remote users as a result of InterMine's support for SOAP and WSDL standards. If a graphical query interface is required the system can automatically generate a customisable web front end with an integrated help system. All queries are mapped to the same internal representation regardless of the interface used.
-  </para>
+  <para>The resultant database can be queried through a Java API or via an
+  OQL-like query language. Both approaches can be used transparently by remote
+  users as a result of InterMine's support for SOAP and WSDL standards. If a
+  graphical query interface is required the system can automatically generate
+  a customisable web front end with an integrated help system. All queries are
+  mapped to the same internal representation regardless of the interface
+  used.</para>
 
-  <para>
-    A stand-alone SQL query optimiser module automatically analyses all such queries submitted to the underlying database to try and make use, in full or part, of precomputed results in order to improve response times for users. In-built caching and paging of results further reduce load on the database. This enables InterMine to provide efficient access for a large number of users despite the potential size of the database.
-  </para>
+  <para>A stand-alone SQL query optimiser module automatically analyses all
+  such queries submitted to the underlying database to try and make use, in
+  full or part, of precomputed results in order to improve response times for
+  users. In-built caching and paging of results further reduce load on the
+  database. This enables InterMine to provide efficient access for a large
+  number of users despite the potential size of the database.</para>
 
-  <para>
-    Included in the <ulink url="doc/software/index.xml">full documentation</ulink> is an <ulink url="doc/software/about/example.xml">example application</ulink> and a more <ulink url="doc/software/about/overview.xml">technical overview</ulink>. InterMine was originally developed as the software infrastructure for the <ulink url="http://www.flymine.org">FlyMine</ulink> project, an integrated genomic database, but is suited to many object warehousing applications.
-  </para>
-
+  <para>Included in the <ulink url="doc/software/index.xml">full
+  documentation</ulink> is an <ulink
+  url="doc/software/about/example.xml">example application</ulink> and a more
+  <ulink url="doc/software/about/overview.xml">technical overview</ulink>.
+  InterMine was originally developed as the software infrastructure for the
+  <ulink url="http://www.flymine.org">FlyMine</ulink> project, an integrated
+  genomic database, but is suited to many object warehousing
+  applications.</para>
 </article>

@@ -1,9 +1,24 @@
-<index>
-    <section>
-        <heading>Documentation</heading>
-        <item><ulink url="software/index.xml">Software</ulink></item>
-        <item><ulink url="http://www.intermine.org/api/">API&#160;JavaDoc</ulink></item>
-        <item><ulink url="contribute/index.xml">Contributing code to InterMine</ulink></item>
-    </section>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Documentation</title>
 
-</index>
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="software/index.xml">Software</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www.intermine.org/api/">API&nbsp;JavaDoc</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="contribute/index.xml">Contributing code to
+        InterMine</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

@@ -75,7 +75,7 @@
       <xsl:apply-templates/>
     </ul>
   </xsl:template>
-  
+ <!-- 
   <xsl:template match="section">
     <li><span><xsl:apply-templates select="heading"/></span><ul><xsl:apply-templates select="item"/></ul></li>
   </xsl:template>
@@ -83,7 +83,7 @@
   <xsl:template match="section/item">
     <li><xsl:apply-templates/></li>
   </xsl:template>
-  
+ --> 
   <xsl:template match="ulink">
     <a href="{@url}">
       <xsl:choose>
@@ -115,7 +115,7 @@
     </a>
   </xsl:template>
   
-  <xsl:template match="address">
+  <xsl:template match="phrase">
     <address>
       <xsl:apply-templates/>
     </address>

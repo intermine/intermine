@@ -1,56 +1,87 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2004-07-26</date>
 
-	<artheader>
-		<date>2004-07-26</date>
-		<title>InterMine - Fetching related objects in the Results object - solving the N + 1 reads problem</title>
-		<authorgroup>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+    <title>InterMine - Fetching related objects in the Results object -
+    solving the N + 1 reads problem</title>
 
-	<sect1>
-		<title>Introduction</title>
-        <para>This document describes a particular performance problem inherent in object-oriented database systems, and how it is tackled in the InterMine system</para>
-		<para>The problem is that following references from objects will result in a request to the database to fetch the data.
-			Each of these database requests is small, and returns a tiny amount of data for a large amount of effort spent.
-			If many of these operations are performed, the efficiency of the database system is greatly reduced.</para>
-	</sect1>
+    <authorgroup>
+      <author>
+        <firstname>Matthew</firstname>
 
-	<sect1>
-		<title>Why is this needed?</title>
-		<para>Consider the situation where a database has two object classes - A and B.
-			Objects of type A each have a reference to an object of type B.
-			The user writes a program that generates a query for all objects of type A, and iterates through the entire Results object, calling toString on each object.
-			Unfortunately, the toString method of class A uses the reference to the object of type B.
-			Therefore, the program performs lots of single object fetches of objects of type B.
-            In fact, it performs N + 1 queries in total, where N is the number of objects of type A - hence it is called the "N + 1 reads problem".</para>
-	</sect1>
+        <surname>Wakeling</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-	<sect1>
-		<title>First coping strategy - caches</title>
-        <para>The first coping strategy that the InterMine system uses is a cache in the ObjectStore that indexes by the ID of the object.
-            When a proxy reference is accessed, the ObjectStore first looks in the cache.
-            This way, if the user can arrange for the B objects to be in the cache already, the problem no longer occurs.
-            The user could arrange this by including the B objects in the query, but they should be careful that this does not alter the results - InterMine does not have a true LEFT OUTER JOIN, which would be required for this to be possible for every query.</para>
-	</sect1>
+  <section>
+    <title>Introduction</title>
 
-    <sect1>
-        <title>ObjectStoreFastCollectionsImpl</title>
-        <para>The second mechanism that the InterMine system provides is a specific ObjectStore that behaves differently to the main ObjectStore.
-            This is a subclass of ObjectStorePassThruImpl, and it explicitly materialises every reference and collection present in the objects returned by the underlying ObjectStore.
-            This is a fairly crude method, but it works well for the InterMine data translation pipeline.
-            It could be retrofitted with a mechanism for specifying which collections and references are to be materialised.</para>
-        <para>A similar function is provided by the ObjectStoreFastCollectionsForTranslatorImpl and the ObjectStoreItemPathFollowingImpl, although they have more knowledge of the actual data requirements of the user than ObjectStoreFastCollectionsImpl.</para>
-    </sect1>
+    <para>This document describes a particular performance problem inherent in
+    object-oriented database systems, and how it is tackled in the InterMine
+    system</para>
 
-    <sect1>
-        <title>Automatic N + 1 reads problem correction</title>
-        <para>There are currently no plans to implement an automatic system to detect and solve generic N + 1 reads problems, although it would not be too difficult.</para>
-    </sect1>
+    <para>The problem is that following references from objects will result in
+    a request to the database to fetch the data. Each of these database
+    requests is small, and returns a tiny amount of data for a large amount of
+    effort spent. If many of these operations are performed, the efficiency of
+    the database system is greatly reduced.</para>
+  </section>
+
+  <section>
+    <title>Why is this needed?</title>
+
+    <para>Consider the situation where a database has two object classes - A
+    and B. Objects of type A each have a reference to an object of type B. The
+    user writes a program that generates a query for all objects of type A,
+    and iterates through the entire Results object, calling toString on each
+    object. Unfortunately, the toString method of class A uses the reference
+    to the object of type B. Therefore, the program performs lots of single
+    object fetches of objects of type B. In fact, it performs N + 1 queries in
+    total, where N is the number of objects of type A - hence it is called the
+    "N + 1 reads problem".</para>
+  </section>
+
+  <section>
+    <title>First coping strategy - caches</title>
+
+    <para>The first coping strategy that the InterMine system uses is a cache
+    in the ObjectStore that indexes by the ID of the object. When a proxy
+    reference is accessed, the ObjectStore first looks in the cache. This way,
+    if the user can arrange for the B objects to be in the cache already, the
+    problem no longer occurs. The user could arrange this by including the B
+    objects in the query, but they should be careful that this does not alter
+    the results - InterMine does not have a true LEFT OUTER JOIN, which would
+    be required for this to be possible for every query.</para>
+  </section>
+
+  <section>
+    <title>ObjectStoreFastCollectionsImpl</title>
+
+    <para>The second mechanism that the InterMine system provides is a
+    specific ObjectStore that behaves differently to the main ObjectStore.
+    This is a subclass of ObjectStorePassThruImpl, and it explicitly
+    materialises every reference and collection present in the objects
+    returned by the underlying ObjectStore. This is a fairly crude method, but
+    it works well for the InterMine data translation pipeline. It could be
+    retrofitted with a mechanism for specifying which collections and
+    references are to be materialised.</para>
+
+    <para>A similar function is provided by the
+    ObjectStoreFastCollectionsForTranslatorImpl and the
+    ObjectStoreItemPathFollowingImpl, although they have more knowledge of the
+    actual data requirements of the user than
+    ObjectStoreFastCollectionsImpl.</para>
+  </section>
+
+  <section>
+    <title>Automatic N + 1 reads problem correction</title>
+
+    <para>There are currently no plans to implement an automatic system to
+    detect and solve generic N + 1 reads problems, although it would not be
+    too difficult.</para>
+  </section>
 </article>
-

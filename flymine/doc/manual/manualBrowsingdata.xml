@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 
-<sect1>
+<article>
+<section>
   <title>Browsing data</title>
   <para>
     If you select an entire class to 'show' in the output (see xxx) it
@@ -11,4 +13,5 @@
     links between classes for that Gene as shown in the second screen
     shot.
   </para>
-</sect1>
+</section>
+</article>

@@ -1,40 +1,58 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-07-03</date>
 
-	<artheader>
-		<date>2003-07-03</date>
-		<title>InterMine - A proposal to improve the Query Optimiser by producing faster optimised queries first</title>
-		<authorgroup>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+    <title>InterMine - A proposal to improve the Query Optimiser by producing
+    faster optimised queries first</title>
 
-	<sect1>
-		<title>Introduction</title>
-		<para>This document describes a proposal to improve the Query Optimiser, by making it produce the faster optimised queries before the slower ones.
-			That way, an optimised query may be produced that will trigger the "query will take short enough time that there's no point optimising further" behaviour earlier than otherwise.</para>
-	</sect1>
+    <authorgroup>
+      <author>
+        <firstname>Matthew</firstname>
 
-	<sect1>
-		<title>Rationale</title>
-		<para>The optimiser performs its optimisation in a very particular style of recursion.
-			Firstly, it asks the PrecomputedTableManager for a Set of PrecomputedTable objects, and iterates through the Set attempting to fit them into the query to optimise.
-			This results in a load of optimised queries, and a Set of PrecomputedTable objects that created them.
-			It is guaranteed now that no PrecomputedTable objects that are not in this Set will be useful for the rest of the optimisation.
-			Each of these optimised queries is added to the BestQuery object, which keeps track of the fastest version and bails out if it finds a particularly quick one.
-			The optimised queries are then then re-optimised with the Set of PrecomputedTables that was useful (this is the recursion).
-			This is done in the natural ordering of the Set.
-			However, by this time all the optimised queries have been EXPLAINed, so it would be sensible to do the recursion for the fastest optimised query first.</para>
-	</sect1>
+        <surname>Wakeling</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-	<sect1>
-		<title>Implementation</title>
-		<para>For this to work, the operation of adding an optimised query to the BestQuery object should return some feedback about the speed of the query.
-			The optimised queries can then be stored in an ordered form (eg. a TreeMap of Integers mapping onto optimised query objects, except it must handle two optimised queries EXPLAINing to the same estimated speed).
-		</para>
-	</sect1>
+  <section>
+    <title>Introduction</title>
+
+    <para>This document describes a proposal to improve the Query Optimiser,
+    by making it produce the faster optimised queries before the slower ones.
+    That way, an optimised query may be produced that will trigger the "query
+    will take short enough time that there's no point optimising further"
+    behaviour earlier than otherwise.</para>
+  </section>
+
+  <section>
+    <title>Rationale</title>
+
+    <para>The optimiser performs its optimisation in a very particular style
+    of recursion. Firstly, it asks the PrecomputedTableManager for a Set of
+    PrecomputedTable objects, and iterates through the Set attempting to fit
+    them into the query to optimise. This results in a load of optimised
+    queries, and a Set of PrecomputedTable objects that created them. It is
+    guaranteed now that no PrecomputedTable objects that are not in this Set
+    will be useful for the rest of the optimisation. Each of these optimised
+    queries is added to the BestQuery object, which keeps track of the fastest
+    version and bails out if it finds a particularly quick one. The optimised
+    queries are then then re-optimised with the Set of PrecomputedTables that
+    was useful (this is the recursion). This is done in the natural ordering
+    of the Set. However, by this time all the optimised queries have been
+    EXPLAINed, so it would be sensible to do the recursion for the fastest
+    optimised query first.</para>
+  </section>
+
+  <section>
+    <title>Implementation</title>
+
+    <para>For this to work, the operation of adding an optimised query to the
+    BestQuery object should return some feedback about the speed of the query.
+    The optimised queries can then be stored in an ordered form (eg. a TreeMap
+    of Integers mapping onto optimised query objects, except it must handle
+    two optimised queries EXPLAINing to the same estimated speed).</para>
+  </section>
 </article>

@@ -1,255 +1,612 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-	<artheader>
-		<date>2003-04-07</date>
-		<title>Intermine - the Dataloader store() method</title>
-		<authorgroup>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-			<author>
-				<firstname>Richard</firstname>
-				<surname>Smith</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+  <articleinfo>
+    <date>2003-04-07</date>
 
-	<sect1>
-		<title>Introduction</title>
-		<para>This document describes the desired behaviour of our DataLoader system, which is used to insert data into our database.
-			It is a layer above the ObjectStoreWriter (which deals with storing objects individually), and sorts out merging collections over multiple attempts to insert the same object, along with all the details of transferring data from multiple sources into one database.
-			The DataLoader deals with the problem of storing multiple objects that are linked together by reference or collection, making sure the links are stored as well.
-			The DataLoader also deals with the problem of multiple data sources containing an instance of the same object, and merging the attributes, references, and collections, without losing any data.</para>
-	</sect1>
+    <title>Intermine - the Dataloader store() method</title>
 
-	<inlinegraphic fileref="dataloader.png"/>
+    <authorgroup>
+      <author>
+        <firstname>Matthew</firstname>
 
-	<sect1>
-		<title>A list of problems that DataLoader has to solve</title>
-		<itemizedlist>
-			<listitem>Collections and references to other objects.
-				The problem is making sure that all the links between objects are realised in the database, whatever order the objects are added.
-				<itemizedlist>
-					<listitem>Specifically, if there are any unidirectional relationships, the object with the reference cannot be stored before an object exists in the database for the reference to refer to.</listitem>
-					<listitem>Java holds many-to-many bidirectional relationships in memory as two separate collections, which may disagree.
-						Notably, if one sets that objects a1 and b1 both have a collection reference to a2 and b2, but neglect to mention that this means that a2 and b2 both have a collection reference to a1 and b1, then storing a1 and b1 before a2 and b2 can result in the links between the objects being lost.</listitem>
-				</itemizedlist>
-				These problems can be solved by writing skeleton objects to the database, to be referred to by the references, until the real data can be written.
-			</listitem>
-			<listitem>Loading an object that already exists in the database.
-				Problems include:
-				<itemizedlist>
-					<listitem>Which attributes take precedence?
-						<itemizedlist>
-							<listitem>If at any point we specify that the data being loaded takes precedence, or the data in the database takes precedence, then the actual outcome of the database is dependent on the order that the data sources are transferred to our database - this we wish to avoid if possible.</listitem>
-							<listitem>If we have a null as an attribute (either in the database or in the data we are importing), then that may also influence the outcome.</listitem>
-							<listitem>We may wish to have a priority ordering for the different databases.
-								This priority should be settable on a per-attribute level, so that some attributes have priority in one database, and the other attributes have priority in another.
-								However, that is difficult to operate if there are more than two data sources for a given attribute, because it is hard to tell which data source originated the data currently in the database.</listitem>
-						</itemizedlist>
-					</listitem>
-					<listitem>Which object reference takes precedence?
-						This problem has the same characteristics as with attributes.</listitem>
-					<listitem>How does one merge two collections from separate data sources?
-						The easiest is to merely merge collections, so that links are always added, and never removed.</listitem>
-					<listitem>If some links in the database are removed because they are overridden by new data (or old data), then what should become of the object that has been linked to?
-						Either it should be deleted (and possibly everything that refers to it as an object reference (difficult, and may result in large chunks of the database going missing)), or it should be left in the database (in which case it may get in the way of some stuff).</listitem>
-				</itemizedlist></listitem>
-		</itemizedlist>
-	</sect1>
+        <surname>Wakeling</surname>
+      </author>
 
-	<sect1>
-		<title>Object references - one-to-one relationships</title>
-		<sect2>
-			<title>New data overrides old data</title>
-			<para>
-				<graphic fileref="objectReferenceMerge1.png" align="Left"/>
-				<graphic fileref="objectReferenceMerge2.png" align="Left"/>
-				In order to avoid horribleness, we will impose the restriction that an object reference that is part of an object's primary keys must be an object reference that is part of a many-to-one relationship.
-				This restriction prevents the situation where a data source changes the object reference of one object in the database, thereby changing the primary key of the object that is pointed to by the reference.
-				<graphic fileref="objectReferenceMerge3.png" align="Right"/></para>
-			<para>The eventual outcome of updating the database from the data source should be independent of the order of the objects in that data source.
-				The diagrams show an example of a database that has three objects linked as A - B1 - C, and a data source that has three objects linked as A - B2 - C, where each of the links is a one-to-one relationship.
-				Note that none of the links can possibly form part of the primary keys of any of the objects.
-				The diagrams on the left show adding object A (attached to a skeleton object B2) to the database, followed by adding object B2 (attached to skeleton objects A and C).
-				As it turns out, adding object C (attached to a skeleton B2) will not change the database any further.</para>
-			<para>The diagram on the right shows adding object B2 first - and it turns out that adding objects A and C afterwards do not change the database.</para>
-		</sect2>
-		<sect2>
-			<title>Old data overrides new data</title>
-			<para>
-				<graphic fileref="objectReferenceMerge1_notOverride.png" align="Left"/>
-				<graphic fileref="objectReferenceMerge2_notOverride.png" align="Right"/>
-				If instead the database has more "reliable" data than the data source we are currently loading, then the data in the database, including object references, must not be altered.
-				Again, the system must produce results independent of the order of the objects provided by the data source.</para>
-			<para>On the left is the result of adding object A (attached to B2) to the database.
-				The object reference in the database (linking to object B1) takes priority, so object A is not altered.
-				B2's skeleton object is added to the database, because there is the possibility that this is the only time the data source will provide us with a copy of B2.
-				If this is the case, then B2 isn't really a skeleton after all.</para>
-			<para>On the right is a diagram showing adding object B2 to the database.
-				B2 is linked to a skeleton object A in the data source - however, searching the database for the real object A reveals that object A already exists, and therefore its link to a B (even if that is null) takes precedence.
-				Therefore, B2 is added to the database without links to objects A and C, and the A - B1 - C objects are left alone.</para>
-		</sect2>
-		<sect2>
-			<title>Note on skeletons and transactions</title>
-			<para>Skeletons become much more interesting if we are attempting to add data to a database, and never override any particular object reference field of a particular object type.
-				Consider the scenario of the database having no objects interesting to this discussion, and a data source that has objects A and B, linked by a one-to-one relationship.
-				The data source is set to never override any data in other instances of A's object class.
-				Consider the possibility that object B might be added to the database first.
-				It would create a skeleton object A for the new object B to link to, and later on it would attempt to add object A for real.
-				However, since the fields of object A are set to have the database as the authority, the system would refuse to actually update object A with its full set of values.</para>
-			<para>For this reason, each "import a data source" operation will need to be performed in a single JVM, which can keep track of which objects in the database are currently skeletons.
-				Therefore, when the system comes to add object A, it will be able to remember that it added object A as a skeleton itself, and therefore know that it is allowed to update the fields.</para>
-		</sect2>
-				
-				
-	</sect1>
+      <author>
+        <firstname>Richard</firstname>
 
-	<sect1>
-		<title>Many-to-one relationships</title>
-		<para>
-			<graphic fileref="collectionMerge1.png" align="Left"/>
-			<graphic fileref="collectionMerge2.png" align="Right"/>
-			Many-to-one relationships can be seen as either a object reference, or a collection, depending on the side of the relationship that is being looked at.
-			When adding an object to the database that has an object reference to another object, then the simple rules in the previous section will apply.
-			However, when adding an object to the database, that has a collection of other objects, then that collection needs to be merged.
-			Merging the collection happens to be an identical operation to setting the object references, because the collection is defined in the database by the object references.</para>
-		<sect2>
-			<title>Adding objects, where there is no conflict</title>
-			<para>
-				For example, on the left is an operation that merges collections, while adding an object A with a collection containing B3, to a database containing A with a collection containing B1 and B2.
-				The operation is performed in two parts - first adding A, then adding B3.
-				On the right is the equivalent operation, but B3 is added first instead of A - and it turns out that adding A afterwards does not affect the database, so that operation is not shown.</para>
-		</sect2>
-		<sect2>
-			<title>New data overrides old data</title>
-			<para>
-				<graphic fileref="collectionMergeConflict1.png" align="Left"/>
-				<graphic fileref="collectionMergeConflict2.png" align="Right"/>
-				With a many-to-one relationship, the functionality is defined by the characteristics of the object reference side of the relation.
-				For example, if the new data source overrides the object reference field in all B objects, then these diagrams show the operations that take place when an object A2 linked to object B2 is added to a database holding object A1 linked to B1 and B2, where A objects have a one-to-many relationship with B objects.
-				On the left is the situation if A2 is added before B2, and on the right is the situation of B2 is added before A2.
-				Happily, both methods result in the same database status.</para>
-		</sect2>
-		<sect2>
-			<title>Old data overrides new data</title>
-			<para>
-				<graphic fileref="collectionMergeConflict3.png" align="Left"/>
-				If, however, the data that is in the database overrides the new data source, then there is a different outcome.
-				The system should always behave as if the object references are the controllers for what happens.
-				The diagram on the right indicates what happens when object A2 is added before B2.
-				Notice that absolutely nothing happens when B2 is added to the database.
-				The same thing happens when B2 is added before A2 - B2 does not change the database, and A2 makes the same modification as in the diagram.</para>
-			<graphic fileref="many2many1.png" align="Right"/>
-		</sect2>
-	</sect1>
+        <surname>Smith</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-	<sect1>
-		<title>Many to many relationships</title>
-		<para>
-			In a way, these are a lot less complicated.
-			Just merge everything in sight, and it all magically works.
-			Try to do anything else, and it all falls apart.</para>
-	</sect1>
+  <section>
+    <title>Introduction</title>
 
-	<sect1>
-		<title>Unidirectional relationships</title>
-		<para>A unidirectional relationship that is an object reference is not necessarily a one-to-one relationship.
-			Several objects may unidirectionally reference the same other object, as there is no "official" way for that to be restricted.
-			This type of relationship can therefore be treated as a one-to-many relationship.</para>
-		<para>A unidirectional collection reference is a weird thing, because it is always possible to reverse the collection.
-			However, the same complaint applies to object references, as does the comment in the above paragraph to collections.
-			Unidirectional collection references are therefore treated as many-to-many relationships.</para>
-		<para>This means that <emphasis>any</emphasis> unidirectional reference can be used as part of a primary key.</para>
-	</sect1>
+    <para>This document describes the desired behaviour of our DataLoader
+    system, which is used to insert data into our database. It is a layer
+    above the ObjectStoreWriter (which deals with storing objects
+    individually), and sorts out merging collections over multiple attempts to
+    insert the same object, along with all the details of transferring data
+    from multiple sources into one database. The DataLoader deals with the
+    problem of storing multiple objects that are linked together by reference
+    or collection, making sure the links are stored as well. The DataLoader
+    also deals with the problem of multiple data sources containing an
+    instance of the same object, and merging the attributes, references, and
+    collections, without losing any data.</para>
 
-	<sect1>
-		<title>Findings, and rules to follow</title>
-		<itemizedlist>
-			<listitem>Primary keys may not include references to other objects, either in an object reference or a collection, unless the reverse reference is a collection.
-				Therefore, the following types are permissible as parts of the primary key:
-				<itemizedlist>
-					<listitem>Any attribute of the object.</listitem>
-					<listitem>Object reference that is part of a one-to-many relationship.</listitem>
-					<listitem>Collection, that is part of a many-to-many relationship.</listitem>
-					<listitem>Any unidirectional reference.</listitem>
-				</itemizedlist>
-			</listitem>
-			<listitem>There are four possibilities for methods of managing consistency between data loaders running in different orders.
-				In all cases, we wish to define a particular data source as authoritative for each particular field of each object class.
-				These are the possible methods:
-				<itemizedlist>
-					<listitem>For each attribute of each object class, define a particular data source as being authoritative.
-						When loading data from the data source, always insert data into the database if it is not already there, but only override data (and that includes nulls) if the data source is the authority for the attribute being examined.
-						This method has drawbacks, in that the data in the database will depend on the order of running the different data loaders, for attributes in objects that were not present in the authoritative data source.
-						However, it would be simple to implement, and relatively quick to run.</listitem>
-					<listitem>For each attribute of each object class, define a hierarchy of data loaders, from least authoritative to most authoritative.
-						Store in an extra table in the database a record of which data source wrote <emphasis>every single</emphasis> attribute in the entire database.
-						This provides information to the currently running data loader as to whether it is more authoritative than the data source that wrote a particular piece of data.
-						One search of this table would be required for every object that is retrieved from the data source, and one insert/update would be required for every attribute that is updated or written into the database.
-						This method would multiply the amount of database activity by a reasonably small number.</listitem>
-					<listitem>Make multiple passes through the data sources.
-						Firstly, populate the database, to make sure all the objects are present.
-						Then, iterate through all attribute types of all object classes.
-						For each, iterate through the data sources, from least authoritative to most authoritative, ignoring the least authoritative.
-						Each time, filter through the data source for that particular attribute, and write it to the database on all objects that have it.
-						When that is finished, every object in the database has the most authoritative data available.
-						This method will be slow.</listitem>
-					<listitem>The last method could be modified to first write each data source into its own individual database.
-						Then the last method could be used, except retrieving data from these databases instead of from the data sources.
-						This may be a little faster than the last method, but still probably slower than the first two methods.</listitem>
-				</itemizedlist>
-				The data loaders should look to some generic metadata object for information like whether it can write stuff to the database, but the format of this all is not sorted.</listitem>
-			<listitem>Merging of data has some interesting properties:
-				<itemizedlist>
-					<listitem>All attribute data will be merged according to which data source is authoritative, as described above.</listitem>
-					<listitem>All object references will be merged according to which data source is authoritative.</listitem>
-					<listitem>One-to-one relationships need care to make sure that the end points point at each other.
-						Therefore, if one data source is authoritative for one end-point of a one-to-one relationship, it should also be authoritative for the other end.</listitem>
-					<listitem>Collections that are one-to-many relationships will have their merge properties defined by the authority of the object reference at the other end of the the relationship.
-						Therefore, if a data source adds an object with object A in such a collection, and the database already has object A in another object's similar collection, and the data source is authoritative for the object reference that is the reverse relationship, then object A will be removed from the collection of the object already in the database, and placed in the collection of the new object, plus the object reference in object A will point to the new object.</listitem>
-					<listitem>Collections that are many-to-many relationships will be merged at all times.
-						Therefore, links between objects can only be added - not taken away.</listitem>
-					<listitem>Unidirectional relationships that are object references will act normally, because there isn't officially a reverse collection to behave like the paragraph that describes one-to-many collections, although it would if it could.</listitem>
-					<listitem>Unidirectional relationships that are collections will act like many-to-many relationships, in that links will always be added, but never taken away.
-						Again, the relationship will act normally, with no hint of target exclusivity</listitem>
-				</itemizedlist>
-			</listitem>
-			<listitem>Skeleton objects should be placed into the database before objects that refer to them, so that links can be established as the object is created in the database, rather than later.
-				These skeleton objects are effectively incomplete objects, which have enough data to cover their primary keys, but not necessarily anything else.
-				The data written to skeleton objects should be all the data that is available at the time of writing, so in some cases it may constitute a complete object.
-				However, there is the possibility that some objects may be mentioned in a data source only as subsidiaries of objects in a list to insert, in which case the data source will probably provide all their data on the spot.
-				Each data loader should keep accessible a list of all the skeleton objects that it has written, so that if in the future a real copy of the object turns up in the data source, the data loader can know that it is permitted to override the values in the skeleton object.
-				If a data source provides an incomplete skeleton object, and fails to provide a full description later on, then after the data loader is finished the object stored in the database will be incomplete.
-				This situation is permitted, for the reason that the remaining values could possibly be filled in by a different data loader.
-				If after all data loaders has run there are still some skeletons in the database, there is nothing we can do about it.
-				Deleting them would be inadvisable, as this will upset other objects.
-				Nothing in the database (apart from the fact that some values are null) distinguishes a skeleton from a real object, and they can be treated as such.</listitem>
-		</itemizedlist>
-	</sect1>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="dataloader.png" />
+      </imageobject>
+    </mediaobject>
+  </section>
 
-	<sect1>
-		<title>Implementation</title>
-		<para>Here is a flowchart describing a possible implementation strategy:</para>
-		<inlinegraphic fileref="execution1.png"/>
-	</sect1>
+  <section>
+    <title>A list of problems that DataLoader has to solve</title>
 
-	<sect1>
-		<title>Integration Management</title>
-		<para>To control the integration of data (i.e. the merging of data from different sources to give a consistent database), we think we will use method two from the list above, where one holds a hierarchy of data sources for each attribute name, and stores in a table the name of the data source that last wrote to a particular attribute.
-			An integration manager class reads a configuration file that stores these hierarchies, allowing a system to work out from the "last writer" information whether it overrides that data or not.
-			There are three methods of storing the "last writer" information in a table:</para>
-		<itemizedlist>
-			<listitem>Store all objects normally in the normal database, and have an extra table that stores a "last writer" for each attribute that was stored in the normal database.</listitem>
-			<listitem>Store all objects normally in the normal database, and have an extra table that stores both the "last writer", and the actual value written, for each attribute that was stored in the normal database.
-				When loading data from the database to merge with a new object, load that data (along with information on who wrote it) from the separate table, instead of the normal database.
-				When every data source has been processed, the separate table can be dropped, leaving a normal database.</listitem>
-			<listitem>Store only indirection tables in the normal database, and have a table that stores both the "last writer", and the actual value that would have been written to the normal database.
-				Load all data for merging from this separate table - as it is the only place the data is stored.
-				When every data source has been processed, then move the data from the separate table into the normal database.
-				This would probably be the method that has the highest performance.</listitem>
-		</itemizedlist>
-	</sect1>
+    <itemizedlist>
+      <listitem>
+        <para>Collections and references to other objects. The problem is
+        making sure that all the links between objects are realised in the
+        database, whatever order the objects are added.</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Specifically, if there are any unidirectional relationships,
+            the object with the reference cannot be stored before an object
+            exists in the database for the reference to refer to.</para>
+          </listitem>
+
+          <listitem>
+            <para>Java holds many-to-many bidirectional relationships in
+            memory as two separate collections, which may disagree. Notably,
+            if one sets that objects a1 and b1 both have a collection
+            reference to a2 and b2, but neglect to mention that this means
+            that a2 and b2 both have a collection reference to a1 and b1, then
+            storing a1 and b1 before a2 and b2 can result in the links between
+            the objects being lost.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>These problems can be solved by writing skeleton objects to the
+        database, to be referred to by the references, until the real data can
+        be written.</para>
+      </listitem>
+
+      <listitem>
+        <para>Loading an object that already exists in the database. Problems
+        include:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Which attributes take precedence?</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>If at any point we specify that the data being loaded
+                takes precedence, or the data in the database takes
+                precedence, then the actual outcome of the database is
+                dependent on the order that the data sources are transferred
+                to our database - this we wish to avoid if possible.</para>
+              </listitem>
+
+              <listitem>
+                <para>If we have a null as an attribute (either in the
+                database or in the data we are importing), then that may also
+                influence the outcome.</para>
+              </listitem>
+
+              <listitem>
+                <para>We may wish to have a priority ordering for the
+                different databases. This priority should be settable on a
+                per-attribute level, so that some attributes have priority in
+                one database, and the other attributes have priority in
+                another. However, that is difficult to operate if there are
+                more than two data sources for a given attribute, because it
+                is hard to tell which data source originated the data
+                currently in the database.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+
+          <listitem>
+            <para>Which object reference takes precedence? This problem has
+            the same characteristics as with attributes.</para>
+          </listitem>
+
+          <listitem>
+            <para>How does one merge two collections from separate data
+            sources? The easiest is to merely merge collections, so that links
+            are always added, and never removed.</para>
+          </listitem>
+
+          <listitem>
+            <para>If some links in the database are removed because they are
+            overridden by new data (or old data), then what should become of
+            the object that has been linked to? Either it should be deleted
+            (and possibly everything that refers to it as an object reference
+            (difficult, and may result in large chunks of the database going
+            missing)), or it should be left in the database (in which case it
+            may get in the way of some stuff).</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Object references - one-to-one relationships</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>New data overrides old data:</emphasis></para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectReferenceMerge1.png" />
+          </imageobject>
+        </mediaobject>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectReferenceMerge2.png" />
+          </imageobject>
+        </mediaobject>
+
+        <para>In order to avoid horribleness, we will impose the restriction
+        that an object reference that is part of an object's primary keys must
+        be an object reference that is part of a many-to-one relationship.
+        This restriction prevents the situation where a data source changes
+        the object reference of one object in the database, thereby changing
+        the primary key of the object that is pointed to by the
+        reference.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectReferenceMerge3.png" />
+          </imageobject>
+        </mediaobject>
+
+        <para>The eventual outcome of updating the database from the data
+        source should be independent of the order of the objects in that data
+        source. The diagrams show an example of a database that has three
+        objects linked as A - B1 - C, and a data source that has three objects
+        linked as A - B2 - C, where each of the links is a one-to-one
+        relationship. Note that none of the links can possibly form part of
+        the primary keys of any of the objects. The diagrams on the left show
+        adding object A (attached to a skeleton object B2) to the database,
+        followed by adding object B2 (attached to skeleton objects A and C).
+        As it turns out, adding object C (attached to a skeleton B2) will not
+        change the database any further.</para>
+
+        <para>The diagram on the right shows adding object B2 first - and it
+        turns out that adding objects A and C afterwards do not change the
+        database.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Old data overrides new data:</emphasis></para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata align="left"
+                       fileref="objectReferenceMerge1_notOverride.png" />
+          </imageobject>
+        </mediaobject>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata align="right"
+                       fileref="objectReferenceMerge2_notOverride.png" />
+          </imageobject>
+        </mediaobject>
+
+        <para>If instead the database has more "reliable" data than the data
+        source we are currently loading, then the data in the database,
+        including object references, must not be altered. Again, the system
+        must produce results independent of the order of the objects provided
+        by the data source.</para>
+
+        <para>On the left is the result of adding object A (attached to B2) to
+        the database. The object reference in the database (linking to object
+        B1) takes priority, so object A is not altered. B2's skeleton object
+        is added to the database, because there is the possibility that this
+        is the only time the data source will provide us with a copy of B2. If
+        this is the case, then B2 isn't really a skeleton after all.</para>
+
+        <para>On the right is a diagram showing adding object B2 to the
+        database. B2 is linked to a skeleton object A in the data source -
+        however, searching the database for the real object A reveals that
+        object A already exists, and therefore its link to a B (even if that
+        is null) takes precedence. Therefore, B2 is added to the database
+        without links to objects A and C, and the A - B1 - C objects are left
+        alone.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Note on skeletons and transactions:</emphasis></para>
+
+        <para>Skeletons become much more interesting if we are attempting to
+        add data to a database, and never override any particular object
+        reference field of a particular object type. Consider the scenario of
+        the database having no objects interesting to this discussion, and a
+        data source that has objects A and B, linked by a one-to-one
+        relationship. The data source is set to never override any data in
+        other instances of A's object class. Consider the possibility that
+        object B might be added to the database first. It would create a
+        skeleton object A for the new object B to link to, and later on it
+        would attempt to add object A for real. However, since the fields of
+        object A are set to have the database as the authority, the system
+        would refuse to actually update object A with its full set of
+        values.</para>
+
+        <para>For this reason, each "import a data source" operation will need
+        to be performed in a single JVM, which can keep track of which objects
+        in the database are currently skeletons. Therefore, when the system
+        comes to add object A, it will be able to remember that it added
+        object A as a skeleton itself, and therefore know that it is allowed
+        to update the fields.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Many-to-one relationships</title>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata align="left" fileref="collectionMerge1.png" />
+      </imageobject>
+    </mediaobject>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata align="right" fileref="collectionMerge2.png" />
+      </imageobject>
+    </mediaobject>
+
+    <para>Many-to-one relationships can be seen as either a object reference,
+    or a collection, depending on the side of the relationship that is being
+    looked at. When adding an object to the database that has an object
+    reference to another object, then the simple rules in the previous section
+    will apply. However, when adding an object to the database, that has a
+    collection of other objects, then that collection needs to be merged.
+    Merging the collection happens to be an identical operation to setting the
+    object references, because the collection is defined in the database by
+    the object references.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>Adding objects, where there is no
+        conflict:</emphasis></para>
+
+        <para>For example, on the left is an operation that merges
+        collections, while adding an object A with a collection containing B3,
+        to a database containing A with a collection containing B1 and B2. The
+        operation is performed in two parts - first adding A, then adding B3.
+        On the right is the equivalent operation, but B3 is added first
+        instead of A - and it turns out that adding A afterwards does not
+        affect the database, so that operation is not shown.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>New data overrides old data:</emphasis></para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata align="left" fileref="collectionMergeConflict1.png" />
+          </imageobject>
+        </mediaobject>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata align="right" fileref="collectionMergeConflict2.png" />
+          </imageobject>
+        </mediaobject>
+
+        <para>With a many-to-one relationship, the functionality is defined by
+        the characteristics of the object reference side of the relation. For
+        example, if the new data source overrides the object reference field
+        in all B objects, then these diagrams show the operations that take
+        place when an object A2 linked to object B2 is added to a database
+        holding object A1 linked to B1 and B2, where A objects have a
+        one-to-many relationship with B objects. On the left is the situation
+        if A2 is added before B2, and on the right is the situation of B2 is
+        added before A2. Happily, both methods result in the same database
+        status.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Old data overrides new data:</emphasis></para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="collectionMergeConflict3.png" />
+          </imageobject>
+        </mediaobject>
+
+        <para>If, however, the data that is in the database overrides the new
+        data source, then there is a different outcome. The system should
+        always behave as if the object references are the controllers for what
+        happens. The diagram on the right indicates what happens when object
+        A2 is added before B2. Notice that absolutely nothing happens when B2
+        is added to the database. The same thing happens when B2 is added
+        before A2 - B2 does not change the database, and A2 makes the same
+        modification as in the diagram.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="many2many1.png" />
+          </imageobject>
+        </mediaobject>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Many to many relationships</title>
+
+    <para>In a way, these are a lot less complicated. Just merge everything in
+    sight, and it all magically works. Try to do anything else, and it all
+    falls apart.</para>
+  </section>
+
+  <section>
+    <title>Unidirectional relationships</title>
+
+    <para>A unidirectional relationship that is an object reference is not
+    necessarily a one-to-one relationship. Several objects may
+    unidirectionally reference the same other object, as there is no
+    "official" way for that to be restricted. This type of relationship can
+    therefore be treated as a one-to-many relationship.</para>
+
+    <para>A unidirectional collection reference is a weird thing, because it
+    is always possible to reverse the collection. However, the same complaint
+    applies to object references, as does the comment in the above paragraph
+    to collections. Unidirectional collection references are therefore treated
+    as many-to-many relationships.</para>
+
+    <para>This means that <emphasis>any</emphasis> unidirectional reference
+    can be used as part of a primary key.</para>
+  </section>
+
+  <section>
+    <title>Findings, and rules to follow</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>Primary keys may not include references to other objects, either
+        in an object reference or a collection, unless the reverse reference
+        is a collection. Therefore, the following types are permissible as
+        parts of the primary key:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Any attribute of the object.</para>
+          </listitem>
+
+          <listitem>
+            <para>Object reference that is part of a one-to-many
+            relationship.</para>
+          </listitem>
+
+          <listitem>
+            <para>Collection, that is part of a many-to-many
+            relationship.</para>
+          </listitem>
+
+          <listitem>
+            <para>Any unidirectional reference.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>There are four possibilities for methods of managing consistency
+        between data loaders running in different orders. In all cases, we
+        wish to define a particular data source as authoritative for each
+        particular field of each object class. These are the possible
+        methods:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>For each attribute of each object class, define a particular
+            data source as being authoritative. When loading data from the
+            data source, always insert data into the database if it is not
+            already there, but only override data (and that includes nulls) if
+            the data source is the authority for the attribute being examined.
+            This method has drawbacks, in that the data in the database will
+            depend on the order of running the different data loaders, for
+            attributes in objects that were not present in the authoritative
+            data source. However, it would be simple to implement, and
+            relatively quick to run.</para>
+          </listitem>
+
+          <listitem>
+            <para>For each attribute of each object class, define a hierarchy
+            of data loaders, from least authoritative to most authoritative.
+            Store in an extra table in the database a record of which data
+            source wrote <emphasis>every single</emphasis> attribute in the
+            entire database. This provides information to the currently
+            running data loader as to whether it is more authoritative than
+            the data source that wrote a particular piece of data. One search
+            of this table would be required for every object that is retrieved
+            from the data source, and one insert/update would be required for
+            every attribute that is updated or written into the database. This
+            method would multiply the amount of database activity by a
+            reasonably small number.</para>
+          </listitem>
+
+          <listitem>
+            <para>Make multiple passes through the data sources. Firstly,
+            populate the database, to make sure all the objects are present.
+            Then, iterate through all attribute types of all object classes.
+            For each, iterate through the data sources, from least
+            authoritative to most authoritative, ignoring the least
+            authoritative. Each time, filter through the data source for that
+            particular attribute, and write it to the database on all objects
+            that have it. When that is finished, every object in the database
+            has the most authoritative data available. This method will be
+            slow.</para>
+          </listitem>
+
+          <listitem>
+            <para>The last method could be modified to first write each data
+            source into its own individual database. Then the last method
+            could be used, except retrieving data from these databases instead
+            of from the data sources. This may be a little faster than the
+            last method, but still probably slower than the first two
+            methods.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>The data loaders should look to some generic metadata object for
+        information like whether it can write stuff to the database, but the
+        format of this all is not sorted.</para>
+      </listitem>
+
+      <listitem>
+        <para>Merging of data has some interesting properties:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>All attribute data will be merged according to which data
+            source is authoritative, as described above.</para>
+          </listitem>
+
+          <listitem>
+            <para>All object references will be merged according to which data
+            source is authoritative.</para>
+          </listitem>
+
+          <listitem>
+            <para>One-to-one relationships need care to make sure that the end
+            points point at each other. Therefore, if one data source is
+            authoritative for one end-point of a one-to-one relationship, it
+            should also be authoritative for the other end.</para>
+          </listitem>
+
+          <listitem>
+            <para>Collections that are one-to-many relationships will have
+            their merge properties defined by the authority of the object
+            reference at the other end of the the relationship. Therefore, if
+            a data source adds an object with object A in such a collection,
+            and the database already has object A in another object's similar
+            collection, and the data source is authoritative for the object
+            reference that is the reverse relationship, then object A will be
+            removed from the collection of the object already in the database,
+            and placed in the collection of the new object, plus the object
+            reference in object A will point to the new object.</para>
+          </listitem>
+
+          <listitem>
+            <para>Collections that are many-to-many relationships will be
+            merged at all times. Therefore, links between objects can only be
+            added - not taken away.</para>
+          </listitem>
+
+          <listitem>
+            <para>Unidirectional relationships that are object references will
+            act normally, because there isn't officially a reverse collection
+            to behave like the paragraph that describes one-to-many
+            collections, although it would if it could.</para>
+          </listitem>
+
+          <listitem>
+            <para>Unidirectional relationships that are collections will act
+            like many-to-many relationships, in that links will always be
+            added, but never taken away. Again, the relationship will act
+            normally, with no hint of target exclusivity</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Skeleton objects should be placed into the database before
+        objects that refer to them, so that links can be established as the
+        object is created in the database, rather than later. These skeleton
+        objects are effectively incomplete objects, which have enough data to
+        cover their primary keys, but not necessarily anything else. The data
+        written to skeleton objects should be all the data that is available
+        at the time of writing, so in some cases it may constitute a complete
+        object. However, there is the possibility that some objects may be
+        mentioned in a data source only as subsidiaries of objects in a list
+        to insert, in which case the data source will probably provide all
+        their data on the spot. Each data loader should keep accessible a list
+        of all the skeleton objects that it has written, so that if in the
+        future a real copy of the object turns up in the data source, the data
+        loader can know that it is permitted to override the values in the
+        skeleton object. If a data source provides an incomplete skeleton
+        object, and fails to provide a full description later on, then after
+        the data loader is finished the object stored in the database will be
+        incomplete. This situation is permitted, for the reason that the
+        remaining values could possibly be filled in by a different data
+        loader. If after all data loaders has run there are still some
+        skeletons in the database, there is nothing we can do about it.
+        Deleting them would be inadvisable, as this will upset other objects.
+        Nothing in the database (apart from the fact that some values are
+        null) distinguishes a skeleton from a real object, and they can be
+        treated as such.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Implementation</title>
+
+    <para>Here is a flowchart describing a possible implementation
+    strategy:</para>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="execution1.png" />
+      </imageobject>
+    </mediaobject>
+  </section>
+
+  <section>
+    <title>Integration Management</title>
+
+    <para>To control the integration of data (i.e. the merging of data from
+    different sources to give a consistent database), we think we will use
+    method two from the list above, where one holds a hierarchy of data
+    sources for each attribute name, and stores in a table the name of the
+    data source that last wrote to a particular attribute. An integration
+    manager class reads a configuration file that stores these hierarchies,
+    allowing a system to work out from the "last writer" information whether
+    it overrides that data or not. There are three methods of storing the
+    "last writer" information in a table:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Store all objects normally in the normal database, and have an
+        extra table that stores a "last writer" for each attribute that was
+        stored in the normal database.</para>
+      </listitem>
+
+      <listitem>
+        <para>Store all objects normally in the normal database, and have an
+        extra table that stores both the "last writer", and the actual value
+        written, for each attribute that was stored in the normal database.
+        When loading data from the database to merge with a new object, load
+        that data (along with information on who wrote it) from the separate
+        table, instead of the normal database. When every data source has been
+        processed, the separate table can be dropped, leaving a normal
+        database.</para>
+      </listitem>
+
+      <listitem>
+        <para>Store only indirection tables in the normal database, and have a
+        table that stores both the "last writer", and the actual value that
+        would have been written to the normal database. Load all data for
+        merging from this separate table - as it is the only place the data is
+        stored. When every data source has been processed, then move the data
+        from the separate table into the normal database. This would probably
+        be the method that has the highest performance.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>

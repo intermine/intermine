@@ -1,34 +1,126 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  
-  <artheader>
+  <articleinfo>
     <title>Technical overview</title>
-  </artheader>
-  
-  <para>At the software level, InterMine is a general-purpose database that supports the storage and retrieval of Java objects. It is designed to support large quantities of data, possibly from different sources of varying reliability.  The resulting complexity in data integration and efficient querying is handled by the provision of well-defined components (see diagram below) which can be flexibly configured. An understanding of these is useful preparation both for using the software and <ulink url="../../contribute/index.xml">contributing</ulink> to the project by suggesting enhancements or writing code.</para>
-  
-  <inlinegraphic fileref="overview.png" align="center"/>
+  </articleinfo>
 
-  <para>The organisation of the InterMine codebase reflects the structure of its components, the most important of which are represented as blue boxes in the diagram. The yellow boxes denote the interfaces available to query the integrated data. For more API information and implementation details please consult the <ulink url="../../../api/">JavaDoc</ulink> - class names in this document link to the relevant pages. A basic <ulink url="../start/tutorial.xml">tutorial</ulink> that describes how to get started with the ObjectStore using a simple UML model is also available.</para>
-  
-  <sect1>
+  <para>At the software level, InterMine is a general-purpose database that
+  supports the storage and retrieval of Java objects. It is designed to
+  support large quantities of data, possibly from different sources of varying
+  reliability. The resulting complexity in data integration and efficient
+  querying is handled by the provision of well-defined components (see diagram
+  below) which can be flexibly configured. An understanding of these is useful
+  preparation both for using the software and <ulink
+  url="../../contribute/index.xml">contributing</ulink> to the project by
+  suggesting enhancements or writing code.</para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="overview.png" />
+    </imageobject>
+  </mediaobject>
+
+  <para>The organisation of the InterMine codebase reflects the structure of
+  its components, the most important of which are represented as blue boxes in
+  the diagram. The yellow boxes denote the interfaces available to query the
+  integrated data. For more API information and implementation details please
+  consult the <ulink url="http://www.intermine.org/api/">JavaDoc</ulink> - class names in this
+  document link to the relevant pages. A basic <ulink
+  url="../start/tutorial.xml">tutorial</ulink> that describes how to get
+  started with the ObjectStore using a simple UML model is also
+  available.</para>
+
+  <section>
     <title>Model</title>
-    <para>The <ulink url="../../../api/org/intermine/metadata/Model.html"><classname>Model</classname></ulink> (<classname>metadata</classname> package) is a metadata representation that describes the data by holding information on the types of objects that are stored in the database and how these types are related by inheritance and composition. This includes, but is not limited to, the the information represented by the Java classes for these objects. This is reflected by the fact that a Model is constructed using a list of class descriptors; one for each object type to be stored. Note that as data is integrated, each of the models describing the data sources are also integrated to produce a model that describes the aggregate data in the resulting InterMine database.</para>
-    <para>The metadata that describes a model is usually specified in an XML file. It is a list of classes which have attributes, references and collections. However, models can also be specified in other formats, including the XMI UML format. The "production" of a Model from XML or XMI is handled by subclasses of <ulink url="../../../api/org/intermine/modelproduction/ModelParser.html"><classname>ModelParser</classname></ulink> (<classname>modelproduction</classname> package) which parse a metadata InputStream. The generation of actual Java classes and model-specific mapping and configuration files is handled by subclasses of ModelOutput (<classname>codegen</classname> package).</para>
-  </sect1>
-  
-  <sect1>
+
+    <para>The <ulink
+    url="http://www.intermine.org/api/org/intermine/metadata/Model.html">Model</ulink>
+    (metadata package) is a metadata representation that describes the data by
+    holding information on the types of objects that are stored in the
+    database and how these types are related by inheritance and composition.
+    This includes, but is not limited to, the the information represented by
+    the Java classes for these objects. This is reflected by the fact that a
+    Model is constructed using a list of class descriptors; one for each
+    object type to be stored. Note that as data is integrated, each of the
+    models describing the data sources are also integrated to produce a model
+    that describes the aggregate data in the resulting InterMine
+    database.</para>
+
+    <para>The metadata that describes a model is usually specified in an XML
+    file. It is a list of classes which have attributes, references and
+    collections. However, models can also be specified in other formats,
+    including the XMI UML format. The "production" of a Model from XML or XMI
+    is handled by subclasses of <ulink
+    url="http://www.intermine.org/api/org/intermine/modelproduction/ModelParser.html">ModelParser</ulink>
+    (modelproduction package) which parse a metadata InputStream. The
+    generation of actual Java classes and model-specific mapping and
+    configuration files is handled by subclasses of ModelOutput (codegen
+    package).</para>
+  </section>
+
+  <section>
     <title>ObjectStore</title>
-    <para>The <ulink url="../../../api/org/intermine/objectstore/ObjectStore.html"><classname>ObjectStore</classname></ulink> (<classname>objectstore</classname> package) is pivotal to InterMine. It is the basis for object storage and retrieval, and abstracts away from the underlying persistence mechanism. It supports "store" and "query" primitives through an interface that is common to caching, networked or object-relational mapping implementations. This allows ObjectStores to be "layered" in a scalable architecture. In practice, InterMine is designed to be read-only in production environments for query efficiency and control over data consistency. To this end the ObjectStore interface specifies read-only operations, whilst the ObjectStoreWriter interface adds storage primitives.</para>
-    <para>An ObjectStore accepts queries and returns results (or an <ulink url="../objectstore/query_explain.xml">estimate</ulink> of how long it would take to obtain results). A <ulink url="../../../api/org/intermine/objectstore/query/Query.html"><classname>Query</classname></ulink> object is a powerful object <ulink url="../howto_query.xml">query specification</ulink>, understanding of which is aided by familiarity with the metadata structure of the data to be queried. Constraints are specified between classes, attributes, references and collections to build an expressive and well-defined request for objects from the underlying database.  There are two ways to construct a Query object: the most concise is to use an <ulink url="../iql_query/spec.xml">IQL</ulink> string, alternatively an <ulink url="../java_query/spec.xml">Java object tree</ulink> of queries, subqueries, constraints and values can be built.</para>
-    <para>The <ulink url="../../../api/org/intermine/objectstore/query/Results.html"><classname>Results</classname></ulink> are returned using as a collection of Objects which supports paging, <ulink url="../objectstore/results_prefetch.xml">prefetching</ulink> and <ulink url="../objectstore/proxies.xml">proxied references</ulink>. This ensures that the system is efficient and scalable to multiple clients.</para>
-    <para>The primary ObjectStore implementation is an object-relational mapping that relies on the PostgreSQL database. This ObjectStoreInterMineImpl uses the InterMine Query object, customised SQL generation and a stand-alone <ulink url="../sql_optimisation/using-query-optimiser.xml">SQL optimiser</ulink> (<classname>sql</classname> package) to provide significant performance improvements.</para>
-  </sect1>
-  
-  <sect1>
+
+    <para>The <ulink
+    url="http://www.intermine.org/api/org/intermine/objectstore/ObjectStore.html">ObjectStore</ulink>
+    (objectstore package) is pivotal to InterMine. It is the basis for object
+    storage and retrieval, and abstracts away from the underlying persistence
+    mechanism. It supports "store" and "query" primitives through an interface
+    that is common to caching, networked or object-relational mapping
+    implementations. This allows ObjectStores to be "layered" in a scalable
+    architecture. In practice, InterMine is designed to be read-only in
+    production environments for query efficiency and control over data
+    consistency. To this end the ObjectStore interface specifies read-only
+    operations, whilst the ObjectStoreWriter interface adds storage
+    primitives.</para>
+
+    <para>An ObjectStore accepts queries and returns results (or an <ulink
+    url="../objectstore/query_explain.xml">estimate</ulink> of how long it
+    would take to obtain results). A <ulink
+    url="http://www.intermine.org/api/org/intermine/objectstore/query/Query.html">Query</ulink>
+    object is a powerful object <ulink url="../howto_query.xml">query
+    specification</ulink>, understanding of which is aided by familiarity with
+    the metadata structure of the data to be queried. Constraints are
+    specified between classes, attributes, references and collections to build
+    an expressive and well-defined request for objects from the underlying
+    database. There are two ways to construct a Query object: the most concise
+    is to use an <ulink url="../iql_query/spec.xml">IQL</ulink> string,
+    alternatively an <ulink url="../java_query/spec.xml">Java object
+    tree</ulink> of queries, subqueries, constraints and values can be
+    built.</para>
+
+    <para>The <ulink
+    url="http://www.intermine.org/api/org/intermine/objectstore/query/Results.html">Results</ulink>
+    are returned using as a collection of Objects which supports paging,
+    <ulink url="../objectstore/results_prefetch.xml">prefetching</ulink> and
+    <ulink url="../objectstore/proxies.xml">proxied references</ulink>. This
+    ensures that the system is efficient and scalable to multiple
+    clients.</para>
+
+    <para>The primary ObjectStore implementation is an object-relational
+    mapping that relies on the PostgreSQL database. This
+    ObjectStoreInterMineImpl uses the InterMine Query object, customised SQL
+    generation and a stand-alone <ulink
+    url="../sql_optimisation/using-query-optimiser.xml">SQL optimiser</ulink>
+    (sql package) to provide significant performance improvements.</para>
+  </section>
+
+  <section>
     <title>DataLoader</title>
-    <para>The various <ulink url="../../../api/org/intermine/dataloader/DataLoader.html"><classname>Dataloader</classname></ulink> (<classname>dataloader</classname> package) classes translate external data in a specific format (flat text, Java objects, XML) to java business objects conforming to the corresponding Model and then <ulink url="../dataloader/">store</ulink> these objects. This is performed using an <ulink url="../../../api/org/intermine/dataloader/IntegrationWriter.html"><classname>IntegrationWriter</classname></ulink> which handles cascaded storage and data merging based on the metadata and data source prioritisation information. An IntegrationWriter makes use of the ObjectStore primitives to perform a query to see if the object to be stored is in the database already (in some form) and then merges the new information if necessary.</para>
-  </sect1>
-  </article>
-  
+
+    <para>The various <ulink
+    url="http://www.intermine.org/api/org/intermine/dataloader/DataLoader.html">Dataloader</ulink>
+    (dataloader package) classes translate external data in a specific format
+    (flat text, Java objects, XML) to java business objects conforming to the
+    corresponding Model and then <ulink url="../dataloader/">store</ulink>
+    these objects. This is performed using an <ulink
+    url="http://www.intermine.org/api/org/intermine/dataloader/IntegrationWriter.html">IntegrationWriter</ulink>
+    which handles cascaded storage and data merging based on the metadata and
+    data source prioritisation information. An IntegrationWriter makes use of
+    the ObjectStore primitives to perform a query to see if the object to be
+    stored is in the database already (in some form) and then merges the new
+    information if necessary.</para>
+  </section>
+</article>

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- -*- DocBook -*- -->
-
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  <sect1>
+  <section>
     <title>Search using a list of identifiers</title>
-    <para>
-      Identifiers (eg. gene names) to use in your query can be loaded file
-      a file into a bag.  
-    </para>
-  </sect1>
-</article>
 
+    <para>Identifiers (eg. gene names) to use in your query can be loaded file
+    a file into a bag.</para>
+  </section>
+</article>

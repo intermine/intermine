@@ -1,41 +1,35 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>The query builder page</title>
 
-<index>
+    <para>$The main FlyMine query builder page is composed of 3
+    sections:</para>
 
-<section>
-       <heading>The query builder page</heading>
-       <item>
-       The main FlyMine query builder page is composed of 3 sections: 
-       </item>
-       <item>
-       <ulink url= "manualModelbrowser.xml">a model browser (left)</ulink> 
-       </item>
-       <item>
-       <ulink url= "manualConstraintslist.xml">a constraints list (right)</ulink>
-       </item>
-       <item>
-       <ulink url= "manualOutputfields.xml">an output fields list (bottom)</ulink>. The output fields list will initially say 'No fields selected for output'.
-       </item>
-         
-   </section>
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="manualModelbrowser.xml">a model browser
+        (left)</ulink></para>
+      </listitem>
 
+      <listitem>
+        <para><ulink url="manualConstraintslist.xml">a constraints list
+        (right)</ulink></para>
+      </listitem>
 
+      <listitem>
+        <para><ulink url="manualOutputfields.xml">an output fields list
+        (bottom)</ulink>. The output fields list will initially say 'No fields
+        selected for output'.</para>
+      </listitem>
+    </itemizedlist>
 
-	  <entry>
-	      <inlinegraphic fileref="queryBuilder1"/>
-	  </entry>
- 
-
-
-
-
-
-
-
-</index>
-
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="queryBuilder1.png" />
+      </imageobject>
+    </mediaobject>
+  </section>
 </article>
-

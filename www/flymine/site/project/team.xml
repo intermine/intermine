@@ -1,65 +1,101 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-<sect1>
-<title>The FlyMine team</title>
+  <section>
+    <title>The FlyMine team</title>
 
-<para>
-The FlyMine team are located in the Genetics Department at Cambridge University.
-</para>
+    <para>The FlyMine team are located in the Genetics Department at Cambridge
+    University.</para>
 
-<table>
-    <tbody>
-        <row>
+    <table>
+      <title>Members:</title>
+
+      <tgroup cols="4">
+        <tbody>
+          <row>
             <entry>Gos Micklem</entry>
-	    <entry>Project Leader</entry>
-	    <entry><email>gos[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Richard Smith</entry>
-	    <entry>Senior Software Developer</entry>
-	    <entry><email>richard[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Matthew Wakeling</entry>
-	    <entry>Software Developer</entry>
-	    <entry><email>matthew[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Mark Woodbridge</entry>
-	    <entry>Software Developer</entry>
-	    <entry><email>mark[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Kim Rutherford</entry>
-	    <entry>Software Developer</entry>
-	    <entry><email>kmr[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Wenyan Ji</entry>
-	    <entry>Software Developer</entry>
-	    <entry><email>wenyan[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>François Guillier</entry>
-	    <entry>System Administrator</entry>
-	    <entry><email>francois[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Rachel Lyne</entry>
-	    <entry>Analysis/User support</entry>
-	    <entry><email>rachel[at]flymine.org</email></entry>
-	    <entry></entry>
-	</row>
-	<row>
-	    <entry>Debashis Rana</entry>
-	    <entry>Postdoctoral Research Associate (data curation)</entry>
-	    <entry><email>rana[at]flymine.org</email></entry>
-	    <entry></entry>
-	</row>
-    </tbody>
-</table>
 
-</sect1>
+            <entry>Project Leader</entry>
+
+            <entry><email>gos [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Richard Smith</entry>
+
+            <entry>Senior Software Developer</entry>
+
+            <entry><email>richard [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Matthew Wakeling</entry>
+
+            <entry>Software Developer</entry>
+
+            <entry><email>matthew [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Mark Woodbridge</entry>
+
+            <entry>Software Developer</entry>
+
+            <entry><email>mark [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Kim Rutherford</entry>
+
+            <entry>Software Developer</entry>
+
+            <entry><email>kmr [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Wenyan Ji</entry>
+
+            <entry>Software Developer</entry>
+
+            <entry><email>wenyan [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Tom Riley</entry>
+
+            <entry>Software Developer</entry>
+
+            <entry><email>tom [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>FranÃ§ois Guillier</entry>
+
+            <entry>System Administrator</entry>
+
+            <entry><email>francois [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Rachel Lyne</entry>
+
+            <entry>Analysis/User support</entry>
+
+            <entry><email>rachel [at] flymine.org</email></entry>
+
+          </row>
+
+          <row>
+            <entry>Debashis Rana</entry>
+
+            <entry>Postdoctoral Research Associate (data curation)</entry>
+
+            <entry><email>rana [at] flymine.org</email></entry>
+
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
 </article>

@@ -1,22 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-  <para>
-    FlyMine Database Documentation
+  <section>
+    <title>FlyMine Database Documentation</title>
+
     <itemizedlist>
       <listitem>
-          FlyMine <ulink url="manual/manualQuickstart.xml">quick start guide</ulink>
-        </listitem>
-        <listitem>
-          <ulink url="tutorials/index.xml">Tutorials</ulink> - step-by-step guide to queries
-        </listitem>
-        <listitem>
-          <ulink url="/examples.do">Query examples</ulink>
-        </listitem>
-        <listitem>
-          <ulink url="manual/index.xml">User Manual</ulink>
-        </listitem>
-        <listitem><ulink url="presentations/index.xml">Presentations, slides, posters...</ulink></listitem>
-        <listitem><ulink url="usage_scenarios/index.xml">Usage scenarios</ulink></listitem>
-        <listitem><ulink url="ontology_merging/index.xml">Object Model from Ontology Merging</ulink></listitem>
+        <para>FlyMine <ulink url="manual/manualQuickstart.xml">quick start
+        guide</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="tutorials/index.xml">Tutorials</ulink> -
+        step-by-step guide to queries</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="/examples.do">Query examples</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="manual/index.xml">User Manual</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="presentations/index.xml">Presentations, slides,
+        posters...</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="usage_scenarios/index.xml">Usage
+        scenarios</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="ontology_merging/index.xml">Object Model from
+        Ontology Merging</ulink></para>
+      </listitem>
     </itemizedlist>
-  </para>
+  </section>
 </article>

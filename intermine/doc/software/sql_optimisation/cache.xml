@@ -1,117 +1,230 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-07-01</date>
 
-	<artheader>
-		<date>2003-07-01</date>
-		<title>InterMine - The optimiser cache</title>
-		<authorgroup>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+    <title>InterMine - The optimiser cache</title>
 
-	<sect1>
-		<title>Introduction</title>
-		<para>This document is intended to describe the layout of the InterMine Query Optimiser, particularly the portion that handles caching of optimisations.
-			The cache is managed by the org.intermine.sql.precompute.OptimiserCache class, which is called from the org.intermine.sql.precompute.QueryOptimiser class.</para>
-	</sect1>
+    <authorgroup>
+      <author>
+        <firstname>Matthew</firstname>
 
-    <sect1>
-        <title>This section needs review</title>
-        <para>The optimiser is currently implemented as described below.
-            However, due to the implementation of large offset optimisation in the SqlGenerator, this cache is not as effective as it could be.
-            In addition, it is overcomplicated for the work that it is given by the new SqlGenerator, and a closer tie with the SqlGenerator would allow a more efficient cache.</para>
-    </sect1>
+        <surname>Wakeling</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-	<sect1>
-		<title>Requirements</title>
-		<para>The intention of the optimiser cache system is to improve the performance of the optimiser in general by caching requests.
-			It turns out that due to the operation of the InterMine code that uses the optimiser, identical and similar queries are often requested to be optimised close together in time.
-			This is because:
-			<itemizedlist>
-				<listitem>The objectstore always performs an EXPLAIN to check whether the query will use an acceptable amount of computing resources before running the actual query.
-					This results in each SQL query being requested to be optimised twice (except for the "EXPLAIN" on the beginning).
-					Since the query is identical, the resulting optimised query should be identical too.</listitem>
-				<listitem>The objectstore performs paging through the results of large queries - each page access will result in a query being EXPLAINed and run.
-					Each of these queries is identical apart from the LIMIT and OFFSET components.
-					Moreover, the EXPLAIN results and optimised queries will be very similar.
-					However, it should be expected that a query to retrieve the first page of a large results set may well produce a different optimised query to one to retrieve the last page.
-					This is due to different algorithms used in the database program being suitable for different arrangements.
-					Luckily, our optimiser does not need to understand all of these algorithms - the database knows best.</listitem>
-			</itemizedlist>
-			Optimising a complex query is a long operation, taking up to half a second in some cases.
-			Retrieving an optimised query from the cache is a much quicker operation, taking less than a millisecond.
-			Therefore the advantages of reducing the frequency of full optimisation operations are significant.</para>
-		<para>The cache MUST NOT cause the optimiser to return a query that would produce incorrect results.
-			The cache SHOULD reduce the amount of time spent by the optimiser.
-			The cache SHOULD NOT cause the optimiser to return much slower queries much of the time, though some slack is inevitable.
-			The cache MUST NOT hold enough optimised queries in memory to significantly contribute towards an OutOfMemoryError.</para>
-	</sect1>
+  <section>
+    <title>Introduction</title>
 
-	<sect1>
-		<title>Implementation</title>
-		<sect2>
-			<title>QueryOptimiser section - how it is used</title>
-			<para>At the start of the QueryOptimiser.optimise(string, database) method, the method creates a new LimitOffsetQuery object from the query string, which partially parses the query to extract the LIMIT and OFFSET parts.
-				The QueryOptimiser calls OptimiserCache.getInstance(database) to get an instance of an cache suitable for this database.
-				The QueryOptimiser then calls cache.lookup, and hands it the contents of the LimitOffsetQuery object.
-				If the return value is a non-null string, then it is the bare optimised query from the cache, which then has its LIMIT and OFFSET appended by the LimitOffsetQuery.reconstruct() method.</para>
-			<para>At the end of the optimisation process, if the cache did not return a hit, the optimiser calls the cache.addCacheLine method to add the optimised query to the cache.</para>
-		</sect2>
+    <para>This document is intended to describe the layout of the InterMine
+    Query Optimiser, particularly the portion that handles caching of
+    optimisations. The cache is managed by the
+    org.intermine.sql.precompute.OptimiserCache class, which is called from
+    the org.intermine.sql.precompute.QueryOptimiser class.</para>
+  </section>
 
-		<sect2>
-			<title>OptimiserCache class</title>
-			<para>This is the main class of the cache system.
-				An instance of this class is created for each database that optimisation requests are made for - in most cases this will mean a single instance.
-				The instance is accessed through the getInstance() method.</para>
-			<sect3>
-				<title>Internal data representation</title>
-				<para>All cache lines are held in a Map (a HashMap) of Sets (HashSets).
-					The lookup key for the Map is the query String, stripped of the EXPLAIN, LIMIT, and OFFSET components
-					The referred Set contains OptimiserCacheLine objects, each of which describe an optimised query for that particular query string, for certain LIMIT and OFFSET situations.
-					Each OptimiserCacheLine object is a correct optimisation for the query String, and each has its own expiration time.</para>
-			</sect3>
-			<sect3>
-				<title>addCacheLine() method</title>
-				<para>This method works by simply creating a new OptimiserCacheLine from the optimised query and its parameters (LIMIT, OFFSET, and expected rows), then inserting it into the Set.</para>
-			</sect3>
-			<sect3>
-				<title>lookup() method</title>
-				<para>This method works by looking up the query String to get a Set of OptimiserCacheLine objects.
-					It then iterates through the Set, removing expired lines, and producing a suitability score for the remaining ones, given the LIMIT and OFFSET of the query to be optimised.
-					When the Set is exhausted, the OptimiserCacheLine that achieved the highest score is checked to see it is "suitable enough" (if it has a score less than 1.0).
-					If a line is suitable enough, it is returned as the cache hit - otherwise a cache miss is returned.</para>
-			</sect3>
-		</sect2>
+  <section>
+    <title>This section needs review</title>
 
-		<sect2>
-			<title>OptimiserCacheLine class</title>
-			<para>This is the class that controls the finer points of policy of the optimiser cache.
-				Earlier we said that the OptimiserCache class searches for the most suitable OptimiserCacheLine - the algorithm for calculating the suitability strongly affects the behaviour of the cache, and is implemented in this class.</para>
-			<para>Trivially, the class is a simple container class that holds a set of information about a cache line - optimised query string, limit and offset it was produced under, and the expected number of rows returned by the query.
-				The only interesting part is the score() method, which calculates a suitability score for the object given a LIMIT and OFFSET, from completely suitable (0.0) to unsuitable (1.0 or above).</para>
-			<para>The calculation it uses is intended to implement the following policy:
-				<itemizedlist>
-					<listitem>While paging through a query with a large number of result rows using a constant LIMIT, the query should be re-optimised OFFSET_SECTIONS times (current set to 8), in order to allow the database to take advantage of different algorithms in different portions of the results.
-						These optimisations split the results set up into eight separate optimisation partitions, each of which is optimised separately.
-						Therefore, while paging through the results linearly for the first time, the first partition will be created centred around the first page.
-						As the paging proceeds, the suitability score of the OptimiserCacheLine increases from 0.0 until about 1/8 the way through the estimated number of rows where the suitability score rises to 1.0 and the system re-optimises and produces a cache line centred around 1/8 the way through the estimated number of rows.
-						This new partition is now most suitable from 1/16 to 1/4 of the range, until the next partition is created, at which point it will be most suitable from 1/16 to 3/16.</listitem>
-					<listitem>On queries with a small number of result rows, it would be tedious for the system to have to re-optimise eight times through the results set.
-						Therefore, there is an OFFSET_GRACE setting, where the difference in offset may be up to OFFSET_GRACE before any score is produced.
-						OFFSET_GRACE is normally set to 1000.
-						This means that re-optimisations are 1000 rows further apart than the previous bullet point would imply.
-						Therefore, a query with up to 1142 rows will only experience one optimisation.</listitem>
-					<listitem>Although this is unlikely to happen often, a query may be run with different LIMIT settings.
-						The database is likely to use different algorithms based on the LIMIT, so the optimiser will probably end up with different optimised queries.
-						Therefore, there is a MAX_LIMIT_FACTOR setting (currently set to 4.0), so that queries with a limit different by more than a factor of 4.0 are unsuitable.</listitem>
-				</itemizedlist>
-				In addition, there is a CACHE_LINE_LIFETIME setting to determine how long a cache line lives - and is currently set to 20 minutes.
-				This allows for the fact that precomputed tables are created that may improve the optimisation, but limits the frequency of re-optimisation.
-			</para>
-		</sect2>
-	</sect1>
+    <para>The optimiser is currently implemented as described below. However,
+    due to the implementation of large offset optimisation in the
+    SqlGenerator, this cache is not as effective as it could be. In addition,
+    it is overcomplicated for the work that it is given by the new
+    SqlGenerator, and a closer tie with the SqlGenerator would allow a more
+    efficient cache.</para>
+  </section>
+
+  <section>
+    <title>Requirements</title>
+
+    <para>The intention of the optimiser cache system is to improve the
+    performance of the optimiser in general by caching requests. It turns out
+    that due to the operation of the InterMine code that uses the optimiser,
+    identical and similar queries are often requested to be optimised close
+    together in time. This is because:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The objectstore always performs an EXPLAIN to check whether the
+        query will use an acceptable amount of computing resources before
+        running the actual query. This results in each SQL query being
+        requested to be optimised twice (except for the "EXPLAIN" on the
+        beginning). Since the query is identical, the resulting optimised
+        query should be identical too.</para>
+      </listitem>
+
+      <listitem>
+        <para>The objectstore performs paging through the results of large
+        queries - each page access will result in a query being EXPLAINed and
+        run. Each of these queries is identical apart from the LIMIT and
+        OFFSET components. Moreover, the EXPLAIN results and optimised queries
+        will be very similar. However, it should be expected that a query to
+        retrieve the first page of a large results set may well produce a
+        different optimised query to one to retrieve the last page. This is
+        due to different algorithms used in the database program being
+        suitable for different arrangements. Luckily, our optimiser does not
+        need to understand all of these algorithms - the database knows
+        best.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Optimising a complex query is a long operation, taking up to half a
+    second in some cases. Retrieving an optimised query from the cache is a
+    much quicker operation, taking less than a millisecond. Therefore the
+    advantages of reducing the frequency of full optimisation operations are
+    significant.</para>
+
+    <para>The cache MUST NOT cause the optimiser to return a query that would
+    produce incorrect results. The cache SHOULD reduce the amount of time
+    spent by the optimiser. The cache SHOULD NOT cause the optimiser to return
+    much slower queries much of the time, though some slack is inevitable. The
+    cache MUST NOT hold enough optimised queries in memory to significantly
+    contribute towards an OutOfMemoryError.</para>
+  </section>
+
+  <section>
+    <title>Implementation</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>QueryOptimiser section - how it is
+        used:</emphasis></para>
+
+        <para>At the start of the QueryOptimiser.optimise(string, database)
+        method, the method creates a new LimitOffsetQuery object from the
+        query string, which partially parses the query to extract the LIMIT
+        and OFFSET parts. The QueryOptimiser calls
+        OptimiserCache.getInstance(database) to get an instance of an cache
+        suitable for this database. The QueryOptimiser then calls
+        cache.lookup, and hands it the contents of the LimitOffsetQuery
+        object. If the return value is a non-null string, then it is the bare
+        optimised query from the cache, which then has its LIMIT and OFFSET
+        appended by the LimitOffsetQuery.reconstruct() method.</para>
+
+        <para>At the end of the optimisation process, if the cache did not
+        return a hit, the optimiser calls the cache.addCacheLine method to add
+        the optimised query to the cache.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>OptimiserCache class:</emphasis></para>
+
+        <para>This is the main class of the cache system. An instance of this
+        class is created for each database that optimisation requests are made
+        for - in most cases this will mean a single instance. The instance is
+        accessed through the getInstance() method.</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>Internal data representation:</emphasis></para>
+
+            <para>All cache lines are held in a Map (a HashMap) of Sets
+            (HashSets). The lookup key for the Map is the query String,
+            stripped of the EXPLAIN, LIMIT, and OFFSET components The referred
+            Set contains OptimiserCacheLine objects, each of which describe an
+            optimised query for that particular query string, for certain
+            LIMIT and OFFSET situations. Each OptimiserCacheLine object is a
+            correct optimisation for the query String, and each has its own
+            expiration time.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>addCacheLine() method:</emphasis></para>
+
+            <para>This method works by simply creating a new
+            OptimiserCacheLine from the optimised query and its parameters
+            (LIMIT, OFFSET, and expected rows), then inserting it into the
+            Set.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>lookup() method:</emphasis></para>
+
+            <para>This method works by looking up the query String to get a
+            Set of OptimiserCacheLine objects. It then iterates through the
+            Set, removing expired lines, and producing a suitability score for
+            the remaining ones, given the LIMIT and OFFSET of the query to be
+            optimised. When the Set is exhausted, the OptimiserCacheLine that
+            achieved the highest score is checked to see it is "suitable
+            enough" (if it has a score less than 1.0). If a line is suitable
+            enough, it is returned as the cache hit - otherwise a cache miss
+            is returned.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>OptimiserCacheLine class</emphasis></para>
+
+        <para>This is the class that controls the finer points of policy of
+        the optimiser cache. Earlier we said that the OptimiserCache class
+        searches for the most suitable OptimiserCacheLine - the algorithm for
+        calculating the suitability strongly affects the behaviour of the
+        cache, and is implemented in this class.</para>
+
+        <para>Trivially, the class is a simple container class that holds a
+        set of information about a cache line - optimised query string, limit
+        and offset it was produced under, and the expected number of rows
+        returned by the query. The only interesting part is the score()
+        method, which calculates a suitability score for the object given a
+        LIMIT and OFFSET, from completely suitable (0.0) to unsuitable (1.0 or
+        above).</para>
+
+        <para>The calculation it uses is intended to implement the following
+        policy:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>While paging through a query with a large number of result
+            rows using a constant LIMIT, the query should be re-optimised
+            OFFSET_SECTIONS times (current set to 8), in order to allow the
+            database to take advantage of different algorithms in different
+            portions of the results. These optimisations split the results set
+            up into eight separate optimisation partitions, each of which is
+            optimised separately. Therefore, while paging through the results
+            linearly for the first time, the first partition will be created
+            centred around the first page. As the paging proceeds, the
+            suitability score of the OptimiserCacheLine increases from 0.0
+            until about 1/8 the way through the estimated number of rows where
+            the suitability score rises to 1.0 and the system re-optimises and
+            produces a cache line centred around 1/8 the way through the
+            estimated number of rows. This new partition is now most suitable
+            from 1/16 to 1/4 of the range, until the next partition is
+            created, at which point it will be most suitable from 1/16 to
+            3/16.</para>
+          </listitem>
+
+          <listitem>
+            <para>On queries with a small number of result rows, it would be
+            tedious for the system to have to re-optimise eight times through
+            the results set. Therefore, there is an OFFSET_GRACE setting,
+            where the difference in offset may be up to OFFSET_GRACE before
+            any score is produced. OFFSET_GRACE is normally set to 1000. This
+            means that re-optimisations are 1000 rows further apart than the
+            previous bullet point would imply. Therefore, a query with up to
+            1142 rows will only experience one optimisation.</para>
+          </listitem>
+
+          <listitem>
+            <para>Although this is unlikely to happen often, a query may be
+            run with different LIMIT settings. The database is likely to use
+            different algorithms based on the LIMIT, so the optimiser will
+            probably end up with different optimised queries. Therefore, there
+            is a MAX_LIMIT_FACTOR setting (currently set to 4.0), so that
+            queries with a limit different by more than a factor of 4.0 are
+            unsuitable.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>In addition, there is a CACHE_LINE_LIFETIME setting to determine
+        how long a cache line lives - and is currently set to 20 minutes. This
+        allows for the fact that precomputed tables are created that may
+        improve the optimisation, but limits the frequency of
+        re-optimisation.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>

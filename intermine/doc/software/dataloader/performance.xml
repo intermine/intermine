@@ -1,207 +1,293 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-	<artheader>
-		<date>2004-02-20</date>
-		<title>Intermine - IntegrationWriterDataTrackingImpl performance tuning</title>
-		<authorgroup>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+  <articleinfo>
+    <date>2004-02-20</date>
 
-	<sect1>
-		<title>Introduction</title>
-		<para>This document describes possibilities for improving performance of the IntegrationWriter.
-			It also describes some measures that have already been implemented.
-		</para>
-	</sect1>
+    <title>Intermine - IntegrationWriterDataTrackingImpl performance
+    tuning</title>
 
-	<sect1>
-		<title>Data tracking data cached</title>
-		<para>This is implemented.
-			The DataTracker currently consists of a LinkedHashMap behaving as a LRU-ordered Map from Integer id onto object descriptions.
-			When the LinkedHashMap grows larger than a preset size (probably around 300,000), a batch of some number (probably around 10,000) of least-recently-used entries are flushed to a backing database table using whatever methods are shown to have best performance.
-			This gives a performance improvement over the old system of using an ObjectStoreWriter with the DataTracking class, for several reasons:
-			<itemizedlist>
-				<listitem>Only the least recently used entries are flushed, giving them a chance to be written and changed multiple times before writing.</listitem>
-				<listitem>Write access happens in a separate thread, which does not block reads.</listitem>
-				<listitem>Database access occurs in much more optimised fashion.</listitem>
-			</itemizedlist>
-			The DataTracker is expected to consume between 200 and 500 bytes per object description, which is seen as reasonable.
-			For the DataTracker to provide a cache set of 300,000 entries (which is sufficient for performance), a maximum of 150MB is consumed.
-		</para>
-	</sect1>
+    <authorgroup>
+      <author>
+        <firstname>Matthew</firstname>
 
-	<sect1>
-		<title>Data tracking database to use the PostgreSQL COPY command</title>
-		<para>This is implemented.
-			The DataTracker creates a significant quantity of database write traffic, all of which is INSERT statements.
-			These can be sped up by using a PostgreSQL extension to the JDBC interface to use the COPY command, which is a method for inserting many rows quickly.
-			This depends on the PostgreSQL JDBC driver built with COPY support (not currently published precompiled, although a patch is available), and on the PostgreSQL server being at least verion 7.4.
-			If the server is not PostgreSQL, or if the server version is too low, then the DataTracker will automatically fall back to the old slow method.
-		</para>
-	</sect1>
+        <surname>Wakeling</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
 
-	<sect1>
-		<title>Local implementation of data tracking</title>
-		<para><highlights>This is NOT implemented</highlights>.
-			PostgreSQL stores data tracking data in a single table, with an index.
-			The table uses 70 bytes per field entry, and the index uses about 50 bytes per field entry.
-			It should be possible to write a custom on-disk format that uses only two to four bytes per field entry, increasing the write performance and improving the cache coherency.
-		</para>
-	</sect1>
+  <section>
+    <title>Introduction</title>
 
-	<sect1>
-		<title>ID Map</title>
-		<para>This is implemented.
-			The IntegrationWriter currently keeps a Map from IDs of objects from the data source to the corresponding IDs of objects in the destination objectstore.
-			<highlights>For this reason, all objects handed to the IntegrationWriter MUST have unique IDs</highlights>.
-			This Map can be used in two places:
-			<itemizedlist>
-				<listitem>In the store method, if the object has been stored before (as marked in the ID Map), and was stored as a non-skeleton, or if we are about to store it as a skeleton, then the store method need not do anything except return the object fetched from the destination with the ID given from the ID Map.</listitem>
-				<listitem>In the getEquivalentObjects method, primary key queries can be simplified if some of the references that are part of the primary key contain objects that are in the ID Map.
-					This means that the majority of primary key queries become very simple single-table queries that use the database indexes.</listitem>
-			</itemizedlist>
-			The size of the ID Map is currently limited to 1,000,000 entries, with the least-recently-used entries thrown away.
-			This Map uses a maximum of approximately 40MB of RAM.
-		</para>
-	</sect1>
+    <para>This document describes possibilities for improving performance of
+    the IntegrationWriter. It also describes some measures that have already
+    been implemented.</para>
+  </section>
 
-	<sect1>
-		<title>Improved ID Map</title>
-		<para>This is implemented.
-			The ID Map is so good at improving the performance of the IntegrationWriter that it may be a good idea to write a special class to handle it.
-			The current ID Map uses a LinkedHashMap, which uses about 40 bytes per entry.
-			Given that the Map is purely a mapping from integer to integer, it should be possible to produce a mapping class that consumes only 4 bytes per entry.
-			This class would then be able to hold the entire mapping for the Chado database (11 million entries) in only 45MB of RAM.
-		</para>
-	</sect1>
+  <section>
+    <title>Data tracking data cached</title>
 
-	<sect1>
-		<title>Extending the IQL query language</title>
-		<para><highlights>This is partially implemented</highlights>.
-			Queries of the form:
-			<programlisting>SELECT Department FROM Department
+    <para>This is implemented. The DataTracker currently consists of a
+    LinkedHashMap behaving as a LRU-ordered Map from Integer id onto object
+    descriptions. When the LinkedHashMap grows larger than a preset size
+    (probably around 300,000), a batch of some number (probably around 10,000)
+    of least-recently-used entries are flushed to a backing database table
+    using whatever methods are shown to have best performance. This gives a
+    performance improvement over the old system of using an ObjectStoreWriter
+    with the DataTracking class, for several reasons:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Only the least recently used entries are flushed, giving them a
+        chance to be written and changed multiple times before writing.</para>
+      </listitem>
+
+      <listitem>
+        <para>Write access happens in a separate thread, which does not block
+        reads.</para>
+      </listitem>
+
+      <listitem>
+        <para>Database access occurs in much more optimised fashion.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The DataTracker is expected to consume between 200 and 500 bytes per
+    object description, which is seen as reasonable. For the DataTracker to
+    provide a cache set of 300,000 entries (which is sufficient for
+    performance), a maximum of 150MB is consumed.</para>
+  </section>
+
+  <section>
+    <title>Data tracking database to use the PostgreSQL COPY command</title>
+
+    <para>This is implemented. The DataTracker creates a significant quantity
+    of database write traffic, all of which is INSERT statements. These can be
+    sped up by using a PostgreSQL extension to the JDBC interface to use the
+    COPY command, which is a method for inserting many rows quickly. This
+    depends on the PostgreSQL JDBC driver built with COPY support (not
+    currently published precompiled, although a patch is available), and on
+    the PostgreSQL server being at least verion 7.4. If the server is not
+    PostgreSQL, or if the server version is too low, then the DataTracker will
+    automatically fall back to the old slow method.</para>
+  </section>
+
+  <section>
+    <title>Local implementation of data tracking</title>
+
+    <para><emphasis>This is NOT implemented</emphasis>. PostgreSQL stores data
+    tracking data in a single table, with an index. The table uses 70 bytes
+    per field entry, and the index uses about 50 bytes per field entry. It
+    should be possible to write a custom on-disk format that uses only two to
+    four bytes per field entry, increasing the write performance and improving
+    the cache coherency.</para>
+  </section>
+
+  <section>
+    <title>ID Map</title>
+
+    <para>This is implemented. The IntegrationWriter currently keeps a Map
+    from IDs of objects from the data source to the corresponding IDs of
+    objects in the destination objectstore. <emphasis>For this reason, all
+    objects handed to the IntegrationWriter MUST have unique IDs</emphasis>.
+    This Map can be used in two places:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>In the store method, if the object has been stored before (as
+        marked in the ID Map), and was stored as a non-skeleton, or if we are
+        about to store it as a skeleton, then the store method need not do
+        anything except return the object fetched from the destination with
+        the ID given from the ID Map.</para>
+      </listitem>
+
+      <listitem>
+        <para>In the getEquivalentObjects method, primary key queries can be
+        simplified if some of the references that are part of the primary key
+        contain objects that are in the ID Map. This means that the majority
+        of primary key queries become very simple single-table queries that
+        use the database indexes.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The size of the ID Map is currently limited to 1,000,000 entries,
+    with the least-recently-used entries thrown away. This Map uses a maximum
+    of approximately 40MB of RAM.</para>
+  </section>
+
+  <section>
+    <title>Improved ID Map</title>
+
+    <para>This is implemented. The ID Map is so good at improving the
+    performance of the IntegrationWriter that it may be a good idea to write a
+    special class to handle it. The current ID Map uses a LinkedHashMap, which
+    uses about 40 bytes per entry. Given that the Map is purely a mapping from
+    integer to integer, it should be possible to produce a mapping class that
+    consumes only 4 bytes per entry. This class would then be able to hold the
+    entire mapping for the Chado database (11 million entries) in only 45MB of
+    RAM.</para>
+  </section>
+
+  <section>
+    <title>Extending the IQL query language</title>
+
+    <para><emphasis>This is partially implemented</emphasis>. Queries of the
+    form:</para>
+
+    <programlisting>SELECT Department FROM Department
 	WHERE Department.company CONTAINS <emphasis>&lt;object&gt;</emphasis></programlisting>
-			generally run faster than queries of the form:
-			<programlisting>SELECT Department FROM Department, Company
+
+    <para>generally run faster than queries of the form:</para>
+
+    <programlisting>SELECT Department FROM Department, Company
 	WHERE Department.company CONTAINS Company AND Company = <emphasis>&lt;object&gt;</emphasis></programlisting>
-			however, before this was implemented, the former query was not possible in IQL.
-			Now, the former query IS possible in IQL, but only if the Department.company is a reference, not a collection.
-			Now, the primary key query uses the former query when it knows the ID of the object in the reference (from the ID Map for example).
-		</para>
-	</sect1>
 
-	<sect1>
-		<title>Proxy collections do not take advantage of extended IQL</title>
-		<para><highlights>This is partially implemented</highlights>.
-			Proxy collections could make use of queries of the form
-			<programlisting>SELECT Department FROM Department
+    <para>however, before this was implemented, the former query was not
+    possible in IQL. Now, the former query IS possible in IQL, but only if the
+    Department.company is a reference, not a collection. Now, the primary key
+    query uses the former query when it knows the ID of the object in the
+    reference (from the ID Map for example).</para>
+  </section>
+
+  <section>
+    <title>Proxy collections do not take advantage of extended IQL</title>
+
+    <para><emphasis>This is partially implemented</emphasis>. Proxy
+    collections could make use of queries of the form</para>
+
+    <programlisting>SELECT Department FROM Department
 	WHERE Department.company CONTAINS <emphasis>&lt;object&gt;</emphasis></programlisting>
-			however they should, at least for the case where the collection is a one-to-many collection.
-		</para>
-	</sect1>
 
-	<sect1>
-		<title>Improved indexing</title>
-		<para><highlights>This is partially implemented</highlights>.
-			The system currently adds indexes to the primary key fields of objects in the destination database, so that primary key queries are quick.
-			However, in Postgres, B-tree indexes cannot help a query restricting a field to be NULL.
-			The indexes are multi-column B-tree indexes.
-			A multi-column index can only help queries restricting by fields other than the first column if it can also help with the first column.
-			Therefore, if the query includes a restriction that the first column of the index has to be NULL, then the index cannot help at all.
-			The index creation code creates a multi-column index with the columns in the order specified in the model primary key config file, so reordering the fields in the config file to put the most distinct field first will help.
-		</para>
-		<para>In the future, the index creation code should probably create just a single-column index on the first field in the primary key, as multi-column indexes are rarely worth it.
-		</para>
-	</sect1>
+    <para>however they should, at least for the case where the collection is a
+    one-to-many collection.</para>
+  </section>
 
-	<sect1>
-		<title>Improve the objectstore with large result sets</title>
-		<para>This is implemented.
-			An SQL database is very bad at running queries with large OFFSETs.
-			Therefore, we should sent queries to the database that use knowledge of which row the sort key changes from a certain value to allow us to generate queries with smaller OFFSETs.
-			Probably the best method is to have the ObjectStore tell the Optimiser what that knowledge is, and the Optimiser can add the predicates and alter the OFFSETs.
-		</para>
-	</sect1>
+  <section>
+    <title>Improved indexing</title>
 
-	<sect1>
-		<title>Rewrite the CacheMap</title>
-		<para>This is implemented.
-			The old CacheMap implementation is a mess.
-			It should be rewritten from scratch.
-		</para>
-	</sect1>
+    <para><emphasis>This is partially implemented</emphasis>. The system
+    currently adds indexes to the primary key fields of objects in the
+    destination database, so that primary key queries are quick. However, in
+    Postgres, B-tree indexes cannot help a query restricting a field to be
+    NULL. The indexes are multi-column B-tree indexes. A multi-column index
+    can only help queries restricting by fields other than the first column if
+    it can also help with the first column. Therefore, if the query includes a
+    restriction that the first column of the index has to be NULL, then the
+    index cannot help at all. The index creation code creates a multi-column
+    index with the columns in the order specified in the model primary key
+    config file, so reordering the fields in the config file to put the most
+    distinct field first will help.</para>
 
-	<sect1>
-		<title>ObjectStoreFastCollectionsImpl</title>
-		<para>This is implemented.
-			The current ObjectStoreTranslatingImpl performs a batch read of Items, and then three collection fetches per item, by dereferencing the Items' collections.
-			Much faster results can be achieved if those collection fetches are batched as well.
-			This can be achieved by writing an ObjectStoreFastCollectionsImpl, which automatically fetches the contents of all the collections of objects it returns, and places them as materialised collections in the objects.
-			It can perform these collection fetches in batches as part of the normal batch fetch.
-		</para>
-	</sect1>
-	
-	<sect1>
-		<title>ObjectStoreFastCollectionsForTranslatorImpl to batch-fetch related Items</title>
-		<para>This is implemented.
-			This is a reimplementation of ObjectStoreFastCollectionsImpl, which is capable of being run on top of the ObjectStoreTranslatingImpl with the ItemToObjectTranslator.
-			The difference is the different method by which the underlying objectstore handles collections, and the type of query that the underlying objectstore will accept.
-		</para>
-	</sect1>
+    <para>In the future, the index creation code should probably create just a
+    single-column index on the first field in the primary key, as multi-column
+    indexes are rarely worth it.</para>
+  </section>
 
-	<sect1>
-		<title>getObjectById() may be unnecessary in many situations</title>
-		<para>This is implemented.
-			getEquivalentObjects() method returns the result of getObjectById() if the id is in the ID Map.
-			This is unnecessary.
-			We could let it return a placeholder, which can be traded in for a real object if it is really needed.
-		</para>
-	</sect1>
+  <section>
+    <title>Improve the objectstore with large result sets</title>
 
-	<sect1>
-		<title>Possibility for parallelism in the IntegrationWriter</title>
-		<para><highlights>This is NOT implemented</highlights>.
-			It can be proven that any given primary key query over objects in the destination objectstore will not be affected by any store operation for the same data source.
-			Therefore, there is potential for parallelism to be used to improve performance, given that most SQL databases will provide decent performance with parallel access to disjoint sets of table rows.
-			Currently, the IntegrationWriter performs stores in series in transactions of 1000.
-			The transactions are important, as they allow the database to perform well inside the transaction.
-			If several threads run parallel transactions, and each thread stores 1000 objects per transaction, then greater performance should be reached than with just one thread.
-			The threads must have a mechanism in place to make sure that only one thread is inside a store method for a given source object at a time.
-			The threads must share the IDMap and the DataTracker, and the IDMap must be guaranteed to not throw away any results that are in an uncommitted transaction (otherwise a store method may end up performing a primary key query on a database that does not have the answer committed to it).
-		</para>
-        <para>Probably a better idea is to merely batch together individual queries into single queries.
-            However, this would be a pain to implement.
-        </para>
-	</sect1>
+    <para>This is implemented. An SQL database is very bad at running queries
+    with large OFFSETs. Therefore, we should sent queries to the database that
+    use knowledge of which row the sort key changes from a certain value to
+    allow us to generate queries with smaller OFFSETs. Probably the best
+    method is to have the ObjectStore tell the Optimiser what that knowledge
+    is, and the Optimiser can add the predicates and alter the OFFSETs.</para>
+  </section>
 
-	<sect1>
-		<title>Further extending the IQL query language</title>
-		<para><highlights>This is NOT implemented</highlights>.
-			Queries of the form:
-			<programlisting>SELECT Department FROM Department
+  <section>
+    <title>Rewrite the CacheMap</title>
+
+    <para>This is implemented. The old CacheMap implementation is a mess. It
+    should be rewritten from scratch.</para>
+  </section>
+
+  <section>
+    <title>ObjectStoreFastCollectionsImpl</title>
+
+    <para>This is implemented. The current ObjectStoreTranslatingImpl performs
+    a batch read of Items, and then three collection fetches per item, by
+    dereferencing the Items' collections. Much faster results can be achieved
+    if those collection fetches are batched as well. This can be achieved by
+    writing an ObjectStoreFastCollectionsImpl, which automatically fetches the
+    contents of all the collections of objects it returns, and places them as
+    materialised collections in the objects. It can perform these collection
+    fetches in batches as part of the normal batch fetch.</para>
+  </section>
+
+  <section>
+    <title>ObjectStoreFastCollectionsForTranslatorImpl to batch-fetch related
+    Items</title>
+
+    <para>This is implemented. This is a reimplementation of
+    ObjectStoreFastCollectionsImpl, which is capable of being run on top of
+    the ObjectStoreTranslatingImpl with the ItemToObjectTranslator. The
+    difference is the different method by which the underlying objectstore
+    handles collections, and the type of query that the underlying objectstore
+    will accept.</para>
+  </section>
+
+  <section>
+    <title>getObjectById() may be unnecessary in many situations</title>
+
+    <para>This is implemented. getEquivalentObjects() method returns the
+    result of getObjectById() if the id is in the ID Map. This is unnecessary.
+    We could let it return a placeholder, which can be traded in for a real
+    object if it is really needed.</para>
+  </section>
+
+  <section>
+    <title>Possibility for parallelism in the IntegrationWriter</title>
+
+    <para><emphasis>This is NOT implemented</emphasis>. It can be proven that
+    any given primary key query over objects in the destination objectstore
+    will not be affected by any store operation for the same data source.
+    Therefore, there is potential for parallelism to be used to improve
+    performance, given that most SQL databases will provide decent performance
+    with parallel access to disjoint sets of table rows. Currently, the
+    IntegrationWriter performs stores in series in transactions of 1000. The
+    transactions are important, as they allow the database to perform well
+    inside the transaction. If several threads run parallel transactions, and
+    each thread stores 1000 objects per transaction, then greater performance
+    should be reached than with just one thread. The threads must have a
+    mechanism in place to make sure that only one thread is inside a store
+    method for a given source object at a time. The threads must share the
+    IDMap and the DataTracker, and the IDMap must be guaranteed to not throw
+    away any results that are in an uncommitted transaction (otherwise a store
+    method may end up performing a primary key query on a database that does
+    not have the answer committed to it).</para>
+
+    <para>Probably a better idea is to merely batch together individual
+    queries into single queries. However, this would be a pain to
+    implement.</para>
+  </section>
+
+  <section>
+    <title>Further extending the IQL query language</title>
+
+    <para><emphasis>This is NOT implemented</emphasis>. Queries of the
+    form:</para>
+
+    <programlisting>SELECT Department FROM Department
 	WHERE Department.company IN (SELECT Company FROM Company
 		WHERE Company.name = 'CompanyA')</programlisting>
-			generally run faster than queries of the form:
-			<programlisting>SELECT Department FROM Department, Company
+
+    <para>generally run faster than queries of the form:</para>
+
+    <programlisting>SELECT Department FROM Department, Company
 	WHERE Department.company CONTAINS Company
 	AND Company IN (SELECT Company FROM Company
 		WHERE Company.name = 'CompanyA')</programlisting>
-			however, this is not possible in the current implementation of IQL.
-		</para>
-	</sect1>
 
-	<sect1>
-		<title>Reducing the over-use of DISTINCT</title>
-		<para>This is implemented.
-			Queries using the DISTINCT keyword run slower than equivalent queries that do not.
-			The primary key query does not need to use DISTINCT, so it should not.
-		</para>
-	</sect1>
+    <para>however, this is not possible in the current implementation of
+    IQL.</para>
+  </section>
+
+  <section>
+    <title>Reducing the over-use of DISTINCT</title>
+
+    <para>This is implemented. Queries using the DISTINCT keyword run slower
+    than equivalent queries that do not. The primary key query does not need
+    to use DISTINCT, so it should not.</para>
+  </section>
 </article>
-
-

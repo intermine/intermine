@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- -*- DocBook -*- -->
-
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-<sect1>
-<title>Positions vacant</title>
+  <section>
+    <title>Positions vacant</title>
 
-<para>
-There are currently no positions available on the FlyMine project.
-</para>
-
-</sect1>
+    <para>There are currently no positions available on the FlyMine
+    project.</para>
+  </section>
 </article>

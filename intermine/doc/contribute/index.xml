@@ -1,11 +1,29 @@
-<index>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
   <section>
+    <title>Contributing code to InterMine</title>
 
-    <heading>Contributing code to InterMine</heading>
-    <item><ulink url="contributing.xml">Introduction</ulink></item>
-    <item><ulink url="coding-standards.xml">Coding standards</ulink></item>
-    <item><ulink url="cvs-developer.xml">Writable CVS access for developers</ulink></item>
-    <item><ulink url="http://www.flymine.org/autobuild/">Automated build daemon results</ulink></item>
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="contributing.xml">Introduction</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="coding-standards.xml">Coding
+        standards</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="cvs-developer.xml">Writable CVS access for
+        developers</ulink></para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="http://www.flymine.org/autobuild/">Automated build
+        daemon results</ulink></para>
+      </listitem>
+    </itemizedlist>
   </section>
-
-</index>
+</article>

@@ -1,61 +1,68 @@
-<?xml version="1.0"?>
-<!-- -*- DocBook -*- -->
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <section>
+    <title>Query History</title>
 
-<index>
+    <itemizedlist>
+      <listitem>
+        <para>This page displays your list of saved bags and queries</para>
+      </listitem>
 
-    <section>
-      <heading>Query History</heading>
-      <item>
-       This page displays your list of saved bags and queries
-       </item>
-       <item>
-       A saved query is a copy of the actual query configuration, while a saved bag contains specific data saved from a particular query.
-       </item>
-       <item>
-       All queries run are saved in the query history.  If you do not give your query a particular name (in the 'Save query' box at the bottom of the query interface), it will be saved as query_x (where x increments for each query run) (see <ulink url="manualSavingqueries.xml">Saving queries)</ulink>
-        </item>
-        <item>
-         Saved bags are created by saving specific data from the results page, (see <ulink url="manualSavingdata.xml">Saving results to bags).</ulink>
-        </item>
-     </section>
+      <listitem>
+        <para>A saved query is a copy of the actual query configuration, while
+        a saved bag contains specific data saved from a particular
+        query.</para>
+      </listitem>
 
+      <listitem>
+        <para>All queries run are saved in the query history. If you do not
+        give your query a particular name (in the 'Save query' box at the
+        bottom of the query interface), it will be saved as query_x (where x
+        increments for each query run) (see <ulink
+        url="manualSavingqueries.xml">Saving queries)</ulink></para>
+      </listitem>
 
-      <section>
-        <heading>Using saved queries</heading>
-        <item>
-        Click on the query name to display the query in the query builder interface.  From here you can edit the query or run it again
-        </item>
-      </section>
+      <listitem>
+        <para>Saved bags are created by saving specific data from the results
+        page, (see <ulink url="manualSavingdata.xml">Saving results to
+        bags).</ulink></para>
+      </listitem>
+    </itemizedlist>
+  </section>
 
+  <section>
+    <title>Using saved queries</title>
 
-      <section>
-         <heading>Using saved bags</heading>
-         <item>
-         Click on the bag name to view its items in the results page.
-         </item>
-      </section>
+    <itemizedlist>
+      <listitem>
+        <para>Click on the query name to display the query in the query
+        builder interface. From here you can edit the query or run it
+        again</para>
+      </listitem>
+    </itemizedlist>
+  </section>
 
-       <section>
-          <heading>Deleting saved bags and queries</heading>
-          <item>
-          Select the check-boxes of the bags or queries you wish to delete and press the appropriate Delete button. 
-          </item>
-       </section>
+  <section>
+    <title>Using saved bags</title>
 
+    <itemizedlist>
+      <listitem>
+        <para>Click on the bag name to view its items in the results
+        page.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
 
+  <section>
+    <title>Deleting saved bags and queries</title>
 
-
-
-
-
-
-
-
-
-  
-
-</index>
-
+    <itemizedlist>
+      <listitem>
+        <para>Select the check-boxes of the bags or queries you wish to delete
+        and press the appropriate Delete button.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>

@@ -1,88 +1,146 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-10-15</date>
 
-	<artheader>
-		<date>2003-10-15</date>
-		<title>InterMine - How the objectstore's behaviour is affected by the model</title>
-		<authorgroup>
-			<author>
-				<firstname>Andrew</firstname>
-				<surname>Varley</surname>
-			</author>
-			<author>
-				<firstname>Matthew</firstname>
-				<surname>Wakeling</surname>
-			</author>
-		</authorgroup>
-	</artheader>
+    <title>InterMine - How the objectstore's behaviour is affected by the
+    model</title>
 
-	<sect1>
-		<title>Introduction</title>
-		<para>This document describes how the objectstore is affected by the model.
-			It describes the different types of Object Class and Interface, and how they differ.</para>
-	</sect1>
+    <authorgroup>
+      <author>
+        <firstname>Andrew</firstname>
 
-	<sect1>
-		<title>Characteristics of a model</title>
-		<para>The InterMine database system treats Classes and Interfaces as similarly to Java as possible.
-			All objects that are stored in the database must implement/extend the <filename>org.intermine.model.InterMineObject</filename> interface.
-			There is no other restriction that prevents an object being stored in the database.
-			All Java Classes and Interfaces generated from a model description implement this interface automatically.</para>
-		<para>The model represents the possibilities for searching in the database.
-			Fields in the model can take part in the WHERE clause of a query and appear in the SELECT list, the GROUP BY clause and the ORDER BY list.
-			Interfaces and Classes in the model can take part in the the FROM clause of a query and appear in the SELECT list.</para>
-		<para>Like Java, an Interface may extend multiple Interfaces, but no Classes.
-			Also, like Java, a Class may extend a single Class, or not (in which case it implicitly extends java.lang.Object).
-			A Class may implement multiple Interfaces, or not.
-			If a Class or Interface implements or extends another Class or Interface, it automatically implements and extends everything that Class or Interface implements or extends.</para>
-	</sect1>
+        <surname>Varley</surname>
+      </author>
 
-	<sect1>
-		<title>Types of Classes and Interfaces</title>
-		<para>This section describes the various types of Class and Interface, and how they can be used in the database.
-			All of these types are Classes and Interfaces that extend or implement <filename>org.intermine.model.InterMineObject</filename>, since other Classes and Interfaces cannot be handled by the InterMine system.</para>
-		<sect2>
-			<title>Interfaces in the model</title>
-			<para>These are Interfaces that are well-described in the model.
-				They may have fields (unlike Java) - the fields are simulated as getter and setter methods in the Interface.
-				One can create an object that is effectively an instance of an interface by using <filename>org.intermine.util.DynamicUtil</filename>, and these objects can be stored in the database.
-				One can create a query with one of these in the FROM clause, to receive a set of objects that can all be cast to the Interface.</para>
-		</sect2>
-		<sect2>
-			<title>Classes in the model</title>
-			<para>These are Classes that are well-described in the model.
-				They may have fields, but (unlike Java) they do not need to list all the fields in their implemented Interfaces - that is done automatically.
-				One can create a new instance of a Class, by using the "new" operator in Java, which is the simplest available method of creating an object.
-				One can create a query with one of these in the FROM clause, to receive a set of objects that can all be cast to the Class.</para>
-		</sect2>
-		<sect2>
-			<title>Interfaces not defined by the model</title>
-			<para>These are Interfaces that are not mentioned in the model.
-				The code for the Interfaces must be written separately - the InterMine Java Code Generation will not oblige.
-				The Interface must implement <filename>org.intermine.model.InterMineObject</filename> - then one can create an object that is effectively an instance of the Interface using <filename>org.intermine.util.DynamicUtil</filename>, and such objects can be stored in the database.
-				These Interfaces cannot however be mentioned in a query, nor can any fields defined by the Interface.
-				The only way to retrieve the objects from the database is to generate a query with a super-Interface that is present in the model (for example <filename>org.intermine.model.InterMineObject</filename>).</para>
-		</sect2>
-		<sect2>
-			<title>Classes not defined by the model</title>
-			<para>These are Classes that are not mentioned in the model.
-				The code for the Class must be written separately - the InterMine Java Code Generation will not oblige.
-				One can create an instance of the Class by using the "new" operator in Java, and one can store that object in the database.
-				These Classes can never be mentioned in a query, nor can any fields defined by the Class.
-				The only way to retrieve the objects from the database is to generate a query for a superclass or super-Interface that is present in the model.</para>
-		</sect2>
-		<sect2>
-			<title>Dynamic classes</title>
-			<para>These are classes that are created on the spot, for example from an Interface.
-				A dynamic class can be generated from a set of classes and interfaces, only one of which can be a class.
-				At least one of those classes must implement <filename>org.intermine.model.InterMineObject</filename>, so that the dynamic class implements it.
-				Objects can be created from these classes, and stored in the database.
-				A query can only be created with one of these classes in the FROM clause if the class is free of classes and interfaces outside the model</para>
-		</sect2>
-		<para>The InterMine database does not treat Classes and Interfaces any differently, except for the following:
-			All elements in the FROM clause of a Query must resolve down to a Class.
-			Obviously this Class can be dynamically constructed from multiple Interfaces, but not from multiple Classes.
-			Likewise, an attempt to form a Class from two interfaces that have a common field name with different types will not work.</para>
-	</sect1>
+      <author>
+        <firstname>Matthew</firstname>
+
+        <surname>Wakeling</surname>
+      </author>
+    </authorgroup>
+  </articleinfo>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>This document describes how the objectstore is affected by the
+    model. It describes the different types of Object Class and Interface, and
+    how they differ.</para>
+  </section>
+
+  <section>
+    <title>Characteristics of a model</title>
+
+    <para>The InterMine database system treats Classes and Interfaces as
+    similarly to Java as possible. All objects that are stored in the database
+    must implement/extend the
+    <filename>org.intermine.model.InterMineObject</filename> interface. There
+    is no other restriction that prevents an object being stored in the
+    database. All Java Classes and Interfaces generated from a model
+    description implement this interface automatically.</para>
+
+    <para>The model represents the possibilities for searching in the
+    database. Fields in the model can take part in the WHERE clause of a query
+    and appear in the SELECT list, the GROUP BY clause and the ORDER BY list.
+    Interfaces and Classes in the model can take part in the the FROM clause
+    of a query and appear in the SELECT list.</para>
+
+    <para>Like Java, an Interface may extend multiple Interfaces, but no
+    Classes. Also, like Java, a Class may extend a single Class, or not (in
+    which case it implicitly extends java.lang.Object). A Class may implement
+    multiple Interfaces, or not. If a Class or Interface implements or extends
+    another Class or Interface, it automatically implements and extends
+    everything that Class or Interface implements or extends.</para>
+  </section>
+
+  <section>
+    <title>Types of Classes and Interfaces</title>
+
+    <para>This section describes the various types of Class and Interface, and
+    how they can be used in the database. All of these types are Classes and
+    Interfaces that extend or implement
+    <filename>org.intermine.model.InterMineObject</filename>, since other
+    Classes and Interfaces cannot be handled by the InterMine system.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>Interfaces in the model:</emphasis></para>
+
+        <para>These are Interfaces that are well-described in the model. They
+        may have fields (unlike Java) - the fields are simulated as getter and
+        setter methods in the Interface. One can create an object that is
+        effectively an instance of an interface by using
+        <filename>org.intermine.util.DynamicUtil</filename>, and these objects
+        can be stored in the database. One can create a query with one of
+        these in the FROM clause, to receive a set of objects that can all be
+        cast to the Interface.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Classes in the model:</emphasis></para>
+
+        <para>These are Classes that are well-described in the model. They may
+        have fields, but (unlike Java) they do not need to list all the fields
+        in their implemented Interfaces - that is done automatically. One can
+        create a new instance of a Class, by using the "new" operator in Java,
+        which is the simplest available method of creating an object. One can
+        create a query with one of these in the FROM clause, to receive a set
+        of objects that can all be cast to the Class.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Interfaces not defined by the model:</emphasis></para>
+
+        <para>These are Interfaces that are not mentioned in the model. The
+        code for the Interfaces must be written separately - the InterMine
+        Java Code Generation will not oblige. The Interface must implement
+        <filename>org.intermine.model.InterMineObject</filename> - then one
+        can create an object that is effectively an instance of the Interface
+        using <filename>org.intermine.util.DynamicUtil</filename>, and such
+        objects can be stored in the database. These Interfaces cannot however
+        be mentioned in a query, nor can any fields defined by the Interface.
+        The only way to retrieve the objects from the database is to generate
+        a query with a super-Interface that is present in the model (for
+        example
+        <filename>org.intermine.model.InterMineObject</filename>).</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Classes not defined by the model:</emphasis></para>
+
+        <para>These are Classes that are not mentioned in the model. The code
+        for the Class must be written separately - the InterMine Java Code
+        Generation will not oblige. One can create an instance of the Class by
+        using the "new" operator in Java, and one can store that object in the
+        database. These Classes can never be mentioned in a query, nor can any
+        fields defined by the Class. The only way to retrieve the objects from
+        the database is to generate a query for a superclass or
+        super-Interface that is present in the model.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>Dynamic classes:</emphasis></para>
+
+        <para>These are classes that are created on the spot, for example from
+        an Interface. A dynamic class can be generated from a set of classes
+        and interfaces, only one of which can be a class. At least one of
+        those classes must implement
+        <filename>org.intermine.model.InterMineObject</filename>, so that the
+        dynamic class implements it. Objects can be created from these
+        classes, and stored in the database. A query can only be created with
+        one of these classes in the FROM clause if the class is free of
+        classes and interfaces outside the model</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The InterMine database does not treat Classes and Interfaces any
+    differently, except for the following: All elements in the FROM clause of
+    a Query must resolve down to a Class. Obviously this Class can be
+    dynamically constructed from multiple Interfaces, but not from multiple
+    Classes. Likewise, an attempt to form a Class from two interfaces that
+    have a common field name with different types will not work.</para>
+  </section>
 </article>

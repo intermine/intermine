@@ -1,57 +1,63 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+  <articleinfo>
+    <date>2003-1-8</date>
 
-<artheader>
-<date>2003-1-8</date>
-<title>Obtaining write access to InterMine source code</title>
-</artheader>
+    <title>Obtaining write access to InterMine source code</title>
+  </articleinfo>
 
-<sect1>
-<title>Introduction</title>
+  <section>
+    <title>Introduction</title>
 
-<para>This document details how active developers can obtain InterMine
-source code from the main CVS server.</para>
+    <para>This document details how active developers can obtain InterMine
+    source code from the main CVS server.</para>
+  </section>
 
-</sect1>
+  <section>
+    <title>Instructions</title>
 
-<sect1>
-<title>Instructions</title>
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>From inside intermine.org domain</emphasis></para>
 
-<sect2>
-<title>From inside intermine.org domain</title>
+        <itemizedlist>
+          <listitem>
+            <para><command>cd</command> to the directory into which you intend
+            to check out the source.</para>
+          </listitem>
 
-<itemizedlist>
+          <listitem>
+            <para>Issue the command <command>cvs -d
+            :ext:cvs-internal.flymine.org/cvs co intermine</command>.</para>
+          </listitem>
 
-<listitem><command>cd</command> to the directory into which you intend
-to check out the source.</listitem>
+          <listitem>
+            <para><command>cd intermine</command>.</para>
+          </listitem>
 
-<listitem>Issue the command <command>cvs
--d :ext:cvs-internal.flymine.org/cvs co intermine</command>.</listitem>
+          <listitem>
+            <para><command>ant -projecthelp</command> gives a list of all the
+            possible build targets.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
 
-<listitem><command>cd intermine</command>.</listitem>
+      <listitem>
+        <para><emphasis>From outside intermine.org domain</emphasis></para>
 
-<listitem><command>ant -projecthelp</command> gives a list of all the
-possible build targets.</listitem>
+        <para>The InterMine main CVS server is on a machine inside the
+        firewall and does not have an external IP address. However, a port on
+        the firewall is set up to forward ssh packets to the cvs server. You
+        will require ssh access to the Intermine system in order to use this
+        machine.</para>
 
-</itemizedlist>
+        <itemizedlist>
+          <listitem>
+            <para>Create a wrapper script as follows:</para>
 
-</sect2>
-
-<sect2>
-
-<title>From outside intermine.org domain</title>
-
-<para>The InterMine main CVS server is on a machine inside the firewall
-and does not have an external IP address. However, a port on the
-firewall is set up to forward ssh packets to the cvs server. You will
-require ssh access to the Intermine system in order to use this
-machine.</para>
-
-<itemizedlist>
-
-<listitem>Create a wrapper script as follows:
-<programlisting>#!/bin/sh
+            <programlisting>#!/bin/sh
 
 HOST=$1
 
@@ -63,23 +69,24 @@ else
    ssh $*
 fi
 </programlisting>
-</listitem>
+          </listitem>
 
-<listitem>Issue the command <command>export
-CVS_RSH=/path/to/wrapper/script</command>. Put this in your
-<filename>.profile</filename>.</listitem>
+          <listitem>
+            <para>Issue the command <command>export
+            CVS_RSH=/path/to/wrapper/script</command>. Put this in your
+            <filename>.profile</filename>.</para>
+          </listitem>
 
-<listitem>Continue as above</listitem>
+          <listitem>
+            <para>Continue as above</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
 
-</itemizedlist>
-
-</sect2>
-
-<para>Once you have checked out the source from the CVS server, the
-command <command>cvs update</command> will obtain any updates to the
-code made by the development team. You should issue this command
-regularly.</para>
-
-</sect1>
-
+    <para>Once you have checked out the source from the CVS server, the
+    command <command>cvs update</command> will obtain any updates to the code
+    made by the development team. You should issue this command
+    regularly.</para>
+  </section>
 </article>

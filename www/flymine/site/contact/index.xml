@@ -1,16 +1,33 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
-<sect1>
-<title>Contact</title>
+  <section>
+    <title>Contact</title>
 
-    <para>To contact the <ulink url="../project/team.xml">FlyMine Team</ulink>:</para>
+    <para>To contact the <ulink url="../project/team.xml">FlyMine
+    Team</ulink>:</para>
+
     <itemizedlist>
-        <listitem>By email: <ulink url="mailto:info[at]flymine.org">info[at]flymine.org</ulink></listitem>
-        <listitem>By Telephone (UK business time): +44 (0)1223 333 377</listitem>
-        <listitem>By FAX (please clearly indicate: FlyMine): +44 (0)1223 333 992</listitem>
-        <listitem>By Post:  <address>FlyMine</address><address>Department of Genetics</address><address>Downing Site</address><address>CAMBRIDGE CB2 3EH</address><address>United Kingdom</address></listitem>
-    </itemizedlist>
+      <listitem>
+        <para>By email: <ulink
+        url="mailto:info[at]flymine.org">info[at]flymine.org</ulink></para>
+      </listitem>
 
-</sect1>
+      <listitem>
+        <para>By Telephone (UK business time): +44 (0)1223 333 377</para>
+      </listitem>
+
+      <listitem>
+        <para>By FAX (please clearly indicate: FlyMine): +44 (0)1223 333
+        992</para>
+      </listitem>
+
+      <listitem>
+        <para>By Post: <phrase>FlyMine</phrase><phrase>Department of
+        Genetics</phrase><phrase>Downing Site</phrase><phrase>CAMBRIDGE
+        CB2 3EH</phrase><phrase>United Kingdom</phrase></para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </article>
