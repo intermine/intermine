@@ -26,19 +26,19 @@
 <section>
       <heading>Query The Database</heading>
       <item>
-        Start a new query with a <ulink url="/query/classChooser.do">particular class</ulink>
+        Start a new query with a <ulink url="classChooser.do">particular class</ulink>
       </item>
       <item>
-        Start a query using a <ulink url="/query/history.do">previous query</ulink>
+        Start a query using a <ulink url="history.do">previous query</ulink>
       </item>
       <item>
-        Search using a list of<ulink url="/query/bagBuild.do"> identifiers</ulink>
+        Search using a list of<ulink url="bagBuild.do"> identifiers</ulink>
       </item>
       <item>
-        Use a <ulink url="/query/examples.do">query example</ulink>
+        Use a <ulink url="examples.do">query example</ulink>
       </item>
       <item>
-        Perform a query using <ulink url="/query/iqlQuery.do">IQL (advanced usage)</ulink>
+        Perform a query using <ulink url="iqlQuery.do">IQL (advanced usage)</ulink>
       </item>
     </section>
 
@@ -53,7 +53,7 @@
         <ulink url="tutorials/tutorialIndex.xml">Tutorials</ulink> - step-by-step guide to queries
       </item>
       <item>
-        <ulink url="/query/examples.do">Query examples</ulink>
+        <ulink url="examples.do">Query examples</ulink>
       </item>
       <item>
         <ulink url="manual/manualIndex.xml">User Manual</ulink>
