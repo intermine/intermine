@@ -10,6 +10,24 @@
 <c:set var="helpUrl" 
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
 
+<%-- figure out whether we should show templates or not --%>
+<c:set var="showTemplatesFlag" value="false"/>
+<c:set var="showImportantTemplatesFlag" value="false"/>
+
+<c:forEach items="${object.clds}" var="cld">
+  <c:set var="className" value="${cld.name}"/>
+  <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className]}">
+    <c:set var="showTemplatesFlag" value="true"/>
+    <c:forEach items="${CLASS_CATEGORY_TEMPLATES[className]}" var="cats">
+      <c:forEach items="${cats.value}" var="tmpl">
+        <c:if test="${tmpl.important}">
+          <c:set var="showImportantTemplatesFlag" value="true"/>
+        </c:if>
+      </c:forEach>
+    </c:forEach>
+  </c:if>
+</c:forEach>
+       
 <im:box helpUrl="${helpUrl}"
         titleKey="objectDetails.heading.details">
 
@@ -111,6 +129,30 @@
       </td>
 
       <td valign="top" width="66%">
+      
+        <%-- show important templates here --%>
+        <c:if test="${showImportantTemplatesFlag == 'true'}">
+          <im:heading id="important">Important Templates</im:heading>
+          <im:vspacer height="3"/>
+          <im:body id="important">
+            <c:forEach items="${CATEGORIES}" var="category">
+              <c:forEach items="${object.clds}" var="cld">
+                <c:set var="className" value="${cld.name}"/>
+                <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className][category]}">
+                  <%--<div class="heading">${category}</div>--%>
+                  <c:set var="interMineObject" value="${object.object}"/>
+                  <!--<div class="body">-->
+                    <im:templateList type="global" category="${category}" className="${className}" 
+                                     interMineObject="${object.object}" important="true"/>
+                  <!--</div>-->
+                  <%--<im:vspacer height="5"/>--%>
+                </c:if>
+              </c:forEach>
+            </c:forEach>
+          </im:body>
+          <im:vspacer height="6"/>
+        </c:if>
+      
         <im:heading id="other">Other Information<im:helplink key="objectDetails.help.otherInfo"/></im:heading>
         <im:body id="other">
           <table border="0">
@@ -251,15 +293,6 @@
 </im:box>
 
 <im:vspacer height="12"/>
-
-<c:set var="showTemplatesFlag" value="false"/>
-
-<c:forEach items="${object.clds}" var="cld">
-  <c:set var="className" value="${cld.name}"/>
-  <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className]}">
-    <c:set var="showTemplatesFlag" value="true"/>
-  </c:if>
-</c:forEach>
 
 <c:if test="${showTemplatesFlag == 'true'}">
   <c:set var="helpUrl" 
