@@ -30,12 +30,38 @@
   <body>
     <tiles:get name="header"/>
     <tiles:get name="menu"/>
-    <div class="main-layout" id="content">
+    <div id="content">
+    
+      <%-- figure out whether or not we have a page description, if not we don't
+           render a box around the content frame. --%>
+      <fmt:message key="${pageName}.description" var="description"/>
+      <c:set var="hasDesc" value="${!empty description}"/>
+      
       <tiles:get name="errorMessages"/>
+      
+      <%-- table only if we have a description --%>
+      <c:if test="${hasDesc}">
+        <table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
+      </c:if>
+      
       <tiles:insert attribute="description">
         <tiles:put name="pageName" beanName="pageName" beanScope="tile"/>
       </tiles:insert>
-      <tiles:get name="body"/>
+
+      <%-- table only if we have a description --%>
+      <c:if test="${hasDesc}">
+        <tr>
+          <td valign="top" colspan="2">
+            <tiles:get name="body"/>
+          </td>
+        </tr>
+        </table>
+      </c:if>
+
+      <c:if test="${not hasDesc}">
+        <tiles:get name="body"/>
+      </c:if>
+
     </div>
     <tiles:get name="footer"/>
   </body>

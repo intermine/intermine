@@ -6,18 +6,21 @@
 <!-- feedback.jsp -->
 
 <logic:empty name="sent">
-
   <html:form action="/feedbackAction">
 
   <table cellspacing="0" cellpadding="3" border="0">
   <tr>
     <td align="right"><fmt:message key="feedback.name"/></td>
-    <td><html:text property="name" size="40"/></td>
+    <td>
+      <html:text property="name" size="40"/>
+    </td>
   </tr>
   <tr>
   <tr>
     <td align="right"><fmt:message key="feedback.email"/></td>
-    <td><html:text property="email" size="40"/></td>
+    <td>
+      <html:text property="email" size="40"/>
+    </td>
   </tr>
   <tr>
     <td align="right"><fmt:message key="feedback.subject"/></td>
