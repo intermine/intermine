@@ -73,23 +73,23 @@ public class TransferSequences
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-
-            Chromosome chr = (Chromosome) rr.get(0);
+            Integer chrId = (Integer) rr.get(0);
+            Chromosome chr = (Chromosome) os.getObjectById(chrId);
             Contig contig = (Contig) rr.get(1);
             Location contigOnChrLocation = (Location) rr.get(2);
 
             char[] chrSequence;
 
-            if (seqArrayMap.get(chr) == null) {
+            if (seqArrayMap.get(chrId) == null) {
                 chrSequence = new char[chr.getLength().intValue()];
                 // fill with '.' so we can see the parts of the Chromosome sequence that haven't
                 // been set
                 for (int i = 0; i < chrSequence.length; i++) {
                     chrSequence[i] = '.';
                 }
-                seqArrayMap.put(chr, chrSequence);
+                seqArrayMap.put(chrId, chrSequence);
             } else {
-                chrSequence = (char[]) seqArrayMap.get(chr);
+                chrSequence = (char[]) seqArrayMap.get(chrId);
             }
 
             copySeqArray(chrSequence, contig.getResidues(), contigOnChrLocation);
@@ -100,15 +100,10 @@ public class TransferSequences
 //         // set the Chromosome residue fields
 //         Iterator iter = seqArrayMap.keySet().iterator();
 //         while (iter.hasNext()) {
-//             Chromosome chr = (Chromosome) iter.next();
+//             Chromosome chr = (Chromosome) os.getObjectById((Integer) iter.next());
 //             chr.setResidues(new String((char[]) seqArrayMap(chr)));
 //             osw.store(chr);
 //         }
-
-        Iterator iter = seqArrayMap.keySet().iterator();
-        while (iter.hasNext()) {
-            Chromosome chr = (Chromosome) iter.next();
-        }
 
         return seqArrayMap;
     }
@@ -122,11 +117,11 @@ public class TransferSequences
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
-            Chromosome chr = (Chromosome) rr.get(0);
+            Integer chrId = (Integer) rr.get(0);
             LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
             Location locationOnChr = (Location) rr.get(2);
 
-            char[] chrSequence = (char[]) seqArrayMap.get(chr);
+            char[] chrSequence = (char[]) seqArrayMap.get(chrId);
             String featureSeq = getSubSequence(chrSequence, locationOnChr);
 
             feature.setResidues(featureSeq);

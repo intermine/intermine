@@ -99,7 +99,7 @@ public class CalculateLocations
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            BioEntity object = (BioEntity) rr.get(0);
+            Integer objectId = (Integer) rr.get(0);
             BioEntity subject = (BioEntity) rr.get(1);
             Location location = (Location) rr.get(2);
 
@@ -143,7 +143,8 @@ public class CalculateLocations
         Iterator batchIter = batch.iterator();
         while (batchIter.hasNext()) {
             ResultsRow rr = (ResultsRow) batchIter.next();
-            BioEntity object = (BioEntity) rr.get(0);
+            Integer objectId = (Integer) rr.get(0);
+            BioEntity object = (BioEntity) os.getObjectById(objectId);
             BioEntity subject = (BioEntity) rr.get(1);
             Location location = (Location) rr.get(2);
 
@@ -300,14 +301,14 @@ public class CalculateLocations
             i++;
             ResultsRow rr = (ResultsRow) resIter.next();
             Location locBioOnContig = (Location) rr.get(2);
-            Contig contig = (Contig) rr.get(0);
+            Integer contigId = (Integer) rr.get(0);
             BioEntity bio = (BioEntity) rr.get(1);
-            SimpleLoc bioOnContig = new SimpleLoc(contig.getId().intValue(),
+            SimpleLoc bioOnContig = new SimpleLoc(contigId.intValue(),
                                                   bio.getId().intValue(),
                                                   locBioOnContig);
 
             // first create location of feature on Chromosome
-            SimpleLoc contigOnChr = (SimpleLoc) contigToChr.get(contig.getId());
+            SimpleLoc contigOnChr = (SimpleLoc) contigToChr.get(contigId);
             Chromosome chr = (Chromosome)
                 chrById.get(new Integer(contigOnChr.getParentId()));
             Location bioOnChrLoc =
@@ -717,13 +718,13 @@ public class CalculateLocations
         Iterator resIter = findLocations(os, Chromosome.class, ChromosomeBand.class);
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            Chromosome chr = (Chromosome) rr.get(0);
+            Integer chrId = (Integer) rr.get(0);
             ChromosomeBand band = (ChromosomeBand) rr.get(1);
             Location loc = (Location) rr.get(2);
-            SimpleLoc sl = new SimpleLoc(chr.getId().intValue(),
+            SimpleLoc sl = new SimpleLoc(chrId.intValue(),
                                          band.getId().intValue(),
                                          loc);
-            addToMap(chrToBand, chr.getId(), sl);
+            addToMap(chrToBand, chrId, sl);
             bandToChr.put(band.getId(), sl);
         }
         LOG.info("Found " + bandToChr.size() + " ChromosomeBands located on Chromosomes");
@@ -752,16 +753,16 @@ public class CalculateLocations
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Location scOnChrLoc = (Location) rr.get(2);
-            Chromosome chr = (Chromosome) rr.get(0);
+            Integer chrId = (Integer) rr.get(0);
             Supercontig sc = (Supercontig) rr.get(1);
-            SimpleLoc scOnChr = new SimpleLoc(chr.getId().intValue(),
+            SimpleLoc scOnChr = new SimpleLoc(chrId.intValue(),
                                               sc.getId().intValue(),
                                               scOnChrLoc);
             scToChr.put(sc.getId(), scOnChr);
-            addToMap(chrToSc, chr.getId(), scOnChr);
+            addToMap(chrToSc, chrId, scOnChr);
 
             // find get ChromosomeBands that cover location on Chromosome
-            Set bands = (Set) chrToBand.get(chr.getId());
+            Set bands = (Set) chrToBand.get(chrId);
             if (bands != null) {
                 Iterator iter = bands.iterator();
                 while (iter.hasNext()) {
@@ -805,14 +806,14 @@ public class CalculateLocations
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Location locContigOnSc = (Location) rr.get(2);
-            Supercontig sc = (Supercontig) rr.get(0);
+            Integer scId = (Integer) rr.get(0);
             Contig contig = (Contig) rr.get(1);
-            SimpleLoc contigOnSc = new SimpleLoc(sc.getId().intValue(),
+            SimpleLoc contigOnSc = new SimpleLoc(scId.intValue(),
                                                  contig.getId().intValue(),
                                                  locContigOnSc);
 
             // create location of contig on chromosome, don't expect partial locations
-            SimpleLoc scOnChr = (SimpleLoc) scToChr.get(sc.getId());
+            SimpleLoc scOnChr = (SimpleLoc) scToChr.get(scId);
             Chromosome chr = (Chromosome) chrById.get(new Integer(scOnChr.getParentId()));
             Location contigOnChrLoc = createChromosomeLocation(scOnChr, contigOnSc, chr, contig);
 
@@ -936,7 +937,7 @@ public class CalculateLocations
      * @param os the ObjectStore to find the Locations in
      * @param objectCls object type of the Location
      * @param subjectCls subject type of the Location
-     * @return an iterator over the results
+     * @return an iterator over the results: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     protected static Iterator findLocations(ObjectStore os, Class objectCls, Class subjectCls)
@@ -946,8 +947,9 @@ public class CalculateLocations
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
+        QueryField qfObj = new QueryField(qcObj, "id");
         q.addFrom(qcObj);
-        q.addToSelect(qcObj);
+        q.addToSelect(qfObj);
         QueryClass qcSub = new QueryClass(subjectCls);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
