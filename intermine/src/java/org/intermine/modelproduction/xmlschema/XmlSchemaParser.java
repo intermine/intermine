@@ -115,7 +115,7 @@ public class XmlSchemaParser implements ModelParser
     protected XmlMetaData xmlInfo;
 
     protected Set namedTypesAlreadyDone = new HashSet();
-    
+
     /** Map from class name to Set of key field names. */
     protected Map keyFieldSets = new HashMap();
 
@@ -237,11 +237,11 @@ public class XmlSchemaParser implements ModelParser
         if (!paths.empty()) {
             path = (String) paths.peek() + "/" + path;
         }
-        
+
         XMLType xmlType = eDecl.getType();
-        
+
         if (xmlType != null && xmlType.isComplexType()) {
-            
+
             // check whether this element is actually a reference
             if (xmlInfo.isReferenceElement(path)) {
                 //String field = xmlInfo.getReferenceElementField(path);
@@ -250,7 +250,7 @@ public class XmlSchemaParser implements ModelParser
                 clsName = (String) xmlInfo.getClsNameFromXPath(path);
                 LOG.debug("found reference element at: " + path + " referencing class: " + clsName);
                 return clsName;
-                
+
             } else if (xmlType.getName() == null) {
                 if (!clsStack.empty()) {
                     clsName = StringUtil.capitalise(uniqueClassName(eDecl.getName(),
@@ -263,13 +263,13 @@ public class XmlSchemaParser implements ModelParser
                 clsStack.push(clsName);
                 generatedName = true;
             }
-            
+
             LOG.debug("pushing " + path + " onto paths " + paths);
             paths.push(path);
             clsName = processComplexType((ComplexType) xmlType);
             path = (String) paths.pop();
             LOG.debug("popped path: " + path);
-            
+
             if (generatedName) {
                 clsName = (String) clsStack.pop();
                 LOG.debug("(no name) Popped clsName " + clsName + " from clsStack " + clsStack);
@@ -392,7 +392,7 @@ public class XmlSchemaParser implements ModelParser
             keys.addAll(xmlInfo.getKeyFields((String) paths.peek()));
         }
         LOG.debug("Leaving processComplexType(" + complexType.getName() + ") normally");
-        
+
         return clsName;
     }
 
@@ -542,8 +542,8 @@ public class XmlSchemaParser implements ModelParser
                         CollectionDescriptor cod = new CollectionDescriptor(
                                 StringUtil.decapitalise(StringUtil.pluralise(fieldName)),
                                 this.pkgName + "." + subClassName, null, true);
-                        AttributeDescriptor atd = new AttributeDescriptor(fieldName,
-                                XmlUtil.xmlToJavaType(type));
+                        AttributeDescriptor atd = new AttributeDescriptor(
+                                generateJavaName(fieldName), XmlUtil.xmlToJavaType(type));
                         ClassDescriptor cld = new ClassDescriptor(this.pkgName + "." + subClassName,
                                 null, false, Collections.singleton(atd), Collections.EMPTY_SET,
                                 Collections.EMPTY_SET);
@@ -606,7 +606,7 @@ public class XmlSchemaParser implements ModelParser
         }
         return name;
     }
-    
+
     private String simpleTypeToBuiltInTypeName(SimpleType type) {
         String typeName = null;
         if (!type.isBuiltInType() && type.getBuiltInBaseType() != null) {
@@ -623,7 +623,7 @@ public class XmlSchemaParser implements ModelParser
         }
         return typeName;
     }
-    
+
     /**
      * Given a model class name, return a Set of key field names.
      * @param clsName model class name
