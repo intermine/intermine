@@ -39,9 +39,9 @@ public class Column
     }
 
     /**
-     * Is the column visible
+     * Get the alias of the column
      *
-     * @return true if the column is visible
+     * @return the alias of the column
      */
     public String getAlias() {
         return alias;
@@ -50,7 +50,7 @@ public class Column
     /**
      * Set the alias of the column
      *
-     * @param visible the alias for the column
+     * @param alias the alias for the column
      */
     public void setAlias(String alias) {
         this.alias = alias;
