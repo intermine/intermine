@@ -32,8 +32,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -67,15 +65,20 @@ public class FeedbackAction extends Action
         try {
             
             MessageResources strings = getResources(request);
-            String host = (String) ((Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
+            String host = (String) ((Map) session.getServletContext().
+                        getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
             String from = ff.getEmail();
             String subject = ff.getSubject();
-            String text = MessageFormat.format(strings.getMessage("feedback.template"), new Object[] {ff.getName(), ff.getEmail(), ff.getMessage()});
+            String text = MessageFormat.format(strings.getMessage("feedback.template"),
+                                new Object[] {ff.getName(), ff.getEmail(), ff.getMessage()});
+            String dest = strings.getMessage("feedback.destination");
+            
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", host);
+            
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(properties, null));
             message.setFrom(new InternetAddress(from));
-            message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(strings.getMessage("feedback.destination"), true)[0]);
+            message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(dest, true)[0]);
             message.setSubject(subject);
             message.setText(text);
             Transport.send(message);

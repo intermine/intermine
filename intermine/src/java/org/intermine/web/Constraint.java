@@ -56,10 +56,11 @@ public class Constraint
      * @return  constraint value translated for the user as a string
      */
     public String getDisplayValue() {
-        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH)
+        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
             return MainForm.wildcardSqlToUser((String) getValue());
-        else
+        } else {
             return (String) getValue();
+        }
     }
 
     /**
