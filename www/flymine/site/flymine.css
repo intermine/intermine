@@ -1,0 +1,11 @@
+body {	font-size: 8pt;
+	color: #000000; 
+	background: #FFFFFF}
+p {	color: #000000;}
+A:link {color: #003399;
+	text-decoration: none}
+A:visited {color: #003399;
+	text-decoration: none}
+A:active {color: #003399;}
+	text-decoration: none}
+.cell { background: #f5f5ff}
