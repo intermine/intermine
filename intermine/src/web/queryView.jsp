@@ -6,7 +6,7 @@
 <table border=0>
   <tr><td>
       <table border="0">
-        <% org.flymine.objectstore.query.Query query = (org.flymine.objectstore.query.Query) request.getAttribute("query"); %>
+        <% org.flymine.objectstore.query.Query query = (org.flymine.objectstore.query.Query) session.getAttribute("query"); %>
         <% request.setAttribute("pclist", org.flymine.objectstore.query.presentation.ConstraintListCreator.createList(query)); %>
         <% java.util.Iterator iter1 = (query == null ? java.util.Collections.EMPTY_LIST : ((java.util.Collection) query.getFrom())).iterator(); while (iter1.hasNext()) { request.setAttribute("fromElement", iter1.next()); %> <!-- c:forEach var="fromElement" items="${query.from}" -->
           <tr><td>

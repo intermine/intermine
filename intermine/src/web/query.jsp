@@ -3,28 +3,42 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
 <%-- <%@ include file="session.jsp" %> --%>
 
+
+
 <html:form action="/query">
-    <html:select property="cldName">
-        <html:options name="model" property="classNames" labelName="model" labelProperty="classNames"/>
-    </html:select>
-
-    <html:submit property="action">
-        <bean:message key="button.select"/>
-    </html:submit>
-
-    <br/>
-
 
     <logic:present scope="session" name="cld">
+
+       <c:out value="${cld.unqualifiedName}" /><br/>
+
        <table border="0">        
-        <c:forEach var="field" items="${cld.fieldDescriptors}">
+        <c:forEach var="field" items="${cld.attributeDescriptors}">
+            <c:set scope="request" var="stringHack" value="fieldValue(${field.name})"/>
+            <tr><td><c:out value="${field.name}"/></td>
+            <td><html:text property="<%=(String) request.getAttribute("stringHack")%>"/> </td></tr>
+        </c:forEach>
+
+<%--        <c:forEach var="field" items="${cld.referenceDescriptors}">
             <tr><td><c:out value="${field.name}"/></td>
             <td><html:text property="fieldValue(field.name)"/></td></tr>
         </c:forEach>
+
+        <c:forEach var="field" items="${cld.collectionDescriptors}">
+            <tr><td><c:out value="${field.name}"/></td>
+            <td><html:text property="fieldValue(field.name)"/></td></tr>
+        </c:forEach>
+--%>
+        <tr><td>
+        <html:submit property="action">
+           <bean:message key="button.submit"/>
+        </html:submit>
+
         </table>
+
+      
+
     </logic:present>
 </html:form>
