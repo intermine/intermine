@@ -29,6 +29,10 @@
              <item><ulink url="manualExamplequeries.xml">Query Examples</ulink></item>
      </section>
 
+      <section>
+         <heading>FlyMine data</heading>
+         <item><ulink url="manualFlyMineIdentifiers.xml">Identifiers used in FlyMine</ulink></item>
+      </section>
 
 
       <section>
