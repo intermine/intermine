@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2003-1-8</date>
+<title>Obtaining FlyMine source code using CVS</title>
+<authorgroup>
+<author>
+<firstname>Andrew</firstname>
+<surname>Varley</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+<title>Instructions</title>
+
+<listitem><command>cd</command> to the directory into which you intend
+to check out the source.</listitem>
+
+<listitem>Issue the command <command>cvs -d
+:pserver:anonymous@cvs.flymine.org/cvs co
+flymine</command>.</listitem>
+
+<para>Once you have checked out the source from the CVS server, the
+command <command>cvs update</command> will obtain any updates to the
+code made by the development team. You should issue this command
+regularly.</para>
+
+</sect1>
+
+</article>
