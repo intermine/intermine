@@ -341,25 +341,4 @@ public class MainHelper
         }
         return map;
     }
-
-    /**
-     * If a path represents a reference field (eg. Department.employees) then
-     * return the type of that field (eg. Employee)
-     * @param path the path
-     * @param model the relevant metadata
-     * @return the relevant ClassDescriptor
-     */
-    public static ClassDescriptor getClassDescriptorForPath(String path, Model model) {
-        String[] split = path.split("[.]");
-        ClassDescriptor cld = getClassDescriptor(split[0], model);
-        for (int i = 1; i < split.length; i++) {
-            FieldDescriptor fd = cld.getFieldDescriptorByName(split[i]);
-            if (fd.isAttribute()) {
-                return null;
-            } else {
-                cld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-            }
-        }
-        return cld;
-    }
 }
