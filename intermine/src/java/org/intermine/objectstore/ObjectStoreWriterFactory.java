@@ -16,12 +16,11 @@ public class ObjectStoreWriterFactory
     /**
      * Return an ObjectStoreWriter configured using properties file
      * @param alias identifier for properties defining integration/writer parameters
-     * @param os the ObjectStore used by the ObjectStoreWriter
      * @return instance of a concrete IntegrationWriter according to property
      * @throws ObjectStoreException if anything goes wrong
      */
 
-    public static ObjectStoreWriter getObjectStoreWriter(String alias, ObjectStore os)
+    public static ObjectStoreWriter getObjectStoreWriter(String alias)
         throws ObjectStoreException {
         if (alias == null) {
             throw new NullPointerException("ObjectStoreWriter alias cannot be null");
@@ -40,7 +39,18 @@ public class ObjectStoreWriterFactory
             throw new ObjectStoreException(alias + " does not have an ObjectStoreWriter class "
                                            + "specified (check properties file)");
         }
+        String osAlias = props.getProperty("os");
+        if (osAlias == null) {
+            throw new ObjectStoreException(alias + " does not have an os alias specified"
+                                           + " (check properties file)");
+        }
 
+        ObjectStore os;
+        try {
+            os = ObjectStoreFactory.getObjectStore(osAlias);
+        } catch (Exception e) {
+            throw new ObjectStoreException(e);
+        }
         ObjectStoreWriter osw = null;
         try {
             Class cls = Class.forName(clsName);
