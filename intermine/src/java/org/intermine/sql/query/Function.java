@@ -64,12 +64,29 @@ public class Function extends AbstractValue
      */
     public static final int POWER = 10;
     /**
-     * MODULO arithmetid function - takes two operands.
+     * MODULO arithmetic function - takes two operands.
      */
     public static final int MODULO = 11;
+    /**
+     * Type casts - takes two operands.
+     */
+    public static final int TYPECAST = 12;
+    /**
+     * STRPOS operator - takes two operands.
+     */
+    public static final int STRPOS = 13;
+    /**
+     * SUBSTR operator - takes two or three operands.
+     */
+    public static final int SUBSTR = 14;
+    /**
+     * COALESCE operator - used by the precomputed tables' orderby fields.
+     */
+    public static final int COALESCE = 15;
     
     private static final String REPRESENTATIONS[] = {"", "COUNT(*)", "MAX(", "MIN(",
-        "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % "};
+        "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % ", "::", "STRPOS(", "SUBSTR(",
+        "COALESCE("};
     
     /**
      * Constructor for this Function object.
@@ -78,7 +95,7 @@ public class Function extends AbstractValue
      * @throws IllegalArgumentException if operation is not valid
      */
     public Function(int operation) {
-        if ((operation < 1) || (operation > 11)) {
+        if ((operation < 1) || (operation > 15)) {
             throw (new IllegalArgumentException("operation is not valid"));
         }
         this.operation = operation;
@@ -107,9 +124,18 @@ public class Function extends AbstractValue
             case MINUS:
             case DIVIDE:
             case POWER:
+            case TYPECAST:
+            case STRPOS:
+            case COALESCE:
                 if (operands.size() >= 2) {
                     throw (new IllegalArgumentException("This function may only take"
                                 + "two operands"));
+                }
+                break;
+            case SUBSTR:
+                if (operands.size() >= 3) {
+                    throw new IllegalArgumentException("This function may only take three"
+                            + " operands");
                 }
                 break;
         }
@@ -143,22 +169,51 @@ public class Function extends AbstractValue
             case DIVIDE:
             case POWER:
             case MODULO:
-                if (operands.size() < 2) {
-                    throw (new IllegalStateException("This function needs two operands"));
-                }
-                Iterator iter = operands.iterator();
-                String retval = "(";
-                boolean needComma = false;
-                while (iter.hasNext()) {
-                    AbstractValue v = (AbstractValue) iter.next();
-                    if (needComma) {
-                        retval += REPRESENTATIONS[operation];
+            case TYPECAST:
+                {
+                    if (operands.size() < 2) {
+                        throw (new IllegalStateException("This function needs two operands"));
                     }
-                    needComma = true;
-                    retval += v.getSQLString();
+                    Iterator iter = operands.iterator();
+                    String retval = "";
+                    if (operation != TYPECAST) {
+                        retval += "(";
+                    }
+                    boolean needComma = false;
+                    while (iter.hasNext()) {
+                        AbstractValue v = (AbstractValue) iter.next();
+                        if (needComma) {
+                            retval += REPRESENTATIONS[operation];
+                        }
+                        needComma = true;
+                        retval += v.getSQLString();
+                    }
+                    if (operation != TYPECAST) {
+                        retval += ")";
+                    }
+                    return retval;
                 }
-                retval += ")";
-                return retval;
+            case STRPOS:
+            case SUBSTR:
+            case COALESCE:
+                {
+                    if (operands.size() < 2) {
+                        throw (new IllegalStateException("This function needs two operands"));
+                    }
+                    Iterator iter = operands.iterator();
+                    String retval = REPRESENTATIONS[operation];
+                    boolean needComma = false;
+                    while (iter.hasNext()) {
+                        AbstractValue v = (AbstractValue) iter.next();
+                        if (needComma) {
+                            retval += ", ";
+                        }
+                        needComma = true;
+                        retval += v.getSQLString();
+                    }
+                    retval += ")";
+                    return retval;
+                }
             }
         throw (new Error("Unknown operation"));
     }

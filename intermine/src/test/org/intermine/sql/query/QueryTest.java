@@ -1066,4 +1066,20 @@ public class QueryTest extends TestCase
         assertEquals(q3, q1);
         assertEquals(q3, q2);
     }
+
+    public void testCoalesce() throws Exception {
+        q1 = new Query("select coalesce(t.a, 53) AS b from t");
+        q2 = new Query();
+        Table t1 = new Table("t");
+        Field f1 = new Field("a", t1);
+        Constant c1 = new Constant("53");
+        Function f2 = new Function(Function.COALESCE);
+        f2.add(f1);
+        f2.add(c1);
+        q2.addSelect(new SelectValue(f2, "b"));
+        q2.addFrom(t1);
+        assertEquals("SELECT COALESCE(t.a, 53) AS b FROM t", q1.getSQLString());
+        assertEquals("SELECT COALESCE(t.a, 53) AS b FROM t", q2.getSQLString());
+        assertEquals(q1, q2);
+    }
 }

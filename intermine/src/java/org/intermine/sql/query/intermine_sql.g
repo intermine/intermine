@@ -75,7 +75,7 @@ select_value: #( SELECT_VALUE abstract_value ( field_alias )? );
 
 abstract_table: table | subquery ;
 
-abstract_value: unsafe_function | safe_function | constant | field ;
+abstract_value: unsafe_function | safe_function | typecast | constant | field ;
 
 field_alias: #( FIELD_ALIAS (ALIAS | IDENTIFIER) ) ;
 
@@ -89,6 +89,8 @@ table_alias: #( TABLE_ALIAS IDENTIFIER ) ;
 
 constant: #( CONSTANT ( QUOTED_STRING | INTEGER | FLOAT | "true" | "false" | "null" ) ) ;
 
+typecast: #( TYPECAST abstract_value ("boolean" | "real" | "double" | "smallint" | "integer" | "bigint" | "numeric" | "text")+ );
+
 field: #( FIELD (table_alias)? field_name );
 
 safe_function: #( SAFE_FUNCTION (
@@ -96,7 +98,10 @@ safe_function: #( SAFE_FUNCTION (
                 | "max" abstract_value
                 | "min" abstract_value
                 | "sum" abstract_value
-                | "avg" abstract_value ) ) ;
+                | "avg" abstract_value
+                | "strpos" abstract_value abstract_value
+                | "substr" abstract_value abstract_value (abstract_value)?
+                | "coalesce" abstract_value abstract_value ) ) ;
 
 unsafe_function: #( UNSAFE_FUNCTION abstract_value
             ( ( PLUS | PERCENT | ASTERISK | DIVIDE | POWER | MINUS ) abstract_value )+ ) ;
@@ -344,6 +349,7 @@ limit_clause:
 
 select_value:
         ( (unsafe_function)=> unsafe_function "as"! field_alias
+            | (typecast)=> typecast "as"! field_alias
             | field ( "as"! field_alias )?
             | constant "as"! field_alias
             | safe_function "as"! field_alias
@@ -357,11 +363,11 @@ abstract_table:
     ;
 
 abstract_value:
-        (unsafe_function)=> unsafe_function | constant | field | safe_function | paren_value
+        (unsafe_function)=> unsafe_function | (typecast)=> typecast | constant | field | safe_function | paren_value
     ;
 
 safe_abstract_value:
-        constant | field | safe_function | paren_value
+        (typecast)=> typecast | constant | field | safe_function | paren_value
     ;
 
 paren_value: OPEN_PAREN! abstract_value CLOSE_PAREN! ;
@@ -402,6 +408,11 @@ field:
         { #field = #([FIELD, "FIELD"], #field); }
     ;
 
+typecast:
+        (constant | field | safe_function | paren_value) ( COLONTYPE! ("boolean" | "real" | "double" "precision"! | "smallint" | "integer" | "bigint" | "numeric" | "text") )+
+        {#typecast = #([TYPECAST, "TYPECAST"], #typecast); }
+    ;
+    
 safe_function:
         (
             "count" OPEN_PAREN! ASTERISK! CLOSE_PAREN!
@@ -409,6 +420,9 @@ safe_function:
             | "min" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "sum" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "avg" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "strpos" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value (COMMA! abstract_value)? CLOSE_PAREN!
+            | "coalesce" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;
