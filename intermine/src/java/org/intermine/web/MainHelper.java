@@ -144,7 +144,7 @@ public class MainHelper
      * @return an InterMine Query
      */
     public static Query makeQuery(PathQuery query, Map savedBags) {
-        PathQuery query2 = (PathQuery) query.clone();
+        query = (PathQuery) query.clone();
         Map qNodes = query.getNodes();
         List view = query.getView();
         Model model = query.getModel();
@@ -153,7 +153,7 @@ public class MainHelper
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
             if (!qNodes.containsKey(path)) {
-                query2.addNode(path);
+                query.addNode(path);
             }
         }
 
@@ -165,7 +165,7 @@ public class MainHelper
         Map queryBits = new HashMap();
 
         //build the FROM and WHERE clauses
-        for (Iterator i = query2.getNodes().values().iterator(); i.hasNext();) {
+        for (Iterator i = query.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
 

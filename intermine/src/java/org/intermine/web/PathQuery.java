@@ -156,7 +156,7 @@ public class PathQuery
      * @param node a PathNode
      * @return a copy of the PathNode
      */
-    public PathNode clone(PathNode node) {
+    protected PathNode clone(PathNode node) {
         PathNode newNode;
         PathNode parent = (PathNode) nodes.get(node.getPrefix());
         if (parent == null) {
