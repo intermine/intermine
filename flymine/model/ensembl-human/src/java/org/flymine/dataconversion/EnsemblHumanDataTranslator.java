@@ -162,6 +162,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 Item tgtItem = (Item) i.next();
                 if ("karyotype".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item location = createLocation(srcItem, tgtItem, true);
                     location.addAttribute(new Attribute("strand", "0"));
                     result.add(location);
@@ -207,7 +208,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     }
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(getOrgRef());
-
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item geneRelation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, geneRelation, "objects", true, "subject", false);
                     moveField(srcItem, geneRelation, "gene", "object");
@@ -244,7 +245,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         storeTgtItem = false;
                     } else {
                         tgtItem.addReference(getEnsemblRef());
-                        tgtItem.addAttribute(new Attribute("type", "accession"));
+                        tgtItem.addAttribute(new Attribute("type", "identifier"));
                     }
 
                 // } else if ("prediction_transcript".equals(className)) {
@@ -252,6 +253,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 //    result.add(createLocation(srcItem, tgtItem, true));
                 } else if ("repeat_feature".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, true));
                     promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
@@ -259,6 +261,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
                     promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
                 } else if ("marker".equals(className)) {
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Set locations = createLocations(srcItem, tgtItem, srcNs);
                     List locationIds = new ArrayList();
                     for (Iterator j = locations.iterator(); j.hasNext(); ) {
@@ -270,7 +273,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     setNameAttribute(srcItem, tgtItem);
                     //setSynonym
                 } else if ("marker_synonym".equals(className)) {
-                    tgtItem.addAttribute(new Attribute("type", "accession"));
+                    tgtItem.addAttribute(new Attribute("type", "identifier"));
                     if (srcItem.hasAttribute("source")) {
                         String source = srcItem.getAttribute("source").getValue();
                         if (source.equals("genbank")) {
@@ -485,6 +488,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     seq.addAttribute(new Attribute("length",
                                           seqRegion.getAttribute("length").getValue()));
                 }
+                addReferencedItem(seq, getEnsemblDb(), "evidence", true, "", false);
 
                 seqIdMap.put(refId, seq);
             }
@@ -539,6 +543,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     //5 primer exon and promoter including coding and noncoding
                 }
                 simpleFeature.addReference(getOrgRef());
+                simpleFeature.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
+                addReferencedItem(simpleFeature, getEnsemblDb(), "evidence", true, "", false);
             }
         }
         return simpleFeature;
@@ -603,7 +609,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "accession"));
+                        synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getSwissprotRef());
                         synonyms.add(synonym);
                     } else if (dbname.equals("Uniprot/SPTREMBL")) { // Uniprot/SPTREMBL
@@ -611,7 +617,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "accession"));
+                        synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getTremblRef());
                         synonyms.add(synonym);
                     } else if (dbname.equals("protein_id")) {
@@ -619,7 +625,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "accession"));
+                        synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getEmblRef());
                         synonyms.add(synonym);
                     } else if (dbname.equals("prediction_SPTREMBL")) {
@@ -627,7 +633,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "accession"));
+                        synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getEmblRef());
                         synonyms.add(synonym);
                     }
@@ -653,6 +659,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
 
         Item chosenProtein = (Item) proteins.get(primaryAcc);
         if (chosenProtein == null) {
+            addReferencedItem(protein, getEnsemblDb(), "evidence", true, "", false);
+
             // set up additional references/collections
             protein.addReference(getOrgRef());
             if (srcItem.hasAttribute("seq_start")) {
@@ -715,11 +723,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonym.addAttribute(new Attribute("value", accession));
                     if (dbname.equals("HUGO")) {
-                        synonym.addAttribute(new Attribute("type", "accession"));
+                        synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getHugoRef());
                         tgtItem.addAttribute(new Attribute("name", accession));
                     } else {
-                        synonym.addAttribute(new Attribute("type", "accession"));
+                        synonym.addAttribute(new Attribute("type", "identifier"));
                         synonym.addReference(getRefSeqRef());
                         tgtItem.addAttribute(new Attribute("name", accession));
                     }
