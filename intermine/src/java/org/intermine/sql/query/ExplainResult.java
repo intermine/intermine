@@ -120,10 +120,10 @@ public class ExplainResult
      * Use this to provide the object with a "better" estimate of the number of rows in the results
      * of this Query.
      *
-     * @param newEstimatedRows the better estimate, in rows
+     * @param estimatedRows the better estimate, in rows
      */
-    public void setEstimatedRows(long newEstimatedRows) {
-        estimatedRows = newEstimatedRows;
+    public void setEstimatedRows(long estimatedRows) {
+        this.estimatedRows = estimatedRows;
     }
 
     /**
