@@ -13,13 +13,14 @@
 
   <head>
     <html:base/>
-    <link rel="stylesheet" type="text/css" href="http://www.intermine.org/style/intermine.css"/>
+    <link rel="stylesheet" type="text/css" href="/style/flymine2.css"/>
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
+    <script src="/style/footer.js" type="text/javascript">;</script>
     <title>
       <fmt:message key="${pageName}.title" var="pageTitle"/>
       <c:out value="${WEB_PROPERTIES['project.title']} - ${pageTitle}" escapeXml="false"/>
@@ -27,18 +28,16 @@
   </head>
   
   <body>
-    <div class="main-layout">
-      <tiles:get name="header"/>
-      <tiles:get name="menu"/>
-      <br/>
+    <tiles:get name="header"/>
+    <tiles:get name="menu"/>
+    <div class="main-layout" id="content">
       <tiles:get name="errorMessages"/>
       <tiles:insert attribute="description">
         <tiles:put name="pageName" beanName="pageName" beanScope="tile"/>
       </tiles:insert>
       <tiles:get name="body"/>
-      <br/>
-      <tiles:get name="footer"/>
     </div>
+    <tiles:get name="footer"/>
   </body>
 </html:html>
 <!-- /layout.jsp -->
