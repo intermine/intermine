@@ -1,5 +1,14 @@
 <menu>
+
   <section>
+    <heading>General information</heading>
+    <item><ulink url="/index">Introduction</ulink></item>
+    <item><ulink url="team">Team</ulink></item>
+    <item><ulink url="funding">Funding</ulink></item>
+  </section>
+
+  <section>
+    <anchor>presentations</anchor>
     <heading>Presentations</heading>
     <item><ulink url="presentations/BOSC2003.sxi">BOSC 2003</ulink></item>
     <item><ulink url="presentations/ISMB2003.sxi">ISMB 2003 (poster)</ulink></item>
