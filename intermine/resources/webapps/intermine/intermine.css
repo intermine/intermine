@@ -74,3 +74,6 @@ tr.even {
 .metadata {
   color: green;
 }
+.arrow {
+  border: solid 0px;
+}
