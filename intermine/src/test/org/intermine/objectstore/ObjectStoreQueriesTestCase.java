@@ -19,6 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
+import java.util.Date;
+import java.math.BigDecimal;
 
 import junit.framework.AssertionFailedError;
 
@@ -26,6 +29,7 @@ import org.intermine.SummaryAssertionFailedError;
 import org.intermine.SummaryException;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.*;
+import org.intermine.util.DynamicUtil;
 
 /**
  * TestCase for testing InterMine Queries
@@ -196,6 +200,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("OrderByReference", orderByReference());
         queries.put("FailDistinctOrder", failDistinctOrder());
         queries.put("LargeBagConstraint", largeBagConstraint());
+
+        // tests using a temporary table for the bag
+        queries.put("LargeBagConstraintUsingTable", largeBagConstraint());
     }
 
     /*
@@ -1290,6 +1297,27 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         for (int i = 0; i < 20000; i++) {
             bag.add("a" + i);
         }
+
+        bag.add(new Short((short) 1000));
+        bag.add(new Short((short) 1000));
+        bag.add(new Integer(2000));
+        bag.add(new Long(3000L));
+        bag.add(new Long(3100L));
+        bag.add(new Float(4000.0));
+        bag.add(new BigDecimal(10000.0));
+        bag.add(new Date(999999));
+        bag.add(new Date(100));
+        bag.add(new Boolean(true));
+        bag.add(new Boolean(false));
+        Employee employee = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        employee.setId(new Integer(5000));
+        bag.add(employee);
+        Manager manager = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        manager.setId(new Integer(5001));
+        bag.add(manager);
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company.setId(new Integer(6000));
+        bag.add(company);
         q.setConstraint(new BagConstraint(new QueryField(qc, "name"), ConstraintOp.IN, bag));
         return q;
     }
