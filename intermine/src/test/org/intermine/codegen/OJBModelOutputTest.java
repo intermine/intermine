@@ -402,8 +402,10 @@ public class OJBModelOutputTest extends TestCase
         assertEquals("INTEGER", mo.generateJdbcType("java.lang.Integer"));
         assertEquals("LONGVARCHAR", mo.generateJdbcType("java.lang.String"));
         assertEquals("INTEGER", mo.generateJdbcType("boolean"));
-        assertEquals("FLOAT", mo.generateJdbcType("java.lang.Float"));
-        assertEquals("FLOAT", mo.generateJdbcType("float"));
+        assertEquals("REAL", mo.generateJdbcType("java.lang.Float"));
+        assertEquals("REAL", mo.generateJdbcType("float"));
+        assertEquals("DOUBLE", mo.generateJdbcType("java.lang.Double"));
+        assertEquals("DOUBLE", mo.generateJdbcType("double"));
         assertEquals("DATE", mo.generateJdbcType("java.util.Date"));
         assertEquals("some_type", mo.generateJdbcType("some_type"));
         try {
