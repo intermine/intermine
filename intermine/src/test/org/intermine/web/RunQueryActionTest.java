@@ -25,7 +25,7 @@ public class RunQueryActionTest extends MockStrutsTestCase
         getSession().setAttribute(Constants.QUERY, new IqlQuery("select c from Company as c", "org.intermine.model.testmodel").toQuery());
         actionPerform();
         verifyForward("results");
-        assertNotNull(getSession().getAttribute("results"));
+        assertNotNull(getRequest().getAttribute("results"));
         verifyNoActionErrors();
     }
 
