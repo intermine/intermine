@@ -68,23 +68,6 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
-
-    private Set compareItemSets(Set a, Set b) {
-        Set diff = new HashSet(a);
-        Iterator i = a.iterator();
-        while (i.hasNext()) {
-            Item itemA = (Item) i.next();
-            Iterator j = b.iterator();
-            while (j.hasNext()) {
-                Item itemB = (Item) j.next();
-                if (itemA.equals(itemB)) {
-                    diff.remove(itemA);
-                }
-            }
-        }
-        return diff;
-    }
-
     public void testSetGeneSynonyms() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl-human#";
         Item gene = createItem(srcNs + "gene", "4_1", "");
@@ -115,7 +98,6 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
     public void testSetOrganismDbId() throws Exception {
         String srcNs = "http://www.flymine.org/model/ensembl-human#";
         Item gene = createItem(srcNs + "gene", "1_1", "");
-
         gene.addReference(new Reference("seq_region", "1_99"));
 
         Item seq =  createItem(srcNs + "seq_region", "1_99", "");
@@ -157,6 +139,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         exp3.addReference(new Reference("source", "-1_2"));
 
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
+
         assertEquals(expected, translator.translateItem(gene));
     }
 
