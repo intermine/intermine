@@ -990,7 +990,7 @@ public class CalculateLocations
                                                  locContigOnSc);
 
             // XXX FIXME - work around for Ensembl Anopheles problem: contig on supercontig strand
-            // should always be 1
+            // should always be 1 - see ticket #64
             contigOnSc.setStrand(1);
 
             // create location of contig on chromosome, don't expect partial locations
