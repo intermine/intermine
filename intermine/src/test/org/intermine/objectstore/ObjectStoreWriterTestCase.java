@@ -2,15 +2,7 @@ package org.flymine.objectstore;
 
 import junit.framework.TestCase;
 
-import java.lang.reflect.Field;
-
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
 import org.flymine.model.testmodel.*;
-
 import org.flymine.objectstore.query.*;
 
 public class ObjectStoreWriterTestCase extends TestCase

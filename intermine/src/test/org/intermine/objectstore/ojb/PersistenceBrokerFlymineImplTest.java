@@ -1,22 +1,14 @@
 package org.flymine.objectstore.ojb;
 
-import java.util.List;
 import java.util.Collection;
-import java.util.Iterator;
 import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
 
-import org.apache.ojb.broker.*;
+import org.apache.ojb.broker.singlevm.DelegatingPersistenceBroker;
 import org.apache.ojb.broker.metadata.*;
-import org.apache.ojb.broker.singlevm.*;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.*;
-import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
-import org.flymine.objectstore.ojb.PersistenceBrokerFlyMineImpl;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;

@@ -3,13 +3,9 @@ package org.flymine.objectstore.ojb;
 import junit.framework.TestCase;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockResultSetMetaData;
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.PersistenceBrokerFactory;
-import org.apache.ojb.broker.PBKey;
 
 public class MultiObjectRsIteratorTest extends TestCase
 {

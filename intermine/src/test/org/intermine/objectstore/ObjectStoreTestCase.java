@@ -162,9 +162,9 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
                              { data.get("EmployeeA1") } };
         results.put("SelectInterfaceAndSubClasses3", toList(r));
 
-        r = new Object[][] { { data.get("SecretaryA1") },
-                             { data.get("SecretaryA2") },
-                             { data.get("SecretaryA3") } };
+        r = new Object[][] { { data.get("Secretary1") },
+                             { data.get("Secretary2") },
+                             { data.get("Secretary3") } };
         results.put("SelectUnidirectionalCollection", toList(r));
     }
 

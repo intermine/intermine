@@ -2,14 +2,9 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;

@@ -1,7 +1,5 @@
 package org.flymine.objectstore.ojb;
 
-import junit.framework.TestCase;
-
 import org.flymine.objectstore.ObjectStoreWriterTestCase;
 import org.flymine.objectstore.ObjectStoreFactory;
 

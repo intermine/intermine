@@ -6,33 +6,18 @@ import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.sql.ResultSet;
 
-import org.apache.ojb.broker.metadata.ClassDescriptor;
-import org.apache.ojb.broker.metadata.DescriptorRepository;
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.PBFactoryException;
-import org.apache.ojb.broker.PersistenceBrokerFactory;
-import org.apache.ojb.broker.accesslayer.JdbcAccess;
-import org.apache.ojb.broker.query.QueryByCriteria;
-import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.accesslayer.ResultSetAndStatement;
 
-import org.flymine.model.testmodel.Company;
-import org.flymine.model.testmodel.Employee;
-import org.flymine.model.testmodel.Address;
+import org.flymine.model.testmodel.*;
 
 import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.ojb.JdbcAccessFlymineImpl;
-import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
-import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.testing.OneTimeTestCase;
 

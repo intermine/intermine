@@ -2,10 +2,7 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.testmodel.Department;
-import org.flymine.model.testmodel.Manager;
-import org.flymine.model.testmodel.Employee;
-
+import org.flymine.model.testmodel.*;
 
 public class SubqueryConstraintTest extends TestCase {
 

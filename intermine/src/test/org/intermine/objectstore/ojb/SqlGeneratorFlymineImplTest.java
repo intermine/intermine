@@ -1,15 +1,14 @@
 package org.flymine.objectstore.ojb;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.*;
-import org.apache.ojb.broker.*;
-import org.apache.ojb.broker.metadata.*;
 
-import org.flymine.model.testmodel.Company;
+import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
+
+import org.flymine.model.testmodel.*;
 
 public class SqlGeneratorFlymineImplTest extends TestCase
 {

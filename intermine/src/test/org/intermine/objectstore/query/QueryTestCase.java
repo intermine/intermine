@@ -1,11 +1,6 @@
 package org.flymine.objectstore.query;
 
-import junit.framework.*;
-
-import java.util.Set;
-import java.util.List;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.flymine.model.testmodel.*;
