@@ -1,4 +1,4 @@
-@prefix :     <http://flymine.org/model/rnai#>.
+@prefix :     <http://www.flymine.org/model/rnai#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix owl:  <http://www.w3.org/2002/07/owl#>.
@@ -18,7 +18,7 @@
     rdfs:domain :Gene;
     rdfs:range :Organism.
 
-:Gene__phenotype a owl:ObjectProperty;
+:Gene__phenotypes a owl:ObjectProperty;
     rdfs:domain :Gene;
     rdfs:range :Phenotype.
 
