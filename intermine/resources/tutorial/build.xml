@@ -11,6 +11,7 @@
   <property name="resources" location="resources"/>
   <property name="src" location="src"/>
   <property name="src.java" location="${src}/java"/>
+  <property name="dist" location="dist"/>
 
   <!-- runtime settings -->
   <property name="runtime.properties" value="flymine.properties" />
@@ -31,6 +32,7 @@
 
   <!-- initialisation -->
   <target name="prepare">  
+    <mkdir dir="${dist}"/>
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.model}"/>
@@ -108,6 +110,14 @@
       </javac>
   </target>
 
+  <target name="jar-model" depends="build-model"
+          description="create a jar of the model">
+    <ant antfile="build-model.xml" target="jar">
+      <property name="model.name" value="tutorial"/>
+      <reference torefid="class.path" refid="tutorial.class.path"/>
+    </ant>    
+  </target>
+
   <!-- execute the tutorial -->
   <target name="run" depends="clean, compile, insert-data">
     <java classname="org.flymine.tutorial.SimpleQuery" dir="${build}" fork="true">
@@ -119,6 +129,7 @@
   <target name="clean"
           description="clean up generated files">
     <delete dir="${build}"/>
+    <delete dir="${dist}"/>
     <delete file="flymine.log"/>
     <delete file="velocity.log"/>
   </target>
