@@ -18,6 +18,7 @@ import java.sql.*;
 public class MapResultSet implements ResultSet
 {
     private Map row;
+    private boolean lastGetWasNull = false;
 
     /**
      * @see java.sql.ResultSet
@@ -50,7 +51,7 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#wasNull
      */    
     public boolean wasNull() throws SQLException {
-        return false;
+        return lastGetWasNull;
     }
 
     /**
@@ -212,7 +213,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getBoolean
      */    
     public boolean getBoolean(String s) throws SQLException {
-        return ((Boolean) get(s)).booleanValue();
+        Boolean b = (Boolean) get(s);
+        return (b == null ? false : b.booleanValue());
     }
 
     /**
@@ -220,7 +222,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getByte
      */    
     public byte getByte(String s) throws SQLException {
-        return ((Byte) get(s)).byteValue();
+        Byte b = (Byte) get(s);
+        return (b == null ? 0 : b.byteValue());
     }
 
     /**
@@ -228,7 +231,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getShort
      */    
     public short getShort(String s) throws SQLException {
-        return ((Short) get(s)).shortValue();
+        Short n = (Short) get(s);
+        return (n == null ? 0 : n.shortValue());
     }
 
     /**
@@ -236,7 +240,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getInt
      */    
     public int getInt(String s) throws SQLException {
-        return ((Integer) get(s)).intValue();
+        Integer i = (Integer) get(s);
+        return (i == null ? 0 : i.intValue());
     }
 
     /**
@@ -244,7 +249,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getLong
      */    
     public long getLong(String s) throws SQLException {
-        return ((Long) get(s)).longValue();
+        Long l = (Long) get(s);
+        return (l == null ? 0 : l.longValue());
     }
 
     /**
@@ -252,7 +258,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getFloat
      */    
     public float getFloat(String s) throws SQLException {
-        return ((Float) get(s)).floatValue();
+        Float f = (Float) get(s);
+        return (f == null ? 0.0f : f.floatValue());
     }
 
     /**
@@ -260,7 +267,8 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#getDouble
      */    
     public double getDouble(String s) throws SQLException {
-        return ((Double) get(s)).doubleValue();
+        Double d = (Double) get(s);
+        return (d == null ? 0.0 : d.doubleValue());
     }
 
     /**
@@ -1201,12 +1209,16 @@ public class MapResultSet implements ResultSet
     }
 
     private Object get(String s) throws SQLException {
+        Object retval = null;
         if (row.containsKey(s)) {
-            return row.get(s);
+            retval = row.get(s);
         } else if (row.containsKey(s.toLowerCase())) {
-            return row.get(s.toLowerCase());
+            retval = row.get(s.toLowerCase());
+        } else {
+            throw new SQLException("Column " + s + " not found");
         }
-        throw new SQLException("Column " + s + " not found");
+        lastGetWasNull = (retval == null);
+        return retval;
     }
     
     private void unsupported() throws SQLException {
