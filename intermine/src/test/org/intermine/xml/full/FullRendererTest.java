@@ -70,6 +70,7 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderItems() throws Exception {
         String generated = FullRenderer.render(getExampleItems());
+        org.intermine.Logger.log(generated);
         InputStream expected = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
@@ -157,7 +158,7 @@ public class FullRendererTest extends XMLTestCase
 
         Address a1 = new Address();
         a1.setId(new Integer(2));
-        a1.setAddress("Address1");
+        a1.setAddress("\"Company's\" street");
         Department d1 = new Department();
         d1.setId(new Integer(3));
         d1.setName("Department1");
@@ -332,7 +333,7 @@ public class FullRendererTest extends XMLTestCase
         item2.setIdentifier(id2);
         Attribute attr3 = new Attribute();
         attr3.setName("address");
-        attr3.setValue("Address1");
+        attr3.setValue("\"Company's\" street");
         item2.addAttribute(attr3);
 
         Item item3 = new Item();

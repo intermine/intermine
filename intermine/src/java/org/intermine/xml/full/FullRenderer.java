@@ -184,8 +184,11 @@ public class FullRenderer
         attrs.addAll(item.getAttributes());
         for (Iterator i = attrs.iterator(); i.hasNext();) {
             Attribute attr = (Attribute) i.next();
+            String value = attr.getValue();
+            
             sb.append("<attribute name=\"" + attr.getName() + "\" value=\""
-                + attr.getValue() + "\"/>" + ENDL);
+                      + attr.getValue().replaceAll("\"", "&quot;").replaceAll("'", "&apos;")
+                      + "\"/>" + ENDL);
         }
 
         TreeSet refs = new TreeSet(new SimpleComparator());
