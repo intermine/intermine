@@ -138,5 +138,6 @@
 				Having completed that wait, the method retrieves a request from the pending queue, adds it to the in-progress list, and removes it from the pending queue, before returning the request to the caller.</para>
 			<inlinegraphic fileref="results_prefetch_getRequest"/>
 		</sect2>
+		<para>These diagrams show that there is no possibility for a deadlock in the Prefetch Manager, as the locks are synchronised on in a strict order - left to right in the diagrams.</para>
 	</sect1>
 </article>
