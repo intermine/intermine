@@ -3,12 +3,9 @@ package org.flymine.objectstore.ojb;
 import junit.framework.Test;
 
 import java.util.Date;
-import java.util.Vector;
-import java.util.Iterator;
 
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
-import org.apache.ojb.broker.metadata.*;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
@@ -26,9 +23,6 @@ import org.flymine.model.testmodel.*;
 
 public class FlymineSqlSelectStatementTest extends SetupDataTestCase
 {
-    //protected static final org.apache.log4j.Logger LOG
-    //    = org.apache.log4j.Logger.getLogger(FlymineSqlSelectStatementTest.class);
-
     protected static DescriptorRepository dr;
 
     public FlymineSqlSelectStatementTest(String arg1) {
@@ -41,6 +35,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
 
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
         setUpResults();

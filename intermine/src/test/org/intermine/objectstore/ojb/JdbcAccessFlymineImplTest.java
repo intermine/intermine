@@ -63,6 +63,7 @@ public class JdbcAccessFlymineImplTest extends SetupDataTestCase
         q1.setConstraint(sc1);
 
         // Get db and writer in order to store data
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         pb = (PersistenceBrokerFlyMine) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
 
         // clear the cache to ensure that objects are materialised later (in case broker reused)
@@ -73,7 +74,6 @@ public class JdbcAccessFlymineImplTest extends SetupDataTestCase
 
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
-
         setUpResults();
     }
 
