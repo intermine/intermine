@@ -12,8 +12,13 @@ package org.flymine.postprocess;
 
 import junit.framework.TestCase;
 
+import java.util.HashSet;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
+import java.io.StringWriter;
 import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +28,7 @@ import java.util.Collection;
 import org.intermine.metadata.Model;
 import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
 
@@ -32,21 +38,18 @@ import org.flymine.model.genomic.Author;
 public class UpdatePublicationsTest extends TestCase
 {
     public void testUpdatePublications() throws Exception {
-        TestUpdatePublications test = new TestUpdatePublications(null);
-        test.execute();
+        StringWriter sw = new StringWriter();
+        new TestUpdatePublications(null, sw).execute();
 
         List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UpdatePublicationsTest_tgt.xml"));
         
-        assertEquals(expected, FullRenderer.toItems(test.objects, Model.getInstanceByName("genomic")));
+        assertEquals(new HashSet(expected), new HashSet(FullParser.parse(new ByteArrayInputStream(sw.toString().getBytes()))));
     }
 
     class TestUpdatePublications extends UpdatePublications
     {
-        protected List objects = new ArrayList();
-        protected int id = 0;
-
-        public TestUpdatePublications(IntegrationWriter iw) {
-            super(iw);
+        public TestUpdatePublications(ObjectStore os, Writer writer) {
+            super(os, writer);
         }
 
         protected List getPublications() {
@@ -60,19 +63,6 @@ public class UpdatePublicationsTest extends TestCase
 
         protected Reader getReader(Set ids) {
             return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/UpdatePublicationsTest_esummary.xml"));
-        }
-        
-        protected void storePublications(Collection publications) throws ObjectStoreException {
-            for (Iterator i = publications.iterator(); i.hasNext();) {
-                Publication publication = (Publication) i.next();
-                publication.setId(new Integer(id++));
-                objects.add(publication);
-                for (Iterator j = publication.getAuthors().iterator(); j.hasNext();) {
-                    Author author = (Author) j.next();
-                    author.setId(new Integer(id++));
-                    objects.add(author);
-                }
-            }
         }
     }
 }
