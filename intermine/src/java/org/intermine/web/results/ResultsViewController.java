@@ -10,6 +10,9 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +35,7 @@ import org.flymine.objectstore.query.Results;
 public class ResultsViewController extends TilesAction
 {
     protected static final String DISPLAYABLERESULTS_NAME = "resultsTable";
+    protected static final String SAVEDBAGS_NAME = "savedBags";
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -63,10 +67,19 @@ public class ResultsViewController extends TilesAction
         drNew.update(drOrig);
     }
 
+    // Do we have any saved bags - if not add an empty map to the session
+    Map savedBags = (Map) session.getAttribute(SAVEDBAGS_NAME);
+    if (savedBags == null) {
+        savedBags = new HashMap();
+    }
+
     // Put required things on the request or session or tile context
 
     // The DisplayableResults object
     session.setAttribute(DISPLAYABLERESULTS_NAME, drNew);
+
+    // The savedBags Map
+    session.setAttribute(SAVEDBAGS_NAME, savedBags);
 
     return null;
   }
