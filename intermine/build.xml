@@ -378,7 +378,7 @@
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="userprofile"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.unittest"/>
+      <property name="db.name" value="db.userprofile"/>
       <property name="objectstore.name" value="os.userprofile"/>      
     </ant>
   </target>
