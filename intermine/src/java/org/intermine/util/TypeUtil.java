@@ -258,15 +258,12 @@ public class TypeUtil
                             Method setter = (Method) methods.get(setterName);
                             Method proxySetter = (Method) methods.get(proxySetterName);
                             Method proxyGetter = (Method) methods.get(proxyGetterName);
-                            String fieldName = getterName.substring(3);
-                            if (Character.isLowerCase(fieldName.charAt(1))) {
-                                fieldName = StringUtil.decapitalise(fieldName);
-                            }
+                            String fieldName = StringUtil.decapitalise(getterName.substring(3));
                             // cglib Factory interface has getCallBack() and getCallBacks() methods
                             if (!getter.getName().equals("getClass")
                                 && !getter.getName().startsWith("getCallback")) {
                                 FieldInfo info = new FieldInfo(fieldName, getter, setter,
-                                        proxySetter, proxyGetter);
+                                                               proxySetter, proxyGetter);
                                 infos.put(fieldName, info);
                             }
                         }
