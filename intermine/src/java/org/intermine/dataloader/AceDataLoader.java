@@ -65,12 +65,13 @@ public class AceDataLoader extends DataLoader
 
                 AceURL objURL = source.relativeURL(clazzName);
                 AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
-
-                Collection objects = processAceObjects(fetchedAceObjects);
-                Iterator objIter = objects.iterator();
-                while (objIter.hasNext()) {
-                    // Now store that object
-                    store(objIter.next());
+                if (fetchedAceObjects != null) {
+                    Collection objects = processAceObjects(fetchedAceObjects);
+                    Iterator objIter = objects.iterator();
+                    while (objIter.hasNext()) {
+                        // Now store that object
+                        store(objIter.next());
+                    }
                 }
             }
 
