@@ -16,10 +16,6 @@ to <email>info[at]intermine.org</email>.</para>
 use under the terms of the <ulink url="http://www.gnu.org/licenses/lgpl.html">
 GNU LGPL licence</ulink></para>.
 
-<para>Depending on your needs, you can either download precompiled jar
-files of the InterMine distribution, or build these yourself from
-source.</para>
-
 <sect1>
 <title>Obtaining the source code</title>
 
@@ -74,15 +70,17 @@ webservice.</para>
 <itemizedlist>
 
 <listitem>Issue the command <command>ant jar</command> (if building
-from source). This will create a file <filename>intermine.jar</filename>
-in the <filename>dist</filename> directory.</listitem>
+from source). This will create the files
+<filename>intermine.jar</filename> and
+<filename>intermine-all.jar</filename> in the
+<filename>dist</filename>
+directory. <filename>intermine-all.jar</filename> contains all dependent
+libraries as well as the InterMine classes.</listitem>
 
-<listitem>Copy the file <filename>intermine.jar</filename> to
-a directory on your classpath</listitem>
-
-<listitem>Copy any of the jars in the <filename>lib/</filename>
-directory that you don't already have to a directory on your
-classpath</listitem>
+<listitem>Copy the file <filename>intermine-all.jar</filename> to a
+directory on your classpath, OR <filename>intermine.jar</filename>
+plus any of the jars in the <filename>lib/</filename> directory that
+you don't already have.</listitem>
 
 <listitem>Write a program using the InterMine Query API. Many things
 (such as locations of the data) are configurable by having a file
@@ -90,29 +88,6 @@ classpath</listitem>
 than <filename>intermine.jar</filename>). An example
 <filename>intermine.properties</filename> can be found in the jar
 file.</listitem>
-
-</itemizedlist>
-
-</sect2>
-
-<sect2>
-<title>Building an InterMine database</title>
-
-<para>An InterMine database contains data in a certain format that has
-been integrated from various other data sources. These data sources
-must be installed locally and their locations configures in
-<filename>intermine.properties</filename>.</para>
-
-<itemizedlist>
-
-<listitem>Edit the file <filename>intermine.properties</filename>,
-changing the locations of servers and datasources to match your local
-site. This file is commented so should be
-self-explanatory.</listitem>
-
-<listitem>Issue the command <command>ant build-db</command> to build
-the integrated database. This may take a very long time to complete,
-depending on the number of datasources configured.</listitem>
 
 </itemizedlist>
 
@@ -134,6 +109,7 @@ the manager application.</listitem>
 <listitem>Configure the underlying ObjectStore properties in the
 <filename>intermine.properties</filename> file.</listitem>
 
+<listitem>Issue the command <command>ant build-webapp</command>.</listitem>
 <listitem>Issue the command <command>ant release-webapp</command>.</listitem>
 
 </itemizedlist>
