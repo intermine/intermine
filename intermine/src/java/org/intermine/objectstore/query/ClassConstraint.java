@@ -92,8 +92,7 @@ public class ClassConstraint extends Constraint
             throw new NullPointerException("obj cannot be null");
         }
 
-        if (!(qc.getType().isAssignableFrom(obj.getClass())
-              || obj.getClass().isAssignableFrom(qc.getType()))) {
+        if (!(qc.getType().isAssignableFrom(obj.getClass()))) {
               throw new IllegalArgumentException("Invalid constraint: "
                                                + qc.getType()
                                                + " " + op
