@@ -18,8 +18,8 @@
 			The <ulink url="../iql_query/spec">IQL document</ulink> provides a reasonable background to the structure of the interface, since IQL maps fairly directly onto the Java interface.
 			In fact, by far the easiest method of creating a Java InterMine Query object is to use the following constructor:</para>
 		<programlisting>
-import <ulink url="/api/org/intermine/objectstore/query/Query">org.intermine.objectstore.query.Query</ulink>;
-import <ulink url="/api/org/intermine/objectstore/query/iql/IqlQuery">org.intermine.objectstore.query.iql.IqlQuery</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/Query">org.intermine.objectstore.query.Query</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/iql/IqlQuery">org.intermine.objectstore.query.iql.IqlQuery</ulink>;
 
 Query q = new IqlQuery("--- IQL Query text ---", null).toQuery();
 		</programlisting>
@@ -29,18 +29,18 @@ Query q = new IqlQuery("--- IQL Query text ---", null).toQuery();
 	<sect1>
 		<title>Structure</title>
 		<itemizedlist>
-			<listitem>The Java Query object has a From list (which is actually a Set), which can contain <ulink url="/api/org/intermine/objectstore/query/FromElement">FromElement</ulink> objects (which can be <ulink url="/api/org/intermine/objectstore/query/QueryClass">QueryClass</ulink> or <ulink url="/api/org/intermine/objectstore/query/Query">Query</ulink> objects).</listitem>
-			<listitem>The object has a Select list, which can contain any <ulink url="/api/org/intermine/objectstore/query/QueryNode">QueryNode</ulink> object, which include <ulink url="/api/org/intermine/objectstore/query/QueryClass">QueryClass</ulink>, <ulink url="/api/org/intermine/objectstore/query/QueryExpression">QueryExpression</ulink>, <ulink url="/api/org/intermine/objectstore/query/QueryField">QueryField</ulink>, <ulink url="/api/org/intermine/objectstore/query/QueryFunction">QueryFunction</ulink>, and <ulink url="/api/org/intermine/objectstore/query/QueryValue">QueryValue</ulink>.</listitem>
-			<listitem>The object has an Order By list, which can contain any <ulink url="/api/org/intermine/objectstore/query/QueryNode">QueryNode</ulink>.</listitem>
-			<listitem>The object has a Group By list (which is actually a Set), which can contain <ulink url="/api/org/intermine/objectstore/query/QueryNode">QueryNode</ulink> objects.
-				However, it does not make sense to include <ulink url="/api/org/intermine/objectstore/query/QueryValue">QueryValue</ulink> objects directly, or <ulink url="/api/org/intermine/objectstore/query/QueryFunction">QueryFunction</ulink> objects at all.</listitem>
-			<listitem>The object has a reference to a <highlights>single</highlights> <ulink url="/api/org/intermine/objectstore/query/Constraint">Constraint</ulink> object, but multiple constraints can be included by encapsulating them in a <ulink url="/api/org/intermine/objectstore/query/ConstraintSet">ConstraintSet</ulink> object.</listitem>
+			<listitem>The Java Query object has a From list (which is actually a Set), which can contain <ulink url="../../../api/org/intermine/objectstore/query/FromElement">FromElement</ulink> objects (which can be <ulink url="../../../api/org/intermine/objectstore/query/QueryClass">QueryClass</ulink> or <ulink url="../../../api/org/intermine/objectstore/query/Query">Query</ulink> objects).</listitem>
+			<listitem>The object has a Select list, which can contain any <ulink url="../../../api/org/intermine/objectstore/query/QueryNode">QueryNode</ulink> object, which include <ulink url="../../../api/org/intermine/objectstore/query/QueryClass">QueryClass</ulink>, <ulink url="../../../api/org/intermine/objectstore/query/QueryExpression">QueryExpression</ulink>, <ulink url="../../../api/org/intermine/objectstore/query/QueryField">QueryField</ulink>, <ulink url="../../../api/org/intermine/objectstore/query/QueryFunction">QueryFunction</ulink>, and <ulink url="../../../api/org/intermine/objectstore/query/QueryValue">QueryValue</ulink>.</listitem>
+			<listitem>The object has an Order By list, which can contain any <ulink url="../../../api/org/intermine/objectstore/query/QueryNode">QueryNode</ulink>.</listitem>
+			<listitem>The object has a Group By list (which is actually a Set), which can contain <ulink url="../../../api/org/intermine/objectstore/query/QueryNode">QueryNode</ulink> objects.
+				However, it does not make sense to include <ulink url="../../../api/org/intermine/objectstore/query/QueryValue">QueryValue</ulink> objects directly, or <ulink url="../../../api/org/intermine/objectstore/query/QueryFunction">QueryFunction</ulink> objects at all.</listitem>
+			<listitem>The object has a reference to a <highlights>single</highlights> <ulink url="../../../api/org/intermine/objectstore/query/Constraint">Constraint</ulink> object, but multiple constraints can be included by encapsulating them in a <ulink url="../../../api/org/intermine/objectstore/query/ConstraintSet">ConstraintSet</ulink> object.</listitem>
 		</itemizedlist>
 	</sect1>
 
 	<sect1>
 		<title>API Javadoc</title>
-		<para>The most exhaustive source of information on the Java InterMine Query interface is in the <ulink url="/api/org/intermine/objectstore/query/package-summary">API Javadoc</ulink>.
+		<para>The most exhaustive source of information on the Java InterMine Query interface is in the <ulink url="../../../api/org/intermine/objectstore/query/package-summary">API Javadoc</ulink>.
 			The InterMine Query is implemented in the org.intermine.objectstore.query package.</para>
 	</sect1>
 
@@ -52,11 +52,11 @@ SELECT a.field1, a.field2 FROM a WHERE a.field3 = 'Hello';
 		</programlisting>
 		<para>The Query is built up in stages.</para>
 		<programlisting>
-import <ulink url="/api/org/intermine/objectstore/query/Query">org.intermine.objectstore.query.Query</ulink>;
-import <ulink url="/api/org/intermine/objectstore/query/QueryClass">org.intermine.objectstore.query.QueryClass</ulink>;
-import <ulink url="/api/org/intermine/objectstore/query/QueryField">org.intermine.objectstore.query.QueryField</ulink>;
-import <ulink url="/api/org/intermine/objectstore/query/QueryValue">org.intermine.objectstore.query.QueryValue</ulink>;
-import <ulink url="/api/org/intermine/objectstore/query/SimpleConstraint">org.intermine.objectstore.query.SimpleConstraint</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/Query">org.intermine.objectstore.query.Query</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/QueryClass">org.intermine.objectstore.query.QueryClass</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/QueryField">org.intermine.objectstore.query.QueryField</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/QueryValue">org.intermine.objectstore.query.QueryValue</ulink>;
+import <ulink url="../../../api/org/intermine/objectstore/query/SimpleConstraint">org.intermine.objectstore.query.SimpleConstraint</ulink>;
 
 Query q = new Query();
 QueryClass c = new QueryClass(a.class);
