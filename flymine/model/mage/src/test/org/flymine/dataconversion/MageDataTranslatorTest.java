@@ -407,7 +407,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
+        InputStreamReader reader = new InputStreamReader(
+            getClass().getClassLoader().getResourceAsStream("genomic.n3"));
 
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(reader, null, "N3");
