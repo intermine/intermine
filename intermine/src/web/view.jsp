@@ -55,6 +55,7 @@
         </html:link>
       </div>
     </c:if>
+    <br/>
     <tiles:get name="saveQuery"/>
   </c:if>
 </c:if>
