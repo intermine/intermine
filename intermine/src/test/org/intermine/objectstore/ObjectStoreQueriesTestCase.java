@@ -979,8 +979,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
-      select a1_, a1_.debt, a1_.vatNumber from (Broke, Company) as a1_
-      where a1_.debt > 0 and a1_.vatNumber > 0;
+      select a1_, a1_.debt, a1_.age from (Broke, Employee) as a1_
+      where a1_.debt > 0 and a1_.age > 0;
 
       Checks Attributes, and that they are sourced from the correct table
       Checks that two Interfaces can be combined
@@ -988,10 +988,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     public static Query dynamicInterfacesAttribute() throws Exception {
         Set classes = new HashSet();
         classes.add(Broke.class);
-        classes.add(Company.class);
+        classes.add(Employee.class);
         QueryClass qc1 = new QueryClass(classes);
         QueryField f1 = new QueryField(qc1, "debt");
-        QueryField f2 = new QueryField(qc1, "vatNumber");
+        QueryField f2 = new QueryField(qc1, "age");
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);

@@ -739,7 +739,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         Connection c = null;
         try {
             c = getConnection();
-            batch.flush(c);
+            Set readTables = SqlGenerator.findTableNames(q, getSchema());
+            batch.flush(c, readTables);
             return executeWithConnection(c, q, start, limit, optimise, explain, sequence);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
@@ -757,7 +758,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         Connection c = null;
         try {
             c = getConnection();
-            batch.flush(c);
+            Set readTables = SqlGenerator.findTableNames(q, getSchema());
+            batch.flush(c, readTables);
             return countWithConnection(c, q, sequence);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
@@ -776,7 +778,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         Connection c = null;
         try {
             c = getConnection();
-            batch.flush(c);
+            String readTable = SqlGenerator.tableNameForId(clazz, getSchema());
+            batch.flush(c, Collections.singleton(readTable));
             return internalGetObjectByIdWithConnection(c, id, clazz);
         } catch (SQLException e) {
             throw new ObjectStoreException("Could not get connection to database", e);
