@@ -50,7 +50,10 @@
             <html:link action="/editTemplate?name=${templateQuery.key}">
               <img border="0" class="arrow" src="images/edit.png" alt="->"/>
             </html:link>
-          </c:if><br/><img border="0" height="8" width="5" src="images/blank.png"/><br/>
+          </c:if>
+          <c:if test="${!status.last}">
+            <br/><img border="0" height="8" width="5" src="images/blank.png"/><br/>
+          </c:if>
         </c:forEach>
       </td>
     </tr>
