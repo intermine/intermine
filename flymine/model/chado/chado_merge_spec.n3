@@ -830,33 +830,33 @@ null:feature__md5checksum a owl:ObjectProperty ;
        ] .
 
 
-:TRNA a owl:Class ;
-      rdfs:subclassOf :LocatedSequenceFeature ;
-      rdfs:subClassOf chado:feature ;
-      rdfs:subClassOf
-        [ a owl:Restriction ;
-           owl:onProperty chado:feature__type ;
-           owl:hasValue
-               [  rdfs:subClassOf chado:cvterm ;
-                  rdfs:subClassOf
-                      [ a owl:Restriction ;
-                        owl:onProperty chado:cvterm__name ;
-                        owl:hasValue "tRNA"
-                      ] ;
-                  rdfs:subClassOf
-                      [ a owl:Restriction ;
-                        owl:onProperty chado:cvterm__cv ;
-                        owl:hasValue
-                            [ rdfs:subClassOf chado:cv ;
-                              rdfs:subClassOf
-                                   [ a owl:Restriction ;
-                                       owl:onProperty chado:cv__name ;
-                                       owl:hasValue "SO"
-                                   ]
-                            ]
-                      ]
-               ]
-       ] .
+#:TRNA a owl:Class ;
+#      rdfs:subclassOf :LocatedSequenceFeature ;
+#      rdfs:subClassOf chado:feature ;
+#      rdfs:subClassOf
+#        [ a owl:Restriction ;
+#           owl:onProperty chado:feature__type ;
+#           owl:hasValue
+#               [  rdfs:subClassOf chado:cvterm ;
+#                  rdfs:subClassOf
+#                      [ a owl:Restriction ;
+#                        owl:onProperty chado:cvterm__name ;
+#                        owl:hasValue "tRNA"
+#                      ] ;
+#                  rdfs:subClassOf
+#                      [ a owl:Restriction ;
+#                        owl:onProperty chado:cvterm__cv ;
+#                        owl:hasValue
+#                            [ rdfs:subClassOf chado:cv ;
+#                              rdfs:subClassOf
+#                                   [ a owl:Restriction ;
+#                                       owl:onProperty chado:cv__name ;
+#                                       owl:hasValue "SO"
+#                                   ]
+#                            ]
+#                      ]
+#               ]
+#       ] .
 
 :TranscriptionStartSite a owl:Class ;
       rdfs:subclassOf :LocatedSequenceFeature ;
