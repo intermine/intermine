@@ -141,11 +141,22 @@ public class AceDataLoader extends AbstractDataLoader
             Field nodeField = TypeUtil.getField(currentObject.getClass(), nodeName);
             if ((nodeField != null) && (nodeField.getType() == Boolean.class)) {
                 setField(currentObject, nodeName, Boolean.TRUE);
+            } else if ((nodeField != null) && !hasChildValues(aceNode)) {
+                // Is it a hash? If it is, currentObject will have a field of this name
+                // and node will not have any values hanging off it
+                // TODO: this logic
+                String nodeClass = nodeField.getType().getName();
+                StaticAceObject referredToAceObject = new StaticAceObject("", // no identifier
+                                                                    null, // no parent
+                                                                    nodeClass);
+                // Add all of the child nodes to this AceObject
+                Iterator nodesIter = aceNode.iterator();
+                while (nodesIter.hasNext()) {
+                    referredToAceObject.addNode((AceNode) nodesIter.next());
+                }
+                Object referredToObject = processAceObject(referredToAceObject, model);
+                setField(currentObject, nodeName, referredToObject);
             }
-
-            // Is it a hash? If it is, currentObject will have a field of this name
-            // and node will not have any values hanging off it
-            // TODO: this logic
 
         }
         // Now iterate through all the child nodes
@@ -171,11 +182,13 @@ public class AceDataLoader extends AbstractDataLoader
     protected static void setField(Object target, String fieldName, Object fieldValue)
         throws FlyMineException {
         try {
-            if (ModelUtil.getFieldType(target.getClass(), fieldName) == ModelUtil.COLLECTION) {
+            int fieldType = ModelUtil.getFieldType(target.getClass(), fieldName);
+            if (fieldType == ModelUtil.COLLECTION) {
                 ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
-            } else {
+            } else if ((fieldType == ModelUtil.REFERENCE) || (fieldType == ModelUtil.ATTRIBUTE)) {
                 TypeUtil.setFieldValue(target, fieldName, fieldValue);
             }
+            // else the field cannot be found -- do nothing
         } catch (IllegalAccessException e) {
             throw new FlyMineException(e);
         }
@@ -205,6 +218,28 @@ public class AceDataLoader extends AbstractDataLoader
         return name;
 
     }
+
+    /**
+     * Returns true if the given node has values as children
+     *
+     * @param node the node to test
+     * @return true if the node has values as children
+     * @throws AceException if error occurs with the Ace data
+     */
+    protected static boolean hasChildValues(AceNode node) throws AceException {
+        Iterator childIter = node.iterator();
+        while (childIter.hasNext()) {
+            AceNode childNode = (AceNode) childIter.next();
+            if ((childNode instanceof StringValue)
+                || (childNode instanceof IntValue)
+                || (childNode instanceof FloatValue)
+                || (childNode instanceof Reference)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Used for testing access to an AceDB server
