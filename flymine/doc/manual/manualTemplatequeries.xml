@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Predefined queries</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>To provide a more direct route to the data in FlyMine, a
+        number of queries have been predefined as templates.  A
+        template query is like a form with various boxes for you to
+        fill in. A number of template queries have been
+        predefined. These range from simple queries to more complex
+        queries covering a wide range of data.  </para>
+      </listitem>
+
+      <listitem>
+         <para>Template queries can be accessed from the main FlyMine
+         query page.  Templates can be selected either via a link from
+         the class categories section, where the templates have also
+         been divided into appropriate biological categories (note
+         that a template query may belong in more than category) or
+         from the 'Predefined template queries' section on the main query
+         page, from where there is a link to all template
+         queries (see screenshot below).</para>
+      </listitem>
+
+       <listitem>
+           <para>To run a template query:</para>
+       </listitem>
+     </itemizedlist>
+
+
+ <orderedlist>
+         <listitem>
+           <para>Select the query you wish to run either from the
+           lists on the main Query page or by selecting 'view all
+           template queries'.  Pressing the -&gt; next to the query
+           description will take you to the template form.</para>
+
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="templates1.png" />
+          </imageobject>
+        </mediaobject>
+
+</listitem>
+
+
+
+         <listitem>
+           <para>Fill in the boxes with the appropriate values or
+           leave them with the default values shown (see screenshot
+           below).</para>
+         </listitem>
+
+          <listitem>
+           <para>Pressing the 'View results' button will take you
+           directly to the results page (see <ulink
+           url="manualResultdisplay.xml">The result page</ulink> for
+           more details). Pressing the 'View query' button will
+           display the template query in the FlyMine Query Builder.
+           Here you can either use the template as a starting point
+           for building a more complex query, edit the query or simply
+           run the query as it is.  Press 'Show results' to run your
+           query. See <ulink url="manualStartingquery.xml">The FlyMine
+           query builder</ulink> for more details.</para>
+        
+
+
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="templates2.png" />
+          </imageobject>
+        </mediaobject>
+
+      </listitem>
+
+       </orderedlist>
+
+</section>
+
+</article>
+ 
+
+
+ 

@@ -24,15 +24,15 @@
 
     <itemizedlist>
       <listitem>
-        <para><ulink url="manualTemp1.xml">The FlyMine query builder</ulink></para>
+        <para><ulink url="manualQueryBuilderIntro.xml">Build your own query</ulink></para>
       </listitem>
 
       <listitem>
-        <para><ulink url="manualBrowsingdata.xml">Browsing FlyMine</ulink></para>
+        <para><ulink url="manualBrowsingdata.xml">Browse FlyMine</ulink></para>
       </listitem>
 
    <listitem>
-        <para><ulink url="manualTemp1.xml">Template Queries</ulink></para>
+        <para><ulink url="manualTemplatequeries.xml">Use a predefined query</ulink></para>
       </listitem>
 
 
@@ -44,17 +44,15 @@
 
 
   <section>
-    <title>The query interface</title>
+    <title>The FlyMine Query Builder</title>
 
     <itemizedlist>
       <listitem>
-        <para><ulink url="manualStartingquery.xml">Starting a FlyMine
-        query</ulink></para>
+        <para><ulink url="manualStartingquery.xml">Introduction</ulink></para>
       </listitem>
 
       <listitem>
-        <para><ulink url="manualClasschooser.xml">The class
-        chooser</ulink></para>
+        <para><ulink url="manualClasschooser.xml">Choosing a starting point</ulink></para>
       </listitem>
 
       <listitem>
@@ -68,17 +66,16 @@
       </listitem>
 
       <listitem>
-        <para><ulink url="manualConstraintslist.xml">The constraints
-        list</ulink></para>
+        <para><ulink url="manualConstraintslist.xml">Applying constraints to your query</ulink></para>
       </listitem>
 
       <listitem>
-        <para><ulink url="manualOutputfields.xml">The output fields
-        list</ulink></para>
+        <para><ulink url="manualOutputfields.xml">Selecting what to
+        show in your results</ulink></para>
       </listitem>
 
       <listitem>
-        <para><ulink url="manualShowresults.xml">Show results</ulink></para>
+        <para><ulink url="manualShowresults.xml">Viewing results</ulink></para>
       </listitem>
 
       <listitem>
@@ -87,8 +84,21 @@
       </listitem>
 
       <listitem>
-        <para><ulink url="manualResultdisplay.xml">The result
-        display</ulink></para>
+        <para><ulink url="manualExamplequeries.xml">Query
+        Examples</ulink></para>
+      </listitem>
+
+   </itemizedlist>
+</section>
+
+
+  <section>
+    <title>Results</title>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink url="manualResultdisplay.xml">The results
+        page</ulink></para>
       </listitem>
 
       <listitem>
@@ -115,10 +125,7 @@
         <para><ulink url="manualHistory.xml">Query history</ulink></para>
       </listitem>
 
-      <listitem>
-        <para><ulink url="manualExamplequeries.xml">Query
-        Examples</ulink></para>
-      </listitem>
+     
     </itemizedlist>
   </section>
 
