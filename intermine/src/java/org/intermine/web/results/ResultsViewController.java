@@ -26,6 +26,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.objectstore.query.Results;
+import org.flymine.web.Constants;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -35,24 +36,6 @@ import org.flymine.objectstore.query.Results;
  */
 public class ResultsViewController extends TilesAction
 {
-    /**
-     * The name of the attribute used to store the results map in the
-     * session object
-     */
-    public static final String DISPLAYABLERESULTS_NAME = "resultsTable";
-
-    /** 
-     * The name of the attribute used to store the saved bags Map in the
-     * session object
-     */
-    public static final String SAVEDBAGS_NAME = "savedBags";
-
-    /**
-     * The name of the attribute used to store the saved bags to saved bag
-     * name Map in the session object
-     */ 
-    public static final String SAVEDBAGSINVERSE_NAME = "savedBagsInverse";
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -79,31 +62,22 @@ public class ResultsViewController extends TilesAction
         // Do we already have a configuration object? If we do, update the
         // new one to inherit properties off the old one
         DisplayableResults drOrig = (DisplayableResults)
-            session.getAttribute(DISPLAYABLERESULTS_NAME);
+            session.getAttribute(Constants.RESULTS_TABLE);
         DisplayableResults drNew = new DisplayableResults(results);
         if (drOrig != null) {
             drNew.update(drOrig);
         }
+        session.setAttribute(Constants.RESULTS_TABLE, drNew);
 
-        // Do we have any saved bags - if not add an empty map to the session
-        Map savedBags = (Map) session.getAttribute(SAVEDBAGS_NAME);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         if (savedBags == null) {
-            savedBags = new HashMap();
+            session.setAttribute(Constants.SAVED_BAGS, new HashMap());
         }
 
-        Map savedBagsInverse = (Map) session.getAttribute(SAVEDBAGSINVERSE_NAME);
+        Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         if (savedBagsInverse == null) {
-            savedBagsInverse = new IdentityHashMap();
+            session.setAttribute(Constants.SAVED_BAGS_INVERSE, new IdentityHashMap());
         }
-
-        // Put required things on the request or session or tile context
-
-        // The DisplayableResults object
-        session.setAttribute(DISPLAYABLERESULTS_NAME, drNew);
-
-        // The savedBags Map
-        session.setAttribute(SAVEDBAGS_NAME, savedBags);
-        session.setAttribute(SAVEDBAGSINVERSE_NAME, savedBagsInverse);
 
         return null;
     }
