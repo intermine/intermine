@@ -38,7 +38,7 @@
       <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
                  title="${sourceTitle}: ${thisSynonym.synonym}"
                  target="view_window">
-        <html:img src="model/ensembl_logo_small.png"/>
+        <html:img src="model/${sourceTitle}_logo_small.png"/>
         <c:out value="${thisSynonym.synonym}"/>
       </html:link>
     </li>
