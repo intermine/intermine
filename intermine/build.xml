@@ -1751,7 +1751,25 @@
       password="${webservice.password}"
       path="${webservice.path}"/>
   </target>
-  
+ 
+  <target name="dot-main" depends="compile-main">
+    <taskdef
+      name="dot"
+      classname="org.flymine.task.InheritanceDotTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <dot directory="${src.java}" packageName="org.flymine" file="main.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
+  </target>
+
+  <target name="dot-test" depends="compile-test">
+    <taskdef
+      name="dot"
+      classname="org.flymine.task.InheritanceDotTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <dot directory="${src.test}" packageName="org.flymine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
+  </target>
+
   <!-- Cleaning-up targets -->
 
   <target name="clean"
