@@ -1,7 +1,7 @@
-<menu>
+<index>
   <section>
     <heading>Database Documentation</heading>
-    <item><ulink url="usage_scenarios/">Usage scenarios</ulink></item>
-    <item><ulink url="ontology_merging/">Object Model from Ontology Merging</ulink></item>
+    <item><ulink url="usage_scenarios/index.xml">Usage scenarios</ulink></item>
+    <item><ulink url="ontology_merging/index.xml">Object Model from Ontology Merging</ulink></item>
   </section>
-</menu>
+</index>
