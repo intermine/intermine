@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
@@ -55,11 +56,13 @@ public class Constraint
      *
      * @return  constraint value translated for the user as a string
      */
-    public String getDisplayValue() {
+    public String getDisplayValue(PathNode node) {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
             return MainForm.wildcardSqlToUser(getValue().toString());
+        //} else if (!node.isAttribute() && !BagConstraint.VALID_OPS.contains(getOp())) {
+        //    return MainForm.dotPathToNicePath("" + getValue());
         } else {
-            return getValue().toString();
+            return "" + getValue();
         }
     }
 
