@@ -77,7 +77,9 @@ public class SavedQueryParser
             }
             if (qName.equals("node")) {
                 qNode = MainHelper.addNode(qNodes, attrs.getValue("path"), model);
-                qNode.setType(attrs.getValue("type"));
+                if (attrs.getValue("type") != null) {
+                    qNode.setType(attrs.getValue("type"));
+                }
             }
             if (qName.equals("constraint")) {
                 int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
