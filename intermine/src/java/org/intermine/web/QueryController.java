@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionMapping;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -48,7 +49,7 @@ public class QueryController extends TilesAction
 
         HttpSession session = request.getSession();
 
-        Model model = Model.getInstanceByName("testmodel");
+        Model model = ObjectStoreFactory.getObjectStore().getModel();
         session.setAttribute("model", new DisplayModel(model));
 
         Map classNames = new HashMap();
