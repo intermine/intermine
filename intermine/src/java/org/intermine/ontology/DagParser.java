@@ -253,7 +253,8 @@ public class DagParser
             line = line.replaceAll("@ISA@|@isa@|@is_a@|@IS_A@", ISA);
             line = line.replaceAll("@PARTOF@|@partof@|@part_of@|@PART_OF@", PARTOF);
             // for the moment we want derived_from relationships to look like part_ofs
-            line = line.replaceAll("@DERIVEDFROM@|@derivedfrom@|@derived_from@|@DERIVED_FROM@", PARTOF);
+            line = line
+             .replaceAll("@DERIVEDFROM@|@derivedfrom@|@derived_from@|@DERIVED_FROM@", PARTOF);
             writer.write(line + "\n");
         }
         writer.close();
