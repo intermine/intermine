@@ -108,6 +108,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map maer2Gene =  new HashMap();
     protected Set cdnaSet = new HashSet();
     protected Map geneMap =  new HashMap(); //organisamDbId, geneItem
+    protected Set assaySet = new HashSet();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -145,6 +146,11 @@ public class MageDataTranslator extends DataTranslator
         }
 
         i = processBioSourceTreatment().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
+        i = processAssayTissue().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
@@ -222,6 +228,7 @@ public class MageDataTranslator extends DataTranslator
                     storeTgtItem = false;
                 } else if (className.equals("DerivedBioAssay")) {
                     translateMicroArrayAssay(srcItem, tgtItem);
+                    storeTgtItem = false;
                 } else if (className.equals("BioAssayDatum")) {
                     translateMicroArrayExperimentalResult(srcItem, tgtItem, normalised);
                     storeTgtItem = false;
@@ -609,12 +616,12 @@ public class MageDataTranslator extends DataTranslator
             tgtItem.addAttribute(new Attribute("name", srcItem.getAttribute("name").getValue()));
         }
         // prefetch done
-        ReferenceList desRl = srcItem.getCollection("descriptions");
-        boolean desFlag = false;
-        boolean pubFlag = false;
-        for (Iterator i = desRl.getRefIds().iterator(); i.hasNext(); ) {
-            Item desItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
-            if (desItem != null) {
+        if (srcItem.hasCollection("descriptions")) {
+            ReferenceList desRl = srcItem.getCollection("descriptions");
+            boolean desFlag = false;
+            boolean pubFlag = false;
+            for (Iterator i = desRl.getRefIds().iterator(); i.hasNext(); ) {
+                Item desItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
                 if (desItem.hasAttribute("text")) {
                     if (desFlag) {
                         LOG.error("Already set description for MicroArrayExperiment, "
@@ -625,21 +632,23 @@ public class MageDataTranslator extends DataTranslator
                         desFlag = true;
                     }
                 }
-
-                ReferenceList publication = desItem.getCollection("bibliographicReferences");
-                if (publication != null) {
-                    if (!isSingleElementCollection(publication)) {
-                        throw new IllegalArgumentException("Experiment description collection ("
+                if (desItem.hasCollection("bibliographicReferences")) {
+                    ReferenceList publication = desItem.getCollection(
+                                                  "bibliographicReferences");
+                    if (publication != null) {
+                        if (!isSingleElementCollection(publication)) {
+                            throw new IllegalArgumentException("Experiment description collection ("
                                 + desItem.getIdentifier()
                                 + ") has more than one bibliographicReferences");
-                    } else {
-                        if (pubFlag) {
-                            LOG.error("Already set publication for MicroArrayExperiment, "
-                                      + " srcItem = " + srcItem.getIdentifier());
                         } else {
-                            tgtItem.addReference(new Reference("publication",
+                            if (pubFlag) {
+                                LOG.error("Already set publication for MicroArrayExperiment, "
+                                      + " srcItem = " + srcItem.getIdentifier());
+                            } else {
+                                tgtItem.addReference(new Reference("publication",
                                                                getFirstId(publication)));
-                            pubFlag = true;
+                                pubFlag = true;
+                            }
                         }
                     }
                 }
@@ -679,11 +688,11 @@ public class MageDataTranslator extends DataTranslator
                      }
                  }
              }
-             // possibly a bug with duplicates in this collection, causing
-             // loads of deletes at load time.  remove temporarily
+
              //tgtItem.addCollection(new ReferenceList("results", resultsRl));
              if (resultsRl != null) {
                  assay2Maer.put(srcItem.getIdentifier(), resultsRl);
+                 assaySet.add(tgtItem);
              }
          }
      }
@@ -1133,6 +1142,26 @@ public class MageDataTranslator extends DataTranslator
             ReferenceList treatments = new ReferenceList("treatments", treatList);
             bioSourceItem.addCollection(treatments);
             results.add(bioSourceItem);
+        }
+        return results;
+    }
+
+    /**
+     * add tissues collection to MicroArrayAssay
+     * @return MicroArrayAssay
+     */
+    protected Set processAssayTissue() {
+        Set results = new HashSet();
+        for (Iterator i = assaySet.iterator(); i.hasNext(); ) {
+            Item assayItem = (Item) i.next();
+            String id = (String) assayItem.getIdentifier();
+            if (assay2LabeledExtract.containsKey(id)) {
+                List tissue = (ArrayList) assay2LabeledExtract.get(id);
+                if (tissue != null) {
+                    assayItem.addCollection(new ReferenceList("tissues", tissue));
+                    results.add(assayItem);
+                }
+            }
         }
         return results;
     }
