@@ -20,6 +20,7 @@ import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Employee;
 import org.flymine.model.testmodel.Address;
 
+import org.flymine.objectstore.ObjectStoreQueriesTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
@@ -30,13 +31,15 @@ import org.flymine.objectstore.ojb.JdbcAccessFlymineImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
 
-public class JdbcAccessFlymineImplTest extends ObjectStoreTestCase
+public class JdbcAccessFlymineImplTest extends ObjectStoreQueriesTestCase
 {
     private JdbcAccessFlymineImpl ja;
     private Query q1, q2;
+    private PersistenceBrokerFlyMineImpl pb;
 
     public JdbcAccessFlymineImplTest(String arg) {
         super(arg);
@@ -44,7 +47,6 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        ja = (JdbcAccessFlymineImpl) pb.serviceJdbcAccess();
 
         // simple query
         q1 = new Query();
@@ -55,6 +57,24 @@ public class JdbcAccessFlymineImplTest extends ObjectStoreTestCase
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, new QueryValue("CompanyA"));
         q1.setConstraint(sc1);
 
+        // Get db and writer in order to store data
+        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
+        db = pb.getDatabase();
+        DescriptorRepository dr = pb.getDescriptorRepository();
+        writer = new ObjectStoreWriterOjbImpl(db, "testmodel");
+
+        storeData();
+        // clear the cache to ensure that objects are materialised later (in case broker reused)
+        ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
+
+        ja = (JdbcAccessFlymineImpl) pb.serviceJdbcAccess();
+
+    }
+
+    public void tearDown() throws Exception {
+        removeDataFromStore();
+        super.tearDown();
     }
 
 

@@ -17,6 +17,8 @@ import org.flymine.objectstore.query.ContainsConstraint;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
+import org.flymine.objectstore.ObjectStoreQueriesTestCase;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
@@ -33,13 +35,18 @@ import org.flymine.model.testmodel.CEO;
 import org.flymine.model.testmodel.RandomInterface;
 import org.flymine.model.testmodel.ImportantPerson;
 
-public class FlymineSqlSelectStatementTest extends ObjectStoreTestCase
+public class FlymineSqlSelectStatementTest extends ObjectStoreQueriesTestCase
 {
     public FlymineSqlSelectStatementTest(String arg1) {
         super(arg1);
     }
 
+    protected DescriptorRepository dr;
+
     public void setUp() throws Exception {
+        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        PersistenceBrokerFlyMineImpl pb = (PersistenceBrokerFlyMineImpl) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
+        dr = pb.getDescriptorRepository();
         super.setUp();
     }
 
