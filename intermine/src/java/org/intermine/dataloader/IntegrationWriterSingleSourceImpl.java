@@ -23,6 +23,8 @@ import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.TypeUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * Simple implementation of IntegrationWriter - assumes that this is the only (or first) data source
  * to be written to the database.
@@ -31,7 +33,10 @@ import org.flymine.util.TypeUtil;
  */
 public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstractImpl
 {
+    protected static final Logger LOG = Logger.getLogger(IntegrationWriterSingleSourceImpl.class);
+
     protected Set nonSkeletons = new HashSet();
+    private int lastSize = 0;
 
     /**
      * Constructs a new instance of IntegrationWriterSingleSourceImpl.
@@ -48,7 +53,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * an IntegrationDescriptor for instructions on how to modify the original object.
      *
      * @param obj the object to search for in the database
-     * @return details of object in database and which fields canbe overwritten
+     * @return details of object in database and which fields can be overwritten
      * @throws ObjectStoreException if error occurs finding object
      */
     public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException {
@@ -61,7 +66,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
                 retval.put(TypeUtil.getField(cls, "id"),
                            cls.getMethod("getId", new Class[] {}).invoke(dbObj, new Object[] {}));
 
-                if (nonSkeletons.contains(dbObj)) {
+                if (nonSkeletons.contains(description(dbObj))) {
                     // This data was written by us in the past. Therefore, the database version
                     // overrides everything, except collections.
                     Map fieldToGetter = TypeUtil.getFieldToGetter(obj.getClass());
@@ -104,7 +109,23 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         // Here, we are assuming that the store(Object) method sets the ID in the object.
         store(obj);
         if (!skeleton) {
-            nonSkeletons.add(obj);
+            nonSkeletons.add(description(obj));
+            if (nonSkeletons.size() >= lastSize + 10000) {
+                lastSize = nonSkeletons.size();
+                LOG.error("nonSkeletons.size() = " + lastSize);
+            }
         }
+    }
+
+    public static String description(Object obj) {
+        Class c = obj.getClass();
+        String retval = c.getName() + ": ";
+        try {
+            Method idGetter = c.getMethod("getId", new Class[] {});
+            retval += idGetter.invoke(obj, new Object[] {});
+        } catch (Exception e) {
+            // Do nothing.
+        }
+        return retval;
     }
 }

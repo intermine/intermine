@@ -34,4 +34,12 @@ public interface IntegrationWriter extends ObjectStoreWriter
      */
     public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException;
 
+    /**
+     * Store an object in this ObjectStore.
+     *
+     * @param o the object to store
+     * @param skeleton is this a skeleton object?
+     * @throws ObjectStoreException if an error occurs during storage of the object
+     */
+    public void store(Object o, boolean skeleton) throws ObjectStoreException;
 }

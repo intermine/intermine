@@ -130,7 +130,7 @@ public class DataLoader
                     }
                 }
             }
-            iw.store(obj);
+            iw.store(obj, skeleton);
         } catch (IntrospectionException e) {
             throw new ObjectStoreException("Something horribly wrong with the model", e);
         } catch (IllegalAccessException e) {
