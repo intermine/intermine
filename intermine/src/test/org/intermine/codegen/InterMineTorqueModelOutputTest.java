@@ -47,8 +47,8 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     }
 
     public void testProcess() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         File path = new File("./");
@@ -75,12 +75,16 @@ public class FlyMineTorqueModelOutputTest extends TestCase
                     + "http://jakarta.apache.org/turbine/dtd/database.dtd\">" + ENDL
             + "<database name=\"\">" + ENDL
             + INDENT + "<table name=\"Class1\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
             + INDENT + "<table name=\"Class2\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
+            + INDENT + "</table>" + ENDL
+            + INDENT + "<table name=\"FlyMineBusinessObject\">" + ENDL
+            + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
             + "</database>" + ENDL;
 
@@ -92,8 +96,8 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     }
 
     public void testGenerateModel() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>" + ENDL
@@ -101,12 +105,16 @@ public class FlyMineTorqueModelOutputTest extends TestCase
             + "http://jakarta.apache.org/turbine/dtd/database.dtd\">" + ENDL
             + "<database name=\"\">" + ENDL
             + INDENT + "<table name=\"Class1\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
             + INDENT + "<table name=\"Class2\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
+            + INDENT + "</table>" + ENDL
+            + INDENT + "<table name=\"FlyMineBusinessObject\">" + ENDL
+            + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL
             + "</database>" + ENDL;
 
@@ -114,24 +122,24 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorClass() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "<table name=\"Class1\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
     }
 
    public void testGenerateClassDescriptorIsInterface() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "<table name=\"Interface1\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + "</table>" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
@@ -148,15 +156,15 @@ public class FlyMineTorqueModelOutputTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
         Set cols = new LinkedHashSet(Collections.singleton(cod1));
 
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, refs, cols);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, refs, cols);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "<table name=\"Class1\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"rfd1Id\" type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"name1\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<index name=\"Class1_name1\">" + ENDL
             + INDENT + INDENT + INDENT + "<index-column name=\"name1\"/>" + ENDL
             + INDENT + INDENT + "</index>" + ENDL
@@ -185,18 +193,18 @@ public class FlyMineTorqueModelOutputTest extends TestCase
         Set atts1 = new LinkedHashSet(Collections.singleton(atd1));
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
         Set refs1 = new LinkedHashSet(Collections.singleton(rfd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts1, refs1, new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts1, refs1, new HashSet());
 
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", false, new HashSet(), new HashSet(), new HashSet());
 
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
 
         String expected = INDENT + "<table name=\"Class2\">" + ENDL
-            + INDENT + INDENT + "<column name=\"ID\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"rfd1Id\" type=\"INTEGER\"/>" + ENDL
             + INDENT + INDENT + "<column name=\"name1\" type=\"LONGVARCHAR\"/>" + ENDL
+            + INDENT + INDENT + "<column name=\"id\" type=\"INTEGER\" required=\"true\" primaryKey=\"true\"/>" + ENDL
             + INDENT + INDENT + "<index name=\"Class2_name1\">" + ENDL
             + INDENT + INDENT + INDENT + "<index-column name=\"name1\"/>" + ENDL
             + INDENT + INDENT + "</index>" + ENDL

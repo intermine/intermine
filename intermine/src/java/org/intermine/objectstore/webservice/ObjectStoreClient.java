@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.rmi.RemoteException;
 
+import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.webservice.ser.SerializationUtil;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
@@ -28,7 +30,6 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.metadata.Model;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
@@ -187,10 +188,11 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * @see ObjectStore#getObjectById
      */
-    public Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
-        Object object = remoteMethod("getObjectByExample", new Object[] {obj});
+    public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+        FlyMineBusinessObject object = (FlyMineBusinessObject)
+            remoteMethod("getObjectByExample", new Object[] {id});
         promoteProxies(object);
         return object;
     }

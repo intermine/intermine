@@ -54,7 +54,7 @@ public class CollectionDescriptorTest extends TestCase
 
     public void testSetClassDescriptor() throws Exception {
 
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   new HashSet(), new HashSet(), new HashSet());
 
         CollectionDescriptor cod = new CollectionDescriptor("name", true, "String", null, true);
@@ -75,8 +75,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
         Set collections = new HashSet(Arrays.asList(new Object[] {cod1}));
         // cld1 has a CollectionDescriptor that contains objects of type Class2
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), collections);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), collections);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         try {
             ClassDescriptor refCld = cod1.getReferencedClassDescriptor();
             fail("Expected IllegalStateException, model has not yet been set");
@@ -88,8 +88,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
         Set collections = new HashSet(Arrays.asList(new Object[] {cod1}));
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), collections);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), collections);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         try {
             ClassDescriptor refCld = cod1.getReferencedClassDescriptor();
@@ -106,8 +106,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod2 = new CollectionDescriptor("cod2", false, "Class1", "cod1", true);
         Set cols1 = Collections.singleton(cod1);
         Set cols2 = Collections.singleton(cod2);
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols1);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), cols2);
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols1);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), cols2);
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         try {
             ReferenceDescriptor rfdReverse = cod1.getReverseReferenceDescriptor();
@@ -124,8 +124,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod2 = new CollectionDescriptor("cod2", false, "Class1", "cod1", true);
         Set cols1 = Collections.singleton(cod1);
         Set cols2 = Collections.singleton(cod2);
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), cols1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), cols2, new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), cols1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), cols2, new HashSet());
 
         try {
             Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
@@ -139,7 +139,7 @@ public class CollectionDescriptorTest extends TestCase
         ReferenceDescriptor ref  = new ReferenceDescriptor("ref1", false, "Class1", null);
         Set cols = Collections.singleton(col);
         Set refs = Collections.singleton(ref);
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, EMPTY_SET, refs, cols);        
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, refs, cols);        
         Model model = new Model("model1", Collections.singleton(cld));
         assertEquals(FieldDescriptor.ONE_N_RELATION, col.relationType());
     }
@@ -148,7 +148,7 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class1", "col2", false);
         CollectionDescriptor col2 = new CollectionDescriptor("col2", false, "Class1", null, false);
         Set cols = new HashSet(Arrays.asList(new Object[] { col1, col2 }));
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, EMPTY_SET, EMPTY_SET, cols);
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, EMPTY_SET, cols);
         Model model = new Model("model1", Collections.singleton(cld));
         assertEquals(FieldDescriptor.M_N_RELATION, col1.relationType());
     }

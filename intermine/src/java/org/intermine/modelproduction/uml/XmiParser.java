@@ -136,8 +136,10 @@ public class XmiParser implements ModelParser
             generateAssociationEnd(((MAssociationEnd) endIter.next()).getOppositeEnd());
         }
 
-        classes.add(new ClassDescriptor(name, extend, implement, isInterface, attributes,
-                                        references, collections));
+        String supers = (extend == null ? "" : extend) + " " + (implement == null ? "" : implement);
+        supers = supers.trim();
+        classes.add(new ClassDescriptor(name, ("".equals(supers) ? null : supers), isInterface,
+                    attributes, references, collections));
     }
 
     /**

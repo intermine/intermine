@@ -18,13 +18,14 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.flymine.util.TypeUtil;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.util.TypeUtil;
 
 /**
  * Class that helps build queries or parts of queries for common situations.
@@ -35,6 +36,26 @@ public class QueryCreator
 {
     protected static final Logger LOG = Logger.getLogger(QueryCreator.class);
 
+    /**
+     * Create a query that will retrieve an object from the objectstore, given an ID.
+     *
+     * @param id the ID of the object to fetch
+     * @return a Query
+     */
+    public static Query createQueryForId(Integer id) {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        try {
+            q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
+                        new QueryValue(id)));
+        } catch (NoSuchFieldException e) {
+            LOG.error("FlyMineBusinessObject.id does not exist!");
+        }
+        return q;
+    }
+    
     /**
      * Create a query that will retrieve an object from the data store given
      * an example objects of the same class. The query will follow the primary

@@ -11,6 +11,7 @@ package org.flymine.web.results;
  */
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,6 +30,7 @@ import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.util.DynamicUtil;
 
 public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 {
@@ -52,11 +54,11 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         dr.setPageSize(5);
 
         // Set up some known objects in the first 3 results rows
-        company1 = new Company();
+        company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company1");
-        company2 = new Company();
+        company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company2.setName("Company2");
-        company3 = new Company();
+        company3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company3.setName("Company3");
         department1 = new Department();
         department1.setName("Department1");

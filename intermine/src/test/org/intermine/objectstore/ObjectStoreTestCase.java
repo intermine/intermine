@@ -419,7 +419,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
     public void testGetObjectByExampleNull() throws Exception {
         try {
-            os.getObjectByExample(null);
+            os.getObjectByExample(null, new ArrayList());
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -428,26 +428,14 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     public void testGetObjectByExampleNonExistent() throws Exception {
         Address a = new Address();
         a.setAddress("10 Downing Street");
-        assertNull(os.getObjectByExample(a));
-    }
-
-    public void testGetObjectByExampleIncomplete() throws Exception {
-        Employee e = new Employee();
-        e.setName("EmployeeA1");
-        e.setAge(10);
-        //address not set
-        try {
-            os.getObjectByExample(e);
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException iae) {
-        }
+        assertNull(os.getObjectByExample(a, Collections.singletonList("address")));
     }
 
     public void testGetObjectByExampleAttribute() throws Exception {
         Address a1 = ((Employee) data.get("EmployeeA1")).getAddress();
         Address a = new Address();
         a.setAddress(a1.getAddress());
-        assertEquals(a1, os.getObjectByExample(a1));
+        assertEquals(a1, os.getObjectByExample(a, Collections.singletonList("address")));
     }
 
     public void testGetObjectByExampleFields() throws Exception {
@@ -456,7 +444,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         e.setName(e1.getName());
         e.setAge(e1.getAge());
         e.setAddress(e1.getAddress());
-        assertEquals(e1, os.getObjectByExample(e));
+        assertEquals(e1, os.getObjectByExample(e, Arrays.asList(new String[] {"name", "age", "address"})));
     }
 
     public void testDataTypes() throws Exception {

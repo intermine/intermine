@@ -29,8 +29,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.flymine.util.TypeUtil;
 
@@ -40,6 +41,7 @@ import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.model.testmodel.Address;
 import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Department;
+import org.flymine.util.DynamicUtil;
 
 import junit.framework.TestCase;
 
@@ -114,7 +116,7 @@ public class SerializationFunctionalTest extends TestCase
 
         Address a1 = new Address();
         a1.setAddress("a1");
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
         c1.setVatNumber(101);
         c1.setAddress(a1);

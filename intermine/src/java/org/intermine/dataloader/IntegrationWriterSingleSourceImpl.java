@@ -55,7 +55,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @throws ObjectStoreException if error occurs finding object
      */
     public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException {
-        Object dbObj = osw.getObjectStore().getObjectByExample(obj);
+        /*Object dbObj = osw.getObjectStore().getObjectByExample(obj);
         IntegrationDescriptor retval = new IntegrationDescriptor();
 
         if (dbObj != null) {
@@ -89,6 +89,8 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
             }
         }
         return retval;
+        */
+        return null;
     }
 
     /**

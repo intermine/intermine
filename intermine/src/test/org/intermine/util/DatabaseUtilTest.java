@@ -86,22 +86,11 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetTableNameOne() throws Exception {
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Model model1 = new Model("test1", new HashSet(Arrays.asList(new Object[] {cld})));
 
         assertEquals("Class1", DatabaseUtil.getTableName(cld));
-    }
-
-    public void testGetTableNameMany() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class3", null, false, new HashSet(), new HashSet(), new HashSet());
-
-        Model model2 = new Model("test2", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
-
-        assertEquals(DatabaseUtil.getTableName(cld1), DatabaseUtil.getTableName(cld4));
     }
 
     public void testGetColumnName() throws Exception {
@@ -113,11 +102,11 @@ public class DatabaseUtilTest extends TestCase
     public void testGetIndirectionTableNameRef() throws Exception {
         CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", "ref1", false);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
 
         ReferenceDescriptor ref1 = new ReferenceDescriptor("ref1", false, "Class1", null);
         Set refs = new HashSet(Arrays.asList(new Object[] {ref1}));
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), refs, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), refs, new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("test", clds);
@@ -132,9 +121,9 @@ public class DatabaseUtilTest extends TestCase
     public void testGetIndirectionTableNameNull() throws Exception {
         CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", null, false);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
 
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("test", clds);
@@ -147,11 +136,11 @@ public class DatabaseUtilTest extends TestCase
     public void testGetIndirectionTableNameCol() throws Exception {
         CollectionDescriptor col1 = new CollectionDescriptor("col1", false, "Class2", "col2", false);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
 
         CollectionDescriptor col2 = new CollectionDescriptor("col2", false, "Class1", "col1", false);
         cols = new HashSet(Arrays.asList(new Object[] {col2}));
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), cols);
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("test", clds);
@@ -163,7 +152,7 @@ public class DatabaseUtilTest extends TestCase
 
     public void testGenerateSqlCompatibleName() throws Exception {
         assertEquals("finish", DatabaseUtil.generateSqlCompatibleName("end"));
-        assertEquals("identifier", DatabaseUtil.generateSqlCompatibleName("id"));
+        assertEquals("id", DatabaseUtil.generateSqlCompatibleName("id"));
         assertEquals("indx", DatabaseUtil.generateSqlCompatibleName("index"));
         assertEquals("ordr", DatabaseUtil.generateSqlCompatibleName("order"));
         assertEquals("complete", DatabaseUtil.generateSqlCompatibleName("full"));

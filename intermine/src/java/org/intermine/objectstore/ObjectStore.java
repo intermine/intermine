@@ -12,10 +12,11 @@ package org.flymine.objectstore;
 
 import java.util.List;
 
+import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.metadata.Model;
 
 /**
  * Gets the Results of a Query from an underlying store.
@@ -52,15 +53,14 @@ public interface ObjectStore
      * Get an object from the ObjectStore by giving an example. The returned object
      * (if present) will have the same primary keys as the example object.
      *
-     * @param obj an example object
-     * @return the equivalent object from the ObjectStore, or null if none exists
+     * @param id the ID of the object to fetch
+     * @return the object from the ObjectStore or cache, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
-     * @throws IllegalArgumentException if obj does not have all its primary key fields set
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException;
+    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException;
 
     /**
-     * Prefetches an object into the objectstore getObjectByExample cache. This method doesn't
+     * Prefetches an object into the objectstore getObjectById cache. This method doesn't
      * actually <u>have</u> to do anything - it is merely a hint to the objectstore that a
      * particular operation is likely to be required in the near future.
      *
@@ -69,40 +69,40 @@ public interface ObjectStore
      * synchronised areas of code, allowing the time-critical synchronised areas of code to access
      * the object from the cache.
      *
-     * @param obj an example object
+     * @param id the ID of the object to prefetch
      */
-    public void prefetchObjectByExample(Object obj);
+    public void prefetchObjectById(Integer id);
 
     /**
-     * Removes an entry from the objectstore getObjectByExample cache. The objectstore must
-     * guarantee that the next time this example object is requested by getObjectByExample, the
+     * Removes an entry from the objectstore getObjectById cache. The objectstore must
+     * guarantee that the next time this example object is requested by getObjectById, the
      * objectstore explicitly fetches the object from the database. Obviously, if the objectstore
-     * does not have a getObjectByExample cache, this method will do nothing.
+     * does not have a getObjectById cache, this method will do nothing.
      *
-     * @param obj an example object
+     * @param id the ID of the object to invalidate
      */
-    public void invalidateObjectByExample(Object obj);
+    public void invalidateObjectById(Integer id);
 
     /**
-     * Places an entry into the objectstore getObjectByExample cache. This method (like prefetch) is
+     * Places an entry into the objectstore getObjectById cache. This method (like prefetch) is
      * merely a hint, and provides no guarantees. The method takes the object provided, and creates
-     * a lookup in the getObjectByExample cache, so that subsequent requests for that object do not
+     * a lookup in the getObjectById cache, so that subsequent requests for that object do not
      * access the database. If there is no cache, this method will do nothing.
      *
-     * @param obj an example object
-     * @param obj2 a fully populated object, as loaded from the database, or null to negatively
+     * @param id the ID of the object
+     * @param obj a fully populated object, as loaded from the database, or null to negatively
      * cache
      * @return an object which is the lookup key for the cache entry. This is useful to the caller
      * for the purpose of ensuring the entry does not expire from the cache. To endure this, the
      * caller merely needs to keep a strong reference to this returned value.
      */
-    public Object cacheObjectByExample(Object obj, Object obj2);
+    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj);
 
     /**
-     * Completely empties the getObjectByExample cache. The objectstore must guarantee that the
-     * next time a given object is mentioned, it must not be taken from the cache.
+     * Completely empties the getObjectById cache. The objectstore must guarantee that the
+     * next time any object is mentioned, it must not be taken from the cache.
      */
-    public void flushObjectByExample();
+    public void flushObjectById();
 
     /**
      * Explain a Query (give estimate for execution time and number of rows).
@@ -128,4 +128,18 @@ public interface ObjectStore
      * @return the Model
      */
     public Model getModel();
+
+    /**
+     * Return an object from the objectstore that has the fields mentioned in the list set to the
+     * same values as the fields in the provided example object. If there are no objects in the
+     * objectstore like that, then this method returns null. If there are more than one object, then
+     * this method throws an exception.
+     *
+     * @param o an example object
+     * @param fieldnames a List of fieldnames
+     * @return a FlyMineBusinessObject from the objectstore, or null if none fits
+     * @throws ObjectStoreException if there are too many matches, or some other error occurs
+     */
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+        throws ObjectStoreException;
 }

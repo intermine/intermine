@@ -54,7 +54,7 @@ public class LiteRendererTest extends TestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<object class=\"org.flymine.model.testmodel.Types\" implements=\"\">"
+        String expected = "<object class=\"org.flymine.model.testmodel.Types\" implements=\"org.flymine.model.FlyMineBusinessObject\">"
             + "<field name=\"intObjType\" value=\"4\"/>"
             + "<field name=\"booleanObjType\" value=\"true\"/>"
             + "<field name=\"doubleType\" value=\"1.3\"/>"

@@ -11,10 +11,12 @@ package org.flymine.objectstore;
  */
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
@@ -78,51 +80,50 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * @see ObjectStore#getObjectById
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
         getObjectOps++;
         if (getObjectOps % 1000 == 0) {
-            LOG.error("getObjectByExample called " + getObjectOps + " times. Cache hits: "
+            LOG.info("getObjectById called " + getObjectOps + " times. Cache hits: "
                     + getObjectHits + ". Prefetches: " + getObjectPrefetches);
         }
         boolean contains = true;
-        Object cached = null;
-        Object cacheKey = QueryCreator.createQueryForExampleObject(obj, model).toString();
+        FlyMineBusinessObject cached = null;
         synchronized (cache) {
-            cached = cache.get(cacheKey);
+            cached = (FlyMineBusinessObject) cache.get(id);
             if (cached == null) {
-                contains = cache.containsKey(cacheKey);
+                contains = cache.containsKey(id);
             }
         }
         if (contains) {
             getObjectHits++;
             return cached;
         }
-        Object fromDb = internalGetObjectByExample(obj);
+        FlyMineBusinessObject fromDb = internalGetObjectById(id);
         synchronized (cache) {
-            cached = cache.get(cacheKey);
+            cached = (FlyMineBusinessObject) cache.get(id);
             if (cached == null) {
-                contains = cache.containsKey(cacheKey);
+                contains = cache.containsKey(id);
             }
             if (contains) {
                 fromDb = cached;
             } else {
-                cache.put(cacheKey, fromDb);
+                cache.put(id, fromDb);
             }
         }
         return fromDb;
     }
 
     /**
-     * Internal service method for getObjectByExample.
+     * Internal service method for getObjectById.
      *
      * @param obj the object to get
      * @return an object from the database
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    protected Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
-        Results results = execute(QueryCreator.createQueryForExampleObject(obj, model));
+    protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+        Results results = execute(QueryCreator.createQueryForId(id));
         results.setNoOptimise();
 
         if (results.size() > 1) {
@@ -130,7 +131,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                                                + "this primary key");
         }
         if (results.size() == 1) {
-            Object o = ((Object []) results.get(0))[0];
+            FlyMineBusinessObject o = (FlyMineBusinessObject) ((Object []) results.get(0))[0];
             try {
                 promoteProxies(o);
             } catch (Exception e) {
@@ -142,42 +143,40 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#prefetchObjectByExample
+     * @see ObjectStore#prefetchObjectById
      */
-    public void prefetchObjectByExample(Object obj) {
+    public void prefetchObjectById(Integer id) {
         getObjectPrefetches++;
         try {
-            getObjectByExample(obj);
+            getObjectById(id);
         } catch (Exception e) {
             // We can ignore this - it's only a hint.
         }
     }
 
     /**
-     * @see ObjectStore#invalidateObjectByExample
+     * @see ObjectStore#invalidateObjectById
      */
-    public void invalidateObjectByExample(Object obj) {
-        Object key = QueryCreator.createQueryForExampleObject(obj, model).toString();
+    public void invalidateObjectById(Integer id) {
         synchronized (cache) {
-            cache.remove(key);
+            cache.remove(id);
         }
     }
 
     /**
-     * @see ObjectStore#cacheObjectByExample
+     * @see ObjectStore#cacheObjectById
      */
-    public Object cacheObjectByExample(Object obj, Object obj2) {
-        Object key = QueryCreator.createQueryForExampleObject(obj, model).toString();
+    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
         synchronized (cache) {
-            cache.put(key, obj2);
+            cache.put(id, obj);
         }
-        return key;
+        return id;
     }
 
     /**
-     * @see ObjectStore#flushObjectByExample
+     * @see ObjectStore#flushObjectById
      */
-    public void flushObjectByExample() {
+    public void flushObjectById() {
         synchronized (cache) {
             cache.clear();
         }
@@ -240,6 +239,27 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                 throw new ObjectStoreException(e);
             }
         }
+    }
+
+    /**
+     * @see ObjectStore#getObjectByExample
+     */
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+            throws ObjectStoreException {
+        /* TODO:
+        Query q = new Query();
+        QueryClass qc = new QueryClass(o.getClass());
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        try {
+            Iterator fieldNameIter = fieldNames.iterator();
+            while (fieldNameIter.hasNext()) {
+                String fieldName = (String) fieldNameIter.next();
+                QueryField field = new QueryField(qc, fieldName);
+                QueryValue value = new QueryValue(TypeUtil.getFieldValue(o, fieldName));
+                SimpleConstraint con = new SimpleConstraint(field, ConstraintOp.EQUALS, value);
+        */
+        return null;
     }
 }
 

@@ -12,13 +12,14 @@ package org.flymine.objectstore.safe;
 
 import java.util.List;
 
+import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCloner;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
-import org.flymine.metadata.Model;
 
 /**
  * Provides a safe implementation of an objectstore - that is, an implementation that works
@@ -55,38 +56,38 @@ public class ObjectStoreSafeImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * @see ObjectStore#getObjectById
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        return os.getObjectByExample(obj);
+    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
+        return os.getObjectById(id);
     }
 
     /**
-     * @see ObjectStore#prefetchObjectByExample
+     * @see ObjectStore#prefetchObjectById
      */
-    public void prefetchObjectByExample(Object obj) {
-        os.prefetchObjectByExample(obj);
+    public void prefetchObjectById(Integer id) {
+        os.prefetchObjectById(id);
     }
 
     /**
-     * @see ObjectStore#invalidateObjectByExample
+     * @see ObjectStore#invalidateObjectById
      */
-    public void invalidateObjectByExample(Object obj) {
-        os.invalidateObjectByExample(obj);
+    public void invalidateObjectById(Integer id) {
+        os.invalidateObjectById(id);
     }
 
     /**
-     * @see ObjectStore#cacheObjectByExample
+     * @see ObjectStore#cacheObjectById
      */
-    public Object cacheObjectByExample(Object obj, Object obj2) {
-        return os.cacheObjectByExample(obj, obj2);
+    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj2) {
+        return os.cacheObjectById(id, obj2);
     }
 
     /**
-     * @see ObjectStore#flushObjectByExample
+     * @see ObjectStore#flushObjectById
      */
-    public void flushObjectByExample() {
-        os.flushObjectByExample();
+    public void flushObjectById() {
+        os.flushObjectById();
     }
 
     /**
@@ -108,5 +109,13 @@ public class ObjectStoreSafeImpl implements ObjectStore
      */
     public Model getModel() {
         return os.getModel();
+    }
+
+    /**
+     * @see ObjectStore#getObjectByExample
+     */
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+            throws ObjectStoreException {
+        return os.getObjectByExample(o, fieldNames);
     }
 }

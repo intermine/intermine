@@ -40,8 +40,8 @@ public class CastorModelOutputTest extends TestCase
     }
 
     public void testProcess() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         File path = new File("./");
@@ -86,8 +86,8 @@ public class CastorModelOutputTest extends TestCase
     }
 
     public void testGenerateModel() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "<!DOCTYPE databases PUBLIC \"-//EXOLAB/Castor Mapping DTD Version 1.0//EN\" "
@@ -110,9 +110,9 @@ public class CastorModelOutputTest extends TestCase
 
     // should ignore interface
     public void testGenerateModelInterface() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
         String expected = "<!DOCTYPE databases PUBLIC \"-//EXOLAB/Castor Mapping DTD Version 1.0//EN\" "
@@ -134,7 +134,7 @@ public class CastorModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorClass() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "<class name=\"Class1\" auto-complete=\"true\" identity=\"id\">" + ENDL
@@ -156,8 +156,8 @@ public class CastorModelOutputTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
         Set cols = new HashSet(Collections.singleton(cod1));
 
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, refs, cols);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, refs, cols);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "<class name=\"Class1\" auto-complete=\"true\" identity=\"id\">" + ENDL
@@ -179,8 +179,8 @@ public class CastorModelOutputTest extends TestCase
     }
 
     public void testGenerateClassDescriptorSuperclass() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "<class name=\"Class2\" extends=\"Class1\" auto-complete=\"true\" identity=\"id\">" + ENDL
@@ -193,7 +193,7 @@ public class CastorModelOutputTest extends TestCase
     public void testGenerateAttributeDescriptorPrimitive() throws Exception {
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "int");
         Set atts = new HashSet(Collections.singleton(atd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + INDENT + "<field name=\"atd1\" type=\"integer\">" + ENDL
@@ -206,7 +206,7 @@ public class CastorModelOutputTest extends TestCase
     public void testGenerateAttributeDescriptorString() throws Exception {
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.lang.String");
         Set atts = new HashSet(Collections.singleton(atd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + INDENT + "<field name=\"atd1\" type=\"java.lang.String\">" + ENDL
@@ -220,7 +220,7 @@ public class CastorModelOutputTest extends TestCase
     public void testGenerateAttributeDescriptorObject() throws Exception {
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.util.Currency");
         Set atts = new HashSet(Collections.singleton(atd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + INDENT + "<field name=\"atd1\" type=\"java.util.Currency\">" + ENDL
@@ -233,8 +233,8 @@ public class CastorModelOutputTest extends TestCase
     public void testGenerateReferenceDescriptor() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), refs, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + INDENT + "<field name=\"rfd1\" type=\"Class2\">" + ENDL
@@ -249,8 +249,8 @@ public class CastorModelOutputTest extends TestCase
     public void testGenerateCollectionDescriptor() throws Exception {
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", false, "Class2", null, true);
         Set cols = new HashSet(Collections.singleton(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), cols);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + INDENT + "<field name=\"cod1\" type=\"Class2\" collection=\"collection\">" + ENDL

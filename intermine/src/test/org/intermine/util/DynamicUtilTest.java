@@ -26,10 +26,7 @@ public class DynamicUtilTest extends TestCase
         super(arg);
     }
 
-    private Model model;
-
     public void setUp() throws Exception {
-        model = Model.getInstanceByName("testmodel");
     }
 
     // NEED MORE TESTS FOR MULTIPLE INHERITED INTERFACES WHEN AVAILABLE
@@ -41,35 +38,80 @@ public class DynamicUtilTest extends TestCase
     //           \   /
     //            - E
 
-    public void testCreateObjectInterfaceAsClass() throws Exception {
-        try {
-            DynamicUtil.createObject(model, Collections.singleton("org.flymine.model.testmodel.Company"));
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-    }
-
-    public void testCreateObjectRubbishClass() throws Exception {
-        try {
-            DynamicUtil.createObject(model, Collections.singleton("org.flymine.model.testmodel.BlahBlahBlah"));
-            fail("Expected: ClassNotFoundException");
-        } catch (ClassNotFoundException e) {
-        }
+    public void testCreateObjectOneInterface() throws Exception {
+        Object obj = DynamicUtil.createObject(Collections.singleton(Company.class));
+        assertTrue(obj instanceof Company);
+        Company c = (Company) obj;
+        c.setName("Flibble");
+        assertEquals("Flibble", c.getName());
     }
 
     public void testCreateObjectOneInterfaceWithParents() throws Exception {
-        Object obj = DynamicUtil.createObject(model, Collections.singleton("org.flymine.model.testmodel.Employable"));
+        Object obj = DynamicUtil.createObject(Collections.singleton(Employable.class));
         assertTrue(obj instanceof Employable);
         assertTrue(obj instanceof Thing);
     }
 
     public void testCreateObjectNoClassTwoInterfaces() throws Exception {
         Set intSet = new HashSet();
-        intSet.add("org.flymine.model.testmodel.Employable");
-        intSet.add("org.flymine.model.testmodel.ImportantPerson");
-        Object obj = DynamicUtil.createObject(model, intSet);
-        assertTrue(obj instanceof Employable);
-        assertTrue(obj instanceof Thing);
+        intSet.add(Company.class);
+        intSet.add(Broke.class);
+        Object obj = DynamicUtil.createObject(intSet);
+        assertTrue(obj instanceof Company);
+        assertTrue(obj instanceof RandomInterface);
+        assertTrue(obj instanceof Broke);
+        assertTrue(obj instanceof HasSecretarys);
+        assertTrue(obj instanceof HasAddress);
+
+        ((Company) obj).setName("Wotsit");
+        ((Broke) obj).setDebt(40);
+
+        assertEquals("Wotsit", ((Company) obj).getName());
+        assertEquals(40, ((Broke) obj).getDebt());
+    }
+
+    public void testCreateObjectClassOnly() throws Exception {
+        Object obj = DynamicUtil.createObject(Collections.singleton(Employee.class));
+        assertEquals(Employee.class, obj.getClass());
+    }
+
+    public void testCreateObjectClassInterfaces() throws Exception {
+        Set intSet = new HashSet();
+        intSet.add(Manager.class);
+        intSet.add(Broke.class);
+        Object obj = DynamicUtil.createObject(intSet);
+        assertTrue(obj instanceof Manager);
+        assertTrue(obj instanceof Employee);
         assertTrue(obj instanceof ImportantPerson);
+        assertTrue(obj instanceof Employable);
+        assertTrue(obj instanceof HasAddress);
+        assertTrue(obj instanceof Broke);
+        
+        Manager m = (Manager) obj;
+        m.setName("Frank");
+        m.setTitle("Mr.");
+        ((Broke) m).setDebt(30);
+        assertEquals("Frank", m.getName());
+        assertEquals("Mr.", m.getTitle());
+        assertEquals(30, ((Broke) m).getDebt());
+    }
+
+    public void testCreateObjectTwoClasses() throws Exception {
+        Set intSet = new HashSet();
+        intSet.add(Manager.class);
+        intSet.add(Department.class);
+        try {
+            Object obj = DynamicUtil.createObject(intSet);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testCreateObjectNothing() throws Exception {
+        try {
+            Object obj = DynamicUtil.createObject(Collections.EMPTY_SET);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 }

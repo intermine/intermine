@@ -10,34 +10,30 @@ package org.flymine.objectstore.query;
  *
  */
 
-import junit.framework.TestCase;
+import java.util.Collections;
+import junit.framework.Test;
 
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
-import org.flymine.objectstore.ojb.FlyMineSqlSelectStatement;
+import org.flymine.testing.OneTimeTestCase;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 
 import org.flymine.model.testmodel.*;
 
-/**
- * For simplicity we use FlyMineSqlSelectStatement for comparison of
- * queries. The alternative is to implement all sorts of equals()
- * methods in XxxConstraint, QueryXxx classes.
- */
-public class CollatedResultTest extends TestCase
+public class CollatedResultTest extends QueryTestCase
 {
     public CollatedResultTest(String arg1) {
         super(arg1);
     }
 
-    private Query q1;
-    private QueryClass qc1, qc2;
-    private QueryFunction qf1;
-
+    public static Test suite() {
+        return OneTimeTestCase.buildSuite(CollatedResultTest.class);
+    }
+    
     public void testConstructNullRow() throws Exception {
         try {
             CollatedResult res = new CollatedResult(null, new QueryClass(Department.class), new Query(), new ObjectStoreDummyImpl());
@@ -370,7 +366,7 @@ public class CollatedResultTest extends TestCase
         q1.addToGroupBy(qc1);
         q1.addToGroupBy(qc2);
 
-        Company company = new Company();
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         TypeUtil.setFieldValue(company, "id", new Integer(42));
         company.setName("Acme");
 
@@ -688,22 +684,4 @@ public class CollatedResultTest extends TestCase
         CollatedResult cr = new CollatedResult();
         assertNull(cr.getMatchesQuery(qc1, q1, row1));
     }
-
-    /**
-     * For simplicity we use FlyMineSqlSelectStatement for comparison of
-     * queries. The alternative is to implement all sorts of equals()
-     * methods in XxxConstraint, QueryXxx classes.
-     */
-    public void assertEquals(Query q1, Query q2) throws Exception {
-        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
-        PersistenceBroker broker = os.getPersistenceBroker();
-        DescriptorRepository dr = broker.getDescriptorRepository();
-
-        String sql1 = new FlyMineSqlSelectStatement(q1, dr).getStatement();
-        String sql2 = new FlyMineSqlSelectStatement(q2, dr).getStatement();
-
-        assertEquals(sql1, sql2);
-
-    }
-
 }

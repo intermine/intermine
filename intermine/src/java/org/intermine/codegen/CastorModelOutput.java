@@ -94,15 +94,6 @@ public class CastorModelOutput extends ModelOutput
 
         sb.append(" auto-complete=\"true\" identity=\"id\">" + ENDL);
 
-        if (superCld == null) {
-            sb.append(INDENT + INDENT)
-                .append("<field name=\"id\" type=\"java.lang.Integer\">" + ENDL)
-                .append(INDENT + INDENT + INDENT)
-                .append("<bind-xml name=\"_xml-id\" type=\"string\" node=\"attribute\"/>" + ENDL)
-                .append(INDENT + INDENT)
-                .append("</field>" + ENDL);
-        }
-
         Iterator iter = cld.getAttributeDescriptors().iterator();
         while (iter.hasNext()) {
             sb.append(generate((AttributeDescriptor) iter.next()));
@@ -138,7 +129,7 @@ public class CastorModelOutput extends ModelOutput
 
         sb.append(INDENT + INDENT + INDENT)
             .append("<bind-xml name=\"")
-            .append(attr.getName());
+            .append("id".equals(attr.getName()) ? "_xml-id\" type=\"string" : attr.getName());
 
         if ((isPrimitive(attr.getType())) || (isBasicType(attr.getType()))) {
             sb.append("\" node=\"attribute\"/>" + ENDL);

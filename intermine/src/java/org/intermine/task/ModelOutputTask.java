@@ -17,11 +17,9 @@ import java.io.File;
 
 import org.flymine.metadata.Model;
 import org.flymine.codegen.AxisModelOutput;
-import org.flymine.codegen.OJBModelOutput;
 import org.flymine.codegen.JavaModelOutput;
 import org.flymine.codegen.ModelOutput;
 import org.flymine.codegen.CastorModelOutput;
-import org.flymine.codegen.OJBTorqueModelOutput;
 import org.flymine.codegen.FlyMineTorqueModelOutput;
 
 /**
@@ -84,14 +82,10 @@ public class ModelOutputTask extends Task
         try {
             if (type.equals("wsdd")) {
                 mo = new AxisModelOutput(model, destDir);
-            } else if (type.equals("ojb")) {
-                mo = new OJBModelOutput(model, destDir);
             } else if (type.equals("java")) {
                 mo = new JavaModelOutput(model, destDir);
             } else if (type.equals("castor")) {
                 mo = new CastorModelOutput(model, destDir);
-            } else if (type.equals("ojbtorque")) {
-                mo = new OJBTorqueModelOutput(model, destDir);
             } else if (type.equals("flyminetorque")) {
                 mo = new FlyMineTorqueModelOutput(model, destDir);
             } else {

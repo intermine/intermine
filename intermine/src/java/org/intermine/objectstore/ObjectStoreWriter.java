@@ -15,17 +15,32 @@ package org.flymine.objectstore;
  *
  * @author Mark Woodbridge
  */
-public interface ObjectStoreWriter
+public interface ObjectStoreWriter extends ObjectStore
 {
     /**
-     * Retrieve this Writer's ObjectStore
+     * Retrieve this Writer's ObjectStore. This ObjectStoreWriter is a read-write extension to the
+     * read-only ObjectStore. This ObjectStoreWriter uses a single database connection in order to
+     * allow proper transaction support - use the ObjectStore for general read-only access.
      *
      * @return the ObjectStore
      */
     public ObjectStore getObjectStore();
 
     /**
-     * Store an object in this ObjectStore
+     * Store an object in this ObjectStore.
+     * If the ID of this object is not set, it will be set to a previously unused value.
+     * If the ID matches the ID of an object already in the objectstore, then an update operation is
+     * performed - otherwise a store operation is performed.
+     * <br>
+     * Attributes and references of the stored object will be set to those of the provided object.
+     * Collections of the stored object will contain the union of the contents of any pre-existing
+     * stored object, and the contents of the provided object. There is currently no way to remove
+     * entries from a collection of a stored object.
+     * <br>
+     * Any objects referred to by this object will have their ID set in a similar way to this
+     * object. This object will be stored with references and collections using those IDs, however
+     * those objects will not be stored themselves. Therefore, the objectstore will be inconsistent
+     * until those objects are also stored.
      *
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
@@ -41,7 +56,7 @@ public interface ObjectStoreWriter
     public void delete(Object o) throws ObjectStoreException;
 
     /**
-     * Check whether the ObjectStore is performing a transaction
+     * Check whether the ObjectStoreWriter is performing a transaction
      *
      * @return true if in a transaction, false otherwise
      * @throws ObjectStoreException if an error occurs the check
@@ -49,21 +64,21 @@ public interface ObjectStoreWriter
     public boolean isInTransaction() throws ObjectStoreException;
 
     /**
-     * Request that the ObjectStore begins a transaction
+     * Request that the ObjectStoreWriter begins a transaction
      *
      * @throws ObjectStoreException if a transaction is in progress, or is aborted
      */
     public void beginTransaction() throws ObjectStoreException;
 
     /**
-     * Request that the ObjectStore commits and closes the transaction
+     * Request that the ObjectStoreWriter commits and closes the transaction
      *
      * @throws ObjectStoreException if a transaction is not in progress, or is aborted
      */
     public void commitTransaction() throws ObjectStoreException;
 
     /**
-     * Request that the ObjectStore aborts and closes the transaction
+     * Request that the ObjectStoreWriter aborts and closes the transaction
      *
      * @throws ObjectStoreException if a transaction is not in progress
      */

@@ -10,6 +10,7 @@ package org.flymine.dataloader;
  *
  */
 
+import java.util.Collections;
 import junit.framework.Test;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,7 @@ import org.flymine.testing.OneTimeTestCase;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.model.testmodel.*;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 
 public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
@@ -65,11 +67,11 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     }
 
     public void testStoreObject() throws Exception {
-        Company c = new Company();
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a = new Address();
         a.setAddress("Company Street, AVille");
 
-        Address a2 = (Address) os.getObjectByExample(a);
+        Address a2 = (Address) iw.getObjectByExample(a, Collections.singletonList("address"));
         assertNotNull("address from db should not be null", a2);
         c.setAddress(a2);
         c.setName("CompanyC");
@@ -78,7 +80,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 
         iw.store(c);  // method we are testing
 
-        Company example = (Company) os.getObjectByExample(c);
+        Company example = (Company) iw.getObjectByExample(c, Collections.singletonList("name"));
         assertNotNull("example from db should not be null", example);
 
         assertEquals(c.getAddress(), example.getAddress());
@@ -90,11 +92,11 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testObjectNotStoredByIntegrationWriter() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) os.getObjectByExample(address);
+        Address a2 = (Address) iw.getObjectByExample(address, Collections.singletonList("address"));
 
         assertNotNull("address from db should not be null", a2);
 
-        Company company = new Company();
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setAddress(a2);
         company.setName("CompanyA");
 
@@ -122,9 +124,9 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testStoredObjectAsSkeleton() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) os.getObjectByExample(address);
+        Address a2 = (Address) iw.getObjectByExample(address, Collections.singletonList("address"));
 
-        Company company = new Company();
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setAddress(a2);
         company.setName("CompanyC");
         company.setVatNumber(100);
@@ -133,7 +135,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         iw.store(company, true); // store as skeleton
 
         // check object stored correctly
-        Company example = (Company) os.getObjectByExample(company);
+        Company example = (Company) iw.getObjectByExample(company, Collections.singletonList("name"));
         assertNotNull("Expected to retrieve object by example", example);
 
         // this object has not been stored as a skeleton, we should be able to write over everything
@@ -157,9 +159,9 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testStoredObjectAsNonSkeleton() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) os.getObjectByExample(address);
+        Address a2 = (Address) iw.getObjectByExample(address, Collections.singletonList("address"));
 
-        Company company = new Company();
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setAddress(a2);
         company.setName("CompanyC");
         company.setVatNumber(100);

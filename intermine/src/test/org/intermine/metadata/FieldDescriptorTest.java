@@ -50,7 +50,7 @@ public class FieldDescriptorTest extends TestCase
 
     public void testSetClassDescriptorValid() throws Exception {
         FieldDescriptor fd = new TestFieldDescriptor("name", false);
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   EMPTY_SET, EMPTY_SET, EMPTY_SET);
         try {
             fd.setClassDescriptor(cld);
@@ -61,7 +61,7 @@ public class FieldDescriptorTest extends TestCase
 
     public void testSetClassDescriptorTwice() throws Exception {
         FieldDescriptor fd = new TestFieldDescriptor("name", false);
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, null, false,
+        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   EMPTY_SET, EMPTY_SET, EMPTY_SET);
         fd.setClassDescriptor(cld);
         try {

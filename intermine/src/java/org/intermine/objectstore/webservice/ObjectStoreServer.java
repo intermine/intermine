@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.flymine.FlyMineException;
+import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
@@ -26,7 +28,6 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
-import org.flymine.metadata.Model;
 
 /**
  * The server side of an ObjectStore webservice. This should be run in
@@ -223,16 +224,14 @@ public class ObjectStoreServer
     }
 
     /**
-     * Get an object from the ObjectStore by giving an example. The returned object
-     * (if present) will have the same primary keys as the example object.
+     * Get an object from the ObjectStore by giving an ID.
      *
-     * @param obj an example object
-     * @return the equivalent object from the ObjectStore, or null if none exists
+     * @param id an ID
+     * @return the object from the ObjectStore, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
-     * @throws IllegalArgumentException if obj does not have all its primary key fields set
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        return os.getObjectByExample(obj);
+    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
+        return os.getObjectById(id);
     }
 
     /**

@@ -67,7 +67,7 @@ public class AceModelParserFunctionalTest extends TestCase
         cols.add(new CollectionDescriptor("hashValues", false, PKG + "AceTestObject", null, false));
         Set clds = new LinkedHashSet();
         ((AceModelParser) parser).addBuiltinClasses(clds);
-        clds.add(new ClassDescriptor(PKG + "AceTestObject", null, null, false, atts, refs, cols));
+        clds.add(new ClassDescriptor(PKG + "AceTestObject", null, false, atts, refs, cols));
         return new Model(MODEL, clds);
     }
 }

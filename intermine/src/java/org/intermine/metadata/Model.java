@@ -13,6 +13,7 @@ package org.flymine.metadata;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -36,8 +37,7 @@ public class Model
 
     private final String name;
     private final Map cldMap = new LinkedHashMap();
-    private final Map subclassMap = new LinkedHashMap();
-    private final Map implementorsMap = new LinkedHashMap();
+    private final Map subMap = new LinkedHashMap();
 
     /**
      * Return a Model for specified model name (loading Model if necessary)
@@ -58,7 +58,7 @@ public class Model
                 ModelParser parser = new FlyMineModelParser();
                 model = parser.process(new InputStreamReader(is));
             } catch (Exception e) {
-                throw new MetaDataException("Error parsing metadata: " + e);
+                throw new MetaDataException("Error parsing metadata", e);
             }
             models.put(name, model);
         }
@@ -85,45 +85,47 @@ public class Model
             throw new NullPointerException("Model ClassDescriptors list cannot be null");
         }
 
-        this.name = name;  // check for valid package name??
+        this.name = name;  // TODO: check for valid package name??
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
-        Iterator cldIter = orderedClds.iterator();
 
+        ClassDescriptor flymineBusinessObject = new ClassDescriptor(
+                "org.flymine.model.FlyMineBusinessObject", null, true,
+                Collections.singleton(new AttributeDescriptor("id", false, "java.lang.Integer")),
+                Collections.EMPTY_SET, Collections.EMPTY_SET);
+        orderedClds.add(flymineBusinessObject);
+        
+        Iterator cldIter = orderedClds.iterator();
         // 1. Put all ClassDescriptors in model.
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cldMap.put(cld.getName(), cld);
 
             // create maps of ClassDescriptor to empty sets for subclasses and implementors
-            subclassMap.put(cld, new LinkedHashSet());
-            implementorsMap.put(cld, new LinkedHashSet());
+            subMap.put(cld, new LinkedHashSet());
         }
 
-        // 2. Now set model in each ClassDescriptor, this sets up superclass, interface,
-        //    etc descriptors.  Set ClassDescriptors and reverse refs in ReferenceDescriptors.
+        // 2. Now set model in each ClassDescriptor, this sets up superDescriptors
+        //    etc.  Set ClassDescriptors and reverse refs in ReferenceDescriptors.
         cldIter = orderedClds.iterator();
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cld.setModel(this);
 
-            // add this to set of subclasses if a superclass exists
-            ClassDescriptor superCld = cld.getSuperclassDescriptor();
-            if (superCld != null) {
-                Set sub = (Set) subclassMap.get(superCld);
-                sub.add(cld);
+            // add this class to subMap sets for any interfaces and superclasses
+            Set supers = cld.getSuperDescriptors();
+            Iterator iter = supers.iterator();
+            while (iter.hasNext()) {
+                ClassDescriptor iCld = (ClassDescriptor) iter.next();
+                Set subs = (Set) subMap.get(iCld);
+                subs.add(cld);
             }
+        }
 
-            // add this class to implementors sets for any interfaces
-            Set interfaces = cld.getInterfaceDescriptors();
-            if (interfaces.size() > 0) {
-                Iterator iter = interfaces.iterator();
-                while (iter.hasNext()) {
-                    ClassDescriptor iCld = (ClassDescriptor) iter.next();
-                    Set implementors = (Set) implementorsMap.get(iCld);
-                    implementors.add(cld);
-                }
-            }
-
+        // 3. Now run setAllFieldDescriptors on everything
+        cldIter = orderedClds.iterator();
+        while (cldIter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            cld.setAllFieldDescriptors();
         }
     }
 
@@ -132,33 +134,17 @@ public class Model
      * @param cld the parent ClassDescriptor
      * @return the ClassDescriptors of its children
      */
-    public Set getSubclasses(ClassDescriptor cld) {
-        return (Set) subclassMap.get(cld);
-    }
-
-    /**
-     * Get the ClassDescriptors for the classes that implement an interface
-     * @param cld the ClassDescriptor of the interface
-     * @return the ClassDescriptors of its implementors
-     */
-    public Set getImplementors(ClassDescriptor cld) {
-        if (!cld.isInterface()) {
-            throw new IllegalArgumentException("getImplementors is only valid for an interface");
-        }
-        return (Set) implementorsMap.get(cld);
+    public Set getSubs(ClassDescriptor cld) {
+        return (Set) subMap.get(cld);
     }
 
     /**
      * Get a ClassDescriptor by name, null if no ClassDescriptor of given name in Model.
-     * @param name name of ClassDescriptor requested
+     * @param name fully-qualified class name of ClassDescriptor requested
      * @return the requested ClassDescriptor
      */
     public ClassDescriptor getClassDescriptorByName(String name) {
-        if (cldMap.containsKey(name)) {
-            return (ClassDescriptor) cldMap.get(name);
-        } else {
-            return null;
-        }
+        return (ClassDescriptor) cldMap.get(name);
     }
 
     /**
@@ -170,7 +156,7 @@ public class Model
     }
 
     /**
-     * Return true if named ClassDescriptor is found in the model
+     * Return true if named ClassDescriptor is found in the model.
      * @param name named of ClassDescriptor search for
      * @return true if named descriptor found
      */
@@ -222,7 +208,10 @@ public class Model
         StringBuffer sb = new StringBuffer();
         sb.append("<model name=\"" + name + "\">");
         for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
-            sb.append(iter.next().toString());
+            ClassDescriptor cld = (ClassDescriptor) iter.next();
+            if (!"org.flymine.model.FlyMineBusinessObject".equals(cld.getName())) {
+                sb.append(cld.toString());
+            }
         }
         sb.append("</model>");
         return sb.toString();

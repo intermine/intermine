@@ -12,6 +12,7 @@ package org.flymine.codegen;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -41,13 +42,15 @@ public class JavaModelOutput extends ModelOutput
         while (iter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             String cldName = cld.getName();
-            String pkg = TypeUtil.packageName(cldName);
-            String cls = TypeUtil.unqualifiedName(cld.getName());
-            File dir = new File(file, pkg.replaceAll("[.]", File.separator));
-            dir.mkdirs();
-            File path = new File(dir, cls + ".java");
-            initFile(path);
-            outputToFile(path, generate(cld));
+            if (!"org.flymine.model.FlyMineBusinessObject".equals(cldName)) {
+                String pkg = TypeUtil.packageName(cldName);
+                String cls = TypeUtil.unqualifiedName(cld.getName());
+                File dir = new File(file, pkg.replaceAll("[.]", File.separator));
+                dir.mkdirs();
+                File path = new File(dir, cls + ".java");
+                initFile(path);
+                outputToFile(path, generate(cld));
+            }
         }
     }
 
@@ -76,19 +79,27 @@ public class JavaModelOutput extends ModelOutput
             .append(cld.isInterface() ? "interface " : "class ")
             .append(TypeUtil.unqualifiedName(cld.getName()));
 
-        if (cld.getSuperclassDescriptor() != null) {
-            sb.append(" extends ")
-                .append(TypeUtil.unqualifiedName(cld.getSuperclassDescriptor().getName()));
+        if (!cld.isInterface()) {
+            if (cld.getSuperclassDescriptor() != null) {
+                sb.append(" extends ")
+                    .append(cld.getSuperclassDescriptor().getName());
+            }
         }
 
-        if (cld.getInterfaceDescriptors().size() > 0) {
-            sb.append(" implements ");
-            Iterator iter = cld.getInterfaceDescriptors().iterator();
+        boolean firstTime = true;
+
+        if (cld.getSuperDescriptors().size() > 0) {
+            Iterator iter = cld.getSuperDescriptors().iterator();
             while (iter.hasNext()) {
-                ClassDescriptor interfaceCld = (ClassDescriptor) iter.next();
-                sb.append(TypeUtil.unqualifiedName(interfaceCld.getName()));
-                if (iter.hasNext()) {
-                    sb.append(", ");
+                ClassDescriptor superCld = (ClassDescriptor) iter.next();
+                if (superCld.isInterface()) {
+                    if (firstTime) {
+                        sb.append(cld.isInterface() ? " extends " : " implements ");
+                        firstTime = false;
+                    } else {
+                        sb.append(", ");
+                    }
+                    sb.append(superCld.getName());
                 }
             }
         }
@@ -96,35 +107,11 @@ public class JavaModelOutput extends ModelOutput
         sb.append(ENDL)
             .append("{" + ENDL);
 
-        if (!cld.isInterface()) {
-            if (cld.getSuperclassDescriptor() == null) {
-                sb.append(INDENT + "protected Integer id;" + ENDL)
-                    .append(INDENT + "public Integer getId() { return id; }" + ENDL)
-                    .append(INDENT + "public void setId(Integer id) { this.id = id; }" + ENDL);
-            }
-
-            if (cld.getSuperclassDescriptor() != null || !cld.getSubclassDescriptors().isEmpty()) {
-                sb.append(INDENT + "protected String ojbConcreteClass = \"")
-                    .append(cld.getName())
-                    .append("\";" + ENDL + ENDL);
-            }
-        }
-
-        Iterator iter;
-        iter = cld.getAttributeDescriptors().iterator();
-        while (iter.hasNext()) {
-            sb.append(generate((AttributeDescriptor) iter.next(), cld.isInterface()));
-        }
-        iter = cld.getReferenceDescriptors().iterator();
-        while (iter.hasNext()) {
-            sb.append(generate((ReferenceDescriptor) iter.next(), cld.isInterface()));
-        }
-        iter = cld.getCollectionDescriptors().iterator();
-        while (iter.hasNext()) {
-            sb.append(generate((CollectionDescriptor) iter.next(), cld.isInterface()));
-        }
-
-        if (!cld.isInterface()) {
+        // FieldDescriptors defined for this class/interface
+        if (cld.isInterface()) {
+            sb.append(generateFieldDescriptors(cld, false));
+        } else {
+            sb.append(generateFieldDescriptors(cld, true));
             sb.append(generateEquals(cld))
                 .append(generateEqualsPK(cld))
                 .append(generateHashCode(cld))
@@ -135,6 +122,39 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
 
+    /**
+     * Generate all FieldDescriptors for a class/interface
+     *
+     * @param cld the ClassDescriptor of the class
+     * @param supers true if go up the inheritence tree and output fields
+     * @return the generated String
+     */
+    protected String generateFieldDescriptors(ClassDescriptor cld, boolean supers) {
+        Set superclassFields = Collections.EMPTY_SET;
+        if (supers && (cld.getSuperclassDescriptor() != null)) {
+            superclassFields = cld.getSuperclassDescriptor().getAllFieldDescriptors();
+        }
+        StringBuffer sb = new StringBuffer();
+        Iterator iter;
+        if (supers) {
+            iter = cld.getAllFieldDescriptors().iterator();
+        } else {
+            iter = cld.getFieldDescriptors().iterator();
+        }
+        while (iter.hasNext()) {
+            FieldDescriptor fd = (FieldDescriptor) iter.next();
+            if (!superclassFields.contains(fd)) {
+                if (fd instanceof AttributeDescriptor) {
+                    sb.append(generate((AttributeDescriptor) fd, supers));
+                } else if (fd instanceof CollectionDescriptor) {
+                    sb.append(generate((CollectionDescriptor) fd, supers));
+                } else if (fd instanceof ReferenceDescriptor) {
+                    sb.append(generate((ReferenceDescriptor) fd, supers));
+                }
+            }
+        }
+        return sb.toString();
+    }
     /**
      * @see ModelOutput#generate(AttributeDescriptor)
      */
@@ -157,16 +177,18 @@ public class JavaModelOutput extends ModelOutput
     /**
      * @see ModelOutput#generate(AttributeDescriptor)
      */
-    protected String generate(AttributeDescriptor attr, boolean interf) {
+    protected String generate(AttributeDescriptor attr, boolean field) {
         StringBuffer sb = new StringBuffer();
-        if (!interf) {
-            sb.append(INDENT + "protected ")
+        if (field) {
+            sb.append(INDENT + "// Attr: " + attr.getClassDescriptor().getName() + "."
+                    + attr.getName() + ENDL)
+                .append(INDENT + "protected ")
                 .append(attr.getType())
                 .append(" ")
                 .append(attr.getName())
                 .append(";" + ENDL);
         }
-        sb.append(generateGetSet(attr, interf))
+        sb.append(generateGetSet(attr, field))
             .append(ENDL);
         return sb.toString();
     }
@@ -174,17 +196,19 @@ public class JavaModelOutput extends ModelOutput
     /**
      * @see ModelOutput#generate(ReferenceDescriptor)
      */
-    protected String generate(ReferenceDescriptor ref, boolean interf) {
+    protected String generate(ReferenceDescriptor ref, boolean field) {
         StringBuffer sb = new StringBuffer();
-        if (!interf) {
-            sb.append(INDENT)
+        if (field) {
+            sb.append(INDENT + "// Ref: " + ref.getClassDescriptor().getName() + "."
+                    + ref.getName() + ENDL)
+                .append(INDENT)
                 .append("protected ")
-                .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getName()))
+                .append(ref.getReferencedClassDescriptor().getName())
                 .append(" ")
                 .append(ref.getName())
                 .append(";" + ENDL);
         }
-        sb.append(generateGetSet(ref, interf))
+        sb.append(generateGetSet(ref, field))
             .append(ENDL);
         return sb.toString();
     }
@@ -192,13 +216,15 @@ public class JavaModelOutput extends ModelOutput
     /**
      * @see ModelOutput#generate(CollectionDescriptor)
      */
-    protected String generate(CollectionDescriptor col, boolean interf) {
+    protected String generate(CollectionDescriptor col, boolean field) {
         String type = col.isOrdered() ? "java.util.List" : "java.util.Set";
         String impl = col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet";
 
         StringBuffer sb = new StringBuffer();
-        if (!interf) {
-            sb.append(INDENT)
+        if (field) {
+            sb.append(INDENT + "// Col: " + col.getClassDescriptor().getName() + "."
+                    + col.getName() + ENDL)
+                .append(INDENT)
                 .append("protected ")
                 .append(type)
                 .append(" ")
@@ -207,7 +233,7 @@ public class JavaModelOutput extends ModelOutput
                 .append(impl)
                 .append("();" + ENDL);
         }
-        sb.append(generateGetSet(col, interf))
+        sb.append(generateGetSet(col, field))
             .append(ENDL);
         return sb.toString();
     }
@@ -217,10 +243,10 @@ public class JavaModelOutput extends ModelOutput
     /**
      * Write code for getters and setters for given field.
      * @param field descriptor for field
-     * @param interf true if this class is an interface
+     * @param fieldPresent true if this class has the associated field
      * @return string with generated java code
      */
-    protected String generateGetSet(FieldDescriptor field, boolean interf) {
+    protected String generateGetSet(FieldDescriptor field, boolean fieldPresent) {
         String name = field.getName(), type = getType(field);
 
         StringBuffer sb = new StringBuffer();
@@ -232,11 +258,11 @@ public class JavaModelOutput extends ModelOutput
             .append(" get")
             .append(StringUtil.capitalise(name))
             .append("()");
-        if (interf) {
+        if (!fieldPresent) {
             sb.append(";" + ENDL);
         } else {
             sb.append(" { ")
-                .append("return this.")
+                .append("return ")
                 .append(name)
                 .append("; }" + ENDL);
         }
@@ -251,13 +277,13 @@ public class JavaModelOutput extends ModelOutput
             .append(" ")
             .append(name)
             .append(")");
-        if (interf) {
+        if (!fieldPresent) {
             sb.append(";" + ENDL);
         } else {
             sb.append(" { ")
                 .append("this.")
                 .append(name)
-                .append("=")
+                .append(" = ")
                 .append(name)
                 .append("; }" + ENDL);
         }

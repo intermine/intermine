@@ -31,7 +31,7 @@ public class TypeUtilTest extends TestCase
     }
 
     public void testGetFieldValue() throws Exception {
-        assertNotNull(TypeUtil.getFieldValue(new Company(), "departments"));
+        assertNotNull(TypeUtil.getFieldValue((Company) DynamicUtil.createObject(Collections.singleton(Company.class)), "departments"));
     }
 
     public void testSetFieldValue() throws Exception {

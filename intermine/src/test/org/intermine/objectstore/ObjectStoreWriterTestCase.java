@@ -10,10 +10,12 @@ package org.flymine.objectstore;
  *
  */
 
+import java.util.Collections;
 import junit.framework.TestCase;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
+import org.flymine.util.DynamicUtil;
 
 public class ObjectStoreWriterTestCase extends TestCase
 {
@@ -41,11 +43,11 @@ public class ObjectStoreWriterTestCase extends TestCase
         address1 = new Address();
         address1.setAddress("Employee Street, BVille");
 
-        company1 = new Company();
+        company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company 1");
         company1.setAddress(address1);
 
-        company2 = new Company();
+        company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company2.setName("Company 2");
         company2.setAddress(address1);
 
@@ -80,7 +82,7 @@ public class ObjectStoreWriterTestCase extends TestCase
         address1Template = new Address();
         address1Template.setAddress(address1.getAddress());
 
-        company1Template = new Company();
+        company1Template = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1Template.setName(company1.getName());
         company1Template.setAddress(company1.getAddress());
 
@@ -115,6 +117,7 @@ public class ObjectStoreWriterTestCase extends TestCase
     /**
      * Storing an object without an ID field should insert it into the database
      */
+    /* TODO: Move to dataloader
     public void testStoreObjectWithAttributeKeyNotAlreadyExists() throws Exception {
 
         try {
@@ -131,10 +134,12 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(address1);
         }
     }
+    */
 
     /**
      * Changing a non-primary key attribute on an object should update it in the database
      */
+    /* TODO: Move to dataloader
     public void testStoreObjectWithAttributeKeyAlreadyExists() throws Exception {
 
         try {
@@ -158,10 +163,12 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(employee1);
         }
     }
+    */
 
     /**
      * Storing an object with a valid primary key should store it and set its ID field
      */
+    /* TODO: Move to dataloader
     public void testStoreObjectWithAttributeReferenceKey() throws Exception {
 
         try {
@@ -181,10 +188,12 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(employee1);
         }
     }
+    */
 
     /**
      * Test referenced object including updating and setting to null
      */
+    /* TODO: Move to dataloader
     public void testStoreObjectWithReferencedObject() throws Exception {
 
         Department department2 = null;
@@ -255,10 +264,12 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(address1);
         }
     }
+    */
 
     /**
      * Test collections including updating and setting to null
      */
+    /* TODO: Move to dataloader
     public void testStoreObjectWith1NCollection() throws Exception {
 
         Department department2 = null;
@@ -317,12 +328,13 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(company1);
             writer.delete(address1);
         }
-
     }
+    */
 
     /**
      * Test collections including updating and setting to null
      */
+    /* TODO: Move to dataloader
     public void testStoreObjectWithMNCollection() throws Exception {
 
         try {
@@ -397,8 +409,8 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.delete(company2);
             writer.delete(address1);
         }
-
     }
+    */
 
     /**
      * Test that transactions do actually commit and that isInTransaction() works.

@@ -10,10 +10,13 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.Collections;
 import junit.framework.TestCase;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Manager;
 import org.flymine.model.testmodel.Employee;
+import org.flymine.util.DynamicUtil;
 
 public class ClassConstraintTest extends TestCase {
 
@@ -22,10 +25,8 @@ public class ClassConstraintTest extends TestCase {
     private QueryClass company2;
     private QueryClass employee;
     private QueryClass manager;
-    private Object company1Object;
-    private Object company2Object;
-    private Object employeeObject;
-    private Object managerObject;
+    private Company company1Object;
+    private Manager managerObject;
 
     public ClassConstraintTest(String arg1) {
         super(arg1);
@@ -36,7 +37,7 @@ public class ClassConstraintTest extends TestCase {
         company2 = new QueryClass(Company.class);
         employee = new QueryClass(Employee.class);
         manager = new QueryClass(Manager.class);
-        company1Object = new Company();
+        company1Object = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         managerObject = new Manager();
     }
 
@@ -73,7 +74,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testNullConstructor3QCQC() throws Exception {
         try {
-            new ClassConstraint(company1, ConstraintOp.EQUALS, null);
+            new ClassConstraint(company1, ConstraintOp.EQUALS, (QueryClass) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -121,7 +122,7 @@ public class ClassConstraintTest extends TestCase {
 
     public void testNullConstructor2QCObj() throws Exception {
         try {
-            constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, (Object) null);
+            constraint = new ClassConstraint(company1, ConstraintOp.EQUALS, (FlyMineBusinessObject) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {

@@ -61,14 +61,7 @@ public class DatabaseUtil
      * @return a valid table name
      */
     public static String getTableName(ClassDescriptor cld) {
-        String tableName = null;
-        if (!cld.isInterface()) {
-            while (cld.getSuperclassDescriptor() != null) {
-                cld = cld.getSuperclassDescriptor();
-            }
-            tableName = TypeUtil.unqualifiedName(cld.getName());
-        }
-        return tableName;
+        return cld.getUnqualifiedName();
     }
     
     /**
@@ -147,9 +140,6 @@ public class DatabaseUtil
         //n should start with a lower case letter
         if (n.equalsIgnoreCase("end")) {
             return StringUtil.toSameInitialCase("finish", n);
-        }
-        if (n.equalsIgnoreCase("id")) {
-            return StringUtil.toSameInitialCase("identifier", n);
         }
         if (n.equalsIgnoreCase("index")) {
             return StringUtil.toSameInitialCase("indx", n);

@@ -19,6 +19,7 @@ import java.io.BufferedWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import org.xml.sax.InputSource;
 
@@ -64,12 +65,12 @@ public class XmlBindingTest extends XMLTestCase {
         Address a2 = new Address();
         a2.setAddress("a2");
 
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
         c1.setVatNumber(101);
         c1.setAddress(a1);
 
-        Company c2 = new Company();
+        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c2.setName("c2");
         c2.setVatNumber(202);
         c2.setAddress(a2);

@@ -36,6 +36,50 @@ public class DynamicUtil
     }
 
     /**
+     * Create a DynamicBean from a Set of Class objects
+     *
+     * @param classes the classes and interfaces to extend/implement
+     * @return the DynamicBean
+     * @throws IllegalArgumentException if there is more than one Class, or if fields are not
+     * compatible.
+     */
+    public static Object createObject(Set classes) throws IllegalArgumentException {
+        Iterator classIter = classes.iterator();
+        Class clazz = null;
+        Set interfaces = new HashSet();
+        while (classIter.hasNext()) {
+            Class cls = (Class) classIter.next();
+            if (cls.isInterface()) {
+                interfaces.add(cls);
+            } else if (clazz == null) {
+                clazz = cls;
+            } else {
+                throw new IllegalArgumentException("Cannot create a class from multiple classes");
+            }
+        }
+        if (interfaces.isEmpty()) {
+            if (clazz == null) {
+                throw new IllegalArgumentException("Cannot create a class from nothing");
+            } else {
+                try {
+                    return clazz.newInstance();
+                } catch (InstantiationException e) {
+                    IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
+                            + " constructor");
+                    e2.initCause(e);
+                    throw e2;
+                } catch (IllegalAccessException e) {
+                    IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
+                            + " constructor");
+                    e2.initCause(e);
+                    throw e2;
+                }
+            }
+        }
+        return DynamicBean.create(clazz, (Class []) interfaces.toArray(new Class[] {}));
+    }
+    
+    /**
      * Create a DynamicBean from a set of interface names
      *
      * @param model the Model we are using

@@ -13,6 +13,7 @@ package org.flymine.objectstore.query;
 import java.util.List;
 import java.util.Arrays;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.util.Util;
 
 /**
@@ -29,7 +30,7 @@ import org.flymine.util.Util;
 public class ClassConstraint extends Constraint
 {
     protected QueryClass qc1, qc2;
-    protected Object obj;
+    protected FlyMineBusinessObject obj;
 
     /**
      * Construct ClassConstraint
@@ -75,7 +76,7 @@ public class ClassConstraint extends Constraint
      * @param op define EQUALS or NOT_EQUALS
      * @param obj example object
      */
-    public ClassConstraint(QueryClass qc, ConstraintOp op, Object obj) {
+    public ClassConstraint(QueryClass qc, ConstraintOp op, FlyMineBusinessObject obj) {
         if (qc == null) {
             throw new NullPointerException("qc cannot be null");
         }
@@ -125,9 +126,9 @@ public class ClassConstraint extends Constraint
     /**
      * Returns the Object argument 2
      *
-     * @return Object arg2
+     * @return FlyMineBusinessObject arg2
      */
-    public Object getArg2Object() {
+    public FlyMineBusinessObject getArg2Object() {
         return obj;
     }
 

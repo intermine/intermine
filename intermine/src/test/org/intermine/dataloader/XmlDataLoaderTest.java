@@ -13,6 +13,7 @@ package org.flymine.dataloader;
 import junit.framework.TestCase;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -25,11 +26,14 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import org.xml.sax.InputSource;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
-import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ListBean;
 import org.flymine.util.XmlBinding;
@@ -37,7 +41,6 @@ import org.flymine.model.testmodel.*;
 
 public class XmlDataLoaderTest extends TestCase
 {
-    protected ObjectStore os;
     protected ObjectStoreWriter writer;
     protected IntegrationWriter iw;
     protected int fakeId = 0;
@@ -50,8 +53,7 @@ public class XmlDataLoaderTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-        writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
+        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         iw = new IntegrationWriterSingleSourceImpl("test", writer);
 
         binding = new XmlBinding("castor_xml_testmodel.xml");
@@ -72,7 +74,7 @@ public class XmlDataLoaderTest extends TestCase
 
     // marshal an object, set up as an InputSource and store to DB
     public void testSimpleObject() throws Exception {
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
         c1.setVatNumber(101);
         Address a1 = new Address();
@@ -91,12 +93,12 @@ public class XmlDataLoaderTest extends TestCase
         dl.processXml(source);
 
         // check address was stored
-        Address a2 = (Address) os.getObjectByExample(a1);
+        Address a2 = (Address) writer.getObjectByExample(a1, Collections.singletonList("address"));
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
 
         // check company was stored
-        Company c2 = (Company) os.getObjectByExample(c1);
+        Company c2 = (Company) writer.getObjectByExample(c1, Collections.singletonList("name"));
         assertNotNull("Expected company to be retieved from DB", c2);
         assertTrue("company id should be set", (c2.getId().intValue() != 0));
 
@@ -126,12 +128,12 @@ public class XmlDataLoaderTest extends TestCase
         dl.processXml(source);
 
         // check address was stored
-        Address a2 = (Address) os.getObjectByExample(a1);
+        Address a2 = (Address) writer.getObjectByExample(a1, Collections.singletonList("address"));
         assertNotNull("Expected address to be retieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
 
         // check company was stored
-        Manager m2 = (Manager) os.getObjectByExample(m1);
+        Manager m2 = (Manager) writer.getObjectByExample(m1, Collections.singletonList("name"));
         assertNotNull("Expected company to be retieved from DB", m2);
         assertTrue("manager id should be set", (m2.getId().intValue() != 0));
 
@@ -147,26 +149,26 @@ public class XmlDataLoaderTest extends TestCase
         // Just test that a specific Company is there
         Address a1 = new Address();
         a1.setAddress("Company Street, BVille");
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("CompanyB");
         c1.setAddress(a1);
-        Company c2 = (Company) os.getObjectByExample(c1);
+        Company c2 = (Company) writer.getObjectByExample(c1, Collections.singletonList("name"));
 
         // Could only know the vatNumber if it got it from the database
         assertNotNull(c2);
         assertEquals(5678, c2.getVatNumber());
 
-        // Read in the file again in order to delete the objects in it
-        testData = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
-        List objects = (List) binding.unmarshal(new InputSource(testData));
-
+        Query q = new Query();
+        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        List objects = new SingletonResults(q, writer);
+        // TODO: Should the above be ObjectStore.singletonExecute() or something?
         Iterator iter = objects.iterator();
         while (iter.hasNext()) {
             Object obj = iter.next();
-            Object obj2 = os.getObjectByExample(obj);
-            toDelete.add(obj2);
+            toDelete.add(obj);
         }
-
     }
 
     private void marshalList(List list, File file) throws Exception {

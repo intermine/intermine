@@ -33,7 +33,7 @@ public class ExplainResult
      * Constructs an instance of ExplainResult for a given query String and
      * database Connection.
      *
-     * @param query    the String query to be explained
+     * @param query    the String query to be explained. It need not start with "EXPLAIN"
      * @param database a java.sql.Connection by which to access the
      *        database. The particular subclass of ExplainResult returned
      *        depends on the type of this Connection

@@ -10,6 +10,7 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 
 import org.flymine.model.testmodel.Company;
+import org.flymine.util.DynamicUtil;
 
 public class ObjectDetailsControllerTest extends MockStrutsTestCase
 {
@@ -34,7 +36,7 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initObjectDetails");
 
-        getRequest().setAttribute("object", new Company());
+        getRequest().setAttribute("object", (Company) DynamicUtil.createObject(Collections.singleton(Company.class)));
         actionPerform();
         assertNotNull(context.getAttribute("cld"));
     }

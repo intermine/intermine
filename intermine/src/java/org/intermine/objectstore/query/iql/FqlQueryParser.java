@@ -18,6 +18,7 @@ import java.util.NoSuchElementException;
 
 import antlr.collections.AST;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.query.*;
 
 /**
@@ -823,11 +824,12 @@ public class FqlQueryParser
                         try {
                             if (op == ConstraintOp.EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
-                                                           ConstraintOp.EQUALS, iterator.next());
+                                        ConstraintOp.EQUALS,
+                                        (FlyMineBusinessObject) iterator.next());
                             } else if (op == ConstraintOp.NOT_EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
-                                                           ConstraintOp.NOT_EQUALS,
-                                                           iterator.next());
+                                        ConstraintOp.NOT_EQUALS,
+                                        (FlyMineBusinessObject) iterator.next());
                             } else {
                                 throw new IllegalArgumentException("Operation is not valid for "
                                                                    + "comparing a class to an "

@@ -39,7 +39,8 @@ public class FlyMineModelParser implements ModelParser
     public Model process(Reader reader) throws Exception {
         ModelHandler handler = new ModelHandler();
         SAXParser.parse(new InputSource(reader), handler);
-        return new Model(handler.modelName, handler.classes);
+        Model model = new Model(handler.modelName, handler.classes);
+        return model;
     }
 
     /**
@@ -59,11 +60,10 @@ public class FlyMineModelParser implements ModelParser
                 modelName = attrs.getValue("name");
             } else if (qName.equals("class")) {
                 String name = attrs.getValue("name");
-                String extend = attrs.getValue("extends");
-                String implement = attrs.getValue("implements");
+                String supers = attrs.getValue("extends");
                 boolean isInterface = new Boolean(attrs.getValue("is-interface"))
                     .booleanValue();
-                cls = new SkeletonClass(name, extend, implement, isInterface);
+                cls = new SkeletonClass(name, supers, isInterface);
             } else if (qName.equals("attribute")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
@@ -92,7 +92,7 @@ public class FlyMineModelParser implements ModelParser
          */
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("class")) {
-                classes.add(new ClassDescriptor(cls.name, cls.extend, cls.implement,
+                classes.add(new ClassDescriptor(cls.name, cls.supers,
                                                 cls.isInterface, cls.attributes, cls.references,
                                                 cls.collections));
             }
@@ -104,7 +104,7 @@ public class FlyMineModelParser implements ModelParser
      */
     class SkeletonClass
     {
-        String name, extend, implement;
+        String name, supers;
         boolean isInterface;
         Set attributes = new LinkedHashSet();
         Set references = new LinkedHashSet();
@@ -116,10 +116,9 @@ public class FlyMineModelParser implements ModelParser
          * @param implement a space string of fully qualified interface names
          * @param isInterface true if describing an interface
          */
-        SkeletonClass(String name, String extend, String implement, boolean isInterface) {
+        SkeletonClass(String name, String supers, boolean isInterface) {
             this.name = name;
-            this.extend = extend;
-            this.implement = implement;
+            this.supers = supers;
             this.isInterface = isInterface;
         }
     }

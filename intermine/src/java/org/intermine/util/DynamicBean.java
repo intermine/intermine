@@ -11,6 +11,8 @@ package org.flymine.util;
  */
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +79,12 @@ public class DynamicBean implements MethodInterceptor
         // Bean methods
         if (method.getName().startsWith("get")
             && (args.length == 0)) {
-            return map.get(method.getName().substring(3));
+            Object retval = map.get(method.getName().substring(3));
+            if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
+                retval = new ArrayList();
+                map.put(method.getName().substring(3), retval);
+            }
+            return retval;
         }
         if (method.getName().startsWith("is")
             && (args.length == 0)) {

@@ -209,7 +209,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
     }
 
     public void testOneToOne() throws Exception {
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
         c1.setVatNumber(101);
         CEO ceo1 = new CEO();
@@ -294,7 +294,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
     }
 
     public void testCollection() throws Exception {
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
         c1.setVatNumber(101);
         Department d1 = new Department();
@@ -343,10 +343,10 @@ public class CastorModelOutputFunctionalTest extends TestCase
     }
 
     public void testManyToMany() throws Exception {
-        Company c1 = new Company();
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c1.setName("c1");
         c1.setVatNumber(101);
-        Company c2 = new Company();
+        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c2.setName("c2");
         c2.setVatNumber(202);
 
@@ -541,7 +541,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         a1.setAddress("Company Street, AVille");
         Address a2 = new Address();
         a2.setAddress("Employee Street, AVille");
-        Company p = new Company();
+        Company p = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         p.setName("CompanyA");
         p.setVatNumber(1234);
         p.setAddress(a1);
@@ -574,7 +574,7 @@ public class CastorModelOutputFunctionalTest extends TestCase
         a1.setAddress("Company Street, BVille");
         Address a2 = new Address();
         a2.setAddress("Employee Street, BVille");
-        Company p = new Company();
+        Company p = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         p.setName("CompanyB");
         p.setVatNumber(5678);
         p.setAddress(a1);

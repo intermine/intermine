@@ -30,9 +30,6 @@ import org.flymine.metadata.CollectionDescriptor;
  */
 public class FlyMineTorqueModelOutput extends ModelOutput
 {
-    static final String ID = "ID";
-    static final String CLASS = "CLASS";
-
     protected Set indirections = new HashSet();
     protected String className = "";
     protected Set columns = new HashSet();
@@ -86,11 +83,10 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         StringBuffer sb = new StringBuffer();
         indices = new StringBuffer();
         columns = new HashSet();
-        className = cld.getUnqualifiedName();
+        className = DatabaseUtil.getTableName(cld);
 
         // Every class and interface has a seperate table
         sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL)
-            .append(generateColumn("ID", "int", true))
             .append(generateColumn("OBJECT", "java.lang.String", false))
             .append(generateSuperclasses(cld))
             .append(indices)
@@ -146,15 +142,10 @@ public class FlyMineTorqueModelOutput extends ModelOutput
                 }
             }
         }
-        // All interfaces recursively to top of inheritence tree
-        Iterator interfaceIter = cld.getInterfaceDescriptors().iterator();
+        // All interfaces and classes recursively to top of inheritence tree
+        Iterator interfaceIter = cld.getSuperDescriptors().iterator();
         while  (interfaceIter.hasNext()) {
             sb.append(generateSuperclasses((ClassDescriptor) interfaceIter.next()));
-        }
-        // All classes recursively to top of inheritence tree
-        ClassDescriptor superCld = cld.getSuperclassDescriptor();
-        if (superCld != null) {
-            sb.append(generateSuperclasses(superCld));
         }
         return sb.toString();
     }
@@ -164,9 +155,9 @@ public class FlyMineTorqueModelOutput extends ModelOutput
         sb.append(INDENT + INDENT + "<column name=\"")
             .append(name)
             .append("\" type=\"")
-            .append(OJBModelOutput.generateJdbcType(type))
+            .append(generateJdbcType(type))
             .append("\"")
-            .append(isPrimaryKey ? " required=\"true\" primaryKey=\"true\"" : "")
+            .append((isPrimaryKey || ("id".equals(name))) ? " required=\"true\" primaryKey=\"true\"" : "")
             .append("/>" + ENDL);
         return sb.toString();
     }
@@ -205,5 +196,34 @@ public class FlyMineTorqueModelOutput extends ModelOutput
             .append("\"/>" + ENDL)
             .append(INDENT + INDENT + "</index>" + ENDL);
         return sb.toString();
+    }
+
+    /**
+     * Convert java primitive and object names to those compatible
+     * with torque.  Returns unaltered string if no
+     * conversion is required.
+     * @param type the string to convert
+     * @return torque compatible name
+     */
+    protected static String generateJdbcType(String type) {
+        if (type.equals("int") || type.equals("java.lang.Integer")) {
+            return "INTEGER";
+        }
+        if (type.equals("java.lang.String")) {
+            return "LONGVARCHAR";
+        }
+        if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
+            return "BIT";
+        }
+        if (type.equals("float") || type.equals("java.lang.Float")) {
+            return "REAL";
+        }
+        if (type.equals("double") || type.equals("java.lang.Double")) {
+            return "DOUBLE";
+        }
+        if (type.equals("java.util.Date")) {
+            return "DATE";
+        }
+        return type;
     }
 }

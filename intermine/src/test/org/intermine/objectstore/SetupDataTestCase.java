@@ -146,7 +146,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     */
     public static Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
-        Object obj = data.get("CompanyA");
+        Company obj = (Company) data.get("CompanyA");
         ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, obj);
         Query q1 = new Query();
         q1.addFrom(qc1);
@@ -167,7 +167,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     public static Query selectClassObjectSubquery() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
-        Object obj1 = data.get("CompanyA");
+        Company obj1 = (Company) data.get("CompanyA");
         ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
         Query q1 = new Query();
         q1.addFrom(qc1);
@@ -181,7 +181,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         Query subquery = new Query();
         QueryClass qc3 = new QueryClass(Department.class);
-        Object obj2 = data.get("DepartmentA1");
+        Department obj2 = (Department) data.get("DepartmentA1");
         ClassConstraint cc2 = new ClassConstraint(qc3, ConstraintOp.EQUALS, obj2);
         subquery.addFrom(qc3);
         subquery.addToSelect(qc3);
@@ -225,7 +225,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addFrom(qc2);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "address"), ConstraintOp.CONTAINS, qc2));
-        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, data.get("Contractor Business Street, AVille")));
+        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, (Address) data.get("Contractor Business Street, AVille")));
         q1.setConstraint(cs);
         return q1;
     }
@@ -242,7 +242,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addFrom(qc2);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ConstraintOp.CONTAINS, qc2));
-        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, data.get("Secretary1")));
+        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, (Secretary) data.get("Secretary1")));
         q1.setConstraint(cs);
         return q1;
     }

@@ -12,7 +12,8 @@ package org.flymine.objectstore.query;
 
 import java.util.Iterator;
 
-import org.flymine.objectstore.*;
+import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.objectstore.ObjectStore;
 
 /**
  * A CollatedResult wraps the result of a Query along with another
@@ -146,10 +147,9 @@ public class CollatedResult extends Results
 
                 if (node instanceof QueryClass) {
                     // add a ClassConstraint, ie. this QueryClass = example
-                    Object value = row.get(index);
+                    FlyMineBusinessObject value = (FlyMineBusinessObject) row.get(index);
                     constraintSet.addConstraint(new ClassConstraint((QueryClass) node,
-                                                                    ConstraintOp.EQUALS,
-                                                                    value));
+                                ConstraintOp.EQUALS, value));
                 } else {
                     // Add a new SimpleConstraint
                     QueryValue value = new QueryValue(row.get(index));
@@ -180,7 +180,7 @@ public class CollatedResult extends Results
                 int index = q.getSelect().indexOf(node);
                 if (node instanceof QueryClass) {
                     // add a ClassConstraint, ie. this QueryClass = example
-                    Object value = row.get(index);
+                    FlyMineBusinessObject value = (FlyMineBusinessObject) row.get(index);
                     constraintSet.addConstraint(new ClassConstraint((QueryClass) node,
                                                                     ConstraintOp.EQUALS,
                                                                     value));

@@ -10,9 +10,16 @@ package org.flymine.dataloader;
  *
  */
 
+import java.util.List;
+
+import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsInfo;
 
 /**
  * Abstract implementation of ObjectStoreIntegrationWriter.  To retain
@@ -40,14 +47,14 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * Search database for object matching the given example object (i.e. primary key search)
+     * Search database for object matching the given object id
      *
-     * @param o the example object
-     * @return the retieved object
+     * @param id the object ID
+     * @return the retrieved object
      * @throws ObjectStoreException if an error occurs retieving the object
      */
-    public Object getObjectByExample(Object o) throws ObjectStoreException {
-        return osw.getObjectStore().getObjectByExample(o);
+    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
+        return osw.getObjectById(id);
     }
 
     /**
@@ -125,5 +132,77 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public ObjectStore getObjectStore() {
         return osw.getObjectStore();
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#execute
+     */
+    public Results execute(Query q) throws ObjectStoreException {
+        return osw.execute(q);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#execute
+     */
+    public List execute(Query q, int start, int limit, boolean optimise)
+            throws ObjectStoreException {
+        return osw.execute(q, start, limit, optimise);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#prefetchObjectById
+     */
+    public void prefetchObjectById(Integer id) {
+        osw.prefetchObjectById(id);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#invalidateObjectById
+     */
+    public void invalidateObjectById(Integer id) {
+        osw.invalidateObjectById(id);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#cacheObjectById
+     */
+    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj) {
+        return osw.cacheObjectById(id, obj);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#flushObjectById
+     */
+    public void flushObjectById() {
+        osw.flushObjectById();
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#estimate
+     */
+    public ResultsInfo estimate(Query q) throws ObjectStoreException {
+        return osw.estimate(q);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#count
+     */
+    public int count(Query q) throws ObjectStoreException {
+        return osw.count(q);
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#getModel
+     */
+    public Model getModel() {
+        return osw.getModel();
+    }
+
+    /**
+     * @see org.flymine.objectstore.ObjectStore#getObjectByExample
+     */
+    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, List fieldNames)
+            throws ObjectStoreException {
+        return osw.getObjectByExample(o, fieldNames);
     }
 }

@@ -42,8 +42,8 @@ public class ModelTest extends TestCase
     }
 
     public void testContructNullArguments() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
 
         try {
@@ -66,8 +66,8 @@ public class ModelTest extends TestCase
     }
 
     public void testGetClassDescriptorByName() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("model", clds);
 
@@ -76,8 +76,8 @@ public class ModelTest extends TestCase
     }
 
     public void testGetClassDescriptorByWrongName() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("model", clds);
 
@@ -88,7 +88,7 @@ public class ModelTest extends TestCase
         Model m1 = new Model("flibble", EMPTY_SET);
         Model m2 = new Model("flibble", EMPTY_SET);
         Model m3 = new Model("flobble", EMPTY_SET);
-        Model m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
+        Model m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
 
         assertEquals(m1, m2);
         assertEquals(m1.hashCode(), m2.hashCode());
@@ -98,8 +98,8 @@ public class ModelTest extends TestCase
     }
 
     public void testToString() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("model", clds);
 
