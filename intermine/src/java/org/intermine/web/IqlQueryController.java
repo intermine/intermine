@@ -44,8 +44,6 @@ public class FqlQueryController extends TilesAction
 
         Query q = (Query) session.getAttribute(Constants.QUERY);
 
-        LogMe.log("FqlQueryController", "form: " + form);
-
         if (q == null || q.getFrom().size () == 0) {
              fqlQueryForm.setQuerystring("");
         } else {
