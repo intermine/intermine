@@ -192,6 +192,9 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/truncatedLargeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);
         results2.put("LargeBagConstraint", Collections.singleton("InterMineObject"));
+
+        results2.put("LargeBagConstraintUsingTable", Collections.singleton("InterMineObject"));
+        results.put("LargeBagConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.name IN (SELECT value FROM " + SqlGeneratorTest.LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
     }
 
     protected DatabaseSchema getSchema() {
