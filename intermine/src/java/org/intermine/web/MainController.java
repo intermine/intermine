@@ -76,9 +76,7 @@ public class MainController extends TilesAction
             session.removeAttribute("editingNode");
             request.setAttribute("editingNode", node);
             if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
-                Class type = MainHelper.getClass(node.getType());
-                Map attributeOps = MainHelper.mapOps(SimpleConstraint.validOps(type));
-                request.setAttribute("attributeOps", attributeOps);
+                request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss));
             } else {
                 Map classCounts = (Map) servletContext.getAttribute("classCounts");
                 ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
@@ -100,8 +98,7 @@ public class MainController extends TilesAction
                     PathNode anode = (PathNode) iter.next();
                     if (anode != node && anode.getType ().equals (node.getType())) {
                         paths.add(anode.getPath());
-                        displayPaths.put(anode.getPath(),
-                               MainForm.dotPathToNicePath(anode.getPath()));
+                        displayPaths.put(anode.getPath(), anode.getPath());
                     }
                 }
                 
@@ -112,23 +109,6 @@ public class MainController extends TilesAction
             }
             if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-            }
-            
-            String parentType = node.getParentType();
-            if (parentType != null) {
-                String parentClassName = MainHelper.getClass(parentType, os.getModel()).getName();
-                List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
-                if (fieldNames != null && node.getType() != null) {
-                    request.setAttribute("attributeOptions", fieldNames);
-                    Class parentClass = MainHelper.getClass(node.getType());
-                    List fixedOps = SimpleConstraint.fixedEnumOps(parentClass);
-                    List fixedOpsCodes = new ArrayList();
-                    Iterator iter = fixedOps.iterator();
-                    while (iter.hasNext()) {
-                        fixedOpsCodes.add(((ConstraintOp) iter.next()).getIndex());
-                    }
-                    request.setAttribute("fixedOptionsOps", fixedOpsCodes);
-                }
             }
         }
 
