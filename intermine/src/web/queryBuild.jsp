@@ -77,18 +77,11 @@
                       </c:choose>
                     </td>
                     <td>
-                      <html:multibox property="selectedConstraints" value="${constraintName}"/>
+                      <html:submit property="buttons(removeConstraint${constraintName})">
+                        <fmt:message key="query.removeconstraint"/>
+                      </html:submit>
                     </td>
                   </tr>
-                  <c:if test="${constraintNameStatus.last}">
-                    <tr>
-                      <td colspan="4">
-                        <html:submit property="buttons(removeConstraints)">
-                          <fmt:message key="query.remove"/>
-                        </html:submit>
-                      </td>
-                    </tr>
-                  </c:if>
                 </c:forEach>
               </table>
             </div>

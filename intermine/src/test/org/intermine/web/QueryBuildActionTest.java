@@ -354,11 +354,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
     public void testRemoveConstraints() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-
-        QueryBuildForm qbf = new MockQueryBuildForm();
-        qbf.setButton("removeConstraints", "");
-        qbf.setSelectedConstraints(new String[] {"name_0"});
-        setActionForm(qbf);
+        addRequestParameter("buttons(removeConstraintname_0)", "");
         
         DisplayQueryClass d = new DisplayQueryClass();
         d.setType("org.flymine.model.testmodel.Department");

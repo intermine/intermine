@@ -60,8 +60,8 @@ public class QueryBuildAction extends Action
             forward = addConstraint(mapping, form, request, response);
         } else if ("updateClass".equals(button)) {
             forward = updateClass(mapping, form, request, response);
-        } else if ("removeConstraints".equals(button)) {
-            forward = removeConstraints(mapping, form, request, response);
+        } else if (button.startsWith("removeConstraint")) {
+            forward = removeConstraint(mapping, form, request, response);
         } else if (button.startsWith("removeClass")) {
             forward = removeClass(mapping, form, request, response);
         } else if (button.startsWith("editClass")) {
@@ -202,7 +202,7 @@ public class QueryBuildAction extends Action
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward removeConstraints(ActionMapping mapping,
+    public ActionForward removeConstraint(ActionMapping mapping,
                                            ActionForm form,
                                            HttpServletRequest request,
                                            HttpServletResponse response)
@@ -213,11 +213,9 @@ public class QueryBuildAction extends Action
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         QueryBuildForm qbf = (QueryBuildForm) form;
+        String constraintName = qbf.getButton().substring("removeConstraint".length());
         DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
-        String[] selectedConstraints = qbf.getSelectedConstraints();
-        for (int i = 0; i < selectedConstraints.length; i++) {
-            QueryBuildHelper.removeConstraint(d, selectedConstraints[i]);
-        }
+        QueryBuildHelper.removeConstraint(d, constraintName);
 
         return mapping.findForward("buildquery");
     }
