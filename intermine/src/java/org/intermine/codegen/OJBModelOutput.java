@@ -1,331 +1,293 @@
 package org.flymine.codegen;
 
-// Most of this code originated in the ArgoUML project, which carries
-// the following copyright
-//
-// Copyright (c) 1996-2001 The Regents of the University of California. All
-// Rights Reserved. Permission to use, copy, modify, and distribute this
-// software and its documentation without fee, and without a written
-// agreement is hereby granted, provided that the above copyright notice
-// and this paragraph appear in all copies.  This software program and
-// documentation are copyrighted by The Regents of the University of
-// California. The software program and documentation are supplied "AS
-// IS", without any accompanying services from The Regents. The Regents
-// does not warrant that the operation of the program will be
-// uninterrupted or error-free. The end-user understands that the program
-// was developed for research purposes and is advised not to rely
-// exclusively on the program for any reason.  IN NO EVENT SHALL THE
-// UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-// SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS,
-// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-// SUCH DAMAGE. THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-// PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-// CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
-// UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-
-import ru.novosoft.uml.xmi.XMIReader;
-import ru.novosoft.uml.foundation.core.*;
-import ru.novosoft.uml.foundation.data_types.*;
-import ru.novosoft.uml.model_management.*;
-import ru.novosoft.uml.foundation.extension_mechanisms.*;
-
 import java.io.File;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import org.xml.sax.InputSource;
 
+import org.flymine.util.StringUtil;
+import org.flymine.util.TypeUtil;
+import org.flymine.metadata.*;
+
+/**
+ * Maps FlyMine metadata to an OJB repository file
+ *
+ * @author Mark Woodbridge
+ */
 public class OJBModelOutput extends ModelOutput
 {
-    private Collection fields = new HashSet();
-    private StringBuffer references, collections;
+    protected StringBuffer references, collections;
 
-    public OJBModelOutput(MModel mmodel) {
-        super(mmodel);
+    /**
+     * @see ModelOutput#Constructor
+     */
+    public OJBModelOutput(Model model, File file) throws Exception {
+        super(model, file);
     }
 
-    protected String generateAttribute (MAttribute attr) {
+    /**
+     * @see ModelOutput#process
+     */
+    public void process() {
+        File path = new File(file, "repository_" + model.getName() + ".xml");
+        initFile(path);
+        outputToFile(path, generate(model));
+    }
+
+    /**
+     * @see ModelOutput#generate(Model)
+     */
+    protected String generate(Model model) {
         StringBuffer sb = new StringBuffer();
-        sb.append(INDENT + INDENT + "<field-descriptor name=\"")
-            .append(generateName(attr.getName()))
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENDL)
+            .append("<!DOCTYPE descriptor-repository SYSTEM \"repository.dtd\" [" + ENDL)
+            .append("<!ENTITY internal SYSTEM \"repository_internal.xml\">" + ENDL)
+            .append("]>" + ENDL + ENDL)
+            .append("<descriptor-repository version=\"1.0\"")
+            .append(" isolation-level=\"read-uncommitted\">" + ENDL);
+
+        Iterator iter = model.getClassDescriptors().iterator();
+        while (iter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) iter.next();
+            sb.append(generate(cld));
+        }
+
+        sb.append("&internal;" + ENDL)
+            .append("</descriptor-repository>" + ENDL);
+        
+        return sb.toString();
+    }
+
+    /**
+     * @see ModelOutput#generate(ClassDescriptor)
+     */
+    protected String generate(ClassDescriptor cld) {
+        references = new StringBuffer();
+        collections = new StringBuffer();
+
+        String tableName = null;
+        if (!cld.isInterface()) {
+            if (cld.getSuperclassDescriptor() == null) {
+                tableName = TypeUtil.unqualifiedName(cld.getClassName());
+            } else {
+                tableName = TypeUtil.unqualifiedName(cld.getUltimateSuperclassDescriptor()
+                                                     .getClassName());
+            }
+        }
+
+        ClassDescriptor parentCld = cld.getSuperclassDescriptor();
+
+        StringBuffer sb = new StringBuffer ();
+        sb.append(INDENT)
+            .append("<class-descriptor class=\"")
+            .append(cld.getClassName())
+            .append("\"")
+            .append(parentCld == null ? "" : " extends=\"" + parentCld.getClassName() + "\"")
+            .append(cld.isInterface() ? "" : " table=\"" + tableName + "\"")
+            .append(">" + ENDL);
+
+        Collection extent = cld.isInterface()
+            ? cld.getImplementorDescriptors() : cld.getSubclassDescriptors();
+        Iterator iter = extent.iterator();
+        while (iter.hasNext()) {
+            sb.append(INDENT + INDENT)
+                .append("<extent-class class-ref=\"")
+                .append(((ClassDescriptor) iter.next()).getClassName())
+                .append("\"/>" + ENDL);
+        }
+
+        if (!cld.isInterface()) {
+            sb.append(INDENT + INDENT)
+                .append("<field-descriptor")
+                .append(" name=\"id\"")
+                .append(" column=\"ID\"")
+                .append(" jdbc-type=\"INTEGER\"")
+                .append(" primarykey=\"true\"")
+                .append(" autoincrement=\"true\"/>" + ENDL);
+
+            if (parentCld != null || cld.getSubclassDescriptors().size() > 0) {
+                sb.append(INDENT + INDENT)
+                    .append("<field-descriptor")
+                    .append(" name=\"ojbConcreteClass\"")
+                    .append(" column=\"CLASS\"")
+                    .append(" jdbc-type=\"VARCHAR\"/>" + ENDL);
+            }
+
+            if (parentCld != null) {
+                Iterator superClds = getParents(cld).iterator();
+                while (superClds.hasNext()) {
+                    ClassDescriptor superCld = (ClassDescriptor) superClds.next();
+                    doAttributes(superCld, sb);
+                    doAssociations(superCld, sb);
+                }
+            }
+
+            doAttributes(cld, sb);
+            doAssociations(cld, sb);
+        }
+
+        sb.append("" + references + collections)
+            .append(INDENT)
+            .append("</class-descriptor>" + ENDL + ENDL);
+        return sb.toString();
+    }
+    
+    /**
+     * @see ModelOutput#generate(AttributeDescriptor)
+     */
+    protected String generate(AttributeDescriptor attr) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(INDENT + INDENT)
+            .append("<field-descriptor name=\"")
+            .append(attr.getName())
             .append("\" column=\"")
             .append(generateSqlCompatibleName(attr.getName()))
             .append("\" jdbc-type=\"")
             .append(generateOJBSqlType(attr.getType()))
-            .append("\" />\n");
+            .append("\"/>" + ENDL);
         return sb.toString();
     }
 
-    protected String generateClassifier(MClassifier cls) {
+    /**
+     * @see ModelOutput#generate(ReferenceDescriptor)
+     */
+    protected String generate(ReferenceDescriptor ref) {
         StringBuffer sb = new StringBuffer();
-        sb.append(generateClassifierStart(cls))
-            .append((cls.isAbstract() || cls instanceof MInterface)
-                    ? new StringBuffer() : generateClassifierBody(cls))
-            .append(generateClassifierEnd(cls));
+        sb.append(INDENT + INDENT)
+            .append("<field-descriptor name=\"")
+            .append(ref.getName())
+            .append("Id\" column=\"")
+            .append(ref.getName())
+            .append("Id\" jdbc-type=\"INTEGER\"/>" + ENDL);
+        references.append(INDENT + INDENT)
+            .append("<reference-descriptor name=\"")
+            .append(ref.getName())
+            .append("\" class-ref=\"")
+            .append(ref.getReferencedClassDescriptor().getClassName() + "\"")
+            .append(" proxy=\"true\"")
+            .append(">" + ENDL)
+            .append(INDENT + INDENT + INDENT)
+            .append("<foreignkey field-ref=\"")
+            .append(ref.getName())
+            .append("Id")
+            .append("\"/>" + ENDL)
+            .append(INDENT + INDENT)
+            .append("</reference-descriptor>" + ENDL);
         return sb.toString();
     }
 
-    protected void generateFileStart(File path) {
-        initFile(path);
+    /**
+     * @see ModelOutput#generate(CollectionDescriptor)
+     */
+    protected String generate(CollectionDescriptor col) {
+        StringBuffer sb = new StringBuffer();
 
-        outputToFile(path, generateHeader());
-    }
+        String name1 = col.getReverseReferenceDescriptor().getName();
+        String name2 = col.getName();
 
-    protected void generateFile(MClassifier cls, File path) {
-        outputToFile(path, generate(cls));
-    }
+        if (col.getReverseReferenceDescriptor() instanceof CollectionDescriptor) { //many:many
+            String joiningTableName = "";
+            if (name1.compareTo(name2) < 0) {
+                joiningTableName = StringUtil.capitalise(name1) + StringUtil.capitalise(name2);
+            } else {
+                joiningTableName = StringUtil.capitalise(name2) + StringUtil.capitalise(name1);
+            }
 
-    protected void generateFileEnd(File path) {
-        outputToFile(path, generateFooter());
+            collections.append(INDENT + INDENT)
+                .append("<collection-descriptor name=\"")
+                .append(name2)
+                .append("\" element-class-ref=\"")
+                .append(col.getReferencedClassDescriptor().getClassName())
+                .append("\" collection-class=\"")
+                .append(col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet")
+                .append("\" proxy=\"true\"")
+                .append(" indirection-table=\"")
+                .append(joiningTableName)
+                .append("\">" + ENDL)
+                .append(INDENT + INDENT + INDENT)
+                .append("<fk-pointing-to-this-class column=\"")
+                // Name of this class's primary key in linkage table
+                .append(name1)
+                .append("Id\"/>" + ENDL)
+                .append(INDENT + INDENT + INDENT)
+                .append("<fk-pointing-to-element-class column=\"")
+                // Name of related class's primary key in linkage table
+                .append(name2)
+                .append("Id\"/>" + ENDL)
+                .append(INDENT + INDENT)
+                .append("</collection-descriptor>" + ENDL);
+        } else { //one:many
+            collections.append(INDENT + INDENT)
+                .append("<collection-descriptor name=\"")
+                .append(name2)
+                .append("\" element-class-ref=\"")
+                .append(col.getReferencedClassDescriptor().getClassName())
+                .append("\" collection-class=\"")
+                .append(col.getCollectionClass().getName())
+                .append("\" proxy=\"true\">" + ENDL)
+                .append(INDENT + INDENT + INDENT)
+                .append("<inverse-foreignkey field-ref=\"")
+                .append(name1)
+                .append("Id\"/>" + ENDL)
+                .append(INDENT + INDENT)
+                .append("</collection-descriptor>" + ENDL);
+        }
+        return sb.toString();
     }
 
     //=================================================================
 
-    private String generateHeader() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-            .append("<!DOCTYPE descriptor-repository SYSTEM \"repository.dtd\" [\n")
-            .append("<!ENTITY internal SYSTEM \"repository_internal.xml\">\n]>\n\n")
-            .append("<descriptor-repository version=\"1.0\""
-                    + " isolation-level=\"read-uncommitted\">\n");
-        return sb.toString();
+    private List getParents(ClassDescriptor cld) {
+        List parentList = new ArrayList();
+        ClassDescriptor superCld = cld.getSuperclassDescriptor();
+        while (superCld != null) {
+            parentList.add(superCld);
+            superCld = superCld.getSuperclassDescriptor();
+        }
+        Collections.reverse(parentList);
+        return parentList;
     }
 
-    private String generateFooter () {
-        StringBuffer sb = new StringBuffer();
-        sb.append("&internal;\n</descriptor-repository>\n");
-        return sb.toString();
-    }
-
-    private StringBuffer generateClassifierStart (MClassifier cls) {
-        references = new StringBuffer();
-        collections = new StringBuffer();
-
-        MClassifier parent = null;
-        String tableName = null;
-        if (cls.getGeneralizations().size() == 0) {
-            tableName = cls.getName();
-            parent = null;
-        } else {
-            List parents = getParents(cls);
-            parent = (MClassifier) parents.get(0);
-            tableName = ((MClassifier) parents.get(parents.size() - 1)).getName();
-        }
-
-        StringBuffer sb = new StringBuffer ();
-        sb.append(INDENT + "<class-descriptor class=\"")
-            .append(generateQualified(cls) + "\"")
-            .append(parent == null ? "" : " extends=\"" + generateQualified(parent) + "\"")
-            .append((cls.isAbstract() || cls instanceof MInterface)
-                    ? "" : " table=\"" + tableName + "\"")
-            .append(">\n");
-
-        Collection ems = new ArrayList(); // extent members i.e. subclasses or implementations
-        if (cls instanceof MInterface) {
-            Collection deps = cls.getSupplierDependencies();
-            Iterator depIterator = deps.iterator();
-            while (depIterator.hasNext()) {
-                MDependency dep = (MDependency) depIterator.next();
-                if ((dep instanceof MAbstraction)) {
-                    MClassifier mc = (MClassifier) dep.getClients().toArray()[0];
-                    ems.add(generateQualified(mc));
-                }
-            }
-        } else {
-            Collection specs = cls.getSpecializations();
-            Iterator specIterator = specs.iterator();
-            while (specIterator.hasNext()) {
-                MClassifier mc = (MClassifier) (((MGeneralization) specIterator.next()).getChild());
-                ems.add(generateQualified(mc));
-            }
-        }
-
-        if (ems != null && ems.size() > 0) {
-            Iterator iter = ems.iterator();
-            while (iter.hasNext()) {
-                sb.append(INDENT + INDENT + "<extent-class class-ref=\"")
-                    .append((String) iter.next())
-                    .append("\" />\n");
-            }
-        }
-        return sb;
-    }
-
-    private StringBuffer generateClassifierBody(MClassifier cls) {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append(INDENT + INDENT + "<field-descriptor name=\"id\"")
-            .append(" column=\"ID\"")
-            .append(" jdbc-type=\"INTEGER\"")
-            .append(" primarykey=\"true\"")
-            .append(" autoincrement=\"true\" />\n");
-
-        Iterator parents = cls.getGeneralizations().iterator();
-        if (parents.hasNext() || cls.getSpecializations().size() > 0) {
-            sb.append(INDENT + INDENT + "<field-descriptor")
-                .append(" name=\"ojbConcreteClass\"")
-                .append(" column=\"CLASS\"")
-                .append(" jdbc-type=\"VARCHAR\" />\n");
-        }
-
-        if (parents.hasNext()) {
-            List parentList = getParents(cls);
-            Collections.reverse(parentList);
-            Iterator iter = parentList.iterator();
-            while (iter.hasNext()) {
-                MClassifier parent = (MClassifier) iter.next();
-                doAttributes(getAttributes(parent), sb);
-                doAssociations(parent.getAssociationEnds(), sb);
-            }
-        }
-
-        doAttributes(getAttributes(cls), sb);
-        doAssociations(cls.getAssociationEnds(), sb);
-        return sb;
-    }
-
-    void doAttributes(Collection c, StringBuffer sb) {
-        if (!c.isEmpty()) {
-            Iterator iter = c.iterator();
-            while (iter.hasNext()) {
-                sb.append(generate((MStructuralFeature) iter.next()));
-            }
+    private void doAttributes(ClassDescriptor cld, StringBuffer sb) {
+        Iterator iter = cld.getAttributeDescriptors().iterator();
+        while (iter.hasNext()) {
+            sb.append(generate((AttributeDescriptor) iter.next()));
         }
     }
 
-    void doAssociations(Collection c, StringBuffer sb) {
-        if (!c.isEmpty()) {
-            Iterator iter = c.iterator();
-            while (iter.hasNext()) {
-                MAssociationEnd ae = (MAssociationEnd) iter.next();
-                sb.append(generateAssociationEnd(ae, ae.getOppositeEnd()));
-            }
+    private void doAssociations(ClassDescriptor cld, StringBuffer sb) {
+        Iterator iter;
+        iter = cld.getReferenceDescriptors().iterator();
+        while (iter.hasNext()) {
+            sb.append(generate((ReferenceDescriptor) iter.next()));
+        }
+        iter = cld.getCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            sb.append(generate((CollectionDescriptor) iter.next()));
         }
     }
 
-    private StringBuffer generateClassifierEnd(MClassifier cls) {
-        fields.clear();
-        StringBuffer sb = new StringBuffer();
-        sb.append("" + references + collections)
-            .append(INDENT + "</class-descriptor>\n\n");
-        return sb;
+    private String generateSqlCompatibleName(String n) {
+        //n should start with a lower case letter
+        if (n.equalsIgnoreCase("end")) {
+            return StringUtil.toSameInitialCase("finish", n);
+        }
+        if (n.equalsIgnoreCase("id")) {
+            return StringUtil.toSameInitialCase("identifier", n);
+        }
+        if (n.equalsIgnoreCase("index")) {
+            return StringUtil.toSameInitialCase("number", n);
+        }
+        return n;
     }
 
-    private String generateAssociationEnd(MAssociationEnd ae1, MAssociationEnd ae2) {
-        //if (!(ae1.isNavigable() && ae2.isNavigable()))
-        if (!ae2.isNavigable()) {
-            return "";
-        }
-        StringBuffer sb = new StringBuffer();
-
-        MMultiplicity m1 = ae1.getMultiplicity();
-        String endName1 = ae1.getName();
-
-        String name1 = "";
-        String impl = "";
-
-        if (endName1 != null && endName1.length() > 0) {
-            name1 = endName1;
-        } else {
-            name1 = generateClassifierRef(ae1.getType());
-        }
-
-        MMultiplicity m2 = ae2.getMultiplicity();
-        String endName2 = ae2.getName();
-
-        String name2 = "";
-
-        if (endName2 != null && endName2.length() > 0) {
-            name2 = endName2;
-        } else {
-            name2 = generateClassifierRef(ae2.getType());
-        }
-
-        // If one or zero of the other class
-        if ((MMultiplicity.M1_1.equals(m2) || MMultiplicity.M0_1.equals(m2)) && ae2.isNavigable()) {
-            if (!fields.contains(name2)) {
-                fields.add(name2);
-                sb.append(INDENT + INDENT + "<field-descriptor name=\"")
-                    .append(generateNoncapitalName(name2))
-                    .append("Id\" column=\"")
-                    .append(generateNoncapitalName(name2))
-                    .append("Id\" jdbc-type=\"INTEGER\" />\n");
-
-                references.append(INDENT + INDENT + "<reference-descriptor name=\"")
-                    .append(generateNoncapitalName(name2))
-                    .append("\" class-ref=\"" + generateQualified(ae2.getType()) + "\"")
-                    .append(" proxy=\"true\"")
-                    .append(">\n" + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"")
-                    .append(generateNoncapitalName(name2) + "Id")
-                    .append("\" />\n" + INDENT + INDENT + "</reference-descriptor>\n");
-            }
-        } else if ((MMultiplicity.M1_N.equals(m2) || MMultiplicity.M0_N.equals(m2))
-                   && (MMultiplicity.M1_1.equals(m1) || MMultiplicity.M0_1.equals(m1))) {
-            // If more than one of the other class AND one or zero of this one
-
-            if (ae2.getOrdering()==null || ae2.getOrdering().getName().equals("unordered")) {
-                impl="java.util.HashSet";
-            } else {
-                impl = "java.util.ArrayList";
-            }
-
-            collections.append(INDENT + INDENT + "<collection-descriptor name=\"")
-                .append(generateNoncapitalName(name2))
-                .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
-                .append(" collection-class=\"" + impl + "\"")
-                .append(" proxy=\"true\"")
-                .append(">\n" + INDENT + INDENT + INDENT + "<inverse-foreignkey field-ref=\"")
-                .append(generateNoncapitalName(name1) + "Id")
-                .append("\"/>\n")
-                .append(INDENT + INDENT + "</collection-descriptor>\n");
-        } else {
-            // Else there must be many:many relationship
-            String joiningTableName = "";
-            if (name1.compareTo(name2) < 0) {
-                joiningTableName = generateCapitalName(name1) + generateCapitalName(name2);
-            } else {
-                joiningTableName = generateCapitalName(name2) + generateCapitalName(name1);
-            }
-
-            if (ae2.getOrdering()==null || ae2.getOrdering().getName().equals("unordered")) {
-                impl="java.util.HashSet";
-            } else {
-                impl = "java.util.ArrayList";
-            }
-
-            collections.append(INDENT + INDENT + "<collection-descriptor name=\"")
-                .append(generateNoncapitalName(name2))
-                .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
-                .append(" collection-class=\"" + impl + "\"")
-                .append(" proxy=\"true\"")
-                .append(" indirection-table=\"")
-                .append(joiningTableName)
-                .append("\">\n")
-                .append(INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"")
-                // Name of this class's primary key in linkage table
-                .append(generateNoncapitalName(name1))
-                .append("Id\"/>\n")
-                .append(INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"")
-                // Name of related class's primary key in linkage table
-                .append(generateNoncapitalName(generateCapitalName(name2)))
-                .append("Id\"/>\n")
-                .append(INDENT + INDENT + "</collection-descriptor>\n");
-        }
-        return sb.toString();
-    }
-
-    private String generateOJBSqlType(MClassifier cls) {
-        String type = generateClassifierRef(cls);
+    private String generateOJBSqlType(String type) {
         if (type.equals("int")) {
             return "INTEGER";
         }
-        if (type.equals("String")) {
+        if (type.equals("java.lang.String")) {
             return "LONGVARCHAR";
         }
         if (type.equals("boolean")) {
@@ -335,24 +297,9 @@ public class OJBModelOutput extends ModelOutput
         if (type.equals("float")) {
             return "FLOAT";
         }
-        if (type.equals("Date")) {
+        if (type.equals("java.util.Date")) {
             return "DATE";
         }
         return type;
-    }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length != 3) {
-            System.err.println("Usage:  OJBModelOutput <project name> <input dir> <output dir>");
-            System.exit(1);
-        }
-        String projectName = args[0];
-        String inputDir = args[1];
-        String outputDir = args[2];
-
-        File xmiFile = new File(inputDir, projectName + "_.xmi");
-        InputSource source = new InputSource(xmiFile.toURL().toString());
-        File path = new File(outputDir, "repository_" + projectName.toLowerCase() + ".xml");
-        new OJBModelOutput(new XMIReader().parse(source)).output(path);
     }
 }

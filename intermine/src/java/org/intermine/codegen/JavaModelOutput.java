@@ -1,709 +1,402 @@
 package org.flymine.codegen;
 
-// Most of this code originated in the ArgoUML project, which carries
-// the following copyright
-//
-// Copyright (c) 1996-2001 The Regents of the University of California. All
-// Rights Reserved. Permission to use, copy, modify, and distribute this
-// software and its documentation without fee, and without a written
-// agreement is hereby granted, provided that the above copyright notice
-// and this paragraph appear in all copies.  This software program and
-// documentation are copyrighted by The Regents of the University of
-// California. The software program and documentation are supplied "AS
-// IS", without any accompanying services from The Regents. The Regents
-// does not warrant that the operation of the program will be
-// uninterrupted or error-free. The end-user understands that the program
-// was developed for research purposes and is advised not to rely
-// exclusively on the program for any reason.  IN NO EVENT SHALL THE
-// UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-// SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS,
-// ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-// THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-// SUCH DAMAGE. THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-// PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-// CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
-// UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-
-import ru.novosoft.uml.xmi.XMIReader;
-import ru.novosoft.uml.foundation.core.*;
-import ru.novosoft.uml.foundation.data_types.*;
-import ru.novosoft.uml.model_management.*;
-import ru.novosoft.uml.foundation.extension_mechanisms.*;
-
 import java.io.File;
-import java.util.StringTokenizer;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.xml.sax.InputSource;
 
+import org.flymine.util.StringUtil;
+import org.flymine.util.TypeUtil;
+import org.flymine.metadata.*;
+
+/**
+ * Maps FlyMine metadata to Java source files
+ *
+ * @author Mark Woodbridge
+ */
 public class JavaModelOutput extends ModelOutput
 {
-    private static final boolean OJB = true;
+    protected static final boolean OJB = true;
 
-    public JavaModelOutput(MModel mmodel) {
-        super(mmodel);
+    /**
+     * @see ModelOutput#Constructor
+     */
+    public JavaModelOutput(Model model, File file) throws Exception {
+        super(model, file);
     }
 
-    protected String generateOperation(MOperation op) {
-        StringBuffer sb = new StringBuffer();
-        String nameStr = generateName(op.getName());
-        String clsName = generateName(op.getOwner().getName());
-
-        // modifiers
-        sb.append(INDENT);
-        sb.append(generateConcurrency(op));
-        sb.append(generateAbstractness(op));
-        sb.append(generateChangeability(op));
-        sb.append(generateScope(op));
-        sb.append(generateVisibility(op));
-
-        // return type
-        MParameter rp = getReturnParameter(op);
-        if (rp != null) {
-            MClassifier returnType = rp.getType();
-            if (returnType == null && !nameStr.equals(clsName)) {
-                sb.append("void ");
-            } else if (returnType != null) {
-                sb.append(generateClassifierRef(returnType)).append(' ');
-            }
+    /**
+     * @see ModelOutput#process
+     */
+    public void process() {
+        Iterator iter = model.getClassDescriptors().iterator();
+        while (iter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) iter.next();
+            String cldName = cld.getClassName();
+            String pkg = TypeUtil.packageName(cldName);
+            String cls = TypeUtil.unqualifiedName(cld.getClassName());
+            File dir = new File(file, pkg.replaceAll("[.]", File.separator));
+            dir.mkdirs();
+            File path = new File(dir, cls + ".java");
+            initFile(path);
+            outputToFile(path, generate(cld));
         }
+    }
+    
+    /**
+     * This mapping generates one file per ClassDescriptor, so nothing output for the Model itself
+     * @see ModelOutput#generate(Model)
+     */
+    protected String generate(Model model) {
+        return null;
+    }
 
-        // method name
-        sb.append(nameStr);
+    /**
+     * @see ModelOutput#generate(ClassDescriptor)
+     */
+    protected String generate(ClassDescriptor cld) {
+        StringBuffer sb = new StringBuffer();
 
-        // parameters
-        List params = new ArrayList(op.getParameters());
-        params.remove(rp);
-        sb.append('(');
-        if (params != null) {
-            for (int i = 0; i < params.size(); i++) {
-                MParameter p = (MParameter) params.get(i);
-                if (i > 0) {
+        String packageName = TypeUtil.packageName(cld.getClassName());
+
+        if (packageName.length() > 0) {
+            sb.append("package ")
+                .append(packageName)
+                .append(";" + ENDL + ENDL);
+        }
+        sb.append("public ")
+            .append(cld.isInterface() ? "interface " : "class ")
+            .append(TypeUtil.unqualifiedName(cld.getClassName()));
+        
+        if (cld.getSuperclassDescriptor() != null) {
+            sb.append(" extends ")
+                .append(TypeUtil.unqualifiedName(cld.getSuperclassDescriptor().getClassName()));
+        }
+        
+        if (cld.getInterfaceDescriptors().size() > 0) {
+            sb.append(" implements ");
+            Iterator iter = cld.getInterfaceDescriptors().iterator();
+            while (iter.hasNext()) {
+                ClassDescriptor interfaceCld = (ClassDescriptor) iter.next();
+                sb.append(TypeUtil.unqualifiedName(interfaceCld.getClassName()));
+                if (iter.hasNext()) {
                     sb.append(", ");
                 }
-                sb.append(generateParameter(p));
             }
         }
-        sb.append(')');
-
-        return sb.toString();
-    }
-
-    protected String generateAttribute (MAttribute attr) {
-        StringBuffer sb = new StringBuffer();
-
-        MClassifier owner = attr.getOwner();
-
-        // modifiers
-        sb.append(INDENT);
-        sb.append(generateVisibility(attr));
-        sb.append(generateScope(attr));
-        sb.append(generateChangability(attr));
-
-        // type
-        MClassifier type = attr.getType();
-        if (type != null) {
-            sb.append(generateClassifierRef(type)).append(' ');
-        }
-
-        // field name
-        sb.append(generateName(attr.getName()));
-
-        // initial value
-        MExpression init = attr.getInitialValue();
-        if (init != null) {
-            String initStr = generateExpression(init).trim();
-            if (initStr.length() > 0) {
-                sb.append(" = ").append(initStr);
+ 
+        sb.append(ENDL)
+            .append("{" + ENDL);
+        
+        if (OJB && !cld.isInterface()) {
+            String key = getKey(cld);
+            if (!key.equals("")) {
+                sb.append("protected static String key = \"" + getKey(cld) + "\";" + ENDL);
+            }
+            if (cld.getSuperclassDescriptor() == null) {
+                sb.append(INDENT + "protected Integer id;" + ENDL)
+                    .append(INDENT + "public Integer getId() { return id; };" + ENDL + ENDL);
+            }
+            
+            if (cld.getSuperclassDescriptor() != null || cld.getSubclassDescriptors() != null) {
+                sb.append(INDENT + "protected String ojbConcreteClass = \"")
+                    .append(cld.getClassName())
+                    .append("\";" + ENDL + ENDL);
             }
         }
+        
+        Iterator iter;
+        iter = cld.getAttributeDescriptors().iterator();
+        while (iter.hasNext()) {
+            sb.append(generate((AttributeDescriptor) iter.next()));
+        }
+        iter = cld.getReferenceDescriptors().iterator();
+        while (iter.hasNext()) {
+            sb.append(generate((ReferenceDescriptor) iter.next()));
+        }
+        iter = cld.getCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            sb.append(generate((CollectionDescriptor) iter.next()));
+        }
 
-        sb.append(";\n")
-            .append(generateGetSet(generateNoncapitalName(attr.getName()),
-                                   generateClassifierRef(type)))
-            .append("\n");
+        sb.append(generateEquals(cld))
+            .append(generateEqualsPK(cld))
+            .append(generateHashCode(cld))
+            .append(generateToString(cld))
+            .append("}");
 
         return sb.toString();
     }
-
-    protected String generateParameter(MParameter param) {
+    
+    /**
+     * @see ModelOutput#generate(AttributeDescriptor)
+     */
+    protected String generate(AttributeDescriptor attr) {
         StringBuffer sb = new StringBuffer();
-        // type
-        sb.append(generateClassifierRef(param.getType())).append(' ');
-        // name
-        sb.append(generateName(param.getName()));
-        return sb.toString();
-    }
-
-    protected String generateClassifier(MClassifier cls) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(generateClassifierStart(cls))
-            .append(generateClassifierBody(cls))
-            .append(generateClassifierEnd(cls));
-        return sb.toString();
-    }
-
-    protected String generateAssociationEnd(MAssociationEnd ae) {
-        if (!ae.isNavigable()) {
-            return "";
-        }
-        StringBuffer sb = new StringBuffer();
-        String type = "";
-        String impl = "";
-        String name = "";
-        String construct = "";
-
-        //sb.append(INDENT + generateVisibility(ae.getVisibility()));
-
-        if (MScopeKind.CLASSIFIER.equals(ae.getTargetScope())) {
-            sb.append("static ");
-        }
-
-        MMultiplicity m = ae.getMultiplicity();
-        if (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m)) {
-            type = generateClassifierRef(ae.getType());
-        } else {
-            if (ae.getOrdering() == null || ae.getOrdering().getName().equals("unordered")) {
-                type = "Set";
-                impl = "HashSet";
-            } else {
-                type = "List";
-                impl = "ArrayList";
-            }
-            name = "s";
-            construct = " = new " + impl + "()";
-        }
-
-        String n = ae.getName();
-        MAssociation asc = ae.getAssociation();
-        String ascName = asc.getName();
-
-        if (n != null && n.length() > 0) {
-            name = n + name;
-        } else if (ascName != null && ascName.length() > 0) {
-            name = ascName + name;
-        } else {
-            name = generateClassifierRef(ae.getType()) + name;
-        }
-
-        if (OJB && (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m))) {
-            sb.append(INDENT + "protected Integer ")
-                .append(generateNoncapitalName(name) + "Id;\n");
-        }
-
         sb.append(INDENT + "protected ")
-            .append(type)
-            .append(' ')
-            .append(generateNoncapitalName(name))
-            .append(construct)
-            .append(";\n")
-            .append(generateGetSet(generateNoncapitalName(name), type))
-            .append("\n");
+            .append(attr.getType())
+            .append(" ")
+            .append(attr.getName())
+            .append(";" + ENDL)
+            .append(generateGetSet(attr))
+            .append(ENDL);
 
         return sb.toString();
     }
 
-    protected void generateFileStart(File path) {
+    /**
+     * @see ModelOutput#generate(ReferenceDescriptor)
+     */
+    protected String generate(ReferenceDescriptor ref) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(OJB ? INDENT + "protected Integer " + ref.getName() + "Id;" + ENDL : "")
+            .append(INDENT)
+            .append("protected ")
+            .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getClassName()))
+            .append(" ")
+            .append(ref.getName())
+            .append(";" + ENDL)
+            .append(generateGetSet(ref))
+            .append(ENDL);
+        return sb.toString();
     }
 
-    protected void generateFile(MClassifier cls, File path) {
-         String filename = cls.getName() + ".java";
-
-         int lastIndex = -1;
-         do {
-             if (!path.isDirectory()) {
-                 if (!path.mkdir()) {
-                     LOG.debug(" could not make directory " + path);
-                     return;
-                 }
-             }
-
-             String packagePath = getPackagePath(cls);
-
-             if (lastIndex == packagePath.length()) {
-                 break;
-             }
-
-             int index = packagePath.indexOf (".", lastIndex + 1);
-             if (index == -1) {
-                 index = packagePath.length();
-             }
-
-             path = new File(path, packagePath.substring (lastIndex + 1, index));
-             lastIndex = index;
-         } while (true);
-
-         path = new File(path, filename);
-         initFile(path);
-
-         String header = generateHeader(cls);
-         String src = generate(cls);
-
-         outputToFile(path, header + src);
-    }
-
-    protected void generateFileEnd(File path) {
+    /**
+     * @see ModelOutput#generate(CollectionDescriptor)
+     */
+    protected String generate(CollectionDescriptor col) {
+        String type = col.isOrdered() ? "java.util.List" : "java.util.Set";
+        String impl = col.isOrdered() ? "java.util.ArrayList" : "java.util.HashSet";
+        
+        StringBuffer sb = new StringBuffer();
+        sb.append(INDENT)
+            .append("protected ")
+            .append(type)
+            .append(" ")
+            .append(col.getName())
+            .append(" = new ")
+            .append(impl)
+            .append("();" + ENDL)
+            .append(generateGetSet(col))
+            .append(ENDL);
+        return sb.toString();
     }
 
     //=================================================================
 
-    private String generateHeader (MClassifier cls) {
-        StringBuffer sb = new StringBuffer();
-        String packagePath = getPackagePath(cls);
-        if (packagePath.length() > 0) {
-            sb.append("package ").append(packagePath).append(";\n\n");
-        }
-        sb.append("import java.util.*;\n\n");
-        return sb.toString();
-    }
+    private String generateGetSet(FieldDescriptor field) {
+        String name = field.getName(), type = getType(field);
 
-    private StringBuffer generateClassifierStart (MClassifier cls) {
-        StringBuffer sb = new StringBuffer ();
-
-        String sClassifierKeyword = null;
-        if (cls instanceof MClassImpl) {
-            sClassifierKeyword = "class";
-        } else if (cls instanceof MInterface) {
-            sClassifierKeyword = "interface";
-        }
-
-        // Now add visibility
-        sb.append(generateVisibility(cls.getVisibility()));
-
-        // Add other modifiers
-        if (cls.isAbstract() && !(cls instanceof MInterface)) {
-            sb.append("abstract ");
-        }
-
-        if (cls.isLeaf()) {
-            sb.append("final ");
-        }
-
-        // add classifier keyword and classifier name
-        sb.append (sClassifierKeyword)
-            .append(" ")
-            .append (generateName(cls.getName()));
-
-        // add base class/interface
-        String baseClass = generateGeneralization(cls.getGeneralizations());
-        if (!baseClass.equals("")) {
-            sb.append (" ")
-                .append ("extends ")
-                .append (baseClass);
-        }
-
-        // add implemented interfaces, if needed
-        if (cls instanceof MClass) {
-            String interfaces = generateSpecification((MClass) cls);
-            if (!interfaces.equals ("")) {
-                sb.append (" ")
-                    .append ("implements ")
-                    .append (interfaces);
-            }
-        }
-
-        // add opening brace
-        sb.append("\n{\n");
-
-        if (OJB && sClassifierKeyword.equals("class")) {
-            if (baseClass.equals("")) {
-                sb.append(INDENT + "protected Integer id;\n")
-                    .append(INDENT + "public Integer getId() { return id; };\n");
-            }
-            String key = getKey(cls);
-            if (key != null) {
-                sb.append(INDENT + "protected static String key = \"" + key + "\";\n");
-            }
-            if (!baseClass.equals("") || cls.getSpecializations().size() > 0) {
-                sb.append(INDENT + "protected String ojbConcreteClass = \""
-                          + generateQualified(cls) + "\";\n");
-            }
-        }
-
-        return sb.append("\n");
-    }
-
-    private String generateGetSet(String name, String type) {
         StringBuffer sb = new StringBuffer();
 
         // Get method
         sb.append(INDENT)
-            .append("public ");
-
-        if (type != null) {
-            sb.append(type).append(' ');
-        }
-        sb.append("get").append(generateCapitalName(name)).append("() { ")
-            .append("return this.").append(generateName(name)).append("; }\n");
+            .append("public ")
+            .append(type)
+            .append(" get")
+            .append(StringUtil.capitalise(name))
+            .append("() { ")
+            .append("return this.")
+            .append(name)
+            .append("; }" + ENDL);
 
         // Set method
         sb.append(INDENT)
             .append("public void ")
-            .append("set").append(generateCapitalName(name)).append("(");
-        if (type != null) {
-            sb.append(type).append(" ");
-        }
-        sb.append(generateName(name)).append(") { ")
-            .append("this.").append(generateName(name)).append("=")
-            .append(generateName(name)).append("; }\n");
+            .append("set")
+            .append(StringUtil.capitalise(name))
+            .append("(")
+            .append(type)
+            .append(" ")
+            .append(name)
+            .append(") { ")
+            .append("this.")
+            .append(name)
+            .append("=")
+            .append(name)
+            .append("; }" + ENDL);
 
         return sb.toString();
     }
 
-    private String generateEquals(MClassifier cls) {
+    private String generateEquals(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        Collection keyFields = getKeys(cls);
+        String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
+
+        Collection keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public boolean equals(Object o) {\n")
-                .append(INDENT + INDENT + "if (!(o instanceof ")
-                .append(cls.getName() + ")) return false;\n")
-                .append(INDENT + INDENT + "return (id==null) ? equalsPK(o) : id.equals(((")
-                .append(cls.getName() + ")o).getId());\n")
-                .append(INDENT + "}\n\n")
-                .append(INDENT + "public boolean equalsPK(Object o) {\n")
-                .append(INDENT + INDENT + "if (!(o instanceof ")
-                .append(cls.getName() + ")) return false;\n")
-                .append(INDENT + INDENT + cls.getName() + " obj = (" + cls.getName() + ") o;\n")
-                .append(INDENT + INDENT + "return obj.getId()==null && ");
+            sb.append(INDENT)
+                .append("public boolean equals(Object o) {" + ENDL)
+                .append(INDENT + INDENT)
+                .append("if (!(o instanceof ")
+                .append(unqualifiedName)
+                .append(")) return false;" + ENDL)
+                .append(INDENT + INDENT)
+                .append("return (id==null) ? equalsPK(o) : id.equals(((")
+                .append(unqualifiedName)
+                .append(")o).getId());" + ENDL)
+                .append(INDENT)
+                .append("}" + ENDL + ENDL);
+        }
+        
+        return sb.toString();
+    }
+
+    private String generateEqualsPK(ClassDescriptor cld) {
+        StringBuffer sb = new StringBuffer();
+
+        String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
+
+        Collection keyFields = cld.getPkFieldDescriptors();
+        if (keyFields.size() > 0) {
+            sb.append(INDENT)
+                .append("public boolean equalsPK(Object o) {" + ENDL)
+                .append(INDENT + INDENT)
+                .append("if (!(o instanceof ")
+                .append(unqualifiedName)
+                .append(")) return false;" + ENDL)
+                .append(INDENT + INDENT)
+                .append(unqualifiedName)
+                .append(" obj = (")
+                .append(unqualifiedName)
+                .append(") o;" + ENDL)
+                .append(INDENT + INDENT)
+                .append("return obj.getId()==null && ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
-                String field = (String) iter.next();
-                if (getAllAttributes(cls).containsKey(field)
-                    && isPrimitive(((MAttribute)
-                                    getAllAttributes(cls).get(field)).getType().getName())) {
-                    sb.append("obj.get" + generateCapitalName(field) + "()" + "==" + field);
+                FieldDescriptor field = (FieldDescriptor) iter.next();
+                if (cld.getAllAttributeDescriptors().contains(field)
+                    && isPrimitive(((AttributeDescriptor) field).getType())) {
+                    sb.append("obj.get")
+                        .append(StringUtil.capitalise(field.getName()))
+                        .append("() ==")
+                        .append(field.getName());
                 } else {
-                    //sb.append(field + ".equals(obj.get" + generateCapitalName(field) + "())");
-                    //TODO use the previous line in preference to the following two...
-                    //our "key" fields can be null at present - if they are then don't do comparison
-                    String thatField = "obj.get" + generateCapitalName(field) + "()";
-                    sb.append("(" + thatField + " == null ? (" + field + " == null) : "
-                              + thatField + ".equals(" + field + "))");
+                    String thatField = "obj.get" + StringUtil.capitalise(field.getName()) + "()";
+                    sb.append("(" + thatField + " == null ? (" + field.getName() + " == null) : "
+                              + thatField + ".equals(" + field.getName() + "))");
+//                     sb.append(field.getName())
+//                         .append(".equals(obj.get")
+//                         .append(StringUtil.capitalise(field.getName()))
+//                         .append("())");
                 }
                 if (iter.hasNext()) {
                     sb.append(" && ");
                 }
             }
-            sb.append(";\n" + INDENT + "}\n");
+            sb.append(";" + ENDL)
+                .append(INDENT)
+                .append("}" + ENDL + ENDL);
         }
+
         return sb.toString();
     }
 
-    private String generateHashCode(MClassifier cls) {
+    private String generateHashCode(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        Collection keyFields = getKeys(cls);
+        Collection keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public int hashCode() {\n")
-                .append(INDENT + INDENT + "if (id!=null) return id.hashCode();\n")
-                .append(INDENT + INDENT + "return ");
+            sb.append(INDENT)
+                .append("public int hashCode() {" + ENDL)
+                .append(INDENT + INDENT)
+                .append("if (id!=null) return id.hashCode();" + ENDL)
+                .append(INDENT + INDENT)
+                .append("return ");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
-                String field = (String) iter.next();
-                if (getAllAttributes(cls).containsKey(field)
-                    && isPrimitive(((MAttribute)
-                                    getAllAttributes(cls).get(field)).getType().getName())) {
-                    if (((MAttribute)
-                         getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
-                        sb.append("(" + field + " ? 0 : 1)");
+                FieldDescriptor field = (FieldDescriptor) iter.next();
+                if (cld.getAllAttributeDescriptors().contains(field)
+                    && isPrimitive(((AttributeDescriptor) field).getType())) {
+                    if (((AttributeDescriptor) field).getType().equals("boolean")) {
+                        sb.append("(" + field.getName() + " ? 0 : 1)");
                     } else {
-                        sb.append(field);
+                        sb.append(field.getName());
                     }
                 } else {
-                    //sb.append(field + ".hashCode()");
-                    //TODO same as above
-                    sb.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
+                    // sb.append(field.getName() + ".hashCode()");
+                    sb.append("(" + field.getName() + " == null ? 0 : " + field.getName()
+                              + ".hashCode())");
                 }
                 if (iter.hasNext()) {
                     sb.append(" ^ ");
                 }
             }
-            sb.append(";\n" + INDENT + "}\n");
+            sb.append(";" + ENDL)
+                .append(INDENT)
+                .append("}" + ENDL + ENDL);
         }
         return sb.toString();
     }
 
-    private String generateToString(MClassifier cls) {
+    private String generateToString(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        Collection keyFields = getKeys(cls);
+        String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
+
+        Collection keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public String toString() { ")
-                .append("return \"" + cls.getName() + " [\"")
-                .append(OJB ? "+id" : "+get" + generateCapitalName(cls.getName()) + "Id()")
+            sb.append(INDENT)
+                .append("public String toString() { ")
+                .append("return \"")
+                .append(unqualifiedName)
+                .append(" [\"")
+                .append(OJB ? "+id" : "+get" + StringUtil.capitalise(unqualifiedName) + "Id()")
                 .append("+\"] \"+");
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
-                String field = (String) iter.next();
-                sb.append(field);
+                FieldDescriptor field = (FieldDescriptor) iter.next();
+                sb.append(field.getName());
                 if (iter.hasNext()) {
                     sb.append("+\", \"+");
                 }
             }
-            sb.append("; }\n");
+            sb.append("; }" + ENDL);
         }
         return sb.toString();
     }
+    
+    private String getType(FieldDescriptor field) {
+        String type = null;
+        if (field instanceof AttributeDescriptor) {
+            type = ((AttributeDescriptor) field).getType();
+        } else if (field instanceof CollectionDescriptor) {
+            if (((CollectionDescriptor) field).isOrdered()) {
+                type = "java.util.List";
+            } else {
+                type = "java.util.Set";
+            }            
+        } else {
+            type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getClassName();
+        }
+        return type;
+    }
 
-    private StringBuffer generateClassifierEnd(MClassifier cls) {
+    private String getKey(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
-        sb.append(generateEquals(cls))
-            .append("\n")
-            .append(generateHashCode(cls))
-            .append("\n")
-            .append(generateToString(cls))
-            .append("}");
-        return sb;
-    }
-
-    private StringBuffer generateClassifierBody(MClassifier cls) {
-        StringBuffer sb = new StringBuffer();
-
-        // (attribute) fields
-        Collection strs = getAttributes(cls);
-        if (!strs.isEmpty()) {
-            Iterator strIter = strs.iterator();
-            while (strIter.hasNext()) {
-                sb.append(generate((MStructuralFeature) strIter.next()));
-            }
+        List keys = cld.getPkFieldDescriptors();
+        toStrings(keys);
+        ClassDescriptor superCld = cld.getSuperclassDescriptor();
+        while (superCld != null) {
+            List moreKeys = superCld.getPkFieldDescriptors();
+            toStrings(moreKeys);
+            keys.removeAll(moreKeys);
+            superCld = superCld.getSuperclassDescriptor();
         }
-
-        // (association) fields
-        Collection ends = new ArrayList(cls.getAssociationEnds());
-        if (!ends.isEmpty()) {
-            Iterator endIter = ends.iterator();
-            while (endIter.hasNext()) {
-                MAssociationEnd ae = (MAssociationEnd) endIter.next();
-                sb.append(generateAssociationEnd(ae.getOppositeEnd()));
-            }
-        }
-
-        // methods
-        Collection behs = getOperations(cls);
-        if (!behs.isEmpty()) {
-            sb.append('\n');
-
-            Iterator behEnum = behs.iterator();
-
-            while (behEnum.hasNext()) {
-                MBehavioralFeature bf = (MBehavioralFeature) behEnum.next();
-
-                sb.append(generate(bf));
-
-
-                if ((cls instanceof MClassImpl)
-                    && (bf instanceof MOperation)
-                    && (!((MOperation) bf).isAbstract())) {
-
-                    sb.append(" {\n")
-                        .append(generateMethodBody((MOperation) bf))
-                        .append(INDENT)
-                        .append("}\n");
-                } else {
-                    sb.append(";\n");
-                }
-            }
-        }
-        return sb;
-    }
-
-    private String generateMethodBody (MOperation op) {
-        if (op != null) {
-            Collection methods = op.getMethods();
-            Iterator i = methods.iterator();
-            MMethod m = null;
-
-            while (i != null && i.hasNext()) {
-                m = (MMethod) i.next();
-
-                if (m != null) {
-                    if (m.getBody() != null) {
-                        return m.getBody().getBody();
-                    } else {
-                        return "";
-                    }
-                }
-            }
-
-            // pick out return type
-            MParameter rp = getReturnParameter(op);
-            if (rp != null) {
-                MClassifier returnType = rp.getType();
-                return generateDefaultReturnStatement (returnType);
-            }
-        }
-
-        return generateDefaultReturnStatement (null);
-    }
-
-    private String generateDefaultReturnStatement(MClassifier cls) {
-        if (cls == null) {
-            return "";
-        }
-
-        String clsName = cls.getName();
-        if (clsName.equals("void")) {
-            return "";
-        }
-        if (clsName.equals("char")) {
-            return INDENT + "return 'x';\n";
-        }
-        if (clsName.equals("int")) {
-            return INDENT + "return 0;\n";
-        }
-        if (clsName.equals("boolean")) {
-            return INDENT + "return false;\n";
-        }
-        if (clsName.equals("byte")) {
-            return INDENT + "return 0;\n";
-        }
-        if (clsName.equals("long")) {
-            return INDENT + "return 0;\n";
-        }
-        if (clsName.equals("float")) {
-            return INDENT + "return 0.0;\n";
-        }
-        if (clsName.equals("double")) {
-            return INDENT + "return 0.0;\n";
-        }
-        return INDENT + "return null;\n";
-    }
-
-    private String generateSpecification(MClass cls) {
-        Collection realizations = getSpecifications(cls);
-        if (realizations == null) {
-            return "";
-        }
-        StringBuffer sb = new StringBuffer();
-        Iterator clsEnum = realizations.iterator();
-        while (clsEnum.hasNext()) {
-            MInterface i = (MInterface) clsEnum.next();
-            sb.append(generateClassifierRef(i));
-            if (clsEnum.hasNext()) {
-                sb.append(", ");
+        Iterator iter = keys.iterator();
+        while (iter.hasNext()) {
+            sb.append((String) iter.next());
+            if (iter.hasNext()) {
+                sb.append(" ");
             }
         }
         return sb.toString();
     }
 
-    private String generateVisibility(MVisibilityKind vis) {
-        if (MVisibilityKind.PUBLIC.equals(vis)) {
-            return "public ";
+    private void toStrings(List l) {
+        for (int i = 0; i < l.size(); i++) {
+            l.set(i, ((FieldDescriptor) l.get(i)).getName());
         }
-        if (MVisibilityKind.PRIVATE.equals(vis)) {
-            return "private ";
-        }
-        if (MVisibilityKind.PROTECTED.equals(vis)) {
-            return "protected ";
-        }
-        return "";
-    }
-
-    private String generateVisibility(MFeature f) {
-        return generateVisibility(f.getVisibility());
-    }
-
-    private String generateScope(MFeature f) {
-        MScopeKind scope = f.getOwnerScope();
-        if (MScopeKind.CLASSIFIER.equals(scope)) {
-            return "static ";
-        }
-        return "";
-    }
-
-    private String generateAbstractness(MOperation op) {
-        if (op.isAbstract()) {
-            return "abstract ";
-        }
-        return "";
-    }
-
-    private String generateChangeability(MOperation op) {
-        if (op.isLeaf()) {
-            return "final ";
-        }
-        return "";
-    }
-
-    private String generateChangability(MStructuralFeature sf) {
-        MChangeableKind ck = sf.getChangeability();
-        //if (ck == null) return "";
-        if (MChangeableKind.FROZEN.equals(ck)) {
-            return "final ";
-        }
-        //if (MChangeableKind.ADDONLY.equals(ck)) return "final ";
-        return "";
-    }
-
-    private String generateConcurrency(MOperation op) {
-        if (op.getConcurrency() != null
-            && op.getConcurrency().getValue() == MCallConcurrencyKind._GUARDED) {
-            return "synchronized ";
-        }
-        return "";
-    }
-
-    private String getKey(MClassifier cls) {
-        Collection tvs = cls.getTaggedValues();
-        if (tvs != null && tvs.size() > 0) {
-            Iterator iter = tvs.iterator();
-            while (iter.hasNext()) {
-                MTaggedValue tv = (MTaggedValue) iter.next();
-                if (tv.getTag().equals("key")) {
-                    return tv.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    private Collection getKeys(MClassifier cls) {
-        Set keyFields = new LinkedHashSet();
-        Collection tvs = cls.getTaggedValues();
-        if (tvs != null && tvs.size() > 0) {
-            Iterator iter = tvs.iterator();
-            while (iter.hasNext()) {
-                MTaggedValue tv = (MTaggedValue) iter.next();
-                if (tv.getTag().equals("key")) {
-                    StringTokenizer st = new StringTokenizer(tv.getValue(), ", ");
-                    while (st.hasMoreElements()) {
-                        keyFields.add(st.nextElement());
-                    }
-                }
-            }
-        }
-        Iterator parents = cls.getGeneralizations().iterator();
-        if (parents.hasNext()) {
-            keyFields.addAll(getKeys((MClassifier) ((MGeneralization) parents.next()).getParent()));
-        }
-        return keyFields;
-    }
-
-    private boolean isPrimitive(String type) {
-        return type.equals("char") || type.equals("byte") || type.equals("short")
-            || type.equals("int") || type.equals("long") || type.equals("float")
-            || type.equals("double") || type.equals("boolean") ? true : false;
-    }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length != 3) {
-            System.err.println("Usage:  JavaModelOutput <project name> <input dir> <output dir>");
-            System.exit(1);
-        }
-        String projectName = args[0];
-        String inputDir = args[1];
-        String outputDir = args[2];
-
-        File xmiFile = new File(inputDir, projectName + "_.xmi");
-        InputSource source = new InputSource(xmiFile.toURL().toString());
-        File path = new File(outputDir);
-        new JavaModelOutput(new XMIReader().parse(source)).output(path);
     }
 }
