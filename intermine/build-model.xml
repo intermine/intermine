@@ -223,6 +223,13 @@
     </build-db>
   </target>
 
+  <target name="analyse-db">
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <analyse-db database="${db.name}"/>
+  </target>
+
   <!-- Targets that could be called from another build script -->
   <target name="generate-model-from-zargo"
           depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
@@ -303,5 +310,16 @@
       <classes file="${build.tmp}/WEB-INF/intermine.properties" />
       <classes dir="${build.model}/${model.name}"/>
     </war>
+  </target>
+
+  <target name="dot">
+    <taskdef name="dot" classname="org.intermine.task.InheritanceDotTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <dot directory="${build.model}/${model.name}"
+         packagename="org.flymine.model.${model.name}"
+         file="${model.name}.dot"
+         omit="org.intermine.model.InterMineObject,java.lang.Object"
+         boring=""/>
   </target>
 </project>
