@@ -34,6 +34,17 @@ public class DisplayableResultsTest extends TestCase
         fq = new FqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.flymine.model.testmodel");
     }
 
+    private DisplayableResults getEmptyResults() throws Exception {
+        os.setResultsSize(0);
+        Results results = os.execute(fq.toQuery());
+        try {
+            results.setBatchSize(20);
+            results.get(0);
+        } catch (IndexOutOfBoundsException e) {
+        }
+        return new DisplayableResults(results);
+    }
+
     private DisplayableResults getExactResults() throws Exception {
         Results results = os.execute(fq.toQuery());
         // Make sure we definitely know the end
@@ -90,6 +101,14 @@ public class DisplayableResultsTest extends TestCase
         assertTrue(dr.getSize() <= 15);
     }
 
+    public void testSizeEmpty() throws Exception {
+        DisplayableResults dr = getEmptyResults();
+        dr.setPageSize(10);
+        dr.setStart(0);
+        assertFalse(dr.isSizeEstimate());
+        assertEquals(0, dr.getSize());
+    }
+
     public void testEndExact() throws Exception {
         // At the beginning
         DisplayableResults dr = getExactResults();
@@ -142,6 +161,15 @@ public class DisplayableResultsTest extends TestCase
         dr.setPageSize(10);
         dr.setStart(10);
         assertEquals(14, dr.getEnd());
+    }
+
+    // For the moment the end is -1 if the underlying results is empty
+    // Anything using DisplayableResults should call getSize() first
+    public void testEndEmpty() throws Exception {
+        DisplayableResults dr = getEmptyResults();
+        dr.setPageSize(10);
+        dr.setStart(0);
+        assertEquals(-1, dr.getEnd());
     }
 
     public void testButtonsExact() throws Exception {
