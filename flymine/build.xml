@@ -150,8 +150,6 @@
 
   <target name="build-www" depends="prepare"
           description="build the static website" >
-    <mkdir dir="${build.www}" />
-    <mkdir dir="${build.www-internal}" />
 
     <available file="${src.www-internal}" type="dir" property="www-internal.present"/>
 
