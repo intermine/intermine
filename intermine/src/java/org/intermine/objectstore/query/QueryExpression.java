@@ -5,8 +5,9 @@ package org.flymine.objectstore.query;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
-public class QueryExpression implements QueryNode, QueryEvaluable
+public class QueryExpression implements QueryEvaluable
 {
     /**
      * Addition of two numeric fields

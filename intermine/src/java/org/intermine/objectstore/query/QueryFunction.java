@@ -5,8 +5,9 @@ package org.flymine.objectstore.query;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
-public class QueryFunction implements QueryNode, QueryEvaluable
+public class QueryFunction implements QueryEvaluable
 {
     /**
      * Sum of a number of QueryFields or QueryExpressions

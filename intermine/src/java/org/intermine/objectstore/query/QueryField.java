@@ -9,8 +9,9 @@ import org.flymine.util.TypeUtil;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
-public class QueryField implements QueryNode, QueryEvaluable
+public class QueryField implements QueryEvaluable
 {
     private FromElement qc;
     private String fieldName;

@@ -5,13 +5,8 @@ package org.flymine.objectstore.query;
  *
  * @author Mark Woodbridge
  * @author Richard Smith
+ * @author Matthew Wakeling
  */
-public interface QueryEvaluable
+public interface QueryEvaluable extends QueryNode
 {
-    /**
-     * Get Java type represented by this evaluable item
-     *
-     * @return class describing the type
-     */
-    public Class getType();
 }
