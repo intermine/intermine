@@ -43,8 +43,16 @@
       
       <%-- Construct help page key --%>
       <fmt:message key="${pageName}.help" var="help"/>
+      <fmt:message key="${pageName}.help.link" var="helplink"/>
       <c:if test="${!empty help}">
-        <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"/>
+        <c:choose>
+          <c:when test="${empty helplink}">
+            <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"/>
+          </c:when>
+          <c:otherwise>
+            <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}${helplink}"/>
+          </c:otherwise>
+        </c:choose>
       </c:if>
       <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
         <tiles:get name="body"/>
