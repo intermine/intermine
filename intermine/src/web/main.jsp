@@ -3,39 +3,9 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute/>
-
-<script type="text/javascript">
-<!--
-
-function enterPath(path)
-{
-  setBorderStyle(path, "#fff");
-}
-
-function exitPath(path)
-{
-  setBorderStyle(path, "#f5f0ff");
-}
-
-function setBorderStyle(path, style)
-{
-  var a = document.getElementById("browser"+path);
-  var b = document.getElementById("query"+path);
-  var c = document.getElementById("showing"+path);
-  
-  if (a != null)
-    a.style.background = style;
-  if (b != null)
-    b.style.background = style;
-  if (c != null)
-    c.style.background = style;
-}
-
-//-->
-</script>
-
 
 <!-- main.jsp -->
 <table class="query" width="100%" cellspacing="0">
@@ -55,10 +25,12 @@ function setBorderStyle(path, style)
           <fmt:message key="query.changePath" var="changePathTitle">
             <fmt:param value="${entry.key}"/>
           </fmt:message>
-          <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY.nodes[entry.value].type}"
-                     title="${changePathTitle}">
-            <c:out value="${entry.key}"/>
-          </html:link>
+          <im:viewable path="${entry.value}" viewPaths="${viewPaths}" idPrefix="browser">
+            <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY.nodes[entry.value].type}"
+                       title="${changePathTitle}">
+              <c:out value="${entry.key}"/>
+            </html:link>
+          </im:viewable>
           <c:if test="${!status.last}">&gt;</c:if>
         </c:forEach>
         <br/><br/>
@@ -98,54 +70,48 @@ function setBorderStyle(path, style)
                 <c:set var="fullpath" value="${prefix}.${fn:substringAfter(node.path,'.')}"/>
               </c:otherwise>
             </c:choose>
-            <c:if test="${viewPaths[fullpath]}">
-              <span class="showing" id="browser${fn:replace(fullpath,".","")}"
-                    onMouseOver="enterPath('${fn:replace(fullpath,".","")}')"
-                    onMouseOut="exitPath('${fn:replace(fullpath,".","")}')">
-            </c:if>
-            <c:if test="${node.indentation > 0}">
+            <im:viewable path="${fullpath}" viewPaths="${viewPaths}" idPrefix="browser">
+              <c:if test="${node.indentation > 0}">
+                <c:choose>
+                  <c:when test="${node.collection}">
+                    <span class="collectionField">
+                      <c:out value="${node.fieldName}"/>
+                    </span>
+                  </c:when>
+                  <c:when test="${node.reference}">
+                    <span class="referenceField">
+                      <c:out value="${node.fieldName}"/>
+                    </span>
+                  </c:when>
+                  <c:otherwise>
+                    <span class="attributeField">
+                      <c:out value="${node.fieldName}"/>
+                    </span>
+                  </c:otherwise>
+                </c:choose>                  
+              </c:if>            
+              <span class="collectionDescription">
+              <c:if test="${node.type != 'String' && node.type != 'Integer'}">
+                <span class="type"><c:out value="${node.type}"/></span><c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup>
+                </c:if>
+              </c:if>
+              <c:if test="${node.collection}">
+                <fmt:message key="query.collection"/>
+              </c:if>
+              </span>
               <c:choose>
-                <c:when test="${node.collection}">
-                  <span class="collectionField">
-                    <c:out value="${node.fieldName}"/>
-                  </span>
-                </c:when>
-                <c:when test="${node.reference}">
-                  <span class="referenceField">
-                    <c:out value="${node.fieldName}"/>
-                  </span>
+                <c:when test="${node.indentation > 0}">
+                  <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
+                    <fmt:param value="${node.fieldName}"/>
+                  </fmt:message>
                 </c:when>
                 <c:otherwise>
-                  <span class="attributeField">
-                    <c:out value="${node.fieldName}"/>
-                  </span>
+                  <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
+                    <fmt:param value="${node.type}"/>
+                  </fmt:message>
                 </c:otherwise>
-              </c:choose>                  
-            </c:if>            
-            <span class="collectionDescription">
-            <c:if test="${node.type != 'String' && node.type != 'Integer'}">
-              <span class="type"><c:out value="${node.type}"/></span><c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup>
-              </c:if>
-            </c:if>
-            <c:if test="${node.collection}">
-              <fmt:message key="query.collection"/>
-            </c:if>
-            </span>
-            <c:choose>
-              <c:when test="${node.indentation > 0}">
-                <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
-                  <fmt:param value="${node.fieldName}"/>
-                </fmt:message>
-              </c:when>
-              <c:otherwise>
-                <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
-                  <fmt:param value="${node.type}"/>
-                </fmt:message>
-              </c:otherwise>
-            </c:choose>
-            <c:if test="${viewPaths[fullpath]}">
-              </span>
-            </c:if>
+              </c:choose>
+            </im:viewable>
             <c:if test="${viewPaths[fullpath] == null}">
               <html:link action="/mainChange?method=addToView&path=${node.path}"
                          title="${selectNodeTitle}">
@@ -193,15 +159,9 @@ function setBorderStyle(path, style)
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </c:forEach>
                   </c:if>
-                  <c:if test="${viewPaths[node.path] && !empty node.fieldName}">
-                    <span class="showing" id="query${fn:replace(node.path,".","")}"
-                          onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
-                          onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
-                  </c:if>
-                  <span class="attributeField"><c:out value="${node.fieldName}"/></span>
-                  <c:if test="${viewPaths[node.path] && !empty node.fieldName}">
-                    </span>
-                  </c:if>
+                  <im:viewable path="${node.path}" viewPaths="${viewPaths}" test="${!empty node.fieldName}" idPrefix="query">
+                    <span class="attributeField"><c:out value="${node.fieldName}"/></span>
+                  </im:viewable>
                   <span class="type">
                     <c:choose>
                       <c:when test="${node.attribute}">
@@ -213,15 +173,9 @@ function setBorderStyle(path, style)
                         </fmt:message>
                         <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}"
                                    title="${changePathTitle}">
-                          <c:if test="${viewPaths[node.path] && empty node.fieldName}">
-                            <span class="showing" id="query${fn:replace(node.path,".","")}"
-                                  onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
-                                  onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
-                          </c:if>
-                          <span class="type"><c:out value="${node.type}"/></span>
-                          <c:if test="${viewPaths[node.path] && empty node.fieldName}">
-                            </span>
-                          </c:if>
+                          <im:viewable path="${node.path}" viewPaths="${viewPaths}" test="${empty node.fieldName}" idPrefix="query">
+                            <span class="type"><c:out value="${node.type}"/></span>
+                          </im:viewable>
                         </html:link>
                         <c:if test="${node.collection}">
                           <fmt:message key="query.collection"/>
