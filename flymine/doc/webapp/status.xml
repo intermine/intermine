@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+  <sect1>
+    <title>FlyMine status</title>
+    <para>
+The FlyMine database is currently in the late stages of Beta release.  We
+believe that it contains an accurate representation of the source databases,
+but for some source we are still working to complete the integration and add
+value.
+    </para>
+    <sect2>
+      <title>Current Data Sources</title>
+      <para>
+        FlyMine has the following datasource available:
+      </para>
+      <itemizedlist>
+        <listitem>
+          Genome Annotation for D. melanogaster and A. gambiae from Ensembl
+          (http://www.ensembl.org)
+        </listitem>
+        <listitem>
+          Orthologues between D. melanogaster and A. gambiae from Ensembl
+          (http://www.ensembl.org)
+        </listitem>
+        <listitem>
+          Orthologues and Paralogues between D. melanogaster and C. elegans from
+          inParanoid (http://inparanoid.cgb.ki.se/index.html) 
+        </listitem>
+        <listitem>
+          2-hybrid protein-protein interactions for D. melanogaster: Curagen set
+          (Giot et al (2003) Science 302 1727-1736) and Hybrigenics set
+          (http://pim.hybrigenics.com/pimrider/nologin/prhome.html) 
+        </listitem>
+        <listitem>
+          2-hybrid protein-protein interactions for C. elegans: (Li et al (2004)
+          Science 303 540-543)
+        </listitem>
+        <listitem>
+          RNAi phenotypes for C. elegans from WormBase (http://www.wormbase.org)
+        </listitem>
+        <listitem>
+          GO Ontology
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2>
+      <title>Planned Datasources</title>
+      <para>
+        We are in process of adding the following datasources:
+      </para>
+      <itemizedlist>
+        <listitem>
+          Drosophila microarray data via ArrayExpress
+        </listitem>
+      </itemizedlist>
+    </sect2>
+  </sect1>
+</article>
