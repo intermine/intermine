@@ -167,4 +167,14 @@
     </jar>
   </target>
 
+  <!-- create indexes task definition -->
+  <target name="create-indexes">
+    <taskdef
+      name="create-indexes"
+      classname="org.flymine.task.CreateIndexesTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+
+    <create-indexes database="${db.name}" model="${model.name}"/>
+  </target>
 </project>

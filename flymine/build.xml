@@ -191,6 +191,10 @@
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
     <pathelement location="${build.model}/xmitest"/>
+  </path>
+
+  <path id="models.class.path">
+    <path refid="project.class.path"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
     <pathelement location="${build.model}/so"/>
@@ -199,6 +203,7 @@
     <pathelement location="${build.model}/rnai"/>
     <pathelement location="${build.model}/orthologue"/>
   </path>
+
 
   <path id="acedbtest.class.path">
     <path refid="project.class.path"/>
@@ -337,6 +342,7 @@
   </target>
 
   <target name="compile-fulldata" depends="precompile-main">
+    <copy todir="${build.model}/fulldata" file="${model}/fulldata/fulldata_keyDefs.properties"/>
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <property name="model.src" value="${model}/fulldata"/>
@@ -364,12 +370,21 @@
      </ant>
    </target>
 
-  <!-- Ensembl items -->
-    <target name="build-db-ensembl-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db">
+  <!-- Ensembl anopheles src items -->
+    <target name="build-db-ensembl-anoph-src-items" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.ensembl-src-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-anoph-src-items"/>
+    </ant>
+  </target>
+
+  <!-- Ensembl drosophila src items -->
+    <target name="build-db-ensembl-dros-src-items" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-dros-src-items"/>
     </ant>
   </target>
 
@@ -377,7 +392,7 @@
   <target name="build-db-orthologue-tgt-items" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.orthologue-tgt-items"/>
     </ant>
   </target>
@@ -386,23 +401,23 @@
   <target name="build-db-rnai-src-items" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.rnai-src-items"/>
     </ant>
   </target>
 
   <!-- Chado items -->
   <target name="build-db-chado-src-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-src-items"/>
     </ant>
   </target>
 
   <!-- Chado main -->
   <target name="build-db-chado-test" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.chado-test"/>
@@ -440,7 +455,7 @@
     <taskdef
       name="insert-xml-data"
       classname="org.flymine.dataloader.InsertXmlDataTask">
-      <classpath refid="project.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
 
     <insert-xml-data integrationWriter="integration.unittestsingle" file="${build.resources.test}/testmodel_data.xml">
@@ -450,48 +465,107 @@
 
   <!-- index the testmodel database -->
   <target name="create-indexes-testmodel" depends="build-db-testmodel">
-    <taskdef
-      name="create-indexes"
-      classname="org.flymine.task.CreateIndexesTask">
-      <classpath refid="test.class.path"/>
-    </taskdef>
-
-    <create-indexes database="db.unittest" model="testmodel"/>
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.unittest"/>
+    </ant>
   </target>
 
   <target name="create-indexes-chado-test" depends="build-db-chado-test">
-    <taskdef
-      name="create-indexes"
-      classname="org.flymine.task.CreateIndexesTask">
-      <classpath refid="test.class.path"/>
-    </taskdef>
-
-    <create-indexes database="db.chado-test" model="chado"/>
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="chado"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.chado-test"/>
+    </ant>
   </target>
 
   <!-- Data Translation targets -->
 
   <!-- Build Chado target items database -->
   <target name="build-db-chado-target-items" depends="convert-chado">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-tgt-items"/>
     </ant>
   </target>
 
  <target name="translate-chado" depends="build-db-chado-target-items">
     <java classname="org.flymine.dataconversion.DataTranslator" fork="true"
-      maxmemory="1200m" >
-      <classpath refid="test.class.path" />
+      maxmemory="800m" >
+      <!-- <jvmarg value="-Xrunjmp" /> -->
+      <classpath refid="models.class.path" />
       <arg value="os.chado-src-items" />
       <arg value="osw.chado-tgt-items" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
     </java>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.chado-tgt-items"/>
+    </ant>
+    
   </target>
 
+  <!-- Build ensembl-anoph-tgt-items database -->
+  <target name="build-db-ensembl-anoph-tgt-items" depends="convert-ensembl">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
+    </ant>
+  </target>
+
+
+ <target name="translate-ensembl-anopheles" depends="build-db-ensembl-anoph-tgt-items">
+    <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="os.ensembl-anoph-src-items" />
+      <arg value="osw.ensembl-anoph-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
+    </ant>
+  </target>
+
+
+  <!-- Build ensembl-dros-tgt-items database -->
+  <target name="build-db-ensembl-dros-tgt-items" depends="convert-ensembl">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-dros-tgt-items"/>
+    </ant>
+  </target>
+
+ <target name="translate-ensembl-drosophila" depends="build-db-ensembl-dros-tgt-items">
+    <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="os.ensembl-dros-src-items" />
+      <arg value="osw.ensembl-dros-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-dros-tgt-items"/>
+    </ant>
+  </target>
 
   <!-- Acedb test build targets -->
   
@@ -575,7 +649,7 @@
     <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <property name="model.src" value="${model}/testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target> 
 
@@ -583,7 +657,7 @@
   <target name="build-db-productionmodel" depends="build-productionmodel">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.production"/>
     </ant>
   </target>
@@ -593,7 +667,7 @@
     <taskdef
       name="insert-xml-data"
       classname="org.flymine.dataloader.InsertXmlDataTask">
-      <classpath refid="project.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
 
     <insert-xml-data integrationWriter="integration.production" file="${build.resources.test}/testmodel_data.xml">
@@ -611,23 +685,29 @@
     <ant antfile="build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
       <property name="model.src" value="${model}/chado"/>
       <property name="model.name" value="chado"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
   <!-- test out creating java objects from chado model -->
   <target name="retrieve-chado" depends="convert-chado, build-db-chado-src-items">
     <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.DBRetrieverTask">
-      <classpath refid="test.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
     
     <retrieve-chado database="db.chado" model="chado" osName="osw.chado-src-items"/>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.chado-src-items"/>
+    </ant>
   </target>
 
   <!-- Load data from chado-items into chado-test -->
   <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, create-indexes-chado-test">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="test.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
 
     <load-chado integrationWriter="integration.chado-test" source="os.chado-translated" sourceName="chado"/>
@@ -638,23 +718,44 @@
     <ant antfile="build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
       <property name="model.src" value="${model}/ensembl"/>
       <property name="model.name" value="ensembl"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
-  <!-- test out creating java objects from ensembl model -->
-  <target name="retrieve-ensembl" depends="convert-ensembl, build-db-ensembl-items">
+  <!-- retrieve ensembl anopheles data -->
+  <target name="retrieve-ensembl-anopheles" depends="convert-ensembl, build-db-ensembl-anoph-src-items">
     <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
-      <classpath refid="test.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
     
-    <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-items"/>
+    <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-anoph-src-items"/>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-anoph-src-items"/>
+    </ant>
+  </target>
+
+  <!-- retrieve ensembl drosophila data -->
+  <target name="retrieve-ensembl-drosophila" depends="convert-ensembl, build-db-ensembl-dros-src-items">
+    <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-dros-src-items"/>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-dros-src-items"/>
+    </ant>
   </target>
 
   <!-- load orthologue/paralogue data -->
   <target name="retrieve-orthologue" depends="build-db-orthologue-tgt-items">
     <taskdef name="retrieve-orthologue" classname="org.flymine.dataconversion.FileConverterTask">
-      <classpath refid="test.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
     
     <concat destfile="${build.tmp}/orthologues">
@@ -664,15 +765,27 @@
     </concat>
 
     <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-tgt-items"/>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.orthologue-tgt-items"/>
+    </ant>
   </target>
 
   <!-- load rnai data -->
   <target name="retrieve-rnai" depends="build-db-rnai-src-items">
     <taskdef name="retrieve-rnai" classname="org.flymine.dataconversion.FileConverterTask">
-      <classpath refid="test.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
 
     <retrieve-rnai file="/shared/data/RNAi/CE_RNAi.txt" source="rnai" osName="osw.rnai-src-items"/>
+
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.rnai-src-items"/>
+    </ant>
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
@@ -680,7 +793,7 @@
     <ant antfile="build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
       <property name="model.src" value="${model}/mage"/>
       <property name="model.name" value="mage"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
@@ -688,14 +801,14 @@
   <target name="compile-mage" depends="convert-mage">
     <ant antfile="build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
    <!-- convert MAGE-OM to OWL -->
    <target name="mage-to-owl" depends="convert-mage">
     <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
-      <classpath refid="test.class.path" />
+      <classpath refid="models.class.path" />
       <arg value="${build.model}/mage/mage_model.xml" />
       <arg value="${build.model}/mage/mage.n3" />
       <arg value="N3" />
@@ -706,7 +819,7 @@
    <!-- convert chado model to OWL -->
    <target name="chado-to-owl" depends="convert-chado">
     <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
-      <classpath refid="test.class.path" />
+      <classpath refid="models.class.path" />
       <arg value="${build.model}/chado/chado_model.xml" />
       <arg value="${build.model}/chado/chado.n3" />
       <arg value="N3" />
@@ -719,17 +832,18 @@
     <mkdir dir="${build.model}/so" />
     <copy file="${model}/so/sofa.ontology" todir="${build.model}/so/"/>
     <java classname="org.flymine.ontology.Dag2Owl" fork="true">
-      <classpath refid="test.class.path" />
+      <classpath refid="models.class.path" />
       <arg value="${build.model}/so/sofa.ontology" />
       <arg value="${build.model}/so/sofa.n3" />
       <arg value="http://www.flymine.org/model/so#" />
     </java>
   </target>
 
-  <!-- create merged model from source OWL ontologies -->
-  <target name="create-genomic-model" depends="merge-chado-model">
+  <!-- create merged model from currently merged OWL ontologies 
+       in build/genomic/genomic.n3  -->
+  <target name="create-genomic-model">
     <java classname="org.flymine.ontology.Owl2FlyMine" fork="true">
-      <classpath refid="test.class.path" />
+      <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="N3" />
       <arg value="${build.model}/genomic/genomic_model.xml" />
@@ -739,24 +853,24 @@
     </java>
   </target>
 
-  <target name="jar-genomic" depends="prepare-dist, create-genomic-model"
+  <!-- create merged model from all source OWL ontologies -->
+  <target name="create-production-model" depends="remove-genomic, merge-orthologue-model, merge-rnai-model, 
+       merge-ensembl-model, merge-chado-model, merge-so-model" >
+    <antcall target="create-genomic-model"/>
+  </target>
+
+
+  <target name="jar-genomic" depends="prepare-dist"
           description="create a jar of the genomic model">
     <ant antfile="build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.src" value="${model}/genomic"/>
     </ant>    
   </target>
 
-  <!-- check whether genomic.n3 already copied into build directory -->
-  <target name="genomic-model-present" depends="compile-main">
-    <property name="copy_genomic" value="true"/>
-    <available file="${build.model}/genomic/genomic.n3" type="file" 
-       value="false" property="copy_genomic"/>   
-  </target>
-
   <!-- if genomic.n3 not copied into build directory then copy it -->
-  <target name="prepare-genomic-model" depends="genomic-model-present" if="copy_genomic">        
+  <target name="prepare-genomic-model" depends="prepare">        
     <copy file="${model}/genomic/genomic.n3" todir="${build.model}/genomic/"/>
   </target>
 
@@ -768,12 +882,12 @@
   <!-- merge the chado owl model with the current genomic model in build/model/genomic
       this target file may already be the result of previous merges -->
   <target name="merge-chado-model" depends="prepare-genomic-model, chado-to-owl">
-    <mkdir dir="${build.model}/genomic" />
     <copy file="${model}/chado/chado_merge_spec.n3" todir="${build.model}/chado/"/>
 
     <!-- combine the chado merge_spec with current genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true">
-      <classpath refid="test.class.path" />
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="${build.model}/chado/chado_merge_spec.n3" />
@@ -783,8 +897,8 @@
 
     <!-- merge chado model with target genomic model -->
     <java classname="org.flymine.ontology.MergeOwl" fork="true"
-      maxmemory="1200m" >
-      <classpath refid="test.class.path" />
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="${build.model}/chado/chado.n3" />
@@ -794,6 +908,122 @@
 
   </target>
 
+  <!-- merge so model -->
+
+  <target name="merge-so-model" depends="prepare-genomic-model, so-to-owl">
+    <copy file="${model}/so/so_merge_spec.n3" todir="${build.model}/so/"/>
+
+    <!-- combine the so merge_spec with current genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/so/so_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+    </java> 
+
+    <!-- merge so model with target genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/so/sofa.n3" />
+      <arg value="http://www.flymine.org/model/so#" />
+      <arg value="N3" />
+    </java>
+
+  </target>
+
+  <!-- merge rnai model -->
+
+  <target name="merge-rnai-model" depends="prepare-genomic-model">
+    <copy file="${model}/rnai/rnai_merge_spec.n3" todir="${build.model}/rnai/"/>
+    <copy file="${model}/rnai/rnai.n3" todir="${build.model}/rnai/"/>
+
+    <!-- combine the rnai merge_spec with current genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/rnai/rnai_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+    </java> 
+
+    <!-- merge rnai model with target genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/rnai/rnai.n3" />
+      <arg value="http://www.flymine.org/model/rnai#" />
+      <arg value="N3" />
+    </java>
+
+  </target>
+
+
+  <!-- merge ensembl owl -->
+
+   <!-- convert ensembl model to OWL -->
+   <target name="ensembl-to-owl" depends="convert-ensembl">
+    <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/ensembl/ensembl_model.xml" />
+      <arg value="${build.model}/ensembl/ensembl.n3" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+  <!-- merge the ensembl owl model with the current genomic model in build/model/genomic
+      this target file may already be the result of previous merges -->
+  <target name="merge-ensembl-model" depends="prepare-genomic-model, ensembl-to-owl">
+    <copy file="${model}/ensembl/ensembl_merge_spec.n3" todir="${build.model}/ensembl/"/>
+
+    <!-- combine the ensembl_merge_spec with current genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+       maxmemory="800m">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/ensembl/ensembl_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+    </java> 
+
+    <!-- merge ensembl model with target genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/ensembl/ensembl.n3" />
+      <arg value="http://www.flymine.org/model/ensembl#" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+  <!-- merge orthologue model -->
+  <target name="merge-orthologue-model" depends="prepare-genomic-model">
+    <copy file="${model}/orthologue/orthologue.n3" todir="${build.model}/orthologue/"/>
+
+    <!-- merge orthologue model with target genomic model -->
+    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/orthologue/orthologue.n3" />
+      <arg value="http://www.flymine.org/model/orthologue#" />
+      <arg value="N3" />
+    </java>
+
+  </target>
 
   <!-- Unit test targets -->
 
@@ -831,6 +1061,7 @@
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
           <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
+          <exclude name="org/flymine/dataconversion/EnsemblDataTranslatorTest.class" />
           <exclude name="org/flymine/dataconversion/ItemToObject*" />
         </fileset>
       </batchtest>
@@ -838,6 +1069,23 @@
 
     <antcall target="test-report"/>
   </target>
+
+  <target name="test-translation" depends="compile-test">
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+      <classpath refid="test.class.path"/>
+      <formatter type="xml" />
+      <batchtest fork="no" todir="${results.junit}">
+        <fileset dir="${build.test}">
+          <depend targetdir="${results.junit}">
+            <mapper type="package" from="*.class" to="TEST-*.xml" />
+          </depend>
+          <include name="org/flymine/dataconversion/EnsemblDataTranslatorTest.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+    <antcall target="test-report"/>
+  </target>
+
 
   <target name="test-webapp" depends="compile-test, build-db-testmodel, build-testable-webapp, release-webapp"
           description="perform JUnit tests on web application" >
