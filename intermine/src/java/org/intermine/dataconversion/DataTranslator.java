@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileReader;
 
@@ -92,8 +93,6 @@ public class DataTranslator
      * @throws ObjectStoreException if error reading/writing an item
      * @throws FlyMineException if no target class/property name can be found
      */
-
-
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
         long count = 0;
         long start = System.currentTimeMillis();
@@ -157,7 +156,8 @@ public class DataTranslator
         Item tgtItem = new Item();
         tgtItem.setIdentifier(srcItem.getIdentifier());
         tgtItem.setClassName(tgtClsName);
-        tgtItem.setImplementations((String) impMap.get(tgtClsName));
+        // no need to set implementations as not dynamic classes
+        //tgtItem.setImplementations((String) impMap.get(tgtClsName));
 
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
@@ -280,7 +280,8 @@ public class DataTranslator
                 col.addRefId(newItem.getIdentifier());
             } else {
                 col = new ReferenceList(fwdRefName,
-                                        Collections.singletonList(newItem.getIdentifier()));
+                                        new ArrayList(Collections.singletonList(newItem
+                                                                             .getIdentifier())));
                 tgtItem.addCollection(col);
             }
         } else {
@@ -296,7 +297,8 @@ public class DataTranslator
                     col.addRefId(tgtItem.getIdentifier());
                 } else {
                     col = new ReferenceList(revRefName,
-                                            Collections.singletonList(tgtItem.getIdentifier()));
+                                     new ArrayList(Collections.singletonList(tgtItem
+                                                                             .getIdentifier())));
                     newItem.addCollection(col);
                 }
             } else {
@@ -429,7 +431,7 @@ public class DataTranslator
 
                 // build implementations map
                 String imps = "";
-                ExtendedIterator superIter = cls.listSuperClasses(false);
+                ExtendedIterator superIter = cls.listSuperClasses(true);
                 while (superIter.hasNext()) {
                     OntClass sup = (OntClass) superIter.next();
                     if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
