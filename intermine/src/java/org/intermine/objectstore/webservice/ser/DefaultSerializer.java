@@ -23,10 +23,11 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.wsdl.fromJava.Types;
 
-import org.flymine.metadata.Model;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.objectstore.query.fql.FqlQuery;
+
+import org.apache.log4j.Logger;
 
 /**
  * This the serializer (object to xml translator) for all objects used in objectstore calls
@@ -35,7 +36,9 @@ import org.flymine.objectstore.query.fql.FqlQuery;
  * @author Mark Woodbridge
  */
 public class DefaultSerializer implements Serializer
-{ 
+{
+    protected static final Logger LOG = Logger.getLogger(DefaultSerializer.class);
+
     /**
      * @see Serializer#serialize
      */
@@ -44,39 +47,38 @@ public class DefaultSerializer implements Serializer
 
         context.startElement(name, attributes);
 
-        //model
-        if (value instanceof Model) {
-            context.writeString(value.toString());
-        } else {
-            //fqlquery, explainresult, proxybean, businessobject
-            Iterator entryIter = SerializationUtil.fieldValues(value).entrySet().iterator();
-            while (entryIter.hasNext()) {
-                Map.Entry entry = (Map.Entry) entryIter.next();
-                Field field = (Field) entry.getKey();
-                Object fieldValue = entry.getValue();
+        //fqlquery, explainresult, proxybean, businessobject
+        Iterator entryIter = SerializationUtil.fieldValues(value).entrySet().iterator();
+        while (entryIter.hasNext()) {
+            Map.Entry entry = (Map.Entry) entryIter.next();
+            Field field = (Field) entry.getKey();
+            Object fieldValue = entry.getValue();
 
-                //lazyreference
-                if (fieldValue instanceof LazyReference) {
-                    LazyReference ref = (LazyReference) fieldValue;
-                    if (!ref.isMaterialised()) {
-                        fieldValue = new SerializationUtil.ProxyBean(ref.getType().getName(),
-                                                                     ref.getFqlQuery(), 
-                                                                     ref.getId());
-                    }
+            //lazyreference
+            if (fieldValue instanceof LazyReference) {
+                LazyReference ref = (LazyReference) fieldValue;
+                if (!ref.isMaterialised()) {
+                    fieldValue = new ProxyBean(ref.getType().getName(),
+                                                                 ref.getFqlQuery(), 
+                                                                 ref.getId());
                 }
-            
-                //singletonresults
-                if (fieldValue instanceof SingletonResults) {
-                    SingletonResults res = (SingletonResults) fieldValue;
-                    fieldValue = new SerializationUtil.ProxyBean(fieldValue.getClass().getName(),
-                                                                 new FqlQuery(res.getQuery()),
-                                                                 new Integer(-1));
-                }
-
-                QName qname = new QName(name.getNamespaceURI(), field.getName());
-                QName xmlType = context.getQNameForClass(field.getType());
-                context.serialize(qname, null, fieldValue, xmlType, true, null);
             }
+            
+            //singletonresults
+            if (fieldValue instanceof SingletonResults) {
+                SingletonResults res = (SingletonResults) fieldValue;
+                fieldValue = new ProxyBean(fieldValue.getClass().getName(),
+                                                             new FqlQuery(res.getQuery()),
+                                                             new Integer(-1));
+            }
+
+            QName qname = new QName(name.getNamespaceURI(), field.getName());
+            QName xmlType = context.getQNameForClass(field.getType());
+//             if (field.getType().equals(java.util.List.class)) {
+//                 LOG.warn("found a list");
+//                 xmlType = new QName("http://soapinterop.org/xsd", "list");
+//             }
+            context.serialize(qname, null, fieldValue, xmlType, true, null);
         }
         
         context.endElement();
