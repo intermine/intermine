@@ -64,7 +64,9 @@ public class ObjectDetailsController extends Action
             }
             DisplayObject dobj = (DisplayObject) displayObjects.get(key);
             if (dobj == null) {
-                dobj = new DisplayObject(object, os.getModel());
+                Map webconfigTypeMap = (Map) servletContext.getAttribute(Constants.DISPLAYERS); 
+                Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                dobj = new DisplayObject(object, os.getModel(), webconfigTypeMap, webPropertiesMap);
                 displayObjects.put(key, dobj);
             }
             session.setAttribute("object", dobj);
