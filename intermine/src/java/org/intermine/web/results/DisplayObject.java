@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.metadata.PrimaryKeyUtil;
@@ -36,11 +38,11 @@ public class DisplayObject
 {
     InterMineObject object;
     Set clds;
-    Map keyAttributes = new HashMap();
-    Map keyReferences = new HashMap();
     Map attributes = new HashMap();
     Map references = new HashMap();
     Map collections = new HashMap();
+    List keyAttributes = new ArrayList();
+    List keyReferences = new ArrayList();
     Map verbosity = new HashMap();
     
     /**
@@ -52,24 +54,6 @@ public class DisplayObject
     public DisplayObject(InterMineObject object, Model model) throws Exception {
         this.object = object;
         clds = ObjectViewController.getLeafClds(object.getClass(), model);
-
-        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
-             i.hasNext();) {
-            FieldDescriptor fd = (FieldDescriptor) i.next();
-            Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
-            if (fieldValue != null) {
-                if (fd.isAttribute() && !fd.getName().equals("id")) {
-                    keyAttributes.put(fd.getName(), fieldValue);
-                } else if (fd.isReference()) {
-                    ReferenceDescriptor ref = (ReferenceDescriptor) fd;
-                    ProxyReference proxy = (ProxyReference) TypeUtil.getFieldProxy(object,
-                                                                                   fd.getName());
-                    keyReferences.put(ref.getName(),
-                                      new DisplayReference(proxy,
-                                                           ref.getReferencedClassDescriptor()));
-                }
-            }
-        }
 
         for (Iterator i = clds.iterator(); i.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) i.next();
@@ -99,6 +83,18 @@ public class DisplayObject
                     if (collection.getSize() > 0) {
                         collections.put(fd.getName(), collection);
                     }
+                }
+            }
+        }
+
+        for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
+             i.hasNext();) {
+            FieldDescriptor fd = (FieldDescriptor) i.next();
+            if (TypeUtil.getFieldValue(object, fd.getName()) != null) {
+                if (fd.isAttribute() && !fd.getName().equals("id")) {
+                    keyAttributes.add(fd.getName());
+                } else if (fd.isReference()) {
+                    keyReferences.add(fd.getName());
                 }
             }
         }
@@ -132,7 +128,7 @@ public class DisplayObject
      * Get the key attribute fields and values for this object
      * @return the key attributes
      */
-    public Map getKeyAttributes() {
+    public List getKeyAttributes() {
         return keyAttributes;
     }
 
@@ -140,7 +136,7 @@ public class DisplayObject
      * Get the key reference fields and values for this object
      * @return the key references
      */
-    public Map getKeyReferences() {
+    public List getKeyReferences() {
         return keyReferences;
     }
 

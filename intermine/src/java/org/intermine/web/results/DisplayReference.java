@@ -29,7 +29,7 @@ public class DisplayReference
 {
     ProxyReference proxy;
     ClassDescriptor cld;
-    Map identifiers;
+    Map keyAttributes;
 
     /**
      * Constructor
@@ -51,6 +51,14 @@ public class DisplayReference
     }
     
     /**
+     * Get the referenced object
+     * @return the object
+     */
+    public Object getObject() {
+        return proxy.getObject();
+    }
+
+    /**
      * Get the clds of the object
      * @return the clds
      */
@@ -63,19 +71,19 @@ public class DisplayReference
      * @return the identifiers
      * @throws Exception if an error occurs
      */
-    public Map getIdentifiers() throws Exception {
-        if (identifiers == null) {
-            identifiers = new HashMap();
+    public Map getKeyAttributes() throws Exception {
+        if (keyAttributes == null) {
+            keyAttributes = new HashMap();
             Set pks = PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(),
                                                          proxy.getObject().getClass());
             for (Iterator i = pks.iterator(); i.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) i.next();
                 if (fd.isAttribute()) {
                     Object fieldValue = TypeUtil.getFieldValue(proxy.getObject(), fd.getName());
-                    identifiers.put(fd.getName(), fieldValue);
+                    keyAttributes.put(fd.getName(), fieldValue);
                 }
             }
         }
-        return identifiers;
+        return keyAttributes;
     }
 }
