@@ -59,7 +59,8 @@ public class FeedbackAction extends InterMineAction
         FeedbackForm ff = (FeedbackForm) form;
         
         try {
-            Map webProperties = (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+            Map webProperties = (Map) session.getServletContext()
+                .getAttribute(Constants.WEB_PROPERTIES);
             MessageResources strings = getResources(request);
             String host = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
