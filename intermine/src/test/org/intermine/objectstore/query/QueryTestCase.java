@@ -28,12 +28,21 @@ public class QueryTestCase extends TestCase
      * it is the same as a SimpleConstraint.
      */
     protected void assertEquals(String msg, Query q1, Query q2) {
-        // Are the SELECT lists equal?
-        checkQueryClassLists(msg + ": SELECT lists are not equal", q1.getSelect(), q2.getSelect(), q1, q2);
-        // Are the FROM lists equal?
-        checkQueryClassLists(msg + ": FROM lists are not equal", q1.getFrom(), q2.getFrom(), q1, q2);
-        // Are the constraints equal?
-        checkConstraints(msg + ": CONSTRAINTS not the same", q1.getConstraint(), q2.getConstraint(), q1, q2);
+        if ((q1 != null) && (q2 != null)) {
+            // Are the SELECT lists equal?
+            checkQueryClassLists(msg + ": SELECT lists are not equal", q1.getSelect(), q2.getSelect(), q1, q2);
+            // Are the FROM lists equal?
+            checkQueryClassLists(msg + ": FROM lists are not equal", q1.getFrom(), q2.getFrom(), q1, q2);
+            // Are the constraints equal?
+            checkConstraints(msg + ": CONSTRAINTS not the same", q1.getConstraint(), q2.getConstraint(), q1, q2);
+            // Do the toString methods return the same thing?
+            checkToString(msg + ": toString does not return the same String", q1, q2);
+        } else if ((q1 == null) && (q2 == null)) {
+            // They are equal - albeit null.
+        } else {
+            assertNotNull(msg + "q1 is null, while q2 is not null", q1);
+            fail(msg + "q2 is null, while q1 is not null");
+        }
     }
 
     protected void checkQueryClassLists(String msg, Collection l1, Collection l2, Query q1, Query q2) {
@@ -44,7 +53,7 @@ public class QueryTestCase extends TestCase
             QueryClass qc1 = (QueryClass) i1.next();
             QueryClass qc2 = (QueryClass) i2.next();
 
-            checkQueryNodes(msg + "query classes are not the same", qc1, qc2, q1, q2);
+            checkQueryNodes(msg + ": query classes are not the same", qc1, qc2, q1, q2);
         }
 
     }
@@ -167,5 +176,10 @@ public class QueryTestCase extends TestCase
         assertEquals(msg + ": QueryReference fieldnames are not equal", qr1.getFieldName(), qr2.getFieldName());
     }
 
+    protected void checkToString(String msg, Query q1, Query q2) {
+        String s1 = q1.toString();
+        String s2 = q2.toString();
+        assertEquals(msg, s1, s2);
+    }
 
 }

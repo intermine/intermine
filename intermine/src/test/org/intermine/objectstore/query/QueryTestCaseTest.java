@@ -205,5 +205,37 @@ public class QueryTestCaseTest extends QueryTestCase
         }
     }
 
+    public void testQ1IsNull() throws Exception {
+        failed = false;
+        try {
+            assertEquals(null, new Query());
+            failed = true;
+        } catch (AssertionFailedError e) {
+        }
+        finally {
+            if (failed) {
+                fail("Failure should have happened");
+            }
+        }
+    }
 
+    public void testQ2IsNull() throws Exception {
+        failed = false;
+        try {
+            assertEquals(new Query(), null);
+            failed = true;
+        } catch (AssertionFailedError e) {
+        }
+        finally {
+            if (failed) {
+                fail("Failure should have happened");
+            }
+        }
+    }
+
+    public void testBothNull() throws Exception {
+        Query q1 = null;
+        Query q2 = null;
+        assertEquals(q1, q2);
+    }
 }

@@ -14,12 +14,12 @@ import java.util.Collection;
 import java.lang.reflect.*;
 import java.beans.*;
 
-import org.flymine.util.ModelUtil;
-import org.flymine.util.TypeUtil;
+import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.*;
-import org.flymine.model.testmodel.*;
 import org.flymine.sql.Database;
+import org.flymine.util.ModelUtil;
+import org.flymine.util.TypeUtil;
 
 /**
  * TestCase for testing FlyMine Queries or FlyMine data
@@ -28,7 +28,7 @@ import org.flymine.sql.Database;
  * override executeTest to run query and assert that the result is what is expected
  */
 
-public abstract class ObjectStoreQueriesTestCase extends TestCase
+public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
 {
     protected Map data = new LinkedHashMap();
     protected Map queries = new HashMap();
@@ -185,6 +185,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         queries.put("SelectInterfaceAndSubClasses", selectInterfaceAndSubClasses());
         queries.put("SelectInterfaceAndSubClasses2", selectInterfaceAndSubClasses2());
         queries.put("SelectInterfaceAndSubClasses3", selectInterfaceAndSubClasses3());
+        //queries.put("SelectClassFromSubQuery", selectClassFromSubQuery());
     }
 
     /*
@@ -365,7 +366,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select department
       from Department
-      where (select name from Department) contains department.name
+      where department.name IN (select name from Department)
       order by Department.name
     */
     public Query whereSubQueryField() throws Exception {
@@ -388,7 +389,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select company
       from Company
-      where (select company from Company where name = "CompanyA") contains company
+      where company IN (select company from Company where name = "CompanyA")
     */
     public Query whereSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -410,7 +411,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select company
       from Company
-      where (select company from Company where name = "CompanyA") !contains company
+      where company NOT IN (select company from Company where name = "CompanyA")
     */
     public Query whereNotSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -432,7 +433,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select company
       from Company
-      where not (select company from Company where name = "CompanyA") contains company
+      where not company IN (select company from Company where name = "CompanyA")
     */
     public Query whereNegSubQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
@@ -528,7 +529,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select department, manager
       from Department, Manager
-      where department.manager contains manager
+      where department.manager = manager
       and department.name = "DepartmentA1"
     */
 
@@ -555,7 +556,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select department, manager
       from Department, Manager
-      where department.manager !contains manager
+      where department.manager != manager
       and department.name = "DepartmentA1"
     */
 
@@ -582,7 +583,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select department, manager
       from Department, Manager
-      where (not department.manager contains manager)
+      where (not department.manager = manager)
       and department.name = "DepartmentA1"
     */
 
@@ -610,7 +611,7 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
     /*
       select company, department
       from Company, Department
-      where company contains department
+      where company.departments contains department
       and company.name = "CompanyA"
     */
       public Query contains1N() throws Exception {
@@ -685,7 +686,11 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         return q1;
     }
 
-    // select distinct oldContract/oldCom from company and Contractor
+    /*
+      select contractor, company
+      from Contractor, Company
+      where contractor.oldComs CONTAINS company
+    */
     public Query containsDuplicatesMN() throws Exception {
         QueryClass qc1 = new QueryClass(Contractor.class);
         QueryClass qc2 = new QueryClass(Company.class);
@@ -837,6 +842,28 @@ public abstract class ObjectStoreQueriesTestCase extends TestCase
         q1.addFrom(qc1);
         return q1;
     }
+
+    /*
+      select company
+      from (select company from Company) as subquery, Company
+      where company = subquery.company
+    */
+    /*
+     * TODO: this currently cannot be done.
+    public Query selectClassFromSubQuery() throws Exception {
+        QueryClass c1 = new QueryClass(Company.class);
+        QueryClass c2 = new QueryClass(Company.class);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        Query q2 = new Query();
+        q2.addFrom(q1);
+        q2.addFrom(c2);
+        q2.addToSelect(c2);
+        q2.setConstraint(new ClassConstraint(c1, ClassConstraint.EQUALS, c2));
+        return q2;
+    }
+    */
 
     private void setUpData() throws Exception {
         Company p1 = p1(), p2 = p2();
