@@ -17,11 +17,15 @@ import junit.framework.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.io.InputStream;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
  * Tests for PrecomputeTask.
@@ -54,24 +58,50 @@ public class PrecomputeTaskTest extends StoreDataTestCase
     /**
      * Test that PrecomputeTask creates the 
      */
-    public void testExecute() {
+    public void testExecute() throws Exception {
         DummyPrecomputeTask task = new DummyPrecomputeTask();
 
         task.setAlias("os.unittest");
-        task.setModelName("testmodel");
         task.setTestMode(Boolean.FALSE);
         task.setMinRows(new Integer(1));
 
-        task.execute();
+        Properties summaryProperties;
 
-        assertEquals(7, task.queries.size());
+        String configFile = "objectstoresummary.config.properties";
+
+        InputStream is = PrecomputeTask.class.getClassLoader().getResourceAsStream(configFile);
+        
+        if (is == null) {
+            throw new Exception("Cannot find " + configFile + " in the class path");
+        }
+        
+        summaryProperties = new Properties();
+        summaryProperties.load(is);
+
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, summaryProperties);
+
+        task.precomputeAll(os, oss);
+        
+        for (int i = 0; i < task.queries.size() ; ++i ) {
+            org.intermine.web.LogMe.log("pct", "" + task.queries.get(i));
+        }
+
+        assertEquals(14, task.queries.size());
 
         String[] expectedQueries = new String[] {
+            "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.name AS a6_, a5_.id AS a7_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a5_ WHERE a1_.departments CONTAINS a5_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.departments CONTAINS a2_ ORDER BY a1_",
+            "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.address AS a6_, a5_.id AS a7_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Address AS a5_ WHERE a1_.address CONTAINS a5_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Address AS a2_ WHERE a1_.address CONTAINS a2_ ORDER BY a1_",
+            "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.id AS a3_, a4_, a4_.salary AS a5_, a4_.title AS a6_, a4_.age AS a7_, a4_.end AS a8_, a4_.fullTime AS a9_, a4_.name AS a10_, a4_.id AS a11_, a4_.seniority AS a12_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a4_ WHERE a1_.employees CONTAINS a4_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_ ORDER BY a1_",
+            "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.id AS a3_, a4_, a4_.age AS a5_, a4_.end AS a6_, a4_.fullTime AS a7_, a4_.name AS a8_, a4_.id AS a9_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a4_ WHERE a1_.employees CONTAINS a4_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE a1_.employees CONTAINS a2_ ORDER BY a1_",
+            "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.id AS a3_, a4_, a4_.title AS a5_, a4_.age AS a6_, a4_.end AS a7_, a4_.fullTime AS a8_, a4_.name AS a9_, a4_.id AS a10_, a4_.seniority AS a11_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Manager AS a4_ WHERE a1_.employees CONTAINS a4_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Manager AS a2_ WHERE a1_.employees CONTAINS a2_ ORDER BY a1_",
+            "SELECT DISTINCT a1_, a1_.id AS a2_, a3_, a3_.name AS a4_, a3_.id AS a5_ FROM org.intermine.model.testmodel.HasSecretarys AS a1_, org.intermine.model.testmodel.Secretary AS a3_ WHERE a1_.secretarys CONTAINS a3_ ORDER BY a1_",
+            "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.HasSecretarys AS a1_, org.intermine.model.testmodel.Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_ ORDER BY a1_",
             "SELECT DISTINCT emp, add FROM org.intermine.model.testmodel.Employee AS emp, org.intermine.model.testmodel.Address AS add WHERE emp.address CONTAINS add",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE a1_.employees CONTAINS a2_",
         };
