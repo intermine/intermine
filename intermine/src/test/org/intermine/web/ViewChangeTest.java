@@ -29,6 +29,10 @@ public class ViewChangeTest extends MockStrutsTestCase
         super(arg);
     }
 
+    public void tearDown() throws Exception {
+         getActionServlet().destroy();
+    }
+
     public void testRemove() throws Exception {
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         query.getView().add("Employee.age");

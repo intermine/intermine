@@ -21,6 +21,10 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
         super(testName);
     }
 
+    public void tearDown() throws Exception {
+         getActionServlet().destroy();
+    }
+
     public void testSelectValidClassName() throws Exception {
         setRequestPathInfo("/queryClassSelect");
         addRequestParameter("className", "org.intermine.model.testmodel.Company");

@@ -75,7 +75,8 @@ public class ProfileTest extends TestCase
     }
 
     public void testSaveWithManager() throws Exception {
-        Profile profile = new Profile(new DummyProfileManager(null), "bob", new HashMap(), new HashMap());
+        ProfileManager profileManager = new DummyProfileManager(null);
+        Profile profile = new Profile(profileManager, "bob", new HashMap(), new HashMap());
 
         try {
             profile.saveQuery("query1", query);
@@ -93,10 +94,13 @@ public class ProfileTest extends TestCase
         assertEquals(profile.getSavedQueries().get("query1"), query);
         assertEquals(1, profile.getSavedBags().size());
         assertEquals(profile.getSavedBags().get("bag1"), bag);
+
+        profileManager.close();
     }
     
     public void testDeleteWithManager() throws Exception {
-        Profile profile = new Profile(new DummyProfileManager(null), "bob", new HashMap(), new HashMap());
+        ProfileManager profileManager = new DummyProfileManager(null);
+        Profile profile = new Profile(profileManager, "bob", new HashMap(), new HashMap());
 
         try {
             profile.deleteQuery("query1");
@@ -112,6 +116,8 @@ public class ProfileTest extends TestCase
 
         assertEquals(0, profile.getSavedQueries().size());
         assertEquals(0, profile.getSavedBags().size());
+
+        profileManager.close();
     }
 
     class DummyProfileManager extends ProfileManager

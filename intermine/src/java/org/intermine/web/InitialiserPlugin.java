@@ -49,6 +49,8 @@ import org.intermine.objectstore.ObjectStoreFactory;
  */
 public class InitialiserPlugin implements PlugIn
 {
+    ProfileManager profileManager;
+
     /**
      * Init method called at Servlet initialisation
      *
@@ -231,15 +233,17 @@ public class InitialiserPlugin implements PlugIn
     private void createProfileManager(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         try {
-            servletContext.setAttribute(Constants.PROFILE_MANAGER, new ProfileManager(os));
+            profileManager = new ProfileManager(os);
         } catch (ObjectStoreException e) {
             //throw new ServletException("Unable to create profile manager", e);
         }
+        servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
     }
 
     /**
      * Destroy method called at Servlet destroy
      */
     public void destroy() {
+        profileManager.close();
     }
 }
