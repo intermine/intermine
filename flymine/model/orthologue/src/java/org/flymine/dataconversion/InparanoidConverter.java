@@ -105,7 +105,7 @@ public class InparanoidConverter extends FileConverter
         store(organisms.values());
         store(proteins.values());
     }
-    
+
     /**
      * Convenience method for creating a new Item
      * @param className the name of the class
@@ -142,8 +142,7 @@ public class InparanoidConverter extends FileConverter
             return (Item) proteins.get(swissProtId);
         }
         Item item = newItem("Protein");
-        item.addAttribute(new Attribute("swissProtId", swissProtId));
-        item.addAttribute(new Attribute("identifier", swissProtId));
+        item.addAttribute(new Attribute("primaryAccession", swissProtId));
         item.addReference(new Reference("organism", organism.getIdentifier()));
         proteins.put(swissProtId, item);
         return item;
