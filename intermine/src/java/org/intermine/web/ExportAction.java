@@ -21,12 +21,15 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionError;
 
 import org.apache.poi.hssf.usermodel.*;
 
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.Column;
 import org.intermine.util.TextFileUtil;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
@@ -62,50 +65,68 @@ public class ExportAction extends DispatchAction
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("results");
 
-        List columns = pt.getColumns();
-        List rowList = pt.getList();
+        try {
+            List columns = pt.getColumns();
+            List rowList = pt.getList();
 
-        for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
-            List row = (List) rowList.get(rowIndex);
-            HSSFRow excelRow = sheet.createRow((short) rowIndex);
-
-            // a count of the columns that we have seen so far are invisble - used to get the
-            // correct columnIndex for the call to createCell()
-            int invisibleColumns = 0;
-                
-            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                Column thisColumn = (Column) columns.get(columnIndex);
-
-                // the column order from PagedTable.getList() isn't necessarily the order that the
-                // user has chosen for the columns
-                int realColumnIndex = thisColumn.getIndex();
-
-                if (!thisColumn.isVisible()) {
-                    invisibleColumns++;
-                    continue;
-                }
-
-                Object thisObject = row.get(realColumnIndex);
-
-                // see comment on invisibleColumns
-                short outputColumnIndex = (short) (columnIndex - invisibleColumns);
-
-                if (thisObject instanceof Number) {
-                    float objectAsFloat = ((Number) thisObject).floatValue();
-                    excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
-                } else {
-                    if (thisObject instanceof Date) {
-                        Date objectAsDate = (Date) thisObject;
-                        excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
+            for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
+                List row;
+                try {
+                    row = (List) rowList.get(rowIndex);
+                } catch (RuntimeException e) {
+                    // re-throw as a more specific exception
+                    if (e.getCause() instanceof ObjectStoreException) {
+                        throw (ObjectStoreException) e.getCause();
                     } else {
-                        excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
+                        throw e;
                     }
                 }
 
-            }
-        }
+                HSSFRow excelRow = sheet.createRow((short) rowIndex);
 
-        wb.write(response.getOutputStream());
+                // a count of the columns that we have seen so far are invisble - used to get the
+                // correct columnIndex for the call to createCell()
+                int invisibleColumns = 0;
+
+                for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                    Column thisColumn = (Column) columns.get(columnIndex);
+
+                    // the column order from PagedTable.getList() isn't necessarily the order that
+                    // the user has chosen for the columns
+                    int realColumnIndex = thisColumn.getIndex();
+
+                    if (!thisColumn.isVisible()) {
+                        invisibleColumns++;
+                        continue;
+                    }
+
+                    Object thisObject = row.get(realColumnIndex);
+
+                    // see comment on invisibleColumns
+                    short outputColumnIndex = (short) (columnIndex - invisibleColumns);
+
+                    if (thisObject instanceof Number) {
+                        float objectAsFloat = ((Number) thisObject).floatValue();
+                        excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
+                    } else {
+                        if (thisObject instanceof Date) {
+                            Date objectAsDate = (Date) thisObject;
+                            excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
+                        } else {
+                            excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
+                        }
+                    }
+
+                }
+            }
+
+            wb.write(response.getOutputStream());
+        } catch (ObjectStoreException e) {
+            ActionMessages actionMessages = new ActionMessages();
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionError("errors.query.objectstoreerror"));
+            saveMessages(request, actionMessages);
+        }
 
         return null;
     }
@@ -133,7 +154,7 @@ public class ExportAction extends DispatchAction
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        
+
         TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getList(),
                                    getOrder(pt), getVisible(pt));
 
@@ -185,7 +206,7 @@ public class ExportAction extends DispatchAction
 
         return returnValue;
     }
-    
+
     /**
      * Return an array containing the visibility of each column in the output
      * @param pt the PagedTable
@@ -201,5 +222,5 @@ public class ExportAction extends DispatchAction
 
         return returnValue;
     }
-    
+
 }
