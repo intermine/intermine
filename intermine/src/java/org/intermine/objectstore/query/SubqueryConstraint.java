@@ -1,5 +1,7 @@
 package org.flymine.objectstore.query;
 
+import java.util.List;
+
 /**
  * Constrain a QueryClass or QueryEvaluable to be within the select list
  * of a given subquery.
@@ -48,6 +50,7 @@ public class SubqueryConstraint implements Constraint
      * @param negated reverse the constraint logic if true
      */
     public SubqueryConstraint(Query query, int type, QueryEvaluable qe, boolean negated) {
+
         if (query == null) {
             throw (new NullPointerException("query cannot be null"));
         }
@@ -58,6 +61,29 @@ public class SubqueryConstraint implements Constraint
             throw (new IllegalArgumentException("Invalid type: " + type));
         }
 
+        // check that query only has one item in select list
+        List select = query.getSelect();
+        if (select.size() < 1) {
+            throw (new IllegalArgumentException("Query has no items in select list."));
+        }
+        if (select.size() > 1) {
+            throw (new IllegalArgumentException("Subquery must have only one select item."));
+        }
+
+        // check that the select node is a QueryEvaluable
+        QueryNode selectNode = (QueryNode) select.get(0);
+        if (!QueryEvaluable.class.isAssignableFrom(selectNode.getClass())) {
+            throw (new IllegalArgumentException("Subquery select item is not a QueryEvalubale"));
+        }
+
+        // check that java types of QueryEvaluables are comparable
+        if (!(selectNode.getType().isAssignableFrom(qe.getType()))
+            && !(qe.getType().isAssignableFrom(selectNode.getType()))) {
+            throw (new IllegalArgumentException("Type of select from subquery ("
+                                                + selectNode.getType()
+                                                + ") not comparable with type from argument ("
+                                                + qe.getType() + ")"));
+        }
         this.subquery = query;
         this.qe = qe;
         this.negated = negated;
@@ -93,6 +119,27 @@ public class SubqueryConstraint implements Constraint
         }
         if ((type < 1) || (type > 2)) {
             throw (new IllegalArgumentException("Invalid type: " + type));
+        }
+
+        // check that query only has one item in select list and it is a QueryClass
+        List select = query.getSelect();
+        if (select.size() < 1) {
+            throw (new IllegalArgumentException("Query has no items in select list."));
+        }
+        if (select.size() > 1) {
+            throw (new IllegalArgumentException("Subquery must have only one "
+                                                + "item in select list."));
+        }
+        QueryNode selectNode = (QueryNode) select.get(0);
+        if (!QueryClass.class.isAssignableFrom(selectNode.getClass())) {
+            throw (new IllegalArgumentException("Select item of subquery is not a QueryClass"));
+        }
+        if (!(selectNode.getType().isAssignableFrom(cls.getType()))
+            && !(cls.getType().isAssignableFrom(selectNode.getType()))) {
+            throw (new IllegalArgumentException("QueryClass select from subquery ("
+                                                + selectNode.getType()
+                                                + ") not comparable with QueryClass ("
+                                                + cls.getType() + ")"));
         }
 
         this.subquery = query;
