@@ -321,7 +321,7 @@
   </target>
 
   <target name="compile-datatracking" depends="precompile-main">
-    <ant antfile="build-model.xml" target="build-model-from-xml">
+    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="datatracking"/>
       <property name="model.src" value="${model}/datatracking"/>
       <reference torefid="class.path" refid="project.class.path"/>
@@ -329,7 +329,7 @@
   </target>
 
   <target name="compile-fulldata" depends="precompile-main">
-    <ant antfile="build-model.xml" target="build-model-from-zargo">
+    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <property name="model.src" value="${model}/fulldata"/>
       <reference torefid="class.path" refid="project.class.path"/>
@@ -349,7 +349,7 @@
 
   <!-- Datatracking -->
   <target name="build-db-datatrackingtest" depends="compile-datatracking">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="datatracking"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.unittest"/>
@@ -358,7 +358,7 @@
   
   <!-- Fulldata -->
    <target name="build-db-fulldatatest" depends="compile-fulldata">
-     <ant antfile="build-model.xml" target="build-db">
+     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
        <property name="model.name" value="fulldata"/>
        <reference torefid="class.path" refid="test.class.path"/>
        <property name="db.name" value="db.unittest"/>
@@ -367,7 +367,7 @@
 
   <!-- Testmodel -->
   <target name="build-testmodel" depends="compile-main" >
-    <ant antfile="build-model.xml" target="build-model-from-xml">
+    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <property name="model.src" value="${model}/testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -375,7 +375,7 @@
   </target>
 
   <target name="build-db-testmodel" depends="build-testmodel">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.unittest"/>
@@ -400,7 +400,7 @@
   
   <!-- generate acedbtest model from .wrm file -->
   <target name="build-acedbtest" depends="compile-main" >
-    <ant antfile="build-model.xml" target="build-model-from-ace">
+    <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedbtest"/>
       <property name="model.src" value="${model}/acedb/acedbtest.wrm"/>
       <reference torefid="class.path" refid="acedbtest.class.path"/>
@@ -423,7 +423,7 @@
   
   <!-- generate acedb model from acemodel file -->
   <target name="build-acedb" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-model-from-ace">
+    <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedb"/>
       <property name="model.src" value="${model}/acedb/acedb.wrm"/>
       <reference torefid="class.path" refid="acedb.class.path"/>
@@ -432,7 +432,7 @@
 
 
   <target name="build-db-acedb" depends="build-acedb">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="acedb"/>
       <reference torefid="class.path" refid="acedb.class.path"/>
       <property name="db.name" value="db.acedb"/>
@@ -475,7 +475,7 @@
   
   <!-- generate production model -->
   <target name="build-productionmodel" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-model-from-zargo">
+    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <property name="model.src" value="${model}/testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -484,7 +484,7 @@
 
 
   <target name="build-db-productionmodel" depends="build-productionmodel">
-    <ant antfile="build-model.xml" target="build-db">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.production"/>
@@ -511,7 +511,7 @@
 
   <!-- convert chado zargo to FlyMine model -->
   <target name="convert-chado" depends="compile-main">
-    <ant antfile="build-model.xml" target="generate-model-from-zargo">
+    <ant antfile="build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
       <property name="model.src" value="${model}/chado"/>
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -529,7 +529,7 @@
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
   <target name="convert-mage" depends="compile-main">
-    <ant antfile="build-model.xml" target="generate-model-from-xmi">
+    <ant antfile="build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
       <property name="model.src" value="/home/rns/resources/mage/"/>
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -538,7 +538,7 @@
 
   <!-- test out creating java objects from mage model -->
   <target name="compile-mage" depends="convert-mage">
-    <ant antfile="build-model.xml" target="compile-java">
+    <ant antfile="build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
@@ -1002,7 +1002,7 @@
 
   <target name="jar-testmodel" depends="prepare-dist, build-testmodel"
           description="create a jar of the testmodel">
-    <ant antfile="build-model.xml" target="jar">
+    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="model.src" value="${model}/testmodel"/>
@@ -1038,7 +1038,7 @@
   </target>
 
   <target name="compile-tutorial" depends="build-tutorial">
-    <ant dir="${tutorial}" target="compile" inheritAll="false">
+    <ant dir="${tutorial}" target="compile" inheritAll="false" inheritRefs="true">
     </ant>        
   </target>
 
