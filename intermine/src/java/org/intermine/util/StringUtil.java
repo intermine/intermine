@@ -1,6 +1,5 @@
 package org.flymine.util;
 
-
 /**
  * Collection of commonly used String utilities
  *
@@ -33,5 +32,20 @@ public class StringUtil
         return count;
     }
 
+    /**
+     * Returns a capitalised version of the given String
+     *
+     * @param str the String to capitalise
+     * @return the capitalised version of str
+     */
+    public static String capitalise(String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() <= 1) {
+            return str.toUpperCase();
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1, str.length());
+    }
 
 }
