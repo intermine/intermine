@@ -720,6 +720,7 @@
     <replace file="${build.webapp}/intermine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
   </target>
 
+  <!-- precompile and war a webapp -->
   <target name="build-webapp" depends="prepare-webapp"
     description="Build the InterMine web application">
 
@@ -727,7 +728,7 @@
     <copy todir="${build.tmp}" file="${resources}/webapps/intermine/web.xml"/>
 
     <!-- this precompilation step is optional -->
-    <antcall target="precompile-jsp"/>
+    <!--antcall target="precompile-jsp"/-->
 
     <war destfile="${dist.webapp}/intermine.war" webxml="${build.tmp}/web.xml">
       <fileset dir="${build.webapp}/intermine"/>
@@ -780,11 +781,11 @@
 
     <antcall target="build-webapp"/>
 
+    <!-- now update war to include the test jars -->
     <war destfile="${dist.webapp}/intermine.war" update="true">
       <lib dir="${lib}">
         <patternset refid="lib.webapptest"/>
       </lib>
-      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
     </war>
   </target>
 

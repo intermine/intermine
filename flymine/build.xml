@@ -18,6 +18,7 @@
 
   <property name="intermine.dist.path" location="../intermine/dist"/>
   <property name="intermine.jar.path" location="${intermine.dist.path}/intermine.jar"/>
+  <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
@@ -1068,107 +1069,44 @@
 
   </target>
 
+  <target name="build-production-webapp" depends="jar-genomic">
+    <mkdir dir="${build.webapp}/intermine"/>
+    <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine"/>
+    <move file="${build.webapp}/intermine/WEB-INF/web.xml" todir="${build.tmp}"/>
 
-  <!-- Webapp targets -->
-
-  <target name="prepare-webapp" depends="prepare,prepare-dist">
-    <mkdir dir="${build.webapp}/flymine"/>
-    <mkdir dir="${build.webapp}/flymine/images"/>
-    <mkdir dir="${build.webapp}/flymine/model"/>
-    <mkdir dir="${build.webapp}/flymine/META-INF"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF/classes"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF/lib"/>
-    <mkdir dir="${build.webapp}/flymine/WEB-INF/src"/>
-
-    <copy todir="${build.webapp}/flymine">
-      <fileset dir="${src.webapp}"/>
-      <fileset dir="${src.www}" includes="flymine.css"/>
-    </copy>
-    <copy todir="${build.webapp}/flymine/images">
-      <fileset dir="${resources}/webapps/flymine/images"/>
-      <fileset dir="${src.www}/images"/>
-    </copy>
-    <copy todir="${build.webapp}/flymine/WEB-INF">
-      <fileset dir="${resources}/webapps/flymine" excludes="images/**, *.properties"/>
-    </copy>
-    <copy todir="${build.webapp}/flymine/WEB-INF/classes">
-      <fileset dir="${resources}/webapps/flymine" includes="*.properties"/>
-    </copy>
-    <copy todir="${build.webapp}/flymine/WEB-INF/lib">
-      <fileset dir="${lib}">
-        <patternset refid="lib.common"/>
-        <patternset refid="lib.antlr"/>
-        <patternset refid="lib.webapp.flymine"/>
-      </fileset>
-      <fileset dir="${dist}" includes="flymine*.jar"/>
-    </copy>
-
-    <copy todir="${build.webapp}/flymine/META-INF" file="${resources}/webapps/flymine/context.xml"/>
-    <replace file="${build.webapp}/flymine/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webapp.path}"/>
-  </target>
-
-  <target name="build-webapp" depends="prepare-webapp"
-    description="Build the FlyMine web application">
-
-    <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
-
-
-    <!-- this precompilation step is optional -->
-    <antcall target="precompile-jsp"/>
-
-    <delete file="${build.webapp}/flymine/WEB-INF/web.xml"/>
-    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
-      <fileset dir="${build.webapp}/flymine"/>
-    </war>
-
-  </target>
-
-  <target name="precompile-jsp">
-    <jspc srcdir="${build.webapp}/flymine"
-      destdir="${build.webapp}/flymine/WEB-INF/src"
-      package="org.flymine.jsp"
-      verbose="9"
-      webinc="${build.tmp}/generated-web.xml">
-      <include name="**/*.jsp"/>
-      <!-- have to exclude index.jsp because listed as a welcome-file in web.xml -->
-      <exclude name="index.jsp"/>
-      <classpath refid="base.class.path"/>
-    </jspc>
-
-    <delete>
-      <fileset dir="${build.webapp}/flymine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
-    </delete>
-
-    <loadfile property="generated.xml" srcFile="${build.tmp}/generated-web.xml"/>
-
-    <replace file="${build.tmp}/web.xml" value="${generated.xml}">
-      <!-- can't use normal token as xml must be parseable before this replacement -->
-      <replacetoken><![CDATA[<!--@JSPC_INCLUDE@-->]]></replacetoken>
-    </replace>
-
-    <javac
-      srcdir="${build.webapp}/flymine/WEB-INF/src"
-      destdir="${build.webapp}/flymine/WEB-INF/classes"
-      listfiles="yes"
-      depend="yes">
-      <classpath refid="base.class.path"/>
-    </javac>
-
-    <!-- don't need the .java files -->
-    <delete dir="${build.webapp}/flymine/WEB-INF/src"/>
-  </target>
-
-  <target name="build-production-webapp" depends="prepare-webapp, jar-genomic"
-    description="Build a FlyMine webapp including the test classes and libraries">
     <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.src" value="${model}/genomic"/>
     </ant>
 
-    <antcall target="build-webapp"/>
+    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
+      <fileset dir="${build.webapp}/intermine"/>
+    </war>
   </target>
+
+  <target name="release-webapp">
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <tomcat-deploy url="${webapp.baseurl}/manager"
+                   username="${webapp.manager}" 
+                   password="${webapp.password}"
+                   path="${webapp.path}" 
+                   war="file://${dist.webapp}/flymine.war"/> 
+  </target>
+
+  <target name="remove-webapp">
+    <taskdef name="tomcat-undeploy" 
+      classname="org.apache.catalina.ant.UndeployTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <tomcat-undeploy url="${webapp.baseurl}/manager"
+                     username="${webapp.manager}" 
+                     password="${webapp.password}"
+                     path="${webapp.path}"/>
+  </target>
+
 
   <!-- Packaging/distribution targets -->
 
