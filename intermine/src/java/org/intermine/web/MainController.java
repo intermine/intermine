@@ -17,6 +17,7 @@ import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
@@ -91,13 +92,14 @@ public class MainController extends TilesAction
                 request.setAttribute("attributeOps", attributeOps);
             } else {
                 ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
-                request.setAttribute("subclasses", getChildren(cld));
+                request.setAttribute("subclasses", new TreeSet(getChildren(cld)));
             }
             if (session.getAttribute(Constants.SAVED_BAGS) != null) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
             }
         }
 
+        // set up the navigation links (eg. Department > employees > department)
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
         Map navigation = new LinkedHashMap();
@@ -120,10 +122,9 @@ public class MainController extends TilesAction
      */
     protected static Set getChildren(ClassDescriptor cld) {
         Set children = new HashSet();
-        children.add(TypeUtil.unqualifiedName(cld.getName()));
         for (Iterator i = cld.getSubDescriptors().iterator(); i.hasNext();) {
-            ClassDescriptor child = (ClassDescriptor) i.next();
-            children.addAll(getChildren(child));
+            children.add(TypeUtil.unqualifiedName(cld.getName()));
+            children.addAll(getChildren((ClassDescriptor) i.next()));
         }
         return children;
     }
