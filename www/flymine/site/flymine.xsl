@@ -70,7 +70,7 @@ version="1.0">
                                     FlyMine<br/>Department of Genetics<br/>Downing Street<br/>Cambridge, CB2 3EH, UK
                                 </td>
                                 <td>
-                                    Tel: +44 (0)1223 333965<br/>Fax: +44 (0)1223 333992<br/><a href="mailto:info[at]flymine.org">info[at]flymine.org</a>
+                                    Tel: +44 (0)1223 333377<br/>Fax: +44 (0)1223 333992<br/><a href="mailto:info[at]flymine.org">info[at]flymine.org</a>
                                 </td>
                             </tr>
                         </table>
