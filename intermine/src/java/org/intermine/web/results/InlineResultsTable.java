@@ -17,16 +17,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
 
-import org.intermine.util.TypeUtil;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.web.config.Type;
 import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.FieldConfigHelper;
 import org.intermine.web.Constants;
 
 import org.apache.log4j.Logger;
@@ -106,40 +103,6 @@ public class InlineResultsTable
             columnNames.add(((FieldConfig) columnIter.next()).getFieldExpr());
         }
         return Collections.unmodifiableList(columnNames);
-    }
-
-    /**
-     * Return the list of fields that are both attributes and primary keys
-     * @param cld the metadata for the class
-     * @return the list of fields
-     */
-    private static List keyAttributes(ClassDescriptor cld) {
-        List keyAttributes = new ArrayList();
-        Iterator i =
-            PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(), cld.getType()).iterator();
-        while (i.hasNext()) {
-            FieldDescriptor fd = (FieldDescriptor) i.next();
-            if (fd.isAttribute() && !fd.getName().equals("id")) {
-                keyAttributes.add(fd);
-            }
-
-        }
-        return keyAttributes;
-    }
-
-    /**
-     * Get a set of field values from an object, given the object and a list of fields
-     * @param o the Object
-     * @param FieldDescriptors the list of fields
-     * @return the list of field values
-     * @throws Exception if an error occurs
-     */
-    private static List getFieldValues(Object o, List fieldDescriptors) throws Exception {
-        List values = new ArrayList();
-        for (Iterator i = fieldDescriptors.iterator(); i.hasNext();) {
-            values.add(TypeUtil.getFieldValue(o, ((FieldDescriptor) i.next()).getName()));
-        }
-        return values;
     }
 
     /**
@@ -289,26 +252,6 @@ public class InlineResultsTable
      * @return the FieldConfig objects for the the given ClassDescriptor
      */
     protected List getClassFieldConfigs(ClassDescriptor cd) {
-        Type type = (Type) webconfigTypeMap.get(cd.getName());
-
-        if (type != null) {
-            List fieldConfigs = type.getFieldConfigs();
-
-            if (fieldConfigs.size() > 0) {
-                return fieldConfigs;
-            }
-        }
-
-        // there are no configured fields for this Class so use the fields from the primary keys
-        List returnRow = new ArrayList();
-
-        Iterator keyAttributesIter = keyAttributes(cd).iterator();
-        while (keyAttributesIter.hasNext()) {
-            FieldConfig fc = new FieldConfig();
-            fc.setFieldExpr(((FieldDescriptor) keyAttributesIter.next()).getName());
-            returnRow.add(fc);
-        }
-
-        return returnRow;
+        return FieldConfigHelper.getClassFieldConfigs(webconfigTypeMap, cd);
     }
 }
