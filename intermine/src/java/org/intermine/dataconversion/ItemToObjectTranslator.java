@@ -283,7 +283,10 @@ public class ItemToObjectTranslator extends Translator
             for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
                 Reference ref = (Reference) i.next();
                 Integer identifier = identifierToId(ref.getRefId());
-                String refName = StringUtil.decapitalise(ref.getName());
+                String refName = ref.getName();
+                if (Character.isLowerCase(refName.charAt(1))) {
+                    refName = StringUtil.decapitalise(refName);
+                }
                 if (TypeUtil.getFieldInfo(obj.getClass(), refName) != null) {
                     TypeUtil.setFieldValue(obj, refName, new ProxyReference(os, identifier,
                                 InterMineObject.class));
@@ -309,14 +312,18 @@ public class ItemToObjectTranslator extends Translator
                 q.setConstraint(bc);
                 os.getSequence();
                 refs.getName();
-                String refsName = StringUtil.decapitalise(refs.getName());
+                // TODO rules about case changes should be centralised
+                String refsName = refs.getName();
+                if (Character.isLowerCase(refsName.charAt(1))) {
+                    refsName = StringUtil.decapitalise(refsName);
+                }
                 if (TypeUtil.getFieldInfo(obj.getClass(), refsName) != null) {
                     TypeUtil.setFieldValue(obj, refsName, new SingletonResults(q, os,
                                                                              os.getSequence()));
                 } else {
                     String message = "Collection not found in model: "
                         + DynamicUtil.decomposeClass(obj.getClass())
-                        + "." + refs.getName();
+                        + "." + refsName + " fileInfos: " + TypeUtil.getFieldInfos(obj.getClass());
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
