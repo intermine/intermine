@@ -57,7 +57,52 @@ public interface ObjectStore
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      * @throws IllegalArgumentException if obj does not have all its primary key fields set
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException ;
+    public Object getObjectByExample(Object obj) throws ObjectStoreException;
+
+    /**
+     * Prefetches an object into the objectstore getObjectByExample cache. This method doesn't
+     * actually <u>have</u> to do anything - it is merely a hint to the objectstore that a
+     * particular operation is likely to be required in the near future.
+     *
+     * <p>This method is provided primarily to help speed up our data loader. The method may block
+     * until the prefetch has been completed. However, the prefetch can be done outside of any
+     * synchronised areas of code, allowing the time-critical synchronised areas of code to access
+     * the object from the cache.
+     *
+     * @param obj an example object
+     */
+    public void prefetchObjectByExample(Object obj);
+
+    /**
+     * Removes an entry from the objectstore getObjectByExample cache. The objectstore must
+     * guarantee that the next time this example object is requested by getObjectByExample, the
+     * objectstore explicitly fetches the object from the database. Obviously, if the objectstore
+     * does not have a getObjectByExample cache, this method will do nothing.
+     *
+     * @param obj an example object
+     */
+    public void invalidateObjectByExample(Object obj);
+
+    /**
+     * Places an entry into the objectstore getObjectByExample cache. This method (like prefetch) is
+     * merely a hint, and provides no guarantees. The method takes the object provided, and creates
+     * a lookup in the getObjectByExample cache, so that subsequent requests for that object do not
+     * access the database. If there is no cache, this method will do nothing.
+     *
+     * @param obj an example object
+     * @param obj2 a fully populated object, as loaded from the database, or null to negatively
+     * cache
+     * @return an object which is the lookup key for the cache entry. This is useful to the caller
+     * for the purpose of ensuring the entry does not expire from the cache. To endure this, the
+     * caller merely needs to keep a strong reference to this returned value.
+     */
+    public Object cacheObjectByExample(Object obj, Object obj2);
+
+    /**
+     * Completely empties the getObjectByExample cache. The objectstore must guarantee that the
+     * next time a given object is mentioned, it must not be taken from the cache.
+     */
+    public void flushObjectByExample();
 
     /**
      * Explain a Query (give estimate for execution time and number of rows).

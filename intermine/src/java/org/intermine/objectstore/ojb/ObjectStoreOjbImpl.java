@@ -167,9 +167,9 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * @see ObjectStoreAbstractImpl#internalGetObjectByExample
      */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+    protected Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
         PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
         try {
             Query q = QueryHelper.createQueryForExampleObject(obj, model);

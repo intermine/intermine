@@ -304,6 +304,7 @@ public class DataLoaderTest extends TestCase
         toDelete.add(a6);
 
         loader.store(c1);
+        os.flushObjectByExample();
 
         // Check company 1.
         Company gotC1 = (Company) os.getObjectByExample(c1);

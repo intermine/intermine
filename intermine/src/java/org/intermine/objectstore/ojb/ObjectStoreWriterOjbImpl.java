@@ -16,9 +16,11 @@ import org.apache.ojb.broker.TransactionInProgressException;
 import org.apache.ojb.broker.TransactionNotInProgressException;
 import org.apache.ojb.broker.TransactionAbortedException;
 
-import org.flymine.objectstore.ObjectStoreWriterAbstractImpl;
-import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreAbstractImpl;
+import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStoreWriterAbstractImpl;
+import java.util.HashSet;
 
 /**
  * Implementation of ObjectStoreWriter that uses OJB as its underlying store
@@ -28,6 +30,7 @@ import org.flymine.objectstore.ObjectStore;
  */
 public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
 {
+    protected HashSet transactionCacheHolder = null;
     protected PersistenceBroker pb = null;
 
     /**
@@ -83,6 +86,10 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
         } catch (Exception e) {
             throw new ObjectStoreException(e);
         }
+        Object cacheKey = ((ObjectStoreAbstractImpl) os).cacheObjectByExample(o, o);
+        if (transactionCacheHolder != null) {
+            transactionCacheHolder.add(cacheKey);
+        }
     }
 
     /**
@@ -94,13 +101,16 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
         } catch (Exception e) {
             throw new ObjectStoreException(e);
         }
+        Object cacheKey = ((ObjectStoreAbstractImpl) os).cacheObjectByExample(o, null);
+        if (transactionCacheHolder != null) {
+            transactionCacheHolder.add(cacheKey);
+        }
     }
 
     /**
      * @see org.flymine.objectstore.ObjectStoreWriter#isInTransaction
      */
     public boolean isInTransaction() throws ObjectStoreException {
-        boolean result;
         try {
             return pb.isInTransaction();
         } catch (PersistenceBrokerException e) {
@@ -112,6 +122,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
      * @see org.flymine.objectstore.ObjectStoreWriter#beginTransaction
      */
     public void beginTransaction() throws ObjectStoreException {
+        transactionCacheHolder = new HashSet();
         try {
             pb.beginTransaction();
         } catch (TransactionInProgressException e) {
@@ -127,6 +138,7 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
      * @see org.flymine.objectstore.ObjectStoreWriter#commitTransaction
      */
     public void commitTransaction() throws ObjectStoreException {
+        transactionCacheHolder = null;
         try {
             pb.commitTransaction();
         } catch (TransactionNotInProgressException e) {
@@ -142,6 +154,8 @@ public class ObjectStoreWriterOjbImpl extends ObjectStoreWriterAbstractImpl
      * @see org.flymine.objectstore.ObjectStoreWriter#abortTransaction
      */
     public void abortTransaction() throws ObjectStoreException {
+        transactionCacheHolder = null;
+        os.flushObjectByExample();
         try {
             pb.abortTransaction();
         } catch (TransactionNotInProgressException e) {

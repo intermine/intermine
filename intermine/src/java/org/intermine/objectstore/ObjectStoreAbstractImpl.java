@@ -13,12 +13,15 @@ package org.flymine.objectstore;
 import java.util.Properties;
 
 import org.flymine.metadata.Model;
-import org.flymine.util.PropertiesUtil;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.util.CacheMap;
+import org.flymine.util.PropertiesUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * Abstract implementation of the ObjectStore interface. Used to provide uniformity
@@ -28,10 +31,17 @@ import org.flymine.sql.query.ExplainResult;
  */
 public abstract class ObjectStoreAbstractImpl implements ObjectStore
 {
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreAbstractImpl.class);
+
     protected Model model;
     protected int maxOffset = Integer.MAX_VALUE;
     protected int maxLimit = Integer.MAX_VALUE;
     protected long maxTime = Long.MAX_VALUE;
+    protected CacheMap cache = new CacheMap();
+    
+    protected int getObjectOps = 0;
+    protected int getObjectHits = 0;
+    protected int getObjectPrefetches = 0;
 
     /**
      * No-arg constructor for testing purposes
@@ -67,6 +77,47 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @see ObjectStore#getObjectByExample
      */
     public Object getObjectByExample(Object obj) throws ObjectStoreException {
+        getObjectOps++;
+        if (getObjectOps % 1000 == 0) {
+            LOG.error("getObjectByExample called " + getObjectOps + " times. Cache hits: "
+                    + getObjectHits + ". Prefetches: " + getObjectPrefetches);
+        }
+        boolean contains = true;
+        Object cached = null;
+        Object cacheKey = QueryHelper.createQueryForExampleObject(obj, model).toString();
+        synchronized (cache) {
+            cached = cache.get(cacheKey);
+            if (cached == null) {
+                contains = cache.containsKey(cacheKey);
+            }
+        }
+        if (contains) {
+            getObjectHits++;
+            return cached;
+        }
+        Object fromDb = internalGetObjectByExample(obj);
+        synchronized (cache) {
+            cached = cache.get(cacheKey);
+            if (cached == null) {
+                contains = cache.containsKey(cacheKey);
+            }
+            if (contains) {
+                fromDb = cached;
+            } else {
+                cache.put(cacheKey, fromDb);
+            }
+        }
+        return fromDb;
+    }
+
+    /**
+     * Internal service method for getObjectByExample.
+     *
+     * @param obj the object to get
+     * @return an object from the database
+     * @throws ObjectStoreException if an error occurs during the running of the Query
+     */
+    protected Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
         Results res = execute(QueryHelper.createQueryForExampleObject(obj, model));
         res.setNoOptimise();
         
@@ -81,6 +132,47 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         return null;
     }
 
+    /**
+     * @see ObjectStore#prefetchObjectByExample
+     */
+    public void prefetchObjectByExample(Object obj) {
+        getObjectPrefetches++;
+        try {
+            getObjectByExample(obj);
+        } catch (Exception e) {
+            // We can ignore this - it's only a hint.
+        }
+    }
+
+    /**
+     * @see ObjectStore#invalidateObjectByExample
+     */
+    public void invalidateObjectByExample(Object obj) {
+        Object key = QueryHelper.createQueryForExampleObject(obj, model).toString();
+        synchronized (cache) {
+            cache.remove(key);
+        }
+    }
+
+    /**
+     * @see ObjectStore#cacheObjectByExample
+     */
+    public Object cacheObjectByExample(Object obj, Object obj2) {
+        Object key = QueryHelper.createQueryForExampleObject(obj, model).toString();
+        synchronized (cache) {
+            cache.put(key, obj2);
+        }
+        return key;
+    }
+
+    /**
+     * @see ObjectStore#flushObjectByExample
+     */
+    public void flushObjectByExample() {
+        synchronized (cache) {
+            cache.clear();
+        }
+    }
 
     /**
      * Runs an EXPLAIN on the query without and LIMIT or OFFSET.

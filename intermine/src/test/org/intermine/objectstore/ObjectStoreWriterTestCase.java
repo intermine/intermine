@@ -340,6 +340,8 @@ public class ObjectStoreWriterTestCase extends TestCase
             writer.store(company1);
             writer.store(company2);
 
+            os.flushObjectByExample();
+
             // Check we have collections filled on both sides
 
             Company returnedCompany = (Company) os.getObjectByExample(company1Template);
@@ -360,6 +362,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             company1.getContractors().add(contractor3);
             contractor3.getCompanys().add(company1);
             writer.store(company1);
+            os.flushObjectByExample();
             returnedCompany = (Company) os.getObjectByExample(company1Template);
 
             assertNotNull(returnedCompany);
@@ -377,6 +380,7 @@ public class ObjectStoreWriterTestCase extends TestCase
             // Delete a contractor from company1's collection
             company1.getContractors().remove(contractor2);
             writer.store(company1);
+            os.flushObjectByExample();
             returnedCompany = (Company) os.getObjectByExample(company1Template);
 
             assertNotNull(returnedCompany);
