@@ -99,7 +99,7 @@
 
   <patternset id="lib.catalina">
     <include name="catalina-ant*.jar" />
-   </patternset>
+  </patternset>
 
   <!-- Libraries relevant to building from UML models -->
   <patternset id="lib.uml">
@@ -131,12 +131,20 @@
     <include name="checkstyle*.jar"/>
   </patternset>
 
-  <!-- Libraries that the InterMine query webapp uses -->
-  <patternset id="lib.webapp.intermine">
-    <include name="log4j*.jar"/>
+  <!-- Libraries that both the webapps use -->
+  <patternset id="lib.webapp.common">
     <include name="postgresql*.jar"/>
-    <include name="antlr*.jar"/>
+    <include name="log4j*.jar"/>
     <include name="cglib*.jar"/>
+    <include name="antlr*.jar"/>
+    <include name="commons-logging*"/>
+    <include name="commons-digester*"/>
+    <include name="commons-collections*.jar"/>
+    <include name="commons-beanutils*"/>
+  </patternset>
+
+  <!-- Libraries that the webapp uses -->
+  <patternset id="lib.webapp.intermine">
     <include name="jstl*.jar"/>
     <include name="servlet*.jar"/>
     <include name="standard*.jar"/>
@@ -144,21 +152,17 @@
     <include name="mail*.jar"/>
     <include name="activation*.jar"/>
     <include name="poi*.jar"/>
-    <include name="commons-beanutils*"/>
-    <include name="commons-digester*"/>
     <include name="commons-fileupload*"/>
     <include name="commons-validator*"/>
-    <include name="commons-collections*"/>
-    <include name="commons-logging*"/>
   </patternset>
 
   <!-- Libraries that the webservice uses -->
   <patternset id="lib.webapp.webservice">
-    <include name="axis*.jar" />
-    <include name="commons-discovery*.jar" />
-    <include name="saaj*.jar" />
-    <include name="jaxrpc*.jar" />
-    <include name="wsdl*.jar" />
+    <include name="commons-discovery*.jar"/>
+    <include name="axis*.jar"/>
+    <include name="saaj*.jar"/>
+    <include name="jaxrpc*.jar"/>
+    <include name="libreadline-java*.jar"/>
   </patternset>
 
   <!-- set the classpath for the build - basically everything in lib -->
@@ -169,6 +173,7 @@
       <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
       <patternset refid="lib.catalina"/>
+      <patternset refid="lib.webapp.common"/>
       <patternset refid="lib.webapp.intermine"/>
       <patternset refid="lib.webapp.webservice"/>
       <patternset refid="lib.acedb"/>
@@ -306,11 +311,11 @@
       </fileset>
     </copy>
     <antlr target="${src.java}/org/intermine/sql/query/intermine_sql.g"
-        outputdirectory="${build.src.java}/org/intermine/sql/query">
+           outputdirectory="${build.src.java}/org/intermine/sql/query">
       <classpath refid="project.class.path"/>
     </antlr>
     <antlr target="${src.java}/org/intermine/objectstore/query/iql/intermine_iql.g"
-        outputdirectory="${build.src.java}/org/intermine/objectstore/query/iql">
+           outputdirectory="${build.src.java}/org/intermine/objectstore/query/iql">
       <classpath refid="project.class.path"/>
     </antlr>
     <depend srcdir="${build.src.java}" destdir="${build.java}" closure="yes" dump="yes"/>
@@ -507,7 +512,7 @@
     <antcall target="test-report"/>
   </target>
 
-   <!-- run cachmap test in a separate jvm with memory limit -->
+  <!-- run cachmap test in a separate jvm with memory limit -->
   <target name="test-cachemap" 
           description="perform cache map test in a separate jvm" >
 
@@ -555,7 +560,7 @@
 
   <target name="test-webservice" depends="compile-test, build-db-unittest, build-testable-webservice, release-webservice"
           description="perform JUnit tests on web service" >
-   <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="webapptest.class.path"/>
       <formatter type="xml" />
       <batchtest fork="no" todir="${results.junit}">
@@ -645,15 +650,15 @@
 
   <target name="compile-webapp" depends="compile-main">
     <ant antfile="build-webapp.xml" target="compile-webapp" inheritRefs="true">
-       <property name="war" value="${dist.webapp}/intermine.war"/> 
-       <reference torefid="class.path" refid="project.class.path"/>
+      <property name="war" value="${dist.webapp}/intermine.war"/> 
+      <reference torefid="class.path" refid="project.class.path"/>
     </ant>   
   </target>
   
   <target name="jar-intermine-webapp" depends="prepare-dist, compile-webapp">
     <ant antfile="build-webapp.xml" target="jar-webapp" inheritRefs="true">
-       <property name="war" value="${dist.webapp}/intermine.war"/>
-       <reference torefid="class.path" refid="project.class.path"/>
+      <property name="war" value="${dist.webapp}/intermine.war"/>
+      <reference torefid="class.path" refid="project.class.path"/>
     </ant>      
   </target>
 
@@ -715,7 +720,7 @@
 
   <!-- Webservice targets -->
   <target name="build-webservice" depends="prepare,prepare-dist,jar-intermine"
-    description="Build the InterMine webservice">
+          description="Build the InterMine webservice">
     <mkdir dir="${build.webapp}/webservice"/>
     <mkdir dir="${build.webapp}/webservice/META-INF"/>
     <mkdir dir="${build.webapp}/webservice/WEB-INF"/>
@@ -723,25 +728,22 @@
     <copy todir="${build.webapp}/webservice/WEB-INF">
       <fileset dir="${resources}/webapps/webservice">
         <exclude name="web.xml"/>
+        <exclude name="context.xml"/>
         <exclude name="deploy-ObjectStore.wsdd"/>
         <exclude name="undeploy-ObjectStore.wsdd"/>
-        <exclude name="default.intermine.properties"/>
       </fileset>
     </copy>
 
     <copy todir="${build.webapp}/webservice/WEB-INF/lib">
       <fileset dir="${lib}">
-        <patternset refid="lib.common"/>
-        <patternset refid="lib.antlr"/>
+        <patternset refid="lib.webapp.common"/>
         <patternset refid="lib.webapp.webservice"/>
       </fileset>
-      <fileset dir="${dist}" includes="webservice*.jar"/>
-      <fileset dir="${dist}" includes="intermine*.jar"/>
+      <fileset dir="${dist}" includes="intermine.jar"/>
     </copy>
 
-    <copy todir="${build.webapp}/webservice/META-INF" file="${resources}/webapps/webservice/context.xml"/>
-
-    <replace file="${build.webapp}/webservice/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webservice.path}"/>
+    <filter token="REPLACE_PATH" value="${webservice.path}"/>
+    <copy todir="${build.webapp}/webservice/META-INF" file="${resources}/webapps/webservice/context.xml" filtering="true"/>
 
     <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
       <fileset dir="${build.webapp}/webservice"/>
@@ -771,14 +773,14 @@
 
   <target name="dist-javadoc" depends="prepare-dist,javadoc"
           description="makes the javadoc available for distribution">
-     <copy todir="${dist.javadoc}">
+    <copy todir="${dist.javadoc}">
       <fileset dir="${build.javadoc}"/>
     </copy>
   </target>   
 
 
   <target name="jar-intermine" depends="prepare-dist, compile-main"
-    description="Makes a JAR file of all the classes and configuration files">
+          description="Makes a JAR file of all the classes and configuration files">
     <condition property="version" value="${DTSTAMP}">
       <not>
         <isset property="version" />
@@ -808,7 +810,7 @@
   </target>
 
   <target name="jar" depends="jar-intermine"
-           description="Makes a JAR file of intermine and essential lib jars">
+          description="Makes a JAR file of intermine and essential lib jars">
     <mkdir dir="${build.tmp}/jars"/>
 
     <unzip dest="${build.tmp}/jars">
@@ -823,7 +825,7 @@
       <zipfileset src="${dist}/intermine.jar"/>
       <fileset dir="${build.tmp}/jars"/>
     </jar>
-  
+    
     <delete dir="${build.tmp}/jars"/>
   </target>
 
@@ -834,6 +836,25 @@
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="model.src" value="${model}/testmodel"/>
     </ant>    
+  </target>
+
+  <target name="jar-webservice-client" depends="jar-intermine">
+    <mkdir dir="${build.tmp}/jars"/>
+    
+    <unzip dest="${build.tmp}/jars">
+      <fileset dir="${lib}">
+        <patternset refid="lib.webapp.common"/>
+        <patternset refid="lib.webapp.webservice"/>
+      </fileset>
+    </unzip>
+
+    <jar destfile="${dist}/intermine-webservice-client.jar">
+      <zipfileset src="${dist}/intermine.jar"/>
+      <fileset dir="${build.tmp}/jars"/>
+      <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
+    </jar>
+    
+    <delete dir="${build.tmp}/jars"/>
   </target>
 
   <target name="build-tutorial" depends="jar-intermine, build-webapp"
@@ -853,6 +874,7 @@
       <fileset dir="${lib}">
         <patternset refid="lib.common"/>
         <patternset refid="lib.catalina"/>
+        <patternset refid="lib.webapp.common"/>
         <patternset refid="lib.webapp.intermine"/>
         <patternset refid="lib.antlr"/>
         <patternset refid="lib.uml"/>
@@ -882,57 +904,46 @@
     </copy>
   </target>
 
-  <!--target name="compile-tutorial" depends="build-tutorial">
-    <ant dir="${tutorial}" target="compile" inheritAll="false" inheritRefs="true">
-    </ant>        
-  </target-->
-
   <target name="test-tutorial" depends="build-tutorial">
-        
     <ant dir="${tutorial}" target="test" inheritAll="false" inheritRefs="true">
       <property name="runtime.properties.local" location="${runtime.properties.local}"/>
     </ant>
-   
   </target>
-
+  
   <!-- Releasing targets -->
-
+  
   <!-- webapp -->
-  <target name="release-webapp" depends="" 
-        description="releases the InterMine web application to the server">
-   <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
+  <target name="release-webapp"
+          description="releases the InterMine web application to the server">
+    <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <reference torefid="class.path" refid="project.class.path"/>
     </ant>    
-   </target>
-
+  </target>
+  
   <target name="remove-webapp"
-    description="remove the web application from the server">
-     <ant antfile="build-webapp.xml" target="remove-webapp" inheritRefs="true">
+          description="remove the web application from the server">
+    <ant antfile="build-webapp.xml" target="remove-webapp" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
     </ant>    
   </target>
   
   <!-- webservice -->
-  <target name="release-webservice" depends="build-webservice"
-    description="releases the webservice application to the webserver">
-    
+  <target name="release-webservice"
+          description="releases the webservice application to the webserver">
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    
-    <tomcat-deploy
-      url="${webservice.baseurl}/manager" 
-      username="${webservice.manager}"
-      password="${webservice.password}" 
-      path="${webservice.path}"
-      war="file://${dist.webapp}/webservice.war"/> 
+    <tomcat-deploy url="${webservice.baseurl}/manager" 
+                   username="${webservice.manager}"
+                   password="${webservice.password}" 
+                   path="${webservice.path}"
+                   war="file://${dist.webapp}/webservice.war"/> 
     
     <taskdef name="generate-wsdd"
-      classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask">
+             classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask">
       <classpath refid="project.class.path" />
     </taskdef>
-
     <generate-wsdd destfile="${build.tmp}/deploy-ObjectStore.wsdd.fragment"/>
     <loadfile srcFile="${build.tmp}/deploy-ObjectStore.wsdd.fragment" property="generated.wsdd"/>
     <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
@@ -947,47 +958,43 @@
   </target>
   
   <target name="remove-webservice"
-    description="remove the webservice application from the server">
+          description="remove the webservice application from the server">
     <taskdef name="tomcat-undeploy" 
-      classname="org.apache.catalina.ant.UndeployTask">
+             classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    <tomcat-undeploy
-      url="${webservice.baseurl}/manager"
-      username="${webservice.manager}"
-      password="${webservice.password}"
-      path="${webservice.path}"/>
+    <tomcat-undeploy url="${webservice.baseurl}/manager"
+                     username="${webservice.manager}"
+                     password="${webservice.password}"
+                     path="${webservice.path}"/>
   </target>
- 
+  
   <target name="dot-main" depends="compile-main">
-    <taskdef
-      name="dot"
-      classname="org.intermine.task.InheritanceDotTask">
+    <taskdef name="dot"
+             classname="org.intermine.task.InheritanceDotTask">
       <classpath refid="project.class.path"/>
     </taskdef>
     <dot directory="${src.java}" packageName="org.intermine" file="main.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
   </target>
-
+  
   <target name="dot-test" depends="compile-test">
-    <taskdef
-      name="dot"
-      classname="org.intermine.task.InheritanceDotTask">
+    <taskdef name="dot"
+             classname="org.intermine.task.InheritanceDotTask">
       <classpath refid="test.class.path"/>
     </taskdef>
     <dot directory="${src.test}" packageName="org.intermine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
   </target>
-
+  
   <target name="dot-testmodel" depends="compile-test">
-    <taskdef
-      name="dot"
-      classname="org.intermine.task.InheritanceDotTask">
+    <taskdef name="dot"
+             classname="org.intermine.task.InheritanceDotTask">
       <classpath refid="test.class.path"/>
     </taskdef>
     <dot directory="${build.model}/testmodel" packageName="org.intermine.model.testmodel" file="testmodel.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
   </target>
-    
+  
   <!-- Cleaning-up targets -->
-
+  
   <target name="clean"
           description="clean up generated files">
     <delete dir="${build}"/>
@@ -1010,10 +1017,10 @@
     <delete dir="${build.resources}"/>
     <delete dir="${build.model}"/>
     <delete>
-    <fileset dir=".">
-      <include name="velocity.log*"/>
-      <include name="intermine.log*"/>
-    </fileset>
+      <fileset dir=".">
+        <include name="velocity.log*"/>
+        <include name="intermine.log*"/>
+      </fileset>
     </delete>
     <antcall target="prepare" />
   </target>
@@ -1022,7 +1029,7 @@
           description="clean up all distribution files">
     <delete dir="${dist}"/>
   </target>
-
+  
   <!-- antdoc target -->
   <target name="antdoc"> 
     <taskdef name="antdoc" classname="org.ed.pack.ant.AntDoc">
@@ -1030,5 +1037,4 @@
     </taskdef>
     <antdoc destination="${results.antdoc}" buildfile="${ant.file}"/>
   </target>
-
 </project>
