@@ -30,6 +30,7 @@ public class NotXmlRenderer
 {
     private static final Logger LOG = Logger.getLogger(NotXmlRenderer.class);
     protected static final String DELIM = "$_^";
+    protected static final String ENCODED_DELIM = "d";
 
     /**
      * Render the given object as NotXml.
@@ -79,6 +80,19 @@ public class NotXmlRenderer
                             .append(DELIM);
                         if (value instanceof Date) {
                             sb.append(Long.toString(((Date) value).getTime()));
+                        } else if (value instanceof String) {
+                            String string = (String) value;
+                            while (string != null) {
+                                int delimPosition = string.indexOf(DELIM);
+                                if (delimPosition == -1) {
+                                    sb.append(string);
+                                    string = null;
+                                } else {
+                                    sb.append(string.substring(0, delimPosition + 3))
+                                        .append(ENCODED_DELIM);
+                                    string = string.substring(delimPosition + 3);
+                                }
+                            }
                         } else {
                             sb.append(value.toString());
                         }

@@ -45,7 +45,9 @@ import org.apache.log4j.Logger;
 public class NotXmlParser
 {
     private static final Logger LOG = Logger.getLogger(NotXmlParser.class);
-    protected static final String DELIM = "\\$_\\^";
+    protected static final String DELIM = "$_^";
+    protected static final String ESCAPED_DELIM = "\\$_\\^";
+    protected static final String ENCODED_DELIM = "d";
 
     /**
      * Parse the given NotXml String into an Object.
@@ -57,7 +59,7 @@ public class NotXmlParser
      */
     public static InterMineObject parse(String xml, ObjectStore os) throws ClassNotFoundException {
         try {
-            String a[] = xml.split(DELIM);
+            String a[] = xml.split(ESCAPED_DELIM);
 
             Set classes = new HashSet();
             if (!"".equals(a[0])) {
@@ -77,8 +79,14 @@ public class NotXmlParser
                     String fieldName = a[i].substring(1);
                     Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName)
                         .getType();
+                    StringBuffer string = new StringBuffer(i + 1 == a.length ? "" : a[i + 1]);
+                    while ((i + 2 < a.length) && (a[i + 2].startsWith("d"))) {
+                        i++;
+                        string.append(DELIM)
+                            .append(a[i + 1].substring(1));
+                    }
                     TypeUtil.setFieldValue(retval, fieldName, TypeUtil.stringToObject(fieldClass,
-                                (i + 1 == a.length ? "" : a[i + 1])));
+                                string.toString()));
                 } else if (a[i].startsWith("r")) {
                     String fieldName = a[i].substring(1);
                     Integer id = Integer.valueOf(a[i + 1]);
