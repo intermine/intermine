@@ -35,33 +35,35 @@
         </nobr>
         <br/>
       </c:if>
-      <c:forEach var="cld" items="${leafClds}">
-        <c:set var="cld" value="${cld}" scope="request"/>
-        <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
-        <c:set var="object" value="${object}" scope="request"/>
-        <c:set var="primaryKeyFields" value="${primaryKeyFields}" scope="request"/>
-        <c:choose>
+      <div style="margin-left: 8px">
+        <c:forEach var="cld" items="${leafClds}">
+          <c:set var="cld" value="${cld}" scope="request"/>
+          <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
+          <c:set var="object" value="${object}" scope="request"/>
+          <c:set var="primaryKeyFields" value="${primaryKeyFields}" scope="request"/>
+          <c:choose>
 
-          <c:when test="${viewType == 'summary' &&
-                        !empty DISPLAYERS[cld.name].shortDisplayers}">
-            <c:forEach items="${DISPLAYERS[cld.name].shortDisplayers}" var="displayer">
-              <tiles:insert beanName="displayer" beanProperty="src"/>
-            </c:forEach>
-          </c:when>
+            <c:when test="${viewType == 'summary' &&
+                          !empty DISPLAYERS[cld.name].shortDisplayers}">
+              <c:forEach items="${DISPLAYERS[cld.name].shortDisplayers}" var="displayer">
+                <tiles:insert beanName="displayer" beanProperty="src"/>
+              </c:forEach>
+            </c:when>
 
-          <c:when test="${viewType == 'detail' &&
-                        !empty DISPLAYERS[cld.name].longDisplayers}">
-            <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
-              <tiles:insert beanName="displayer" beanProperty="src"/>
-            </c:forEach>
-          </c:when>
+            <c:when test="${viewType == 'detail' &&
+                          !empty DISPLAYERS[cld.name].longDisplayers}">
+              <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
+                <tiles:insert beanName="displayer" beanProperty="src"/>
+              </c:forEach>
+            </c:when>
 
-          <c:otherwise>
-            <tiles:insert name="/objectFields.jsp"/>
-          </c:otherwise>
-          
-        </c:choose>
-      </c:forEach>
+            <c:otherwise>
+              <tiles:insert name="/objectFields.jsp"/>
+            </c:otherwise>
+            
+          </c:choose>
+        </c:forEach>
+      </div>
     </c:otherwise>
   </c:choose>
 </div>
