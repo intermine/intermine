@@ -8,5 +8,6 @@
 		<item><ulink url="class_diagram/FlyMineApplication.zargo">Class diagram</ulink></item>
 		<item><ulink url="sql_optimisation">SQL query optimisation</ulink></item>
         <item><ulink url="architecture/ResultsToJdbc">How a results object accesses JDBC (directly through ObjectStoreOjbImpl)</ulink></item>
+		<item><ulink url="architecture/polymorphism_and_sql_generation">Polymorphism and SQL generation</ulink></item>
 	</section>
 </menu>

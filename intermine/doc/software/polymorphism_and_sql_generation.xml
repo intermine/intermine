@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+	<date>2003-03-06</date>
+	<title>Flymine - Polymorphism and SQL generation</title>
+	<authorgroup>
+		<author>
+			<firstname>Matthew</firstname>
+			<surname>Wakeling</surname>
+		</author>
+		<author>
+			<firstname>Richard</firstname>
+			<surname>Smith</surname>
+		</author>
+	</authorgroup>
+</artheader>
+
+<sect1>
+<title>Introduction</title>
+<para>This document is an attempt to describe the subtleties of generating SQL for OJB from a Flymine Query, given the fact that object classes may have subclasses, superclasses, and interfaces.
+	They may in fact be interfaces themselves, in which case they may be represented in the database as more than one table (in fact, implementing this gives us the freedom to split the data into multiple tables in any way).
+</para>
+</sect1>
+
+<sect1>
+<title>The RowReader - what our SQL query must produce</title>
+<para>The standard RowReaderDefaultImpl is constructed with a single ClassDescriptor, which is set to the ClassDescriptor of the type of object expected by the RowReader.
+	Our MultiObjectRsIterator changes this ClassDescriptor so that it always is the correct object type for the expected object.
+	If the expected object is an interface, then this ClassDescriptor should be substituted with another ClassDescriptor which implements this interface, but is not an interface itself.
+	The RowReader first checks for the existence of a column in the results that matches the ojbConcreteClass field of the default ClassDescriptor (this assumes that all possible objects that may be materialised have the same ojbConcreteClass column name), and works out what type of Object it is materialising from the contents of that column.
+	Otherwise, the default ClassDescriptor is used to determine the object type.
+	The RowReader then materialises the object using reflection.
+</para>
+</sect1>
+
+<sect1>
+<title>Types of object class</title>
+<para>There are four different possible styles of object class which may appear in the From list of a Flymine Query.
+	Note that our mapping strategy is assumed to be that all absolute superclasses are allocated a table, and all subclasses of them are allocated to their superclass' table.
+<itemizedlist>
+	<listitem>Standard object class, <emphasis>which is the only thing mapped to its table</emphasis>.
+		It has no superclasses, and no subclasses, although it might inplement an interface<!-- (although these rules may all be broken if subclasses of a superclass are all mapped to individual tables)-->.
+		The interface is not an issue until we encounter the interface in the From list of a Query.
+		This type of class needs no intervention, and its table name may simply be added to the FROM list of the SQL query.
+	</listitem>
+	<listitem>A superclass of other subclasses, where the <emphasis>other subclasses all appear in the same table</emphasis>.
+		The query results should include all of the subclasses.
+		The RowReader will need an ojbConcreteClass field in order to correctly instantiate all of the objects - luckily all such tables have one.
+		The RowReader will also need all the columns from the subclasses (even though these will be NULL in some cases) as well as the columns from the required class, for use when a row turns out to represent a subclass.
+		This type of class can be added directly to the FROM list of the SQL query, but all of the subclass fields need to be explicitly added to the SELECT list.
+	</listitem>
+	<listitem>A subclass of another superclass, where the <emphasis>subclass objects appear in the same table as the unwanted superclass objects</emphasis>.
+		The results should be restricted, so that objects that are not instances of the required class are not returned in the results.
+		This type of class can be added directly to the FROM list of the SQL query, but an extra WHERE clause must be added, limiting the ojbConcreteClass field to instances of this class (luckily the ojbConcreteClass field always exists in this type of table).
+		<highlights>NOTE</highlights> that some classes may fall into both this category and the category above, where both modifications must be carried out, including restricting the ojbConcreteClass field to any of the valid subclasses of the required class.
+	</listitem>
+	<listitem>An interface that has <emphasis>implementations in separate tables</emphasis>.
+		The query will require several tables to be UNIONed together to form a temporary virtual interface table.
+		A list of all the required fields of all the subclasses of the interface should be produced (making sure ojbConcreteClass is included), along with a list of all tables involved in the interface.
+		The table entry in the FROM list of the SQL query should be replaced with a subquery, containing these tables UNIONed together.
+		For each table in the UNION, each field from the list should be quoted even if that field is not present in that particular table.
+		For fields that are not present in the table, they should be assigned to a value of NULL, except the ojbConcreteClass field, which should be assigned to the class of the object in the table if that table does not have an ojbConcreteClass (which implies that only one class is present).
+		<highlights>NOTE</highlights> that this style can also be combined with any of the other styles.
+		Or rather, each of the individual tables forming the UNION may need to have extra WHERE clauses added to filter out superclasses that are unwanted.
+	</listitem>
+</itemizedlist>
+</para>
+</sect1>
+
+<sect1>
+<title>How to handle all these types of objectclass correctly</title>
+<para>There are two places that these objectclasses need to be handled:
+	<itemizedlist>
+		<listitem>While building the SELECT list.</listitem>
+		<listitem>While building the FROM list.</listitem>
+	</itemizedlist>
+	This could prove interesting - since some items in the FROM list will result in extra things being added to the WHERE clause, and some items in the WHERE clause can cause extra tables to be added to the FROM list.
+	Here is a procedure to produce text to enter into the FROM list:
+	<itemizedlist>
+		<listitem>Firstly, get a full list of all the object classes involved in the FROM item.
+			ClassDescriptor.getExtentClasses() provides a list of all subclasses/implementations - add the current class to produce the required list.</listitem>
+		<listitem>Iterate through this list, finding the field names of the class.
+			<itemizedlist>
+				<listitem>Add these field names to a Set (allFieldNames).
+					This Set will contain all the field names that need to be included in the SELECT list.
+					One could at this stage put allFieldNames into a instance-global Map (classToFieldNames) with the current ClassDescriptor as the lookup key, so that the code that creates the SELECT list of the main query can use it.</listitem>
+				<listitem>Also find the table name for the class.
+					Create a new Set, add the field names to it, and insert that into a Map (tableNameToFields) with the table name as the lookup key.
+					This Map will then contain all the table names that will be involved in the output text, along with the fields that the table knows about.</listitem>
+				<listitem>Also insert the class name into a Map (tableNameToClassName) with the table name as the lookup key.
+					This Map will be used to find out the class name of objects present in a table that does not have an ojbConcreteClass field (which guarantees that they are all of the same class).</listitem>
+				<listitem>Also, insert an entry into another Map (tableNameToRestriction) with either a Set or a "No restriction needed" object as the value, and the table name as the lookup key.
+					If the current class is an absolute superclass (checked by ClassDescriptor.getSuperClass() == null) then the value should be "No restriction needed".
+					Otherwise, the Set should contain all the classnames found so far for this table.
+					This Map will be used to produce the restrictions that need to be added to the WHERE clause.
+					If the table name looked up in tableNameToRestriction is "No restriction needed", then do not add a restriction.
+					Otherwise, the condition required is for the table ojbConcreteClass field to equal any of the class names in the Set resulting from the lookup.</listitem>
+			</itemizedlist>
+		</listitem>
+		<listitem>Count the number of table names in tableNameToFields.
+			If there is only one, then write the table name into the FROM list, and add the condition (from tableNameToRestriction) to the WHERE clause - and the job is finished.
+			Otherwise, iterate through tableNameToFields.
+			For each table, output a whole SELECT statement, where the SELECT list mentions every single field in allFieldNames.
+			For each field name, there are three possibilities:
+			<itemizedlist>
+				<listitem>If the field name is present in the Set resulting from looking up the table name in tableNameToFields, then just output its name.</listitem>
+				<listitem>Otherwise, if the field name is the column name for ojbConcreteClass, then output "'&lt;the result of looking up the field name in tableNameToClassName&gt;' AS &lt;the field name&gt;".</listitem>
+				<listitem>Otherwise, output "NULL AS &lt;the field name&gt;".</listitem>
+			</itemizedlist>
+			The statement should have a FROM list with a single table - the table name, and a WHERE clause with the restriction from tableNameToRestriction.</listitem>
+	</itemizedlist>
+	And once classToFieldNames is set up, the process of creating the SELECT list is quite simple:
+	<itemizedlist>
+		<listitem>Look up the ClassDescriptor in classToFieldNames.</listitem>
+		<listitem>Use the resulting Set as the list of field names.</listitem>
+		<listitem>For each field, output "&lt;alias of table&gt;.&lt;field name&gt; AS &lt;alias of table&gt;&lt;field name&gt;".</listitem>
+	</itemizedlist>
+</para>
+</sect1>
+
+
+</article>
