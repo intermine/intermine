@@ -390,4 +390,121 @@ public class QueryCreatorTest extends QueryTestCase
         }
     }
 
+    public void testCreateQueryForQueryNodeValues1() throws Exception {
+        QueryClass qcCompany = new QueryClass(Company.class);
+        QueryClass qcDepartment = new QueryClass(Department.class);
+
+        QueryField qf1 = new QueryField(qcCompany, "name");
+        QueryReference qr1 = new QueryCollectionReference(qcCompany, "departments");
+
+        Constraint c1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcDepartment);
+        Constraint c2 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        cs1.addConstraint(c1);
+        cs1.addConstraint(c2);
+
+        Query orig = new Query();
+        orig.addFrom(qcCompany);
+        orig.addFrom(qcDepartment);
+        orig.addToSelect(qcCompany);
+        orig.addToSelect(qcDepartment);
+        orig.setConstraint(cs1);
+        orig.setDistinct(false);
+        orig.addToOrderBy(qcCompany);
+
+        QueryClass qcCompanyExpected = new QueryClass(Company.class);
+        QueryClass qcDepartmentExpected = new QueryClass(Department.class);
+
+        QueryField qf1Expected = new QueryField(qcCompanyExpected, "name");
+        QueryReference qr1Expected = new QueryCollectionReference(qcCompanyExpected, "departments");
+
+        Constraint c1Expected = new ContainsConstraint(qr1Expected, ContainsConstraint.CONTAINS, qcDepartmentExpected);
+        Constraint c2Expected = new SimpleConstraint(qf1Expected, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+
+        ConstraintSet cs1Expected = new ConstraintSet(ConstraintSet.AND);
+        cs1Expected.addConstraint(c1Expected);
+        cs1Expected.addConstraint(c2Expected);
+
+        QueryField qfWantedExpected = new QueryField(qcDepartmentExpected, "name");
+
+        Query expected = new Query();
+
+        expected.addFrom(qcCompanyExpected);
+        expected.addFrom(qcDepartmentExpected);
+        expected.addToSelect(qfWantedExpected);
+        expected.setConstraint(cs1Expected);
+        expected.setDistinct(true);
+        expected.addToOrderBy(qfWantedExpected);
+
+        QueryField qfWanted = new QueryField(qcDepartment, "name");
+        Query ret = QueryCreator.createQueryForQueryNodeValues(orig, qfWanted);
+
+        // Make sure it has been cloned
+        assertTrue(ret != orig);
+        // Test that the expected query is produced
+        assertEquals("Wanted " + expected.toString() + ", got " + ret.toString(), expected, ret);
+
+
+    }
+
+    public void testCreateQueryForQueryNodeValues2() throws Exception {
+        QueryClass qcCompany = new QueryClass(Company.class);
+        QueryClass qcDepartment = new QueryClass(Department.class);
+
+        QueryField qf1 = new QueryField(qcCompany, "name");
+        QueryReference qr1 = new QueryCollectionReference(qcCompany, "departments");
+
+        Constraint c1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcDepartment);
+        Constraint c2 = new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+        cs1.addConstraint(c1);
+        cs1.addConstraint(c2);
+
+        Query orig = new Query();
+        orig.addFrom(qcCompany);
+        orig.addFrom(qcDepartment);
+        orig.addToSelect(qcCompany);
+        orig.addToSelect(qcDepartment);
+        orig.setConstraint(cs1);
+        orig.setDistinct(false);
+        orig.addToOrderBy(qcCompany);
+
+        QueryClass qcCompanyExpected = new QueryClass(Company.class);
+        QueryClass qcDepartmentExpected = new QueryClass(Department.class);
+
+        QueryField qf1Expected = new QueryField(qcCompanyExpected, "name");
+        QueryReference qr1Expected = new QueryCollectionReference(qcCompanyExpected, "departments");
+
+        Constraint c1Expected = new ContainsConstraint(qr1Expected, ContainsConstraint.CONTAINS, qcDepartmentExpected);
+        Constraint c2Expected = new SimpleConstraint(qf1Expected, SimpleConstraint.EQUALS, new QueryValue("Company1"));
+
+        ConstraintSet cs1Expected = new ConstraintSet(ConstraintSet.AND);
+        cs1Expected.addConstraint(c1Expected);
+        cs1Expected.addConstraint(c2Expected);
+
+        QueryClass qcWantedExpected = qcDepartmentExpected;
+
+        Query expected = new Query();
+
+        expected.addFrom(qcCompanyExpected);
+        expected.addFrom(qcDepartmentExpected);
+        expected.addToSelect(qcWantedExpected);
+        expected.setConstraint(cs1Expected);
+        expected.setDistinct(true);
+        expected.addToOrderBy(qcWantedExpected);
+
+        QueryClass qcWanted = qcDepartment;
+        Query ret = QueryCreator.createQueryForQueryNodeValues(orig, qcWanted);
+
+        // Make sure it has been cloned
+        assertTrue(ret != orig);
+        // Test that the expected query is produced
+        assertEquals("Wanted " + expected.toString() + ", got " + ret.toString(), expected, ret);
+
+
+    }
+
+
 }
