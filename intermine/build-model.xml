@@ -23,7 +23,14 @@
   <property name="build.model.dir.tmp.builddb" location="${build.model.dir.tmp}/builddb"/>
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
   <property name="model.lib" location="${model}/${model.name}/lib"/>
-
+  
+  <!-- Summarise object store properties -->
+  <property name="os.summary.properties.file" 
+            value="${build.model.dir}/objectstoresummary.config.properties" />
+  <property name="summarise.output.properties" 
+            value="${build.model.dir}/objectstoresummary.properties"/>
+  
+  
   <path id="compile.class.path">
     <path refid="class.path"/>
     <fileset dir="${model.lib}">
@@ -37,7 +44,25 @@
     <pathelement location="${build.model.dir.resources}"/>
   </path>
 
-  <!-- Create the directory that this model will be built to -->
+  
+  <!-- object store summary targets -->
+  <target name="check-objectstore-summary">
+    <uptodate property="objectstore-is-summarised"
+              srcfile="${os.summary.properties.file}"
+              targetfile="${summarise.output.properties}"/>
+  </target>
+  
+  <target name="summarise-objectstore" depends="check-objectstore-summary, build-model-from-db" unless="objectstore-is-summarised">
+    <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <echo message="Summarising object store ${objectstore.name}..."/>
+    <summarise-objectstore alias="${objectstore.name}" 
+                           outputFile="${summarise.output.properties}"
+                           inputFile="${os.summary.properties.file}"/>
+  </target>
+  
+  <!-- create the directory that this model will be built to -->
   <target name="prepare"
           description="Create a directory that this model will be built to">
     <mkdir dir="${build.model.dir}" />
@@ -238,8 +263,7 @@
   </target>
 
   <target name="retrieve-metadata">
-    <taskdef name="retrieve-metadata"
-             classname="org.intermine.objectstore.intermine.RetrieveMetadataTask">
+    <taskdef name="retrieve-metadata" classname="org.intermine.objectstore.intermine.RetrieveMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
     <retrieve-metadata database="${db.name}" destDir="${build.model.dir}"/>
@@ -315,7 +339,7 @@
     <precompute-queries alias="${objectstore.name}" modelName="${model.name}" testMode="true"/>
   </target>
 
-  <target name="add-model-to-webapp" depends="build-model-from-db, compile-java, compile-webapp-java"
+  <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"
           description="Add a model to the webapp">
     <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
     <unwar src="${war}" dest="${build.tmp}">   
