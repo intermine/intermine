@@ -210,11 +210,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
             /*Exception trace = new Exception();
             trace.fillInStackTrace();
-            StringWriter message = new StringWriter();
-            PrintWriter pw = new PrintWriter(message);
-            trace.printStackTrace(pw);
-            pw.flush();
-            LOG.debug("Connection in use - entering wait - " + message.toString());*/
+            LOG.debug("Connection in use - entering wait", trace);*/
             if (loops > 100) {
                 LOG.error("Waited for connection for 100 seconds - probably a deadlock"
                         + " - throwing exception");
@@ -262,22 +258,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             + " - transaction aborted");
                 }
             } catch (Exception e) {
-                StringWriter message = new StringWriter();
-                PrintWriter pw = new PrintWriter(message);
-                e.printStackTrace(pw);
-                pw.flush();
                 LOG.error("Exception caught when destroying transaction while closing"
-                        + " ObjectStoreWriter - " + message);
+                        + " ObjectStoreWriter", e);
             }
             try {
                 batch.close(c);
             } catch (Exception e) {
-                StringWriter message = new StringWriter();
-                PrintWriter pw = new PrintWriter(message);
-                e.printStackTrace(pw);
-                pw.flush();
-                LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter - "
-                        + message);
+                LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter", e);
             }
             try {
                 os.releaseConnection(c);
@@ -290,11 +277,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         } else if (c != null) {
             Exception trace = new Exception();
             trace.fillInStackTrace();
-            StringWriter message = new StringWriter();
-            PrintWriter pw = new PrintWriter(message);
-            trace.printStackTrace(pw);
-            pw.flush();
-            LOG.warn("Attempt made to release the wrong connection - " + message.toString());
+            LOG.warn("Attempt made to release the wrong connection", trace);
         }
     }
 
@@ -336,22 +319,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             + " - transaction aborted");
                 }
             } catch (Exception e) {
-                StringWriter message = new StringWriter();
-                PrintWriter pw = new PrintWriter(message);
-                e.printStackTrace(pw);
-                pw.flush();
                 LOG.error("Exception caught when destroying transaction while closing"
-                        + " ObjectStoreWriter - " + message);
+                        + " ObjectStoreWriter", e);
             }
             try {
                 batch.close(conn);
             } catch (Exception e) {
-                StringWriter message = new StringWriter();
-                PrintWriter pw = new PrintWriter(message);
-                e.printStackTrace(pw);
-                pw.flush();
-                LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter - "
-                        + message);
+                LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter", e);
             }
             try {
                 os.releaseConnection(conn);

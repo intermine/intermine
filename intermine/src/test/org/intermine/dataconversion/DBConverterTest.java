@@ -13,7 +13,6 @@ package org.intermine.dataconversion;
 import junit.framework.TestCase;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Date;
-import java.io.StringWriter;
-import java.io.PrintWriter;
+//import java.io.StringWriter;
+//import java.io.PrintWriter;
 import java.math.BigDecimal;
 import javax.sql.DataSource;
 
@@ -71,13 +71,7 @@ public class Database implements Shutdownable
                     + getClass().getClassLoader());
         } catch (Exception e) {
             LOG.info("Creating new invalid Database with ClassLoader "
-                    + getClass().getClassLoader());
-            e.fillInStackTrace();
-            StringWriter message = new StringWriter();
-            PrintWriter pw = new PrintWriter(message);
-            e.printStackTrace(pw);
-            pw.close();
-            LOG.info(message.toString());
+                    + getClass().getClassLoader(), e);
         }
         ShutdownHook.registerObject(new WeakReference(this));
     }

@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
@@ -330,24 +328,15 @@ public class ItemToObjectTranslator extends Translator
             }
         } catch (IllegalAccessException e) {
             LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
-                      + item.getIdentifier());
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            LOG.error(sw.toString());
+                      + item.getIdentifier(), e);
             throw new RuntimeException(e);
         } catch (MetaDataException e) {
             LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
-                      + item.getIdentifier());
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            LOG.error(sw.toString());
+                      + item.getIdentifier(), e);
             throw e;
         } catch (Exception e) {
             LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
-                      + item.getIdentifier());
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            LOG.error(sw.toString());
+                      + item.getIdentifier(), e);
             throw new RuntimeException(e);
         }
         return obj;

@@ -10,8 +10,6 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,16 +78,12 @@ public class TableBatch implements Table
                         throw new IllegalStateException("Cannot change colNames once it is set");
                     }
                 }
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
                 Exception e = new Exception();
                 e.fillInStackTrace();
-                e.printStackTrace(pw);
-                pw.flush();
                 LOG.warn("Potential inefficiency - seen two equivalent column name arrays, and had"
                         + " to compare them as arrays (slowly). Try to cache the column name array"
                         + " so they can be compared by reference (fast). old = " + this.colNames
-                        + ", new: " + colNames + ", stack trace = " + sw);
+                        + ", new: " + colNames + ", stack trace = ", e);
                 this.colNames = colNames;
             }
         }
