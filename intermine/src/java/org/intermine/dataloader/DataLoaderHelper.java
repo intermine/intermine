@@ -116,7 +116,7 @@ public class DataLoaderHelper
                     String sourceNames = (String) entry.getValue();
                     List sources = new ArrayList();
                     for (StringTokenizer st = new StringTokenizer(sourceNames, ", ");
-                         st.hasMoreTokens();) {
+                            st.hasMoreTokens();) {
                         sources.add(st.nextToken());
                     }
                     descriptorSources.put(descriptorName, sources);

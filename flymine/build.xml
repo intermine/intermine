@@ -614,7 +614,6 @@
           <exclude name="org/flymine/objectstore/webservice/**" />
           <exclude name="org/flymine/dataloader/DataLoaderTest.class" />
           <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
-          <exclude name="org/flymine/dataloader/DataLoaderHelperTest.class" />
         </fileset>
       </batchtest>
     </junit>

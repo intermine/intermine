@@ -197,17 +197,29 @@ public class DataLoaderHelperTest extends QueryTestCase
 
     public void testGetDescriptors() throws Exception {
         Map expected = new HashMap();
-        expected.put("Employee.age", Arrays.asList(new Object[] {"SourceA", "SourceB"}));
-        expected.put("Employee", Arrays.asList(new Object[] {"SourceB", "SourceA"}));
-        expected.put("Address", Arrays.asList(new Object[] {"SourceB", "SourceA"}));
+        expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Company", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Employable", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("ImportantPerson", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Secretary", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Bank", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Types", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Employee.age", Arrays.asList(new Object[] {"storedata", "testsource2", "testsource"}));
+        expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Broke", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("HasAddress", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Manager", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("CEO", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Contractor", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         assertEquals(expected, DataLoaderHelper.getDescriptors(model));
     }
 
     public void testComparePriorityField() throws Exception {
         Source sourceA = new Source();
-        sourceA.setName("SourceA");
+        sourceA.setName("storedata");
         Source sourceB = new Source();
-        sourceB.setName("SourceB");
+        sourceB.setName("testsource");
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("age");
         assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) > 0);
@@ -217,9 +229,9 @@ public class DataLoaderHelperTest extends QueryTestCase
 
     public void testComparePriorityClass() throws Exception {
         Source sourceA = new Source();
-        sourceA.setName("SourceA");
+        sourceA.setName("storedata");
         Source sourceB = new Source();
-        sourceB.setName("SourceB");
+        sourceB.setName("testsource");
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("fullTime");
         assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) > 0);
