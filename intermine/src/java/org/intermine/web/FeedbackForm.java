@@ -99,8 +99,7 @@ public class FeedbackForm extends ValidatorForm
 
         ActionErrors errors = super.validate(mapping, request);
         
-        if ((errors == null || errors.size() == 0) && getEmail().indexOf('@') == -1)
-        {
+        if ((errors == null || errors.size() == 0) && getEmail().indexOf('@') == -1) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
@@ -120,6 +119,8 @@ public class FeedbackForm extends ValidatorForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
+        
+        name = subject = message = email = "";
         
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
         if (profile != null) {
