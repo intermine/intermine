@@ -108,21 +108,43 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
 
 
     // block execution of OJB queries (?)
-    /*
+    /**
+     * Refuses to create a Select statement for the OJB-specific statement type.
+     *
+     * @param query an OJB query object
+     * @param cld its associated ClassDescriptor
+     * @return never
+     * @throws UnsupportedOperationException all the time
+     */
     public String getSelectStatementDep(Query query, ClassDescriptor cld) {
-        throw (new UnsupportedOperationException("Method not
-supported in SqlGeneratorFlymineImpl"));
+        throw (new UnsupportedOperationException("Method not "
+                    + "supported in SqlGeneratorFlymineImpl"));
     }
 
+    /**
+     * Refuses to create a Select statement for the OJB-specific statement type.
+     *
+     * @param table the indirection table to be used
+     * @param selectColumns a list of columns in the select
+     * @param columns a list of other columns
+     * @return never
+     * @throws UnsupportedOperationException all the time
+     */
     public String getSelectMNStatement(String table, String[] selectColumns, String[] columns) {
-        throw (new UnsupportedOperationException("Method not
-supported in SqlGeneratorFlymineImpl"));
+        throw (new UnsupportedOperationException("Method not "
+                    + "supported in SqlGeneratorFlymineImpl"));
     }
 
+    /**
+     * Refuses to create a Select statement for the OJB-specific statement type.
+     *
+     * @param cld a ClassDescriptor
+     * @return never
+     * @throws UnsupportedOperationException all the time
+     */
     public String getPreparedSelectByPkStatement(ClassDescriptor cld) {
-        throw (new UnsupportedOperationException("Method not
-supported in SqlGeneratorFlymineImpl"));
+        throw (new UnsupportedOperationException("Method not "
+                    + "supported in SqlGeneratorFlymineImpl"));
     }
-    */
 
 }

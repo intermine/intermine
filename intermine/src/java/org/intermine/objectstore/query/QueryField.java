@@ -58,4 +58,13 @@ public class QueryField implements QueryNode, QueryEvaluable
     public Class getType() {
         return type;
     }
+
+    /**
+     * Returns the name of the field.
+     *
+     * @return field name
+     */
+    public String getFieldName() {
+        return fieldName;
+    }
 }

@@ -25,7 +25,7 @@ public class QueryFunctionTest extends TestCase
     }
     
     public void testValidCount() {
-        QueryFunction function = new QueryFunction(new QueryClass(Company.class));
+        QueryFunction function = new QueryFunction();
         assertTrue(Number.class.isAssignableFrom(function.getType()));
     }
 

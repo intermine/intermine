@@ -38,6 +38,9 @@ public class Query
             throw new NullPointerException("cls must not be null");
         }
         queryClasses.add(cls);
+        if (!aliases.containsKey(cls)) {
+            aliases.put(cls, "a" + (alias++) + "_");
+        }
         return this;
     }
 
@@ -135,7 +138,9 @@ public class Query
      */
     public Query addToSelect(QueryNode node) {
         select.add(node);
-        aliases.put(node, "a" + (alias++) + "_");
+        if (!aliases.containsKey(node)) {
+            aliases.put(node, "a" + (alias++) + "_");
+        }
         return this;
     }
 

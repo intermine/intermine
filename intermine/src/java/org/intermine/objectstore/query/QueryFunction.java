@@ -29,7 +29,7 @@ public class QueryFunction implements QueryNode, QueryEvaluable
      */
     public static final int COUNT = 4;
 
-    private Object obj;
+    private QueryEvaluable obj;
     private int op;
     
     /**
@@ -60,13 +60,11 @@ public class QueryFunction implements QueryNode, QueryEvaluable
     }
 
     /**
-     * @param qc the QueryClass to aggregate over
-     * @throws IllegalArgumentException if there is a mismatch between the argument type 
-     * and the specified operation
+     * Creates a COUNT aggregate function.
      */    
-    public QueryFunction(QueryClass qc) throws IllegalArgumentException {
+    public QueryFunction() {
         op = COUNT;
-        obj = qc;
+        obj = null;
     }
 
     /**
@@ -76,6 +74,24 @@ public class QueryFunction implements QueryNode, QueryEvaluable
         return Number.class;
     }
 
+    /**
+     * Returns the operation of the function.
+     *
+     * @return the operation
+     */
+    public int getOperation() {
+        return op;
+    }
+
+    /**
+     * Returns the QueryEvaluable of the function.
+     *
+     * @return the QueryEvaluable
+     */
+    public QueryEvaluable getParam() {
+        return obj;
+    }
+    
     private void constructNonCount(QueryEvaluable qe, int op) throws IllegalArgumentException {
         if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");

@@ -46,4 +46,13 @@ public class QueryValue implements QueryEvaluable
     public Class getType() {
         return value.getClass();
     }
+
+    /**
+     * Returns the object that is the actual value.
+     *
+     * @return the value
+     */
+    public Object getValue() {
+        return value;
+    }
 }

@@ -114,4 +114,40 @@ public class QueryExpression implements QueryNode, QueryEvaluable
     public Class getType() {
         return type;
     }
+
+    /**
+     * Returns the operation.
+     *
+     * @return the operation of the expression
+     */
+    public int getOperation() {
+        return op;
+    }
+
+    /**
+     * Returns the left argument of the expression.
+     *
+     * @return the left argument
+     */
+    public QueryEvaluable getArg1() {
+        return arg1;
+    }
+
+    /**
+     * Returns the right argument, or the position argument of the substring.
+     *
+     * @return argument 2
+     */
+    public QueryEvaluable getArg2() {
+        return arg2;
+    }
+
+    /**
+     * Returns the length argument of a substring expression.
+     *
+     * @return argument 3
+     */
+    public QueryValue getArg3() {
+        return arg3;
+    }
 }
