@@ -125,11 +125,14 @@ public class ClassDescriptor
     }
 
     /**
-     * Return list of space seperated superclass names.
-     * @return space seperated list of superclass names
+     * Return set of superclass class names. The set will never contain
+     * "org.intermine.model.InterMineObject".
+     * @return set of superclass class names
      */
-    public String getSupers() {
-        return supers;
+    public Set getSuperclassNames() {
+        Set copy = new LinkedHashSet(superNames);
+        copy.remove("org.intermine.model.InterMineObject");
+        return copy;
     }
     
     /**
@@ -381,7 +384,7 @@ public class ClassDescriptor
         return getCollectionDescriptorByName(name, false);
     }
 
-   /**
+    /**
      * Gets a CollectionDescriptor for a field of the given name.  Returns null if
      * not found.  If ascend flag is true will also look in superclasses.
      * @param name the name of an CollectionDescriptor to find
