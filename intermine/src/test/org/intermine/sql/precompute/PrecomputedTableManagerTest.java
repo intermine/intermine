@@ -34,6 +34,7 @@ public class PrecomputedTableManagerTest extends TestCase
         q1.addSelect(sv1);
         q1.addSelect(sv2);
         q1.addWhere(new Constraint(f1, Constraint.LT, c));
+        q1.addOrderBy(f1);
 
         pt1 = new PrecomputedTable(q1, "precomp1");
 

@@ -4,10 +4,13 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import java.sql.*;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.Query;
+import org.flymine.sql.query.AbstractValue;
+import org.flymine.sql.query.SelectValue;
 
 /**
  * Manages all the Precomputed tables in a given database.
@@ -23,7 +26,7 @@ public class PrecomputedTableManager
     protected static Map instances = new HashMap();
 
     /**
-     * Create a PrecomputedTableManager for the given underlying database
+     * Create a PrecomputedTableManager for the given underlying database.
      *
      * @param database the underlying database
      * @throws SQLException if an error occurs in the underlying database
@@ -36,6 +39,7 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = database.getConnection();
+            con.setAutoCommit(false);
             synchroniseWithDatabase(con);
         } finally {
             try {
@@ -49,7 +53,7 @@ public class PrecomputedTableManager
     }
 
     /**
-     * Gets a PrecomputedTableManager instance for the given underlying database
+     * Gets a PrecomputedTableManager instance for the given underlying database.
      *
      * @param database the underlying database
      * @return the PrecomputedTableManager for this database
@@ -66,7 +70,7 @@ public class PrecomputedTableManager
     }
 
     /**
-     * Add a precomputed table to the underlying database
+     * Add a precomputed table to the underlying database.
      *
      * @param pt the PrecomputedTable to add
      * @throws SQLException if an error occurs in the underlying database
@@ -82,7 +86,7 @@ public class PrecomputedTableManager
 
 
     /**
-     * Delete a precomputed table from the underlying database
+     * Delete a precomputed table from the underlying database.
      *
      * @param pt the PrecomputedTable to delete
      * @throws SQLException if an error occurs in the underlying database
@@ -102,7 +106,7 @@ public class PrecomputedTableManager
     }
 
     /**
-     * Get all the precomputed tables in the underlying database
+     * Get all the precomputed tables in the underlying database.
      *
      * @return a Set of PrecomputedTables present in the database
      */
@@ -111,7 +115,7 @@ public class PrecomputedTableManager
     }
 
     /**
-     * Add a PrecomputedTable to the database
+     * Add a PrecomputedTable to the database.
      *
      * @param pt the PrecomputedTable to add
      * @throws SQLException if an error occurs in the underlying database
@@ -120,10 +124,20 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = database.getConnection();
+            con.setAutoCommit(false);
 
             // Create the table
             Statement stmt = con.createStatement();
             stmt.execute(pt.getSQLString());
+
+            List orderBy = pt.getQuery().getOrderBy();
+            if (!orderBy.isEmpty()) {
+                AbstractValue firstOrderBy = ((AbstractValue) orderBy.get(0));
+                SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap().get(firstOrderBy));
+                if (firstOrderByValue != null) {
+                    addIndex(pt.getName(), firstOrderByValue.getAlias(), con);
+                }
+            }
 
             // Create the entry in the index table
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
@@ -141,7 +155,7 @@ public class PrecomputedTableManager
     }
 
     /**
-     * Delete a PrecomputedTable from the database
+     * Delete a PrecomputedTable from the database.
      *
      * @param name the name of the PrecomputedTable to delete
      * @throws SQLException if an error occurs in the underlying database
@@ -150,15 +164,16 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = database.getConnection();
-            // Drop the table
-            Statement stmt = con.createStatement();
-            stmt.execute("DROP TABLE " + name);
-
+            con.setAutoCommit(false);
             // Drop the entry from the index table
             PreparedStatement pstmt = con.prepareStatement("DELETE FROM "
                                                            + TABLE_INDEX + " WHERE name = ?");
             pstmt.setString(1, name);
             pstmt.execute();
+
+            // Drop the table
+            Statement stmt = con.createStatement();
+            stmt.execute("DROP TABLE " + name);
 
             con.commit();
         } finally {
@@ -168,6 +183,21 @@ public class PrecomputedTableManager
         }
     }
 
+    /**
+     * Adds an index to the given table on the given field.
+     *
+     * @param table the name of the table
+     * @param field the name of the field
+     * @param con a Connection to use
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    protected void addIndex(String table, String field, Connection con) throws SQLException {
+        Statement stmt = con.createStatement();
+        stmt.execute("CREATE INDEX index" + table + "_field_" + field + " ON " + table + " ("
+                + field + ")");
+        con.commit();
+    }
+    
     /**
      * Synchronise with the underlying database
      *
