@@ -310,6 +310,23 @@ public class SessionMethods
     }
     
     /**
+     * Return the displayObjects Map from the session or create and return it if it doesn't exist.
+     * @param session the HttpSession to get the displayObjects Map from
+     * @return the (possibly new) displayObjects Map
+     */
+    public static Map getDisplayObjects(HttpSession session) {
+        Map displayObjects = (Map) session.getAttribute("displayObjects");
+        
+        // Build map from object id to DisplayObject
+        if (displayObjects == null) {
+            displayObjects = new LRUMap(150);
+            session.setAttribute("displayObjects", displayObjects);
+        }
+
+        return displayObjects;
+    }
+
+    /**
      * Initialise a new session. Adds a profile to the session.
      * 
      * @param session the new session to initialise
