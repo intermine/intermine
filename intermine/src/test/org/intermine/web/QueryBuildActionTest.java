@@ -90,19 +90,14 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
-        QueryBuildForm form = new QueryBuildForm() {
-            public void reset(ActionMapping mapping, HttpServletRequest request) {
-                // override to avoid the form being reset by Struts
-            }
-        };
-
+        QueryBuildForm form = new MockQueryBuildForm();
         form.setNewFieldName("name");
 
         setActionForm(form);
         actionPerform();
 
-        verifyForward("buildquery");
         verifyNoActionErrors();
+        verifyForward("buildquery");
         assertEquals(newAlias, session.getAttribute(Constants.EDITING_ALIAS));
         Map afterQueryClasses = (Map)session.getAttribute(Constants.QUERY_CLASSES);
         assertEquals(1, afterQueryClasses.size());
@@ -117,38 +112,8 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertEquals(expected, afterDisplayQueryClass);
     }
 
-    public void testAddNoModel() throws Exception {
-        HttpSession session = getSession();
-        setRequestPathInfo("/query");
-        addRequestParameter("action", "Add");
-
-        QueryBuildForm form = new QueryBuildForm() {
-            public void reset(ActionMapping mapping, HttpServletRequest request) {
-                // override to avoid the form being reset by Struts
-            }
-        };
-
-        form.setFieldValue("name_1", "Dave");
-        form.setFieldOp("name_1", ConstraintOp.EQUALS.getIndex().toString());
-        setActionForm(form);
-
-        actionPerform();
-        verifyForward("error");
-    }
-
-    public void testAddNoQueryClass() throws Exception {
-        HttpSession session = getSession();
-        setRequestPathInfo("/query");
-        addRequestParameter("action", "Add");
-        session.setAttribute(Constants.QUERY, new Query());
-
-        actionPerform();
-        verifyForward("error");
-        assertNotNull(session.getAttribute(Constants.QUERY));
-    }
-
     // test that we can parse all possible types without an error
-    public void testTypes() {
+    public void testUpdateClass() {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("buttons(updateClass)", "");
@@ -192,12 +157,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
-        QueryBuildForm queryBuildForm = new QueryBuildForm() {
-            public void reset(ActionMapping mapping, HttpServletRequest request) {
-                // override to avoid the form being reset by Struts
-            }
-        };
-
+        QueryBuildForm queryBuildForm = new MockQueryBuildForm();
         queryBuildForm.setFieldValue("floatType_0", "1.234");
         queryBuildForm.setFieldOp("floatType_0", ConstraintOp.EQUALS.getIndex().toString());
         queryBuildForm.setFieldValue("doubleType_0", "1.234");
@@ -229,6 +189,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         actionPerform();
 
+        verifyNoActionErrors();
         verifyForward("buildquery");
 
         DisplayQueryClass expected = new DisplayQueryClass();
@@ -273,7 +234,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
     // test that we report an error if the user puts something unparsable in
     // a constraint value field
-    public void testAddUnparseable() {
+    public void testUpdateClassUnparseable() {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("buttons(updateClass)", "");
@@ -315,12 +276,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
 
-        QueryBuildForm queryBuildForm = new QueryBuildForm() {
-            public void reset(ActionMapping mapping, HttpServletRequest request) {
-                // override to avoid the form being reset by Struts
-            }
-        };
-
+        QueryBuildForm queryBuildForm = new MockQueryBuildForm();
         queryBuildForm.setFieldValue("floatType_0", "a string that can't be parsed");
         queryBuildForm.setFieldOp("floatType_0", ConstraintOp.EQUALS.getIndex().toString());
         queryBuildForm.setFieldValue("doubleType_0", "a string that can't be parsed");
@@ -400,10 +356,56 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertNotNull(dateObjTypeIter.next());
         assertFalse(dateObjTypeIter.hasNext());
 
-        Iterator noFieldIter = actionErrors.get("a_feild_with_no_error");
+        Iterator noFieldIter = actionErrors.get("a_field_with_no_error");
         assertFalse(noFieldIter.hasNext());
     }
+    
+    public void testRemoveConstraints() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
 
+        QueryBuildForm qbf = new MockQueryBuildForm();
+        qbf.setButton("removeConstraints", "");
+        qbf.setSelectedConstraints(new String[] {"name_0"});
+        setActionForm(qbf);
+        
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType("org.flymine.model.testmodel.Department");
+        d.getConstraintNames().add("name_0");
+        d.getFieldNames().put("name_0", "name");
+        d.getFieldOps().put("name_0", ConstraintOp.MATCHES);
+        d.getFieldValues().put("name_0", "DepartmentA%");
+        d.getConstraintNames().add("name_1");
+        d.getFieldNames().put("name_1", "name");
+        d.getFieldOps().put("name_1", ConstraintOp.DOES_NOT_MATCH);
+        d.getFieldValues().put("name_1", "DepartmentB%");
+
+        String alias = "Department_0";
+        Map queryClasses = new HashMap();
+        queryClasses.put(alias, d);
+
+        session.setAttribute(Constants.EDITING_ALIAS, alias);
+        session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
+
+        actionPerform();
+
+        verifyNoActionErrors();
+        verifyForward("buildquery");
+        assertEquals(alias, session.getAttribute(Constants.EDITING_ALIAS));
+        Map afterQC = (Map) session.getAttribute(Constants.QUERY_CLASSES);
+        assertNotNull(afterQC);
+        DisplayQueryClass after = (DisplayQueryClass) afterQC.get(alias);
+        assertNotNull(after);
+
+        DisplayQueryClass expected = new DisplayQueryClass();
+        expected.setType("org.flymine.model.testmodel.Department");
+        expected.getConstraintNames().add("name_1");
+        expected.getFieldNames().put("name_1", "name");
+        expected.getFieldOps().put("name_1", ConstraintOp.DOES_NOT_MATCH);
+        expected.getFieldValues().put("name_1", "DepartmentB%");
+        assertEquals(expected, after);
+    }
+        
     public void testRunQuery() {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
@@ -421,9 +423,16 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         actionPerform();
 
+        verifyNoActionErrors();
         verifyForward("runquery");
         assertNotNull(session.getAttribute(Constants.QUERY));
         Query q = (Query) session.getAttribute(Constants.QUERY);
         assertEquals(1, q.getFrom().size());
+    }
+    
+    class MockQueryBuildForm extends QueryBuildForm {
+        public void reset(ActionMapping mapping, HttpServletRequest request) {
+            // override to avoid the form being reset by Struts
+        }
     }
 }
