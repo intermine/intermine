@@ -36,19 +36,23 @@ a:hover {
   color: red;
 }
 
-.query table, .results table {
-border-left: solid 1px;
-border-top: solid 1px;
+table.query, table.results {
+  border-left: solid 1px;
+  border-top: solid 1px;
 }
-.query th, .query td, .results th, .results td {
-padding: 4px;
-border-right: solid 1px;
-border-bottom: solid 1px;
+table.query th, table.query td, table.results th, table.results td {
+  padding: 4px;
+  border-right: solid 1px;
+  border-bottom: solid 1px;
 }
-.query th, .results th { 
+table.results td td {
+  border:none;
+}
+
+th {
   background: #ccaaff;
 }
-.even { 
+tr.even { 
   background: #ccaaff;
 }
 .type {

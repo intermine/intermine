@@ -10,7 +10,7 @@
   <br/>
   Current view:<br/>
   <br/>
-  <table cellspacing="0">
+  <table class="results" cellspacing="0">
     <tr>
       <c:forEach var="path" items="${view}" varStatus="status">
         <th>
@@ -38,21 +38,17 @@
 
   <hr/>
   <c:if test="${QUERY != null}">
-    <c:if test="${RESULTS_TABLE == null}">
-
 <%--     
 Need to improved the estimates:
- <tiles:get name="queryStatistics"/>
+<c:if test="${RESULTS_TABLE == null}">
+  <tiles:get name="queryStatistics"/>
+</c:if>
 --%>
-
-    </c:if>
     <div>
       <html:link action="/viewChange?method=runQuery">
         <fmt:message key="view.showresults"/>
       </html:link>
     </div>
   </c:if>
-</div>
-
 </c:if>
 <!-- /view.jsp -->

@@ -5,11 +5,8 @@
 <tiles:importAttribute/>
 
 <!-- results.jsp -->
-<div class="results">
-  <tiles:get name="table"/>
-  <tiles:get name="saveQuery"/>
-  <tiles:get name="queryName"/>
-  
-  <html:link action="/query"><fmt:message key="results.returnToQuery"/></html:link>
-</div>
+<tiles:get name="table"/>
+<tiles:get name="saveQuery"/>
+<tiles:get name="queryName"/>
+<html:link action="/query"><fmt:message key="results.returnToQuery"/></html:link>
 <!-- /results.jsp -->

@@ -10,7 +10,7 @@
 <html:form action="/changeResultsSize">
 
   <%-- The following should probably be turned into a tag at some stage --%>
-  <table cellspacing="0">
+  <table class="results" cellspacing="0">
     <%-- The headers --%>
     <tr>
       <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">

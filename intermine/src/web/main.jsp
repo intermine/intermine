@@ -5,7 +5,7 @@
 <tiles:importAttribute/>
 
 <!-- main.jsp -->
-<table width="100%" cellspacing="0">
+<table class="query" width="100%" cellspacing="0">
   <tr>
     <td rowspan="2" valign="top" width="50%">
       Current class:<br/>
