@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +34,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     /**
      * @see BatchWriter#write
      */
-    public List write(Connection con, Map tables) throws SQLException {
+    public List write(Connection con, Map tables, Set filter) throws SQLException {
         retval = new ArrayList();
         this.con = con;
         simpleBatch = con.createStatement();
@@ -42,11 +43,13 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
-            Table table = (Table) tableEntry.getValue();
-            if (table instanceof TableBatch) {
-                doDeletes(name, (TableBatch) table);
-            } else {
-                doIndirectionDeletes(name, (IndirectionTableBatch) table);
+            if ((filter == null) || filter.contains(name)) {
+                Table table = (Table) tableEntry.getValue();
+                if (table instanceof TableBatch) {
+                    doDeletes(name, (TableBatch) table);
+                } else {
+                    doIndirectionDeletes(name, (IndirectionTableBatch) table);
+                }
             }
         }
         if (simpleBatchSize > 0) {
@@ -57,13 +60,15 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
-            Table table = (Table) tableEntry.getValue();
-            if (table instanceof TableBatch) {
-                doInserts(name, (TableBatch) table);
-            } else {
-                doIndirectionInserts(name, (IndirectionTableBatch) table);
+            if ((filter == null) || filter.contains(name)) {
+                Table table = (Table) tableEntry.getValue();
+                if (table instanceof TableBatch) {
+                    doInserts(name, (TableBatch) table);
+                } else {
+                    doIndirectionInserts(name, (IndirectionTableBatch) table);
+                }
+                table.clear();
             }
-            table.clear();
         }
         return retval;
     }
