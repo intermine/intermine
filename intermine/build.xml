@@ -77,6 +77,7 @@
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
     <include name="jena*.jar" />
+    <include name="icu4j*.jar"/>
   </patternset>
 
   <!-- Ant tasks and unit testing stuff -->
