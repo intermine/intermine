@@ -130,7 +130,17 @@ public class MultiObjectRsIterator extends RsIterator
                     String alias = (String) query.getAliases().get(node);
                     if (node instanceof QueryClass) {
                         m_rsAndStmt.m_rs = getUnaliasedColumns(rsTemp, alias);
-                        m_cld = dr.getDescriptorFor(node.getType());
+                        String rowClass = null;
+                        try {
+                            rowClass = m_rsAndStmt.m_rs.getString("CLASS");
+                        } catch (SQLException e) {
+                            rowClass = null;
+                        }
+                        if (rowClass == null) {
+                            m_cld = dr.getDescriptorFor(node.getType());
+                        } else {
+                            m_cld = dr.getDescriptorFor(Class.forName(rowClass));
+                        }
                         itemProxyClass = m_cld.getProxyClass();
                         itemExtentClass = null;
                         
@@ -143,8 +153,8 @@ public class MultiObjectRsIterator extends RsIterator
                         obj = SqlHelper.getObjectFromColumn(m_rsAndStmt.m_rs, jdbcType, alias);
                     }
                     results[i] = obj;
+                    m_rsAndStmt.m_rs = rsTemp;
                 }
-                m_rsAndStmt.m_rs = rsTemp;
                 m_current_row++;
 
                 return results;
