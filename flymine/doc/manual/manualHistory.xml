@@ -14,7 +14,7 @@
        A saved query is a copy of the actual query configuration, while a saved bag contains specific data saved from a particular query.
        </item>
        <item>
-       All queries run are saved in the query history.  If you do not give your query a particular name (in the 'Save query' box at the bottom of the query interface), it will be saved as query_x (where x increments for each query run) (see <ulink url="manualSelectingData.xml">Saving queries)</ulink>
+       All queries run are saved in the query history.  If you do not give your query a particular name (in the 'Save query' box at the bottom of the query interface), it will be saved as query_x (where x increments for each query run) (see <ulink url="manualSavingqueries.xml">Saving queries)</ulink>
         </item>
         <item>
          Saved bags are created by saving specific data from the results page, (see <ulink url="manualSavingdata.xml">Saving results to bags).</ulink>
