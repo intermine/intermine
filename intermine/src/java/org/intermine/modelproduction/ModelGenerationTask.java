@@ -107,9 +107,9 @@ public class ModelGenerationTask extends Task
         ModelParser parser = null;
 
         if (type.equals("xmi")) {
-            parser = new XmiParser(namespace, modelName);
+            parser = new XmiParser(modelName, pkg, namespace);
         } else if (type.equals("acedb")) {
-            parser = new AceModelParser(namespace, modelName);
+            parser = new AceModelParser(modelName, pkg, namespace);
         } else if (type.equals("xmlschema")) {
             parser = new XmlSchemaParser(modelName, pkg, namespace);
         } else {

@@ -99,8 +99,9 @@
       <classpath refid="class.path"/>
     </taskdef>
     <model-generation type="xmi"
-                      nameSpace="${namespace}"
                       modelName="${model.name}"
+                      pkg="${packagename}.${model.name}"
+                      nameSpace="${namespace}"
                       source="${build.model.dir.tmp}/${model.name}_.xmi"
                       destDir="${build.model.dir}"/>
   </target>
@@ -111,8 +112,8 @@
       <classpath refid="class.path"/>
     </taskdef>
     <model-generation type="xmlschema"
-                      pkg="${package.prefix}.${model.name}"
                       modelName="${model.name}"
+                      pkg="${packagename}.${model.name}"
                       namespace="${namespace}"
                       source="${model}/${model.name}/${model.name}.xsd"
                       destDir="${build.model}/${model.name}" />   
@@ -140,8 +141,9 @@
       <classpath refid="class.path"/>
     </taskdef>
     <model-generation type="acedb"
-                      nameSpace="${namespace}"
                       modelName="${model.name}"
+                      pkg="${packagename}.${model.name}"
+                      nameSpace="${namespace}"
                       source="${model}/${model.name}/${model.name}.wrm"
                       destDir="${build.model.dir}"/>
   </target>

@@ -3,6 +3,12 @@
   
   <property file="build.properties"/>
 
+  <!-- used by build-model.xml -->
+  <property name="packagename" value="org.intermine.model"/>
+
+  <!-- used by build-model.xml -->
+  <property name="namespace" value="http://www.intermine.org/model"/>
+
   <!-- directory locations -->
   <property name="model" location="model"/>
   <property name="build" location="build"/>

@@ -59,8 +59,7 @@ import org.intermine.metadata.*;
  */
 public class XmiParser implements ModelParser
 {
-    protected String nameSpace;
-    protected String modelName;
+    protected String modelName, pkgName, nameSpace;
 
     private Set attributes, references, collections;
     private Set classes = new LinkedHashSet();
@@ -68,12 +67,14 @@ public class XmiParser implements ModelParser
     /**
      * Constructor that takes the modelName
      *
-     * @param nameSpace the XML name space
      * @param modelName the name of the model to produce
+     * @param pkgName the name of the package
+     * @param nameSpace the XML name space
      */
-    public XmiParser(String nameSpace, String modelName) {
-        this.nameSpace = nameSpace;
+    public XmiParser(String modelName, String pkgName, String nameSpace) {
         this.modelName = modelName;
+        this.pkgName = pkgName;
+        this.nameSpace = nameSpace;
     }
 
     /**
@@ -236,9 +237,14 @@ public class XmiParser implements ModelParser
         return sb.toString();
     }
 
+
     private String qualified(MClassifier cls) {
+        if (pkgName != null) {
+            return stripIllegal(pkgName + "." + cls.getName());
+        }
         return stripIllegal(getPackagePath(cls) + "." + cls.getName());
     }
+
 
     private String stripIllegal(String s) {
         StringBuffer sb = new StringBuffer();
@@ -298,7 +304,7 @@ public class XmiParser implements ModelParser
                 name = StringUtil.pluralise(name);
             }
         }
-        
+
         if (Character.isLowerCase(name.charAt(1))) {
             name = StringUtil.decapitalise(name);
         }
