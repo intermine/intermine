@@ -42,6 +42,9 @@ form {
 .headerSubtitle {
   font-size: large;
 }
+.description {
+  font-weight: bold;
+}
 .errors {
   color: red;
 }
