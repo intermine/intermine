@@ -16,10 +16,18 @@
     <ant dir="/shared/log/buildlog/.projects/flymine" target="fulltest"/>
   </target>
 
+  <target name="release">
+    <ant dir="/shared/log/buildlog/.projects/flymine" target="release-jar"/>
+  </target>
+
   <target name="masterbuild" depends="checkout,unittest"
     description="Cruise control master build"/> 
 
   <target name="cleanbuild" depends="clean,masterbuild"
     description="Cruise control clean build"/>
+
+  <target name="nightlybuild" depends="clean,masterbuild,release"
+    description="Official nightly build and release"/>
+
 </project>
 
