@@ -57,7 +57,8 @@ public class BeginController extends TilesAction
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         
         if (properties != null) {
-            request.setAttribute("browseTemplateName", properties.getProperty("begin.browse.template"));
+            request.setAttribute("browseTemplateName",
+                                                properties.getProperty("begin.browse.template"));
             // might want to make the operator a model web.properties property
             request.setAttribute("browseOperator", ConstraintOp.MATCHES.getIndex());
         }
