@@ -43,9 +43,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.Attribute;
-import org.intermine.metadata.Model;
 
 import org.flymine.model.genomic.Publication;
 

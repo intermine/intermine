@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Properties;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
