@@ -68,7 +68,7 @@ public class CollectionDetailsController extends TilesAction
         if (pageSize != null) {
             try {
                 int pageSizeInt = Integer.parseInt(pageSize);
-                ((ChangeResultsForm) form).setPageSize(pageSize);
+                ((ChangeResultsSizeForm) form).setPageSize(pageSize);
                 pc.setPageSize(pageSizeInt);
             } catch (NumberFormatException e) {
                 // ignore badly formatted numbers

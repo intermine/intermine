@@ -25,20 +25,21 @@ import org.intermine.web.Profile;
 import org.intermine.web.Constants;
 
 /**
- * Form bean to represent the inputs to a text-based query
+ * Form bean for the results table and bag creation form.
  *
  * @author Andrew Varley
+ * @author Thomas Riley
  */
-public class ChangeResultsForm extends ActionForm
+public class SaveBagForm extends ActionForm
 {
 
-    protected String pageSize, existingBagName, newBagName;
+    protected String existingBagName, newBagName;
     protected String[] selectedObjects;
 
     /**
      * Constructor
      */
-    public ChangeResultsForm() {
+    public SaveBagForm() {
         initialise();
     }
 
@@ -46,28 +47,9 @@ public class ChangeResultsForm extends ActionForm
      * Initialiser
      */
     public void initialise() {
-        pageSize = "10";
         existingBagName = null;
         newBagName = null;
         selectedObjects = new String[0];
-    }
-
-    /**
-     * Set the page size
-     *
-     * @param pageSize the page size to display
-     */
-    public void setPageSize(String pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    /**
-     * Get the page size
-     *
-     * @return the page size
-     */
-    public String getPageSize() {
-        return pageSize;
     }
 
     /**

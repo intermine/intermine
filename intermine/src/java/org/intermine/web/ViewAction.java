@@ -19,7 +19,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.web.results.ChangeResultsForm;
+import org.intermine.web.results.ChangeResultsSizeForm;
 
 /**
  * Action to handle buttons on view tile.
@@ -47,8 +47,8 @@ public class ViewAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        ChangeResultsForm resultsForm =
-            (ChangeResultsForm) session.getAttribute("changeResultsForm");
+        ChangeResultsSizeForm resultsForm =
+            (ChangeResultsSizeForm) session.getAttribute("changeResultsForm");
         if (resultsForm != null) {
             resultsForm.reset(mapping, request);
         }
