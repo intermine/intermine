@@ -1,8 +1,19 @@
 package org.flymine.sql.query;
 
+// TODO: Tree parser to convert conditions to conjunctive normal form.
+//       Handling subqueries that reference values from the scope of the surrounding Query.
+//              Note: one should probably delay parsing of subqueries until after all normal
+//              tables. This still doesn't allow for subqueries referencing variables created
+//              in the surrounding scope by other subqueries, but that is impossible with the
+//              current java Query object.
+//              Done.
+//       Handling conditions that go (A AND B OR C). I believe this is ((A AND B) OR C). Currently
+//              the parser rejects this.
+
 import java.util.*;
 import java.io.*;
 import antlr.collections.AST;
+//import antlr.debug.misc.ASTFrame;
 
 /**
  * Represents an SQL query in parsed form.
@@ -43,6 +54,18 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Construct a new Query. 
+     * 
+     * @param aliasToTable a map of tables in a surrounding query, which are in the scope of this
+     * query.
+     */
+    public Query(Map aliasToTable) {
+        this();
+
+        this.aliasToTable.putAll(aliasToTable);
+    }
+
+    /**
      * Construct a new parsed Query from a String.
      *
      * @param sql a SQL SELECT String to parse
@@ -50,17 +73,7 @@ public class Query implements SQLStringable
      * @throws antlr.TokenStreamException if something else goes wrong
      */
     public Query(String sql) throws antlr.RecognitionException, antlr.TokenStreamException {
-        select = new ArrayList();
-        from = new HashSet();
-        where = new HashSet();
-        groupBy = new HashSet();
-        having = new HashSet();
-        orderBy = new ArrayList();
-        limit = 0;
-        offset = 0;
-        explain = false;
-        distinct = false;
-        aliasToTable = new HashMap();
+        this();
 
         InputStream is = new ByteArrayInputStream(sql.getBytes());
         
@@ -330,20 +343,15 @@ public class Query implements SQLStringable
     private void processAST(AST ast) {
         boolean processSelect = false;
         switch (ast.getType()) {
-            case SqlTokenTypes.LITERAL_select:
-            case SqlTokenTypes.LITERAL_from:
-            case SqlTokenTypes.SEMI:
-            case SqlTokenTypes.OPEN_PAREN:
-            case SqlTokenTypes.CLOSE_PAREN:
-                break;
             case SqlTokenTypes.SELECT_LIST:
+                // Always do the select list last.
                 processSelect = true;
                 break;
             case SqlTokenTypes.FROM_LIST:
                 processFromList(ast.getFirstChild());
                 break;
             case SqlTokenTypes.WHERE_CLAUSE:
-//                processWhereCondition(astgetFirstChild());
+                //processWhereCondition(ast.getFirstChild());
                 break;
             default:
                 throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -363,23 +371,25 @@ public class Query implements SQLStringable
      * @param ast an AST node to process
      */
     private void processFromList(AST ast) {
-        do {
-            switch (ast.getType()) {
-                case SqlTokenTypes.LITERAL_from:
-                case SqlTokenTypes.COMMA:
-                    break;
-                case SqlTokenTypes.TABLE:
-                    processNewTable(ast.getFirstChild());
-                    break;
-                case SqlTokenTypes.SUBQUERY:
-                    processNewSubQuery(ast.getFirstChild());
-                    break;
-                default:
-                    throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
-                                + ast.getType() + "]"));
-            }
-            ast = ast.getNextSibling();
-        } while (ast != null);
+        boolean processSubQuery = false;
+        switch (ast.getType()) {
+            case SqlTokenTypes.TABLE:
+                processNewTable(ast.getFirstChild());
+                break;
+            case SqlTokenTypes.SUBQUERY:
+                // Always do subqueries last.
+                processSubQuery = true;
+                break;
+            default:
+                throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                            + ast.getType() + "]"));
+        }
+        if (ast.getNextSibling() != null) {
+            processFromList(ast.getNextSibling());
+        }
+        if (processSubQuery) {
+            processNewSubQuery(ast.getFirstChild());
+        }
     }
 
     /**
@@ -392,8 +402,6 @@ public class Query implements SQLStringable
         String tableAlias = null;
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.LITERAL_as:
-                    break;
                 case SqlTokenTypes.TABLE_NAME:
                     tableName = ast.getFirstChild().getText();
                     break;
@@ -419,10 +427,6 @@ public class Query implements SQLStringable
         String alias = null;
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.LITERAL_as:
-                case SqlTokenTypes.OPEN_PAREN:
-                case SqlTokenTypes.CLOSE_PAREN:
-                    break;
                 case SqlTokenTypes.SQL_STATEMENT:
                     subquery = ast.getFirstChild();
                     break;
@@ -435,7 +439,7 @@ public class Query implements SQLStringable
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        Query q = new Query();
+        Query q = new Query(aliasToTable);
         q.processAST(subquery);
         addFrom(new SubQuery(q, alias));
     }
@@ -448,8 +452,6 @@ public class Query implements SQLStringable
     public void processSelectList(AST ast) {
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.COMMA:
-                    break;
                 case SqlTokenTypes.SELECT_VALUE:
                     processNewSelect(ast.getFirstChild());
                     break;
@@ -471,8 +473,6 @@ public class Query implements SQLStringable
         String alias = null;
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.LITERAL_as:
-                    break;
                 case SqlTokenTypes.FIELD_ALIAS:
                     alias = ast.getFirstChild().getText();
                     break;
@@ -525,8 +525,6 @@ public class Query implements SQLStringable
         String field = null;
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.DOT:
-                    break;
                 case SqlTokenTypes.TABLE_ALIAS:
                     table = ast.getFirstChild().getText();
                     break;
@@ -555,9 +553,6 @@ public class Query implements SQLStringable
         boolean gotType = false;
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.OPEN_PAREN:
-                case SqlTokenTypes.CLOSE_PAREN:
-                    break;
                 case SqlTokenTypes.FIELD:
                 case SqlTokenTypes.CONSTANT:
                 case SqlTokenTypes.UNSAFE_FUNCTION:
@@ -630,10 +625,6 @@ public class Query implements SQLStringable
         boolean gotType = false;
         do {
             switch (ast.getType()) {
-                case SqlTokenTypes.OPEN_PAREN:
-                case SqlTokenTypes.CLOSE_PAREN:
-                case SqlTokenTypes.ASTERISK:
-                    break;
                 case SqlTokenTypes.FIELD:
                 case SqlTokenTypes.CONSTANT:
                 case SqlTokenTypes.UNSAFE_FUNCTION:
@@ -680,6 +671,17 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Processes an AST node that describes a where condition.
+     *
+     * @param ast an AST node to process
+     */
+    /*
+    private void processAST(AST ast) {
+        switch (ast.getType()) {
+            case SqlTokenTypes.
+                */
+    
+    /**
      * A testing method - converts the argument into a Query object, and then converts it back to
      * a String again.
      *
@@ -697,6 +699,15 @@ public class Query implements SQLStringable
         
         out.println("\n==> Dump of AST <==");
         antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+        visitor.visit(ast);
+
+//        ASTFrame frame = new ASTFrame("AST JTree Example", ast);
+//        frame.setVisible(true);
+        SqlTreeParser treeparser = new SqlTreeParser();
+        treeparser.start_rule(ast);
+        ast = treeparser.getAST();
+
+        out.println("\n==> Dump of AST <==");
         visitor.visit(ast);
 
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
