@@ -96,14 +96,12 @@ public class MainController extends TilesAction
                     PathNode anode = (PathNode) iter.next();
                     if (anode != node && anode.getType ().equals (node.getType())) {
                         paths.add(anode.getPath());
-                        displayPaths.put(anode.getPath(), anode.getPath());
                     }
                 }
 
                 Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
-                request.setAttribute ("loopQueryPathsDisplay", displayPaths);
             }
             if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
