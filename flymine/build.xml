@@ -1405,14 +1405,35 @@
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
 
-  <target name="compute-mappings" depends="compile-genomic-java">
+  <target name="calculate-locations" depends="compile-genomic-java">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <mappings alias="osw.production" type="mappings"/>
+  
+    <mappings alias="osw.production" type="calculate-locations"/>
   </target>
 
+  <target name="create-references" depends="compile-genomic-java">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+  
+    <mappings alias="osw.production" type="create-references"/>
+  </target>
+
+  <target name="transfer-sequences" depends="compile-genomic-java">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+  
+    <mappings alias="osw.production" type="transfer-sequences"/>
+  </target>
+
+  <target name="post-process">
+    <antcall target="calculate-locations"/>
+    <antcall target="create-references"/>
+    <antcall target="transfer-sequences"/>
+  </target>
 
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
 
