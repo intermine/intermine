@@ -134,7 +134,7 @@ public class DataLoaderHelper
      * @param cld the ClassDescriptor to fetch primary keys for
      * @return the Map from key names to PrimaryKeys
      */
-    protected static Map getPrimaryKeys(ClassDescriptor cld) {
+    public static Map getPrimaryKeys(ClassDescriptor cld) {
         Map keyMap = new HashMap();
         Properties keys = getKeyProperties(cld.getModel());
         String cldName = TypeUtil.unqualifiedName(cld.getName());
