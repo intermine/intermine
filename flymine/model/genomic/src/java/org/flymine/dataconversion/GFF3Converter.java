@@ -215,6 +215,7 @@ public class GFF3Converter
                                                                String.valueOf(record.getScore())));
             }
 
+            //no sense to create ComputationalAnalysis if there is no ComputationalResult
             if (record.getSource() != null) {
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
