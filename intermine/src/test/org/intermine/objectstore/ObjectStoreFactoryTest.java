@@ -25,7 +25,7 @@ public class ObjectStoreFactoryTest extends TestCase
 
     public void testConfigure() throws Exception {
         ObjectStore os1 = ObjectStoreFactory.getObjectStore("os.unittest");
-        ObjectStore os2 = ObjectStoreFactory.getObjectStore("os.unittest");        
+        ObjectStore os2 = ObjectStoreFactory.getObjectStore("os.unittest");
         // These should be exactly the same object
         assertTrue(os1 == os2);
     }
@@ -37,7 +37,7 @@ public class ObjectStoreFactoryTest extends TestCase
         } catch (NullPointerException e) {
         }
     }
-    
+
     public void testEmpty() throws Exception {
         try {
             ObjectStoreFactory.getObjectStore("");
@@ -53,4 +53,12 @@ public class ObjectStoreFactoryTest extends TestCase
         } catch (ObjectStoreException e) {
         }
     }
+
+    public void testDefault() throws Exception {
+        ObjectStore os1 = ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStore os2 = ObjectStoreFactory.getObjectStore();
+        // These should be exactly the same object
+        assertTrue(os1 == os2);
+    }
+
 }
