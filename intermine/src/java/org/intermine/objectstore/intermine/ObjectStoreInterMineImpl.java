@@ -613,7 +613,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 //            + (now - time) + "): EXPLAIN " + sql);
                 //}
 
-                //System.out.println("Explain result for " + sql + "\n"
+                //System .out.println("Explain result for " + sql + "\n"
                 //        + ((PostgresExplainResult) explainResult).getExplainText());
 
                 estimatedTime = explainResult.getTime();
