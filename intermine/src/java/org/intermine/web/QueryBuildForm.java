@@ -52,8 +52,10 @@ public class QueryBuildForm extends ActionForm
     protected Map fieldOps = new HashMap();
     // map from constraint name to constraint value (a string)
     protected Map fieldValues = new HashMap();
-    // the errors, if any, returned by the last call to validate()
-    protected ActionErrors errors = new ActionErrors();
+    // map from "name" of last button pressed to text of that button
+    protected Map buttons = new HashMap();
+    // the names of the selected constraints
+    protected String[] selectedConstraints;
 
     /**
      * Set newFieldName
@@ -148,12 +150,59 @@ public class QueryBuildForm extends ActionForm
     }
 
     /**
-     * Get any errors that occured at the last validation
+     * Set the selected constraints
      *
-     * @return the errors
+     * @param selectedConstraints the array
      */
-    public ActionErrors getErrors() {
-        return errors;
+    public void setSelectedConstraints(String[] selectedConstraints) {
+        this.selectedConstraints = selectedConstraints;
+    }
+
+    /**
+     * Get the selected constraints
+     *
+     * @return the array
+     */
+    public String[] getSelectedConstraints() {
+        return selectedConstraints;
+    }
+
+    /**
+     * Set the buttons map
+     *
+     * @param buttons the map
+     */
+    public void setButtons(Map buttons) {
+        this.buttons = buttons;
+    }
+
+    /**
+     * Get the buttons map
+     *
+     * @return the map
+     */
+    public Map getButtons() {
+        return this.buttons;
+    }
+
+    /**
+     * Set a value for the given field
+     *
+     * @param key the field name
+     * @param value value to set
+     */
+    public void setButton(String key, Object value) {
+        buttons.put(key, value);
+    }
+
+    /**
+     * Get the value for the given field
+     *
+     * @param key the field name
+     * @return the field value
+     */
+    public Object getButton(String key) {
+        return buttons.get(key);
     }
 
     /**
@@ -185,7 +234,8 @@ public class QueryBuildForm extends ActionForm
         parsedFieldValues = new HashMap();
         parsedFieldOps = new HashMap();
         newFieldName = null;
-        errors = new ActionErrors();
+        selectedConstraints = null;
+        buttons = new HashMap();
     }
 
     /**
@@ -197,15 +247,15 @@ public class QueryBuildForm extends ActionForm
      * @return ActionErrors object that encapsulates any validation errors
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        //only validate if the button clicked was "update"
+        if (!buttons.containsKey("updateClass")) {
+            return null;
+        }
+        
         HttpSession session = request.getSession();
         Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
-
-        if (editingAlias == null) {
-            // all is well - nothing has happened yet
-            return null;
-        }
 
         parsedFieldValues = new HashMap();
         parsedFieldOps = new HashMap();
@@ -256,8 +306,6 @@ public class QueryBuildForm extends ActionForm
 
         }
 
-        //this is necessary because the controller needs to know if there were any errors
-        this.errors = errors;
         return errors;
     }
 
@@ -314,6 +362,6 @@ public class QueryBuildForm extends ActionForm
         return null;
     }
 
-    private Map parsedFieldValues;
-    private Map parsedFieldOps;
+    private Map parsedFieldValues = new HashMap();
+    private Map parsedFieldOps = new HashMap();
 }

@@ -51,7 +51,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
     public void testAddConstraint() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Add");
+        addRequestParameter("buttons(addConstraint)", "");
 
         Map queryClasses = new HashMap();
 
@@ -83,6 +83,8 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertEquals(1, afterQueryClasses.size());
         DisplayQueryClass afterDisplayQueryClass =
             (DisplayQueryClass) afterQueryClasses.get(newAlias);
+        assertNotNull(afterDisplayQueryClass);
+        Logger.log("fly2", afterDisplayQueryClass+"");
 
         DisplayQueryClass expected = new DisplayQueryClass();
         expected.setType("org.flymine.model.testmodel.Department");
@@ -125,7 +127,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
     public void testTypes() {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Update");
+        addRequestParameter("buttons(updateClass)", "");
         //this is necessary because the mock session is US locale by default
         session.setAttribute(Globals.LOCALE_KEY, Locale.getDefault());
 
@@ -250,7 +252,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
     public void testAddUnparseable() {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Update");
+        addRequestParameter("buttons(updateClass)", "");
 
         Map queryClasses = new HashMap();
 
@@ -381,7 +383,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
     public void testRunQuery() {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Run query");
+        addRequestParameter("buttons(runQuery)", "");
 
         String anAlias = "ClassAlias_0";
         Map queryClasses = new HashMap();

@@ -11,7 +11,6 @@ package org.flymine.web;
  */
 
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Iterator;
@@ -21,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 
-import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -31,26 +30,61 @@ import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.Query;
 
 /**
- * Implementation of <strong>Action</strong> that runs a Query
- *
  * @author Richard Smith
  * @author Mark Woodbridge
  */
-public class QueryBuildAction extends LookupDispatchAction
+public class QueryBuildAction extends Action
 {
     /**
-     * Save the Query on the and go to the FQL edit page.
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward editFQL(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
+        QueryBuildForm qbf = (QueryBuildForm) form;
+        
+        ActionForward forward = null;
+        Map buttons = qbf.getButtons();
+        String button = (String) buttons.keySet().iterator().next();
+
+        if ("editFql".equals(button)) {
+            forward = editFql(mapping, form, request, response);
+        } else if ("addConstraint".equals(button)) {
+            forward = addConstraint(mapping, form, request, response);
+        } else if ("updateClass".equals(button)) {
+            forward = updateClass(mapping, form, request, response);
+        } else if ("removeConstraints".equals(button)) {
+            forward = removeConstraints(mapping, form, request, response);
+        } else if (button.startsWith("removeClass")) {
+            forward = removeClass(mapping, form, request, response);
+        } else if (button.startsWith("editClass")) {
+            forward = editClass(mapping, form, request, response);
+        } else if ("runQuery".equals(button)) {
+            forward = runQuery(mapping, form, request, response);
+        }
+        
+        return forward;
+    }
+
+    /**
+     * Save the Query on the and go to the FQL edit page.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward editFql(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -75,18 +109,11 @@ public class QueryBuildAction extends LookupDispatchAction
     }
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception Exception if the application business logic throws
      *  an exception
      */
@@ -134,18 +161,11 @@ public class QueryBuildAction extends LookupDispatchAction
     }
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception Exception if the application business logic throws
      *  an exception
      */
@@ -171,18 +191,98 @@ public class QueryBuildAction extends LookupDispatchAction
     }
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward removeConstraints(ActionMapping mapping,
+                                           ActionForm form,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
+        String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
+
+        QueryBuildForm qbf = (QueryBuildForm) form;
+        String[] selectedConstraints = qbf.getSelectedConstraints();
+
+        DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
+        for (int i = 0; i < selectedConstraints.length; i++) {
+            String constraintName = selectedConstraints[i];
+            d.getConstraintNames().remove(constraintName);
+            d.getFieldNames().remove(constraintName);
+            d.getFieldOps().remove(constraintName);
+            d.getFieldValues().remove(constraintName);
+        }
+
+        return mapping.findForward("buildquery");
+    }
+
+    /**
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward removeClass(ActionMapping mapping,
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
+
+        QueryBuildForm qbf = (QueryBuildForm) form;
+        String button = (String) qbf.getButtons().keySet().iterator().next();
+        String alias = button.substring("removeClass".length());
+
+        queryClasses.remove(alias);
+        QueryBuildHelper.removeContainsConstraints(queryClasses, alias);
+
+        return mapping.findForward("buildquery");
+    }
+
+    /**
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward editClass(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+
+        QueryBuildForm qbf = (QueryBuildForm) form;
+        String button = (String) qbf.getButtons().keySet().iterator().next();
+        String alias = button.substring("editClass".length());
+
+        session.setAttribute(Constants.EDITING_ALIAS, alias);
+
+        return mapping.findForward("buildquery");
+    }
+
+    /**
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
      */
@@ -202,20 +302,5 @@ public class QueryBuildAction extends LookupDispatchAction
                                                                            savedBags));
 
         return mapping.findForward("runquery");
-    }
-
-    /**
-     * Distributes the actions to the necessary methods, by providing a Map from action to
-     * the name of a method.
-     *
-     * @return a Map
-     */
-    protected Map getKeyMethodMap() {
-        Map map = new HashMap();
-        map.put("button.add", "addConstraint");
-        map.put("button.update", "updateClass");
-        map.put("query.editfql", "editFQL");
-        map.put("query.run", "runQuery");
-        return map;
     }
 }

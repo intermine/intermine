@@ -69,10 +69,7 @@ public class QueryBuildController extends TilesAction
             DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
             QueryBuildForm qbf = (QueryBuildForm) form;
 
-            //if validation failed we don't want to wipe out the invalid values
-            if (qbf.getErrors().isEmpty()) {
-                QueryBuildHelper.populateForm(qbf, d);
-            }
+            QueryBuildHelper.populateForm(qbf, d);
 
             ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;

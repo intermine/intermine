@@ -80,12 +80,6 @@
       <forward name="buildfqlquery" path="fqlquery.page"/>
     </action>
 
-    <action path="/changequery"
-            type="org.flymine.web.QueryBuildChangeAction"
-            parameter="method">
-      <forward name="buildquery" path="query.page"/>
-    </action>
-
     <!-- Input an fql query -->
     <action path="/fqlquery"
             type="org.flymine.web.FqlQueryAction"
