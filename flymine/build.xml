@@ -2725,7 +2725,7 @@
   </target>
 
   <!-- translate ensembl human data -->
-  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java">
+  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-human-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2923,12 +2923,12 @@
                    infoSourceTitle="UCSC"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
-      <!--fileset dir ="/shared/data/human/tfbs">        
-        <include name ="tfbsConsSitesNew.gff"/>
-      </fileset-->
-      <fileset dir ="/shared/data/gff3">
-        <include name ="tfbs.gff"/>
+      <fileset dir ="/shared/data/human/tfbs">        
+        <include name ="tfbsConsSites_withFactors.gff"/>
       </fileset>
+      <!--fileset dir ="/shared/data/gff3">
+        <include name ="tfbs.gff"/>
+      </fileset-->
     </retrieve-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
