@@ -25,7 +25,7 @@
           <fmt:message key="query.changePath" var="changePathTitle">
             <fmt:param value="${entry.key}"/>
           </fmt:message>
-          <im:viewable path="${entry.value}" viewPaths="${viewPaths}" idPrefix="browser">
+          <im:viewable path="${entry.value}" viewPaths="${viewPaths}" idPrefix="nav">
             <html:link action="/mainChange?method=changePath&prefix=${entry.value}&path=${QUERY.nodes[entry.value].type}"
                        title="${changePathTitle}">
               <c:out value="${entry.key}"/>
