@@ -15,7 +15,7 @@
 
 <body bgcolor="#f4eeff">
 
-<table cellpadding="10" border="0" width="100%" align="center">
+<table cellpadding="10" border="0" bordercolor="red" width="100%" align="center">
   <tr>
     <td valign="bottom" align="left" colspan="3"><tiles:get name="header" /></td>
   </tr>
@@ -24,7 +24,7 @@
       <tiles:get name='menu' />
     </td>
     <td rowspan="2" valign="top" align="left" class="main"> <tiles:get name='body' /> </td>
-    <td valign="top" align="left" class="main"> <tiles:get name='right' /> </td>
+    <td valign="top" align="left" class="main" width="15%"> <tiles:get name='right' /> </td>
   </tr>
   <tr>
     <td />

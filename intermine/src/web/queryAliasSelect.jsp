@@ -7,7 +7,7 @@
 
 <c:if test="${query != null}">
     <html:form action="/queryAliasSelect">
-        Edit an existing query element<br/>
+        <font size="-1">Edit class in query</font><br/>
         <html:select property="alias">
             <c:forEach items="${query.aliases}" var="entry">
                 <c:set var="alias" scope="page" value="${entry.value}"/>

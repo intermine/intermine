@@ -4,11 +4,12 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <html:form action="/queryClassSelect">
-    Add a new class to query<br/>
+    <font size="-1">Add class to query</font><br/>
     <html:select property="className">
         <html:options name="model" property="classNames" labelName="model" labelProperty="unqualifiedClassNames"/>
     </html:select>
 
+    <br/>
     <html:submit property="action">
         <bean:message key="button.select"/>
     </html:submit>
