@@ -126,7 +126,7 @@ public class AssociatedConstraint extends PrintableConstraint
             return (((ContainsConstraint) constraint).isNotContains() ? "DOES NOT CONTAIN"
                     : "CONTAINS");
         } else if (constraint instanceof SimpleConstraint) {
-            return ((SimpleConstraint) constraint).getOpString();
+            return ((SimpleConstraint) constraint).getType().toString();
         } else if (constraint instanceof SubqueryConstraint) {
             return (((SubqueryConstraint) constraint).isNotIn() ? "IS NOT IN" : "IN");
         }
