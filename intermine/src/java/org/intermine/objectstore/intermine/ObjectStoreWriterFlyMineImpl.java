@@ -86,12 +86,12 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 trace.printStackTrace(pw);
                 pw.flush();
                 LOG.error("Connection in use - entering wait - " + message.toString());*/
-                LOG.error("Connection in use - entering wait");
+                LOG.info("Connection in use - entering wait");
                 try {
                     conn.wait(1000L);
                 } catch (InterruptedException e) {
                 }
-                LOG.error("Notified or timed out");
+                LOG.info("Notified or timed out");
             }
             connInUse = true;
             /*
@@ -102,7 +102,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             trace.printStackTrace(pw);
             pw.flush();
             LOG.error("getConnection returning connection - " + message.toString());*/
-            LOG.error("getConnection returning connection");
+            LOG.info("getConnection returning connection");
             return conn;
         }
     }
@@ -114,11 +114,17 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         if (c == conn) {
             synchronized(conn) {
                 connInUse = false;
-                LOG.error("Released connection - notifying");
+                LOG.info("Released connection - notifying");
                 conn.notify();
             }
-        } else {
-            LOG.error("Attempt made to release the wrong connection");
+        } else if (c != null) {
+            Exception trace = new Exception();
+            trace.fillInStackTrace();
+            StringWriter message = new StringWriter();
+            PrintWriter pw = new PrintWriter(message);
+            trace.printStackTrace(pw);
+            pw.flush();
+            LOG.error("Attempt made to release the wrong connection - " + message.toString());
         }
     }
 
@@ -208,7 +214,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 String tableName = DatabaseUtil.getTableName(cld);
                 if (alreadyThere) {
                     s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
-                    System.out.println("DELETE FROM " + tableName + " WHERE id = " + o.getId());
                 }
                 StringBuffer sql = new StringBuffer("INSERT INTO ")
                     .append(tableName)
@@ -249,7 +254,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                 indirectSql.append(inCollection.getId().toString())
                                     .append(");");
                                 s.addBatch(indirectSql.toString());
-                                System.out.println(indirectSql.toString());
                             }
                         }
                     } else {
@@ -265,7 +269,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 sql.append(");");
 
                 s.addBatch(sql.toString());
-                System.out.println(sql.toString());
             }
 
             s.executeBatch();
@@ -336,7 +339,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
                 s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
-                System.out.println("DELETE FROM " + tableName + " WHERE id = " + o.getId());
             }
 
             s.executeBatch();
