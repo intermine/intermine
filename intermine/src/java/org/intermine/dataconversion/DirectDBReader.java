@@ -32,8 +32,9 @@ import org.flymine.sql.Database;
 public class DirectDBReader implements DBReader
 {
     private static final int BATCH_SIZE = 1000;
+    private static final int MAX_SIZE = 10000000;
     private Database db;
-    private DBBatch batch;
+    protected DBBatch batch;
     private int queryNo;
     private String sql;
     private String idField;
@@ -91,13 +92,29 @@ public class DirectDBReader implements DBReader
      */
     protected DBBatch getBatch(DBBatch previous) throws SQLException {
         String tempSql = sql;
-        if (previous != null) {
-            int whereIndex = sql.toUpperCase().indexOf(" WHERE ");
-            tempSql = tempSql + (whereIndex == -1 ? " WHERE " : " AND ") + idField + " > "
-                + previous.getLastId();
-        }
-        tempSql = tempSql + " ORDER BY " + idField + " LIMIT " + BATCH_SIZE;
+        String sizeQuery = null;
         Connection c = db.getConnection();
+        if (previous != null) {
+            sizeQuery = previous.getSizeQuery();
+            int whereIndex = sql.toUpperCase().indexOf(" WHERE ");
+            String tempSizeQuery = sizeQuery + (whereIndex == -1 ? " WHERE " : " AND ") + idField
+                + " > " + previous.getLastId() + " ORDER BY " + idField + " LIMIT " + BATCH_SIZE;
+            Statement s = c.createStatement();
+            ResultSet r = s.executeQuery(tempSizeQuery);
+            int rowCount = 0;
+            int sizeSum = 0;
+            while (r.next() && (sizeSum <= MAX_SIZE)) {
+                sizeSum += r.getInt("size");
+                rowCount++;
+            }
+            if (rowCount <= 0) {
+                rowCount = 1;
+            }
+            tempSql = tempSql + (whereIndex == -1 ? " WHERE " : " AND ") + idField + " > "
+                + previous.getLastId() + " ORDER BY " + idField + " LIMIT " + rowCount;
+        } else {
+            tempSql = tempSql + " ORDER BY " + idField + " LIMIT 1";
+        }
         Statement s = c.createStatement();
         ResultSet r = s.executeQuery(tempSql);
         List rows = new ArrayList();
@@ -111,9 +128,19 @@ public class DirectDBReader implements DBReader
             }
             rows.add(row);
         }
+        if (sizeQuery == null) {
+            sizeQuery = "SELECT " + idField + ", 30";
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = rMeta.getColumnName(i);
+                sizeQuery += " + char_length(" + columnName + ")";
+            }
+            sizeQuery += " AS size";
+            int whereIndex = sql.toUpperCase().indexOf(" FROM ");
+            sizeQuery += sql.substring(whereIndex);
+        }
         c.close();
         return new DBBatch((previous == null ? 0 : previous.getOffset()
-                    + previous.getRows().size()), rows, null, idField);
+                    + previous.getRows().size()), rows, null, idField, sizeQuery);
     }
 
     /**

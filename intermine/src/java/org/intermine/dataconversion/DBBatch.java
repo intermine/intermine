@@ -26,6 +26,7 @@ public class DBBatch
     private List rows;
     private Map cache;
     private String idField;
+    private String sizeQuery;
 
     /**
      * Constructs a new DBBatch with the given contents.
@@ -35,12 +36,14 @@ public class DBBatch
      * @param cache a Map from SQL String to prefabricated results in the form of a List of Maps
      * from column name to value
      * @param idField the name of the objectId field
+     * @param sizeQuery an SQL query that will return the sizes of all the rows in the table.
      */
-    public DBBatch(int offset, List rows, Map cache, String idField) {
+    public DBBatch(int offset, List rows, Map cache, String idField, String sizeQuery) {
         this.offset = offset;
         this.rows = rows;
         this.cache = cache;
         this.idField = idField;
+        this.sizeQuery = sizeQuery;
     }
 
     /**
@@ -86,5 +89,14 @@ public class DBBatch
      */
     public String getLastId() {
         return DatabaseUtil.objectToString(((Map) rows.get(rows.size() - 1)).get(idField));
+    }
+
+    /**
+     * Getter for sizeQuery
+     *
+     * @return a String
+     */
+    public String getSizeQuery() {
+        return sizeQuery;
     }
 }
