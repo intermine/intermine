@@ -12,7 +12,7 @@
       <c:forEach items="${object.synonyms}" var="thisSynonym">
         <c:set var="sourceTitle" value="${thisSynonym.source.title}"/>
         <c:set var="linkProperty" value="${sourceTitle}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
-        <c:if test="${!empty WEB_PROPERTIES[linkProperty]}">
+        <c:if test="${!empty WEB_PROPERTIES[linkProperty] && thisSynonym.type == 'accession'}">
           <tr>
             <td>
               <html:img src="model/${sourceTitle}_logo_small.png"/>
@@ -25,7 +25,7 @@
               </html:link>
             </td>
           </tr>
-      </c:if>
+        </c:if>
       </c:forEach>
     </table>
   </div>
