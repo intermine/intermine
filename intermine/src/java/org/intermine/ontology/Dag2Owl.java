@@ -16,6 +16,7 @@ import java.util.Set;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.ObjectProperty;
 import org.flymine.util.StringUtil;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -59,9 +60,21 @@ public class Dag2Owl
         if (cls == null) {
             cls = ontModel.createClass(NS + term.getId());
             cls.setLabel(term.getName(), null);
+            // set synonyms
             if (term.getSynonyms().size() > 0) {
                 cls.addComment("synonyms=" + StringUtil.join(term.getSynonyms(), ", "), null);
             }
+            // create partof property
+            for (Iterator i = term.getComponents().iterator(); i.hasNext(); ) {
+                DagTerm component = (DagTerm) i.next();
+                ObjectProperty prop = ontModel.createObjectProperty(NS
+                                                                    + component.getId()
+                                                                    + "_"
+                                                                    + term.getId());
+                prop.setDomain(processTerm(component, ontModel));
+                prop.setRange(cls);
+            }
+            // set subclasses
             for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
                 cls.addSubClass(processTerm((DagTerm) i.next(), ontModel));
             }
@@ -104,9 +117,6 @@ public class Dag2Owl
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
 }
 
