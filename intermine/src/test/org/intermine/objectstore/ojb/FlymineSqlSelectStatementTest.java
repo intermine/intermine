@@ -41,12 +41,12 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
 
     public void setUpResults() throws Exception {
         results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS a2_ FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.a2_ LIMIT 10000 OFFSET 0");
-        results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.vatNumber AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 5 ORDER BY a1_.vatNumber LIMIT 10000 OFFSET 0");
-        results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.vatNumber AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 5 ORDER BY a1_.vatNumber LIMIT 10000 OFFSET 0");
-        results.put("WhereSimpleLike", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name LIKE 'flibble' ORDER BY a1_.name LIMIT 10000 OFFSET 0");
-        results.put("WhereEqualsString", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name = 'flibble' ORDER BY a1_.name LIMIT 10000 OFFSET 0");
-        results.put("WhereAndSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'flibble' AND a1_.vatNumber > 5) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
-        results.put("WhereOrSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'flibble' OR a1_.vatNumber > 5) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 5 ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereSimpleLike", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name LIKE 'company' ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereEqualsString", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name = 'companyA' ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereAndSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'company' AND a1_.vatNumber > 2000) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereOrSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'companyA' OR a1_.vatNumber > 2000) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
         results.put("WhereNotSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE ( NOT (a1_.name LIKE 'flibble' AND a1_.vatNumber > 5)) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
         results.put("WhereSubQueryField", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
         results.put("WhereSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
