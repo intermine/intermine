@@ -11,20 +11,13 @@
      expr = "${" + expr + "}";
    }
 
-   org.intermine.web.LogMe.log("eval", "expr: " + expr);
-
    String evalVariable = (String) jspContext.getAttribute("evalVariable");
 
-   Object ex;
-
    try {
-       ex = org.apache.taglibs.standard.lang.support.ExpressionEvaluatorManager.evaluate(null,
-              expr, Object.class, null, (PageContext) jspContext);
-       request.setAttribute(evalVariable, ex);
-       org.intermine.web.LogMe.log("eval", "ex: " + ex);
+      Object ex = org.apache.taglibs.standard.lang.support.ExpressionEvaluatorManager.evaluate(null,
+                           expr, Object.class, null, (PageContext) jspContext);
+      request.setAttribute(evalVariable, ex);
    } catch (Exception e) {
        request.setAttribute(evalVariable, "[???" + expr + "??? - " + e.getClass().getName() + "]");
-       org.intermine.web.LogMe.log("eval", "failed ex: " + expr); 
    }
-
 %>
