@@ -39,7 +39,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testAddRowRetrieveSame() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         ResultsRow row = new ResultsRow();
         String field1 = "test1";
         String field2 = "test2";
@@ -58,7 +58,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testRetrieveNew() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         Query q = new Query();
         q.addToSelect(new QueryClass(String.class));
         q.addToSelect(new QueryClass(Department.class));
@@ -74,7 +74,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testRetrieveNewAfterAdd() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         Query q = new Query();
         q.addToSelect(new QueryClass(String.class));
         q.addToSelect(new QueryClass(Department.class));
@@ -101,7 +101,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testRowLimit() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         Query q = new Query();
         os.setResultsSize(10);
         Results res = os.execute(q);
@@ -111,7 +111,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testReachEndOfResults() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         Query q = new Query();
         os.setResultsSize(10);
         Results res = os.execute(q);
@@ -135,7 +135,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
 
 
     public void testExecuteCalls() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         Query q = new Query();
         os.setResultsSize(10);
         Results res = os.execute(q);
@@ -146,7 +146,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testPoisonRow() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os = new ObjectStoreDummyImpl();
         Query q = new Query();
         os.setResultsSize(10);
         os.setPoisonRowNo(7);
