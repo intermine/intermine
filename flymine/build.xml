@@ -1818,7 +1818,6 @@
                                            load-static,
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
-                                           analyse-protein-production,
                                            build-psi-production,
                                            build-orthologues-production,
                                            build-rnai-production,
