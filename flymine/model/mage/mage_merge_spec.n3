@@ -197,7 +197,7 @@ null:MeasuredBioAssayData__propertySets a owl:ObjectProperty;
 
 :MicroArraySlideDesign__descriptions a owl:ObjectProperty;
     rdfs:domain :MicroArraySlideDesign;
-    rdfs:range :DagTerm.
+    rdfs:range :OntologyTerm.
 
 :MicroArraySlideDesign__name a owl:DatatypeProperty;
     rdfs:domain :MicroArraySlideDesign;
@@ -442,7 +442,7 @@ null:LabeledExtract__propertySets a owl:ObjectProperty;
 
 :Sample__characteristics a owl:ObjectProperty;
     rdfs:domain :Sample;
-    rdfs:range :DagTerm.
+    rdfs:range :OntologyTerm.
 
 :Sample__treatments a owl:ObjectProperty;
     rdfs:domain :Sample;
@@ -567,10 +567,10 @@ null:BibliographicReference__descriptions a owl:ObjectProperty;
 null:BibliographicReference__propertySets a owl:ObjectProperty;
     owl:equivalentProperty mage:BibliographicReference__propertySets.
 
-:DagTerm a owl:Class;
+:OntologyTerm a owl:Class;
     owl:equivalentClass mage:OntologyEntry.
 
-:DagTerm__name a owl:DatatypeProperty;
+:OntologyTerm__name a owl:DatatypeProperty;
     owl:equivalentProperty mage:OntologyEntry__value.
 
 null:OntologyEntry__category a owl:DatatypeProperty;

@@ -89,44 +89,44 @@
 
 # ------------ DAG Terms and relationships ---------------
 
-:DagTerm a owl:Class ;
+:OntologyTerm a owl:Class ;
     rdfs:subClassOf :BioProperty .
 
-:DagTerm__identifier a owl:DatatypeProperty ;
-    rdfs:domain :DagTerm ;
+:OntologyTerm__identifier a owl:DatatypeProperty ;
+    rdfs:domain :OntologyTerm ;
     rdfs:range xsd:string .
 
-:DagTerm__name a owl:DatatypeProperty ;
-    rdfs:domain :DagTerm ;
+:OntologyTerm__name a owl:DatatypeProperty ;
+    rdfs:domain :OntologyTerm ;
     rdfs:range xsd:string .
 
-:DagTerm__parentRelations a owl:ObjectProperty ;
-    rdfs:domain :DagTerm ;
-    rdfs:range :DagRelation .
+:OntologyTerm__parentRelations a owl:ObjectProperty ;
+    rdfs:domain :OntologyTerm ;
+    rdfs:range :OntologyRelation .
 
-:DagTerm__childRelations a owl:ObjectProperty ;
-    rdfs:domain :DagTerm ;
-    rdfs:range :DagRelation .
+:OntologyTerm__childRelations a owl:ObjectProperty ;
+    rdfs:domain :OntologyTerm ;
+    rdfs:range :OntologyRelation .
 
-:DagRelation a owl:Class ;
+:OntologyRelation a owl:Class ;
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :DagRelation__parentTerm ] ;
+        owl:onProperty :OntologyRelation__parentTerm ] ;
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :DagRelation__childTerm ] .
+        owl:onProperty :OntologyRelation__childTerm ] .
 
-:DagRelation__type a owl:DatatypeProperty ;
-    rdfs:domain :DagRelation ;
+:OntologyRelation__type a owl:DatatypeProperty ;
+    rdfs:domain :OntologyRelation ;
     rdfs:range xsd:string .
 
-:DagRelation__parentTerm a owl:ObjectProperty ;
-    owl:inverseOf :DagTerm__childRelations .
+:OntologyRelation__parentTerm a owl:ObjectProperty ;
+    owl:inverseOf :OntologyTerm__childRelations .
 
-:DagRelation__childTerm a owl:ObjectProperty ;
-    owl:inverseOf :DagTerm__parentRelations .
+:OntologyRelation__childTerm a owl:ObjectProperty ;
+    owl:inverseOf :OntologyTerm__parentRelations .
 
 # ------------ Relationships between BioEntity classes -----------
 

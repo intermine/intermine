@@ -187,7 +187,7 @@ null:BioSourceType a owl:Class;
     owl:equivalentClass psi:BioSourceType.
 
 :ProteinInteractionTerm a owl:Class;
-    rdfs:subClassOf :DagTerm ;
+    rdfs:subClassOf :OntologyTerm ;
     owl:equivalentClass psi:CvType.
 
 null:CvType__names a owl:ObjectProperty;
