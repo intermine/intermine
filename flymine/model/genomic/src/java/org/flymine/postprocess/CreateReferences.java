@@ -40,7 +40,7 @@ public class CreateReferences
     }
 
     /**
-     * Fill in references/collectiosn in model by querying relations
+     * Fill in missing references/collections in model by querying relations
      * @throws Exception if anything goes wrong
      */
     public void insertReferences() throws Exception {
@@ -65,14 +65,27 @@ public class CreateReferences
         insertReferences(Contig.class, Gene.class, Relation.class, "genes");
         insertReferences(Contig.class, Exon.class, Relation.class, "exons");
         
-        insertReferences(Gene.class, Exon.class, Relation.class, "exons");
         insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
-
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
+
+        osw.flushObjectById();
+        osw.getObjectStore().flushObjectById();
+        // special case
+        insertGeneExonReferences("exons");
+        osw.flushObjectById();
+        osw.getObjectStore().flushObjectById();
     }
 
-    private void insertReferences(Class objectClass, Class subjectClass,
-                                  Class relationClass, String collectionFieldName)
+    /**
+     * Fill in missing references/collectiosn in model by querying relations
+     * @param objectClass the class of the objects to which the collection will be added
+     * @param subjectClass the class to the objects to add to the new collection
+     * @param relationClass the class that relates subjectClass and objectClass
+     * @param collectionFieldName the field in the object class to which the subjects will be added
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertReferences(Class objectClass, Class subjectClass,
+                                    Class relationClass, String collectionFieldName)
         throws Exception {
 
         InterMineObject lastObject = null;
@@ -87,13 +100,21 @@ public class CreateReferences
             InterMineObject thisObject = (InterMineObject) rr.get(0);
             InterMineObject thisSubject = (InterMineObject) rr.get(1);
 
+            // special case for Gene <-> Transcript
+            if (objectClass.getName().equals("org.flymine.model.genomic.Gene")
+                && subjectClass.getName().equals("org.flymine.model.genomic.Transcript")) {
+                InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisSubject);
+                
+                ((Transcript) tempObject).setGene((Gene) thisObject);
+                osw.store(tempObject);
+            }
+
             if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
                 if (lastObject != null) {
                     // clone so we don't change the ObjectStore cache
                     InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
 
                     TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-
                     osw.store(tempObject);
                 }
 
@@ -108,7 +129,6 @@ public class CreateReferences
         if (lastObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-
             TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
 
             osw.store(tempObject);
@@ -116,4 +136,54 @@ public class CreateReferences
         osw.commitTransaction();
     }
 
+    /**
+     * Add a exons collection to Gene objects by following the transcripts collection
+     * @param collectionFieldName the collection field in the object class
+     * @throws Exception if anything goes wrong
+     */
+    protected void insertGeneExonReferences(String collectionFieldName) throws Exception {
+        InterMineObject lastObject = null;
+        List newCollection = new ArrayList();
+        Iterator resIter = PostProcessUtil.findGeneExonRelations(osw.getObjectStore());
+        // results will be ordered by object
+        osw.beginTransaction();
+
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            InterMineObject thisObject = (InterMineObject) rr.get(0);
+            InterMineObject thisSubject = (InterMineObject) rr.get(1);
+
+            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
+                if (lastObject != null) {
+                    for (int i = 0; i < newCollection.size(); i++) {
+                        ((Exon) newCollection.get(i)).setGene((Gene) lastObject);
+                        osw.store((InterMineObject) newCollection.get(i));
+                    }
+                }
+
+                newCollection = new ArrayList();
+            }
+
+            newCollection.add(thisSubject);
+
+            lastObject = thisObject;
+        }
+        
+        if (lastObject != null) {
+            for (int i = 0; i < newCollection.size(); i++) {
+                ((Exon) newCollection.get(i)).setGene((Gene) lastObject);
+                osw.store((InterMineObject) newCollection.get(i));
+            }
+        }
+        osw.commitTransaction();
+
+        Query q = new Query();
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        Results res = new Results(q, osw, osw.getSequence());
+        ResultsRow row = (ResultsRow) res.iterator().next();
+        
+        Gene resGene = (Gene) row.get(0);
+    }
 }
