@@ -70,8 +70,17 @@ public class MainController extends TilesAction
                 Map attributeOps = MainHelper.mapOps(SimpleConstraint.validOps(type));
                 request.setAttribute("attributeOps", attributeOps);
             } else {
+                Map classCounts = (Map) servletContext.getAttribute("classCounts");
                 ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
-                request.setAttribute("subclasses", new ArrayList(new TreeSet(getChildren(cld))));
+                ArrayList subclasses = new ArrayList();
+                Iterator iter = new TreeSet(getChildren(cld)).iterator();
+                while (iter.hasNext()) {
+                    String thisClassName = (String) iter.next();
+                    if (((Integer) classCounts.get(thisClassName)).intValue() > 0) {
+                        subclasses.add(TypeUtil.unqualifiedName(thisClassName));
+                    }
+                }
+                request.setAttribute("subclasses", subclasses);
             }
             if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
@@ -113,7 +122,7 @@ public class MainController extends TilesAction
     protected static void getChildren(ClassDescriptor cld, Set children) {
         for (Iterator i = cld.getSubDescriptors().iterator(); i.hasNext();) {
             ClassDescriptor child = (ClassDescriptor) i.next();
-            children.add(TypeUtil.unqualifiedName(child.getName()));
+            children.add(child.getName());
             getChildren(child, children);
         }
     }
