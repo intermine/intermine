@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import antlr.collections.AST;
 
@@ -45,6 +47,7 @@ public class FqlQueryParser
         Query q = new Query();
         String modelPackage = fq.getPackageName();
         String fql = fq.getQueryString();
+        Iterator iterator = fq.getParameters().iterator();
 
         try {
             InputStream is = new ByteArrayInputStream(fql.getBytes());
@@ -63,13 +66,17 @@ public class FqlQueryParser
                 throw new IllegalArgumentException("Invalid FQL string " + fql);
             }
 
-            processFqlStatementAST(ast, q, modelPackage);
+            processFqlStatementAST(ast, q, modelPackage, iterator);
 
             return q;
         } catch (antlr.RecognitionException e) {
-            throw new IllegalArgumentException("Exception: " + e);
+            IllegalArgumentException e2 = new IllegalArgumentException("Exception");
+            e2.initCause(e);
+            throw e2;
         } catch (antlr.TokenStreamException e) {
-            throw new IllegalArgumentException("Exception: " + e);
+            IllegalArgumentException e2 = new IllegalArgumentException("Exception");
+            e2.initCause(e);
+            throw e2;
         }
     }
 
@@ -79,12 +86,14 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the FqlQuery
      */
-    private static void processFqlStatementAST(AST ast, Query q, String modelPackage) {
+    private static void processFqlStatementAST(AST ast, Query q, String modelPackage,
+                                               Iterator iterator) {
         if (ast.getType() != FqlTokenTypes.FQL_STATEMENT) {
             throw new IllegalArgumentException("Expected: an FQL SELECT statement");
         }
-        processAST(ast.getFirstChild(), q, modelPackage);
+        processAST(ast.getFirstChild(), q, modelPackage, iterator);
     }
 
     /**
@@ -93,8 +102,9 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the FqlQuery
      */
-    private static void processAST(AST ast, Query q, String modelPackage) {
+    private static void processAST(AST ast, Query q, String modelPackage, Iterator iterator) {
         boolean processSelect = false;
         switch (ast.getType()) {
             case FqlTokenTypes.SELECT_LIST:
@@ -102,10 +112,10 @@ public class FqlQueryParser
                 processSelect = true;
                 break;
             case FqlTokenTypes.FROM_LIST:
-                processFromList(ast.getFirstChild(), q, modelPackage);
+                processFromList(ast.getFirstChild(), q, modelPackage, iterator);
                 break;
             case FqlTokenTypes.WHERE_CLAUSE:
-                q.setConstraint(processConstraint(ast.getFirstChild(), q, modelPackage));
+                q.setConstraint(processConstraint(ast.getFirstChild(), q, modelPackage, iterator));
                 break;
             case FqlTokenTypes.GROUP_CLAUSE:
                 processGroupClause(ast.getFirstChild(), q);
@@ -118,7 +128,7 @@ public class FqlQueryParser
                         + ast.getType() + "]");
         }
         if (ast.getNextSibling() != null) {
-            processAST(ast.getNextSibling(), q, modelPackage);
+            processAST(ast.getNextSibling(), q, modelPackage, iterator);
         }
         if (processSelect) {
             processSelectList(ast.getFirstChild(), q, modelPackage);
@@ -131,15 +141,16 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the FqlQuery
      */
-    private static void processFromList(AST ast, Query q, String modelPackage) {
+    private static void processFromList(AST ast, Query q, String modelPackage, Iterator iterator) {
         do {
             switch (ast.getType()) {
                 case FqlTokenTypes.TABLE:
                     processNewTable(ast.getFirstChild(), q, modelPackage);
                     break;
                 case FqlTokenTypes.SUBQUERY:
-                    processNewSubQuery(ast.getFirstChild(), q, modelPackage);
+                    processNewSubQuery(ast.getFirstChild(), q, modelPackage, iterator);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -206,8 +217,10 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the FqlQuery
      */
-    private static void processNewSubQuery(AST ast, Query q, String modelPackage) {
+    private static void processNewSubQuery(AST ast, Query q,
+                                           String modelPackage, Iterator iterator) {
         AST subquery = null;
         String tableAlias = null;
         do {
@@ -228,7 +241,7 @@ public class FqlQueryParser
         } while (ast != null);
 
         Query sq = new Query();
-        processFqlStatementAST(subquery, sq, modelPackage);
+        processFqlStatementAST(subquery, sq, modelPackage, iterator);
         if (tableAlias == null) {
             throw new IllegalArgumentException("No alias for subquery");
         }
@@ -609,14 +622,16 @@ public class FqlQueryParser
      * @param andOr true if ConstraintSet is AND
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the FqlQuery
      * @return a Constraint corresponding to the input
      */
     private static Constraint processConstraintSet(AST ast, boolean andOr,
-                                                   Query q, String modelPackage) {
+                                                   Query q, String modelPackage,
+                                                   Iterator iterator) {
         Constraint retval = null;
         boolean isSet = false;
         do {
-            Constraint temp = processConstraint(ast, q, modelPackage);
+            Constraint temp = processConstraint(ast, q, modelPackage, iterator);
             if (retval == null) {
                 retval = temp;
             } else if (!isSet) {
@@ -639,19 +654,21 @@ public class FqlQueryParser
      * @param ast an AST node to process
      * @param q the Query to build
      * @param modelPackage the package for unqualified class names
+     * @param iterator an iterator through the list of parameters of the FqlQuery
      * @return a Constraint corresponding to the input
      */
-    private static Constraint processConstraint(AST ast, Query q, String modelPackage) {
+    private static Constraint processConstraint(AST ast, Query q,
+                                                String modelPackage, Iterator iterator) {
         AST subAST;
         switch (ast.getType()) {
             case FqlTokenTypes.AND_CONSTRAINT_SET:
                 return processConstraintSet(ast.getFirstChild(), ConstraintSet.AND,
-                                            q, modelPackage);
+                                            q, modelPackage, iterator);
             case FqlTokenTypes.OR_CONSTRAINT_SET:
                 return processConstraintSet(ast.getFirstChild(), ConstraintSet.OR,
-                                            q, modelPackage);
+                                            q, modelPackage, iterator);
             case FqlTokenTypes.CONSTRAINT:
-                return processSimpleConstraint(ast, q);
+                return processSimpleConstraint(ast, q, iterator);
             case FqlTokenTypes.SUBQUERY_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 QueryNode leftb = processNewQueryNode(subAST, q);
@@ -660,7 +677,7 @@ public class FqlQueryParser
                     throw new IllegalArgumentException("Expected: a FQL SELECT statement");
                 }
                 Query rightb = new Query();
-                processFqlStatementAST(subAST, rightb, modelPackage);
+                processFqlStatementAST(subAST, rightb, modelPackage, iterator);
                 if (leftb instanceof QueryClass) {
                     return new SubqueryConstraint(rightb, SubqueryConstraint.CONTAINS,
                             (QueryClass) leftb);
@@ -728,7 +745,7 @@ public class FqlQueryParser
                 }
             case FqlTokenTypes.NOT_CONSTRAINT:
                 subAST = ast.getFirstChild();
-                Constraint retval = processConstraint(subAST, q, modelPackage);
+                Constraint retval = processConstraint(subAST, q, modelPackage, iterator);
                 retval.setNegated(!retval.isNegated());
                 return retval;
             default:
@@ -737,7 +754,7 @@ public class FqlQueryParser
         }
     }
 
-    private static Constraint processSimpleConstraint(AST ast, Query q) {
+    private static Constraint processSimpleConstraint(AST ast, Query q, Iterator iterator) {
         AST subAST = ast.getFirstChild();
         QueryNode left = processNewQueryNode(subAST, q);
         subAST = subAST.getNextSibling();
@@ -791,30 +808,54 @@ public class FqlQueryParser
                 throw new IllegalArgumentException("Most simple constraints require two "
                         + "arguments");
             } else {
-                QueryNode right = processNewQueryNode(subAST, q);
-                if (left instanceof QueryClass) {
-                    if (right instanceof QueryClass) {
-                        if (op == SimpleConstraint.EQUALS) {
-                            return new ClassConstraint((QueryClass) left,
-                                    ClassConstraint.EQUALS, (QueryClass) right);
-                        } else if (op == SimpleConstraint.NOT_EQUALS) {
-                            return new ClassConstraint((QueryClass) left,
-                                    ClassConstraint.NOT_EQUALS, (QueryClass) right);
-                        } else {
-                            throw new IllegalArgumentException("Operation is not valid for "
-                                    + "comparing two classes");
+                if (FqlTokenTypes.QUESTION_MARK == subAST.getType()) {
+                    if (left instanceof QueryClass) {
+                        try {
+                            if (op == SimpleConstraint.EQUALS) {
+                                return new ClassConstraint((QueryClass) left,
+                                                           ClassConstraint.EQUALS, iterator.next());
+                            } else if (op == SimpleConstraint.NOT_EQUALS) {
+                                return new ClassConstraint((QueryClass) left,
+                                                           ClassConstraint.NOT_EQUALS,
+                                                           iterator.next());
+                            } else {
+                                throw new IllegalArgumentException("Operation is not valid for "
+                                                                   + "comparing a class to an "
+                                                                   + "object");
+                            }
+                        } catch (NoSuchElementException e) {
+                            throw new IllegalArgumentException("Not enough parameters in "
+                                                               + "FqlQuery object");
                         }
                     } else {
-                        throw new IllegalArgumentException("Cannot compare a class to a "
-                                + "value");
+                        throw new IllegalArgumentException("Cannot compare a field to an object");
                     }
                 } else {
-                    if (right instanceof QueryClass) {
-                        throw new IllegalArgumentException("Cannot compare a value to a "
-                                + "class");
+                    QueryNode right = processNewQueryNode(subAST, q);
+                    if (left instanceof QueryClass) {
+                        if (right instanceof QueryClass) {
+                            if (op == SimpleConstraint.EQUALS) {
+                                return new ClassConstraint((QueryClass) left,
+                                        ClassConstraint.EQUALS, (QueryClass) right);
+                            } else if (op == SimpleConstraint.NOT_EQUALS) {
+                                return new ClassConstraint((QueryClass) left,
+                                        ClassConstraint.NOT_EQUALS, (QueryClass) right);
+                            } else {
+                                throw new IllegalArgumentException("Operation is not valid for "
+                                        + "comparing two classes");
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Cannot compare a class to a "
+                                    + "value");
+                        }
                     } else {
-                        return new SimpleConstraint((QueryEvaluable) left, op,
-                                (QueryEvaluable) right);
+                        if (right instanceof QueryClass) {
+                            throw new IllegalArgumentException("Cannot compare a value to a "
+                                    + "class");
+                        } else {
+                            return new SimpleConstraint((QueryEvaluable) left, op,
+                                    (QueryEvaluable) right);
+                        }
                     }
                 }
             }
