@@ -105,16 +105,6 @@ public class ClassDescriptor
     }
     
     /**
-     * Construct a ClassDescriptor that takes on all the properties of <code>cld</code>
-     * without attaching to a particular Model.
-     * @param cld the ClassDescriptor to clone
-     */
-    public ClassDescriptor(ClassDescriptor cld) {
-        this(cld.name, cld.supers, cld.isInterface,
-             cld.attDescriptors, cld.refDescriptors, cld.colDescriptors);
-    }
-    
-    /**
      * Returns the fully qualified class name described by this ClassDescriptor.
      * @return qualified name of the described Class
      */
