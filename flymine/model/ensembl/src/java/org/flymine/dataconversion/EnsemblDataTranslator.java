@@ -56,18 +56,24 @@ public class EnsemblDataTranslator extends DataTranslator
     private Map scLocs = new HashMap();
     private Map exonLocs = new LinkedHashMap();
     private Map exons = new HashMap();
+    private String organismName;
+    private Item organism;
+    private Reference orgRef;
 
     /**
      * @see DataTranslator#DataTranslator
      */
-    public EnsemblDataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
+    public EnsemblDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
+                                 String organismName) {
         super(srcItemReader, model, ns);
+        this.organismName = organismName;
     }
 
     /**
      * @see DataTranslator#translate
      */
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
+        tgtItemWriter.store(ItemHelper.convert(getOrganism()));
         tgtItemWriter.store(ItemHelper.convert(getEnsemblDb()));
         tgtItemWriter.store(ItemHelper.convert(getEmblDb()));
         super.translate(tgtItemWriter);
@@ -97,8 +103,10 @@ public class EnsemblDataTranslator extends DataTranslator
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
                 if ("karyotype".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     result.add(createLocation(srcItem, tgtItem, "chromosome", "chr", true));
                 } else if ("exon".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     storeTgtItem = false;
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Set locs = processExon(srcItem, tgtItem,
@@ -107,11 +115,14 @@ public class EnsemblDataTranslator extends DataTranslator
                         result.addAll(locs);
                     }
                 } else if ("simple_feature".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("prediction_transcript".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("repeat_feature".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                     promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
@@ -119,16 +130,19 @@ public class EnsemblDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
                     promoteField(tgtItem, srcItem, "name", "repeat_consensus", "repeat_name");
                 } else if ("gene".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
 
                 } else if ("contig".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     Item relation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, relation, "subjects", true, "object", false);
                     moveField(srcItem, relation, "clone", "subject");
                     result.add(relation);
                     promoteField(tgtItem, srcItem, "residues", "dna", "sequence");
                 } else if ("transcript".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                     Item geneRelation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, geneRelation, "objects", true, "subject", false);
                     moveField(srcItem, geneRelation, "gene", "object");
@@ -145,12 +159,18 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("clone".equals(className)) {
                     // clone embl_acc needs to be a synonym in embl database
 
+                    tgtItem.addReference(getOrgRef());
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     moveField(srcItem, synonym, "embl_acc", "synonym");
                     synonym.addReference(getEmblRef());
                     result.add(synonym);
+                } else if ("chromosome".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
+                } else if ("translation".equals(className)) {
+                    tgtItem.addReference(getOrgRef());
                 }
+
                 if (storeTgtItem) {
                     result.add(tgtItem);
                 }
@@ -249,6 +269,7 @@ public class EnsemblDataTranslator extends DataTranslator
             supercontig.addCollection(subjects);
             supercontig.addCollection(new ReferenceList("objects",
                                       Collections.singletonList(chrLoc.getIdentifier())));
+            supercontig.addReference(getOrgRef());
             supercontigs.put(name, supercontig);
             scLocs.put(name, chrLoc);
         }
@@ -391,6 +412,22 @@ public class EnsemblDataTranslator extends DataTranslator
         return emblRef;
     }
 
+    private Item getOrganism() {
+        if (organism == null) {
+            organism = createItem(tgtNs + "Organism", "");
+            Attribute a = new Attribute("name", organismName);
+            organism.addAttribute(a);
+        }
+        return organism;
+    }
+
+    private Reference getOrgRef() {
+        if (orgRef == null) {
+            orgRef = new Reference("organism", getOrganism().getIdentifier());
+        }
+        return orgRef;
+    }
+
     /**
      * Main method
      * @param args command line arguments
@@ -402,6 +439,7 @@ public class EnsemblDataTranslator extends DataTranslator
         String modelName = args[2];
         String format = args[3];
         String namespace = args[4];
+        String organism = args[5];
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
@@ -410,7 +448,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new EnsemblDataTranslator(srcItemReader, model, namespace);
+        DataTranslator dt = new EnsemblDataTranslator(srcItemReader, model, namespace, organism);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();
