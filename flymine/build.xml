@@ -153,19 +153,25 @@
   </target>
 
   <target name="new-intermine-jar" depends="prepare">
-    <uptodate property="new.intermine.jar"
-            targetfile="${intermine.jar.path}">
-      <srcfiles dir="${build}" includes="build-model.xml"/>
-    </uptodate>
+    <uptodate property="old.intermine.jar.build-model" srcfile="${intermine.jar.path}" targetfile="${build}/build-model.xml"/>
+    <uptodate property="old.intermine.jar.build-webapp" srcfile="${intermine.jar.path}" targetfile="${build}/build-webapp.xml"/>
+    <condition property="old.intermine.jar">
+      <and>
+        <isset property="old.intermine.jar.build-model"/>
+        <isset property="old.intermine.jar.build-webapp"/>
+      </and>
+    </condition>
   </target>
 
-  <target name="prepare-build-model" depends="new-intermine-jar" if="new.intermine.jar">
+  <target name="prepare-build-model" depends="new-intermine-jar" unless="old.intermine.jar">
     <unzip src="${intermine.jar.path}" dest="${build}">
       <patternset>
         <include name="build-model.xml"/>
+        <include name="build-webapp.xml"/>
       </patternset>
     </unzip>
-   <touch file="${build}/build-model.xml"/>
+    <touch file="${build}/build-model.xml"/>
+    <touch file="${build}/build-webapp.xml"/>
   </target>
 
 
