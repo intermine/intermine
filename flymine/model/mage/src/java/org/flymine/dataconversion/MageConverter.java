@@ -12,19 +12,27 @@ package org.flymine.dataconversion;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.lang.reflect.Method;
+import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.Writer;
 import java.io.Reader;
 
 import org.biomage.tools.xmlutils.MAGEReader;
+import org.biomage.QuantitationType.QuantitationType;
+import org.biomage.DesignElement.Feature;
+import org.biomage.BioAssayData.MeasuredBioAssayData;
+import org.biomage.BioAssayData.BioDataCube;
+import org.biomage.BioAssayData.FeatureDimension;
 
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
@@ -32,9 +40,7 @@ import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.FileConverter;
-import org.intermine.xml.full.FullRenderer;
 
 import org.apache.log4j.Logger;
 
@@ -51,6 +57,7 @@ public class MageConverter extends FileConverter
     protected static final String MAGE_NS = "http://www.biomage.org#";
 
     protected HashMap seenMap;
+    protected HashSet dataItems;
     protected int id = 0;
 
     /**
@@ -65,6 +72,7 @@ public class MageConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         seenMap = new LinkedHashMap();
+        dataItems = new LinkedHashSet();
         id = 0;
         File f = new File("build/tmp/mageconvert.xml");
         try {
@@ -157,9 +165,91 @@ public class MageConverter extends FileConverter
                 }
             }
         }
+
+
+        if (className.equals("MeasuredBioAssayData")) {
+            MeasuredBioAssayData mbad = (MeasuredBioAssayData) obj;
+            String fileName = ((BioDataCube) mbad.getBioDataValues()).getDataExternal()
+                .getFilenameURI();
+            List colTypes = mbad.getQuantitationTypeDimension().getQuantitationTypes();
+            List rowNames = ((FeatureDimension) mbad.getDesignElementDimension())
+                .getContainedFeatures();
+            BufferedReader br = new BufferedReader(new
+                InputStreamReader(getClass().getClassLoader().getResourceAsStream(fileName)));
+            Item bdt = new Item();
+            bdt.setClassName(MAGE_NS + "BioDataTuples");
+            bdt.setImplementations("");
+            bdt.setIdentifier(alias(className) + "_" + (id++));
+
+            ReferenceList rl = new ReferenceList();
+            rl.setName("bioAssayTupleData");
+            StringBuffer sb = new StringBuffer();
+            for (Iterator i = rowNames.iterator(); i.hasNext();) {
+                Feature f = (Feature) i.next();
+                String s = br.readLine();
+                StringTokenizer st = new StringTokenizer(s, "\t");
+                for (Iterator j = colTypes.iterator(); j.hasNext();) {
+                    QuantitationType qt = (QuantitationType) j.next();
+                    String value = st.nextToken();
+                    Item data = new Item();
+                    data.setClassName(MAGE_NS + "BioAssayDatum");
+                    data.setImplementations("");
+                    data.setIdentifier(alias(className) + "_" + (id++));
+
+                    sb.append(data.getIdentifier() + " ");
+
+                    //reference
+                    Reference ref = new Reference();
+                    ref.setName("quantitationType");
+                    ref.setRefId(createItem(qt).getIdentifier());
+                    data.addReferences(ref);
+
+                    ref = new Reference();
+                    ref.setName("designElement");
+                    ref.setRefId(createItem(f).getIdentifier());
+                    data.addReferences(ref);
+
+                    Attribute attr = new Attribute();
+                    attr.setName("value");
+                    attr.setValue(value);
+                    data.addAttributes(attr);
+
+                    //should create reference for bioAssay
+                    //ref = new Reference();
+                    //ref.setName("bioAssay");
+                    //ref.setRefId(createItem(obj).getIdentifier());
+                    //data.addReferences(ref);
+                    dataItems.add(data);
+
+                }
+            }
+            rl.setRefIds(sb.toString().trim());
+            bdt.addCollections(rl);
+            dataItems.add(bdt);
+
+            Reference bdtRef = new Reference();
+            bdtRef.setName("bioDataValues");
+            bdtRef.setRefId(bdt.getIdentifier());
+
+            Set newRefs = new HashSet();
+            Iterator refIter = item.getReferences().iterator();
+            while (refIter.hasNext()) {
+                Reference ref = (Reference) refIter.next();
+                if (!ref.getName().equals("bioDataValues")) {
+                    newRefs.add(ref);
+                }
+            }
+            newRefs.add(bdtRef);
+            item.setReferences(newRefs);
+        }
         return item;
     }
 
+    /**
+     * escape quotes
+     * @param s for input String
+     * @return String
+     */
     protected  String escapeQuotes(String s) {
         if (s.indexOf('\"') == -1) {
             return s;
