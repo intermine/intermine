@@ -190,10 +190,14 @@ public class OntologyUtil
             return "java.lang.Boolean";
         } else if (xmlType.equals("anyURI")) {
             return "java.net.URL";
+        } else if (xmlType.equals("date")) {
+            return "java.util.Date";
         } else if (xmlType.equals("dateTime")) {
             return "java.util.Date";
         } else if (xmlType.equals("bigDecimal")) {
             return "java.math.BigDecimal";
+        } else if (xmlType.equals("ID")) {
+            return "java.lang.String";
         } else {
             throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
         }

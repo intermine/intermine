@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="org:flymine:model:test" xmlns="org:flymine:model:test" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <xs:element name="Company">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="Department" maxOccurs="unbounded">
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="manager" type="Employee"/>
+       <xs:element name="employees" type="Employee" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string"/>
+     </xs:complexType>
+    </xs:element>
+   </xs:sequence>
+   <xs:attribute name="name" type="xs:string"/>
+   <xs:attribute name="vatNumber" type="xs:integer"/>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:complexType name="Employee">
+  <xs:complexContent>
+   <xs:extension base="Employable">
+    <xs:attribute name="fullTime" type="xs:boolean"/>
+    <xs:attribute name="age" type="xs:integer"/>
+   </xs:extension>
+  </xs:complexContent>
+ </xs:complexType>
+
+ <xs:complexType name="Employable">
+  <xs:attribute name="name" type="xs:string"/>
+ </xs:complexType>
+</xs:schema>

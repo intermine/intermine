@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<model name="http://www.intermine.org/model" namespace="org:flymine:model:test#">
+  <class name="Employee" extends="Employable" is-interface="true">
+    <attribute name="age" type="java.lang.Integer"/>
+    <attribute name="fullTime" type="java.lang.Boolean"/>
+  </class>
+  <class name="Company" is-interface="true">
+    <attribute name="vatNumber" type="java.lang.Integer"/>
+    <attribute name="name" type="java.lang.String"/>
+    <collection name="departments" referenced-type="Department_Company" ordered="true"/>
+  </class>
+  <class name="Employable" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <class name="Department_Company" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="manager" referenced-type="Employee"/>
+    <collection name="employees" referenced-type="Employee" ordered="true"/>
+  </class>
+</model>

@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.intermine.modelproduction.uml.XmiParser;
+import org.intermine.modelproduction.xmlschema.XmlSchemaParser;
 import org.intermine.modelproduction.acedb.AceModelParser;
 import org.intermine.metadata.Model;
 
@@ -103,6 +104,9 @@ public class ModelGenerationTask extends Task
             parser = new XmiParser(nameSpace, modelName);
         } else if (type.equals("acedb")) {
             parser = new AceModelParser(nameSpace, modelName);
+        } else if (type.equals("xmlschema")) {
+            // TODO should be pkgName not nameSpace
+            parser = new XmlSchemaParser(nameSpace, modelName);
         } else {
             throw new BuildException("Unrecognised value for type: " + type);
         }
@@ -112,7 +116,10 @@ public class ModelGenerationTask extends Task
         try {
             model = parser.process(new FileReader(source));
         } catch (Exception e) {
-            throw new BuildException("Error parsing model: " + e);
+            BuildException be = new BuildException("Error parsing model: ");
+            be.initCause(e);
+            e.printStackTrace();
+            throw be;
         }
 
         if (model == null) {
