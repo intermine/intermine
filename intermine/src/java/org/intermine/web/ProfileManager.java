@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
+import org.apache.log4j.Logger;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -33,6 +34,8 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
  */
 public class ProfileManager
 {
+    private static final Logger LOG = Logger.getLogger(ProfileManager.class);
+    
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
@@ -116,18 +119,37 @@ public class ProfileManager
             Map savedBags = new HashMap();
             for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
                 SavedBag bag = (SavedBag) i.next();
-                savedBags.putAll(bagBinding.unmarshal(new StringReader(bag.getBag()), os));
+                try {
+                    savedBags.putAll(bagBinding.unmarshal(new StringReader(bag.getBag()), os));
+                } catch (Exception _) {
+                    // Ignore rows that don't unmarshal (they probably reference
+                    // another model.
+                    LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
+                }
             }
             Map savedQueries = new HashMap();
             for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                 SavedQuery query = (SavedQuery) i.next();
-                savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
+                try {
+                    savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
+                } catch (Exception _) {
+                    // Ignore rows that don't unmarshal (they probably reference
+                    // another model.
+                    LOG.warn("Failed to unmarshal saved query: " + query.getQuery());
+                }
             }
             Map savedTemplates = new HashMap();
             for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); i.hasNext();) {
                 SavedTemplateQuery template = (SavedTemplateQuery) i.next();
-                savedTemplates.putAll(
-                    templateBinding.unmarshal(new StringReader(template.getTemplateQuery())));
+                try {
+                    savedTemplates.putAll(
+                        templateBinding.unmarshal(new StringReader(template.getTemplateQuery())));
+                } catch (Exception _) {
+                    // Ignore rows that don't unmarshal (they probably reference
+                    // another model.
+                    LOG.warn("Failed to unmarshal saved temlplate query: "
+                              + template.getTemplateQuery());
+                }
             }
             profile = new Profile(this, username, savedQueries, savedBags, savedTemplates);
         }
