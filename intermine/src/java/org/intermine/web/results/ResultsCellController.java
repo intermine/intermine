@@ -13,7 +13,7 @@ package org.flymine.web.results;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
-import javax.servlet.http.HttpSession;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,28 +55,18 @@ public class ResultsCellController extends TilesAction
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
-        HttpSession session = request.getSession();
-
         Object obj = request.getAttribute("object");
 
-        // Put a map of all fields on to the request
         Model model = ObjectStoreFactory.getObjectStore().getModel();
 
-        Set clds = model.getClassDescriptorsForClass(obj.getClass());
+        context.putAttribute("clds", model.getClassDescriptorsForClass(obj.getClass()));
 
-        if (clds.size() > 0) {
-            context.putAttribute("clds", clds);
-        }
-
-        Set leafClasses = DynamicUtil.decomposeClass(obj.getClass());
         Set leafClds = new HashSet();
-        for (Iterator i = leafClasses.iterator(); i.hasNext(); ) {
+        for (Iterator i = DynamicUtil.decomposeClass(obj.getClass()).iterator(); i.hasNext(); ) {
             leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
         }
-        if (leafClds.size() > 0) {
-            context.putAttribute("leafClds", leafClds);
-        }
-
+        context.putAttribute("leafClds", leafClds);
+        
         return null;
     }
 }
