@@ -257,17 +257,17 @@ null:transcript__seq_region a owl:ObjectProperty ;
 
 
 # ----------- simple_feature maps to TRNA or CpGIsland -----eponine-scan?, firstef?--a.program #
-#trna?
+
 
 :TRNA a owl:Class ;
     rdfs:subClassOf :BioEntity.
- 
-# currently cannot have a src Resource equivalent to two tgt resources
-#    owl:equivalentProperty e:simple_feature__contig.
-
+:CpGIsland a owl:Class ;
+    rdfs:subClassOf :BioEntity.
+:TranscriptStartSite a owl:Class ;
+    rdfs:subClassOf :BioEntity.
+##FirstEF
 null:simple_feature a owl:Class ;
     owl:equivalentClass e:simple_feature .
-
 
 
 # ------------ dna_align_feature and protein_align_feature are Match objects ----------- #
@@ -321,17 +321,32 @@ null:identity_xref a owl:Class ;
 
 # ----------- ensembl objects with no data or place in target mapped to null ------------ #
 
-null:marker_synonym a owl:Class ;
-    owl:equivalentClass e:marker_synonym .
+#null:marker_synonym a owl:Class ;
+#    owl:equivalentClass e:marker_synonym .
 
 null:marker_map_location a owl:Class ;
     owl:equivalentClass e:marker_map_location .
 
+:Marker a owl:Class ;
+    rdfs:subClassOf :Region;    
+    owl:equivalentClass e:marker .
+
+:Marker__name a owl:DatatypeProperty;
+    rdfs:domain :Marker;
+    rdfs:range xsd:string .
+
+:Marker__locations a owl:ObjectProperty;
+    rdfs:domain :Marker;
+    rdfs:range :Location .
+
+null:marker__priority a owl:DatatypeProperty ;
+    owl:equivalentProperty e:marker__priority .
+
+null:marker__type a owl:DatatypeProperty ;
+    owl:equivalentProperty e:marker__type .
+
 null:marker_feature a owl:Class ;
     owl:equivalentClass e:marker_feature .
-
-null:marker a owl:Class ;
-    owl:equivalentClass e:marker .
 
 null:stable_id_event a owl:Class ;
     owl:equivalentClass e:stable_id_event .
@@ -415,13 +430,13 @@ null:analysis__gff_feature a owl:DatatypeProperty ;
 
 #  synonym, EnsemblTranslater will need to point this synonym at an InfoSource
 :Synonym a owl:Class ;
-    owl:equivalentClass e:exon_stable_id, e:gene_stable_id, e:translation_stable_id, e:transcript_stable_id .
+    owl:equivalentClass e:exon_stable_id, e:gene_stable_id, e:translation_stable_id, e:transcript_stable_id, marker_synonym .
 
 :Synonym__value a owl:DatatypeProperty ;
-    owl:equivalentProperty e:exon_stable_id__stable_id, e:gene_stable_id__stable_id, e:translation_stable_id__stable_id, e:transcript_stable_id__stable_id .
+    owl:equivalentProperty e:exon_stable_id__stable_id, e:gene_stable_id__stable_id, e:translation_stable_id__stable_id, e:transcript_stable_id__stable_id, marker_synonym__name .
 
 :Synonym__subject a owl:ObjectProperty ;
-    owl:equivalentProperty e:exon_stable_id__exon, e:gene_stable_id__gene, e:translation_stable_id__translation, e:transcript_stable_id__transcript .
+    owl:equivalentProperty e:exon_stable_id__exon, e:gene_stable_id__gene, e:translation_stable_id__translation, e:transcript_stable_id__transcript,marker_synonym__marker  .
 
 null:exon_stable_id__version a owl:DatatypeProperty ;
     owl:equivalentProperty e:exon_stable_id__version .
