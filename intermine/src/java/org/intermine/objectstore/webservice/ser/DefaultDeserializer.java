@@ -10,77 +10,97 @@ package org.flymine.objectstore.webservice.ser;
  *
  */
 
+import javax.xml.namespace.QName;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.DeserializerTarget;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.message.SOAPHandler;
+
+import org.flymine.util.TypeUtil;
+
+import org.apache.log4j.Logger;
 
 /**
- * This the deserializer (xml to object translator) for all objects used in objectstore calls
+ * This the deserializer (xml->object) for all objects used in objectstore calls
  * (except lists...which will eventually be handled by axis)
  *
  * @author Mark Woodbridge
  */
 public class DefaultDeserializer extends DeserializerImpl
 {
-//     public SOAPHandler onStartChild(String namespace,
-//                                     String localName,
-//                                     String prefix,
-//                                     Attributes attributes,
-//                                     DeserializationContext context)
-//         throws SAXException {
-//         if (log.isDebugEnabled()) {
-//             log.debug("Enter: VectorDeserializer::onStartChild()");
-//         }
+    protected static final Logger LOG = Logger.getLogger(DefaultDeserializer.class);
+
+    QName xmlType;
+    Class javaType;
+
+    /**
+     * Constructor
+     * @param javaType the type of the object to instantiate
+     * @param xmlType the qname (tag) of the xml version of the object
+     */
+    public DefaultDeserializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+
+    /**
+     * @see DeserializerImpl#onStartElement
+     */
+    public void onStartElement(String namespace, String localName, String prefix,
+                               Attributes attributes, DeserializationContext context)
+        throws SAXException {
         
-//         if (attributes == null)
-//             throw new SAXException(Messages.getMessage("noType01"));
-
-//         // If the xsi:nil attribute, set the value to null and return since
-//         // there is nothing to deserialize.
-//         if (context.isNil(attributes)) {
-//             setChildValue(null, new Integer(curIndex++));
-//             return null;
-//         }
-
-//         // Get the type
-//         QName itemType = context.getTypeFromAttributes(namespace,
-//                                                        localName,
-//                                                        attributes);
-//         // Get the deserializer
-//         Deserializer dSer = null;
-//         if (itemType != null) {
-//            dSer = context.getDeserializerForType(itemType);
-//         }
-//         if (dSer == null) {
-//             dSer = new DeserializerImpl();
-//         }
-
-//         // When the value is deserialized, inform us.
-//         // Need to pass the index because multi-ref stuff may 
-//         // result in the values being deserialized in a different order.
-//         dSer.registerValueTarget(new DeserializerTarget(this, new Integer(curIndex)));
-//         curIndex++;
-
-//         if (log.isDebugEnabled()) {
-//             log.debug("Exit: VectorDeserializer::onStartChild()");
-//         }
+        if (context.isNil(attributes)) { 
+            return;
+        }
         
-//         // Let the framework know that we aren't complete until this guy
-//         // is complete.
-//         addChildDeserializer(dSer);
-        
-//         return (SOAPHandler)dSer;
-//     }
+        try {
+            setValue(javaType.newInstance());
+        } catch (Exception e) {
+            throw new SAXException(e);
+        }
+    }
 
-//    public void setChildValue(Object value, Object hint) throws SAXException {
-//         if (log.isDebugEnabled()) {
-//             log.debug(Messages.getMessage("gotValue00", "VectorDeserializer", "" + value));
-//         }
-//         int offset = ((Integer)hint).intValue();
-//         Vector v = (Vector)this.value;
+    /**
+     * @see DeserializerImpl#onStartChild
+     */
+    public SOAPHandler onStartChild(String namespace, String localName, String prefix, 
+                                    Attributes attributes, DeserializationContext context) 
+        throws SAXException {
         
-//         // If the vector is too small, grow it 
-//         if (offset >= v.size()) {
-//             v.setSize(offset+1);
-//         }
-//         v.setElementAt(value, offset);
-//     }
+        if (context.isNil(attributes)) {
+            return null;
+        }
+
+        QName itemType = context.getTypeFromAttributes(namespace, localName, attributes);
+        Deserializer dSer = null;
+        if (itemType != null) {
+           dSer = context.getDeserializerForType(itemType);
+        }
+        if (dSer == null) {
+            dSer = new DeserializerImpl();
+        }
+
+        dSer.registerValueTarget(new DeserializerTarget(this, localName));
+        
+        addChildDeserializer(dSer);
+        
+        return (SOAPHandler) dSer;
+    }
+
+    /**
+     * @see DeserializerImpl#setChildValue
+     */
+   public void setChildValue(Object value, Object hint) throws SAXException {
+       String fieldName = (String) hint;
+       try {
+           TypeUtil.setFieldValue(this.value, fieldName, value);
+       } catch (IllegalAccessException e) {
+           throw new SAXException(e);
+       }
+    }
 }
