@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.gnu.readline.Readline;
 import org.gnu.readline.ReadlineLibrary;
@@ -172,9 +173,11 @@ public class IqlShell
 
         out.println("Query to run: " + q.toString());
         if (os instanceof ObjectStoreInterMineImpl) {
-            out.println("SQL: " + SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
-                        ((ObjectStoreInterMineImpl) os).getSchema(),
-                        ((ObjectStoreInterMineImpl) os).getDatabase()));
+            String sqlString =
+                SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
+                                      ((ObjectStoreInterMineImpl) os).getSchema(),
+                                      ((ObjectStoreInterMineImpl) os).getDatabase(), (Map) null);
+                out.println("SQL: " + sqlString);
         }
 
         Results res = os.execute(q);
