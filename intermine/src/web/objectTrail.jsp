@@ -4,17 +4,15 @@
 
 <!-- objectTrail.jsp -->
 
-<im:body>
-  <div class="objectTrail">
-    <c:forEach items="${trailElements}" var="item" varStatus="status">
-      <html:link action="/objectDetails?id=${item.objectId}&trail=${item.trail}"
-                 styleClass="objectTrailLink">${item.label}</html:link>
-      <c:if test="${!status.last}">
-        >
-      </c:if>
-    </c:forEach>
-  </div>
-</im:body>
+<span class="objectTrail">
+  <c:forEach items="${trailElements}" var="item" varStatus="status">
+    <html:link action="/objectDetails?id=${item.objectId}&trail=${item.trail}"
+               styleClass="objectTrailLink">${item.label}</html:link>
+    <c:if test="${!status.last}">
+      &gt;
+    </c:if>
+  </c:forEach>
+</span>
 
 <!-- /objectTrail.jsp -->
 
