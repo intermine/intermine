@@ -525,49 +525,6 @@ public class Results extends AbstractList
         }
     }
 
-    private List columnAliases = null;
-    private List columnTypes = null;
-
-    /**
-     * Returns a list of aliases, where each alias corresponds to each element of the SELECT list
-     * of the Query object. This is effectively a list of column headings for the results object.
-     *
-     * @return a List of Strings, each of which is the alias of the column
-     */
-    public List getColumnAliases() {
-        if (columnAliases == null) {
-            setupColumns();
-        }
-        return columnAliases;
-    }
-
-    /**
-     * Returns a list of Class objects, where each object corresponds to the type of each element
-     * of the SELECT list of the Query object. This is effectively a list of column types for the
-     * results object.
-     *
-     * @return a List of Class objects
-     */
-    public List getColumnTypes() {
-        if (columnTypes == null) {
-            setupColumns();
-        }
-        return columnTypes;
-    }
-
-    private void setupColumns() {
-        columnAliases = new ArrayList();
-        columnTypes = new ArrayList();
-        Iterator selectIter = query.getSelect().iterator();
-        while (selectIter.hasNext()) {
-            QueryNode node = (QueryNode) selectIter.next();
-            String alias = (String) query.getAliases().get(node);
-            Class type = node.getType();
-            columnAliases.add(alias);
-            columnTypes.add(type);
-        }
-    }
-
     /**
      * Sets this Results object to bypass the optimiser.
      */

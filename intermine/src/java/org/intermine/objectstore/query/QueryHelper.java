@@ -13,6 +13,8 @@ package org.flymine.objectstore.query;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -201,5 +203,40 @@ public abstract class QueryHelper
             throw new IllegalArgumentException("Invalid type for QueryValue: " + type);
         }
         return qv;
+    }
+
+    /**
+     * Returns a list of aliases, where each alias corresponds to each element of the SELECT list
+     * of the Query object. This is effectively a list of column headings for the results object.
+     * @param query the Query object
+     * @return a List of Strings, each of which is the alias of the column
+     */
+    public static List getColumnAliases(Query query) {
+        List columnAliases = new ArrayList();
+        Iterator selectIter = query.getSelect().iterator();
+        while (selectIter.hasNext()) {
+            QueryNode node = (QueryNode) selectIter.next();
+            String alias = (String) query.getAliases().get(node);
+            columnAliases.add(alias);
+        }
+        return columnAliases;
+    }
+
+    /**
+     * Returns a list of Class objects, where each object corresponds to the type of each element
+     * of the SELECT list of the Query object. This is effectively a list of column types for the
+     * results object.
+     * @param query the Query object
+     * @return a List of Class objects
+     */
+    public static List getColumnTypes(Query query) {
+        List columnTypes = new ArrayList();
+        Iterator selectIter = query.getSelect().iterator();
+        while (selectIter.hasNext()) {
+            QueryNode node = (QueryNode) selectIter.next();
+            Class type = node.getType();
+            columnTypes.add(type);
+        }
+        return columnTypes;
     }
 }

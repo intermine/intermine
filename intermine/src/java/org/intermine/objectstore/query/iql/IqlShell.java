@@ -17,6 +17,7 @@ import java.io.PrintStream;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.util.TypeUtil;
@@ -157,9 +158,9 @@ public class FqlShell
 
         Results res = os.execute(q);
         out.print("Column headings: ");
-        outputList(res.getColumnAliases());
+        outputList(QueryHelper.getColumnAliases(q));
         out.print("Column types: ");
-        outputList(res.getColumnTypes());
+        outputList(QueryHelper.getColumnTypes(q));
         Iterator rowIter = res.iterator();
         while (rowIter.hasNext()) {
             outputList((List) (rowIter.next()));

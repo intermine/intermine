@@ -21,6 +21,7 @@ import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
+import org.flymine.objectstore.query.QueryHelper;
 
 /**
  * Displayable section of a Results object, containing various
@@ -49,7 +50,7 @@ public class DisplayableResults
         this.results = results;
 
         // Add some blank column configurations
-        Iterator columnIter = results.getColumnAliases().iterator();
+        Iterator columnIter = QueryHelper.getColumnAliases(results.getQuery()).iterator();
         int i = 0;
         while (columnIter.hasNext()) {
             String alias = (String) columnIter.next();
