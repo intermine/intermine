@@ -1,0 +1,20 @@
+<webconfig>
+  <class name="Class1">
+    <shortdisplayers>
+      <displayer src="page1.jsp"/>
+      <displayer src="tile1.tile"/>
+    </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/model/page2.jsp"/>
+    </longdisplayers>
+  </class>
+  <class name="Class2">
+    <shortdisplayers>
+      <displayer src="page3.jsp"/>
+    </shortdisplayers>
+    <longdisplayers>
+      <displayer src="/model/page4.jsp"/>
+      <displayer src="tile2.tile"/>
+    </longdisplayers>
+  </class>
+</webconfig>
