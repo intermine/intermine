@@ -65,14 +65,11 @@ public class PostProcessTask extends Task
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(alias);
             if ("calculate-locations".equals(type)) {
                 CalculateLocations cl = new CalculateLocations(osw);
-                LOG.info("Starting CalculateLocations.fixPartials()");
-                cl.fixPartials();
-                LOG.info("Starting CalculateLocations.createLocations()");
-                cl.createLocations();
-                LOG.info("Starting CalculateLocations.createSpanningLocations()");
-                cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
-                cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
-                LOG.info("Finished calculate-locations");
+                 LOG.info("Starting CalculateLocations.fixPartials()");
+                 cl.fixPartials();
+                 LOG.info("Starting CalculateLocations.createLocations()");
+                 cl.createLocations();
+                 LOG.info("Starting CalculateLocations.createSpanningLocations()");
             } else if ("create-references".equals(type)) {
                 CreateReferences cr = new CreateReferences(osw);
                 LOG.info("Starting CreateReferences.insertReferences()");
@@ -87,6 +84,11 @@ public class PostProcessTask extends Task
                 LOG.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
                 LOG.info("Finished transfer-sequences");
+            } else if ("make-spanning-locations".equals(type)) {
+                CalculateLocations cl = new CalculateLocations(osw);
+                cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
+                cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
+                LOG.info("Finished calculate-locations");
             } else {
                 throw new BuildException("unknown type: " + type);
             }
