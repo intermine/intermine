@@ -583,6 +583,7 @@ public class MageDataTranslator extends DataTranslator
             tgtItem.addCollection(newRl);
         }
 
+        //prefetch?
         List labeledExtract = new ArrayList();
         if (physical != null && derived != null) {
             Item pbaItem = ItemHelper.convert(srcItemReader.getItemById(physical));
@@ -1969,6 +1970,24 @@ public class MageDataTranslator extends DataTranslator
         desc1 = new ItemPrefetchDescriptor("Experiment.bioAssays");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("bioAssays",
                                                  ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc1);
+
+
+        // Experiment->bioAssays.physicalBioAssay->Hybridization
+        desc2 = new ItemPrefetchDescriptor(
+                    "(Experiment.bioAssays:physicalBioAssay).bioAssayCreation");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("bioAssayCreation",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc1.addPath(desc2);
+
+        // Experiment->bioAssays.physicalBioAssay->Hybridization.sourceBioMaterialMeasurements
+        desc3 = new ItemPrefetchDescriptor(
+          "(Experiment.bioAssays:physicalBioAssay.bioAssayCreation).sourceBioMaterialMeasurements");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("sourceBioMaterialMeasurements",
+                                                 ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+        desc2.addPath(desc3);
+
         descSet.add(desc1);
 
         // Experiment.descriptions
