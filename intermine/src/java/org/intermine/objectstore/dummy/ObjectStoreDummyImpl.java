@@ -192,4 +192,14 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
         return new ExplainResult();
     }
 
+    /**
+     * return the resultsSize parameter that simulates number of rows returned from query
+     *
+     * @param q Flymine Query on which to run COUNT(*)
+     * @return the number of rows to be produced by query
+     */
+    public int count(Query q) {
+        return this.resultsSize;
+    }
+
 }
