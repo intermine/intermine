@@ -121,8 +121,10 @@ public class FileConverterTask extends Task
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
-                converter.process(new BufferedReader(new FileReader(new File(ds.getBasedir(),
-                                                                             files[i]))));
+                File f = new File(ds.getBasedir(), files[i]);
+                //System.out.println("Processing file: " + f.getName());
+                LOG.error("Processing file: " + f.getName());
+                converter.process(new BufferedReader(new FileReader(f)));
             }
             converter.close();
             writer.close();
