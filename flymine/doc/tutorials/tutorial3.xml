@@ -38,7 +38,7 @@
             <listitem>Select the starting point for your query. In this case, Orthologue.</listitem>
           
 	  <entry>
-	      <inlinegraphic fileref="classSelection2.png"/>
+	      <inlinegraphic fileref="classSelection2"/>
 	  </entry>
 
 
@@ -68,22 +68,23 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainRelation1.png"/>
+	      <inlinegraphic fileref="constrainRelation1"/>
 	  </entry>
 
 
           
 
-          <listitem>You want to display the name of the object and the subject
-          in your results.  In this case the object and the subject are genes,
-          so the name fields will refer to the gene name.  Select the name
+          <listitem>You want to display the identifier of the object
+          and the subject in your results.  In this case the object
+          and the subject are genes, so the identifier fields will
+          refer to the gene's main identifier. Select the identifier
           fields of the object and the subject to show in the
-          results.</listitem> 
+          results.</listitem>
 
 
 
 	  <entry>
-	      <inlinegraphic fileref="showFields2.png"/>
+	      <inlinegraphic fileref="showFields2"/>
 	  </entry>
 
 
@@ -97,14 +98,14 @@
          constraints list.</listitem> 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainEvidence2.png"/>
+	      <inlinegraphic fileref="constrainEvidence2"/>
 	  </entry>
 
 
 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainEvidence1.png"/>
+	      <inlinegraphic fileref="constrainEvidence1"/>
 	  </entry>
 
 
@@ -118,7 +119,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="showFields3.png"/>
+	      <inlinegraphic fileref="showFields3"/>
 	  </entry>
 
 
@@ -128,7 +129,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="resultsQuery4.png"/>
+	      <inlinegraphic fileref="resultsQuery4"/>
 	  </entry>
 
 
