@@ -14,7 +14,11 @@
 # ------------ BioEntity is central class of schema ------------
 
 # represents any biological entity in the object model
-:BioEntity a owl:Class .
+:BioEntity a owl:Class ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :BioEntity__organism ] .
 
 :BioEntity__name a owl:DatatypeProperty ;
     rdfs:domain :BioEntity ;
@@ -46,13 +50,9 @@
 
 # any property applied to a BioEntity with associated evidence(s)
 
-:BioProperty a owl:Class ;
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :BioProperty__subject ] .
+:BioProperty a owl:Class.
 
-:BioProperty__subject a owl:ObjectProperty ;
+:BioProperty__subjects a owl:ObjectProperty ;
     owl:inverseOf :BioEntity__properties .
 
 :BioProperty__evidence a owl:ObjectProperty ;
@@ -187,11 +187,14 @@
 
 :AnalysisResult a owl:Class ;
     rdfs:subClassOf :Evidence ;
-
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :AnalysisResult__analysis ] .
+        owl:onProperty :AnalysisResult__analysis ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :AnalysisResult__source ] .
 
 :AnalysisResult__confidence a owl:DatatypeProperty ;
     rdfs:domain :AnalysisResult ;
