@@ -90,86 +90,93 @@
     <td valign="top">
       <fmt:message key="query.currentquery"/><br/>
 
-      <c:forEach var="entry" items="${QUERY.nodes}" varStatus="status">
-        <div>
-          <nobr>
+      <c:choose>
+        <c:when test="${empty QUERY.nodes}">
+          <fmt:message key="query.empty"/>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="entry" items="${QUERY.nodes}" varStatus="status">
             <div>
-              <c:set var="node" value="${entry.value}"/>
-              <c:if test="${node.indentation > 0}">
-                <c:forEach begin="1" end="${node.indentation}">
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </c:forEach>
-              </c:if>
-              <span class="metadata"><c:out value="${node.fieldName}"/></span>
-              <span class="type">
-                <c:choose>
-                  <c:when test="${node.attribute}">
-                    <c:out value="${node.type}"/>
-                  </c:when>
-                  <c:otherwise>
-                    <fmt:message key="query.changePath" var="changePathTitle">
-                      <fmt:param value="${node.type}"/>
-                    </fmt:message>
-                    <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}"
-                               title="${changePathTitle}">
-                      <c:out value="${node.type}"/>
-                    </html:link>
-                    <c:if test="${node.collection}">
-                      <fmt:message key="query.collection"/>
-                    </c:if>
-                  </c:otherwise>
-                </c:choose>
-              </span>
-              <c:choose>
-                <c:when test="{node.indentation > 0"> 
-                  <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-                    <fmt:param value="${node.fieldName}"/>
-                  </fmt:message>
-                </c:when>
-                <c:otherwise>
-                  <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-                    <fmt:param value="${node.type}"/>
-                  </fmt:message>
-                </c:otherwise>
-              </c:choose>
-              <html:link action="/mainChange?method=addConstraint&path=${node.path}"
-                         title="${addConstraintToTitle}">
-                <fmt:message key="query.addConstraint"/>
-              </html:link>
-              <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
-                <fmt:param value="${node.fieldName}"/>
-              </fmt:message>
-              <html:link action="/mainChange?method=removeNode&path=${node.path}"
-                         title="${removeNodeTitle}">
-                <img border="0" src="images/cross.png" alt="x"/>
-              </html:link>
-            </div>
-            <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
-              <div>
-                <c:forEach begin="0" end="${node.indentation}">
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </c:forEach>
-                <span class="constraint">
-                  <c:out value="${constraint.op}"/>
+              <nobr>
+                <div>
+                  <c:set var="node" value="${entry.value}"/>
+                  <c:if test="${node.indentation > 0}">
+                    <c:forEach begin="1" end="${node.indentation}">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </c:forEach>
+                  </c:if>
+                  <span class="metadata"><c:out value="${node.fieldName}"/></span>
+                  <span class="type">
+                    <c:choose>
+                      <c:when test="${node.attribute}">
+                        <c:out value="${node.type}"/>
+                      </c:when>
+                      <c:otherwise>
+                        <fmt:message key="query.changePath" var="changePathTitle">
+                          <fmt:param value="${node.type}"/>
+                        </fmt:message>
+                        <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}"
+                                   title="${changePathTitle}">
+                          <c:out value="${node.type}"/>
+                        </html:link>
+                        <c:if test="${node.collection}">
+                          <fmt:message key="query.collection"/>
+                        </c:if>
+                      </c:otherwise>
+                    </c:choose>
+                  </span>
                   <c:choose>
-                    <c:when test="${constraint.value.class.name == 'java.util.Date'}">
-                      <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
+                    <c:when test="{node.indentation > 0"> 
+                      <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+                        <fmt:param value="${node.fieldName}"/>
+                      </fmt:message>
                     </c:when>
                     <c:otherwise>
-                      <c:out value=" ${constraint.value}"/>
+                      <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+                        <fmt:param value="${node.type}"/>
+                      </fmt:message>
                     </c:otherwise>
                   </c:choose>
-                </span>
-                <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
-                <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}"
-                           title="${removeConstraintTitle}">
-                  <img border="0" src="images/cross.png" alt="x"/>
-                </html:link>
-              </div>
-            </c:forEach>
-          </nobr>
-        </div>
-      </c:forEach>
+                  <html:link action="/mainChange?method=addConstraint&path=${node.path}"
+                             title="${addConstraintToTitle}">
+                    <fmt:message key="query.addConstraint"/>
+                  </html:link>
+                  <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
+                    <fmt:param value="${node.fieldName}"/>
+                  </fmt:message>
+                  <html:link action="/mainChange?method=removeNode&path=${node.path}"
+                             title="${removeNodeTitle}">
+                    <img border="0" src="images/cross.png" alt="x"/>
+                  </html:link>
+                </div>
+                <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
+                  <div>
+                    <c:forEach begin="0" end="${node.indentation}">
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </c:forEach>
+                    <span class="constraint">
+                      <c:out value="${constraint.op}"/>
+                      <c:choose>
+                        <c:when test="${constraint.value.class.name == 'java.util.Date'}">
+                          <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
+                        </c:when>
+                        <c:otherwise>
+                          <c:out value=" ${constraint.value}"/>
+                        </c:otherwise>
+                      </c:choose>
+                    </span>
+                    <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
+                    <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}"
+                               title="${removeConstraintTitle}">
+                      <img border="0" src="images/cross.png" alt="x"/>
+                    </html:link>
+                  </div>
+                </c:forEach>
+              </nobr>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
 
 
     </td>
