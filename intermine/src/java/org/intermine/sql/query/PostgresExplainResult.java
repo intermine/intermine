@@ -164,23 +164,41 @@ public class PostgresExplainResult extends ExplainResult
         if (nextToken < 0) {
             throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"..\""));
         }
-        start = Long.parseLong(text.substring(0, text.indexOf('.'))
-                               + text.substring(text.indexOf('.') + 1, nextToken)) / 10;
+        String toParse = text.substring(0, text.indexOf('.'))
+            + text.substring(text.indexOf('.') + 1, text.indexOf('.') + 2);
+        try {
+            start = Long.parseLong(toParse);
+        } catch (NumberFormatException e) {
+            start = Long.MAX_VALUE;
+        }
         text = text.substring(nextToken + 2);
         nextToken = text.indexOf(" rows=");
         if (nextToken < 0) {
             throw (new IllegalArgumentException("Invalid EXPLAIN string: no \" rows=\""));
         }
-        complete = Long.parseLong(text.substring(0, text.indexOf('.'))
-                                  + text.substring(text.indexOf('.') + 1, nextToken)) / 10;
+        toParse = text.substring(0, text.indexOf('.'))
+            + text.substring(text.indexOf('.') + 1, text.indexOf('.') + 2);
+        try {
+            complete = Long.parseLong(toParse);
+        } catch (NumberFormatException e) {
+            complete = Long.MAX_VALUE;
+        }
         text = text.substring(nextToken + 6);
         nextToken = text.indexOf(" width=");
         if (nextToken < 0) {
             throw (new IllegalArgumentException("Invalid EXPLAIN string: no \" width=\""));
         }
-        rows = Long.parseLong(text.substring(0, nextToken));
+        try {
+            rows = Long.parseLong(text.substring(0, nextToken));
+        } catch (NumberFormatException e) {
+            rows = Long.MAX_VALUE;
+        }
         estimatedRows = rows;
         text = text.substring(nextToken + 7);
-        width = Long.parseLong(text);
+        try {
+            width = Long.parseLong(text);
+        } catch (NumberFormatException e) {
+            width = Long.MAX_VALUE;
+        }
     }
 }
