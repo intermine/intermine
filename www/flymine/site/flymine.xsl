@@ -191,9 +191,6 @@ version="1.0">
     </xsl:otherwise>
 </xsl:choose>
 </xsl:attribute>
-
-
-
     <xsl:choose>
       <xsl:when test="count(child::node())=0">
         <xsl:value-of select="@url"/>
@@ -206,20 +203,20 @@ version="1.0">
 </xsl:template>
 
 <xsl:template match="url">
-<A TARGET="_blank">
-<xsl:attribute name="HREF">
+<a target="_blank">
+<xsl:attribute name="href">
 <xsl:apply-templates/>
 </xsl:attribute>
 <xsl:apply-templates/>
-</A>
+</a>
 </xsl:template>
 
 <xsl:template match="url[@protocol='mailto']">
-<A>
-<xsl:attribute name="HREF">mailto:<xsl:apply-templates/>
+<a>
+<xsl:attribute name="href">mailto:<xsl:apply-templates/>
 </xsl:attribute>
 <xsl:apply-templates/>
-</A>
+</a>
 </xsl:template>
 
 <xsl:template match="para">
@@ -248,5 +245,24 @@ version="1.0">
 <code><xsl:apply-templates/></code>
 </xsl:template>
 
+<xsl:template match="pubdate">
+<xsl:variable name="releaseinfo"><xsl:value-of select="/article/artheader/releaseinfo"/></xsl:variable>
+<p align="right">
+<xsl:value-of select="substring($releaseinfo,2,string-length($releaseinfo)-2)"/><text> - </text>
+<xsl:value-of select="substring(text(),16,2)"/><text>/</text>
+<xsl:value-of select="substring(text(),13,2)"/><text>/</text>
+<xsl:value-of select="substring(text(),8,4)"/>
+</p>
+</xsl:template>
+
+<xsl:template match="releaseinfo"/>
+
+<!--
+<xsl:template match="releaseinfo">
+<p align="right">
+<xsl:value-of select="substring('$',2)"/><text>-</text>
+</p>
+</xsl:template>
+-->
 </xsl:stylesheet>
 
