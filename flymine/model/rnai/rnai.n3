@@ -17,6 +17,10 @@
     rdfs:domain :Gene;
     rdfs:range xsd:string.
 
+:Gene__organismDbId a owl:DatatypeProperty;
+    rdfs:domain :Gene;
+    rdfs:range xsd:string.
+
 :Gene__commonName a owl:DatatypeProperty;
     rdfs:domain :Gene;
     rdfs:range xsd:string.
@@ -75,7 +79,11 @@
     rdfs:domain :Synonym;
     rdfs:range :Database.
 
-:Synonym__synonym a owl:DatatypeProperty;
+:Synonym__value a owl:DatatypeProperty;
+    rdfs:domain :Synonym;
+    rdfs:range xsd:string.
+
+:Synonym__type a owl:DatatypeProperty;
     rdfs:domain :Synonym;
     rdfs:range xsd:string.
 
