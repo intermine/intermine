@@ -105,7 +105,7 @@ Summary for selected
 </td>
 
 <td valign="top" width="66%">
-<im:heading id="other"><nobr>Other Information</nobr></im:heading>
+<im:heading id="other">Other Information</im:heading>
 <im:body id="other">
 <table border="0">
   <c:if test="${!empty object.refsAndCollections}">
