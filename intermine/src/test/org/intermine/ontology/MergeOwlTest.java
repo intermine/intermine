@@ -413,7 +413,8 @@ public class MergeOwlTest extends TestCase
         src.read(new StringReader(srcStr), null, "N3");
 
         merger.mergeByEquivalence(src, src1Namespace);
-
+        System.out.println(merger.equiv);
+        System.out.println(merger.subMap);
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "PrivateBusiness"));
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Organisation"));
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "OrganisationType"));
@@ -448,24 +449,140 @@ public class MergeOwlTest extends TestCase
 //         }
     }
 
-    //================================================================================================
+
+    // problem occurred when a class in source model has multiple restricted subclasses
+    // only one had a property in the target model
+//     public void testMultipleRestrictedSubclasses() throws Exception {
+//          String ensemblNs = "http://www.flymine.org/model/ensembl#";
+//          String genomicNs = "http://www.flymine.org/model/genomic#";
+
+//          String mergeSpec = "@prefix : <" + genomicNs + "> ." + ENDL
+//             + "@prefix e: <" + ensemblNs + "> ." + ENDL
+//             + "@prefix null: <" + nullNamespace + "> ." + ENDL
+//             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+//             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+//             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+//             + ":BioEntity a owl:Class ." + ENDL
+//              + ":CpGIsland a owl:Class ;"
+//              + "  rdfs:subClassOf :BioEntity ;"
+//             + "  rdfs:subClassOf e:simple_feature ;"
+//             + "  rdfs:subClassOf"
+//             + "  [ a owl:Restriction ;"
+//             + "    owl:onProperty e:simple_feature__analysis ;"
+//             + "    owl:hasValue"
+//             + "      [ rdfs:subClassOf e:analysis ;"
+//             + "        rdfs:subClassOf"
+//             + "          [ a owl:Restriction ;"
+//             + "            owl:onProperty e:analysis__program ;"
+//             + "            owl:hasValue \"cpg\""
+//             + "          ]"
+//             + "      ]"
+//             + "  ] ;"  + ENDL
+//              + "    rdfs:subClassOf"
+//              +"      [ a owl:Restriction ;"
+//              +"        owl:maxCardinality \"1\" ;"
+//              +"        owl:onProperty :CpGIsland__contig ] ."+ENDL
+//             + ":TRNA a owl:Class ;"
+//             + "  rdfs:subClassOf :BioEntity ;"
+//             + "  rdfs:subClassOf e:simple_feature ;"
+//             + "  rdfs:subClassOf"
+//             + "  [ a owl:Restriction ;"
+//             + "    owl:onProperty e:simple_feature__analysis ;"
+//             + "    owl:hasValue"
+//             + "      [ rdfs:subClassOf e:analysis ;"
+//             + "        rdfs:subClassOf"
+//             + "          [ a owl:Restriction ;"
+//             + "            owl:onProperty e:analysis__program ;"
+//             + "            owl:hasValue \"trna\""
+//             + "          ]"
+//             + "      ]"
+//             + "  ] ;" + ENDL
+//             + "    rdfs:subClassOf"
+//             +"      [ a owl:Restriction ;"
+//             +"        owl:maxCardinality \"1\" ;"
+//             +"        owl:onProperty :TRNA__contig ] ."+ENDL
+//             + ":Contig a owl:Class;"
+//             + "  owl:equivalentClass e:contig." + ENDL
+//             + ":TRNA__contig a owl:ObjectProperty;"
+//             + "  rdfs:domain :TRNA;"
+//             + "  rdfs:range :Contig."+ENDL
+//              //+ "  owl:equivalentProperty e:simple_feature__contig." + ENDL
+//             + ":CpGIsland__contig a owl:ObjectProperty;"
+//             + "  rdfs:domain :CpGIsland;"
+//             + "  rdfs:range :Contig."+ENDL
+//              //+ "  owl:equivalentProperty e:simple_feature__contig." + ENDL
+//             + "null:simple_feature a owl:Class ;"
+//             + "  owl:equivalentClass e:simple_feature ." + ENDL
+//             +":ComputationalAnalysis a owl:Class ;"
+//              +"    owl:equivalentClass e:analysis ."+ENDL;
+
+//         String srcStr = "@prefix : <" + ensemblNs + "> ." + ENDL
+//             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+//             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+//             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+//             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
+//             + ":simple_feature__contig a owl:ObjectProperty ;"
+//             + "  rdfs:domain :simple_feature ;"
+//             + "  rdfs:range :contig ." + ENDL
+//             + ":simple_feature__analysis a owl:ObjectProperty ;"
+//             + "  rdfs:domain :simple_feature ;"
+//             + "  rdfs:range :analysis ." + ENDL
+//             + ":simple_feature a owl:Class." + ENDL
+//             + ":contig a owl:Class."+ ENDL
+//             + ":analysis a owl:Class."+ ENDL
+//             + ":analysis__program a owl:DatatypeProperty ;"
+//             + "  rdfs:domain :analysis ;"
+//             + "  rdfs:range xsd:string ." + ENDL;
+
+//         Reader genomicReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
+//         MergeOwl merger = new MergeOwl(genomicReader, genomicNs, true);
+//         //MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), genomicNs);
+
+//         OntModel ms = ModelFactory.createOntologyModel();
+//         ms.read(new StringReader(mergeSpec), null, "N3");
+
+//         merger.mergeByEquivalence(ms, genomicNs);
+//         assertNotNull(merger.tgtModel.getOntClass(genomicNs + "CpGIsland"));
+//         assertNotNull(merger.tgtModel.getOntClass(genomicNs + "TRNA"));
+//         //assertNotNull(merger.tgtModel.getOntProperty(genomicNs + "TRNA__contig"));
+//         //assertNotNull(merger.tgtModel.getOntProperty(genomicNs + "CpGIsland__contig"));
+
+//         OntModel src = ModelFactory.createOntologyModel();
+//         src.read(new StringReader(srcStr), null, "N3");
+
+//         merger.mergeByEquivalence(src, ensemblNs);
+
+//         System.out.println(merger.equiv);
+//         System.out.println(merger.subMap);
+//         merger.tgtModel.write(System.out, "N3");
+
+//         assertNotNull(merger.tgtModel.getOntClass(genomicNs + "CpGIsland"));
+//         assertNotNull(merger.tgtModel.getOntClass(genomicNs + "TRNA"));
+//         assertNotNull(merger.tgtModel.getOntProperty(genomicNs + "TRNA__contig"));
+//         assertNotNull(merger.tgtModel.getOntProperty(genomicNs + "CpGIsland__contig"));
+
+//     }
 
 
-    private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {
-        Iterator stmtIter = model.listStatements();
-        while (stmtIter.hasNext()) {
-            Statement stmt = (Statement) stmtIter.next();
-            if (stmt.getSubject().equals(subject)
-                && stmt.getPredicate().getLocalName().equals(predicate)) {
 
-                Resource res = stmt.getResource();
-                if (res.equals((Resource) object)) {
-                    return true;
+        //================================================================================================
+
+
+        private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {
+            Iterator stmtIter = model.listStatements();
+            while (stmtIter.hasNext()) {
+                Statement stmt = (Statement) stmtIter.next();
+                if (stmt.getSubject().equals(subject)
+                    && stmt.getPredicate().getLocalName().equals(predicate)) {
+
+                    Resource res = stmt.getResource();
+                    if (res.equals((Resource) object)) {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
-        return false;
-    }
 
     private String getMergeSpec() {
         return "@prefix : <" + tgtNamespace + "> ." + ENDL
