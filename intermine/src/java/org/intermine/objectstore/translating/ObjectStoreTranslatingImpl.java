@@ -92,10 +92,17 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             Constructor con = c.getConstructor(new Class[] {Model.class, ObjectStore.class});
             t = (Translator) con.newInstance(new Object[] {model, sub});
         } catch (Exception e) {
-            IllegalArgumentException e2 = new IllegalArgumentException("Cannot find specified"
-                    + " Translator class for Translating ObjectStore (check properties file)");
-            e2.initCause(e);
-            throw e2;
+            // preserve ObjectStoreExceptions for more useful message
+            Throwable thr = e.getCause();
+            if (thr instanceof ObjectStoreException) {
+                throw (ObjectStoreException) thr;
+            } else {
+                IllegalArgumentException e2 = new IllegalArgumentException("Cannot find "
+                  + "specified Translator class for Translating ObjectStore (check "
+                  + "properties file)");
+                e2.initCause(e);
+                throw e2;
+            }
         }
         return new ObjectStoreTranslatingImpl(model, sub, t);
     }

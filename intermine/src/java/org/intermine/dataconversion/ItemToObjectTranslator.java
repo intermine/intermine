@@ -98,18 +98,22 @@ public class ItemToObjectTranslator extends Translator
         q.addToSelect(qfu);
         q.addToGroupBy(qe3);
         q.setDistinct(false);
-        if (os != null) {
-            List res = os.execute(q);
-            int offset = 0;
-            Iterator iter = res.iterator();
-            while (iter.hasNext()) {
-                ResultsRow row = (ResultsRow) iter.next();
-                String namespace = (String) row.get(0);
-                idToNamespace.put(new Integer(offset), namespace);
-                namespaceToId.put(namespace, new Integer(offset));
-                int highest = ((Integer) row.get(1)).intValue();
-                offset += highest + 1;
+        try {
+            if (os != null) {
+                List res = os.execute(q);
+                int offset = 0;
+                Iterator iter = res.iterator();
+                while (iter.hasNext()) {
+                    ResultsRow row = (ResultsRow) iter.next();
+                    String namespace = (String) row.get(0);
+                    idToNamespace.put(new Integer(offset), namespace);
+                    namespaceToId.put(namespace, new Integer(offset));
+                    int highest = ((Integer) row.get(1)).intValue();
+                    offset += highest + 1;
+                }
             }
+        } catch (Exception e) {
+            throw new ObjectStoreException(e);
         }
     }
 
