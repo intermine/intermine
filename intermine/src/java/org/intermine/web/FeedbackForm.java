@@ -122,8 +122,9 @@ public class FeedbackForm extends ValidatorForm
         super.reset(mapping, request);
         
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        if (profile != null)
+        if (profile != null) {
             email = profile.getUsername();
+        }
     }
     
     
