@@ -379,8 +379,6 @@ public class Results extends AbstractList
                     //        + "                                   Result "
                     //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
                     get(toGt);
-                } catch (ObjectStoreLimitReachedException e) {
-                    throw e;
                 } catch (IndexOutOfBoundsException e) {
                     // Ignore - this will happen if the end of a batch lies on the
                     // end of the results
@@ -474,8 +472,6 @@ public class Results extends AbstractList
             try {
                 nextObject = get(cursor);
                 return true;
-            } catch (ObjectStoreLimitReachedException e) {
-                throw e;
             } catch (IndexOutOfBoundsException e) {
                 // Ignore - it means that we should return false;
             }
