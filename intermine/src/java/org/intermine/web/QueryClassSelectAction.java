@@ -69,7 +69,8 @@ public class QueryClassSelectAction extends LookupDispatchAction
                 throw new Exception("ClassDescriptor (" + cldName + ") not found in model ("
                                     + model.getName() + ")");
             }
-            DisplayClassDescriptor cld = new DisplayClassDescriptor(model.getClassDescriptorByName(cldName));
+            DisplayClassDescriptor cld =
+                new DisplayClassDescriptor(model.getClassDescriptorByName(cldName));
             session.setAttribute("cld", cld);
         } catch (Throwable e) {
             e.printStackTrace(System.err);

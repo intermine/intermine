@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -23,9 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
-import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.metadata.presentation.DisplayClassDescriptor;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.query.presentation.QueryCreator;
@@ -66,7 +63,8 @@ public class QueryAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         QueryForm queryForm = (QueryForm) form;
-        ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld")).getClassDescriptor();
+        ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld"))
+            .getClassDescriptor();
 
         Query query = (Query) session.getAttribute("query");
         if (query == null) {
