@@ -45,10 +45,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String geneNs = getTargetModel().getNameSpace() + "Gene";
         String publicationNs = getTargetModel().getNameSpace() + "Publication";
 
-        Item bindingSite = getFeature();
-        String factor = (String) ((List) record.getAttributes().get("Factor")).get(0);
-        bindingSite.setAttribute("factor", factor);
-
         String pmid = (String) ((List) record.getAttributes().get("PMID")).get(0);
 
         Item pubmedItem;
@@ -62,7 +58,26 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             addItem(pubmedItem);
         }
 
+        Item bindingSite = getFeature();
+
         bindingSite.addToCollection("evidence", pubmedItem);
+
+        String factorGeneName = (String) ((List) record.getAttributes().get("Factor")).get(0);
+
+        if (!factorGeneName.toLowerCase().equals("unknown")) {
+            Item gene;
+
+            if (geneIdMap.containsKey(factorGeneName)) {
+                gene = (Item) geneIdMap.get(factorGeneName);
+            } else {
+                gene = getItemFactory().makeItemForClass(geneNs);
+                geneIdMap.put(factorGeneName, gene);
+                gene.setAttribute("name", factorGeneName);
+                addItem(gene);
+            }
+
+            bindingSite.setReference("factor", gene.getIdentifier());
+        }
 
         String targetGeneName = (String) ((List) record.getAttributes().get("Target")).get(0);
 
@@ -78,7 +93,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                 addItem(gene);
             }
 
-            bindingSite.setReference("targetGene", gene.getIdentifier());
+            bindingSite.setReference("gene", gene.getIdentifier());
         }
     }
 }
