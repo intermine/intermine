@@ -1693,54 +1693,49 @@
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <mappings alias="osw.production" type="calculate-locations"/>
+    <mappings operation="calculate-locations" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <mappings alias="osw.production" type="create-references"/>
+    <mappings operation="create-references" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="make-spanning-locations" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <mappings alias="osw.production" type="make-spanning-locations"/>
+    <mappings operation="make-spanning-locations" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="transfer-sequences" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <mappings alias="osw.production" type="transfer-sequences"/>
+    <mappings operation="transfer-sequences" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="update-publications" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings type="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
+    <mappings operation="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
   </target>
 
  <target name="add-licences" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings alias="osw.production" type="add-licences" integrationWriter="integration.production"/>
+    <mappings operation="add-licences" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="update-orthologues" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <mappings alias="osw.production" type="update-orthologues"/>
+    <mappings operation="update-orthologues" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="post-process">
@@ -2549,9 +2544,7 @@
     <taskdef name="fetch-sequences" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <fetch-sequences alias="osw.production" ensemblDb="db.ensembl-human" 
-                     type="fetch-contig-sequences-human" />
+    <fetch-sequences operation="fetch-contig-sequences-human" objectStoreWriter="osw.production" ensemblDb="db.ensembl-human"/>
   </target>
 
   <target name="post-process-human">   
