@@ -993,9 +993,7 @@ public class CalculateLocations
 
             // XXX FIXME - work around for Ensembl Anopheles problem: contig on supercontig strand
             // should always be 1
-            if (contigOnSc.getStrand() == -1) {
-                contigOnSc.setStrand(1);
-            }
+            contigOnSc.setStrand(1);
 
             // create location of contig on chromosome, don't expect partial locations
             SimpleLoc scOnChr = (SimpleLoc) scToChr.get(scId);
