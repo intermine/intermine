@@ -905,7 +905,8 @@
     </war>
   </target>
 
-  <target name="build-testmodel-webapp" depends="build-webapp, jar-testmodel"
+  <target name="build-testmodel-webapp" 
+          depends="build-webapp, jar-testmodel, summarise-testmodel-objectstore"
           description="Build webapp including the test model">
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/intermine.war"/>
@@ -921,6 +922,16 @@
       <property name="war" value="${dist.webapp}/intermine.war"/>
       <property name="file.dir" value="${build.tmp}"/>
       <reference torefid="file.names" refid="default-intermine-properties"/>
+    </ant>
+
+    <copy todir="${build.tmp}" file="${build.model}/testmodel/objectstoresummary.properties"/>
+    <patternset id="objectstore-summary-properties">
+      <include name="objectstoresummary.properties"/>
+    </patternset>
+    <ant antfile="build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/intermine.war"/>
+      <property name="file.dir" value="${build.tmp}"/>
+      <reference torefid="file.names" refid="objectstore-summary-properties"/>
     </ant>
   </target>
 
@@ -966,6 +977,21 @@
     <ant antfile="build-webapp.xml" target="remove-webservice" inheritRefs="true">
       <reference torefid="class.path" refid="project.class.path"/>
     </ant>    
+  </target>
+
+  <!-- ========== POST PROCESSING TARGETS ========== -->
+
+  <target name="summarise-testmodel-objectstore" depends="compile-main">
+    <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <property name="os.summary.properties.file" 
+              value="${model}/testmodel/resources/objectstoresummary.config.properties" />
+    <property name="summarise.output.properties" 
+              value="${build.model}/testmodel/objectstoresummary.properties"/>
+    <summarise-objectstore alias="os.unittest" 
+                           outputFile="${summarise.output.properties}"
+                           inputFile="${os.summary.properties.file}"/>
   </target>
 
   <!-- Model diagrams -->
