@@ -704,6 +704,21 @@
     </filter-chado>
   </target>
 
+  <!-- filter only chromosome 4 of Chado for creating small databases -->
+  <target name="filter-chado-small" depends="prepare-build-model, compile-chado-java, compile-flymine-java">
+    <taskdef
+      name="filter-chado"
+      classname="org.flymine.dataconversion.FilterChadoTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <filter-chado tgtDir="${build.tmp}">
+      <fileset dir="/shared/data/flybase/release_4_0/gff">
+        <include name="*-4-*.gff"/>
+      </fileset>
+    </filter-chado>
+  </target>
+
   <!--load retrieve chado GFF3 data-->
   <target name="retrieve-chado" depends="prepare-build-model, compile-genomic-model, compile-chado-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -752,7 +767,12 @@
   </target>
 
   <target name="build-flybase-production" 
-          depends="compile-genomic-java, filter-chado,retrieve-chado,load-chado"/>
+          depends="compile-genomic-java, filter-chado, retrieve-chado, load-chado"/>
+
+  
+  <!-- build a production DB from Chado chromosome 4 - for testing -->
+  <target name="build-flybase-production-small" 
+          depends="compile-genomic-java, filter-chado-small, retrieve-chado, load-chado"/>
 
 
   <!-- ENSEMBL ORTHOLOGUES PIPELINE -->
