@@ -10,8 +10,6 @@ package org.intermine.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -27,17 +25,12 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import org.intermine.InterMineException;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.ontology.SubclassRestriction;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -99,7 +92,6 @@ public class DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
-
         long opCount = 0;
         long time = System.currentTimeMillis();
         long start = time;
@@ -695,31 +687,5 @@ public class DataTranslator
             item.addCollection(refList);
         }
         refList.addRefId(element.getIdentifier());
-    }
-
-    /**
-     * Main method
-     * @param args command line arguments
-     * @throws Exception if something goes wrong
-     */
-    public static void main (String[] args) throws Exception {
-        String srcOsName = args[0];
-        String tgtOswName = args[1];
-        String modelName = args[2];
-        String format = args[3];
-        String namespace = args[4];
-
-        ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ItemReader sourceItemReader = new ObjectStoreItemReader(osSrc);
-        ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
-        ItemWriter tgtItemWriter = new ObjectStoreItemWriter(oswTgt);
-
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(new FileReader(new File(modelName)), null, format);
-        DataTranslator dt = new DataTranslator(sourceItemReader, model, namespace);
-        model = null;
-        dt.translate(tgtItemWriter);
-        tgtItemWriter.close();
-        oswTgt.close();
     }
 }
