@@ -1214,7 +1214,7 @@
                  model="psi"
                  osName="osw.psi-src-items">
       <fileset dir="/shared/data/ProteinInteractions">
-        <include name="droso_embryo.xml"/>
+        <include name="droso*.xml"/>
       </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1242,8 +1242,8 @@
                  model="psi"
                  osName="osw.psi-src-items">
       <fileset dir="/shared/data/ProteinInteractions">
-        <!--include name="caeel_li-2004-ex1_01.xml"/-->
-        <include name="drome_giot-2003-ex1_01.xml"/>
+        <include name="caeel*.xml"/>
+        <include name="drome*.xml"/>
       </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1298,7 +1298,8 @@
     <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi-intact" ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-hybrigenics, translate-psi, load-psi-hybrigenics, retrieve-psi-intact, translate-psi, load-psi-intact"/>
+  <!--target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-hybrigenics, translate-psi, load-psi-hybrigenics, retrieve-psi-intact, translate-psi, load-psi-intact"/-->
+  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-intact, translate-psi, load-psi-intact"/>
 
   <!-- TAXONOMY PIPELINE -->
 
@@ -1850,6 +1851,7 @@
   </target>
 
   <target name="post-process">
+    <antcall target="add-licences"/>
     <antcall target="calculate-locations"/>
     <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
