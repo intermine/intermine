@@ -87,6 +87,11 @@
     rdfs:domain :Relation ;
     rdfs:range :Evidence .
 
+# SimpleRelation relates two BioEntities with no specific information added
+
+:SimpleRelation a owl:Class ;
+    rdfs:subClassOf :Relation .
+
 # RankedRelation describes an integer order (rank) for objects in subject
 
 :RankedRelation a owl:Class ;
