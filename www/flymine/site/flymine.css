@@ -17,6 +17,10 @@ a:hover {color: #220077;
 .main-layout {
     width: 100%
 }
+.sidebar {
+    font-size: small;
+    background-color: #ccaaff;
+}
 .links {
     font-size: small;
     background-color: #ccaaff;
