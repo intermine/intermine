@@ -39,22 +39,13 @@ import org.intermine.metadata.Model;
  */
 public abstract class TargetItemsTestCase extends TestCase
 {
-    ObjectStoreWriter osw;
-
-    /**
-     * Set up.
-     * @throws Exception if anyhting goes wrong
-     */
-    public void setUp() throws Exception {
-        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.fulldatatest");
-    }
-
     /**
      * Delete items put in temporary objectstore.
      * @throws Exception if anything goes wrong
      */
     public void tearDown() throws Exception {
+        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.fulldatatest");
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
@@ -71,13 +62,14 @@ public abstract class TargetItemsTestCase extends TestCase
         osw.close();
     }
 
-
     /**
      * Test that converted/translated items can be made into business objects.  Will highlight
      * problems with model incompatibility.
      * @throws Exception if anything goes wrong
      */
     public void testItemToObject() throws Exception {
+        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.fulldatatest");
         ItemWriter iw = new ObjectStoreItemWriter(osw);
 
         // store items
