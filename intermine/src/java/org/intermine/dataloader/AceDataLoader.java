@@ -9,32 +9,21 @@ import org.acedb.AceURL;
 import org.acedb.AceSet;
 import org.acedb.AceNode;
 import org.acedb.AceObject;
-import org.acedb.AceValue;
 import org.acedb.StringValue;
 import org.acedb.IntValue;
 import org.acedb.FloatValue;
 import org.acedb.Reference;
-import org.acedb.Connection;
-import org.acedb.socket.SocketDriver;
 
 import org.flymine.FlyMineException;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ModelUtil;
 
 /**
- * A simple command-line ACeDB client.
- * <P>
- * The client connects to an ACeDB socket server on a user-defined socket. The
- * client currently has no command-line history or auto-complete functionality.
- * These would be good things to add.
- * <P>
- * Use:<br>
- * <code>java AceDataLoader host port user password</code>
- *
- * @author Matthew Pocock
+ * DataLoader for AceDB data
+ * @author Andrew Varley
  */
-public class AceDataLoader extends AbstractDataLoader {
-
+public class AceDataLoader extends AbstractDataLoader
+{
     /**
      * Static method to unmarshall business objects from a given xml file and call
      * store on each.
@@ -57,7 +46,6 @@ public class AceDataLoader extends AbstractDataLoader {
             AceURL objURL = source.relativeURL(clazzName);
             AceSet fetchedObjects = (AceSet) Ace.fetch(objURL);
 
-            System.out.println("Retrieved " + fetchedObjects.size() + " " + clazzName + " objects");
             Iterator objIter = fetchedObjects.iterator();
             while (objIter.hasNext()) {
                 processAceObject((AceObject) objIter.next(), null);
@@ -68,6 +56,17 @@ public class AceDataLoader extends AbstractDataLoader {
         }
     }
 
+    /**
+     * Process an AceObject. This will create a new instance of the
+     * object and set the identifier.
+     *
+     * @param aceObject the AceObject to process
+     * @param model the model this object comes from, or null if AceObject name is fully qualified
+     * @return an instance of the object
+     *
+     * @throws AceException if an error occurs with the Ace data
+     * @throws FlyMineException if object cannot be instantiated
+     */
     protected static Object processAceObject(AceObject aceObject, String model)
         throws AceException, FlyMineException {
         Object currentObject = null;
@@ -79,7 +78,6 @@ public class AceDataLoader extends AbstractDataLoader {
             }
             currentObject = Class.forName(clazzName).newInstance();
             setField(currentObject, "identifier", aceObject.getName());
-            System.out.println("Creating object " + aceObject.getName());
         } catch (ClassNotFoundException e) {
             throw new FlyMineException(e);
         } catch (InstantiationException e) {
@@ -92,6 +90,16 @@ public class AceDataLoader extends AbstractDataLoader {
         return currentObject;
     }
 
+    /**
+     * Process an AceNode. This will set field values in the given
+     * object if the node is a data node.
+     *
+     * @param aceNode the AceNode to process
+     * @param currentObject the object in which to set field
+     *
+     * @throws AceException if an error occurs with the Ace data
+     * @throws FlyMineException if object cannot be instantiated
+     */
     protected static void processAceNode(AceNode aceNode, Object currentObject)
         throws AceException, FlyMineException {
         String nodeType;
@@ -99,28 +107,24 @@ public class AceDataLoader extends AbstractDataLoader {
         String nodeName;
         if (aceNode instanceof Reference) {
             nodeName = getName(aceNode);
-            nodeValue = new String(aceNode.getName());
-            output(nodeName, "Ref", nodeValue);
+            nodeValue = aceNode.getName();
         } else if (aceNode instanceof FloatValue) {
             nodeName = getName(aceNode);
             nodeValue = new Float(((FloatValue) aceNode).toFloat());
             setField(currentObject, nodeName, nodeValue);
-            output(nodeName, "Float", nodeValue);
         } else if (aceNode instanceof IntValue) {
             nodeName = getName(aceNode);
             nodeValue = new Integer(((IntValue) aceNode).toInt());
             setField(currentObject, nodeName, nodeValue);
-            output(nodeName, "Int", nodeValue);
         } else if (aceNode instanceof StringValue) {
             nodeName = getName(aceNode);
             nodeValue = ((StringValue) aceNode).toString();
             setField(currentObject, nodeName, nodeValue);
-            output(nodeName, "String", nodeValue);
         } else if (aceNode instanceof AceNode) {
             nodeName = aceNode.getName();
             // Give it a chance to set a Boolean flag
-            if ((TypeUtil.getField(currentObject.getClass(), nodeName) != null)
-                && (TypeUtil.getField(currentObject.getClass(), nodeName).getType() == Boolean.class)) {
+            Field nodeField = TypeUtil.getField(currentObject.getClass(), nodeName);
+            if ((nodeField != null) && (nodeField.getType() == Boolean.class)) {
                 setField(currentObject, nodeName, Boolean.TRUE);
             }
         }
@@ -139,15 +143,16 @@ public class AceDataLoader extends AbstractDataLoader {
     /**
      * Sets a field in a target object, or adds the piece of data to a collection
      *
+     * @param target the object in which to set the field
+     * @param fieldName the name of the field to set
+     * @param fieldValue the value to set or to be added to a collection
+     * @throws FlyMineException if the field cannot be accessed
      */
     protected static void setField(Object target, String fieldName, Object fieldValue)
         throws FlyMineException {
         try {
             if (ModelUtil.getFieldType(target.getClass(), fieldName) == ModelUtil.COLLECTION) {
-                System.out.println("Adding " + fieldValue + " to " + fieldName + " Collection of " + TypeUtil.getFieldValue(target, "identifier"));
-                if (((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue)) {
-                    System.out.println("ADDED");
-                }
+                ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
             } else {
                 TypeUtil.setFieldValue(target, fieldName, fieldValue);
             }
@@ -156,6 +161,12 @@ public class AceDataLoader extends AbstractDataLoader {
         }
     }
 
+    /**
+     * Get the name of an AceNode, or of the parent if it is a data node
+     *
+     * @param aceNode the node
+     * @return the name of the node, or the parent's name if this node is a data node
+     */
     protected static String getName(AceSet aceNode) {
         String name = aceNode.getParent().getName();
         AceSet node = aceNode;
@@ -175,11 +186,12 @@ public class AceDataLoader extends AbstractDataLoader {
 
     }
 
-    protected static void output(String nodeName, String nodeType, Object nodeValue) {
-        System.out.println(nodeName + "(" + nodeType + "):" + nodeValue);
-    }
-
-
+    /**
+     * Used for testing access to an AceDB server
+     *
+     * @param args command line arguments
+     * @throws Exception if an error occurs
+     */
     public static void main(String [] args) throws Exception {
         if (args.length != 4) {
             throw new RuntimeException("AceDataLoader hostname port username password");
