@@ -304,7 +304,7 @@ public class FqlQueryParserTest extends FqlQueryTestCase
             Query q = FqlQueryParser.parse(new FqlQuery("select Company from Company where Company.name = Company.vatNumber", "org.flymine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because the two types do not match");
         } catch (IllegalArgumentException e) {
-            assertEquals("Invalid pair of arguments: class java.lang.String, class java.lang.Integer", e.getMessage());
+            assertEquals("Invalid comparison: java.lang.String = java.lang.Integer", e.getMessage());
         }
         try {
             Query q = FqlQueryParser.parse(new FqlQuery("select Company from Company where Company.departments = Company.vatNumber", "org.flymine.model.testmodel"));

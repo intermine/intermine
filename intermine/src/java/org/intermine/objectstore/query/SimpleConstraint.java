@@ -10,6 +10,10 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.Date;
+
+import org.flymine.util.Util;
+
 /**
  * Represents a constraint between two QueryEvaluable types.  These are query elements
  * that can be resolved to a value - fields, expressions, aggregate functions and
@@ -19,77 +23,12 @@ package org.flymine.objectstore.query;
  * @author Richard Smith
  * @author Mark Woodbridge
  */
-
 public class SimpleConstraint implements Constraint
 {
-
-    /**
-     * require that the two arguments are either equal numerically or are identical strings
-     */
-    public static final int EQUALS = 1;
-
-    /**
-     * require that the two arguments are not equal numerically or not identical strings
-     */
-    public static final int NOT_EQUALS = 2;
-
-    /**
-     * require that the first argument is less than the second (numeric only)
-     */
-    public static final int LESS_THAN = 3;
-
-    /**
-     * require that the first argument is less than or equal to the second (numeric only)
-     */
-    public static final int LESS_THAN_EQUALS = 4;
-
-    /**
-     * require that the first argument is greater than the second (numeric only)
-     */
-    public static final int GREATER_THAN = 5;
-
-    /**
-     * require that the first argument is greater than or equal to the second (numeric only)
-     */
-    public static final int GREATER_THAN_EQUALS = 6;
-
-    /**
-     * require that the first argument is a substring of the second (string only)
-     */
-    public static final int MATCHES = 7;
-
-    /**
-     * require that the first argument is not a substring of the second (string only)
-     */
-    public static final int DOES_NOT_MATCH = 8;
-
-    /**
-     * require that the specified argument is null
-     */
-    public static final int IS_NULL = 9;
-
-    /**
-     * require that the specified argument is not null
-     */
-    public static final int IS_NOT_NULL = 10;
-
-    private static final String OPERATIONS[] = {"",
-        "=",
-        "!=",
-        "<",
-        "<=",
-        ">",
-        ">=",
-        "LIKE",
-        "NOT LIKE",
-        "IS NULL",
-        "IS NOT NULL"};
-
     protected QueryEvaluable qe1;
     protected QueryEvaluable qe2;
     protected boolean negated;
     protected int type;
-
 
     /**
      * Construct a Constraint.  Check that java types of QueryEvaluables are compatible with the
@@ -116,58 +55,28 @@ public class SimpleConstraint implements Constraint
      */
     public SimpleConstraint(QueryEvaluable qe1, int type, QueryEvaluable qe2, boolean negated) {
         if (qe1 == null) {
-            throw (new NullPointerException("qe1 cannot be null"));
+            throw new NullPointerException("qe1 cannot be null");
         }
+
         if (qe2 == null) {
-            throw (new NullPointerException("qe2 cannot be null"));
+            throw new NullPointerException("qe2 cannot be null");
+        }
+
+        if (type < 0 || type > 9) {
+            throw new IllegalArgumentException("Invalid value for type: " + type);
+        }
+
+        if (!validComparison(qe1.getType(), type, qe2.getType())) {
+            throw new IllegalArgumentException("Invalid comparison: " + qe1.getType().getName()
+                                               + " " + getOpString(type) + " "
+                                               + qe2.getType().getName());
         }
 
         this.qe1 = qe1;
         this.qe2 = qe2;
         this.negated = negated;
-
-        if ((type < 1) || (type > 10)) {
-            throw (new IllegalArgumentException("Invalid value for type: " + type));
-        }
-        if ((type == IS_NULL) || (type == IS_NOT_NULL)) {
-            throw (new IllegalArgumentException("Invalid number of arguments for operation: "
-                                                + type));
-        }
-        Class qe1Type = qe1.getType();
-        Class qe2Type = qe2.getType();
-
-        if (Number.class.isAssignableFrom(qe1Type) && Number.class.isAssignableFrom(qe2Type)) {
-            if (!(type == EQUALS || type == NOT_EQUALS
-                  || type == LESS_THAN || type == LESS_THAN_EQUALS
-                  || type == GREATER_THAN || type == GREATER_THAN_EQUALS)) {
-                throw (new IllegalArgumentException("Invalid type for numeric arguments: " + type));
-            }
-        } else if (String.class.isAssignableFrom(qe1Type)
-                   && String.class.isAssignableFrom(qe2Type)) {
-            if (!(type == MATCHES || type == DOES_NOT_MATCH
-                  || type == EQUALS || type == NOT_EQUALS)) {
-                throw (new IllegalArgumentException("Invalid type for string arguments: " + type));
-            }
-        } else if (Boolean.class.isAssignableFrom(qe1Type)
-                   && Boolean.class.isAssignableFrom(qe2Type)) {
-            if (!(type == EQUALS || type == NOT_EQUALS)) {
-                throw (new IllegalArgumentException("Invalid type for boolean arguments: " + type));
-            }
-        } else if (java.util.Date.class.isAssignableFrom(qe1Type)
-                   && java.util.Date.class.isAssignableFrom(qe2Type)) {
-            if (!(type == EQUALS || type == NOT_EQUALS
-                  || type == LESS_THAN || type == LESS_THAN_EQUALS
-                  || type == GREATER_THAN || type == GREATER_THAN_EQUALS)) {
-                throw (new IllegalArgumentException("Invalid type for string arguments: " + type));
-            }
-        } else {
-            throw (new IllegalArgumentException("Invalid pair of arguments: " + qe1Type + ", "
-                                                + qe2Type));
-        }
-
         this.type = type;
     }
-
 
     /**
      * Construct a Constraint.  Check that correct type of constraint is selected for
@@ -180,7 +89,6 @@ public class SimpleConstraint implements Constraint
     public SimpleConstraint(QueryEvaluable qe1, int type) {
         this(qe1, type, false);
     }
-
 
     /**
      * Construct a Constraint.  Check that correct type of constraint is selected for
@@ -196,17 +104,18 @@ public class SimpleConstraint implements Constraint
             throw (new NullPointerException("qe1 cannot be null"));
         }
 
+        if (type < 0 || type > 9) {
+            throw new IllegalArgumentException("Invalid value for type: " + type);
+        }
+
+        if (!validComparison(qe1.getType(), type, null)) {
+            throw new IllegalArgumentException("Invalid comparison: " + qe1.getType().getName()
+                                               + " " + getOpString(type));
+        }
+
         this.qe1 = qe1;
         this.qe2 = null;
         this.negated = negated;
-
-        if ((type < 1) || (type > 10)) {
-            throw (new IllegalArgumentException("Invalid value for type: " + type));
-        }
-        if ((type != IS_NULL) && (type != IS_NOT_NULL)) {
-            throw (new IllegalArgumentException("Invalid number of arguments for operation: "
-                                                + type));
-        }
         this.type = type;
     }
 
@@ -244,31 +153,7 @@ public class SimpleConstraint implements Constraint
      * @return integer value of operation type
      */
     public int getRealType() {
-        if (negated) {
-            switch(type) {
-                case EQUALS:
-                    return NOT_EQUALS;
-                case NOT_EQUALS:
-                    return EQUALS;
-                case LESS_THAN:
-                    return GREATER_THAN_EQUALS;
-                case GREATER_THAN_EQUALS:
-                    return LESS_THAN;
-                case GREATER_THAN:
-                    return LESS_THAN_EQUALS;
-                case LESS_THAN_EQUALS:
-                    return GREATER_THAN;
-                case MATCHES:
-                    return DOES_NOT_MATCH;
-                case DOES_NOT_MATCH:
-                    return MATCHES;
-                case IS_NULL:
-                    return IS_NOT_NULL;
-                case IS_NOT_NULL:
-                    return IS_NULL;
-            }
-        }
-        return type;
+        return negate(type);
     }
 
     /**
@@ -295,7 +180,7 @@ public class SimpleConstraint implements Constraint
      * @return String representation
      */
     public String getOpString() {
-        return OPERATIONS[getRealType()];
+        return getOpString(type);
     }
 
     /**
@@ -307,21 +192,217 @@ public class SimpleConstraint implements Constraint
     public boolean equals(Object obj) {
         if (obj instanceof SimpleConstraint) {
             SimpleConstraint sc = (SimpleConstraint) obj;
-            return (qe1.equals(sc.qe1)
-                    && (type == sc.type)
-                    && (negated == sc.negated)
-                    && ((qe2 != null) ? (qe2.equals(sc.qe2)) : (sc.qe2 == null)));
+            return qe1.equals(sc.qe1)
+                    && type == sc.type
+                    && negated == sc.negated
+                    && Util.equals(qe2, sc.qe2);
         }
         return false;
     }
+
     /**
      * Get the hashCode for this object overrides Object.hashCode()
      *
      * @return the hashCode
      */
     public int hashCode() {
-        return qe1.hashCode() + (3 * type) + ((negated) ? 29 : 0)
-            + ((qe2 != null) ? qe2.hashCode() : 31);
+        return qe1.hashCode()
+            + 3 * type 
+            + 29 * (negated ? 1 : 0)
+            + 31 * Util.hashCode(qe2);
     }
 
+    //-------------------------------------------------------------------------
+    
+    /**
+     * require that the two arguments are either equal numerically or are identical strings
+     */
+    public static final int EQUALS = 0;
+
+    /**
+     * require that the two arguments are not equal numerically or not identical strings
+     */
+    public static final int NOT_EQUALS = 1;
+
+    /**
+     * require that the first argument is less than the second (numeric only)
+     */
+    public static final int LESS_THAN = 2;
+
+    /**
+     * require that the first argument is less than or equal to the second (numeric only)
+     */
+    public static final int LESS_THAN_EQUALS = 3;
+
+    /**
+     * require that the first argument is greater than the second (numeric only)
+     */
+    public static final int GREATER_THAN = 4;
+
+    /**
+     * require that the first argument is greater than or equal to the second (numeric only)
+     */
+    public static final int GREATER_THAN_EQUALS = 5;
+
+    /**
+     * require that the first argument is a substring of the second (string only)
+     */
+    public static final int MATCHES = 6;
+
+    /**
+     * require that the first argument is not a substring of the second (string only)
+     */
+    public static final int DOES_NOT_MATCH = 7;
+
+    /**
+     * require that the specified argument is null
+     */
+    public static final int IS_NULL = 8;
+
+    /**
+     * require that the specified argument is not null
+     */
+    public static final int IS_NOT_NULL = 9;
+
+    protected static final String[] OPERATIONS = {
+        "=",
+        "!=",
+        "<",
+        "<=",
+        ">",
+        ">=",
+        "LIKE",
+        "NOT LIKE",
+        "IS NULL",
+        "IS NOT NULL"};
+
+    protected static final int[] NUMBER_OPS = {
+        EQUALS,
+        NOT_EQUALS,
+        LESS_THAN,
+        LESS_THAN_EQUALS,
+        GREATER_THAN,
+        GREATER_THAN_EQUALS};
+
+    protected static final int[] DATE_OPS = NUMBER_OPS;
+
+    protected static final int[] STRING_OPS = {
+        EQUALS,
+        NOT_EQUALS,
+        MATCHES,
+        DOES_NOT_MATCH};
+
+    protected static final int[] BOOLEAN_OPS = {
+        EQUALS,
+        NOT_EQUALS};
+
+    /**
+     * Get type of constraint, taking negated into account.
+     *
+     * @param operator the operator to negate
+     * @return integer value of operation type
+     */
+    protected static int negate(int operator) {
+        switch(operator) {
+        case EQUALS:
+            return NOT_EQUALS;
+        case NOT_EQUALS:
+            return EQUALS;
+        case LESS_THAN:
+            return GREATER_THAN_EQUALS;
+        case GREATER_THAN_EQUALS:
+            return LESS_THAN;
+        case GREATER_THAN:
+            return LESS_THAN_EQUALS;
+        case LESS_THAN_EQUALS:
+            return GREATER_THAN;
+        case MATCHES:
+            return DOES_NOT_MATCH;
+        case DOES_NOT_MATCH:
+            return MATCHES;
+        case IS_NULL:
+            return IS_NOT_NULL;
+        case IS_NOT_NULL:
+            return IS_NULL;
+        }
+        return operator;
+    }
+
+    /**
+     * Returns the String representation of the operation.
+     *
+     * @param type the operator code
+     * @return String representation
+     */
+    public static String getOpString(int type) {
+        return OPERATIONS[type];
+    }
+
+    /**
+     * Check whether a comparison is valid i.e. the arguments are comparable types and the
+     * the operator is permitted for those types
+     * @param arg1 the first argument
+     * @param operator how to compare the arguments
+     * @param arg2 the second argument
+     * @return whether the comparison is valid
+     */
+    public static boolean validComparison(Class arg1, int operator, Class arg2) {
+        if (arg2 == null) {
+            return operator == IS_NULL || operator == IS_NOT_NULL;
+        }
+        if (comparable(arg1, arg2)) {
+            return contains(validOperators(arg1), operator);
+        }
+        return false;
+    }
+
+    /**
+     * Check whether the two arguments are of comparable types i.e. they are of similiar type
+     * and we know how to handle that type
+     * @param arg1 the first argument
+     * @param arg2 the second argument
+     * @return whether the types are comparable
+     */
+    public static boolean comparable(Class arg1, Class arg2) {
+        if (Number.class.isAssignableFrom(arg1) && Number.class.isAssignableFrom(arg2)
+            || arg1.equals(String.class) && arg2.equals(String.class)
+            || arg1.equals(Boolean.class) && arg2.equals(Boolean.class)
+            || arg1.equals(Date.class) && arg2.equals(Date.class)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return the list of valid (binary) operator codes given arguments of a specified type
+     * @param arg the argument type
+     * @return an array of character codes
+     */
+    public static int[] validOperators(Class arg) {
+        if (Number.class.isAssignableFrom(arg)) {
+            return NUMBER_OPS;
+        } else if (String.class.equals(arg)) {
+            return STRING_OPS;
+        } else if (Boolean.class.equals(arg)) {
+            return BOOLEAN_OPS;
+        } else if (Date.class.equals(arg)) {
+            return DATE_OPS;
+        }
+        return new int[0];
+    }
+
+    /**
+     * Utility method to check whether an (int) array contains an int
+     * @param array the array to inspect
+     * @param element the value to look for
+     * @return whether the array contains the element
+     */
+    protected static boolean contains(int[] array, int element) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == element) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
