@@ -59,13 +59,13 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      * field, rather than the object field called "identifier". The test used to determine
      * whether a path rule refers to this String is by Object reference equality (==).
      */
-    public static final String IDENTIFIER = "some random string";
+    public static final String IDENTIFIER = "IDENTIFIER";
     /**
      * This String should be used to construct item path rules that refer to the Item className
      * field, rather than the object field called "className". The test used to determine
      * whether a path rule refers to this String is by Object reference equality (==).
      */
-    public static final String CLASSNAME = "another random string";
+    public static final String CLASSNAME = "CLASSNAME";
     private static final Logger LOG = Logger.getLogger(ObjectStoreItemPathFollowingImpl.class);
 
     Map descriptiveCache = Collections.synchronizedMap(new CacheMap(
@@ -251,7 +251,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         // of FieldNameAndValue objects. We can put this data onto a queue and process it that way,
         // because processing an element will involve creating more descriptor-setofconstraints
         // pairs.
-        
+
         LinkedList queue = new LinkedList();
         Iterator entryIter = descriptorToConstraints.entrySet().iterator();
         while (entryIter.hasNext()) {
@@ -284,7 +284,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
 
             // So, we have a constraints Set, with constraints that have all been generated from the
             // same ItemPrefetchDescriptor. So, they can all be fetched in the same query.
-            
+
 
             if (dac.constraints.size() > 1) {
                 Query q = buildQuery(dac);
@@ -448,7 +448,7 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         }
         ConstraintSet orCs = new ConstraintSet(ConstraintOp.OR);
         mainCs.addConstraint(orCs);
-        
+
         // Now we have the framework of the query. Each constraint must use the correct
         // number of attributes and references.
 
