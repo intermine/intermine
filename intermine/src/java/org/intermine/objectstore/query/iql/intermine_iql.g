@@ -120,7 +120,7 @@ table:
     ;
 
 table_name:
-        IDENTIFIER
+        ( IDENTIFIER DOT! )* IDENTIFIER
         { #table_name = #([TABLE_NAME, "TABLE_NAME"], #table_name); }
     ;
 

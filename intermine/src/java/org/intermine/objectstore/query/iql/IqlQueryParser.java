@@ -55,6 +55,10 @@ public class FqlQueryParser
 
             AST ast = parser.getAST();
 
+            //antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+            //System.\\out.println("\n==> Dump of AST <==");
+            //visitor.visit(ast);
+
             if (ast == null) {
                 throw new IllegalArgumentException("Invalid FQL string " + fql);
             }
@@ -158,7 +162,12 @@ public class FqlQueryParser
         do {
             switch (ast.getType()) {
                 case FqlTokenTypes.TABLE_NAME:
-                    tableName = ast.getFirstChild().getText();
+                    AST tableNameAst = ast.getFirstChild();
+                    do {
+                        String temp = tableNameAst.getText();
+                        tableName = (tableName == null ? temp : tableName + "." + temp);
+                        tableNameAst = tableNameAst.getNextSibling();
+                    } while (tableNameAst != null);
                     break;
                 case FqlTokenTypes.TABLE_ALIAS:
                     tableAlias = ast.getFirstChild().getText();
@@ -171,10 +180,18 @@ public class FqlQueryParser
         } while (ast != null);
         Class c = null;
         try {
-            c = Class.forName(modelPackage + "." + tableName);
+            c = Class.forName(tableName);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Unknown class name " + tableName + " in package "
-                    + modelPackage);
+            if (modelPackage != null) {
+                try {
+                    c = Class.forName(modelPackage + "." + tableName);
+                } catch (ClassNotFoundException e2) {
+                    throw new IllegalArgumentException("Unknown class name " + tableName
+                            + " in package " + modelPackage);
+                }
+            } else {
+                throw new IllegalArgumentException("Unknown class name " + tableName);
+            }
         }
         QueryClass qc = new QueryClass(c);
         if (tableAlias == null) {

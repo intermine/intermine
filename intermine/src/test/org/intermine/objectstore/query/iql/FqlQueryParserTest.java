@@ -23,7 +23,7 @@ import org.flymine.objectstore.ObjectStoreQueriesTestCase;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class FqlQueryParserTest extends ObjectStoreQueriesTestCase
+public class FqlQueryParserTest extends FqlQueryTestCase
 {
     public FqlQueryParserTest(String arg) {
         super(arg);
@@ -31,49 +31,6 @@ public class FqlQueryParserTest extends ObjectStoreQueriesTestCase
 
     public static Test suite() {
         return OneTimeTestCase.buildSuite(FqlQueryParserTest.class);
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        ObjectStoreQueriesTestCase.oneTimeSetUp();
-
-        setUpResults();
-    }
-
-    /**
-     * Set up all the results expected for a given subset of queries
-     */
-    public static void setUpResults() {
-        results.put("SelectSimpleObject", "select a1_ from Company as a1_");
-        results.put("SubQuery", "select a1_.a1_.name AS a2_, a1_.a2_ AS a3_ from (select a1_, 5 as a2_ from Company as a1_) as a1_");
-        results.put("WhereSimpleEquals", "select a1_.name as a2_ from Company as a1_ where a1_.vatNumber = 1234");
-        results.put("WhereSimpleNotEquals", "select a1_.name as a2_ from Company as a1_ where a1_.vatNumber != 1234");
-        results.put("WhereSimpleLike", "select a1_.name as a2_ from Company as a1_ where a1_.name like 'Company%'");
-        results.put("WhereEqualsString", "select a1_.name as a2_ from Company as a1_ where a1_.name = 'CompanyA'");
-        results.put("WhereAndSet", "select a1_.name as a2_ from Company as a1_ where a1_.name like 'Company%' and a1_.vatNumber > 2000");
-        results.put("WhereOrSet", "select a1_.name as a2_ from Company as a1_ where a1_.name like 'CompanyA%' or a1_.vatNumber > 2000");
-        results.put("WhereNotSet", "select a1_.name as a2_ from Company as a1_ where not (a1_.name like 'Company%' and a1_.vatNumber > 2000)");
-        results.put("WhereSubQueryField", "select a1_ from Department as a1_ where a1_.name in (select a1_.name as a2_ from Department as a1_) order by a1_.name");
-        results.put("WhereSubQueryClass", "select a1_ from Company as a1_ where a1_ in (select a1_ from Company as a1_ where a1_.name = 'CompanyA')");
-        results.put("WhereNotSubQueryClass", "select a1_ from Company as a1_ where a1_ not in (select a1_ from Company as a1_ where a1_.name = 'CompanyA')");
-        results.put("WhereNegSubQueryClass", "select a1_ from Company as a1_ where not (a1_ in (select a1_ from Company as a1_ where a1_.name = 'CompanyA'))");
-        results.put("WhereClassClass", "select a1_, a2_ from Company as a1_, Company as a2_ where a1_ = a2_");
-        results.put("WhereNotClassClass", "select a1_, a2_ from Company as a1_, Company as a2_ where a1_ != a2_");
-        results.put("WhereNegClassClass", "select a1_, a2_ from Company as a1_, Company as a2_ where not a1_ = a2_");
-        results.put("Contains11", "select a1_, a2_ from Department as a1_, Manager as a2_ where a1_.manager contains a2_ and a1_.name = 'DepartmentA1'");
-        results.put("ContainsNot11", "select a1_, a2_ from Department as a1_, Manager as a2_ where a1_.manager does not contain a2_ and a1_.name = 'DepartmentA1'");
-        results.put("ContainsNeg11", "select a1_, a2_ from Department as a1_, Manager as a2_ where not a1_.manager contains a2_ and a1_.name = 'DepartmentA1'");
-        results.put("Contains1N", "select a1_, a2_ from Company as a1_, Department as a2_ where a1_.departments contains a2_ and a1_.name = 'CompanyA'");
-        results.put("ContainsN1", "select a1_, a2_ from Department as a1_, Company as a2_ where a1_.company contains a2_ and a2_.name = 'CompanyA'");
-        results.put("ContainsMN", "select a1_, a2_ from Contractor as a1_, Company as a2_ where a1_.companys contains a2_ and a1_.name = 'ContractorA'");
-        results.put("ContainsDuplicatesMN", "select a1_, a2_ from Contractor as a1_, Company as a2_ where a1_.oldComs contains a2_");
-        results.put("SimpleGroupBy", "select a1_, count(*) as a2_ from Company as a1_, Department as a3_ where a1_.departments contains a3_ group by a1_");
-        results.put("MultiJoin", "select a1_, a2_, a3_, a4_ from Company as a1_, Department as a2_, Manager as a3_, Address as a4_ where a1_.departments contains a2_ and a2_.manager contains a3_ and a3_.address contains a4_ and a3_.name = 'EmployeeA1'");
-        results.put("SelectComplex", "select avg(a1_.vatNumber) + 20 as a3_, a2_.name as a4_, a2_ from Company as a1_, Department as a2_ group by a2_");
-        results.put("SelectClassAndSubClasses", "select a1_ from Employee as a1_ order by a1_.name");
-        results.put("SelectInterfaceAndSubClasses", "select a1_ from Employable as a1_");
-        results.put("SelectInterfaceAndSubClasses2", "select a1_ from RandomInterface as a1_");
-        results.put("SelectInterfaceAndSubClasses3", "select a1_ from ImportantPerson as a1_");
-        results.put("OrderByAnomaly", "select 5 as a2_, a1_.name as a3_ from Company as a1_");
     }
 
     public void executeTest(String type) throws Exception {
@@ -84,7 +41,7 @@ public class FqlQueryParserTest extends ObjectStoreQueriesTestCase
 
     public void testConstants() throws Exception {
         Query q = FqlQueryParser.parse(new FqlQuery("select 1 as b, false as c, true as d, 1.2 as e, 'hello' as f, '2003-04-30 14:12:30.333' as g from Company", "org.flymine.model.testmodel"));
-        assertEquals("SELECT 1 AS b, false AS c, true AS d, 1.2 AS e, hello AS f, Wed Apr 30 14:12:30 BST 2003 AS g FROM org.flymine.model.testmodel.Company AS Company", q.toString());
+        assertEquals("SELECT 1 AS b, false AS c, true AS d, 1.2 AS e, 'hello' AS f, '2003-04-30 14:12:30.333' AS g FROM org.flymine.model.testmodel.Company AS Company", q.toString());
     }
 
     public void testValidPathExpressions() throws Exception {
@@ -195,7 +152,7 @@ public class FqlQueryParserTest extends ObjectStoreQueriesTestCase
 
     public void testSafeFunctions() throws Exception {
         Query q = FqlQueryParser.parse(new FqlQuery("select count(*) as a, sum(Company.vatNumber + 3) as b, avg(Company.vatNumber) as c, min(Company.vatNumber) as d, substr('flibble', 3, max(Company.vatNumber)) as e from Company", "org.flymine.model.testmodel"));
-        assertEquals("SELECT COUNT(*) AS a, SUM(Company.vatNumber + 3) AS b, AVG(Company.vatNumber) AS c, MIN(Company.vatNumber) AS d, SUBSTR(flibble, 3, MAX(Company.vatNumber)) AS e FROM org.flymine.model.testmodel.Company AS Company", q.toString());
+        assertEquals("SELECT COUNT(*) AS a, SUM(Company.vatNumber + 3) AS b, AVG(Company.vatNumber) AS c, MIN(Company.vatNumber) AS d, SUBSTR('flibble', 3, MAX(Company.vatNumber)) AS e FROM org.flymine.model.testmodel.Company AS Company", q.toString());
     }
 
     public void testInvalidSafeFunctions() throws Exception {
@@ -256,7 +213,7 @@ public class FqlQueryParserTest extends ObjectStoreQueriesTestCase
 
     public void testValidConstraints() throws Exception {
         Query q = FqlQueryParser.parse(new FqlQuery("select c_, d_, e_ from Company as c_, Department as d_, CEO as e_ where c_.departments does not contain d_ and c_.cEO contains e_ and (c_.vatNumber < 5 or c_.name like 'fish%') and e_.salary is not null and c_.vatNumber > e_.age and c_.name in (select Company.name as name from Company)", "org.flymine.model.testmodel"));
-        assertEquals("SELECT c_, d_, e_ FROM org.flymine.model.testmodel.Company AS c_, org.flymine.model.testmodel.Department AS d_, org.flymine.model.testmodel.CEO AS e_ WHERE (c_.departments DOES NOT CONTAIN d_ AND c_.cEO CONTAINS e_ AND (c_.vatNumber < 5 OR c_.name LIKE fish%) AND e_.salary IS NOT NULL AND c_.vatNumber > e_.age AND c_.name IN (SELECT Company.name AS name FROM org.flymine.model.testmodel.Company AS Company))", q.toString());
+        assertEquals("SELECT c_, d_, e_ FROM org.flymine.model.testmodel.Company AS c_, org.flymine.model.testmodel.Department AS d_, org.flymine.model.testmodel.CEO AS e_ WHERE (c_.departments DOES NOT CONTAIN d_ AND c_.cEO CONTAINS e_ AND (c_.vatNumber < 5 OR c_.name LIKE 'fish%') AND e_.salary IS NOT NULL AND c_.vatNumber > e_.age AND c_.name IN (SELECT Company.name AS name FROM org.flymine.model.testmodel.Company AS Company))", q.toString());
     }
 
     public void testInvalidConstraint() throws Exception {

@@ -23,11 +23,23 @@ public class FqlQuery
     private String packageName;
 
     /**
+     * Construct an FQL query from a Flymine Query Object.
+     *
+     * @param query a Flymine Query Object
+     * @throws NullPointerException if query is null
+     */
+    public FqlQuery(Query query) {
+        this.query = query.toString();
+        this.packageName = null;
+    }
+
+    /**
      * Construct an FQL query from a String.
      * NOTE: The query string is not validated on construction
      *
      * @param query the string-based query
-     * @param packageName the package name to qualify unqualified classnames with
+     * @param packageName the package name with which to qualify unqualified classnames. Note that
+     * this can be null if every class name is fully qualified
      * @throws NullPointerException if query is null
      */
     public FqlQuery(String query, String packageName) {
@@ -43,7 +55,6 @@ public class FqlQuery
         this.query = query;
         this.packageName = packageName;
     }
-
 
     /**
      * Convert to a FlyMine query

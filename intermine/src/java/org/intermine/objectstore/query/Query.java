@@ -10,8 +10,10 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -342,7 +344,15 @@ public class Query implements FromElement
             return aliases.get(qf.getFromElement()) + "." + qf.getFieldName()
                 + (qf.getSecondFieldName() == null ? "" : "." + qf.getSecondFieldName());
         } else if (qn instanceof QueryValue) {
-            return ((QueryValue) qn).getValue().toString();
+            Object obj = ((QueryValue) qn).getValue();
+            if (obj instanceof String) {
+                return "'" + obj + "'";
+            } else if (obj instanceof Date) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                return "'" + format.format((Date) obj) + "'";
+            } else {
+                return obj.toString();
+            }
         } else if (qn instanceof QueryExpression) {
             QueryExpression qe = (QueryExpression) qn;
             if (qe.getOperation() == QueryExpression.SUBSTRING) {
