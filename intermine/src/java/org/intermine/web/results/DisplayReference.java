@@ -22,6 +22,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Class to represent a reference field of an object for display in the webapp
@@ -36,13 +37,13 @@ public class DisplayReference extends DisplayField
      * Create a new DisplayReference object.
      * @param proxy proxy for the referenced object
      * @param cld metadata for the referenced object
-     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
     public DisplayReference(ProxyReference proxy, ClassDescriptor cld,
-                            Map webconfigTypeMap, Map webProperties) throws Exception {
-        super(getProxyList(proxy), cld, webconfigTypeMap, webProperties);
+                            WebConfig webConfig, Map webProperties) throws Exception {
+        super(getProxyList(proxy), cld, webConfig, webProperties);
         this.proxy = proxy;
         this.cld = cld;
     }

@@ -29,6 +29,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.web.config.FieldConfigHelper;
 import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.WebConfig;
 
 import org.intermine.util.TypeUtil;
 
@@ -51,15 +52,15 @@ public class DisplayObject
     Map verbosity = new HashMap();
     
     /**
-     * Constructor
+     * Create a new DisplayObject.
      * @param object the object to display
      * @param model the metadata for the object
-     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
     public DisplayObject(InterMineObject object, Model model,
-                         Map webconfigTypeMap, Map webProperties) throws Exception {
+                         WebConfig webConfig, Map webProperties) throws Exception {
         this.object = object;
         clds = ObjectViewController.getLeafClds(object.getClass(), model);
 
@@ -81,7 +82,7 @@ public class DisplayObject
                     if (proxy != null) {
                         DisplayReference newReference = 
                             new DisplayReference(proxy, ref.getReferencedClassDescriptor(),
-                                                 webconfigTypeMap, webProperties);
+                                                 webConfig, webProperties);
                         references.put(fd.getName(), newReference);
                     }
                 } else if (fd.isCollection()) {
@@ -89,15 +90,14 @@ public class DisplayObject
                     ClassDescriptor refCld =
                         ((CollectionDescriptor) fd).getReferencedClassDescriptor();
                     DisplayCollection newCollection =
-                        new DisplayCollection((List) fieldValue, refCld, 
-                                              webconfigTypeMap, webProperties);
+                        new DisplayCollection((List) fieldValue, refCld, webConfig, webProperties);
                     if (newCollection.getSize() > 0) {
                         collections.put(fd.getName(), newCollection);
                     }
                 }
             }
 
-            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webconfigTypeMap, cld);
+            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
 
             Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
 

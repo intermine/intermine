@@ -24,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.WebConfig;
 import org.intermine.web.Constants;
 
 import org.apache.log4j.Logger;
@@ -46,23 +47,22 @@ public class InlineResultsTable
     protected List tableRows = null;
     protected Model model;
     protected int size = 30;
-    protected Map webconfigTypeMap;
+    protected WebConfig webConfig;
 
     /**
      * Construct a new InlineResultsTable object
      * @param results the underlying SingletonResults object
      * @param cld the type of this collection field
-     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws ObjectStoreException if an error occurs
      */
     public InlineResultsTable(List results, ClassDescriptor cld,
-                              Map webconfigTypeMap,
-                              Map webProperties)
+                              WebConfig webConfig, Map webProperties)
         throws ObjectStoreException {
         this.results = results;
         this.cld = cld;
-        this.webconfigTypeMap = webconfigTypeMap;
+        this.webConfig = webConfig;
         this.model = cld.getModel();
 
         // default
@@ -252,6 +252,6 @@ public class InlineResultsTable
      * @return the FieldConfig objects for the the given ClassDescriptor
      */
     protected List getClassFieldConfigs(ClassDescriptor cd) {
-        return FieldConfigHelper.getClassFieldConfigs(webconfigTypeMap, cd);
+        return FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
     }
 }
