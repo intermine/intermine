@@ -1949,7 +1949,7 @@
           description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory"
           depends="prepare-gbrowse-conf">
     <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX" 
-            value="${webapp.prefix}/${webapp.viewByID.prefix}"/>
+            value="${webapp.baseurl}${webapp.path}/${webapp.viewByID.prefix}"/>
     <filter token="FLYMINE_SITE_PREFIX" 
             value="${www.location}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE" 
