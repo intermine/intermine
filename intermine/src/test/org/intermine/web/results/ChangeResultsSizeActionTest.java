@@ -88,7 +88,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testChangePageSize1() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("action", "Change");
+        addRequestParameter("buttons(changePageSize)", "");
 
         ChangeResultsForm form = new ChangeResultsForm();
         form.setPageSize("25");
@@ -107,7 +107,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testChangePageSize2() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("action", "Change");
+        addRequestParameter("buttons(changePageSize)", "");
 
         ChangeResultsForm form = new ChangeResultsForm();
         form.setPageSize("10");
@@ -126,7 +126,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testSaveNewBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("action", "Save selections in new collection");
+        addRequestParameter("buttons(saveNewBag)", "");
         getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
@@ -149,7 +149,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testAddToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("action", "Add selections to existing collection");
+        addRequestParameter("buttons(addToExistingBag)", "");
         getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
@@ -183,7 +183,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testAddSameToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("action", "Add selections to existing collection");
+        addRequestParameter("buttons(addToExistingBag)", "");
         getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
