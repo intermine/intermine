@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.StringReader;
 import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
@@ -34,6 +35,7 @@ import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
@@ -54,6 +56,8 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
+import org.intermine.modelproduction.ModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 
 import org.apache.log4j.Logger;
 
@@ -86,16 +90,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Constructs an ObjectStoreInterMineImpl.
      *
      * @param db the database in which the model resides
-     * @param model the model
-     * @throws NullPointerException if db or model are null
-     * @throws IllegalArgumentException if db or model are invalid
-     */
-    protected ObjectStoreInterMineImpl(Database db, Model model) {
-        super(model);
-        this.db = db;
-        schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
-        ShutdownHook.registerObject(new WeakReference(this));
-    }
+      * @param model the model
+      * @throws NullPointerException if db or model are null
+      * @throws IllegalArgumentException if db or model are invalid
+      */
+     protected ObjectStoreInterMineImpl(Database db, Model model) {
+         super(model);
+         this.db = db;
+         org.intermine.web.LogMe.log("i5", "ObjectStoreInterMineImpl constructor 2");
+         schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
+         ShutdownHook.registerObject(new WeakReference(this));
+     }
 
     /**
      * Constructs an ObjectStoreInterMineImpl, with a schema.
@@ -107,9 +112,48 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected ObjectStoreInterMineImpl(Database db, DatabaseSchema schema) {
         super(schema.getModel());
+        org.intermine.web.LogMe.log("i5", "ObjectStoreInterMineImpl constructor 2");
         this.db = db;
         this.schema = schema;
         ShutdownHook.registerObject(new WeakReference(this));
+    }
+  
+    /**
+     * Read the Model from the intermine_metadata table of the given Database.
+     * @param db the Database to read from
+     * @return a Model
+     */
+    private static Model getModelFromDatabase(Database db)
+        throws SQLException {
+        Connection connection = null;
+        try {
+            connection = db.getConnection();
+            connection.setAutoCommit(true);
+            Statement statement = connection.createStatement();
+            statement.execute("SELECT value FROM intermine_metadata WHERE key = 'model'");
+            ResultSet rs = statement.getResultSet();
+            if (rs.next()) {
+                String modelXML = null;
+                org.intermine.web.LogMe.log("i5", "database: " + db.getURL());
+                modelXML = rs.getString(1);
+                org.intermine.web.LogMe.log("i5", "got XML: " + modelXML);
+                
+                ModelParser parser = new InterMineModelParser();
+                StringReader reader = new StringReader(modelXML);
+                try {
+                    return parser.process(reader);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to read model from the database", e);
+                }
+            } else {
+                throw new IllegalArgumentException("Failed to get model from: " + db.getURL()
+                                                   + " - no model found");
+            }
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
 
     /**
@@ -171,36 +215,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * Gets a ObjectStoreInterMineImpl instance for the given underlying properties
      *
+     * @param osAlias the alias of this objectstore
      * @param props The properties used to configure a InterMine-based objectstore
-     * @param model the metadata associated with this objectstore
      * @return the ObjectStoreInterMineImpl for this repository
      * @throws IllegalArgumentException if props or model are invalid
      * @throws ObjectStoreException if there is any problem with the instance
      */
-    public static ObjectStoreInterMineImpl getInstance(Properties props, Model model)
+    public static ObjectStoreInterMineImpl getInstance(String osAlias, Properties props)
         throws ObjectStoreException {
         String dbAlias = props.getProperty("db");
         if (dbAlias == null) {
             throw new ObjectStoreException("No 'db' property specified for InterMine"
                                            + " objectstore (check properties file)");
         }
+
         String missingTablesString = props.getProperty("missingTables");
         String noObjectTablesString = props.getProperty("noObjectTables");
         String logfile = props.getProperty("logfile");
         String truncatedClassesString = props.getProperty("truncatedClasses");
         String logTable = props.getProperty("logTable");
 
-        String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName()
-            + (missingTablesString == null ? "" : ", missingTables = " + missingTablesString)
-            + (noObjectTablesString == null ? "" : ", noObjectTables = " + noObjectTablesString)
-            + (logfile == null ? "" : ", logfile = " + logfile)
-            + (truncatedClassesString == null ? "" : ", truncatedClasses = "
-                    + truncatedClassesString)
-            + (logTable == null ? "" : ", logTable = " + logTable);
-
         synchronized (instances) {
-            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
-                .get(objectStoreDescription);
+            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
             if (os == null) {
                 Database database;
                 try {
@@ -210,21 +246,42 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             + " ObjectStore", e);
                 }
                 if (truncatedClassesString != null) {
+                    Model osModel;
+                    try {
+                        osModel = getModelFromDatabase(database);
+                    } catch (Exception e) {
+                        try {
+                            osModel = getModelFromClasspath(osAlias, props);
+                        } catch (MetaDataException metaDataException) {
+                            throw new ObjectStoreException("Cannot load model", metaDataException);
+                        }
+                    }
                     List truncatedClasses = new ArrayList();
                     String classes[] = truncatedClassesString.split(",");
                     for (int i = 0; i < classes.length; i++) {
-                        ClassDescriptor truncatedClassDescriptor = model
-                            .getClassDescriptorByName(classes[i]);
+                        ClassDescriptor truncatedClassDescriptor =
+                            osModel.getClassDescriptorByName(classes[i]);
                         if (truncatedClassDescriptor == null) {
                             throw new ObjectStoreException("Truncated class " + classes[i]
                                                            + " does not exist in the model");
                         }
                         truncatedClasses.add(truncatedClassDescriptor);
                     }
-                    os = new ObjectStoreInterMineImpl(database, new DatabaseSchema(model,
-                                truncatedClasses));
+                    DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses);
+                    os = new ObjectStoreInterMineImpl(database, databaseSchema);
                 } else {
-                    os = new ObjectStoreInterMineImpl(database, model);
+                    try {
+                        os = new ObjectStoreInterMineImpl(database, getModelFromDatabase(database));
+                    } catch (Exception e) {
+                        Model osModel;
+                        
+                        try {
+                            osModel = getModelFromClasspath(osAlias, props);
+                        } catch (MetaDataException metaDataException) {
+                            throw new ObjectStoreException("Cannot load model", metaDataException);
+                        }
+                        os = new ObjectStoreInterMineImpl(database, osModel);
+                    }
                 }
                 if (missingTablesString != null) {
                     String tables[] = missingTablesString.split(",");
@@ -256,7 +313,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + e);
                     }
                 }
-                instances.put(objectStoreDescription, os);
+                instances.put(osAlias, os);
             }
             return os;
         }

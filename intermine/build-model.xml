@@ -221,6 +221,12 @@
               tempdir="${build.model.dir.tmp.builddb}"
               schemafile="${objectstore.name}-schema.xml">
     </build-db>
+
+    <taskdef name="db-insert-model" 
+             classname="org.intermine.objectstore.intermine.InsertModelTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <db-insert-model database="${db.name}" modelName="${model.name}"/>
   </target>
 
   <target name="analyse-db">

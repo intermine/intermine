@@ -61,13 +61,13 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * Gets an ObjectStore for the given underlying properties.
      *
+     * @param osAlias the alias of this objectstore
      * @param props the properties used to configure the objectstore
-     * @param model the metadata associated with this objectstore
      * @return the ObjectStore
      * @throws IllegalArgumentException if props or model are invalid
      * @throws ObjectStoreException if there is any problem with the instance
      */
-    public static ObjectStoreTranslatingImpl getInstance(Properties props, Model model)
+    public static ObjectStoreTranslatingImpl getInstance(String osAlias, Properties props)
         throws ObjectStoreException {
         String subAlias = props.getProperty("os");
         if (subAlias == null) {
@@ -89,8 +89,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         Translator t;
         try {
             Class c = Class.forName(translatorClass);
-            Constructor con = c.getConstructor(new Class[] {Model.class, ObjectStore.class});
-            t = (Translator) con.newInstance(new Object[] {model, sub});
+            Constructor con = c.getConstructor(new Class[] {String.class, ObjectStore.class});
+            t = (Translator) con.newInstance(new Object[] {subAlias, sub});
         } catch (Exception e) {
             // preserve ObjectStoreExceptions for more useful message
             Throwable thr = e.getCause();
@@ -104,7 +104,16 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                 throw e2;
             }
         }
-        return new ObjectStoreTranslatingImpl(model, sub, t);
+
+        Model osModel;
+
+        try {
+            osModel = getModelFromClasspath(osAlias, props);
+        } catch (MetaDataException metaDataException) {
+            throw new ObjectStoreException("Cannot load model", metaDataException);
+        }
+
+        return new ObjectStoreTranslatingImpl(osModel, sub, t);
     }
 
     /**

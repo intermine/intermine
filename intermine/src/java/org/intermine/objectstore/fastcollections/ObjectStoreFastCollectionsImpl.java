@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -63,25 +62,25 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * Gets an ObjectStoreFastCollectionsImpl instance for the given properties
      *
+     * @param osAlias the alias of this objectstore
      * @param props the properties
-     * @param model - thrown away
      * @return the ObjectStore
      * @throws IllegalArgumentException if props are invalid
      * @throws ObjectStoreException if there is a problem with the instance
      */
-    public static ObjectStoreFastCollectionsImpl getInstance(Properties props, Model model)
+    public static ObjectStoreFastCollectionsImpl getInstance(String osAlias, Properties props)
         throws ObjectStoreException {
-        String osAlias = props.getProperty("os");
-        if (osAlias == null) {
+        String underlyingOsAlias = props.getProperty("os");
+        if (underlyingOsAlias == null) {
             throw new IllegalArgumentException("No 'os' property specified for FastCollections"
                     + " objectstore");
         }
         ObjectStore objectStore;
         try {
-            objectStore = ObjectStoreFactory.getObjectStore(osAlias);
+            objectStore = ObjectStoreFactory.getObjectStore(underlyingOsAlias);
         } catch (Exception e) {
-            throw new IllegalArgumentException("ObjectStore '" + osAlias + "' not found in"
-                    + " properties");
+            throw new IllegalArgumentException("ObjectStore '" + underlyingOsAlias
+                                               + "' not found in properties");
         }
         return new ObjectStoreFastCollectionsImpl(objectStore);
     }
