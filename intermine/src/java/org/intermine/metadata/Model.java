@@ -12,7 +12,7 @@ import java.util.Properties;
 import org.xml.sax.InputSource;
 
 import org.flymine.util.PropertiesUtil;
-import org.flymine.modelproduction.xml.ModelParser;
+import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 /**
  * Represents a named business model, makes availble metadata for each class
@@ -23,6 +23,12 @@ import org.flymine.modelproduction.xml.ModelParser;
 
 public class Model
 {
+
+
+    protected static final org.apache.log4j.Logger LOG
+        = org.apache.log4j.Logger.getLogger(Model.class);
+
+
     private static Model model;
     private final String name;
     private final Map cldMap = new HashMap();
@@ -65,7 +71,7 @@ public class Model
          String filename = name + "_model.xml";
          InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
          try {
-             ModelParser parser = new ModelParser();
+             FlyMineModelParser parser = new FlyMineModelParser();
              parser.parse(new InputSource(is));
              model = new Model(parser.getModelName(), parser.getClasses());
          } catch (Exception e) {
@@ -73,7 +79,7 @@ public class Model
          }
          return model;
     }
-    
+
     /**
      * Construct a Model with a name and list of ClassDescriptors.  The model will be
      * set to this in each of the ClassDescriptors. NB This method should only be called
@@ -94,6 +100,7 @@ public class Model
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cldMap.put(cld.getClassName(), cld);
+            LOG.warn("MODEL: put cld in model: " + cld.getClassName());
 
             // create maps of ClassDescriptor to empty lists for subclasses and implementors
             subclassMap.put(cld, new ArrayList());
