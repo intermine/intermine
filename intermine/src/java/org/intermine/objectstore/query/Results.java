@@ -5,15 +5,14 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 import java.util.Iterator;
 import java.lang.reflect.Field;
 
 import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ojb.LazyCollection;
-
+import org.flymine.objectstore.proxy.LazyCollection;
+import org.flymine.objectstore.proxy.LazyReference;
 
 /**
  * Results representation as a List of ResultRows
@@ -103,7 +102,7 @@ public class Results extends AbstractList
 
         for (int i = startBatch; i <= endBatch; i++) {
             List rows = getRowsFromBatch(i, start, end);
-            //promoteLazyCollections(rows);
+            //promoteProxies(rows);
             ret.addAll(rows);
         }
         return ret;
@@ -237,35 +236,29 @@ public class Results extends AbstractList
      * @throws FlyMineException if errors occur accessing object fields
      */
     protected void promoteProxies(List rows) throws FlyMineException {
-
         try {
-            // iterate through each object in each row
             Iterator listIter = rows.iterator();
             while (listIter.hasNext()) {
                 List rr = (List) listIter.next();
                 Iterator rowIter = rr.iterator();
                 while (rowIter.hasNext()) {
                     Object obj = (Object) rowIter.next();
-                    // reflect on fields of obj, if any are LazyCollections build Results
                     Class objClass = obj.getClass();
                     Field fields[] = objClass.getDeclaredFields();
                     for (int i = 0; i < fields.length; i++) {
                         fields[i].setAccessible(true);
-                        if (Collection.class.isAssignableFrom(fields[i].getType())) {
-                            Collection col = (Collection) fields[i].get(obj);
-                            if (col instanceof LazyCollection) {
-                                Query q = ((LazyCollection) fields[i].get(obj)).getQuery();
-                                Results res = new Results(q, os);
-                                fields[i].set(obj, res);
-                            }
+                        Object field = fields[i].get(obj);
+                        if (field instanceof LazyCollection) {
+                            Query query = ((LazyCollection) field).getQuery();
+                            fields[i].set(obj, new Results(query, os));
+                        } else if (field instanceof LazyReference) {
+                            ((LazyReference) field).setObjectStore(os);
                         }
-                        // do the same for reference proxies...
                     }
                 }
             }
-        } catch (IllegalAccessException e) {
-            throw (new FlyMineException("Error encountered converting LazyCollections to Results. "
-                                        + e.getMessage()));
+        } catch (Exception e) {
+            throw new FlyMineException(e);
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.lang.reflect.Field;
 
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.flymine.objectstore.ojb.LazyCollection;
+import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Employee;
 
