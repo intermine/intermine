@@ -155,5 +155,40 @@ public class SubqueryConstraintTest extends TestCase {
         }
     }
 
+
+    public void testEquals() throws Exception {
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        Query q2 = new Query();
+        q2.addToSelect(qe1);
+
+        SubqueryConstraint sc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+        SubqueryConstraint sc2 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+        SubqueryConstraint sc3 = new SubqueryConstraint(q2, SubqueryConstraint.CONTAINS, qe1);
+        SubqueryConstraint sc4 = new SubqueryConstraint(q2, SubqueryConstraint.DOES_NOT_CONTAIN, qe1);
+
+        assertEquals(sc1, sc1);
+        assertEquals(sc1, sc2);
+        assertTrue("Expected sc1 to not equal sc3:", !sc1.equals(sc3));
+        assertTrue("Expected sc3 to not equal sc4:", !sc3.equals(sc4));
+    }
+
+
+   public void testHashCode() throws Exception {
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        Query q2 = new Query();
+        q2.addToSelect(qe1);
+
+        SubqueryConstraint sc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+        SubqueryConstraint sc2 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, qc1);
+        SubqueryConstraint sc3 = new SubqueryConstraint(q2, SubqueryConstraint.CONTAINS, qe1);
+        SubqueryConstraint sc4 = new SubqueryConstraint(q2, SubqueryConstraint.DOES_NOT_CONTAIN, qe1);
+
+        assertEquals(sc1.hashCode(), sc1.hashCode());
+        assertEquals(sc1.hashCode(), sc2.hashCode());
+        assertTrue("Expected sc1.hashCode() to not equal sc3.hashCode():", sc1.hashCode() != sc3.hashCode());
+        assertTrue("Expected sc3.hashCode() to not equal sc4.hashCode():", sc3.hashCode() != sc4.hashCode());
+    }
 }
 
