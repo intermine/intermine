@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE descriptor-repository SYSTEM "repository.dtd" [
+<!ENTITY internal SYSTEM "repository_internal.xml">
+]>
+
+<descriptor-repository version="1.0" isolation-level="read-uncommitted">
+    &internal;
+</descriptor-repository>

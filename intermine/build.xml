@@ -1,13 +1,16 @@
 <project name="FlyMine" default="all" basedir=".">
   <description>FlyMine build file</description>
 
-  <!-- set up some buildtime and runtime properties -->
+  <!-- Property setup targets -->
 
+  <!-- buildtime and runtime settings -->
   <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
   <property file="${build.properties.local}"/>
   <property file="build.properties"/>
 
-  <!-- Libraries and binaries -->
+  <property name="runtime.properties.local" value="${user.home}/flymine.properties" />
+
+  <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
   <property name="buildlib" location="buildlib"/>
   <property name="bin" location="bin"/>
@@ -27,7 +30,6 @@
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
-  <property name="build.resources.test" location="${build.resources}/test" />
   <property name="build.test" location="${build}/test"/>
   <property name="build.schema" location="${build}/schema" />
   <property name="build.src.java" location="${build}/javasrc"/>
@@ -46,18 +48,14 @@
   <property name="dist.www"  location="${dist}/www"/>
   <property name="dist.javadoc"  location="${dist.www}/internal/api"/>
 
-
-
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
     <pathelement path="${build.java}"/>
     <pathelement path="${build.resources}"/>
-    <pathelement path="${lib}"/>
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
       <exclude name="antlr.jar"/>
     </fileset>
-    <pathelement path="${buildlib}"/>
     <fileset dir="${buildlib}">
       <include name="**/*.jar"/>
       <exclude name="checkstyle-all-3.0b1.jar"/>
@@ -65,23 +63,20 @@
   </path>
 
   <path id="project.class.path">
-    <pathelement location="${lib}/antlr.jar"/>
     <path refid="base.class.path"/>
+    <pathelement location="${lib}/antlr.jar"/>
+  </path>
+
+  <path id="checkstyle.class.path">
+    <pathelement location="${buildlib}/checkstyle-all-3.0b1.jar"/>
   </path>
 
   <path id="test.class.path">
-    <pathelement path="${build.resources.test}" />
     <path refid="project.class.path"/>
     <pathelement location="${build.test}"/>
   </path>
 
-  <path id="checkstyle.class.path">
-    <path refid="base.class.path"/>
-    <pathelement location="${buildlib}/checkstyle-all-3.0b1.jar"/>
-  </path>
-
   <!-- Initialisation targets -->
-
   <target name="prepare">
     <tstamp>
       <format property="YEAR" pattern="yyyy"/>
@@ -89,7 +84,6 @@
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
-    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.test}"/>
     <mkdir dir="${build.schema}" />
     <mkdir dir="${build.src.java}"/>
@@ -102,12 +96,10 @@
     <mkdir dir="${results.junit}"/>
     <mkdir dir="${results.checkstyle}"/>
 
-    <copy file="${build.properties.local}" tofile="${build.resources}/flymine.properties">
-    </copy>
+    <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
     <copy todir="${build.resources}">
-      <fileset dir="${resources}" />
+      <fileset dir="${resources}/runtime" />
     </copy>
-
   </target>
 
   <target name="prepare-dist">
@@ -168,8 +160,8 @@
   <target name="generate-java-testmodel" depends="testmodel-java.check, compile-main"
           description="generate testmodel classes from xmi"
           if="testmodel-java.outofdate">
-    <java classname="org.flymine.codegen.JavaModelOutput" fork="true" dir="${build}">
-      <classpath refid="project.class.path" />
+    <java classname="org.flymine.codegen.JavaModelOutput" fork="true">
+      <classpath refid="base.class.path" />
       <arg value="TestModel" />
       <arg value="${build.src.test}" />
       <arg value="${build.src.test}" />
@@ -187,18 +179,18 @@
   <!-- is our repository descriptor older than the model? -->
   <target name="testmodel-repository.check" depends="unpack-testmodel">
     <uptodate property="testmodel-repository.outofdate" targetfile="${build.src.test}/TestModel_.xmi">
-      <srcfiles dir="${build.resources.test}" includes="**/*.xml"/>
+      <srcfiles dir="${build.resources}" includes="**/*.xml"/>
     </uptodate>
   </target>
 
   <!-- generate repository descriptor for model -->
   <target name="generate-repository-testmodel" depends="testmodel-repository.check, compile-main"
           if="testmodel-repository.outofdate">
-    <java classname="org.flymine.codegen.OJBModelOutput" fork="true" dir="${build}">
-      <classpath refid="project.class.path" />
+    <java classname="org.flymine.codegen.OJBModelOutput" fork="true">
+      <classpath refid="base.class.path" />
       <arg value="TestModel" />
       <arg value="${build.src.test}" />
-      <arg value="${build.resources.test}" />
+      <arg value="${build.resources}" />
     </java>
   </target>
 
@@ -206,8 +198,8 @@
   <target name="build-db-testmodel" depends="generate-repository-testmodel"
           if="testmodel-repository.outofdate">
     <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
-      <classpath refid="project.class.path" />
-      <arg value="${build.resources.test}/repository_testmodel.xml" />
+      <classpath refid="base.class.path" />
+      <arg value="${build.resources}/repository_testmodel.xml" />
       <arg value="${build.schema}/testmodel-schema.xml" />
     </java>
     <copy todir="${build.schema}">
@@ -231,7 +223,7 @@
     </build-db>
   </target>
   
-  <!-- Unit tests -->
+  <!-- Unit test targets -->
 
   <!-- compile the tests -->
   <target name="compile-test" depends="compile-testmodel"
@@ -304,16 +296,16 @@
 
   <!-- System tests -->
 
-  <!-- Check the style of all the java files in the project -->
+  <!-- Java checkstyle targets -->
   <target name="checkstyle" depends="prepare"
           description="checks the coding style of all the java files in the project">
     <taskdef resource="checkstyletask.properties">
       <classpath refid="checkstyle.class.path"/>
     </taskdef>
-    <checkstyle config="${build.resources}/checkstyle-config.xml"
+    <checkstyle config="${resources}/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
-      <classpath refid="checkstyle.class.path"/>
+      <classpath refid="base.class.path"/>
       <formatter type="xml" tofile="${results.checkstyle}/checkstyle_report.xml" />
       <fileset dir="${src.java}">
         <include name="**/*.java" />
@@ -323,11 +315,11 @@
 
     <style in="${results.checkstyle}/checkstyle_report.xml"
            out="${results.checkstyle}/checkstyle_report.html"
-           style="${build.resources}/checkstyle-frames.xsl" />
+           style="${resources}/checkstyle-frames.xsl" />
 
   </target>
 
-  <!-- Javadoc -->
+  <!-- Javadoc targets -->
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
     <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="${ant.project.name} API" additionalparam="-breakiterator">
@@ -337,6 +329,7 @@
       <bottom><![CDATA[<i>Copyright &#169; ${YEAR} University of Cambridge. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
+
 
   <!-- Web targets -->
 
@@ -353,7 +346,7 @@
 
   <target name="www-external" depends="prepare">
 
-    <!-- Make sure files dependent on sidebar are handled correctly -->
+    <!-- make sure files dependent on sidebar are handled correctly -->
     <dependset>
       <srcfilelist dir="${src.www}" files="sidebar.xml,flymine.xsl" />
       <targetfileset dir="${build.www}" includes="**/*.html" />
@@ -369,7 +362,7 @@
       <targetfileset dir="${build.www}" includes="**/*.gif" />
     </dependset>
 
-    <!-- Main web site -->
+    <!-- main web site -->
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <exclude name="**/*.xml" />
@@ -406,7 +399,7 @@
 
   <target name="www-internal" depends="prepare"
           if="www-internal.present" >
-    <!-- Internal web site -->
+    <!-- internal web site -->
     <copy todir="${build.www-internal}">
       <fileset dir="${src.www-internal}">
         <exclude name="**/*.xml" />
@@ -479,6 +472,7 @@
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
   </target>
+
 
   <!-- Cleaning-up targets -->
 
