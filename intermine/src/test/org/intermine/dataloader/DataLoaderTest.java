@@ -28,7 +28,7 @@ public class DataLoaderTest extends TestCase
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
         Model model = Model.getInstanceByName("testmodel");
-        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("dataloader.unittest", "source1", os);
+        IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittest", "source1");
         loader = new DataLoader(iw);
     }
 
