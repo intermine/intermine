@@ -388,27 +388,28 @@ public class JavaModelOutput extends ModelOutput
 
         Collection keyFields = getKeys(cls);
         if (keyFields.size() > 0) {
-            sb.append(INDENT + "public int hashCode() { return ");
-            sb.append("id");
-//             Iterator iter = keyFields.iterator();
-//             while (iter.hasNext()) {
-//                 String field = (String) iter.next();
-//                 if (getAllAttributes(cls).containsKey(field)
-//                     && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
-//                     if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
-//                         sb.append("(" + field + " ? 0 : 1)");
-//                     } else {
-//                         sb.append(field);
-//                     }
-//                 } else {
-//                     //sb.append(field + ".hashCode()");
-//                     //TODO same as above
-//                     sb.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
-//                 }
-//                 if (iter.hasNext()) {
-//                     sb.append(" ^ ");
-//                 }
-//             }
+            sb.append(INDENT + "public int hashCode() {\n")
+                .append(INDENT+INDENT+"if (id!=0) return id;\n")
+                .append(INDENT+INDENT+"return ");
+            Iterator iter = keyFields.iterator();
+            while (iter.hasNext()) {
+                String field = (String) iter.next();
+                if (getAllAttributes(cls).containsKey(field) 
+                    && isPrimitive(((MAttribute) getAllAttributes(cls).get(field)).getType().getName())) {
+                    if (((MAttribute) getAllAttributes(cls).get(field)).getType().getName().equals("boolean")) {
+                        sb.append("(" + field + " ? 0 : 1)");
+                    } else {
+                        sb.append(field);
+                    }
+                } else {
+                    //sb.append(field + ".hashCode()");
+                    //TODO same as above
+                    sb.append("(" + field + " == null ? 0 : " + field + ".hashCode())");
+                }
+                if (iter.hasNext()) {
+                    sb.append(" ^ ");
+                }
+            }
             sb.append("; }\n");
         }
         return sb.toString();
