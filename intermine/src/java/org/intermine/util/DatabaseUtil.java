@@ -221,7 +221,7 @@ public class DatabaseUtil
         Connection conn = db.getConnection();
         try {
             Statement s = conn.createStatement();
-            ResultSet res = conn.getMetaData().getTables(null, null, null, null);
+            ResultSet res = conn.getMetaData().getTables(null, null, null, new String[] {"TABLE"});
             while (res.next()) {
                 s.execute("GRANT " + perm + " ON " + res.getString(3) + " TO " + user);
             }
