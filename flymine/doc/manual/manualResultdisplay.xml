@@ -43,7 +43,7 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata fileref="../tutorials/resultsQuery1.png" />
+        <imagedata fileref="tableResults1.png" />
       </imageobject>
     </mediaobject>
   </section>
