@@ -264,8 +264,9 @@ public class ItemToObjectTranslator extends Translator
             for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
                 Reference ref = (Reference) i.next();
                 Integer identifier = identifierToId(ref.getRefId());
-                if (TypeUtil.getFieldInfo(obj.getClass(), ref.getName()) != null) {
-                    TypeUtil.setFieldValue(obj, ref.getName(), new ProxyReference(os, identifier,
+                String refName = StringUtil.decapitalise(ref.getName());
+                if (TypeUtil.getFieldInfo(obj.getClass(), refName) != null) {
+                    TypeUtil.setFieldValue(obj, refName, new ProxyReference(os, identifier,
                                 InterMineObject.class));
                 } else {
                     String message = "Reference not found in model: "
@@ -289,8 +290,9 @@ public class ItemToObjectTranslator extends Translator
                 q.setConstraint(bc);
                 os.getSequence();
                 refs.getName();
-                if (TypeUtil.getFieldInfo(obj.getClass(), refs.getName()) != null) {
-                    TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os,
+                String refsName = StringUtil.decapitalise(refs.getName());
+                if (TypeUtil.getFieldInfo(obj.getClass(), refsName) != null) {
+                    TypeUtil.setFieldValue(obj, refsName, new SingletonResults(q, os,
                                                                              os.getSequence()));
                 } else {
                     String message = "Collection not found in model: "
