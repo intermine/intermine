@@ -1,9 +1,9 @@
 <menu>
     <section>
-        <heading>Project</heading>
+        <heading><ulink url="project">Project</ulink></heading>
         <item><ulink url="/index">About</ulink></item>
-        <item><ulink url="/team">Team</ulink></item>
-        <item><ulink url="/funding">Funding</ulink></item>
+        <item><ulink url="/project/team">Team</ulink></item>
+        <item><ulink url="/project/funding">Funding</ulink></item>
         <item><ulink url="/project">Presentations</ulink></item>
     </section>
     <section>
