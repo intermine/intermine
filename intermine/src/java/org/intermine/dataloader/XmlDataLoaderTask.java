@@ -80,7 +80,7 @@ public class XmlDataLoaderTask extends ClassPathTask
             // a different ClassLoader) can see
 
             Method method = driver.getClass().getMethod("loadData", new Class[] {String.class,
-                String.class, String.class});
+                File.class, String.class});
             method.invoke(driver, new Object [] {integrationWriter, xmlFile, sourceName });
         } catch (Exception e) {
             e.printStackTrace();
