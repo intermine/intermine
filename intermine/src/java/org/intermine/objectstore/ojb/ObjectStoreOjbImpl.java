@@ -76,7 +76,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
      *
      * @return the PersistenceBroker this object is using
      */
-    protected PersistenceBroker getPersistenceBroker() {
+    public PersistenceBroker getPersistenceBroker() {
         return pb;
     }
 
