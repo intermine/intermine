@@ -26,7 +26,7 @@
             <listitem>Select the starting point for your query. In this case, Gene.</listitem>
           
 	  <entry>
-	      <inlinegraphic fileref="classSelection1.png"/>
+	      <inlinegraphic fileref="classSelection1"/>
 	  </entry>
 
 
@@ -34,14 +34,14 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="geneOrganism1.png"/>
+	      <inlinegraphic fileref="geneOrganism1"/>
 	  </entry>
 
            <listitem>You need to constrain the organism name to <span class = "oraganism">Drosophila melanogaster</span>.  Select the constrain arrow next to the name field of the Organism class.  In the constraints box add the constraint: = Drosophila melanogaster.  Alternatively you can change the '=' to 'LIKE' and write %melanogaster in the box.  % is just like a * wild card.  Press 'Add to query' to add this constraint to the constraints list.</listitem>  
 
 
 	  <entry>
-	      <inlinegraphic fileref="constrainOrganism1.png"/>
+	      <inlinegraphic fileref="constrainOrganism1"/>
 	  </entry>
 
 
@@ -50,7 +50,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="showFields1.png"/>
+	      <inlinegraphic fileref="showFields1"/>
 	  </entry>
 
            <listitem>Press 'Show results' to view your results in the results page:</listitem>  
@@ -58,7 +58,7 @@
 
 
 	  <entry>
-	      <inlinegraphic fileref="resultsQuery3.png"/>
+	      <inlinegraphic fileref="resultsQuery3"/>
 	  </entry>
 
   </orderedlist>

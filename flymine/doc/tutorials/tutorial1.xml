@@ -25,7 +25,7 @@ all the gene names of the genes in FlyMine.  The aim of this query tutorial is t
             <listitem>Select the starting point for your query. In this case, Gene.</listitem>
           
 	  <entry>
-	      <inlinegraphic fileref="classSelection1.png"/>
+	      <inlinegraphic fileref="classSelection1"/>
 	  </entry>
 
 
@@ -33,7 +33,7 @@ all the gene names of the genes in FlyMine.  The aim of this query tutorial is t
 
 
 	  <entry>
-	      <inlinegraphic fileref="geneClass1.png"/>
+	      <inlinegraphic fileref="geneClass1"/>
 	  </entry>
 
 
@@ -41,7 +41,7 @@ all the gene names of the genes in FlyMine.  The aim of this query tutorial is t
 
 
 	  <entry>
-	      <inlinegraphic fileref="resultsQuery1.png"/>
+	      <inlinegraphic fileref="resultsQuery1"/>
 	  </entry>
 
 
