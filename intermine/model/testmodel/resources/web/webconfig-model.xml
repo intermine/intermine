@@ -27,9 +27,6 @@
   <class className="org.intermine.model.testmodel.Manager">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="department.name"/>
-      <fieldconfig fieldExpr="department.company.name"/>
-      <fieldconfig fieldExpr="age"/>
       <fieldconfig fieldExpr="seniority"/>
     </fields>
   </class>
