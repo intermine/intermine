@@ -100,14 +100,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         try {
             iw.beginTransaction();
 
-            Source source = new Source();
-            source.setName("storedata");
-            source.setSkeleton(false);
-            iw.getDataTracker().store(source);
-            Source skelSource = new Source();
-            skelSource.setName("storedata");
-            skelSource.setSkeleton(true);
-            iw.getDataTracker().store(skelSource);
+            Source source = iw.getMainSource("storedata");
+            Source skelSource = iw.getSkeletonSource("storedata");
 
             //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
             Iterator iter = data.entrySet().iterator();
@@ -201,14 +195,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         c.setName("CompanyC");
         c.setVatNumber(100);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(c, source, skelSource);  // method we are testing
 
@@ -245,14 +233,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         ceo.setCompany(c);
         ceo.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(c, source, skelSource);  // method we are testing
 
@@ -275,14 +257,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testUpdateObjectOneToOne2() throws Exception {
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         {
             Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -330,14 +306,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertEquals(rCEOA, rCompanyA.getCEO());
         assertEquals(rCEOB, rCompanyB.getCEO());
         
-        Source source2 = new Source();
-        source2.setName("testsource2");
-        source2.setSkeleton(false);
-        iw.getDataTracker().store(source2);
-        Source skelSource2 = new Source();
-        skelSource2.setName("testsource2");
-        skelSource2.setSkeleton(true);
-        iw.getDataTracker().store(skelSource2);
+        Source source2 = iw.getMainSource("testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2");
         {
             Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
             Address a = new Address();
@@ -387,14 +357,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         c.setName("CompanyB");
         c.setVatNumber(100);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(c, source, skelSource); // method we are testing
 
@@ -432,14 +396,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
 
@@ -472,14 +430,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
 
@@ -517,14 +469,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         a2.setAddress("Employee Street, AVille");
         e.setAddress(a2);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(d, source, skelSource);  // method we are testing
 
@@ -559,14 +505,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(con, source, skelSource);  // method we are testing
 
@@ -578,14 +518,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(rca.getContractors().contains(rcon));
         assertTrue(rcon.getCompanys().contains(rca));
 
-        Source source2 = new Source();
-        source2.setName("testsource2");
-        source2.setSkeleton(false);
-        iw.getDataTracker().store(source2);
-        Source skelSource2 = new Source();
-        skelSource2.setName("testsource2");
-        skelSource2.setSkeleton(true);
-        iw.getDataTracker().store(skelSource2);
+        Source source2 = iw.getMainSource("testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2");
 
         Address companyBAddress = new Address();
         Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -690,14 +624,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         con.addCompanys(companyA);
         companyA.addContractors(con);
 
-        Source source2 = new Source();
-        source2.setName("testsource2");
-        source2.setSkeleton(false);
-        iw.getDataTracker().store(source2);
-        Source skelSource2 = new Source();
-        skelSource2.setName("testsource2");
-        skelSource2.setSkeleton(true);
-        iw.getDataTracker().store(skelSource2);
+        Source source2 = iw.getMainSource("testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2");
 
         // Make sure there are currently multiple copies of CompanyA and ContractorA.
         try {
@@ -745,14 +673,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         e.setName("EmployeeA1");
         ((Broke) e).setDebt(8762);
 
-        Source source = new Source();
-        source.setName("testsource");
-        source.setSkeleton(false);
-        iw.getDataTracker().store(source);
-        Source skelSource = new Source();
-        skelSource.setName("testsource");
-        skelSource.setSkeleton(true);
-        iw.getDataTracker().store(skelSource);
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
         

@@ -67,6 +67,26 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     /**
+     * @see IntegrationWriter#getMainSource
+     */
+    public Source getMainSource(String name) throws ObjectStoreException {
+        Source retval = new Source();
+        retval.setName(name);
+        retval.setSkeleton(false);
+        return retval;
+    }
+
+    /**
+     * @see IntegrationWriter#getSkeletonSource
+     */
+    public Source getSkeletonSource(String name) throws ObjectStoreException {
+        Source retval = new Source();
+        retval.setName(name);
+        retval.setSkeleton(true);
+        return retval;
+    }
+
+    /**
      * @see IntegrationWriterAbstractImpl#store(FlyMineBusinessObject, Source, Source, int)
      */
     protected FlyMineBusinessObject store(FlyMineBusinessObject o, Source source, Source skelSource,

@@ -39,4 +39,24 @@ public interface IntegrationWriter extends ObjectStoreWriter
      */
     public void store(FlyMineBusinessObject o, Source source, Source skelSource)
         throws ObjectStoreException;
+
+    /**
+     * Converts a string describing the data source into a Source object suitable for passing to the
+     * store method as the main source.
+     *
+     * @param name the name of the data source
+     * @return a Source
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public Source getMainSource(String name) throws ObjectStoreException;
+
+    /**
+     * Converts a string describing the data source into a Source object suitable for passing to the
+     * store method as the skeleton source.
+     *
+     * @param name the name of the data source
+     * @return a skeleton Source
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public Source getSkeletonSource(String name) throws ObjectStoreException;
 }

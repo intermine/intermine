@@ -10,6 +10,7 @@ package org.flymine.dataloader;
  *
  */
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,6 +83,38 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             throw new IllegalArgumentException("Data tracking objectstore must use the data"
                     + " tracking model - currently using " + dataTracker.getModel().getName());
         }
+    }
+
+    /**
+     * @see IntegrationWriter#getMainSource
+     */
+    public Source getMainSource(String name) throws ObjectStoreException {
+        Source retval = new Source();
+        retval.setName(name);
+        retval.setSkeleton(false);
+        Source retval2 = (Source) dataTracker.getObjectByExample(retval, new HashSet(Arrays.asList(
+                        new String[] {"name", "skeleton"})));
+        if (retval2 != null) {
+            return retval2;
+        }
+        dataTracker.store(retval);
+        return retval;
+    }
+
+    /**
+     * @see IntegrationWriter#getSkeletonSource
+     */
+    public Source getSkeletonSource(String name) throws ObjectStoreException {
+        Source retval = new Source();
+        retval.setName(name);
+        retval.setSkeleton(true);
+        Source retval2 = (Source) dataTracker.getObjectByExample(retval, new HashSet(Arrays.asList(
+                        new String[] {"name", "skeleton"})));
+        if (retval2 != null) {
+            return retval2;
+        }
+        dataTracker.store(retval);
+        return retval;
     }
 
     /**
