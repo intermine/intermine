@@ -1,6 +1,8 @@
 <project name="flymine" default="help" basedir=".">
   <description>FlyMine build file</description>
 
+  <!-- SETUP TARGETS -->
+
   <!-- Property setup targets -->
   <!-- buildtime and runtime settings -->
   <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
@@ -162,10 +164,6 @@
     <echo message="See 'ant -projecthelp' for full target list"/>
   </target>
 
-  <!-- Compilation targets -->
-
-  <!-- Models to build -->
-
   <target name="new-intermine-jar" depends="prepare">
     <uptodate property="new.intermine.jar"
             targetfile="${intermine.jar.path}">
@@ -191,21 +189,19 @@
     </ant>
   </target>
 
+  <!-- ============================================================================== -->
+
+
+  <!-- Compilation targets -->
+
+  <!-- Models to build -->
+
   <!-- Ensembl drosophila src items -->
     <target name="build-db-ensembl-dros-src-items" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-src-items"/>
-    </ant>
-  </target>
-
-  <!-- Orthologue items -->
-  <target name="build-db-orthologue-tgt-items" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.orthologue-tgt-items"/>
     </ant>
   </target>
 
@@ -227,61 +223,6 @@
     </ant>
   </target>
 
-  <!-- Chado main -->
-  <target name="build-db-chado-test" depends="prepare-build-model, create-genomic-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.chado-test"/>
-    </ant>
-  </target>
-
-  <!-- Chado model -->
-  <target name="create-indexes-chado-test" depends="build-db-chado-test">
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.chado-test"/>
-    </ant>
-  </target>
-
-  <!-- Chado src test -->
-  <target name="build-db-chado-src-test" depends="prepare-build-model, compile-chado-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="chado"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.chado-src-test"/>
-    </ant>
-  </target>
-
-  <!-- Chado model -->
-  <target name="create-indexes-chado-src-test" depends="build-db-chado-src-test">
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="chado"/>
-      <property name="model.src" value="${model}/chado"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.chado-src-test"/>
-    </ant>
-  </target>
-
-  <target name="create-indexes-dros-test" depends="build-db-dros-test">
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-dros-test"/>
-    </ant>
-  </target>
-
-  <target name="create-indexes-anoph-test" depends="build-db-anoph-test">
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-anoph-test"/>
-    </ant>
-  </target>
 
   <!-- Data Translation targets -->
 
@@ -311,7 +252,13 @@
       <property name="db.name" value="db.chado-tgt-items"/>
     </ant>
 
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.chado-tgt-items"/>
   </target>
+
 
   <!-- Build ensembl-anoph-tgt-items database -->
   <target name="build-db-ensembl-anoph-tgt-items" depends="convert-ensembl">
@@ -340,6 +287,13 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
     </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.ensembl-anoph-tgt-items"/>
+
   </target>
 
 
@@ -369,6 +323,14 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-tgt-items"/>
     </ant>
+
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.ensembl-dros-tgt-items"/>
+
+
   </target>
 
   <!-- model tests -->
@@ -442,23 +404,19 @@
   </target>
 
 
-  <!-- Production build targets (currently uses testmodel) -->
-
-  <target name="load-production" depends="build-db-production,create-indexes-production,load-organisms,load-ensembl-drosophila,load-ensembl-anopheles"/>
-
   <!-- Load organism XML data into productiondatabase -->
   <target name="load-organisms" depends="prepare-build-model">
     <taskdef
-      name="insert-xml-data"
-      classname="org.intermine.dataloader.InsertXmlDataTask">
+      name="load-xml-data"
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
     <copy file="/shared/data/organisms/organisms.xml" todir="${build.tmp}"/>
 
-    <insert-xml-data integrationWriter="integration.production" file="${build.tmp}/organisms.xml">
+    <load-xml-data integrationWriter="integration.production" xmlFile="${build.tmp}/organisms.xml" sourceName="organisms">
       <classpath refid="models.class.path"/>
-    </insert-xml-data>
+    </load-xml-data>
   </target>
 
   <!-- Load data from chado-items into chado-test -->
@@ -470,22 +428,14 @@
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado"/>
   </target>
 
-  <!-- Load data from chado-src-items into chado-src-test -->
-  <target name="load-chado-src-test" depends="prepare-build-model,build-db-chado-src-test,create-indexes-chado-src-test">
-    <taskdef name="load-chado-src-test" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
 
-    <load-chado-src-test integrationWriter="integration.chado-src-test" source="os.chado-src-translated" sourceName="chado"/>
-  </target>
-
-  <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
+  <!-- Load data from ensembl-anoph-tgt-items into production -->
   <target name="load-ensembl-anopheles" depends="prepare-build-model">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-anoph integrationWriter="integration.production" source="os.anoph-translated" sourceName="ensembl"/>
+    <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph"/>
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into production -->
@@ -494,7 +444,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-dros integrationWriter="integration.production" source="os.ensembl-dros-translated" sourceName="ensembl"/>
+    <load-dros integrationWriter="integration.production" source="os.ensembl-dros-translated" sourceName="ensembl-dros"/>
   </target>
 
   <!-- convert chado zargo to FlyMine model -->
@@ -530,79 +480,8 @@
     <load-chado integrationWriter="integration.chado-test" source="os.chado-translated" sourceName="chado"/>
   </target>
 
-  <!-- Load organism XML data into test database -->
-  <target name="load-organisms-test" depends="prepare-build-model, build-db-organism-test">
-    <taskdef
-      name="insert-xml-data"
-      classname="org.intermine.dataloader.InsertXmlDataTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
 
-    <copy file="/shared/data/organisms/organisms.xml" todir="${build.tmp}"/>
-
-    <insert-xml-data integrationWriter="integration.organism-test" file="${build.tmp}/organisms.xml">
-      <classpath refid="models.class.path"/>
-    </insert-xml-data>
-  </target>
-
-
-  <!-- Build temporary flymine database to hold ensembl anopheles data -->
-  <target name="build-db-anoph-test">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-anoph-test"/>
-    </ant>
-  </target>
-
-  <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
-  <target name="load-ensembl-anopheles-test" depends="prepare-build-model, build-db-anoph-test, create-indexes-anoph-test">
-    <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <load-anoph integrationWriter="integration.ensembl-anoph-test" source="os.anoph-translated" sourceName="ensembl"/>
-  </target>
-
-  <!-- Load data from ensembl-dros-tgt-items into dros-test -->
-  <target name="load-ensembl-drosophila-test" depends="prepare-build-model, build-db-dros-test, create-indexes-dros-test">
-    <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <load-dros integrationWriter="integration.ensembl-dros-test" source="os.ensembl-dros-translated" sourceName="ensembl"/>
-  </target>
-
-  <!-- test genomic model database to hold orthologue data -->
-  <target name="build-db-orthologue-test">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.orthologue-test"/>
-    </ant>
-  </target>
-
-  <target name="create-indexes-orthologue-test" depends="build-db-orthologue-test">
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.orthologue-test"/>
-    </ant>
-  </target>
-
-
-
-  <!-- Load data from orthologue-tgt-items into orthologue-test -->
-  <target name="load-orthologues-test" depends="prepare-build-model, build-db-orthologue-test, create-indexes-orthologue-test">
-    <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <load-orthologue integrationWriter="integration.orthologue-test" source="os.orthologue-translated" sourceName="orthologue"/>
-  </target>
-  
-
+  <!-- PRODUCTION DATABASE -->
 
   <!-- Build flymine database to hold production data -->
   <target name="build-db-production" depends="create-genomic-model">
@@ -618,27 +497,39 @@
       <property name="model.name" value="genomic"/>
       <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-production"/>
+      <property name="db.name" value="db.production"/>
     </ant>
   </target>
 
-  <!-- Build temporary flymine database to hold ensembl anopheles data -->
-  <target name="build-db-dros-test" depends="create-genomic-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-dros-test"/>
-    </ant>
+
+  <!-- LOAD PRODUCTION DATA -->
+
+  <!-- Translates and loads ensembl drosophila data -->
+  <target name="build-ensembl-drosophila-production" depends="retrieve-ensembl-drosophila,translate-ensembl-drosophila,load-ensembl-drosophila"/>
+
+  <!-- Translates and loads ensembl anopheles data -->
+  <target name="build-ensembl-anopheles-production" depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
+
+  <!-- Retrieve and load orthologue data -->
+  <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
+
+  <!-- build production database - assumes that ensembl databases already retrieved -->
+  <target name="production-build" depends="create-production-model, jar-genomic,
+                                           build-db-production,create-indexes-production,
+                                           build-ensembl-drosophila-production,
+                                           build-ensembl-anopheles-production,
+                                           build-orthologues-production,
+                                           load-organisms">
+
+    <!-- analyse database -->
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+       <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <analyse-db database="db.production" full="true"/>
   </target>
 
-  <!-- Build temporary flymine database to hold organism data -->
-  <target name="build-db-organism-test" depends="create-genomic-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.organism-test"/>
-    </ant>
-  </target>
+
 
   <!-- convert ensembl zargo to FlyMine model -->
   <target name="convert-ensembl" depends="prepare-build-model">
@@ -680,7 +571,13 @@
   </target>
 
   <!-- retrieve ensembl orthologue/paralogue data into items database-->
-  <target name="orthologues-ensembl" depends="compile-orthologue-java">
+  <target name="retrieve-orthologues-ensembl" depends="prepare-build-model, compile-orthologue-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+
     <taskdef name="retrieve-orthologue" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -689,22 +586,34 @@
 
     <retrieve-orthologue file="${build.tmp}/orthologues.AG-DM" 
        clsName="org.flymine.dataconversion.OrthologueConverter" 
-       osName="osw.orthologue-tgt-items"
-       param1="D. melanogaster"
-       param2="A. gambiae"/>
+       osName="osw.ensembl-orthologue-tgt-items"
+       param1="AG"
+       param2="DM"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.orthologue-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
     </ant>
   </target>
 
-  <target name="retrieve-orthologues-ensembl" depends="build-db-orthologue-tgt-items, orthologues-ensembl"/>  
+  <!-- Load data from ensembl orthologues into production -->
+  <target name="load-orthologues-ensembl">
+    <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-orthologue integrationWriter="integration.production" source="os.ensembl-orthologue-translated" sourceName="orthologue-ensembl"/>
+  </target>
 
 
-  <!-- retrieve inparanoid orthologue data into orthologue-tgt-items database -->
-  <target name="orthologues-inparanoid" depends="compile-orthologue-java">
+  <!-- retrieve inparanoid orthologue data into common-tgt-items database -->
+  <target name="retrieve-orthologues-inparanoid" depends="prepare-build-model, compile-orthologue-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
     <taskdef name="retrieve-orthologue" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -718,22 +627,24 @@
     <retrieve-orthologue 
        file="${build.tmp}/inparanoid"
        clsName="org.flymine.dataconversion.InparanoidConverter" 
-       osName="osw.orthologue-tgt-items"/>
+       osName="osw.inparanoid-orthologue-tgt-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.orthologue-tgt-items"/>
+      <property name="db.name" value="db.common-tgt-items"/>
     </ant>
   </target>
 
-  <target name="retrieve-orthologues-inparanoid" depends="build-db-orthologue-tgt-items, orthologues-inparanoid"/>
+  <!-- Load data from inparanoid orthologues into production -->
+  <target name="load-orthologues-inparanoid">
+    <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
 
+    <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated" sourceName="orthologue-inparanoid"/>
+  </target>
 
-  <!-- retrieve orthologue data from all sources into orthologue-tgt-items
-    !! Currently does not work - causes generated identifiers to clash in tgt-items database
-  <target name="retrieve-orthologues" depends="build-db-orthologue-tgt-items, orthologues-ensembl, orthologues-inparanoid"/>
-  -->
 
   <!-- convert RNAi OWL to FlyMine model -->
   <target name="convert-rnai" depends="prepare-build-model">
@@ -1015,14 +926,6 @@
 
   </target>
 
-  <target name="build-db-production" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.production"/>
-    </ant>
-  </target>
-
   <target name="junit-clean" depends="prepare">
     <delete>
       <fileset dir="${results.junit}" includes="TEST-*.xml"/>
@@ -1069,118 +972,12 @@
 
   </target>
 
-  <!-- Javadoc targets -->
-
-  <target name="javadoc" depends="prepare"
-          description="generate the javadoc">
-    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="FlyMine API" additionalparam="-breakiterator">
-      <classpath refid="base.class.path"/>
-      <fileset dir="${src.java}" defaultexcludes="yes" />
-      <doctitle><![CDATA[<h1>FlyMine</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} FlyMine. All Rights Reserved.</i>]]></bottom>
-    </javadoc>
-  </target>
 
 
-  <!-- Web targets -->
 
-  <target name="build-www" depends="prepare"
-          description="build the static website" >
 
-    <available file="${src.www-internal}" type="dir" property="www-internal.present"/>
 
-    <antcall target="www-external" />
-    <antcall target="www-internal" />
-
-  </target>
-
-    <!-- main web site -->
-  <target name="www-external" depends="prepare">
-
-    <!-- make sure files dependent on sidebar are handled correctly -->
-    <dependset>
-      <srcfilelist dir="${src.www}" files="sidebar.xml,flymine.xsl" />
-      <targetfileset dir="${build.www}" includes="**/*.html" />
-    </dependset>
-
-    <dependset>
-      <srcfilelist dir="${bin}" files="diatopng,pstopng,buildpngfromdia,pnmscalealpha" />
-      <targetfileset dir="${build.www}" includes="**/*.png" />
-    </dependset>
-
-    <dependset>
-      <srcfilelist dir="${bin}" files="buildgiffrompng" />
-      <targetfileset dir="${build.www}" includes="**/*.gif" />
-    </dependset>
-
-    <copy todir="${build.www}">
-      <fileset dir="${src.www}">
-        <exclude name="**/*.xml" />
-        <exclude name="**/*.xsl" />
-        <exclude name="**/*.dia" />
-      </fileset>
-    </copy>
-
-    <style basedir="${src.www}" destdir="${build.www}" extension=".html"
-      style="${src.www}/flymine.xsl" includes="**/*.xml">
-      <classpath refid="base.class.path"/>
-      <param name="basedir" expression="${www.location}" />
-    </style>
-
-    <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www}">
-      <fileset dir="${src.www}">
-        <include name="**/*.dia" />
-      </fileset>
-      <mapper type="glob" from="*.dia" to="*.png" />
-      <srcfile />
-      <targetfile />
-    </apply>
-
-    <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www}">
-      <fileset dir="${build.www}">
-        <include name="**/*.png" />
-      </fileset>
-      <mapper type="glob" from="*.png" to="*.gif" />
-      <srcfile />
-      <targetfile />
-    </apply>
-  </target>
-
-    <!-- internal web site -->
-  <target name="www-internal" depends="prepare"
-          if="www-internal.present" >
-    <copy todir="${build.www-internal}">
-      <fileset dir="${src.www-internal}">
-        <exclude name="**/*.xml" />
-        <exclude name="**/*.xsl" />
-        <exclude name="**/*.dia" />
-      </fileset>
-    </copy>
-
-    <style basedir="${src.www-internal}" destdir="${build.www-internal}" extension=".html"
-      style="${src.www}/flymine.xsl" includes="**/*.xml">
-      <classpath refid="base.class.path"/>
-      <param name="basedir" expression="${www.location}" />
-    </style>
-
-    <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www-internal}">
-      <fileset dir="${src.www-internal}">
-        <include name="**/*.dia" />
-      </fileset>
-      <mapper type="glob" from="*.dia" to="*.png" />
-      <srcfile />
-      <targetfile />
-    </apply>
-    <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www-internal}">
-      <fileset dir="${build.www-internal}">
-        <include name="**/*.png" />
-      </fileset>
-      <mapper type="glob" from="*.png" to="*.gif" />
-      <srcfile />
-      <targetfile />
-    </apply>
-
-  </target>
+  <!-- WEBAPP TARGETS -->
 
   <target name="build-production-webapp" depends="jar-genomic">
     <mkdir dir="${build.webapp}/intermine"/>
@@ -1221,25 +1018,9 @@
   </target>
 
 
-  <!-- Packaging/distribution targets -->
 
-  <target name="dist-www" depends="prepare-dist,build-www"
-          description="makes the static website available for distribution">
-    <copy todir="${dist.www}">
-      <fileset dir="${build.www}">
-      </fileset>
-    </copy>
-  </target>
-
-  <target name="dist-javadoc" depends="prepare-dist,javadoc"
-          description="makes the javadoc available for distribution">
-     <copy todir="${dist.javadoc}">
-      <fileset dir="${build.javadoc}">
-      </fileset>
-    </copy>
-  </target>
  
-  <!-- Model compilation tasks -->
+  <!-- MODEL COMPILATION TARGETS -->
 
   <target name="compile-acedb-model" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-model-from-ace" inheritRefs="true">
@@ -1273,7 +1054,24 @@
     </ant>
   </target>
 
-  <!-- Dot tasks -->
+
+  <!-- ============================================================================== -->
+
+  <!-- JAVADOC TARGETS -->
+
+  <target name="javadoc" depends="prepare"
+          description="generate the javadoc">
+    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="FlyMine API" additionalparam="-breakiterator">
+      <classpath refid="base.class.path"/>
+      <fileset dir="${src.java}" defaultexcludes="yes" />
+      <doctitle><![CDATA[<h1>FlyMine</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} FlyMine. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+
+
+  <!-- DOT TASKS -->
+
   <target name="dot" depends="dot-acedb,dot-chado,dot-ensembl,dot-genomic,dot-mage"/>
 
   <taskdef name="dot" classname="org.intermine.task.InheritanceDotTask">
@@ -1300,7 +1098,19 @@
     <dot directory="${build.model}/mage" packagename="MAGEOM" file="mage.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
   </target>
 
-  <!-- Cleaning-up targets -->
+
+  <!-- PACKAGING/DISTRIBUTION TARGETS -->
+
+  <target name="dist-javadoc" depends="prepare-dist,javadoc"
+          description="makes the javadoc available for distribution">
+     <copy todir="${dist.javadoc}">
+      <fileset dir="${build.javadoc}">
+      </fileset>
+    </copy>
+  </target>
+
+
+  <!-- CLEAN TARGETS -->
 
   <target name="clean"
           description="clean up generated files">
@@ -1332,7 +1142,8 @@
     <delete dir="${dist}"/>
   </target>
 
-  <!-- AntDoc target -->
+
+  <!-- ANTDOC TARGET -->
 
   <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
     <classpath refid="base.class.path"/>
