@@ -75,7 +75,7 @@ public class ModifyBagForm extends ActionForm
 
         if (selectedBags.length == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
-        } else {
+        } else if (request.getParameter("delete") != null) {
             for (int i = 0; i < getSelectedBags().length; i++) {
                 List queries = queriesThatMentionBag(profile.getSavedQueries(),
                                                      getSelectedBags()[i]);
