@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Making use of bags</title>
+
+   <itemizedlist>
+      <listitem>
+        <para>Bags of objects or identifiers can be created either from your query results (see <ulink url="manualSavingdata.xml">Saving results to bags, </ulink>or from an external source (see <ulink url="manualCreatingBag.xml">Creating a bag of identifiers.)</ulink> These bags of data can be used for logical operations (union and intersect) or for constraining queries in the query builder - details below.</para>
+      </listitem>
+
+        <listitem>
+           <para>The logical operations, union and intersect, can be performed on bags of data from your <ulink url="manualHistory.xml">history </ulink>page. Use the checkbuttons next to your saved bags to select two or more bags for these operations.  The result of the operation will be saved as a new bag with a default name (see screenshot below).</para>
+
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="logicalOps1.png" />
+            </imageobject>
+          </mediaobject>
+
+
+        </listitem>
+
+
+        <listitem>
+            <para>Bags of data can be used to constrain queries in the query builder.  If you have bags of data saved in your history you will automatically be able to use these from within the query builder to constrain a query.  When a field or class is selected for constraining in the query builder the constraint box in the right hand constaint pane will ask you to either add a constraint or constrain to a choice of your bags (see screenshot below).</para>
+         
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="constrain2bag1.png" />
+            </imageobject>
+          </mediaobject>
+
+ </listitem>
+
+</itemizedlist>
+
+</section>
+
+</article>
+ 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Creating a bag of identifiers</title>
+
+   <itemizedlist>
+      <listitem>
+        <para>A bag of objects can be created from an external source.
+        From the main query page click on the 'Create a bag of
+        identifiers' link (see screenshot below).</para>
+
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="createBag1.png" />
+            </imageobject>
+          </mediaobject>
+
+
+      </listitem>
+
+      <listitem>
+         <para>To make your bag, either type or cut and paste in a list of identifiers, or upload a list from a file. Press 'Make bag' to save the bag of identifers to your  <ulink url="manualHistory.xml">history.</ulink> The bag you create will be a bag of objects.  For example if you enter a list gene identifiers the bag you create will contain the object for each of those genes (as opposed to being simply a bag containing a list of identifiers). See <ulink url="manualUsingBags.xml">Making use of bags.</ulink> for details on how to use a bag of identifiers in a query and for performing the logical operations union and intersect.</para>
+
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="createBag2.png" />
+            </imageobject>
+          </mediaobject>
+
+
+       </listitem>
+
+
+</itemizedlist>
+
+</section>
+
+</article>
+ 
+
+
