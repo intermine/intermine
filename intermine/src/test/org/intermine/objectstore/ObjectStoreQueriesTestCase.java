@@ -94,6 +94,21 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
             if (!(queries.containsKey(type))) {
                 writer.println("\n" + type + " does not appear in the queries map");
                 status = 1;
+            } else {
+                Object result = results.get(type);
+                if (result != NO_RESULT) {
+                    try {
+                        executeTest(type);
+                    } catch (AssertionFailedError e) {
+                        writer.println("\n" + type + " has failed: " + e.getMessage());
+                        //e.printStackTrace(writer);
+                        status = (status == 2 ? 2 : 1);
+                    } catch (Throwable t) {
+                        writer.println("\n" + type + " produced an error:");
+                        t.printStackTrace(writer);
+                        status = 2;
+                    }
+                }
             }
         }
         i = queries.keySet().iterator();
@@ -104,18 +119,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                 if (strictTestQueries) {
                     writer.println("\n" + type + " does not appear in the results map");
                     status = (status == 2 ? 2 : 1);
-                }
-            } else if (result != NO_RESULT) {
-                try {
-                    executeTest(type);
-                } catch (AssertionFailedError e) {
-                    writer.println("\n" + type + " has failed: " + e.getMessage());
-                    //e.printStackTrace(writer);
-                    status = (status == 2 ? 2 : 1);
-                } catch (Throwable t) {
-                    writer.println("\n" + type + " produced an error:");
-                    t.printStackTrace(writer);
-                    status = 2;
                 }
             }
         }
