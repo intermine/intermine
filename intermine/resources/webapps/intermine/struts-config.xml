@@ -94,7 +94,7 @@
             forward="query.page">
     </action>
 
-    <!-- Action to run a query for a Query object on the request -->
+    <!-- Action to run a query for a Query object on the session -->
     <action    path="/runQuery"
                type="org.flymine.web.RunQueryAction">
       <forward name="results" path="results.page"/>
