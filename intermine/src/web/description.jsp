@@ -13,7 +13,7 @@
       <c:out value="${description}" escapeXml="false"/>
       <fmt:message key="${pageName}.help" var="help"/>
       <c:if test="${!empty help}">
-        [<html:link href="/webapp/${pageName}.html"><c:out value="${help}"/></html:link>]
+        [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}webapp/${pageName}.html"><c:out value="${help}"/></html:link>]
       </c:if>
       <br/><br/>
     </div>
