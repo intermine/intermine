@@ -29,11 +29,12 @@ public class AceModelParserFunctionalTest extends TestCase
 {
     private static final String MODEL = "acedbtest";
     private static final String PKG = "org.intermine.model." + MODEL + ".";
+    private static final String nameSpace = "http://www.intermine.org/model";
+    private static final String uri = nameSpace + "/testmodel";
 
     private ModelParser parser;
     private Reader reader;
     private Model model;
-    private String uri = "http://www.intermine.org/model/testmodel";
 
     public AceModelParserFunctionalTest(String arg) {
         super(arg);
@@ -41,7 +42,7 @@ public class AceModelParserFunctionalTest extends TestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        parser = new AceModelParser(MODEL);
+        parser = new AceModelParser(nameSpace, MODEL);
         reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".wrm"));
         model = createModel();
     }

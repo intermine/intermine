@@ -38,6 +38,7 @@ public class AceModelParser implements ModelParser
 {
     protected static final Logger LOG = Logger.getLogger(AceModelParser.class);
 
+    protected String nameSpace;
     protected String modelName, pkgName;
 
     /**
@@ -50,9 +51,11 @@ public class AceModelParser implements ModelParser
      * Constructor that takes the modelName - required because not available from wrm file
      * but necessary to name ClassDescriptors correctly
      *
+     * @param nameSpace the XML name space
      * @param modelName the name of the model to produce
      */
-    public AceModelParser(String modelName) {
+    public AceModelParser(String nameSpace, String modelName) {
+        this.nameSpace = nameSpace;
         this.modelName = modelName;
         pkgName = "org.intermine.model." + modelName + ".";
     }
@@ -74,8 +77,7 @@ public class AceModelParser implements ModelParser
             ModelNode c = (ModelNode) classIter.next();
             classDescriptors.add(nodeClassToDescriptor(c));
         }
-        return new Model(modelName, "http://www.intermine.org/model/" + modelName,
-                         classDescriptors);
+        return new Model(modelName, nameSpace + "/" + modelName, classDescriptors);
     }
 
     /**

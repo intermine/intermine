@@ -28,13 +28,14 @@ public class XmiParserFunctionalTest extends TestCase
 {
     private static final String MODEL = "xmitest";
     private static final String PKG = "org.intermine.model." + MODEL + ".";
+    private String nameSpace = "http://www.intermine.org/model";
 
     public XmiParserFunctionalTest(String arg) {
         super(arg);
     }
 
     public void testProcess() throws Exception {
-        ModelParser parser1 = new XmiParser(MODEL);
+        ModelParser parser1 = new XmiParser(nameSpace, MODEL);
         Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xmi"));
         Model model1 = parser1.process(reader1);
         ModelParser parser2 = new InterMineModelParser();

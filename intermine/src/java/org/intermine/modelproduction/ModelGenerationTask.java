@@ -29,10 +29,19 @@ import org.intermine.metadata.Model;
  */
 public class ModelGenerationTask extends Task
 {
+    protected String nameSpace;
     protected String modelName;
     protected File destDir;
     protected String type;
     protected File source;
+
+    /**
+     * Set the name space to use in the output XML
+     * @param nameSpace the XML name space
+     */
+    public void setNameSpace(String nameSpace) {
+        this.nameSpace = nameSpace;
+    }
 
     /**
      * Set name of the model to be created.
@@ -91,9 +100,9 @@ public class ModelGenerationTask extends Task
         ModelParser parser = null;
 
         if (type.equals("xmi")) {
-            parser = new XmiParser(modelName);
+            parser = new XmiParser(nameSpace, modelName);
         } else if (type.equals("acedb")) {
-            parser = new AceModelParser(modelName);
+            parser = new AceModelParser(nameSpace, modelName);
         } else {
             throw new BuildException("Unrecognised value for type: " + type);
         }

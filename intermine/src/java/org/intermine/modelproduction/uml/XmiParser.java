@@ -63,6 +63,7 @@ public class XmiParser implements ModelParser
 {
     protected static final Logger LOG = Logger.getLogger(XmiParser.class);
 
+    protected String nameSpace;
     protected String modelName;
 
     private Set attributes, references, collections;
@@ -71,9 +72,11 @@ public class XmiParser implements ModelParser
     /**
      * Constructor that takes the modelName
      *
+     * @param nameSpace the XML name space
      * @param modelName the name of the model to produce
      */
-    public XmiParser(String modelName) {
+    public XmiParser(String nameSpace, String modelName) {
+        this.nameSpace = nameSpace;
         this.modelName = modelName;
     }
 
@@ -87,7 +90,7 @@ public class XmiParser implements ModelParser
      */
     public Model process(Reader reader) throws Exception {
         recurse(new XMIReader().parse(new InputSource(reader)));
-        return new Model(modelName, "http://www.intermine.org/model/" + modelName + "#", classes);
+        return new Model(modelName, nameSpace + "/" + modelName + "#", classes);
     }
 
     /**
