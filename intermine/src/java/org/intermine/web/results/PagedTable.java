@@ -181,7 +181,7 @@ public abstract class PagedTable
     }
 
     /**
-     * Return the rows of the table as a List of Lists.
+     * Return the currently visible rows of the table as a List of Lists.
      *
      * @return the rows of the table
      */    
