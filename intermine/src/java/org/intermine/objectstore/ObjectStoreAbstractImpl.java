@@ -123,16 +123,21 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     protected Object internalGetObjectByExample(Object obj) throws ObjectStoreException {
-        Results res = execute(QueryCreator.createQueryForExampleObject(obj, model));
-        res.setNoOptimise();
+        Results results = execute(QueryCreator.createQueryForExampleObject(obj, model));
+        results.setNoOptimise();
 
-        if (res.size() > 1) {
+        if (results.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
                                                + "this primary key");
         }
-        if (res.size() == 1) {
-            Object ret = ((ResultsRow) res.get(0)).get(0);
-            return ret;
+        if (results.size() == 1) {
+            Object o = ((Object []) results.get(0))[0];
+            try {
+                promoteProxies(o);
+            } catch (Exception e) {
+                throw new ObjectStoreException("Problem promoting proxies", e);
+            }
+            return o;
         }
         return null;
     }
