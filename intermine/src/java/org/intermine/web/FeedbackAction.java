@@ -59,7 +59,7 @@ public class FeedbackAction extends InterMineAction
         FeedbackForm ff = (FeedbackForm) form;
         
         try {
-            
+            Map webProperties = (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
             MessageResources strings = getResources(request);
             String host = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
@@ -67,8 +67,7 @@ public class FeedbackAction extends InterMineAction
             String subject = ff.getSubject();
             String text = MessageFormat.format(strings.getMessage("feedback.template"),
                                 new Object[] {ff.getName(), ff.getEmail(), ff.getMessage()});
-            String dest = strings.getMessage("feedback.destination");
-            
+            String dest = (String) webProperties.get("feedback.destination");
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", host);
             
