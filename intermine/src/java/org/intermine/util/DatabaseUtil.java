@@ -66,7 +66,7 @@ public class DatabaseUtil
             while (cld.getSuperclassDescriptor() != null) {
                 cld = cld.getSuperclassDescriptor();
             }
-            tableName = TypeUtil.unqualifiedName(cld.getClassName());
+            tableName = TypeUtil.unqualifiedName(cld.getName());
         }
         return tableName;
     }
@@ -99,7 +99,7 @@ public class DatabaseUtil
                                                + "many-to-many relation");
         }
         
-        String cldName = col.getClassDescriptor().getClassName();
+        String cldName = col.getClassDescriptor().getName();
         String name1 = getInwardIndirectionColumnName(col);
         String name2 = getOutwardIndirectionColumnName(col);
         return name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
@@ -134,7 +134,7 @@ public class DatabaseUtil
         
         ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
         return StringUtil.capitalise(rd == null
-                ? TypeUtil.unqualifiedName(col.getClassDescriptor().getClassName())
+                ? TypeUtil.unqualifiedName(col.getClassDescriptor().getName())
                 : rd.getName());
     }
 

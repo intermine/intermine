@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collection;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
@@ -92,7 +91,7 @@ public class Model
         // 1. Put all ClassDescriptors in model.
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-            cldMap.put(cld.getClassName(), cld);
+            cldMap.put(cld.getName(), cld);
 
             // create maps of ClassDescriptor to empty sets for subclasses and implementors
             subclassMap.put(cld, new LinkedHashSet());
@@ -178,15 +177,6 @@ public class Model
      */
     public String getName() {
         return this.name;
-    }
-
-    /**
-     * Get a Collection of fully qualified class names in this model (i.e. including
-     * package name).
-     * @return Collection of fully qualified class names
-     */
-    public Collection getClassNames() {
-        return (Collection) cldMap.keySet();
     }
 
     /**

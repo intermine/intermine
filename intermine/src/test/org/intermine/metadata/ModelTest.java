@@ -83,17 +83,6 @@ public class ModelTest extends TestCase
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));
     }
-
-    public void testGetClassNames() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
-
-        Set names = new HashSet(Arrays.asList(new Object[] {"Class1", "Class2"}));
-
-        assertEquals(names, model.getClassNames());
-    }
       
     public void testEquals() throws Exception {
         Model m1 = new Model("flibble", EMPTY_SET);

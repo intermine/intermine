@@ -131,7 +131,7 @@ public class ClassDescriptor
      * Returns the fully qualified class name described by this ClassDescriptor.
      * @return name of the described Class
      */
-    public String getClassName() {
+    public String getName() {
         return name;
     }
 
@@ -182,7 +182,7 @@ public class ClassDescriptor
             if (superclassDescriptor != null) {
                 return superclassDescriptor.getFieldDescriptorByName(name);
             } else {
-                throw new NullPointerException("ClassDescriptor '" + getClassName() 
+                throw new NullPointerException("ClassDescriptor '" + getName() 
                                                + "' has no field named '" + name + "'");
             }
         }
@@ -317,10 +317,10 @@ public class ClassDescriptor
                                             + superclassName + " found in model.");
             }
             if (isInterface() != superclassDescriptor.isInterface()) {
-                throw new MetaDataException("This class (" + getClassName()
+                throw new MetaDataException("This class (" + getName()
                                             + (isInterface() ? ") is " : ") is not ")
                                             + "an interface but superclass ("
-                                            + superclassDescriptor.getClassName()
+                                            + superclassDescriptor.getName()
                                             + (superclassDescriptor.isInterface() ? ") is."
                                                : ") is not."));
             }
@@ -418,7 +418,7 @@ public class ClassDescriptor
      */
     public Set getImplementorDescriptors() throws IllegalStateException {
         if (!implSet) {
-            throw new IllegalStateException("This ClassDescriptor (" + getClassName() 
+            throw new IllegalStateException("This ClassDescriptor (" + getName() 
                                             + ") has not yet had implementor Descriptors set.");
         }
         return implementorDescriptors;
@@ -455,7 +455,7 @@ public class ClassDescriptor
 
     private void checkModel() {
         if (!modelSet) {
-            throw new IllegalArgumentException("ClassDescriptor '" + getClassName()
+            throw new IllegalArgumentException("ClassDescriptor '" + getName()
                                                + "' has not been added to a Model");
         }
     }

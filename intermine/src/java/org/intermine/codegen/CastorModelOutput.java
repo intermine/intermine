@@ -84,11 +84,11 @@ public class CastorModelOutput extends ModelOutput
 
         sb.append(INDENT)
             .append("<class name=\"")
-            .append(cld.getClassName())
+            .append(cld.getName())
             .append("\"");
         if (superCld != null) {
             sb.append(" extends=\"")
-                .append(superCld.getClassName())
+                .append(superCld.getName())
                 .append("\"");
         }
 
@@ -159,7 +159,7 @@ public class CastorModelOutput extends ModelOutput
             .append("<field name=\"")
             .append(ref.getName())
             .append("\" type=\"")
-            .append(ref.getReferencedClassDescriptor().getClassName())
+            .append(ref.getReferencedClassDescriptor().getName())
             .append("\">" + ENDL)
             .append(INDENT + INDENT + INDENT)
             .append("<bind-xml name=\"")
@@ -178,7 +178,7 @@ public class CastorModelOutput extends ModelOutput
             .append("<field name=\"")
             .append(col.getName())
             .append("\" type=\"")
-            .append(col.getReferencedClassDescriptor().getClassName())
+            .append(col.getReferencedClassDescriptor().getName())
             .append("\" collection=\"collection\">" + ENDL)
             .append(INDENT + INDENT + INDENT)
             .append("<bind-xml name=\"")

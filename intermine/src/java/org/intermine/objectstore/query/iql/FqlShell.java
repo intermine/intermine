@@ -12,14 +12,13 @@ package org.flymine.objectstore.query.fql;
 
 import java.util.Iterator;
 import java.util.List;
-
 import java.io.PrintStream;
-
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.ObjectStoreFactory;
+import org.flymine.metadata.ClassDescriptor;
 import org.flymine.util.TypeUtil;
 import org.gnu.readline.Readline;
 import org.gnu.readline.ReadlineLibrary;
@@ -149,9 +148,10 @@ public class FqlShell
         PrintStream out = System.out;
 
         // The following will only work when there is one package in the model
-        String modelPackage = TypeUtil.packageName((String) os.getModel().getClassNames()
-                                                   .iterator().next());
-
+        String modelPackage = TypeUtil.packageName(((ClassDescriptor) os.getModel()
+                                                    .getClassDescriptors().iterator().next())
+                                                   .getName());
+        
         FqlQuery fq = new FqlQuery(fql, modelPackage);
         Query q = fq.toQuery();
 

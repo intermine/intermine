@@ -103,7 +103,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     public boolean equals(Object obj) {
         if (obj instanceof CollectionDescriptor) {
             CollectionDescriptor ref = (CollectionDescriptor) obj;
-            return (cld == null || cld.getClassName().equals(ref.cld.getClassName()))
+            return (cld == null || cld.getName().equals(ref.cld.getName()))
                 && name.equals(ref.name)
                 && primaryKey == ref.primaryKey
                 && referencedType.equals(ref.referencedType)
@@ -117,7 +117,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @see Object#hashCode
      */
     public int hashCode() {
-        return 2 * (cld == null ? 0 : cld.getClassName().hashCode())
+        return 2 * (cld == null ? 0 : cld.getName().hashCode())
             + 3 * name.hashCode()
             + 5 * (primaryKey ? 1 : 0)
             + 7 * referencedType.hashCode()

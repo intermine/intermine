@@ -242,9 +242,9 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testGetImplementorDescriptors() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, "interface1", false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", null, "interface1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, "Interface1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", null, "Interface1", false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Model model2 = new Model("test2", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
@@ -275,10 +275,13 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testToString() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", "Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        String expected = "<class name=\"Class1\" extends=\"Class2\" implements=\"Interface1\" is-interface=\"false\">"
+        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        String expected = "<class name=\"Class3\" extends=\"Class2\" implements=\"Interface1\" is-interface=\"false\">"
             + "</class>";
-        assertEquals(expected, cld1.toString());
+        Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        assertEquals(expected, cld3.toString());
     }
 
     // ============================================

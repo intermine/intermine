@@ -84,7 +84,8 @@ public class AceDataLoader extends DataLoader
      * Initialise the built-in types
      */
     protected void initialise() {
-        pkgName = TypeUtil.packageName(((String) model.getClassNames().iterator().next())) + ".";
+        pkgName = TypeUtil.packageName(((ClassDescriptor) model.getClassDescriptors().iterator()
+                                        .next()).getName()) + ".";
         dateType = pkgName + DATETYPE;
         floatType = pkgName + FLOAT;
         intType = pkgName + INT;
@@ -105,7 +106,7 @@ public class AceDataLoader extends DataLoader
             // Go through each class in the model and get a dump of the objects of
             // that class
 
-            Iterator clsIter = model.getClassNames().iterator();
+            Iterator clsIter = model.getClassDescriptors().iterator();
             //String skippedClass;
             //while (clsIter.hasNext() && (!"org.flymine.model.acedb.Peptide".equals(skippedClass
             //        = (String) clsIter.next()))) {
@@ -290,7 +291,7 @@ public class AceDataLoader extends DataLoader
                         // find out the type of the elements
                         CollectionDescriptor fdCld = (CollectionDescriptor) fd;
                         ClassDescriptor referencedCld = fdCld.getReferencedClassDescriptor();
-                        nodeClass = TypeUtil.unqualifiedName(referencedCld.getClassName());
+                        nodeClass = TypeUtil.unqualifiedName(referencedCld.getName());
                     } else {
                         nodeClass = TypeUtil.unqualifiedName(nodeField.getType().getName());
                     }
@@ -475,7 +476,7 @@ public class AceDataLoader extends DataLoader
             while (((nameIter == null) || (!nameIter.hasNext())
                         || (thisClassCount >= 1000000000)) && classIter.hasNext()) {
                 thisClassCount = 0;
-                String className = (String) classIter.next();
+                String className = ((ClassDescriptor) classIter.next()).getName();
                 String aceClazzName = AceModelParser
                     .unformatAceName(TypeUtil.unqualifiedName(className));
                 AceURL objURL = source.relativeURL(aceClazzName);

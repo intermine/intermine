@@ -40,9 +40,9 @@ public class JavaModelOutput extends ModelOutput
         Iterator iter = model.getClassDescriptors().iterator();
         while (iter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
-            String cldName = cld.getClassName();
+            String cldName = cld.getName();
             String pkg = TypeUtil.packageName(cldName);
-            String cls = TypeUtil.unqualifiedName(cld.getClassName());
+            String cls = TypeUtil.unqualifiedName(cld.getName());
             File dir = new File(file, pkg.replaceAll("[.]", File.separator));
             dir.mkdirs();
             File path = new File(dir, cls + ".java");
@@ -65,7 +65,7 @@ public class JavaModelOutput extends ModelOutput
     protected String generate(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        String packageName = TypeUtil.packageName(cld.getClassName());
+        String packageName = TypeUtil.packageName(cld.getName());
 
         if (packageName.length() > 0) {
             sb.append("package ")
@@ -74,11 +74,11 @@ public class JavaModelOutput extends ModelOutput
         }
         sb.append("public ")
             .append(cld.isInterface() ? "interface " : "class ")
-            .append(TypeUtil.unqualifiedName(cld.getClassName()));
+            .append(TypeUtil.unqualifiedName(cld.getName()));
 
         if (cld.getSuperclassDescriptor() != null) {
             sb.append(" extends ")
-                .append(TypeUtil.unqualifiedName(cld.getSuperclassDescriptor().getClassName()));
+                .append(TypeUtil.unqualifiedName(cld.getSuperclassDescriptor().getName()));
         }
 
         if (cld.getInterfaceDescriptors().size() > 0) {
@@ -86,7 +86,7 @@ public class JavaModelOutput extends ModelOutput
             Iterator iter = cld.getInterfaceDescriptors().iterator();
             while (iter.hasNext()) {
                 ClassDescriptor interfaceCld = (ClassDescriptor) iter.next();
-                sb.append(TypeUtil.unqualifiedName(interfaceCld.getClassName()));
+                sb.append(TypeUtil.unqualifiedName(interfaceCld.getName()));
                 if (iter.hasNext()) {
                     sb.append(", ");
                 }
@@ -104,7 +104,7 @@ public class JavaModelOutput extends ModelOutput
 
             if (cld.getSuperclassDescriptor() != null || !cld.getSubclassDescriptors().isEmpty()) {
                 sb.append(INDENT + "protected String ojbConcreteClass = \"")
-                    .append(cld.getClassName())
+                    .append(cld.getName())
                     .append("\";" + ENDL + ENDL);
             }
         }
@@ -155,7 +155,7 @@ public class JavaModelOutput extends ModelOutput
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
             .append("protected ")
-            .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getClassName()))
+            .append(TypeUtil.unqualifiedName(ref.getReferencedClassDescriptor().getName()))
             .append(" ")
             .append(ref.getName())
             .append(";" + ENDL)
@@ -236,7 +236,7 @@ public class JavaModelOutput extends ModelOutput
     protected String generateEquals(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
+        String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
         Collection keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
@@ -265,7 +265,7 @@ public class JavaModelOutput extends ModelOutput
     protected String generateEqualsPK(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
+        String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
         Collection keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
@@ -363,7 +363,7 @@ public class JavaModelOutput extends ModelOutput
     protected String generateToString(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
 
-        String unqualifiedName = TypeUtil.unqualifiedName(cld.getClassName());
+        String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
         Set keyFields = cld.getPkFieldDescriptors();
         if (keyFields.size() > 0) {
@@ -401,7 +401,7 @@ public class JavaModelOutput extends ModelOutput
                 type = "java.util.Set";
             }
         } else {
-            type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getClassName();
+            type = ((ReferenceDescriptor) field).getReferencedClassDescriptor().getName();
         }
         return type;
     }

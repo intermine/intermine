@@ -90,10 +90,10 @@ public class OJBModelOutput extends ModelOutput
         StringBuffer sb = new StringBuffer ();
         sb.append(INDENT)
             .append("<class-descriptor class=\"")
-            .append(cld.getClassName())
+            .append(cld.getName())
             .append("\"")
             .append(parentCld == null ? "" : " extends=\""
-                    + parentCld.getClassName() + "\"")
+                    + parentCld.getName() + "\"")
             .append(cld.isInterface() ? "" : " table=\"" + DatabaseUtil.getTableName(cld) + "\"")
             .append(">" + ENDL);
 
@@ -103,7 +103,7 @@ public class OJBModelOutput extends ModelOutput
         while (iter.hasNext()) {
             sb.append(INDENT + INDENT)
                 .append("<extent-class class-ref=\"")
-                .append(((ClassDescriptor) iter.next()).getClassName())
+                .append(((ClassDescriptor) iter.next()).getName())
                 .append("\"/>" + ENDL);
         }
 
@@ -176,7 +176,7 @@ public class OJBModelOutput extends ModelOutput
             .append("<reference-descriptor name=\"")
             .append(ref.getName())
             .append("\" class-ref=\"")
-            .append(ref.getReferencedClassDescriptor().getClassName() + "\"")
+            .append(ref.getReferencedClassDescriptor().getName() + "\"")
             .append(" proxy=\"true\"")
             .append(">" + ENDL)
             .append(INDENT + INDENT + INDENT)
@@ -200,7 +200,7 @@ public class OJBModelOutput extends ModelOutput
                 .append("<collection-descriptor name=\"")
                 .append(col.getName())
                 .append("\" element-class-ref=\"")
-                .append(col.getReferencedClassDescriptor().getClassName())
+                .append(col.getReferencedClassDescriptor().getName())
                 .append("\" collection-class=\"")
                 .append(col.getCollectionClass().getName())
                 .append("\" proxy=\"true\"")
@@ -224,7 +224,7 @@ public class OJBModelOutput extends ModelOutput
                 .append("<collection-descriptor name=\"")
                 .append(col.getName())
                 .append("\" element-class-ref=\"")
-                .append(col.getReferencedClassDescriptor().getClassName())
+                .append(col.getReferencedClassDescriptor().getName())
                 .append("\" collection-class=\"")
                 .append(col.getCollectionClass().getName())
                 .append("\" proxy=\"true\">" + ENDL)
