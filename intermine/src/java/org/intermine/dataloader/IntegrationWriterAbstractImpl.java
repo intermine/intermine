@@ -59,6 +59,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected IntToIntMap idMap = new IntToIntMap();
     protected IntPresentSet dbIdsStored = new IntPresentSet();
     protected int idMapOps = 0;
+    protected boolean ignoreDuplicates = false;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -67,6 +68,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public IntegrationWriterAbstractImpl(ObjectStoreWriter osw) {
         this.osw = osw;
+    }
+
+    /**
+     * @see IntegrationWriter#setIgnoreDuplicates
+     */
+    public void setIgnoreDuplicates(boolean ignoreDuplicates) {
+        this.ignoreDuplicates = ignoreDuplicates;
     }
 
     /**
