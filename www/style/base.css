@@ -336,6 +336,16 @@ A.bred            { color: #FFFFFF;
   font-size: 12px;
 }
 
+.heading > .help {
+  float: right;
+  padding: 1px;
+}
+
+/* force help link in heading to be blue */
+.help > a {
+  color: blue;
+}
+
 .boxbody {
   background-color: white;
 }
@@ -371,7 +381,7 @@ table.box > tbody > tr > td {
   font-size: 90%;
 }
 
-table.box th.help {
+.help {
   padding: 5px;
   text-align: right;
   font-size: 11px;
