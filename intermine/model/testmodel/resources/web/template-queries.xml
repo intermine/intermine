@@ -29,7 +29,7 @@
   </template>
   
   <template name="employeesOverACertainAgeFromDepartmentA"
-            description="View all the employees of a certain age"
+            description="View all the employees of a certain age from a certain department"
             category="People">
     <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee">
       <node path="Employee.age">
