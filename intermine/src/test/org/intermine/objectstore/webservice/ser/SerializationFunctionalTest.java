@@ -67,10 +67,8 @@ public class SerializationFunctionalTest extends TestCase
             tm = (TypeMapping) reg.createTypeMapping();
             reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
         }
-        SerializationUtil.registerMappings(tm);
-        SerializationUtil.registerDefaultMapping(tm, Address.class);
-        SerializationUtil.registerDefaultMapping(tm, Company.class);
-        SerializationUtil.registerDefaultMapping(tm, Department.class);
+        SerializationUtil.registerDefaultMappings(tm);
+        SerializationUtil.registerMappings(tm, Model.getInstanceByName("testmodel"));
         msg.output(context);
             
         String msgString = stringWriter.toString();

@@ -29,7 +29,6 @@ import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
@@ -70,12 +69,8 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
             call.setTargetEndpointAddress(url);
 
             TypeMapping tm = call.getTypeMapping();
-            SerializationUtil.registerMappings(tm);
-            Iterator iter = model.getClassDescriptors().iterator();
-            while (iter.hasNext()) {
-                Class cls = Class.forName(((ClassDescriptor) iter.next()).getName());
-                SerializationUtil.registerDefaultMapping(tm, cls);
-            }
+            SerializationUtil.registerDefaultMappings(tm);
+            SerializationUtil.registerMappings(tm, model);
         } catch (Exception e) {
             throw new ObjectStoreException("Calling remote service failed", e);
         }

@@ -24,6 +24,8 @@ import org.apache.axis.encoding.TypeMapping;
 
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
 
 /**
  * Utilities used by (de)serializers
@@ -78,15 +80,14 @@ public class SerializationUtil
 
     /**
      * Register the default FlyMine type mappings
-     * These should match those in the axis deployment descriptor
      * @param tm the type mapping to register to
      */
-    public static void registerMappings(TypeMapping tm) {
-        registerDefaultMapping(tm, org.flymine.objectstore.query.fql.FqlQuery.class);
-        registerDefaultMapping(tm, org.flymine.objectstore.query.ResultsInfo.class);
-        registerDefaultMapping(tm, ProxyBean.class);
+    public static void registerDefaultMappings(TypeMapping tm) {
+        registerMapping(tm, org.flymine.objectstore.query.fql.FqlQuery.class);
+        registerMapping(tm, org.flymine.objectstore.query.ResultsInfo.class);
+        registerMapping(tm, ProxyBean.class);
         tm.register(org.flymine.metadata.Model.class,
-                    new QName("", "model"),
+                    getQName(org.flymine.metadata.Model.class),
                     new ModelSerializerFactory(),
                     new ModelDeserializerFactory());
         // this really should be List.class. Axis doesn't like that, but it is necessary in the
@@ -94,8 +95,25 @@ public class SerializationUtil
         //ArrayLists. this isn't a problem for fields that are lists (we do the conversion to
         //ArrayList in ListSerializer) but is a problem for top-level lists (see Results.subList())
         tm.register(java.util.ArrayList.class,
-                    new QName("http://soapinterop.org/xsd", "list"),
-                    new ListSerializerFactory(), new ListDeserializerFactory());
+                    getQName(java.util.ArrayList.class),
+                    new ListSerializerFactory(),
+                    new ListDeserializerFactory());
+    }
+
+    /**
+     * Register the mappings for the classes of a Model
+     * @param tm the type mapping to register to
+     * @param model the Model
+     */
+    public static void registerMappings(TypeMapping tm, Model model) {
+        Iterator iter = model.getClassDescriptors().iterator();
+        while (iter.hasNext()) {
+            try {
+                Class cls = Class.forName(((ClassDescriptor) iter.next()).getName());
+                SerializationUtil.registerMapping(tm, cls);
+            } catch (ClassNotFoundException e) {
+            }
+        }
     }
 
     /**
@@ -103,11 +121,23 @@ public class SerializationUtil
      * @param tm the type mapping to register to
      * @param type the type to register
      */
-    public static void registerDefaultMapping(TypeMapping tm, Class type) {
-        QName qname = new QName("", TypeUtil.unqualifiedName(type.getName()));
+    protected static void registerMapping(TypeMapping tm, Class type) {
         tm.register(type,
-                    qname,
+                    getQName(type),
                     new DefaultSerializerFactory(),
-                    new DefaultDeserializerFactory(type, qname));
+                    new DefaultDeserializerFactory(type, getQName(type)));
+    }
+
+    /**
+     * Convert a Java type to a QName
+     * @param type the Java type
+     * @return the QName
+     */
+    protected static QName getQName(Class type) {
+        if (java.util.ArrayList.class.equals(type)) {
+            return new QName("http://soapinterop.org/xsd", "list");
+        } else {
+            return new QName("", TypeUtil.unqualifiedName(type.getName()));
+        }
     }
 }
