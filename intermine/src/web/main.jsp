@@ -53,7 +53,7 @@
         </c:choose>
         <span class="type"><c:out value="${node.type}"/><c:if test="${node.collection}"> collection</c:if></span>
         <html:link action="/mainChange?method=addToView&path=${node.path}">
-          <fmt:message key="query.select"/>
+          <fmt:message key="query.selectNode"/>
         </html:link>
         <br/>
       </c:forEach>
