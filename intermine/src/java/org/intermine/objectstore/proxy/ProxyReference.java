@@ -44,8 +44,8 @@ public class ProxyReference implements InterMineObject
         try {
             return os.getObjectById(id);
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("ObjectStoreException while materialising proxy: " +
-                                       e.getMessage());
+            throw new RuntimeException("ObjectStoreException while materialising proxy: "
+                                       + e.getMessage());
         }
     }
 
