@@ -4,13 +4,6 @@
 
 <!-- export.jsp -->
 <div>
-  <%-- disabling excel export as whole file must be built in-memory
-      <div>
-        <html:link action="/exportAction?type=excel">
-          <fmt:message key="export.excel"/>
-        </html:link>
-     </div>
-  --%>
   <ul>
     <li>
       <html:link action="/exportAction?type=csv">
@@ -22,16 +15,25 @@
         <fmt:message key="export.tabdelimited"/>
       </html:link>
     </li>
+    <c:if test="${RESULTS_TABLE.size <= WEB_PROPERTIES['max.excel.export.size']}">
+      <li>
+        <html:link action="/exportAction?type=excel">
+          <fmt:message key="export.excel">
+            <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
+          </fmt:message>
+        </html:link>
+      </li>
+    </c:if>
 
-  <fmt:setBundle basename="model"/>
+    <fmt:setBundle basename="model"/>
 
-  <c:forEach var="entry" items="${exporters}" varStatus="status">
-    <li>
-      <html:link action="${entry.value.actionPath}">
-        <fmt:message key="exporter.${entry.key}.description"/>
-      </html:link>
-    </li>
-  </c:forEach>
+    <c:forEach var="entry" items="${exporters}" varStatus="status">
+      <li>
+        <html:link action="${entry.value.actionPath}">
+          <fmt:message key="exporter.${entry.key}.description"/>
+        </html:link>
+      </li>
+    </c:forEach>
 
   </ul>
 </div>
