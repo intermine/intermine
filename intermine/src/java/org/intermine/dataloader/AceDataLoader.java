@@ -10,8 +10,8 @@ package org.flymine.dataloader;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+//import java.io.PrintWriter;
+//import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
@@ -146,9 +146,9 @@ public class AceDataLoader extends DataLoader
                 AceObject aceObj = (AceObject) aceSet.retrieve(name);
                 FlyMineBusinessObject obj = processAceObject(aceObj);
                 //iw.getObjectStore().prefetchObjectByExample(obj);
-                synchronized (this) {
+                /*synchronized (this) {
                     try {
-                        store(obj);
+                        // TODO: fix this:  store(obj);
                     } catch (Exception e) {
                         commitCount = 0;
                         StringWriter sw = new StringWriter();
@@ -167,7 +167,7 @@ public class AceDataLoader extends DataLoader
                         }
                         commitCount--;
                     }
-                }
+                }*/
             } catch (Exception e) {
                 LOG.error("Object " + todo.getName() + " not retrievable: " + e.getMessage());
             }

@@ -10,22 +10,16 @@ package org.flymine.dataloader;
  *
  */
 
-import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.ObjectStoreException;
-
-import org.apache.log4j.Logger;
-
 /**
  * Loads information from a data source into the Flymine database.
- * This class defines the store method, which can be used by the process method of
- * subclasses.
+ * This class defines a member variable referencing an IntegrationWriter, which all DataLoaders
+ * require.
  *
  * @author Matthew Wakeling
  * @author Richard Smith
  */
 public class DataLoader
 {
-    protected static final Logger LOG = Logger.getLogger(DataLoader.class);
     protected IntegrationWriter iw;
     
     /**
@@ -42,15 +36,4 @@ public class DataLoader
     public DataLoader(IntegrationWriter iw) {
         this.iw = iw;
     }
-
-    /**
-     * Stores an object, with all of the objects referenced by it as skeletons.
-     *
-     * @param obj an object to store
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public void store(FlyMineBusinessObject obj) throws ObjectStoreException {
-//        store(obj, new ConsistentSet(), false);
-    }
-
 }
