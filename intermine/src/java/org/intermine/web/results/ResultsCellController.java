@@ -62,8 +62,11 @@ public class ResultsCellController extends TilesAction
 
     ClassDescriptor cld = model.getClassDescriptorByName(obj.getClass().getName());
 
-    request.setAttribute("cld", cld);
-
+    if (cld != null) {
+        request.setAttribute("cld", cld);
+    } else {
+        request.removeAttribute("cld");
+    }
     return null;
   }
 }
