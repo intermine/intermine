@@ -21,7 +21,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.web.Constants;
+import org.intermine.web.BagHelper;
 
 /**
  * Form bean to represent the inputs to a text-based query
@@ -163,7 +163,7 @@ public class ChangeResultsForm extends ActionForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Map savedBags = BagHelper.getSavedBags(session);
 
         ActionErrors errors = null;
 

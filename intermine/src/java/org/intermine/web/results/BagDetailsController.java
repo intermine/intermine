@@ -22,9 +22,9 @@ import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineBag;
+import org.intermine.web.BagHelper;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -54,10 +54,8 @@ public class BagDetailsController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-
         String bagName = request.getParameter("bagName");
-        Collection bag = (Collection) savedBags.get(bagName);
+        Collection bag = (Collection) BagHelper.getSavedBags(session).get(bagName);
 
         if (bag == null) {
             // display an empty bag

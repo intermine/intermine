@@ -96,7 +96,7 @@ public class MainController extends TilesAction
                 ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
                 request.setAttribute("subclasses", new TreeSet(getChildren(cld)));
             }
-            if (session.getAttribute(Constants.SAVED_BAGS) != null) {
+            if (BagHelper.getSavedBags(session).size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
             }
         }
