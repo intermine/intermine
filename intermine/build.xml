@@ -281,8 +281,8 @@
     <echo message=""/>
     <echo message="compile-main           --> compiles the source code"/>
     <echo message="build-testmodel        --> generate testmodel class and mapping files"/>
-    <echo message="build-db-testmodel     --> create the testmodel database tables"/>
-    <echo message="insert-data-testmodel  --> store testmodel test data"/>
+    <echo message="build-db-unittest      --> create the unittest database tables"/>
+    <echo message="insert-data-unittest   --> store testmodel test data"/>
     <echo message="test-main              --> runs the unit tests"/>
     <echo message="clean                  --> cleans up the directory"/>
     <echo message="jar                    --> builds the InterMine jar"/>
@@ -374,7 +374,7 @@
     </ant>
   </target>
 
-  <target name="build-db-testmodel" depends="build-testmodel">
+  <target name="build-db-unittest" depends="build-testmodel">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -383,7 +383,7 @@
   </target>
   
   <!-- insert the testmodel data into the database -->
-  <target name="insert-data-testmodel" depends="build-db-testmodel">
+  <target name="insert-data-unittest" depends="build-db-unittest">
     <taskdef
       name="insert-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
@@ -395,8 +395,8 @@
     </insert-xml-data>
   </target>
 
-  <!-- index the testmodel database -->
-  <target name="create-indexes-testmodel" depends="build-db-testmodel">
+  <!-- index the unittest database -->
+  <target name="create-indexes-unittest" depends="build-db-unittest">
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -467,7 +467,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+  <target name="test-main" depends="compile-test, build-db-unittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
@@ -528,7 +528,7 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="test-webservice" depends="compile-test, build-db-testmodel, build-testable-webservice, release-webservice"
+  <target name="test-webservice" depends="compile-test, build-db-unittest, build-testable-webservice, release-webservice"
           description="perform JUnit tests on web service" >
    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="webapptest.class.path"/>
