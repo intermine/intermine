@@ -684,7 +684,19 @@ public class CalculateLocations
                                              + childOnParent.getStart()) - 1));
             childOnChr.setEnd(new Integer((parentOnChr.getStart() + childOnParent.getEnd()) - 1));
         }
-        childOnChr.setStrand(new Integer(childOnParent.getStrand()));
+        if (childOnParent.getStrand() == -1) {
+            if (parentOnChr.getStrand() == -1) {
+                childOnChr.setStrand(new Integer(1));
+            } else {
+                childOnChr.setStrand(new Integer(-1));
+            }
+        } else {
+            if (parentOnChr.getStrand() == -1) {
+                childOnChr.setStrand(new Integer(-1));
+            } else {
+                childOnChr.setStrand(new Integer(1));
+            }
+        }
         childOnChr.setStartIsPartial(Boolean.FALSE);
         childOnChr.setEndIsPartial(Boolean.FALSE);
         childOnChr.setObject(chr);
