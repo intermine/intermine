@@ -48,13 +48,14 @@ mv flymine flymine-$version
 tar czvf flymine-src-$version.tar.gz flymine-$version
 zip -r flymine-src-$version.zip flymine-$version
 
-### Build the necessary jar files
+### Build the tutorial
 cd $tempdir/flymine-$version
-ant jar
+ant build-tutorial
 
-
-jarfilename=flymine-$version.jar
-
+cd $tempdir
+mv flymine-$version/build/tutorial flymine-tutorial-$version
+tar czvf flymine-tutorial-$version.tar.gz flymine-tutorial-$version
+zip -r flymine-tutorial-$version.zip flymine-tutorial-$version
 
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
@@ -63,13 +64,9 @@ then
     eval $command
 fi
 
-### Copy the jar file(s) to the destination
-command="scp dist/flymine.jar $server:$destdir/$jarfilename"
-eval $command
 
 ### Copy the source archives to the destination
-cd $tempdir
-command="scp *.tar.gz *.zip $server:$destdir/"
+COMMAND="scp *.tar.gz *.zip $server:$destdir/"
 eval $command
 
 ### Make sure all permissions are world-readable
