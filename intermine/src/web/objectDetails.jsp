@@ -150,7 +150,8 @@ Summary for selected
         <tr>
           <td colspan="2">
             <table border="0" cellspacing="0" cellpadding="0" width="100%">
-              <tr><td width="15"><td><td>
+              <tr>
+                <td width="15"><img border="0" src="images/blank.gif" alt="" width="15"/></td><td>
                 <table border="0" cellspacing="0" class="refSummary" align="right">
                   <thead style="text-align: center">
                     <tr>
