@@ -10,25 +10,35 @@
       <fmt:message key="menu.home"/>
     </html:link>
   </span>
-  <c:if test="${!empty QUERY}">
-    <span class="menu-item">
-      <html:link action="/query.do">
+  <span class="menu-item">
+    <c:choose>
+      <c:when test="${!empty QUERY}">
+        <html:link action="/query.do">
+          <fmt:message key="menu.currentquery"/>
+        </html:link>
+      </c:when>
+      <c:otherwise>
         <fmt:message key="menu.currentquery"/>
-      </html:link>
-    </span>
-  </c:if>
+      </c:otherwise>
+    </c:choose>
+  </span>
   <span class="menu-item">
     <html:link action="/begin.do">
       <fmt:message key="menu.newquery"/>
     </html:link>
   </span>
-  <c:if test="${!empty PROFILE.savedBags || !empty PROFILE.savedQueries}">
-    <span class="menu-item">
+  <span class="menu-item">
+  <c:choose>
+    <c:when test="${!empty PROFILE.savedBags || !empty PROFILE.savedQueries}">
       <html:link action="/history.do">
         <fmt:message key="menu.history"/>
       </html:link>
-    </span>
-  </c:if>
+    </c:when>
+    <c:otherwise>
+      <fmt:message key="menu.history"/>
+    </c:otherwise>
+  </c:choose>
+  </span>
   <span class="menu-item">
     <html:link action="/examples.do">
       <fmt:message key="menu.examples"/>
@@ -40,17 +50,22 @@
     </html:link>
     <img src="images/inspect.gif" width="12" height="11" alt="-&gt;"/>
   </span>
-  <c:if test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
-    <span class="menu-item">
-      <html:link action="/login.do">
-        <fmt:message key="menu.login"/>
-      </html:link>
-    </span>
-  </c:if>
   <span class="menu-item">
     <html:link action="/feedback.do">
       <fmt:message key="menu.feedback"/>
     </html:link>
+  </span>
+  <span class="menu-item">
+    <c:choose>
+      <c:when test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
+        <html:link action="/login.do">
+          <fmt:message key="menu.login"/>
+        </html:link>
+      </c:when>
+      <c:otherwise>
+        <fmt:message key="menu.login"/>
+      </c:otherwise>
+    </c:choose>
   </span>
   <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/index.html">
