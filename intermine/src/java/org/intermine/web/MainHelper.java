@@ -15,14 +15,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Collection;
 import java.util.Date;
+import java.math.BigDecimal;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
@@ -42,6 +45,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * Helper methods for main controller and main action
@@ -150,7 +154,7 @@ public class MainHelper
     public static Query makeQuery(PathQuery query, Map savedBags) {
         return makeQuery(query, savedBags, null);
     }
-    
+
     /**
      * Make an InterMine query from a path query
      * @param query the PathQuery
@@ -220,7 +224,7 @@ public class MainHelper
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL
                         || c.getOp() == ConstraintOp.IS_NULL) {
                         cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn,
-                                                              c.getOp()));   
+                                                              c.getOp()));
                     } else {
                         cs.addConstraint(new SimpleConstraint((QueryField) qn,
                                                               c.getOp(),
@@ -248,7 +252,7 @@ public class MainHelper
         if (pathToQueryNode != null) {
             pathToQueryNode.putAll(queryBits);
         }
-        
+
         return q;
     }
 
@@ -318,7 +322,7 @@ public class MainHelper
         }
         return opString;
     }
-    
+
     /**
      * Create constraint values for display. Returns a Map from Constraint to String
      * for each Constraint in the path query.
@@ -335,10 +339,135 @@ public class MainHelper
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
                 ConstraintOp op = con.getOp();
-                
+
                 map.put(con, con.getDisplayValue(node));
             }
         }
         return map;
+    }
+
+    /**
+     * Return the qualified name of the given unqualified class name.  The className must be in the
+     * given model or in the java.lang package or one of java.util.Date or java.math.BigDecimal.
+     * @param className the name of the class
+     * @param model the Model used to resolve class names
+     * @return the fully qualified name of the class
+     * @throws ClassNotFoundException if the class can't be found
+     */
+    public static String getQualifiedTypeName(String className, Model model)
+        throws ClassNotFoundException {
+
+        if (className.indexOf(".") != -1) {
+            throw new IllegalArgumentException("Expected an unqualified class name: " + className);
+        }
+
+        if (TypeUtil.instantiate(className) != null) {
+            // a primative type
+            return className;
+        } else {
+            if ("InterMineObject".equals(className)) {
+                return "org.intermine.model.InterMineObject";
+            } else {
+                try {
+                    return Class.forName(model.getPackageName() + "." + className).getName();
+                } catch (ClassNotFoundException e) {
+                    // fall through and try java.lang
+                }
+            }
+
+            if ("Date".equals(className)) {
+                return Date.class.getName();
+            }
+
+            if ("BigDecimal".equals(className)) {
+                return BigDecimal.class.getName();
+            }
+
+            return Class.forName("java.lang." + className).getName();
+        }
+    }
+
+    /**
+     * Return the fully qualified type of the last node in the given path.
+     * @param path the path
+     * @param pathQuery the PathQuery that contains the given path
+     * @return the fully qualified type name
+     * @throws IllegalArgumentException if the path isn't valid for the PathQuery or if any
+     * arguments are null
+     */
+    public static String getTypeForPath(String path, PathQuery pathQuery) {
+        // find the longest path that has a type stored in the pathQuery, then use the model to find
+        // the type of the last node
+
+        if (path == null) {
+            throw new IllegalArgumentException("path argument cannot be null");
+        }
+
+        if (pathQuery == null) {
+            throw new IllegalArgumentException("pathQuery argument cannot be null");
+        }
+
+        Model model = pathQuery.getModel();
+
+        PathNode testPathNode = (PathNode) pathQuery.getNodes().get(path);
+        if (testPathNode != null) {
+            try {
+                return getQualifiedTypeName(testPathNode.getType(), model);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("class \"" + testPathNode.getType()
+                                                   + "\" not found");
+            }
+        }
+
+        String[] bits = path.split("[.]");
+
+        List bitsList = new ArrayList(Arrays.asList(bits));
+
+        String prefix = null;
+
+        while (bitsList.size() > 0) {
+            prefix = StringUtil.join(bitsList, ".");
+            if (pathQuery.getNodes().get(prefix) != null) {
+                break;
+            }
+
+            bitsList.remove(bitsList.size() - 1);
+        }
+
+        // the longest path prefix that has an entry in the PathQuery
+        String longestPrefix = prefix;
+
+        ClassDescriptor cld;
+
+        if (bitsList.size() == 0) {
+            try {
+                cld = model.getClassDescriptorByName(getQualifiedTypeName(bits[0], model));
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("class \"" + bits[0] + "\" not found");
+            }
+        } else {
+            PathNode pn = (PathNode) pathQuery.getNodes().get(longestPrefix);
+            cld = getClassDescriptor(pn.getType(), model);
+        }
+
+        int startIndex = bitsList.size();
+
+        if (startIndex < 1) {
+            startIndex = 1;
+        }
+
+        for (int i = startIndex; i < bits.length; i++) {
+            FieldDescriptor fd = cld.getFieldDescriptorByName(bits[i]);
+            if (fd == null) {
+                throw new IllegalArgumentException("could not find descriptor for: " + bits[i]);
+            }
+            if (fd.isAttribute()) {
+                return ((AttributeDescriptor) fd).getType();
+            } else {
+                cld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
+            }
+        }
+
+        return cld.getName();
     }
 }
