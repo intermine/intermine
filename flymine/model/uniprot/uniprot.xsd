@@ -15,18 +15,10 @@
          -MSV (Multi-Schema XML Validator), http://wwws.sun.com/software/xml/developers/multischema/
          -XMLSpy, http://www.xmlspy.com/
          -->
-    <!--  Time stamp definition begins  -->
-    <xs:simpleType name="timeStampType">
-        <xs:annotation>
-            <xs:documentation>This simple type is used storing the different kinds of dates that are possible for SPTr citations.</xs:documentation>
-        </xs:annotation>
-        <xs:union memberTypes="xs:date xs:gYearMonth xs:gYear"/>
-    </xs:simpleType>
-    <!--  Time stamp definition ends  -->
     <!--  Name definition begins  -->
     <xs:complexType name="nameType">
         <xs:annotation>
-            <xs:documentation>The name type is used for all basic names occuring in an entry.</xs:documentation>
+            <xs:documentation>The name type is used for protein names occuring in an entry, which are represented in a flat file as DE lines.</xs:documentation>
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -68,6 +60,23 @@
                             <xs:enumeration value="scientific"/>
                             <xs:enumeration value="synonym"/>
                             <xs:enumeration value="abbreviation"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="geneLocationNameType">
+        <xs:annotation>
+            <xs:documentation>The name type is used for gene location name.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="status" use="optional" default="known">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="known"/>
+                            <xs:enumeration value="unknown"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -141,7 +150,7 @@
             <xs:documentation>Defines the locations/origins of the shown sequence (OG line).</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="name" type="nameType" minOccurs="0"/>
+            <xs:element name="name" type="geneLocationNameType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="type" use="required">
             <xs:simpleType>
@@ -160,7 +169,7 @@
     <!--  Citation type section begins  -->
     <xs:complexType name="citationType">
         <xs:annotation>
-            <xs:documentation>The citation type stores all information about a citation. The equivalent information in the flatfile can be found in the RA (authors), RT (title), RX (PubMed/MEDLINE IDs) and RL (citation location information such journal name, volume numbers, pages, etc.) lines.</xs:documentation>
+            <xs:documentation>The citation type stores all information about a citation. The equivalent information in the flatfile can be found in the RA (authors), RT (title), RX (PubMed/MEDLINE/DOI IDs) and RL (citation location information such journal name, volume numbers, pages, etc.) lines.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="title" type="xs:string" minOccurs="0">
@@ -223,7 +232,11 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="date" type="timeStampType" use="optional"/>
+        <xs:attribute name="date" use="optional">
+            <xs:simpleType>
+                <xs:union memberTypes="xs:date xs:gYearMonth xs:gYear"/>
+            </xs:simpleType>
+        </xs:attribute>
         <xs:attribute name="name" type="xs:string" use="optional"/>
         <xs:attribute name="volume" type="xs:string" use="optional"/>
         <xs:attribute name="first" type="xs:string" use="optional"/>
@@ -248,13 +261,11 @@
     </xs:complexType>
     <xs:complexType name="personType">
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="forename" type="xs:string" use="optional"/>
-        <xs:attribute name="surname" type="xs:string" use="optional"/>
     </xs:complexType>
     <xs:complexType name="nameListType">
         <xs:choice maxOccurs="unbounded">
             <xs:element name="person" type="personType"/>
-            <xs:element name="consortium" type="consortiumType"/><!-- Actually, consortium has a maxOccurs of 1-->
+            <xs:element name="consortium" type="consortiumType"/>
         </xs:choice>
     </xs:complexType>
     <!--  Definitions for SPTr's additional citation information begins  -->
@@ -295,7 +306,7 @@
                     </xs:simpleContent>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="transposon"><!--Actually, this has a maxOccurs of 1-->
+            <xs:element name="transposon">
                 <xs:complexType>
                     <xs:simpleContent>
                         <xs:extension base="xs:string">
@@ -315,6 +326,23 @@
             </xs:element>
         </xs:choice>
     </xs:complexType>
+    <xs:group name="sptrCitationGroup">
+        <xs:annotation>
+            <xs:documentation>Groups the scope (RP lines) and source data (RC lines) lists.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="scope" type="xs:string" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Contains a scope regarding a citation. There is no classification yet. (RP lines).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="source" type="sourceDataType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains all information about the source this citation is referring to (RC line).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
     <!--  Definitions for SPTr's additional citation information ends  -->
     <xs:complexType name="referenceType">
         <xs:annotation>
@@ -322,14 +350,37 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="citation" type="citationType"/>
-            <xs:element name="scope" type="xs:string" maxOccurs="unbounded"/><!--Actually, this has a maxOccurs of 1-->
-            <xs:element name="source" type="sourceDataType" minOccurs="0"/>
+            <xs:group ref="sptrCitationGroup"/>
         </xs:sequence>
         <xs:attribute name="evidence" type="xs:string" use="optional"/>
         <xs:attribute name="key" type="xs:string" use="required"/>
     </xs:complexType>
     <!--  Citation type section ends  -->
     <!--  Comment definition begins  -->
+    <xs:group name="bpcCommentGroup">
+        <xs:sequence>
+            <xs:element name="absorption" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="kinetics" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="KM" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="Vmax" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="pH_dependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="redox_potential" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="temperature_dependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:group>
     <xs:complexType name="commentType">
         <xs:annotation>
             <xs:documentation>The comment element stores all information found in the CC lines of the flatfile format. If there is a defined structure to the CC comment, the extracted is displayed in the various defined attributes and child-elements. See the documentation of these attributes/elements for more details.</xs:documentation>
@@ -340,6 +391,7 @@
                     <xs:documentation>If a CC line type does not have a defined structure, the text of this comment is stored in the element.</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:group ref="bpcCommentGroup"/>
             <xs:choice minOccurs="0" maxOccurs="1">
                 <xs:sequence>
                     <xs:element name="link" minOccurs="0" maxOccurs="unbounded">
@@ -358,24 +410,29 @@
                             -molWeight (molecular weight)
                             -mwError (error of the molecular weight)
                             -msMethod (the method used for the mass spectrometry)
-                            -range (which amino acids were messured. It's not mentioned if the complete sequence as shown in the entry was messured)</xs:documentation>
+                            -range (which amino acids were messured. It's not mentioned if the complete sequence as shown in the entry was measured)</xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>
                 <xs:sequence>
-                    <xs:element name="event" type="eventType" minOccurs="1" maxOccurs="2"/>
+                    <xs:element name="event" type="eventType" minOccurs="1" maxOccurs="3"/>
                     <xs:element name="isoform" type="isoformType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:choice>
-            <xs:element name="note" type="xs:string" maxOccurs="unbounded">
+            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>Contains a note regarding this comment. Used by the comment types mass spectrometry and online information. Actually, this element has a real maxOccurs of 1</xs:documentation>
+                    <xs:documentation>If a CC line type contains a "NOTE=", the text of that note is stored in this element.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>States the name of the online information if there is one.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="note" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>Contains a note regarding this comment. Used by the comment types mass spectrometry and online information.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="mass" type="xs:float" use="optional">
@@ -412,6 +469,7 @@
                     <xs:enumeration value="allergen"/>
                     <xs:enumeration value="alternative products"/>
                     <xs:enumeration value="biotechnology"/>
+                    <xs:enumeration value="biophysicochemical properties"/>
                     <xs:enumeration value="catalytic activity"/>
                     <xs:enumeration value="caution"/>
                     <xs:enumeration value="cofactor"/>
@@ -640,7 +698,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="accession" type="xs:string" maxOccurs="unbounded"/>
-            <xs:element name="name" type="xs:string" maxOccurs="1"/>
+            <xs:element name="name" type="xs:string" maxOccurs="unbounded"/>
             <xs:element name="protein" type="proteinType"/>
             <xs:element name="gene" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
@@ -653,7 +711,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="name" type="organismNameType" maxOccurs="unbounded"/>
-                        <xs:element name="dbReference" type="dbReferenceType"/>
+                        <xs:element name="dbReference" type="dbReferenceType" maxOccurs="unbounded"/>
                         <xs:element name="lineage" minOccurs="0">
                             <xs:complexType>
                                 <xs:sequence>
@@ -674,7 +732,7 @@
                     <xs:simpleContent>
                         <xs:extension base="xs:string">
                             <xs:attribute name="evidence" type="xs:string" use="optional"/>
-                            <xs:attribute name="id" type="xs:string" use="optional"/>
+                            <xs:attribute name="id" type="xs:string" use="required"/>
                         </xs:extension>
                     </xs:simpleContent>
                 </xs:complexType>
@@ -688,7 +746,7 @@
                             <xs:attribute name="length" type="xs:integer" use="required"/>
                             <xs:attribute name="mass" type="xs:integer" use="required"/>
                             <xs:attribute name="checksum" type="xs:string" use="required"/>
-                            <xs:attribute name="updated" type="xs:date" use="required"/>
+                            <xs:attribute name="modified" type="xs:date" use="required"/>
                         </xs:extension>
                     </xs:simpleContent>
                 </xs:complexType>
@@ -696,7 +754,7 @@
         </xs:sequence>
         <xs:attribute name="dataset" type="xs:string" use="required"/>
         <xs:attribute name="created" type="xs:date" use="required"/>
-        <xs:attribute name="updated" type="xs:date" use="required"/>
+        <xs:attribute name="modified" type="xs:date" use="required"/>
     </xs:complexType>
     <!--  Entry type definition ends  -->
     <!--  Definition of the content of the root element "swissprot"  -->
