@@ -38,8 +38,9 @@ import org.intermine.web.results.PagedTable;
 import org.intermine.model.InterMineObject;
 
 import org.flymine.model.genomic.Contig;
-import org.flymine.web.biojava.FlyMineSequence;
-import org.flymine.web.biojava.FlyMineSequenceFactory;
+import org.flymine.model.genomic.Protein;
+import org.flymine.biojava.FlyMineSequence;
+import org.flymine.biojava.FlyMineSequenceFactory;
 
 /**
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
@@ -94,6 +95,8 @@ public class SequenceExporter implements TableExporter
         
         int realFeatureIndex = featureColumn.getIndex();
 
+        int writtenSequencesCount = 0; 
+
         try {
             List rowList = pt.getAllRows();
 
@@ -143,12 +146,12 @@ public class SequenceExporter implements TableExporter
                     if (feature.getResidues() != null) {
                         sequence = FlyMineSequenceFactory.make(feature);
                     }
-                } //else {
-//                     Protein protein = (Protein) object;
-//                     if (protein.getAminoAcids() != null) {
-//                         sequence = FlyMineSequenceFactory.make(protein);
-//                     }
-//                 }
+                } else {
+                    Protein protein = (Protein) object;
+                    if (protein.getResidues() != null) {
+                        sequence = FlyMineSequenceFactory.make(protein);
+                    }
+                }
 
                 if (sequence != null) {
                     if (row.size() > 1) {
@@ -164,10 +167,23 @@ public class SequenceExporter implements TableExporter
                         outputStream = response.getOutputStream();
                     }
                     SeqIOTools.writeFasta(outputStream, sequence);
+
+                    writtenSequencesCount++;
                 }
             }
 
-            outputStream.close();
+            if (outputStream != null) {
+                outputStream.close();
+            }
+
+            if (writtenSequencesCount == 0) {
+                ActionErrors messages = new ActionErrors();
+                ActionError error = new ActionError("errors.export.nothingtoexport");
+                messages.add(ActionErrors.GLOBAL_ERROR, error);
+                request.setAttribute(Globals.ERROR_KEY, messages);
+
+                return mapping.findForward("results");
+            }
         } catch (ObjectStoreException e) {
             ActionErrors messages = new ActionErrors();
             ActionError error = new ActionError("errors.query.objectstoreerror");
@@ -207,6 +223,6 @@ public class SequenceExporter implements TableExporter
      * @return true if we handle the type
      */
     protected boolean validType(Class type) {
-        return Contig.class.isAssignableFrom(type);
+        return Contig.class.isAssignableFrom(type) || Protein.class.isAssignableFrom(type);
     }
 }
