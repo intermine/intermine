@@ -10,7 +10,7 @@ fi
 
 
 addjarstopath () {
-    for jar in "$2/*.jar"; do
+    for jar in $2/*.jar; do
 	append "$1" $jar
     done
 }
