@@ -61,6 +61,8 @@ public class TemplatesImportAction extends InterMineAction
             profile.saveTemplate(template.getName(), template);
             imported++;
         }
+
+        InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
         
         recordMessage(new ActionMessage("importTemplates.done",
                                         new Integer(deleted), new Integer(imported)), request);
