@@ -18,7 +18,7 @@
   <body>
     <div class="main-layout">
       <tiles:get name="header"/>
-      <tiles:get name="menu"/>
+      <%--tiles:get name="menu"/--%>
       <tiles:get name="body"/>
       <tiles:get name="footer"/>
     </div>
