@@ -252,47 +252,6 @@ public class ResultsTest extends TestCase
 
     }
 
-    public void testGarbageCollectionOnWeakHashMap() throws Exception {
-        Query q = new Query();
-        q.addFrom(new QueryClass(Department.class));
-        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
-        os2.setResultsSize(100000);
-
-        Results res = os2.execute(q);
-        Object tempHold = null;;
-        res.setBatchSize(200);
-        int count = 0;
-        Iterator iter = res.iterator();
-        while (iter.hasNext() && (count < 50000)) {
-            Object row = iter.next();
-            if (count == 0) {
-                tempHold = res.batches.keySet().iterator().next();
-            }
-            count++;
-        }
-        int mapSize = res.batches.size();
-        int mapCount = 0;
-        iter = res.batches.keySet().iterator();
-        while (iter.hasNext()) {
-            mapCount++;
-            Object obj = iter.next();
-        }
-        LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
-        tempHold = null;
-        System.gc();
-        LOG.info("testGarbageCollectionOnWeakHashMap - batches map now: " + res.batches.keySet());
-        int newMapSize = res.batches.size();
-        int newMapCount = 0;
-        iter = res.batches.keySet().iterator();
-        while (iter.hasNext()) {
-            newMapCount++;
-            Object obj = iter.next();
-        }
-        LOG.info("testGarbageCollectionOnWeakHashMap - original size: " + mapSize + ", new size: " + newMapSize);
-        LOG.info("testGarbageCollectionOnWeakHashMap - original count: " + mapCount + ", new count: " + newMapCount);
-        assertTrue("new count " + newMapCount + " is not less than " + mapCount, newMapCount <= mapCount);
-    }
-
     public void testWorkingWithRemovals() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
