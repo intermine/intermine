@@ -33,7 +33,7 @@ public class CacheMapTest extends TestCase
         System.gc();
 
         assertTrue("Expected first two to be missing",!(cm.containsKey(new Integer(2)) && cm.containsKey(new Integer(1))));
-        assertTrue("Expected last two to be present", cm.containsKey(new Integer(99998)) || cm.containsKey(new Integer(99997)));
+        assertTrue("Expected last two to be present", cm.containsKey(new Integer(999998)) || cm.containsKey(new Integer(999997)));
         assertTrue("Expected number 0 to be present", cm.containsKey(new Integer(0)));
         assertTrue("Expected number 3 to be present", cm.containsKey(new Integer(3)));
     }
