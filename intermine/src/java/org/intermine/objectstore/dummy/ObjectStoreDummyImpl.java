@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.flymine.objectstore.*;
 import org.flymine.objectstore.query.*;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.metadata.Model;
 
 /**
  * Generate dummy Results from a query. Used for testing purposes.
@@ -222,4 +223,10 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
         return this.resultsSize;
     }
 
+    /**
+     * @see ObjectStore#getModel
+     */
+    public Model getModel() {
+        return null;
+    }
 }

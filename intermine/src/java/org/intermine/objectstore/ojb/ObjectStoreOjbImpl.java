@@ -20,7 +20,6 @@ import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.PropertiesUtil;
 import org.flymine.metadata.Model;
-import org.flymine.metadata.MetaDataException;
 
 /**
  * Implementation of ObjectStore that uses OJB as its underlying store.
@@ -32,7 +31,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
 {
     protected static Map instances = new HashMap();
     protected Database db;
-    protected String model;
+    protected Model model;
     protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
 
     /**
@@ -56,7 +55,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @throws NullPointerException if repository is null
      * @throws IllegalArgumentException if repository is invalid
      */
-    protected ObjectStoreOjbImpl(Database db, String model) {
+    protected ObjectStoreOjbImpl(Database db, Model model) {
         this();
         this.db = db;
         this.model = model;
@@ -73,26 +72,23 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @return the PersistenceBroker this object is using
      */
     public PersistenceBroker getPersistenceBroker() {
-        return pbf.createPersistenceBroker(db, model);
+        return pbf.createPersistenceBroker(db, model.getName());
     }
 
     /**
      * Gets a ObjectStoreOjbImpl instance for the given underlying repository
      *
      * @param props The properties used to configure an OJB-based objectstore
+     * @param model the metadata associated with this objectstore
      * @return the ObjectStoreOjbImpl for this repository
      * @throws IllegalArgumentException if repository is invalid
      * @throws ObjectStoreException if there is any problem with the underlying OJB instance
      */
-    public static ObjectStoreOjbImpl getInstance(Properties props) throws ObjectStoreException {
+    public static ObjectStoreOjbImpl getInstance(Properties props, Model model)
+        throws ObjectStoreException {
         String dbAlias = props.getProperty("db");
         if (dbAlias == null) {
             throw new ObjectStoreException("No 'db' property specified for OJB"
-                                           + " objectstore (check properties file)");
-        }
-        String modelName = props.getProperty("model");
-        if (modelName == null) {
-            throw new ObjectStoreException("No 'model' property specified for OJB"
                                            + " objectstore (check properties file)");
         }
         Database db;
@@ -103,7 +99,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
         }
         synchronized (instances) {
             if (!(instances.containsKey(db))) {
-                instances.put(db, new ObjectStoreOjbImpl(db, modelName));
+                instances.put(db, new ObjectStoreOjbImpl(db, model));
             }
         }
         return (ObjectStoreOjbImpl) instances.get(db);
@@ -134,7 +130,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     public List execute(Query q, int start, int limit) throws ObjectStoreException {
         checkStartLimit(start, limit);
 
-        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model);
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
         ExplainResult explain = pb.explain(q, start, limit);
 
         if (explain.getTime() > maxTime) {
@@ -155,15 +151,6 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @see ObjectStore#getObjectByExample
      */
     public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        Model model;
-        try {
-            model = Model.getInstance();
-            if (model == null) {
-                throw new MetaDataException();
-            }
-        } catch (MetaDataException e) {
-            throw new ObjectStoreException(e);
-        }
         Results res = execute(QueryHelper.createQueryForExampleObject(obj, model));
         
         if (res.size() > 1) {
@@ -203,12 +190,11 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     }
 
     private ExplainResult explain(Query q, int start, int limit) throws ObjectStoreException {
-        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model);
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
         ExplainResult result = pb.explain(q, start, limit);
         pb.close();
         return result;
     }
-
 
     /**
      * Execute a COUNT(*) on a query, returns the number of row the query will produce
@@ -217,11 +203,17 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @return the number of row to be produced by query
      */
     public int count(Query q) {
-        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model);
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
         int count = pb.count(q);
         pb.close();
         return count;
     }
 
+    /**
+     * @see ObjectStore#getModel
+     */
+    public Model getModel() {
+        return model;
+    }
 }
 

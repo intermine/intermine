@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
-
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.metadata.Model;
 
 /**
  * Gets the Results of a Query from an underlying store.
@@ -75,4 +75,11 @@ public interface ObjectStore
      * @return the number of row to be produced by query
      */
     public int count(Query q);
+
+    /**
+     * Return the metadata associated with this objectstore
+     *
+     * @return the Model
+     */
+    public Model getModel();
 }

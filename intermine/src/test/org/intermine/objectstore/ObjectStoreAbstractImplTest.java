@@ -7,6 +7,7 @@ import java.util.List;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.metadata.Model;
 
 public class ObjectStoreAbstractImplTest extends TestCase
 {
@@ -67,7 +68,9 @@ public class ObjectStoreAbstractImplTest extends TestCase
         public int count(Query q) {
             return 0;
         }
+
+        public Model getModel() {
+            return null;
+        }
     }
-
-
 }

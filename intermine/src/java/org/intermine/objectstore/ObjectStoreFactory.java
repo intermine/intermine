@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.flymine.util.PropertiesUtil;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.MetaDataException;
 
 /**
  * Produce ObjectStores
@@ -36,6 +38,20 @@ public class ObjectStoreFactory
             throw new ObjectStoreException(alias + " does not have an ObjectStore class specified"
                                            + " (check properties file)");
         }
+        String modelName = props.getProperty("model");
+        if (modelName == null) {
+            throw new ObjectStoreException(alias + " does not have an model specified"
+                                           + " (check properties file)");
+        }
+        Model model;
+        try {
+            model = Model.getInstanceByName(modelName);
+            if (model == null) {
+                throw new MetaDataException("Model is null despite load");
+            }
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
+        }
         String impl = props.getProperty("alias");
         if (impl == null) {
             throw new ObjectStoreException(alias + " does not have an alias specified"
@@ -49,7 +65,8 @@ public class ObjectStoreFactory
             throw new ObjectStoreException("Cannot find specified ObjectStore class '" + clsName
                                            + "' for " + alias + " (check properties file)");
         }
-        Method m = cls.getDeclaredMethod("getInstance", new Class[] {Properties.class});
-        return (ObjectStore) m.invoke(null, new Object[] {subProps});
+        Method m = cls.getDeclaredMethod("getInstance", 
+                                         new Class[] {Properties.class, Model.class});
+        return (ObjectStore) m.invoke(null, new Object[] {subProps, model});
     }
 }
