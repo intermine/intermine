@@ -11,7 +11,7 @@
 
 function enterPath(path)
 {
-  setBorderStyle(path, "#f8f8f8");
+  setBorderStyle(path, "#fafafa");
 }
 
 function exitPath(path)
@@ -168,6 +168,9 @@ function setBorderStyle(path, style)
                           onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
                   </c:if>
                   <span class="metadata"><c:out value="${node.fieldName}"/></span>
+                  <c:if test="${viewPaths[node.path]}">
+                    </span>
+                  </c:if>
                   <span class="type">
                     <c:choose>
                       <c:when test="${node.attribute}">
@@ -199,9 +202,6 @@ function setBorderStyle(path, style)
                       </fmt:message>
                     </c:otherwise>
                   </c:choose>
-                  <c:if test="${viewPaths[node.path]}">
-                    </span>
-                  </c:if>
                   <html:link action="/mainChange?method=addConstraint&path=${node.path}"
                              title="${addConstraintToTitle}">
                     <fmt:message key="query.addConstraint"/>
@@ -276,7 +276,7 @@ function setBorderStyle(path, style)
               </fmt:message>
             </c:when>
             <c:otherwise>
-              <c:out value="${editingNode.type}"/>
+            <%-- <c:out value="${editingNode.type}"/> --%>
             </c:otherwise>
           </c:choose>
         </span>
@@ -373,7 +373,7 @@ function setBorderStyle(path, style)
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0 && !empty subclasses}">
-                <p>
+                <p style="text-align: left;">
                   <fmt:message key="query.subclassConstraint"/>
                   <html:select property="subclassValue">
                     <c:forEach items="${subclasses}" var="subclass">
