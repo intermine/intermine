@@ -176,13 +176,15 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("repeat_feature".equals(className)) {
-                    tgtItem.addReference(getOrgRef());
-                    result.add(createAnalysisResult(srcItem, tgtItem));
-                    result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
-                    promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
-                                 "repeat_consensus");
-                    promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
-                    promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
+                    // temporarily ignore repeat_features
+                    //tgtItem.addReference(getOrgRef());
+                    //result.add(createAnalysisResult(srcItem, tgtItem));
+                    //result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
+                    //promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
+                    //             "repeat_consensus");
+                    //promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
+                    //promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
+                    storeTgtItem = false;
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
@@ -240,7 +242,8 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
-                    if (className.equals(srcNs + "translation_stable_id")) {
+                    if (className.endsWith("translation_stable_id")) {
+                        System.out.println("translation_stable_id: " + srcItem.getIdentifier());
                         storeTgtItem = false;
                     } else {
                         tgtItem.addReference(getEnsemblRef());
@@ -396,94 +399,6 @@ public class EnsemblDataTranslator extends DataTranslator
         return results;
     }
 
-    private Set setProteinIdentifiers(Item srcItem, Item tgtItem, String srcNs)
-        throws ObjectStoreException {
-        Set synonyms = new HashSet();
-        String value = srcItem.getIdentifier();
-        Set constraints = new HashSet();
-        constraints.add(new FieldNameAndValue("className", srcNs + "object_xref", false));
-        constraints.add(new FieldNameAndValue("ensembl", value, true));
-        Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
-        // set specific ids and add synonyms
-
-        String swissProtId = null;
-        String tremblId = null;
-        String emblId = null;
-        while (objectXrefs.hasNext()) {
-            Item objectXref = ItemHelper.convert(
-                                  (org.intermine.model.fulldata.Item) objectXrefs.next());
-            Item xref = ItemHelper.convert(srcItemReader
-                        .getItemById(objectXref.getReference("xref").getRefId()));
-
-            String accession = null;
-            String dbname = null;
-            if (xref != null) {
-                accession = xref.getAttribute("dbprimary_acc").getValue();
-                Item externalDb = ItemHelper.convert(srcItemReader
-                                  .getItemById(xref.getReference("external_db").getRefId()));
-                if (externalDb != null) {
-                    dbname =  externalDb.getAttribute("db_name").getValue();
-                }
-            }
-            //LOG.error("processing: " + accession + ", " + dbname);
-
-            if (accession != null && !accession.equals("")
-                && dbname != null && !dbname.equals("")) {
-                if (dbname.equals("SWISSPROT")) {
-                    //Attribute a = new Attribute("swissProtId", accession);
-                    //tgtItem.addAttribute(a);
-                    //tgtItem.addAttribute(new Attribute("swissProtId", accession));
-                    swissProtId = accession;
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("value", accession));
-                    synonym.addAttribute(new Attribute("type", "accession"));
-                    synonym.addReference(getSwissprotRef());
-                    synonyms.add(synonym);
-                } else if (dbname.equals("SPTREMBL")) {
-                    //tgtItem.addAttribute(new Attribute("spTREMBLId", accession));
-                    tremblId = accession;
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("value", accession));
-                    synonym.addAttribute(new Attribute("type", "accession"));
-                    synonym.addReference(getTremblRef());
-                    synonyms.add(synonym);
-                } else if (dbname.equals("protein_id")) {
-                    //tgtItem.addAttribute(new Attribute("emblId", accession));
-                    emblId = accession;
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("value", accession));
-                    synonym.addAttribute(new Attribute("type", "accession"));
-                    synonym.addReference(getEmblRef());
-                    synonyms.add(synonym);
-                } else if (dbname.equals("prediction_SPTREMBL")) {
-                    //tgtItem.addAttribute(new Attribute("emblId", accession));
-                    emblId = accession;
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("value", accession));
-                    synonym.addAttribute(new Attribute("type", "accession"));
-                    synonym.addReference(getEmblRef());
-                    synonyms.add(synonym);
-                }
-            }
-        }
-        if (swissProtId != null) {
-            tgtItem.addAttribute(new Attribute("primaryAccession", swissProtId));
-        } else if (tremblId != null) {
-            tgtItem.addAttribute(new Attribute("primaryAccession", tremblId));
-        } else if (emblId != null) {
-            tgtItem.addAttribute(new Attribute("primaryAccession", emblId));
-        } else {
-            // there was no protein identifier so use ensembl stable id - do nothing?
-            // or could set primaryAccession to be ensembl stable id
-        }
-        return synonyms;
-    }
-
-
     private String getChosenProteinId(String id, String srcNs) throws ObjectStoreException {
         String chosenId = (String) proteinIds.get(id);
         if (chosenId == null) {
@@ -564,7 +479,7 @@ public class EnsemblDataTranslator extends DataTranslator
             }
         }
 
-        String primaryAcc = null;
+        String primaryAcc = srcItem.getIdentifier();
         if (swissProtId != null) {
             primaryAcc = swissProtId;
         } else if (tremblId != null) {
@@ -572,8 +487,11 @@ public class EnsemblDataTranslator extends DataTranslator
         } else if (emblId != null) {
             primaryAcc = emblId;
         } else {
-            // there was no protein identifier so use ensembl stable id - do nothing?
-            // or could set primaryAccession to be ensembl stable id
+            // there was no protein accession so use ensembl stable id
+            Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
+            if (stableId != null) {
+                moveField(stableId, protein, "stable_id", "primaryAccession");
+            }
         }
         protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
 
@@ -581,11 +499,11 @@ public class EnsemblDataTranslator extends DataTranslator
         if (chosenProtein == null) {
             // set up additional references/collections
             protein.addReference(getOrgRef());
-            if (srcItem.hasReference("seq_start")) {
-                protein.addReference(new Reference("translationStart", srcItem.getReference("seq_start").getRefId()));
+            if (srcItem.hasAttribute("seq_start")) {
+                protein.addAttribute(new Attribute("translationStart", srcItem.getAttribute("seq_start").getValue()));
             }
-            if (srcItem.hasReference("seq_end")) {
-                protein.addReference(new Reference("translationEnd", srcItem.getReference("seq_end").getRefId()));
+            if (srcItem.hasAttribute("seq_end")) {
+                protein.addAttribute(new Attribute("translationEnd", srcItem.getAttribute("seq_end").getValue()));
             }
             if (srcItem.hasReference("start_exon")) {
                 protein.addReference(new Reference("startExon", srcItem.getReference("start_exon").getRefId()));
