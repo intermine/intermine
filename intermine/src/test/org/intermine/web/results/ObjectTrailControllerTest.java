@@ -13,9 +13,6 @@ package org.intermine.web.results;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Collection;
 
 import org.apache.struts.tiles.ComponentContext;
 
@@ -109,6 +106,57 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertEquals(42, e0.getObjectId());
         assertEquals(43, e1.getObjectId());
         assertEquals(44, e2.getObjectId());
+    }
+    
+    
+    public void testNoTrailParameter() {
+        ComponentContext context = new ComponentContext();
+        ComponentContext.setContext(context, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+
+        actionPerform();
         
+        verifyNoActionErrors();
+    }
+    
+    public void testEmptyTrailParameter() {
+        ComponentContext context = new ComponentContext();
+        ComponentContext.setContext(context, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        addRequestParameter("trail", "");
+
+        actionPerform();
+        
+        verifyNoActionErrors();
+    }
+    
+    public void testJunkTrailParameter() {
+        ComponentContext context = new ComponentContext();
+        ComponentContext.setContext(context, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        addRequestParameter("trail", "sdfklksdkasdf");
+
+        actionPerform();
+        
+        verifyNoActionErrors();
+    }
+    
+    public void testBadIdsTrailParameter() {
+        ComponentContext context = new ComponentContext();
+        ComponentContext.setContext(context, getRequest());
+        setRequestPathInfo("/initObjectTrail");
+
+        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        addRequestParameter("trail", "_234234_2345544");
+
+        actionPerform();
+        
+        verifyNoActionErrors();
     }
 }
