@@ -119,9 +119,16 @@ public interface Constants
     public static final String SUPERUSER_ACCOUNT = "SUPERUSER_ACCOUNT";
     
     /**
-     * Session attribute that temporarily holds a message that will be displayed by the
+     * Session attribute that temporarily holds a Vector of messages that will be displayed by the
      * errorMessages.jsp on the next page viewed by the user and then removed (allows message
      * after redirect).
      */
-    public static final String MESSAGE = "MESSAGE";
+    public static final String MESSAGES = "MESSAGES";
+    
+    /**
+     * Session attribute that temporarily holds a Vector of errors that will be displayed by the
+     * errorMessages.jsp on the next page viewed by the user and then removed (allows errors
+     * after redirect).
+     */
+    public static final String ERRORS = "ERRORS";
 }
