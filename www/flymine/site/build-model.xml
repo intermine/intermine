@@ -84,7 +84,7 @@
       <classpath refid="class.path" />
     </taskdef>
 
-    <model-output type="wsdd" model="${model.name}" destdir="${build.model}/${model.name}"/>
+    <model-output type="wsdd" model="${model.name}" destdir="${build.tmp}"/>
   </target>
 
   <target name="generate-java" depends="prepare"
