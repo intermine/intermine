@@ -77,7 +77,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public ObjectStoreWriter getObjectStoreWriter() {
         return osw;
     }
-    
+
     /**
      * Returns a Set of objects from the database that are equivalent to the given object, according
      * to the primary keys defined by the given Source.
@@ -157,7 +157,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 
     /**
      * Copies the value of the field given from the source object into the destination object.
-     * 
+     *
      * @param srcObj the source object
      * @param dest the destination object
      * @param source the data Source to which to attribute the data
@@ -450,7 +450,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public InterMineObject pilferObjectById(Integer id) {
         return osw.pilferObjectById(id);
     }
-    
+
     /**
      * @see org.intermine.objectstore.ObjectStore#estimate
      */
@@ -499,5 +499,26 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public int getSequence() {
         return osw.getSequence();
+    }
+
+    /**
+     * @see ObjectStore#getMaxLimit
+     */
+    public int getMaxLimit() {
+        return osw.getMaxLimit();
+    }
+
+    /**
+     * @see ObjectStore#getMaxOffset
+     */
+    public int getMaxOffset() {
+        return osw.getMaxOffset();
+    }
+
+    /**
+     * @see ObjectStore#getMaxTime
+     */
+    public long getMaxTime() {
+        return osw.getMaxTime();
     }
 }
