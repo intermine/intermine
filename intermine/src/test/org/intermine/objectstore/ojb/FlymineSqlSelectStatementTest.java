@@ -151,6 +151,39 @@ public class FlymineSqlSelectStatementTest extends QueryTestCase
         assertEquals("MAX(a1_.vatNumber)", s1.queryEvaluableToString(f5));
     }
 
+    public void testCountNoGroupByNotDistinct() throws Exception {
+        Query q = (Query) queries.get("ContainsDuplicatesMN");
+        q.setDistinct(false);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        assertEquals(s1.getStatement(), "SELECT COUNT(*) AS count_ FROM Contractor AS a1_, Company AS a2_, OldComOldContract AS ind_a1_a2_OldComOldContract_ WHERE ((a1_.ID = ind_a1_a2_OldComOldContract_.oldContractId AND a2_.ID = ind_a1_a2_OldComOldContract_.oldComId))");
+    }
+
+    public void testCountNoGroupByDistinct() throws Exception {
+        Query q = (Query) queries.get("ContainsDuplicatesMN");
+        q.setDistinct(true);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        assertEquals(s1.getStatement(), "SELECT COUNT(*) FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.businessAddressId AS a1_businessAddressId, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Contractor AS a1_, Company AS a2_, OldComOldContract AS ind_a1_a2_OldComOldContract_ WHERE ((a1_.ID = ind_a1_a2_OldComOldContract_.oldContractId AND a2_.ID = ind_a1_a2_OldComOldContract_.oldComId))) AS count_");
+    }
+
+    public void testCountGroupByNotDistinct() throws Exception {
+        Query q = (Query) queries.get("SimpleGroupBy");
+        q.setDistinct(false);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        assertEquals(s1.getStatement(), "SELECT COUNT(*) FROM (SELECT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE (a1_.ID = a3_.companyId) GROUP BY a1_.ID, a1_.addressId, a1_.name, a1_.vatNumber) AS count_");
+    }
+
+    public void testCountGroupByDistinct() throws Exception {
+        Query q = (Query) queries.get("SimpleGroupBy");
+        q.setDistinct(true);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr, false, true);
+        assertEquals(s1.getStatement(), "SELECT COUNT(*) FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE (a1_.ID = a3_.companyId) GROUP BY a1_.ID, a1_.addressId, a1_.name, a1_.vatNumber) AS count_");
+    }
+
+
+
+
+
+    // why is all this code commented out?  for deletion?
     /*
     public void testSelectQueryClass() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
