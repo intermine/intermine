@@ -82,9 +82,6 @@ xmlns="http://www.w3.org/1999/xhtml">
                 <xsl:value-of select="@fileref"/>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:if test="not(substring(@fileref,string-length(@fileref)-3)='.gif')">
-            <xsl:text>.png</xsl:text>
-        </xsl:if>
     </xsl:attribute>
     <xsl:apply-templates/>
     </img>
