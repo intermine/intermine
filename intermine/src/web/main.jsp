@@ -8,7 +8,7 @@
 <!-- main.jsp -->
 <table class="query" width="100%" cellspacing="0">
   <tr>
-    <td rowspan="2" valign="top" width="50%">
+    <td rowspan="2" valign="top" width="50%" class="modelbrowse">
       <fmt:message key="query.currentclass"/><br/>
 
       <c:if test="${!empty navigation}">
@@ -210,21 +210,95 @@
           </c:choose>
         </span>
         <br/><br/>
+        
+        
+        <script type="text/javascript">
+        <!--
+        
+        var fixedOps = new Array();
+        
+        <c:forEach items="${fixedOptionsOps}" var="op">
+          fixedOps.push("<c:out value="${op}"/>");
+        </c:forEach>
+        
+       
+        /***********************************************************
+         * Called when user chooses a constraint operator. If the
+         * user picks an operator contained in fixedOptionsOps then
+         * the input box is hidden and the user can only choose
+         **********************************************************/
+        function updateConstraintForm(form)
+        {
+          if (form.attributeOptions == null)
+            return;
+        
+          for (var i=0 ; i<fixedOps.length ; i++)
+          {
+            if (form.attributeOp.value == fixedOps[i])
+            {
+              document.getElementById("operandEditSpan").style.display="none";
+              //form.attributeValue.style.visibility='hidden';
+              form.attributeValue.value = form.attributeOptions.value; // constrain value
+              return;
+            }
+          }
+          
+          document.getElementById("operandEditSpan").style.display="";
+          //form.attributeValue.style.visibility='visible';
+        }
+        
+        /***********************************************************
+         * Init attribute value with selected item and hide input box if
+         * required
+         **********************************************************/
+        function initConstraintForm(form)
+        {
+          if (form.attributeOptions == null)
+            return;
+          
+          form.attributeValue.value = form.attributeOptions.value;
+          updateConstraintForm(form);
+        }
+        
+        //-->
+        </script>
+        
         <html:form action="/mainAction">
           <html:hidden property="path" value="${editingNode.path}"/>
           <c:choose>
             <c:when test="${editingNode.attribute}">
-              <html:select property="attributeOp">
-                <c:forEach items="${attributeOps}" var="attributeOp">
-                  <html:option value="${attributeOp.key}">
-                    <c:out value="${attributeOp.value}"/>
-                  </html:option>
-                </c:forEach>
-              </html:select>
-              <html:text property="attributeValue"/>
-              <html:submit property="attribute">
-                <fmt:message key="query.submitConstraint"/>
-              </html:submit>
+              <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" height="65">
+                <tr>
+                  <td valign="top">
+                    <html:select property="attributeOp" onchange="updateConstraintForm(this.form)">
+                      <c:forEach items="${attributeOps}" var="attributeOp">
+                        <html:option value="${attributeOp.key}">
+                          <c:out value="${attributeOp.value}"/>
+                        </html:option>
+                      </c:forEach>
+                    </html:select>
+                  </td>
+                  <td valign="top" align="center">
+                    <span id="operandEditSpan">
+                      <html:text property="attributeValue"/><br/>
+                    </span>
+                    <c:if test="${not empty attributeOptions}">
+                      <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
+                      <c:forEach items="${attributeOptions}" var="option">
+                        <option value="${option}">
+                          <c:out value="${option}"/>
+                        </option>
+                      </c:forEach>
+                      </select>
+                    </c:if>
+                  </td>
+                  <td valign="top">
+                    <html:submit property="attribute">
+                      <fmt:message key="query.submitConstraint"/>
+                    </html:submit>
+                  </td>
+                </tr>
+              </table>
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0 && !empty subclasses}">
@@ -264,6 +338,14 @@
             </html:submit>
           </c:if>
         </html:form>
+        
+        
+        <script type="text/javascript">
+        <!--
+        initConstraintForm(document.mainForm);
+        //-->
+        </script>
+        
       </td>
     </tr>
   </c:if>
