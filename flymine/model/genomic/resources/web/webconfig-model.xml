@@ -20,10 +20,6 @@
     </longdisplayers>
   </class>
   <class className="org.flymine.model.genomic.Gene">
-    <shortdisplayers>
-      <displayer src="/model/geneShort.jsp"/>
-      <displayer src="/objectFields.jsp"/>
-    </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/geneLong.jsp"/>
       <displayer src="/objectFields.jsp"/>
