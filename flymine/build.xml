@@ -30,6 +30,7 @@
   <!-- distributable directories -->
   <property name="dist"  location="dist"/>
   <property name="dist.www"  location="${dist}/www"/>
+  <property name="dist.javadoc"  location="${dist.www}/api"/>
 
 
 
@@ -60,10 +61,9 @@
   </target>
 
   <target name="prepare-dist">
-
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist.www}"/>
-
+    <mkdir dir="${dist.javadoc}"/>
   </target>
     
 
@@ -138,7 +138,6 @@
   <!-- Javadoc -->
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
-    <mkdir dir="${build.javadoc}"/>
     <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="${ant.project.name} API">
       <fileset dir="${src.java}" defaultexcludes="yes" />
       <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
@@ -269,6 +268,14 @@
       </fileset>
     </chmod>
   </target>
+
+  <target name="dist-javadoc" depends="prepare-dist,javadoc"
+          description="makes the javadoc available for distribution">
+     <copy todir="${dist.javadoc}">
+      <fileset dir="${build.javadoc}">
+      </fileset>
+    </copy>
+  </target>   
 
 
   <!-- Releasing targets -->
