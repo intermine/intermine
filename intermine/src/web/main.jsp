@@ -40,16 +40,9 @@
             <img src="images/blank.png" alt=" "/>
           </c:otherwise>
         </c:choose>
-        <c:choose>
-          <c:when test="${node.indentation == 0}">
-            <span class="metadata"><c:out value="${node.fieldName}"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mainChange?method=addPath&path=${node.path}">
-              <span class="metadata"><c:out value="${node.fieldName}"/></span>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
+        <c:if test="${node.indentation > 0}">
+          <span class="metadata"><c:out value="${node.fieldName}"/></span>
+        </c:if>
         <span class="type">
           <c:out value="${node.type}"/>
           <c:if test="${node.collection}"> collection</c:if>
