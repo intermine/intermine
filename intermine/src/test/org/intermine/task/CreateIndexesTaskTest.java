@@ -42,7 +42,7 @@ public class CreateIndexesTaskTest extends TestCase
     }
 
     //test indirection table columns
-    public void testProcessClassDescriptor1() throws Exception {
+    public void testProcessClassDescriptor2() throws Exception {
         List expected = new ArrayList();
         expected.add("drop index HasSecretarysSecretarys__Secretarys");
         expected.add("create index HasSecretarysSecretarys__Secretarys on HasSecretarysSecretarys(Secretarys)");
