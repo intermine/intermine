@@ -123,6 +123,14 @@
     rdfs:domain :Location ;
     rdfs:range xsd:boolean .
 
+:Location__strand a owl:DatatypeProperty ;
+    rdfs:domain :Location ;
+    rdfs:range xsd:integer .
+
+:Location__phase a owl:DatatypeProperty ;
+    rdfs:domain :Location ;
+    rdfs:range xsd:integer .
+
 # ------------- Evidence for properties etc. -----------#
 
 :Evidence a owl:Class .
