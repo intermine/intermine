@@ -24,14 +24,12 @@
       <c:forEach var="cld" items="${leafClds}">
         <c:choose>
           <c:when test="${!empty webconfig.types[cld.name].shortDisplayers}">
-            <em>one</em><br/>
             <c:forEach items="${webconfig.types[cld.name].shortDisplayers}" var="displayer">
               <c:set var="cld" value="${cld}" scope="request"/>
               <tiles:insert beanName="displayer" beanProperty="src"/>
             </c:forEach>
           </c:when>
           <c:otherwise>
-            <em>two</em><br/>
             <c:set var="cld" value="${cld}" scope="request"/>
             <c:choose>
               <c:when test="${!empty primaryKeyFields}"> 
@@ -46,7 +44,6 @@
                 </c:forEach>
               </c:when>
               <c:otherwise>
-                <em>three</em><br/>
                 <tiles:insert name="/allFields.jsp"/>
               </c:otherwise>
             </c:choose>
