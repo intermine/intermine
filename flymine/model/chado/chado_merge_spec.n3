@@ -305,7 +305,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -333,7 +333,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -362,7 +362,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -391,7 +391,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -420,7 +420,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -449,7 +449,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -478,7 +478,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -507,7 +507,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -536,7 +536,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -565,7 +565,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -594,7 +594,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -623,7 +623,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -652,7 +652,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -681,7 +681,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -710,7 +710,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -739,7 +739,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -767,7 +767,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -796,7 +796,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -824,7 +824,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -852,7 +852,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
@@ -880,7 +880,7 @@ null:feature__md5checksum a owl:ObjectProperty ;
                               rdfs:subClassOf
                                    [ a owl:Restriction ;
                                        owl:onProperty chado:cv__name ;
-                                       owl:hasValue "so"
+                                       owl:hasValue "SO"
                                    ]
                             ]
                       ]
