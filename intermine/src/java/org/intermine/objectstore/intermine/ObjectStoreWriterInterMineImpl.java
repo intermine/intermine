@@ -276,8 +276,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         + " - transaction aborted");
             }
             batch.close(c);
-            os.releaseConnection(c);
-            conn = null;
+            synchronized (this) {
+                os.releaseConnection(c);
+                conn = null;
+            }
         } catch (Exception e) {
         }
     }
