@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -41,5 +41,19 @@
   </c:forEach>
 
 </table>
-Displaying <c:out value="${resultsTable.start+1}"/> to <c:out value="${resultsTable.end+1}"/> of <c:out value="${resultsTable.size}"/> items.
+
+<c:choose>
+  <c:when test="${resultsTable.sizeEstimate}">
+    <bean:message key="results.pageinfo.estimate"
+                  arg0="${resultsTable.start+1}"
+                  arg1="${resultsTable.end+1}"
+                  arg2="${resultsTable.size}"/>
+  </c:when>
+  <c:otherwise>
+    <bean:message key="results.pageinfo.exact"
+                  arg0="${resultsTable.start+1}"
+                  arg1="${resultsTable.end+1}"
+                  arg2="${resultsTable.size}"/>
+  </c:otherwise>
+</c:choose>
 
