@@ -18,32 +18,60 @@ import java.util.LinkedHashMap;
 
 import org.intermine.metadata.Model;
 
+/**
+ * Class to represent a path-based query
+ * @author Mark Woodbridge
+ */
 public class PathQuery
 {
     protected Model model;
     protected Map nodes = new LinkedHashMap();
     protected List view = new ArrayList();
-    
+   
+    /**
+     * Constructor
+     * @param model the Model on which to base this query
+     */
     public PathQuery(Model model) {
         this.model = model;
     }
 
+    /**
+     * Gets the value of model
+     * @return the value of model
+     */
     public Model getModel() {
         return model;
     }
 
+    /**
+     * Sets the value of nodes
+     * @param nodes the value of nodes
+     */
     public void setNodes(Map nodes) {
         this.nodes = nodes;
     }
 
+    /**
+     * Gets the value of nodes
+     * @return the value of nodes
+     */
     public Map getNodes() {
         return nodes;
     }
 
+    /**
+     * Sets the value of view
+     * @param view the value of view
+     */
     public void setView(List view) {
         this.view = view;
     }
 
+    /**
+     * Gets the value of view
+     * @return the value of view
+     */
     public List getView() {
         return view;
     }
@@ -72,6 +100,10 @@ public class PathQuery
         return node;
     }
 
+    /**
+     * Clone this PathQuery
+     * @return a PathQuery
+     */
     public Object clone() {
         PathQuery query = new PathQuery(model);
         for (Iterator i = nodes.entrySet().iterator(); i.hasNext();) {
@@ -82,6 +114,11 @@ public class PathQuery
         return query;
     }
 
+    /**
+     * Clone a RightNode
+     * @param node a RightNode
+     * @return a copy of the RightNode
+     */
     public RightNode clone(RightNode node) {
         RightNode newNode;
         RightNode parent = (RightNode) nodes.get(node.getPrefix());
@@ -96,9 +133,5 @@ public class PathQuery
             newNode.getConstraints().add(new Constraint(constraint.getOp(), constraint.getValue()));
         }
         return newNode;
-    }
-
-    public String toString() {
-        return nodes + " " + view;
     }
 }
