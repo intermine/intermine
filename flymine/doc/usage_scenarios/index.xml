@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2002-11-15</date>
+<title>Graphical Query Examples</title>
+<authorgroup>
+<author>
+<firstname>Mark</firstname>
+<surname>Woodbridge</surname>
+</author>
+<author>
+<firstname>Richard</firstname>
+<surname>Smith</surname>
+</author>
+</authorgroup>
+</artheader>
+
+<sect1>
+
+<para>This document presents examples of how a number of FlyMine use cases could be represented in a graphical query bulder.  Use Cases taken from  document by Gos Micklem, Andrew Varley</para>
+
+
+<itemizedlist>
+
+<listitem>Select the proteins in a Gene Ontology functional class, 
+and show the associated gene expression data for them, for
+selected experiments.</listitem>
+<para />
+<inlinegraphic fileref="use_case_1" align="center"/>
+<para />
+<listitem>List all genes together with their position in the Gene
+Ontology for which there is evidence from protein studies of
+post-translational modification.</listitem>
+<para />
+<inlinegraphic fileref="use_case_2" align="center"/>
+<para />
+<listitem>Find all genes which are not placed in the Gene Ontology for
+which there are at least the specified number of fold expression differences
+under a specified minimum number of conditions: list the genes and
+conditions.</listitem>
+<para />
+<inlinegraphic fileref="use_case_3" align="center"/>
+<para />
+<listitem>Find genes without good structural predictions - extract as
+a set of sequences for further study.  Identify those which have been
+assayed by 2-D gel and/ or Mass spectrometry, as potential candidates
+for structural studies.</listitem>
+<para />
+<inlinegraphic fileref="use_case_4" align="center"/>
+<para />
+<listitem>Find genes with significant expression changes under defined
+conditions that also occur within a specified map range.</listitem>
+<para />
+<inlinegraphic fileref="use_case_5" align="center"/>
+<para />
+<listitem>Find those 3-D structure predictions that are marked as
+reliable and which are TIM barrels.  List the gene ontology functions
+for these genes.  Find which of these have mutant alleles defined at
+the sequence level and paint these onto the structure.</listitem>
+<para />
+<inlinegraphic fileref="use_case_6" align="center"/>
+<para />
+<listitem>Find the genes with significant mRNA or protein expression
+differences under specified conditions that also occur within a
+specified map range. Is anything known about post-translational
+modifications of this protein under specified conditions?</listitem>
+<para />
+<inlinegraphic fileref="use_case_7" align="center"/>
+<para />
+<listitem>Return set of proteins for which any post-translational
+modification is known in a specified set of conditions. Show the ones
+that change within the conditions.</listitem>
+<para />
+<inlinegraphic fileref="use_case_8" align="center"/>
+<para />
+<listitem>Paint location of mutation/alleles onto the predicted
+structure for a gene.</listitem>
+<para />
+<inlinegraphic fileref="use_case_9" align="center"/>
+<para />
+<listitem>Start with list of genes. Apply GO contraints (eg. signal
+transduction). Return list of Swissprot IDs. Filter by organism
+type. Use Drosophila ones to pull out their chromosomal locations from
+ensembl. Match Dros. ones with Anoph. gene annotation, and find
+chromosomal location. Combine Dros. and Anoph. locations by means of a
+mapping based on the underlying genes.</listitem>
+<para />
+<inlinegraphic fileref="use_case_10" align="center"/>
+<para />
+<listitem>For a specified spotted PCR product, view the annotated
+genome containing the probe.</listitem>
+<para />
+<inlinegraphic fileref="use_case_11" align="center"/>
+<para />
+</itemizedlist>
+
+
+</sect1>
+</article>
