@@ -77,7 +77,13 @@ public class BuildTemplateAction extends InterMineAction
             if (profile.getUsername() != null
                 && profile.getUsername().equals
                     (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-                InitialiserPlugin.loadGlobalTemplateQueries(servletContext);
+                TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+                if (editing != null) {
+                    tr.globalTemplateUpdated(template);
+                } else {
+                    tr.globalTemplateAdded(template);
+                }
+                //InitialiserPlugin.loadGlobalTemplateQueries(servletContext);
             }
             return mapping.findForward("finish");
         }

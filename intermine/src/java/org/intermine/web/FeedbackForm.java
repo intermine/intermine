@@ -147,7 +147,7 @@ public class FeedbackForm extends ValidatorForm
         String msg = "\n\n\n\n---- Current page: ----\n\n";
         msg += request.getAttribute("javax.servlet.forward.servlet_path");
         if (request.getQueryString() != null) {
-            msg += request.getQueryString();
+            msg += "?" + request.getQueryString();
         }
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query != null) {

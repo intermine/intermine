@@ -15,16 +15,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
@@ -32,15 +28,9 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.RAMDirectory;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -51,17 +41,18 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.config.WebConfig;
 
 /**
- * Initialiser for the InterMine web application
+ * Initialiser for the InterMine web application.
  * Anything that needs global initialisation goes here.
  *
  * @author Andrew Varley
+ * @author Thomas Riley
  */
 public class InitialiserPlugin implements PlugIn
 {
     private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
-    
-    ProfileManager profileManager;
 
+    ProfileManager profileManager;
+    
     /**
      * Init method called at Servlet initialisation
      *
@@ -96,10 +87,8 @@ public class InitialiserPlugin implements PlugIn
         createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
-        // Load global template queries from superuser account
-        loadGlobalTemplateQueries(servletContext);
-        // Build lucene index
-        createTemplateIndex(servletContext);
+        servletContext.setAttribute(Constants.TEMPLATE_REPOSITORY,
+                new TemplateRepository(servletContext));
     }
 
     /**
@@ -213,52 +202,6 @@ public class InitialiserPlugin implements PlugIn
         }
         servletContext.setAttribute(Constants.EXAMPLE_QUERIES, exampleQueries);
     }
-
-    /**
-     * Loads the default template queries into the superuser's account.
-     *
-     * @param servletContext  current servlet context
-     */
-    private void loadDefaultGlobalTemplateQueries(ServletContext servletContext)
-        throws ServletException {
-        InputStream templateQueriesStream =
-            servletContext.getResourceAsStream("/WEB-INF/template-queries.xml");
-        if (templateQueriesStream == null) {
-            return;
-        }
-        Reader templateQueriesReader = new InputStreamReader(templateQueriesStream);
-        Map templateQueries = null;
-        try {
-            templateQueries = new TemplateQueryBinding().unmarshal(templateQueriesReader);
-        } catch (Exception e) {
-            throw new ServletException("Unable to parse template-queries.xml", e);
-        }
-        // Add them to superuser profile
-        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        if (superuser == null) {
-            LOG.warn("No superuser account specified");
-            return;
-        }
-        Profile profile = null;
-        if (!pm.hasProfile(superuser)) {
-            LOG.info("Creating profile for superuser " + superuser);
-            profile = new Profile(pm, superuser, new HashMap(), new HashMap(), new HashMap());
-            String password = RequestPasswordAction.generatePassword();
-            Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-            pm.saveProfile(profile);
-            pm.setPassword(superuser, password);
-        } else {
-            profile = pm.getProfile(superuser, pm.getPassword(superuser));
-        }
-        if (profile.getSavedTemplates().size() == 0) {
-            Iterator iter = templateQueries.values().iterator();
-            while (iter.hasNext()) {
-                TemplateQuery template = (TemplateQuery) iter.next();
-                profile.saveTemplate(template.getName(), template);
-            }
-        }
-    }
     
     /**
      * Load superuser account name into servlet context attribute SUPERUSER_ACCOUNT
@@ -280,176 +223,6 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
     }
     
-    /**
-     * Create the lucene search index of all global template queries.
-     * @param servletContext the servlet context
-     * @throws ServletException if something goes wrong
-     */
-    private static void createTemplateIndex(ServletContext servletContext)
-        throws ServletException {
-        long time = System.currentTimeMillis();
-        LOG.info("Indexing template queries");
-        
-        RAMDirectory ram = new RAMDirectory();
-        IndexWriter writer;
-        try {
-            writer = new IndexWriter(ram, new StandardAnalyzer(), true);
-        } catch (IOException err) {
-            throw new ServletException("Failed to create lucene IndexWriter", err);
-        }
-        
-        // step through global templates, indexing a Document for
-        // each template
-        Map templates = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
-        Iterator iter = templates.values().iterator();
-        while (iter.hasNext()) {
-            TemplateQuery template = (TemplateQuery) iter.next();
-            
-            Document doc = new Document();
-            doc.add(Field.Text("name", template.getName()));
-            doc.add(Field.Text("description", template.getDescription()));
-            doc.add(Field.Keyword("category", template.getCategory()));
-            // TODO
-            //doc.add(Field.Keyword("keywords", template.getKeywords()));
-            
-            try {
-                writer.addDocument(doc);
-            } catch (IOException e) {
-                LOG.error("Failed to add template " + template.getName()
-                        + " to the index", e);
-            }
-        }
-        
-        time = System.currentTimeMillis() - time;
-        LOG.info("Finished indexing templates (took " + time + " milliseconds)");
-    }
-    
-    /**
-     * Read the template queries into the GLOBAL_TEMPLATE_QUERIES servlet context attribute and set
-     * CATEGORY_TEMPLATES and CLASS_CATEGORY_TEMPLATES. 
-     * This is also called when the superuser updates his or her templates.
-     *
-     * @param servletContext  servlet context in which to place template map
-     * @throws ServletException if something goes wrong
-     */
-    public static void loadGlobalTemplateQueries(ServletContext servletContext)
-        throws ServletException {   
-        Map templateMap = Collections.synchronizedMap(new HashMap());
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        
-        if (superuser != null && pm.hasProfile(superuser)) {
-            Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
-            if (profile != null) {
-                templateMap = Collections.synchronizedMap(new TreeMap(profile.getSavedTemplates()));
-            } else {
-                LOG.warn("failed to getch profile for superuser " + superuser);
-            }
-        } else {
-            LOG.warn("superuser.account not specified");
-        }
-        servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_QUERIES, templateMap);
-        
-        // Sort into categories
-        Map categoryTemplates = new HashMap();
-        // a Map from class name to a Map from category to template
-        Map classCategoryTemplates = new HashMap();
-        // a Map from class name to a Map from template name to field name List - the field
-        // names/expressions are the ones that should be set when a template is linked to from the
-        // object details page eg. Gene.identifier
-        Map classTemplateExprs = new HashMap();
-        Iterator iter = templateMap.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            TemplateQuery template = (TemplateQuery) entry.getValue();
-            List list = (List) categoryTemplates.get(template.getCategory());
-            if (list == null) {
-                list = new ArrayList();
-                categoryTemplates.put(template.getCategory(), list);
-            }
-            list.add(template);
-
-            Object osObject = servletContext.getAttribute(Constants.OBJECTSTORE);
-            ObjectStore os = (ObjectStore) osObject;
-
-            
-            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateExprs);
-        }
-        servletContext.setAttribute(Constants.CATEGORY_TEMPLATES, categoryTemplates);
-        servletContext.setAttribute(Constants.CLASS_CATEGORY_TEMPLATES, classCategoryTemplates);
-        servletContext.setAttribute(Constants.CLASS_TEMPLATE_EXPRS, classTemplateExprs);
-    }
-    
-    /**
-     * Return two Maps with information about the relations between classnames, a given template and
-     * its template categories.
-     * @param classCategoryTemplates a Map from class name to a Map from category to template
-     * @param classTemplateExprs a Map from class name to a Map from template name to field name
-     * List - the field names/expressions are the ones that should be set when a template is linked
-     * to from the object details page eg. Gene.identifier
-     */
-    private static void setClassesForTemplate(ObjectStore os, TemplateQuery template,
-                                              Map classCategoryTemplates,
-                                              Map classTemplateExprs) {
-        List constraints = template.getAllConstraints();
-        Model model = os.getModel();
-        Iterator constraintIter = constraints.iterator();
-        
-        // look for ClassName.fieldname  (Gene.identifier)
-        // or ClassName.fieldname.fieldname.fieldname...  (eg. Gene.organism.name)
-        while (constraintIter.hasNext()) {
-            Constraint c = (Constraint) constraintIter.next();
-
-            String constraintIdentifier = c.getIdentifier();
-            String[] bits = constraintIdentifier.split("\\.");
-
-            if (bits.length == 2) {
-                String className = model.getPackageName() + "." + bits[0];
-                String fieldName = bits[1];
-                String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
-                ClassDescriptor cd = model.getClassDescriptorByName(className);
-
-                if (cd != null && cd.getFieldDescriptorByName(fieldName) != null) {
-                    Set subClasses = model.getAllSubs(cd);
-
-                    Set thisAndSubClasses = new HashSet();
-                    thisAndSubClasses.addAll(subClasses);
-                    thisAndSubClasses.add(cd);
-
-                    Iterator thisAndSubClassesIterator = thisAndSubClasses.iterator();
-                    
-                    while (thisAndSubClassesIterator.hasNext()) {
-                        ClassDescriptor thisCD = (ClassDescriptor) thisAndSubClassesIterator.next();
-                        String thisClassName = thisCD.getName();
-                        if (!classCategoryTemplates.containsKey(thisClassName)) {
-                            classCategoryTemplates.put(thisClassName, new HashMap());
-                        }
-                    
-                        Map categoryTemplatesMap = (Map) classCategoryTemplates.get(thisClassName);
-                    
-                        if (!categoryTemplatesMap.containsKey(template.getCategory())) {
-                            categoryTemplatesMap.put(template.getCategory(), new ArrayList());
-                        }
-                    
-                        ((List) categoryTemplatesMap.get(template.getCategory())).add(template);
-                    
-                        if (!classTemplateExprs.containsKey(thisClassName)) {
-                            classTemplateExprs.put(thisClassName, new HashMap());
-                        }
-                    
-                        Map fieldNameTemplatesMap = (Map) classTemplateExprs.get(thisClassName);
-                    
-                        if (!fieldNameTemplatesMap.containsKey(template.getName())) {
-                            fieldNameTemplatesMap.put(template.getName(), new ArrayList());
-                        }
-                    
-                        ((List) fieldNameTemplatesMap.get(template.getName())).add(fieldExpr);
-                    }
-               }
-            }
-        }
-    }
-
     /**
      * Load the CATEGORY_CLASSES and CATEGORIES servlet context attribute. Loads cateogires and
      * subcateogires from roperties file /WEB-INF/classCategories.properties<p>

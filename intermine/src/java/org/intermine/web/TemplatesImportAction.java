@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ public class TemplatesImportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplatesImportForm tif = (TemplatesImportForm) form;
         Map templates = null;
@@ -62,7 +64,9 @@ public class TemplatesImportAction extends InterMineAction
             imported++;
         }
 
-        InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
+        TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+        tr.globalTemplatesChanged();
+        //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
         
         recordMessage(new ActionMessage("importTemplates.done",
                                         new Integer(deleted), new Integer(imported)), request);
