@@ -63,6 +63,7 @@ import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.CacheMap;
 
 import org.apache.log4j.Logger;
 
@@ -92,7 +93,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         "execute", "permitted", "convert", "iql", "sql"};
 
     // see generateSql()
-    protected Map queryBagTables = new HashMap();
+    protected Map queryBagTables = new CacheMap();
 
     public static final String UNIQUE_INTEGER_SEQUENCE_NAME = "objectstore_unique_integer";
 
@@ -664,7 +665,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     private String generateSql(Connection c, Query q, int start, int limit)
         throws ObjectStoreException {
 
-        Map bagTableNames = new HashMap();
+        Map bagTableNames = new CacheMap();
 
         if (queryBagTables.get(q) == null) {
             createTempBagTables(c, q, bagTableNames, SqlGenerator.MAX_BAG_INLINE_SIZE);
