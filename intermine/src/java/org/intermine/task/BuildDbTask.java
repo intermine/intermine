@@ -97,6 +97,10 @@ public class BuildDbTask extends Task
         sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
         InputStream schemaFileInputStream =
             getClass().getClassLoader().getResourceAsStream(schemaFile);
+
+        if (schemaFileInputStream == null) {
+            throw new BuildException("cannot open schema file (" + schemaFile + ")");
+        }
         
         File tempFile;
 
