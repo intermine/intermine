@@ -117,11 +117,15 @@
 
 <p>
 
-<c:if test="${!empty GLOBAL_TEMPLATE_QUERIES && IS_SUPERUSER}">
-  <form method="link" action="<html:rewrite action="/exportTemplates"/>">
-    <input type="hidden" name="type" value="global"/>
-    <input type="submit" value="<fmt:message key="begin.exportTemplates"/>"/>
-  </form>
+<c:if test="${!empty PROFILE.savedTemplates && IS_SUPERUSER}">
+<span class="smallnote">
+  <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
+    <fmt:message key="begin.exportTemplates"/>
+  </html:link><br/>
+  <html:link action="/import" titleKey="begin.importTemplatesDesc">
+    <fmt:message key="begin.importTemplates"/>
+  </html:link>
+</span>
 </c:if>
 
 <!-- /begin.jsp -->
