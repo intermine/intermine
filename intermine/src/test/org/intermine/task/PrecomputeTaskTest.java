@@ -226,10 +226,18 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         q.addToSelect(qfAge);
         q.setConstraint(cs);
 
+        System.out.println("query: " + q);
+
         PrecomputeTask.QueryAndIndexes expected = task.new QueryAndIndexes();
         expected.setQuery(q);
         expected.addIndex(qfAge);
-        assertEquals(expected.toString(), task.processTemplate(template).toString());
+        PrecomputeTask.QueryAndIndexes qai = task.processTemplate(template);
+        System.out.println("generate: " + qai.getQuery());
+        assertEquals(expected.toString(), qai.toString());
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        System.out.println("generate: " + qai.getQuery());
+
+        task.precompute(os, qai.getQuery(), qai.getIndexes());
     }
 
     class DummyPrecomputeTask extends PrecomputeTask {

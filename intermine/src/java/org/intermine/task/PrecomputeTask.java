@@ -292,6 +292,7 @@ public class PrecomputeTask extends Task
     protected QueryAndIndexes processTemplate(TemplateQuery template) {
         QueryAndIndexes qai = new QueryAndIndexes();
         HashMap pathToQueryNode = new HashMap();
+        List indexes = new ArrayList();
         Query tmp = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
 
         // find nodes with editable constraints to index and possibly add to select list
@@ -305,8 +306,10 @@ public class PrecomputeTask extends Task
                 if (qn == null) {
                     throw new BuildException("no QueryNode for path " + node.getPath());
                 }
-                template.getQuery().getView().add(node.getPath());
-                qai.addIndex(qn);
+                // this seems to exhibit a bug with repeated aliases in generated query
+                // so add QueryField to select after creating new query
+                //template.getQuery().getView().add(node.getPath());
+                indexes.add(qn);
             }
         }
 
@@ -315,7 +318,35 @@ public class PrecomputeTask extends Task
         Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap());
         qai.setQuery(query);
 
+        // list of indexes needs to be QueryFields from generated query but list created from temp
+        // query -> find equivalents from select list
+        Iterator indexIter = indexes.iterator();
+        while (indexIter.hasNext()) {
+            QueryField oldQf = (QueryField) indexIter.next();
+            QueryClass oldQc = (QueryClass) oldQf.getFromElement();
+            QueryClass newQc = getQueryClassFromSet(query.getFrom(), oldQc);
+
+            // we now have corresponding QueryClass from new query -> create QueryField
+            QueryField newQf = new QueryField(newQc, oldQf.getFieldName());
+            query.addToSelect(newQf);
+            qai.addIndex(newQf);
+        }
         return qai;
+    }
+
+    private QueryClass getQueryClassFromSet(Set set, QueryClass qc) {
+        Iterator i = set.iterator();
+        while (i.hasNext()) {
+            QueryClass candidate = (QueryClass) i.next();
+            if (sameQueryClass(candidate, qc)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private boolean sameQueryClass(QueryClass a, QueryClass b) {
+        return a.getType().equals(b.getType());
     }
 
 
