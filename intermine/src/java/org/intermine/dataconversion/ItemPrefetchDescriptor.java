@@ -23,6 +23,7 @@ import org.intermine.model.fulldata.Item;
  * item.
  *
  * @author Matthew Wakeling
+ * @author Richard Smith
  */
 public class ItemPrefetchDescriptor
 {
@@ -100,6 +101,20 @@ public class ItemPrefetchDescriptor
         // of these sets of Constraints. This requires recursion, so we use another method to help.
         buildCombinationalProduct(retval, constraintSets, 0, new HashSet());
         return retval;
+    }
+
+    /**
+     * When ObjectStoreItemPathFOllowingImpl has finished with a batch of items
+     * local caches in ItemPrefetchConstraintDynamic can be cleared.
+     */
+    public void finishedBatch() {
+        Iterator conIter = constraints.iterator();
+        while (conIter.hasNext()) {
+            ItemPrefetchConstraint con = (ItemPrefetchConstraint) conIter.next();
+            if (con.getClass().equals(ItemPrefetchConstraintDynamic.class)) {
+                ((ItemPrefetchConstraintDynamic) con).clearIdToFnavs();
+            }
+        }
     }
 
     /**

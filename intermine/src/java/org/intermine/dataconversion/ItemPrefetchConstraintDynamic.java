@@ -34,7 +34,7 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
 {
     private String nearFieldName;
     private String farFieldName;
-    private Map idToFnavs = new HashMap();
+    protected Map idToFnavs = new HashMap();
 
     /**
      * Constructs a new instance of ItemPrefetchConstraint.
@@ -149,6 +149,16 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
                     + item);
         }
     }
+
+
+    /**
+     * Clear map of item identifiers to contraints when identifiers no longer
+     * needed.  Need to keep memory usage sensible.
+     */
+    public void clearIdToFnavs() {
+        idToFnavs = new HashMap();
+    }
+
 
     /**
      * @see Object#toString
