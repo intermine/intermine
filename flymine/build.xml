@@ -460,6 +460,19 @@
   </target>
 
 
+  <target name="insert-data-testmodel" depends="compile-test, build-db-testmodel">
+    <taskdef
+          name="insert-xml-data"
+          classname="org.flymine.task.InsertXmlDataTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+
+    <insert-xml-data objectStore="os.unittest" file="${build.resources.testxml}/testmodel.xml">
+      <classpath refid="test.class.path"/>
+    </insert-xml-data>
+
+  </target>
+
   <target name="insert-data" depends="generate-repository-testmodel, compile-testmodel">
     <taskdef
           name="insert-ace-data"
