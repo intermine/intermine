@@ -26,7 +26,6 @@ import java.util.TreeSet;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.IOException;
 
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -109,7 +108,7 @@ public class InitialiserPlugin implements PlugIn
         Properties classDescriptions = new Properties();
         try {
             classDescriptions.load(is);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ServletException("Error loading classDescriptions.properties", e);
         }
         servletContext.setAttribute("classDescriptions", classDescriptions);
@@ -124,14 +123,14 @@ public class InitialiserPlugin implements PlugIn
             servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
         try {
             webProperties.load(globalPropertiesStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ServletException("Unable to find global.web.properties", e);
         }
         InputStream modelPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/web.properties");
         try {
             webProperties.load(modelPropertiesStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ServletException("Unable to find web.properties", e);
         }
         servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
