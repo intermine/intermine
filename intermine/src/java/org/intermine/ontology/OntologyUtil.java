@@ -805,11 +805,11 @@ public class OntologyUtil
     /**
      * Given a fully qualified class name return the appropriate model name space.
      *
-     * @param a full qualified class name
+     * @param className a full qualified class name
      * @return a name space
      */
     public static String getNamespaceFromClassName(String className) {
-        String nameSpace ="http://www.";
+        String nameSpace = "http://www.";
 
         if (className.startsWith("org")) {
 
