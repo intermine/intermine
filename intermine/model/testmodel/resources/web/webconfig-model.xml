@@ -1,12 +1,12 @@
 <webconfig>
   <class name="org.flymine.model.testmodel.Company">
     <shortdisplayers>
-      <displayer src="/pkFields.jsp"/>
-      <displayer src="/model/CompaniesHouseIcon.jsp"/>
+      <displayer src="/allFields.jsp"/>
+      <displayer src="/model/companiesHouse.jsp"/>
     </shortdisplayers>
     <longdisplayers>
-      <displayer src="/pkFields.jsp"/>
-      <displayer src="/model/CompaniesHouseIcon.jsp"/>
+      <displayer src="/allFields.jsp"/>
+      <displayer src="/model/companiesHouse.jsp"/>
     </longdisplayers>
   </class>
 </webconfig>
