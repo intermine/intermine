@@ -162,7 +162,7 @@ public abstract class QueryHelper
             cs = (ConstraintSet) c;
         }
 
-        Iterator iter = ConstraintHelper.createList(q, qc).iterator();
+        Iterator iter = ConstraintHelper.createList(q, (FromElement) qc).iterator();
         while (iter.hasNext()) {
             cs.removeConstraint((Constraint) iter.next());
         }

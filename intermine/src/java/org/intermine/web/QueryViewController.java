@@ -32,9 +32,7 @@ import org.flymine.objectstore.query.FromElement;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ConstraintHelper;
 import org.flymine.objectstore.query.Constraint;
-import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.presentation.PrintableConstraint;
-import org.flymine.objectstore.query.presentation.AssociatedConstraint;
 
 /**
  * Splits up the query in the request into little bits for queryView.jsp to display.
@@ -73,27 +71,12 @@ public class QueryViewController extends TilesAction
 
                 Iterator conIter = ConstraintHelper.filter(clist, fromElement).iterator();
                 while (conIter.hasNext()) {
-                    Constraint c = (Constraint) conIter.next();
-                    PrintableConstraint pc;
-                    if (c instanceof ConstraintSet) {
-                        pc = new PrintableConstraint(query, (ConstraintSet) c);
-                    } else {
-                        pc = new AssociatedConstraint(query, c);
-                    }
-                    fromSet.add(pc);
+                    fromSet.add(new PrintableConstraint(query, (Constraint) conIter.next()));
                 }
             }
-
             Iterator conIter = ConstraintHelper.filter(clist, null).iterator();
             while (conIter.hasNext()) {
-                Constraint c = (Constraint) conIter.next();
-                PrintableConstraint pc;
-                if (c instanceof ConstraintSet) {
-                    pc = new PrintableConstraint(query, (ConstraintSet) c);
-                } else {
-                    pc = new AssociatedConstraint(query, c);
-                }
-                noFromConstraints.add(pc);
+                noFromConstraints.add(new PrintableConstraint(query, (Constraint) conIter.next()));
             }
         }
 
