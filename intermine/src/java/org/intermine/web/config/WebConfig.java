@@ -49,7 +49,7 @@ public class WebConfig
         digester.addObjectCreate("webconfig", WebConfig.class);
 
         digester.addObjectCreate("webconfig/class", Type.class);
-        digester.addSetProperties("webconfig/class", "name", "name");
+        digester.addSetProperties("webconfig/class", "className", "className");
         digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
         digester.addObjectCreate("webconfig/class/shortdisplayers/displayer", Displayer.class);
