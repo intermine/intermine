@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <table class="footer">
   <tr>
@@ -8,7 +9,7 @@
         <tr>
           <td align="center">
             <a href="http://www.wellcome.ac.uk">
-              <img src="http://www.flymine.org/wellcome.gif" border="0" hspace="10" alt="Wellcome Trust Logo"/>
+              <img src="<html:rewrite page="/images/wellcome.gif"/>" border="0" hspace="10" alt="Wellcome Trust Logo"/>
             </a>
           </td>
           <td>
