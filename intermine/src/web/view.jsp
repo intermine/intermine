@@ -43,6 +43,9 @@
               </nobr>
             </div>
             <div>
+              <span class="type"><small>${viewPathTypes[path]}</small></span>
+            </div>
+            <div>
               <nobr>
                 <c:if test="${!status.first}">
                   <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
