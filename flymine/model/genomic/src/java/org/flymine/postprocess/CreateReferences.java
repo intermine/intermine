@@ -119,10 +119,10 @@ public class CreateReferences
 
         LOG.info("insertReferences stage 10");
         // Protein.interactions
-        insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
+        //insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
         LOG.info("insertReferences stage 11");
         // Protein.interactions
-        insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
+        //insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
 
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
