@@ -45,7 +45,7 @@ public class QueryClonerTest extends SetupDataTestCase
 
             assertEquals(type + " has failed", orig, cloned);
         } catch (IllegalArgumentException e) {
-            fail("IllegalArgumentException thrown for " + type + ": " + queries.get(type));
+            fail("IllegalArgumentException thrown for " + type + ": " + e.getMessage() + ": " + queries.get(type));
         }
     }
 

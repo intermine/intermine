@@ -125,6 +125,21 @@ public class QueryField implements QueryEvaluable
     }
 
     /**
+     * Constructs a QueryField object - intended for cloning operations.
+     *
+     * @param qc the FromElement
+     * @param fieldName the first field name
+     * @param secondFieldName the second field name
+     * @param type the Class of the value
+     */
+    protected QueryField(FromElement qc, String fieldName, String secondFieldName, Class type) {
+        this.qc = qc;
+        this.fieldName = fieldName;
+        this.secondFieldName = secondFieldName;
+        this.type = type;
+    }
+
+    /**
      * Gets the QueryClass of which the field is a member
      *
      * @return the QueryClass
