@@ -121,7 +121,7 @@ public class FullRendererTest extends XMLTestCase
             + "<reference name=\"department\" ref_id=\"5678\"/>" + ENDL
             + "</object>" + ENDL;
 
-        assertEquals(expected, FullRenderer.renderObject(e, model));
+        assertEquals(expected, FullRenderer.render(e, model));
     }
 
     public void testRenderObjectNoId() throws Exception {
@@ -129,7 +129,7 @@ public class FullRendererTest extends XMLTestCase
         e.setName("Employee1");
 
         try {
-            FullRenderer.renderObject(e, model);
+            FullRenderer.render(e, model);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException ex) {
         }
@@ -160,7 +160,7 @@ public class FullRendererTest extends XMLTestCase
             + "<field name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
             + "</object>" + ENDL;
 
-        assertEquals(expected, FullRenderer.renderObject(b, model));
+        assertEquals(expected, FullRenderer.render(b, model));
     }
 
     public void testRenderTypes() throws Exception {
@@ -192,6 +192,6 @@ public class FullRendererTest extends XMLTestCase
             + "<field name=\"dateObjType\" value=\"7777777777\"/>" + ENDL
             + "</object>" + ENDL;
 
-        assertEquals(expected, FullRenderer.renderObject(t, model));
+        assertEquals(expected, FullRenderer.render(t, model));
     }
 }
