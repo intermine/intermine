@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.TreeSet;
 import java.util.TreeMap;
 import java.util.Iterator;
@@ -30,6 +30,8 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryCollectionReference;
@@ -37,6 +39,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
@@ -167,9 +170,7 @@ public class PrecomputeTask extends Task
             String key = (String) entry.getKey();
 
             List queries = (List) entry.getValue();
-
             Iterator queriesIter = queries.iterator();
-
             while (queriesIter.hasNext()) {
                 Query query = (Query) queriesIter.next();
 
@@ -344,10 +345,10 @@ public class PrecomputeTask extends Task
                     continue;
                 }
 
-                queryList.add(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                                             thisSubjectCD.getType(), true));
-                queryList.add(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                                             thisSubjectCD.getType(), false));
+                queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
+                                                thisSubjectCD.getType(), true));
+                queryList.addAll(constructQuery(thisObjectCD.getType(), connectingFieldname,
+                                                thisSubjectCD.getType(), false));
             }
         }
 
@@ -412,13 +413,13 @@ public class PrecomputeTask extends Task
                         continue;
                     }
 
-                    queryList.add(constructQuery(thisObject1CD.getType(), connectingFieldname1,
-                                                 thisObject2CD.getType(), connectingFieldname2,
-                                                 thisObject3CD.getType(), true));
+                    queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
+                                                    thisObject2CD.getType(), connectingFieldname2,
+                                                    thisObject3CD.getType(), true));
 
-                    queryList.add(constructQuery(thisObject1CD.getType(), connectingFieldname1,
-                                                 thisObject2CD.getType(), connectingFieldname2,
-                                                 thisObject3CD.getType(), false));
+                    queryList.addAll(constructQuery(thisObject1CD.getType(), connectingFieldname1,
+                                                    thisObject2CD.getType(), connectingFieldname2,
+                                                    thisObject3CD.getType(), false));
                 }
             }
         }
@@ -450,17 +451,17 @@ public class PrecomputeTask extends Task
                                      + getPropertiesFileName() + ")");
         }
 
-        Set returnList;
+        Set returnSet;
 
         if (useSubClasses) {
-            returnList = os.getModel().getAllSubs(classDesc);
+            returnSet = os.getModel().getAllSubs(classDesc);
         } else {
-            returnList = new HashSet();
+            returnSet = new LinkedHashSet();
         }
 
-        returnList.add(classDesc);
+        returnSet.add(classDesc);
 
-        return returnList;
+        return returnSet;
     }
 
     /**
@@ -471,12 +472,12 @@ public class PrecomputeTask extends Task
      * @param subjectClass the subject class
      * @param selectAllFields if true add all of the fields of objectClass and subjectClass to the
      * select list of the Query to precompute()
-     * @return the new Query
+     * @return the new Queries
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist)
      */
-    protected Query constructQuery(Class objectClass, String connectingFieldname,
-                                   Class subjectClass, boolean selectAllFields)
+    protected List constructQuery(Class objectClass, String connectingFieldname,
+                                  Class subjectClass, boolean selectAllFields)
         throws BuildException {
         Query q = new Query();
         q.setDistinct(true);
@@ -493,7 +494,6 @@ public class PrecomputeTask extends Task
         QueryClass qcSub = new QueryClass(subjectClass);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
-        q.addToOrderBy(qcObj);
 
         if (selectAllFields) {
             List fieldNames = getAttributeFieldNames(subjectClass);
@@ -519,7 +519,7 @@ public class PrecomputeTask extends Task
         ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcSub);
         q.setConstraint(cc);
 
-        return q;
+        return getOrderedQueries(q);
     }
 
     /**
@@ -532,13 +532,13 @@ public class PrecomputeTask extends Task
      * @param object3Class an object class
      * @param selectAllFields if true add all of the fields of objectClass and subjectClass to the
      * select list of the Query to precompute()
-     * @return the new Query
+     * @return the new Queries
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist)
      */
-    protected Query constructQuery(Class object1Class, String connectingFieldname1,
-                                   Class object2Class, String connectingFieldname2,
-                                   Class object3Class, boolean selectAllFields)
+    protected List constructQuery(Class object1Class, String connectingFieldname1,
+                                  Class object2Class, String connectingFieldname2,
+                                  Class object3Class, boolean selectAllFields)
         throws BuildException {
         Query q = new Query();
         q.setDistinct(true);
@@ -564,10 +564,6 @@ public class PrecomputeTask extends Task
         QueryClass qcObj3 = new QueryClass(object3Class);
         q.addFrom(qcObj3);
         q.addToSelect(qcObj3);
-
-        q.addToOrderBy(qcObj1);
-        q.addToOrderBy(qcObj2);
-        q.addToOrderBy(qcObj3);
 
         if (selectAllFields) {
             List fieldNames = getAttributeFieldNames(object3Class);
@@ -611,7 +607,41 @@ public class PrecomputeTask extends Task
         cs.addConstraint(cc2);
 
         q.setConstraint(cs);
-        return q;
+        return getOrderedQueries(q);
+    }
+
+    /**
+     * Return a List containing clones of the given Query, but with each ordered by a different 
+     * field of the Query.
+     * @param q the Query
+     * @return clones of the Query order by each of the fields
+     */
+    protected List getOrderedQueries(Query q) {
+        List queryList = new ArrayList();
+
+        for (int i = 0; i < q.getSelect().size(); i++) {
+            // clone() first, then call addToOrderBy() with a QueryNode from the cloned Query
+            Query queryClone = QueryCloner.cloneQuery(q);
+
+            if (i == 0) {
+                // by default, the Query is ordered by the first selected QueryNode, so just use the
+                // clone to avoid adding extra unnecessary order by elements
+                queryList.add(queryClone);
+            } else {
+                QueryNode selectNode = (QueryNode) queryClone.getSelect().get(i);
+
+                if (selectNode instanceof QueryClass) {
+                    QueryClass queryClass = (QueryClass) selectNode;
+                    queryClone.addToOrderBy(queryClass);
+                } else {
+                    QueryEvaluable queryEvaluable = (QueryEvaluable) selectNode;
+                    queryClone.addToOrderBy(queryEvaluable);
+                }
+                queryList.add(queryClone);
+            }
+        }
+
+        return queryList;
     }
 
     /**
