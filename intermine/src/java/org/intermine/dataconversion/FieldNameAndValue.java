@@ -10,7 +10,9 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
@@ -32,7 +34,9 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
      *
      * @param fieldName a String
      * @param value a String
-     * @param reference true if fieldName is a reference, false if it is an Attribute
+     * @param reference true if fieldName is a reference, false if it is an Attribute.
+     * Alternatively, if fieldName is ObjectStoreItemPathFollowingImpl.IDENTIFIER, then false if
+     * the value is from a reference, true if it is from a referencelist.
      */
     public FieldNameAndValue(String fieldName, String value, boolean reference) {
         this.fieldName = fieldName;
@@ -104,13 +108,13 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
     }
 
     /**
-     * Returns this object.
+     * Returns this object in a singleton.
      *
      * @param item ignored
-     * @return this
+     * @return this, in a singleton
      */
-    public FieldNameAndValue getConstraintFromTarget(Item item) {
-        return this;
+    public Set getConstraintFromTarget(Item item) {
+        return Collections.singleton(this);
     }
 
     /**
@@ -121,18 +125,35 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
      */
     public boolean matches(Item item) {
         if (reference) {
-            Iterator refIter = item.getReferences().iterator();
-            while (refIter.hasNext()) {
-                Reference ref = (Reference) refIter.next();
-                if (ref.getName().equals(fieldName)) {
-                    return ref.getRefId().equals(value);
+            if (fieldName == ObjectStoreItemPathFollowingImpl.IDENTIFIER) {
+                String id = item.getIdentifier();
+                int idLen = id.length();
+                if (value == null) {
+                    return false;
                 }
+                int valLen = value.length();
+                if ((id + " ").equals(value.substring(0, idLen + 1))) {
+                    return true;
+                } else if (value.indexOf(" " + id + " ") != -1) {
+                    return true;
+                } else if ((" " + id).equals(value.substring(valLen - idLen - 1))) {
+                    return true;
+                }
+                return false;
+            } else {
+                Iterator refIter = item.getReferences().iterator();
+                while (refIter.hasNext()) {
+                    Reference ref = (Reference) refIter.next();
+                    if (ref.getName().equals(fieldName)) {
+                        return ref.getRefId().equals(value);
+                    }
+                }
+                return false;
             }
-            return false;
         } else {
-            if (fieldName.equals("identifier")) {
+            if (fieldName == ObjectStoreItemPathFollowingImpl.IDENTIFIER) {
                 return value.equals(item.getIdentifier());
-            } else if (fieldName.equals("className")) {
+            } else if (fieldName == ObjectStoreItemPathFollowingImpl.CLASSNAME) {
                 return value.equals(item.getClassName());
             } else {
                 Iterator attIter = item.getAttributes().iterator();

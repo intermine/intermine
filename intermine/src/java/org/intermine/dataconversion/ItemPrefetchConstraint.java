@@ -10,6 +10,8 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.util.Set;
+
 import org.intermine.model.fulldata.Item;
 
 /**
@@ -30,11 +32,12 @@ public interface ItemPrefetchConstraint
     public FieldNameAndValue getConstraint(Item item);
 
     /**
-     * Returns a FieldNameAndValue object that describes this constraint with respect to a
-     * particular target Item.
+     * Returns a Set of FieldNameAndValue objects that describe this constraint with respect to a
+     * particular target Item. Sometimes the result of this may seemingly contain infinite entries,
+     * in which case only the ones which are deemed to be of use are returned.
      *
      * @param item the Item
-     * @return a FieldNameAndValue object
+     * @return a Set of FieldNameAndValue objects
      */
-    public FieldNameAndValue getConstraintFromTarget(Item item);
+    public Set getConstraintFromTarget(Item item);
 }
