@@ -30,14 +30,14 @@ import org.biojava.bio.seq.io.SeqIOTools;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.util.StringUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
 import org.intermine.model.InterMineObject;
 
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Contig;
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
 
@@ -67,7 +67,8 @@ public class SequenceExporter implements TableExporter
         HttpSession session = request.getSession();
 
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
+        response.setHeader("Content-Disposition ",
+                           "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
 
         OutputStream outputStream = response.getOutputStream();
 
@@ -77,18 +78,13 @@ public class SequenceExporter implements TableExporter
 
         Column featureColumn = null;
 
-        // find and remember the LocatedSequenceFeature column
+        // find and remember the first valid column
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
                 Object columnType = ((Column) columns.get(i)).getType();
-                
                 if (columnType instanceof ClassDescriptor) {
-                    
-                    ClassDescriptor cd = (ClassDescriptor) columnType;
-                    
-                    if (LocatedSequenceFeature.class.isAssignableFrom(cd.getType())
-                        || Protein.class.isAssignableFrom(cd.getType())) {
+                    if (validType(((ClassDescriptor) columnType).getType())) {
                         featureColumn = column;
                         break;
                     }
@@ -132,7 +128,7 @@ public class SequenceExporter implements TableExporter
                     int realColumnIndex = thisColumn.getIndex();
 
                     if (realColumnIndex == realFeatureIndex) {
-                        // skip - this is the column containing LocatedSequenceFeature
+                        // skip - this is the column containing the valid type
                         continue;
                     }
 
@@ -142,17 +138,17 @@ public class SequenceExporter implements TableExporter
 
                 FlyMineSequence sequence = null;
 
-                if (object instanceof LocatedSequenceFeature) {
-                    LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+                if (object instanceof Contig) {
+                    Contig feature = (Contig) object;
                     if (feature.getResidues() != null) {
                         sequence = FlyMineSequenceFactory.make(feature);
                     }
-                } else {
-                    Protein protein = (Protein) object;
-//                    if (protein.getAminoAcids() != null) {  FIXME
-                        sequence = FlyMineSequenceFactory.make(protein);
-//                    }
-                }
+                } //else {
+//                     Protein protein = (Protein) object;
+//                     if (protein.getAminoAcids() != null) {
+//                         sequence = FlyMineSequenceFactory.make(protein);
+//                     }
+//                 }
 
                 if (sequence != null) {
                     if (row.size() > 1) {
@@ -189,13 +185,21 @@ public class SequenceExporter implements TableExporter
                 
                 if (columnType instanceof ClassDescriptor) {
                     ClassDescriptor cd = (ClassDescriptor) columnType;
-                    if (LocatedSequenceFeature.class.isAssignableFrom(cd.getType())
-                        || Protein.class.isAssignableFrom(cd.getType())) {
+                    if (validType(cd.getType())) {
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Check whether the argument is one of the types we handle
+     * @param type the type
+     * @return true if we handle the type
+     */
+    protected boolean validType(Class type) {
+        return Contig.class.isAssignableFrom(type);
     }
 }
