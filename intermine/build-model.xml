@@ -79,7 +79,7 @@
 
   <!-- copy key definition files -->
   <target name="copy-keydefs" depends="prepare">
-    <copy todir="${build.model.dir}">
+    <copy todir="${build.model.dir}" failonerror="false">
       <fileset dir="${model}/${model.name}/resources">
         <include name="*.properties"/>
       </fileset>
