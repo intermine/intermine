@@ -14,13 +14,21 @@ a:active {color: #220077;
 	text-decoration: none}
 a:hover {color: #220077;
 	text-decoration: underline}
-.sidebar {
+.main-layout {
+    width: 100%
+}
+.links {
     font-size: small;
     background-color: #ccaaff;
+}
+.links .menu-item {
+    padding: 1em
 }
 .footer {
     font-size: x-small;
     background-color: #ccaaff;
+    padding: 1em;
+    width: 100%;
 }
 .menu-heading {
     font-weight: bold;
@@ -82,11 +90,21 @@ a:hover {color: #220077;
     font-size: small;
 }
 .queryErrorMessage { 
-  color: red;
+    color: red;
 }
 .queryBuildQueryClasses {
-  margin-left: 1em;
+    margin-left: 1em;
 }
 .queryBuildCurrentQuery {
-  margin-left: 1em;
+    margin-left: 1em;
+}
+div.savedView {
+}
+div.savedView li {
+    font-size: small;
+    color: green;
+}
+div.savedView span.title {
+    color: blue;
+    font-size: small;
 }
