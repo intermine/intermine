@@ -27,6 +27,7 @@ public class ObjectStoreDataLoaderTask extends Task
     protected String source;
     protected String sourceName;
     protected boolean ignoreDuplicates;
+    protected String queryClass = null;
 
     /**
      * Set the IntegrationWriter.
@@ -64,6 +65,14 @@ public class ObjectStoreDataLoaderTask extends Task
     }
 
     /**
+     * If the name of a class is set will only load objects of that type
+     * @param queryClass the name of a class to load
+     */
+    public void setQueryClass(String queryClass) {
+        this.queryClass = queryClass;
+    }
+
+    /**
      * @see Task#execute
      * @throws BuildException
      */
@@ -78,9 +87,17 @@ public class ObjectStoreDataLoaderTask extends Task
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
             iw.setIgnoreDuplicates(ignoreDuplicates);
-            new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
-                                                  iw.getMainSource(sourceName),
-                                                  iw.getSkeletonSource(sourceName));
+            if (queryClass != null) {
+                new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
+                                                      iw.getMainSource(sourceName),
+                                                      iw.getSkeletonSource(sourceName),
+                                                      Class.forName(queryClass));
+
+            } else {
+                new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
+                                                      iw.getMainSource(sourceName),
+                                                      iw.getSkeletonSource(sourceName));
+            }
         } catch (Exception e) {
             throw new BuildException(e);
         }

@@ -53,12 +53,29 @@ public class ObjectStoreDataLoader extends DataLoader
      */
     public void process(ObjectStore os, Source source, Source skelSource)
         throws ObjectStoreException {
+        process(os, source, skelSource, InterMineObject.class);
+    }
+
+
+    /**
+     * Loads only a specified class reading data from the given ObjectStore, which must use the
+     * same model as the destination IntegrationWriter.  If the class is InterMineObject then
+     * all data will be loaded.
+     *
+     * @param os the ObjectStore from which to read data
+     * @param source the main Source
+     * @param skelSource the skeleton Source
+     * @param queryClass the class to load data for
+     * @throws ObjectStoreException if an error occurs on either the source or the destination
+     */
+    public void process(ObjectStore os, Source source, Source skelSource, Class queryClass)
+        throws ObjectStoreException {
         long times[] = new long[20];
         for (int i = 0; i < 20; i++) {
             times[i] = -1;
         }
         Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
+        QueryClass qc = new QueryClass(queryClass);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setDistinct(false);
