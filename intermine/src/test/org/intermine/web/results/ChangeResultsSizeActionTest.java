@@ -49,8 +49,6 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         os.setResultsSize(15);
         IqlQuery fq = new IqlQuery("select c, d from Company as c, Department as d", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
-        pr = new PagedResults(results);
-        pr.setPageSize(5);
 
         // Set up some known objects in the first 3 results rows
         company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -84,6 +82,9 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         row.add(company3);
         row.add(department3);
         os.addRow(row);
+
+        pr = new PagedResults(results);
+        pr.setPageSize(5);
     }
 
 //     public void testChangePageSize1() throws Exception {
