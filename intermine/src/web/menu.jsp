@@ -31,7 +31,7 @@
   <c:if test="${empty PROFILE.username}">
     <span class="menu-item">
       <html:link action="/login.do">
-        Log in
+        <fmt:message key="menu.login"/>
       </html:link>
     </span>
   </c:if>
