@@ -15,8 +15,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
+import java.util.Iterator;
 import java.io.IOException;
+
+import org.intermine.util.StringUtil;
 
 /**
  * A class that represents one line of a GFF3 file.
@@ -331,5 +333,29 @@ public class GFF3Record
         return "<GFF3Record: sequenceID: " + sequenceID + " source: " + source + " type: "
             + type + " start: " + start + " end: " + end + " score: " + score + " strand: "
             + strand + " phase: " + phase + " attributes: " + attributes + ">";
+    }
+
+    public String toGFF3() {
+        return sequenceID + "\t" + ((source == null) ? "." : source) + "\t"
+            + type + "\t" + start + "\t" + end + "\t"
+            + ((score == null) ? "." : score.toString()) + "\t"
+            + ((strand == null) ? "." : strand) + "\t"
+            + ((phase == null) ? "." : phase) + "\t"
+            + writeAttributes(attributes) + System.getProperty("line.separator");
+    }
+
+    private String writeAttributes(Map attributes) {
+        StringBuffer sb = new StringBuffer();
+        boolean first = true;
+        Iterator iter = attributes.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            if (!first) {
+                sb.append(";");
+            }
+            first = false;
+            sb.append(entry.getKey() + "=" + StringUtil.join((List) entry.getValue(), ","));
+        }
+        return sb.toString();
     }
 }
