@@ -35,6 +35,22 @@ public class ObjectDescription
     }
 
     /**
+     * Constructs a new ObjectDescription from an existing one.
+     * This is used for copy-on-write for the write-back cache in the DataTracker.
+     *
+     * @param desc an existing description
+     */
+    public ObjectDescription(ObjectDescription desc) {
+        dirty = desc.dirty;
+        if (desc.orig != null) {
+            orig = new HashMap(desc.orig);
+        }
+        if (desc.newData != null) {
+            newData = new HashMap(desc.newData);
+        }
+    }
+
+    /**
      * Adds a fieldname-source mapping for this ObjectDescription while keeping it clean.
      *
      * @param fieldName the name of the field

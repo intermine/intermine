@@ -10,6 +10,10 @@ package org.flymine.dataloader;
  *
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -114,7 +118,7 @@ public class DataTracker
             e.initCause(broken);
             throw e;
         }
-        ObjectDescription desc = getDesc(id);
+        ObjectDescription desc = getDesc(id, false);
         return desc.getSource(field);
     }
 
@@ -122,12 +126,17 @@ public class DataTracker
      * Gets the object descriptor for a given object id
      * 
      * @param id the ID
+     * @param forWrite true if the returned value is going to be modified
      * @return an ObjectDescriptor
      */
-    private ObjectDescription getDesc(Integer id) {
+    private ObjectDescription getDesc(Integer id, boolean forWrite) {
         ObjectDescription desc = (ObjectDescription) cache.get(id);
         if (desc == null) {
             desc = (ObjectDescription) writeBack.get(id);
+            if (forWrite && (desc != null)) {
+                desc = new ObjectDescription(desc);
+            }
+            cache.put(id, desc);
         }
         if (desc == null) {
             desc = new ObjectDescription();
@@ -174,7 +183,7 @@ public class DataTracker
             e.initCause(broken);
             throw e;
         }
-        ObjectDescription desc = getDesc(id);
+        ObjectDescription desc = getDesc(id, true);
         desc.put(field.intern(), source);
         // Lastly, we put the description into the cache, just in case we got it out of the
         // write-back cache. This guarantees that we won't lose data by forgetting to write it to
@@ -314,35 +323,77 @@ public class DataTracker
      * @throws SQLException on any error with the backing database
      */
     private void writeMap(Map map, boolean clean) throws SQLException {
-        Statement s = storeConn.createStatement();
-        Iterator iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Integer id = (Integer) entry.getKey();
-            ObjectDescription desc = (ObjectDescription) entry.getValue();
-            if (desc.isDirty()) {
-                Map orig = desc.getOrig();
-                Map newData = desc.getNewData();
-                Iterator fieldIter = newData.entrySet().iterator();
-                while (fieldIter.hasNext()) {
-                    Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-                    String field = (String) fieldEntry.getKey();
-                    Source source = (Source) fieldEntry.getValue();
-                    if (!orig.containsKey(field) || (!orig.get(field).equals(source))) {
-                        // Insert required
-                        s.addBatch("INSERT INTO tracker (objectid, fieldname, sourcename, version)"
-                                + " VALUES (" + id + ", '" + field + "', '"
-                                + sourceToString(source) + "', " + version + ")");
+        try {
+            org.postgresql.copy.CopyManager copyManager = null;
+            ByteArrayOutputStream baos = null;
+            DataOutputStream dos = null;
+            Statement s = null;
+            if (storeConn instanceof org.postgresql.PGConnection) {
+                copyManager = ((org.postgresql.PGConnection) storeConn).getCopyAPI();
+                baos = new ByteArrayOutputStream();
+                dos = new DataOutputStream(baos);
+                dos.writeBytes("PGCOPY\n");
+                dos.writeByte(255);
+                dos.writeBytes("\r\n");
+                dos.writeByte(0); // Signature done
+                dos.writeInt(0); // Flags - we aren't supplying OIDS
+                dos.writeInt(0); // Length of header extension
+            }
+            if (copyManager == null) {
+                s = storeConn.createStatement();
+                LOG.error("Using slow portable writing method");
+            }
+            Iterator iter = map.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                Integer id = (Integer) entry.getKey();
+                ObjectDescription desc = (ObjectDescription) entry.getValue();
+                if (desc.isDirty()) {
+                    Map orig = desc.getOrig();
+                    Map newData = desc.getNewData();
+                    Iterator fieldIter = newData.entrySet().iterator();
+                    while (fieldIter.hasNext()) {
+                        Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
+                        String field = (String) fieldEntry.getKey();
+                        Source source = (Source) fieldEntry.getValue();
+                        if (!orig.containsKey(field) || (!orig.get(field).equals(source))) {
+                            // Insert required
+                            if (s == null) {
+                                dos.writeShort(4); // Number of fields
+                                dos.writeInt(4); // Length of an integer
+                                dos.writeInt(id.intValue()); // objectid
+                                dos.writeInt(field.length()); // Length of fieldname
+                                dos.writeBytes(field); // Field name
+                                String sourceName = sourceToString(source);
+                                dos.writeInt(sourceName.length()); // Length of source name
+                                dos.writeBytes(sourceName); // Source name
+                                dos.writeInt(4); // Length of an integer
+                                dos.writeInt(version); // version
+                            } else {
+                                s.addBatch("INSERT INTO tracker (objectid, fieldname, sourcename,"
+                                        + " version) VALUES (" + id + ", '" + field + "', '"
+                                        + sourceToString(source) + "', " + version + ")");
+                            }
+                        }
+                    }
+                    if (clean) {
+                        desc.clean();
                     }
                 }
-                if (clean) {
-                    desc.clean();
-                }
             }
+            if (s == null) {
+                dos.writeShort(-1); // No more tuples
+                dos.flush();
+                copyManager.copyInQuery("COPY tracker FROM STDIN BINARY",
+                        new ByteArrayInputStream(baos.toByteArray()));
+            } else {
+                s.executeBatch();
+            }
+            version++;
+            storeConn.commit();
+        } catch (IOException e) {
+            throw new SQLException(e.toString());
         }
-        s.executeBatch();
-        version++;
-        storeConn.commit();
     }
 
     /**
