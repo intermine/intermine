@@ -39,6 +39,13 @@ public class ChangeResultsForm extends ActionForm
     protected Map buttons;
 
     /**
+     * Create a new ChangeResultsForm object.
+     */
+    public ChangeResultsForm() {
+        internalReset();
+    }
+
+    /**
      * Set the page size
      *
      * @param pageSize the page size to display
@@ -195,15 +202,22 @@ public class ChangeResultsForm extends ActionForm
 
     /**
      * Reset the form to the initial state
-     *
-     * @param mapping the mapping
-     * @param request the request
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void internalReset() {
         pageSize = "10";
         selectedObjects = new String[] {};
         newBagName = null;
         bagName = null;
         buttons = new HashMap();
+    }
+
+    /**
+     * Reset the form to the initial state
+     *
+     * @param mapping the mapping
+     * @param request the request
+     */
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        internalReset();
     }
 }
