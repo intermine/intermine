@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <brand>
     <title>FlyMine</title>
-    <stylesheet file="style/default.css"/>
+    <stylesheet file="style/base.css"/>
+    <stylesheet file="style/branding.css"/>
     <meta name="keywords" content="microarray, bioinformatics, drosophila, genomics, OQL, integration, query optimiser"/>
     <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics"/>
     <headline>An integrated database for <span class="fly">Drosophila</span> and <span class="fly">Anopheles</span> genomics</headline>

@@ -4,13 +4,10 @@ html, body
     font-size: 100%; /* NN4 */
     margin: 0;
     padding: 0;
-    color: #000000;
-    background-color: #F5F0FF;
 }
 
 a
 {
-    color: #00e;
     text-decoration: none;
 /*  font-family: sans-serif; */
 }
@@ -32,12 +29,16 @@ span.fly
    font-style: oblique;
 }
 
+p
+{
+    text-align: justify;
+}
+
 /**************************************/
 
 #header
 {
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-    background: #F5F0FF;
     padding: 5px;
     border-bottom: solid black 1px;
     margin-bottom: 0px;
@@ -52,7 +53,6 @@ span.fly
 
 #header h1 a
 {
-    color: #5C0075;
     text-decoration: none;
 }
 
@@ -95,20 +95,14 @@ span.fly
 {
     display: block;
     padding: 5px 10px 5px 10px;
-    color: #750054;
-    background: #E5E5E5;
     text-decoration: none;
     font-weight: bold;
-    border-top: solid 1px #FFFFFF;
-    border-bottom: solid 1px #CCCCCC;
     width: 140px !important;
     width: 160px;   /* Win IE Hack :-( */
 }
 
 #sidebar a:hover
 {
-    color: #FFFFFF;
-    background: #BC00F0;
     border-top: solid 1px #D86BFF;
     border-bottom: solid 1px #336699;
 }
@@ -126,8 +120,6 @@ span.fly
 #sidebar ul ul a
 {
     padding-left: 20px;
-    color: #210075;
-    background: #F5F5F5;
     text-decoration: none;
     font-weight: normal;
     border-bottom: 1px solid #E5E5E5;
@@ -199,7 +191,6 @@ ul ul li#current a
 {
     position: absolute; /* For Safari */
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-    background-color: #FFFFFF;
     clear: both;
     border-top: solid black 1px;
     margin-top: 8em;
@@ -220,6 +211,8 @@ ul ul li#current a
 }
 
 /**************************************/
+
+
 
 #pagecontent ul.fileformat
 {
