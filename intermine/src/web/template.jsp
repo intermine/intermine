@@ -12,15 +12,22 @@
     <c:forEach items="${templateQuery.nodes}" var="node">
       <c:forEach items="${constraints[node]}" var="con">
         <c:set var="index" value="${index+1}"/>
+        <c:if test="${!empty con.description}">
+          <tr>
+            <td align="right" valign="top" rowspan="2">
+              <c:out value="[${index}]"/>
+            </td>
+            <td colspan="3">
+              <i><c:out value="${con.description}"/></i>
+            </td>
+          </tr>
+        </c:if>
         <tr>
-          <td align="right" valign="top" rowspan="2">
-            <c:out value="[${index}]"/>
-          </td>
-          <td colspan="3">
-            <i><c:out value="${con.description}"/></i>
-          </td>
-        </tr>
-        <tr>
+          <c:if test="${empty con.description}">
+            <td align="right">
+              <c:out value="[${index}]"/>
+            </td>
+          </c:if>
           <td>
             <c:out value="${names[con]}"/>
           </td>
