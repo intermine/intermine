@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cd $FLYMINE
+
+export CLASSPATH=/software/noarch/junit/junit.jar:/software/noarch/antlr/antlr.jar:$FLYMINE/build/java:$FLYMINE/build/resources:$FLYMINE/build/test
+
+for i in $FLYMINE/lib/*.jar ; do
+    export CLASSPATH=$CLASSPATH:$i
+done
+
+if test -z "$LD_LIBRARY_PATH" ; then
+    export LD_LIBRARY_PATH=/usr/lib
+else
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
+fi
+
+echo "Using classpath: $CLASSPATH"
+echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+
+java org.flymine.objectstore.query.Query
+
