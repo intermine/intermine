@@ -38,7 +38,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreAbstractImpl.class);
 
-    protected static Random rand = new Random(); 
+    protected static Random rand = new Random();
 
     protected Model model;
     protected int maxOffset = Integer.MAX_VALUE;
@@ -94,13 +94,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return getObjectById(id, InterMineObject.class);
     }
-    
+
     /**
      * @see ObjectStore#getObjectById(Integer, Class)
      */
     public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
         getObjectOps++;
-        if (getObjectOps % 1000 == 0) {
+        if (getObjectOps % 10000 == 0) {
             LOG.info("getObjectById called " + getObjectOps + " times. Cache hits: "
                     + getObjectHits + ". Prefetches: " + getObjectPrefetches);
         }
