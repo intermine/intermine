@@ -31,9 +31,6 @@
     <form-bean name="saveQueryForm"
                type="org.intermine.web.SaveQueryForm"/>
 
-    <form-bean name="historyForm"
-               type="org.intermine.web.HistoryForm"/>
-
     <form-bean name="buildBagForm"
                type="org.intermine.web.BuildBagForm"/>
 
