@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
+<!DOCTYPE database SYSTEM "http://jakarta.apache.org/turbine/dtd/database.dtd">
+
+<database name="" defaultIdMethod="none">
+
+ <table name="OJB_HL_SEQ" description="HIGH/LOW SequenceManager table">
+    <column name="TABLENAME" required="true" primaryKey="true" type="VARCHAR" size="175"/>
+    <column name="FIELDNAME" required="true" primaryKey="true" type="VARCHAR" size="70"/>
+    <column name="MAX_KEY" type="INTEGER"/>
+    <column name="GRAB_SIZE" type="INTEGER"/>
+  </table>
+
+  <table name="OJB_LOCKENTRY" description="OJB Lock table">
+    <column name="OID_" required="true" primaryKey="true" type="VARCHAR" size="250"/>
+    <column name="TX_ID" required="true" primaryKey="true" type="VARCHAR" size="50"/>
+    <column name="TIMESTAMP_" type="TIMESTAMP"/>
+    <column name="ISOLATIONLEVEL" type="INTEGER"/>
+    <column name="LOCKTYPE" type="INTEGER"/>
+  </table>
+
+  <table name="OJB_NRM" description="OJB NAMED ROOTS Table">
+    <column name="NAME" required="true" primaryKey="true" type="VARCHAR" size="250"/>
+    <column name="OID_" type="LONGVARBINARY"/>
+  </table>
+
+  <table name="OJB_DLIST" description="DLIST IMPLEMENTATION">
+    <column name="ID" required="true" primaryKey="true" type="INTEGER"/>
+    <column name="SIZE_" type="INTEGER"/>
+  </table>
+
+  <table name="OJB_DLIST_ENTRIES" description="DList entry table">
+    <column name="ID" required="true" primaryKey="true" type="INTEGER"/>
+    <column name="DLIST_ID" required="true" type="INTEGER"/>
+    <column name="POSITION_" type="INTEGER"/>
+    <column name="OID_" type="LONGVARBINARY"/>
+  </table>
+
+  <table name="OJB_DSET" description="DSET IMPLEMENTATION">
+    <column name="ID" required="true" primaryKey="true" type="INTEGER"/>
+    <column name="SIZE_" type="INTEGER"/>
+  </table>
+
+  <table name="OJB_DSET_ENTRIES" description="DSet entry table">
+    <column name="ID" required="true" primaryKey="true" type="INTEGER"/>
+    <column name="DLIST_ID" required="true" type="INTEGER"/>
+    <column name="POSITION_" type="INTEGER"/>
+    <column name="OID_" type="LONGVARBINARY"/>
+  </table>
+
+  <table name="OJB_DMAP" description="DMap table">
+    <column name="ID" required="true" primaryKey="true" type="INTEGER"/>
+    <column name="SIZE_" type="INTEGER"/>
+  </table>
+
+  <table name="OJB_DMAP_ENTRIES" description="DMap entry table">
+    <column name="ID" required="true" primaryKey="true" type="INTEGER"/>
+    <column name="DMAP_ID" required="true" type="INTEGER"/>
+    <column name="KEY_OID" type="LONGVARBINARY"/>
+    <column name="VALUE_OID" type="LONGVARBINARY"/>
+  </table>
+
+</database>
