@@ -42,6 +42,8 @@ public class BuildTemplateForm extends ValidatorForm
     protected String templateDescription = "";
     /** Template name. */
     protected String shortName = "";
+    /** Is the template 'important'? (Shown early on portal entry page) */
+    protected boolean important = false;
     
     /**
      * Construct instance of BuildTemplateForm.
@@ -169,6 +171,22 @@ public class BuildTemplateForm extends ValidatorForm
     }
     
     /**
+     * Whether or not this template be marked as important.
+     *
+     * @return whether or not this template be marked as important.
+     */
+    public boolean isImportant() {
+        return important;
+    }
+
+    /**
+     * @param important whether or not this template should be marked as important.
+     */
+    public void setImportant(boolean important) {
+        this.important = important;
+    }
+    
+    /**
      * Fail validation if user template exists with specified name or no
      * constraints have been made editable.
      *
@@ -215,6 +233,7 @@ public class BuildTemplateForm extends ValidatorForm
         templateDescription = "";
         shortName = "";
         category = "";
+        important = false;
     }
     
     /**
@@ -227,6 +246,7 @@ public class BuildTemplateForm extends ValidatorForm
         setShortName(template.getName());
         setCategory(template.getCategory());
         setDescription(template.getDescription());
+        setImportant(template.isImportant());
         
         int j = 0;
         Iterator niter = template.getQuery().getNodes().entrySet().iterator();
