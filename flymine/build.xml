@@ -516,15 +516,6 @@
     </ant>
   </target>
 
-  <target name="store-metadata">
-       <taskdef name="db-insert-model"
-             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <db-insert-model database="db.production" modelName="genomic"/> 
-  </target>
-
-
   <target name="jar-genomic" depends="compile-genomic-model"
           description="create a jar of the genomic model">
     <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
