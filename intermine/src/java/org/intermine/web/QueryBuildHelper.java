@@ -131,10 +131,17 @@ public class QueryBuildHelper
                 String constraintName = (String) j.next();
                 String fieldName = (String) d.getFieldName(constraintName);
                 FieldDescriptor fd = (FieldDescriptor) cld.getFieldDescriptorByName(fieldName);
+                ConstraintOp fieldOp = (ConstraintOp) d.getFieldOp(constraintName);
+                Object fieldValue = d.getFieldValue(constraintName);
                 if (fd instanceof AttributeDescriptor) {
-                    QueryHelper.addConstraint(q, fieldName, qc,
-                                              (ConstraintOp) d.getFieldOp(constraintName),
-                                              new QueryValue(d.getFieldValue(constraintName)));
+                    if (savedBags.containsKey(fieldValue)
+                        && BagConstraint.VALID_OPS.contains(fieldOp)) {
+                        Collection bag = (Collection) savedBags.get(fieldValue);
+                        QueryHelper.addConstraint(q, fieldName, qc, fieldOp, bag);
+                    } else {
+                        QueryHelper.addConstraint(q, fieldName, qc,
+                                                  fieldOp, new QueryValue(fieldValue));
+                    }
                 }
             }
         }
