@@ -71,17 +71,15 @@ public class DBConverter extends DataConverter
      */
     public void process() throws Exception {
         try {
-            c = db.getConnection();
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
+                    //if (cld.getName().equals("org.flymine.model.ensembl.protein_align_feature")) {
                     processClassDescriptor(cld);
+                    //}
                 }
             }
         } finally {
-            if (c != null) {
-                c.close();
-            }
             writer.close();
         }
     }
@@ -92,27 +90,33 @@ public class DBConverter extends DataConverter
      * @throws Exception if an error occurs when reading or writing data
      */
     protected void processClassDescriptor(ClassDescriptor cld) throws Exception {
-        String clsName = TypeUtil.unqualifiedName(cld.getName());
-        Iterator iter;
+        try {
+            c = db.getConnection();
 
-        LOG.error("Processing class: " + clsName);
-
-        boolean idsProvided = idsProvided(cld);
-        if (idsProvided) {
-            iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
-        } else {
-            iter = reader.execute("SELECT * FROM " + clsName).iterator();
+            String clsName = TypeUtil.unqualifiedName(cld.getName());
+            Iterator iter;
+            
+            LOG.error("Processing class: " + clsName);
+            
+            boolean idsProvided = idsProvided(cld);
+            if (idsProvided) {
+                iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
+            } else {
+                iter = reader.execute("SELECT * FROM " + clsName).iterator();
+            }
+            
+            int identifier = 0;
+            while (iter.hasNext()) {
+                Map row = (Map) iter.next();
+                String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (identifier++);
+                writer.store(getItem(cld, clsId, row));
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
         }
-
-        int identifier = 0;
-        while (iter.hasNext()) {
-            Map row = (Map) iter.next();
-            String clsId = idsProvided ? "" + row.get(clsName + "_id") : "" + (identifier++);
-            writer.store(getItem(cld, clsId, row));
-        }
-
-        LOG.error("Aliases now: " + aliases);
-     }
+    }
 
     /**
      * Check whether this class has a single primary key column named className_id
