@@ -28,8 +28,6 @@ import java.io.IOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -120,8 +118,8 @@ public class BuildDbTask extends Task
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            throw new BuildException("cannot create temporary file for BuildDbTask: " +
-                                     e.getMessage());
+            throw new BuildException("cannot create temporary file for BuildDbTask: "
+                                     + e.getMessage());
         }
 
         sql.setXmlFile(tempFile.getPath());
