@@ -16,7 +16,6 @@ import java.beans.*;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
-import org.apache.ojb.broker.PersistenceBroker;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
@@ -103,31 +102,31 @@ public abstract class QueryTestCase extends TestCase
      */
     public void setUpData() throws Exception {
         data();
-        PersistenceBrokerFlyMineImpl broker = (PersistenceBrokerFlyMineImpl) ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
+        ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
          try {
-            broker.beginTransaction();
+            writer.beginTransaction();
             Iterator iter = data.keySet().iterator();
             while (iter.hasNext()) {
-                broker.store(data.get(iter.next()));
+                writer.store(data.get(iter.next()));
             }
-            broker.commitTransaction();
+            writer.commitTransaction();
         } catch (Exception e) {
-            broker.abortTransaction();
+            writer.abortTransaction();
             throw new Exception(e);
         }
     }
 
     public void tearDownData() throws Exception {
-        PersistenceBrokerFlyMineImpl broker = (PersistenceBrokerFlyMineImpl) ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
+        ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
          try {
-            broker.beginTransaction();
+            writer.beginTransaction();
             Iterator iter = data.keySet().iterator();
             while (iter.hasNext()) {
-                broker.delete(data.get(iter.next()));
+                writer.delete(data.get(iter.next()));
             }
-            broker.commitTransaction();
+            writer.commitTransaction();
         } catch (Exception e) {
-            broker.abortTransaction();
+            writer.abortTransaction();
             throw new Exception(e);
         }
     }
