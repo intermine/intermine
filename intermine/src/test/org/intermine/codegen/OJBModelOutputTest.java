@@ -210,8 +210,8 @@ public class OJBModelOutputTest extends TestCase
             + INDENT + INDENT + "</reference-descriptor>" + ENDL
             + INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Cod1\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class1\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL
             + INDENT + "</class-descriptor>" + ENDL + ENDL;
 
@@ -285,13 +285,13 @@ public class OJBModelOutputTest extends TestCase
             + INDENT + INDENT + "</reference-descriptor>" + ENDL;
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Cod1\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class1\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL
             + INDENT + INDENT + "<collection-descriptor name=\"cod2\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod2\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Cod2\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class1\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
 
         mo.collections = new StringBuffer();
@@ -316,8 +316,8 @@ public class OJBModelOutputTest extends TestCase
 
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Cod1\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class1\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
         assertEquals(collections, mo.collections.toString());
     }
@@ -336,8 +336,8 @@ public class OJBModelOutputTest extends TestCase
 
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Cod1Cod2\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Class2Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Cod1\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"Cod2\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
 
         assertEquals(collections, mo.collections.toString());

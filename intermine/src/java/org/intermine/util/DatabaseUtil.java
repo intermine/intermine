@@ -99,13 +99,9 @@ public class DatabaseUtil
                                                + "many-to-many relation");
         }
         
-        ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
         String cldName = col.getClassDescriptor().getClassName();
-        String name1 = StringUtil.capitalise(rd == null 
-                                             ? TypeUtil.unqualifiedName(col.getClassDescriptor()
-                                                                        .getClassName())
-                                             : rd.getName());
-        String name2 = StringUtil.capitalise(col.getName());
+        String name1 = getInwardIndirectionColumnName(col);
+        String name2 = getOutwardIndirectionColumnName(col);
         return name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
     }
     
@@ -116,7 +112,12 @@ public class DatabaseUtil
      * @return a valid column name
      */
     public static String getInwardIndirectionColumnName(CollectionDescriptor col) {
-        return TypeUtil.unqualifiedName(col.getClassDescriptor().getClassName()) + "Id";
+        if (FieldDescriptor.M_N_RELATION != col.relationType()) {
+            throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
+                                               + "many-to-many relation");
+        }
+        
+        return StringUtil.capitalise(col.getName());
     }
 
     /**
@@ -126,7 +127,15 @@ public class DatabaseUtil
      * @return a valid column name
      */
     public static String getOutwardIndirectionColumnName(CollectionDescriptor col) {
-        return  TypeUtil.unqualifiedName(col.getReferencedClassDescriptor().getClassName()) + "Id";
+        if (FieldDescriptor.M_N_RELATION != col.relationType()) {
+            throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
+                                               + "many-to-many relation");
+        }
+        
+        ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
+        return StringUtil.capitalise(rd == null
+                ? TypeUtil.unqualifiedName(col.getClassDescriptor().getClassName())
+                : rd.getName());
     }
 
     /**

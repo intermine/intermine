@@ -140,8 +140,8 @@ public class DatabaseUtilTest extends TestCase
         Model model = new Model("test", clds);
 
         assertEquals("Class1Col1", DatabaseUtil.getIndirectionTableName(col1));
-        assertEquals("Class1Id", DatabaseUtil.getInwardIndirectionColumnName(col1));
-        assertEquals("Class2Id", DatabaseUtil.getOutwardIndirectionColumnName(col1));
+        assertEquals("Col1", DatabaseUtil.getInwardIndirectionColumnName(col1));
+        assertEquals("Class1", DatabaseUtil.getOutwardIndirectionColumnName(col1));
     }
 
     public void testGetIndirectionTableNameCol() throws Exception {
@@ -157,8 +157,8 @@ public class DatabaseUtilTest extends TestCase
         Model model = new Model("test", clds);
 
         assertEquals("Col1Col2", DatabaseUtil.getIndirectionTableName(col1));
-        assertEquals("Class1Id", DatabaseUtil.getInwardIndirectionColumnName(col1));
-        assertEquals("Class2Id", DatabaseUtil.getOutwardIndirectionColumnName(col1));
+        assertEquals("Col1", DatabaseUtil.getInwardIndirectionColumnName(col1));
+        assertEquals("Col2", DatabaseUtil.getOutwardIndirectionColumnName(col1));
     }
 
     public void testGenerateSqlCompatibleName() throws Exception {
