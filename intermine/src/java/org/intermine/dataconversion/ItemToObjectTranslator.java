@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.MetaDataException;
@@ -105,7 +107,6 @@ public class ItemToObjectTranslator extends Translator
                 String namespace = (String) row.get(0);
                 idToNamespace.put(new Integer(offset), namespace);
                 namespaceToId.put(namespace, new Integer(offset));
-                LOG.error("Assigning namespace " + namespace + " to " + offset);
                 int highest = ((Integer) row.get(1)).intValue();
                 offset += highest + 1;
             }
@@ -279,6 +280,8 @@ public class ItemToObjectTranslator extends Translator
                 q.addToSelect(qc);
                 q.addFrom(qc);
                 q.setConstraint(bc);
+                os.getSequence();
+                refs.getName();
                 if (TypeUtil.getFieldInfo(obj.getClass(), refs.getName()) != null) {
                     TypeUtil.setFieldValue(obj, refs.getName(), new SingletonResults(q, os,
                                                                              os.getSequence()));
@@ -291,6 +294,25 @@ public class ItemToObjectTranslator extends Translator
                 }
             }
         } catch (IllegalAccessException e) {
+            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
+                      + item.getIdentifier());
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            LOG.error(sw.toString());
+            throw new RuntimeException(e);
+        } catch (MetaDataException e) {
+            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
+                      + item.getIdentifier());
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            LOG.error(sw.toString());
+            throw e;
+        } catch (Exception e) {
+            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
+                      + item.getIdentifier());
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            LOG.error(sw.toString());
             throw new RuntimeException(e);
         }
         return obj;
