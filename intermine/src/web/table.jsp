@@ -217,44 +217,47 @@
       </c:if>
 
       <%-- Return to main results link --%>
-      <c:if test="${RESULTS_TABLE.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null}">
+      <c:if test="${RESULTS_TABLE.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null && empty bagName}">
         <br>
         <html:link action="/changeResults?method=reset">
           <fmt:message key="results.return"/>
         </html:link>
       </c:if>
-
+    
+      </div> <%-- end of main results table body div --%>
+      
       <%-- Save bag controls --%>
       <br/><br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
         <div class="heading">
-          <fmt:message key="results.saveandexport"/>
+          <fmt:message key="results.save"/>
         </div>
-        <ul>
-          <li>
-            <fmt:message key="bag.new"/>
-            <html:text property="newBagName"/>
-            <html:submit property="saveNewBag">
-              <fmt:message key="button.save"/>
-            </html:submit>
-          </li>
-          <c:if test="${!empty PROFILE.savedBags}">
+        <div class="body">
+          <ul>
             <li>
-              <fmt:message key="bag.existing"/>
-              <html:select property="existingBagName">
-                <c:forEach items="${PROFILE.savedBags}" var="entry">
-                  <html:option value="${entry.key}"/>
-                </c:forEach>
-              </html:select>
-              <html:submit property="addToExistingBag">
-                <fmt:message key="button.add"/>
+              <fmt:message key="bag.new"/>
+              <html:text property="newBagName"/>
+              <html:submit property="saveNewBag">
+                <fmt:message key="button.save"/>
               </html:submit>
             </li>
-          </c:if>
-        </ul>
+            <c:if test="${!empty PROFILE.savedBags}">
+              <li>
+                <fmt:message key="bag.existing"/>
+                <html:select property="existingBagName">
+                  <c:forEach items="${PROFILE.savedBags}" var="entry">
+                    <html:option value="${entry.key}"/>
+                  </c:forEach>
+                </html:select>
+                <html:submit property="addToExistingBag">
+                  <fmt:message key="button.add"/>
+                </html:submit>
+              </li>
+            </c:if>
+          </ul>
+        </div>
       </c:if>
     </html:form>
-    </div>
 
     <tiles:get name="export.tile" />
   </c:otherwise>
