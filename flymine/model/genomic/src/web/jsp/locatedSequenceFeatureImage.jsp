@@ -7,7 +7,8 @@
 <fmt:setBundle basename="model"/>
 
 <c:if test="${object.organism.name == 'Anopheles gambiae' ||
-            object.organism.name == 'Drosophila melanogaster'}">
+            object.organism.name == 'Drosophila melanogaster' ||
+            object.organism.name == 'Homo sapiens'}">
 
   <%-- hacky fix: some things aren't located yet (eg. genes from Uniprot) so we
        check that the object has a location before linking --%>
