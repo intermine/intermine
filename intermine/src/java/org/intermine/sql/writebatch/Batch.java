@@ -204,7 +204,7 @@ public class Batch
      */
     public void flush(Connection con, Set filter) throws SQLException {
         backgroundFlush(con, filter);
-        synchronized(this) {
+        synchronized (this) {
             while (flushJobs != null) {
                 try {
                     wait();
