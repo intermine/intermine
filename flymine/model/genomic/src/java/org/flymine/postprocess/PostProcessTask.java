@@ -124,6 +124,10 @@ public class PostProcessTask extends Task
                 LOG.info("Starting add-licences");
                 new AddLicences(osw).execute();
                 LOG.info("Finished add-licences");
+            } else if ("update-orthologues".equals(type)) {
+                UpdateOrthologues uo = new UpdateOrthologues(osw);
+                LOG.info("Starting UpdateOrthologues.process()");
+                uo.process();
             } else {
                 throw new BuildException("unknown type: " + type);
             }
