@@ -245,18 +245,14 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
      * @see BatchWriterSimpleImpl#getTableSize
      */
     protected int getTableSize(String name, Connection conn) throws SQLException {
-        long start = System.currentTimeMillis();
         Statement s = conn.createStatement();
         ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = '"
                 + name.toLowerCase() + "'");
         if (r.next()) {
-            int retval = r.getInt(1);
+            int retval = (int) r.getFloat(1);
             if (r.next()) {
                 throw new SQLException("Too many results");
             }
-            long end = System.currentTimeMillis();
-            LOG.info("Finding size of table " + name + " (" + retval + ") took " + (end - start)
-                    + "ms");
             return retval;
         } else {
             throw new SQLException("No results");
