@@ -846,17 +846,6 @@
       <fileset dir="${build.www}">
       </fileset>
     </copy>
-
-    <chmod perm="a+r" type="file">
-      <fileset dir="${dist.www}">
-        <include name="**/**" />
-      </fileset>
-    </chmod>
-    <chmod perm="a+rx" type="dir">
-      <fileset dir="${dist.www}">
-        <include name="**/**" />
-      </fileset>
-    </chmod>
   </target>
 
   <target name="dist-javadoc" depends="prepare-dist,javadoc"
@@ -954,6 +943,16 @@
   <!-- website -->
   <target name="release-www" depends="dist-www, dist-javadoc"
     description="releases the static website to the webserver">
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <chmod perm="a+rx" type="dir">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
