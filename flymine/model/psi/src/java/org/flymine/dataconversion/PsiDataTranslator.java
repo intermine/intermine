@@ -211,7 +211,7 @@ public class PsiDataTranslator extends DataTranslator
         if (pubs.containsKey(exptId)) {
             pub = (Item) pubs.get(exptId);
         } else {
-            Item pub = null;
+            //Item pub = null;
             Item bibRefType = ItemHelper.convert(srcItemReader
                   .getItemById(exptType.getReference("bibref").getRefId()));
             if (bibRefType != null) {
