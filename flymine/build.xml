@@ -1608,9 +1608,8 @@
   </target>
 
   <!-- create selected precomputed tables in the production database -->
-  <target name="precompute-production-queries"
-          depends="prepare-build-model, drop-precomputed-tables-production">
-    <ant antfile="build/build-model.xml" target="precompute-queries" inheritRefs="true">
+  <target name="precompute-production-queries" depends="prepare-build-model">
+    <ant antfile="build/build-model.xml" target="precompute-model" inheritRefs="true">
       <property name="objectstore.name" value="os.production"/>
       <property name="db.name" value="db.production"/>
       <property name="model.name" value="genomic"/>
@@ -1621,9 +1620,19 @@
 
   <!-- create selected precomputed tables in the production database and test
        the speed of queries -->
-  <target name="precompute-production-queries-test"
-          depends="prepare-build-model, drop-precomputed-tables-production">
-    <ant antfile="build/build-model.xml" target="precompute-queries-test" inheritRefs="true">
+  <target name="precompute-production-queries-test" depends="prepare-build-model">
+    <ant antfile="build/build-model.xml" target="precompute-model-test" inheritRefs="true">
+      <property name="objectstore.name" value="os.production"/>
+      <property name="db.name" value="db.production"/>
+      <property name="model.name" value="genomic"/>
+      <property name="precompute.minRows" value="0"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <!-- create selected precomputed tables in the production database -->
+  <target name="precompute-production-templates" depends="prepare-build-model">
+    <ant antfile="build/build-model.xml" target="precompute-templates" inheritRefs="true">
       <property name="objectstore.name" value="os.production"/>
       <property name="db.name" value="db.production"/>
       <property name="model.name" value="genomic"/>
