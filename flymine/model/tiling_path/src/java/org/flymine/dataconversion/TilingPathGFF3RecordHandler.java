@@ -12,8 +12,11 @@ package org.flymine.dataconversion;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
+import org.intermine.util.XmlUtil;
 
 import org.flymine.io.gff3.GFF3Record;
 
@@ -47,6 +50,23 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) {
+
+        Item feature = getFeature();
+        String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
+
+        if (clsName.equals("PCRProduct")) {
+
+            System.err.println ("record: " + record);
+
+            List promoters = (List) record.getAttributes().get("promotor");
+            
+            if (promoters.get(0).equals("1")) {
+                feature.setAttribute("promoter", "true");
+            } else {
+                feature.setAttribute("promoter", "false");
+            }
+        }
+
         setReferences(references);
     }
 }
