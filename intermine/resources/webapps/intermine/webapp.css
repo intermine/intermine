@@ -4,7 +4,7 @@ img {
 form {
   margin: 0px
 }
-#feedbackForm textarea, input[type=text] {
+#feedbackForm textarea, #feedbackForm input[type=text] {
   padding: 3px;
   border-top: 1px solid #909090;
   border-left: 1px solid #909090;
@@ -13,6 +13,22 @@ form {
 }
 #feedbackForm {
   white-space: nowrap;
+}
+#topright {
+  float: right;
+  padding-top: 6px;
+  padding-right: 10px;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  text-align: right;
+}
+#topright .wellcome {
+  font-size: 11px;
+}
+#topright .contact {
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 14px;
 }
 table td {
   font-size: 12px;
