@@ -66,11 +66,6 @@ public interface Constants
      * field enumerations.
      */
     public static final String OBJECT_STORE_SUMMARY = "OBJECT_STORE_SUMMARY";
-    /**
-     * ServletContext attribute used to store the Map of class names to Displayer objects and
-     * className+"."+fieldName to Displayer objects.
-     */
-    public static final String DISPLAYERS = "DISPLAYERS";
 
     /**
      * ServletContext attribute used to store the WebConfig object for the Model.
