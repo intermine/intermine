@@ -41,7 +41,7 @@ span.organism-name
 {
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     padding: 5px;
-    border-bottom: solid black 1px;
+    border-bottom: solid #888 1px;
     margin-bottom: 0px;
 }
 
@@ -69,40 +69,38 @@ span.organism-name
 /**************************************/
 
 #sidebar {
-vertical-align: top;
-  width: 15%
+  vertical-align: top;
   margin: 0px;
   padding: 5px;
   border: 1px solid #888;
-
   background-color: white;
 }
 
 #sidebar .heading {
   margin: 5px;
-  padding: px;
+  padding: 1px;
   padding-left: 5px;
+  padding-right: 10px;
   border: 1px solid #888;
-
   background-color: #f5f5f5;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: black;
   white-space: nowrap;
 }
 
 #sidebar .body {
-  padding: 0x;
+  padding: 0px;
   margin: 0px;
   margin-bottom: 10px;
 }
 
 #sidebar .body ul {
-    margin: 0px 0px 0px 0px;
+    margin: 0px;
+    padding: 0px;
+    margin-left: 25px;
 }
 
 #sidebar .body ul li {
-    font-family: "verdana", "helvetica", "arial", sans-serif;
     font-size: 13px;
     text-transform: none;
     list-style-type: circle;
@@ -110,6 +108,11 @@ vertical-align: top;
     background-color: white;
 }
 
+/**************************************/
+
+#pagecontent {
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+}
 
 /**************************************/
 
@@ -123,7 +126,6 @@ vertical-align: top;
 #static-content
 {
   vertical-align: top;
-  width: 85%
   margin: 0px;
   padding: 5px;
   border: solid #888 1px;
@@ -309,7 +311,6 @@ span.tutorial, span.organism
                     CURSOR: help;
                     TEXT-DECORATION: none
                   }
- 
 
 A.bblue           { color: #FFFFFF;
                     background-color: #9999FF;
@@ -322,6 +323,14 @@ A.bred            { color: #FFFFFF;
                     text-align: center;
                   }
 
+/* Link Styles */
+
+a.webapplink , a.webapplink:link, a.webapplink:visited, a.webapplink:active, a.webapplink:hover {
+  background: url(images/intlink.gif) right center no-repeat;
+  padding-right: 15px;
+}
+
+
 /*INPUT.reset_button {background-color: pink;****/
 /*	            color: yellow;             }**/
 
@@ -333,12 +342,12 @@ A.bred            { color: #FFFFFF;
   padding: 0px;
   padding-left: 5px;
   margin: 5px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: black;
   white-space: nowrap;
 }
 
+/* Larger heading style used on static site. */
 .heading2 {
   font-size: 14px;
   font-weight: bold;
@@ -350,7 +359,6 @@ A.bred            { color: #FFFFFF;
 .box .body {
   padding: 0px;
   margin: 0px 10px 0px 10px;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
 
@@ -361,7 +369,6 @@ A.bred            { color: #FFFFFF;
 .box .buildmenu .body {
   border: 1px solid #888;
   height: 10;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
 
@@ -384,7 +391,6 @@ table.box th {
 table.box > tbody > tr > td {
   padding: 5px;
   background: white;
-  font-size: 90%;
 }
 
 .help {
@@ -392,7 +398,6 @@ table.box > tbody > tr > td {
   text-align: right;
   font-size: 11px;
   font-weight: normal;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
 table.box th.title {
@@ -401,5 +406,4 @@ table.box th.title {
   font-weight: normal;
   font-size: 14px;
   font-weight: bold;
-  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
