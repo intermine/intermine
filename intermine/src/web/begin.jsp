@@ -8,7 +8,7 @@
 
 
 <%-- Build a query --%>
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/ch02s03.html"/>
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualClasschooser.html"/>
 <im:box helpUrl="${helpUrl}"
         titleKey="begin.heading.build">
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
