@@ -19,8 +19,9 @@
 			In fact, by far the easiest method of creating a Java Flymine Query object is to use the following constructor:</para>
 		<programlisting>
 import <ulink url="../../api/org/flymine/objectstore/query/Query">org.flymine.objectstore.query.Query</ulink>;
+import <ulink url="../../api/org/flymine/objectstore/query/Query">org.flymine.objectstore.query.fql.FqlQuery</ulink>;
 
-Query q = new Query("--- FQL Query text ---");
+Query q = new FqlQuery("--- FQL Query text ---", null).toQuery();
 		</programlisting>
 		<para>However, in a Java program, one will occasionally require more flexibility - the Java interface is a more direct method of inserting parameters into the Query, rather than converting them into text and expecting our parser to convert back.
 			Also, there is a Query Constraint that cannot be specified in FQL - namely comparing a objectclass to a live business object - there is no useful way to represent all possible business objects in text.</para>
