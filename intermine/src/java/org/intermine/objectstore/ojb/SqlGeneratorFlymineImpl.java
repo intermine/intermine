@@ -104,4 +104,18 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
         return result;
     }
 
+
+    /**
+     * generate a select statement that will run COUNT(*) on the given query
+     * @param query the Query
+     * @param dr DescriptorRepository for the database
+     * @return sql statement as String
+     */
+    public String getPreparedCountStatement(Query query, DescriptorRepository dr) {
+
+        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr, false, true);
+        return sql.getStatement();
+    }
+
+
 }
