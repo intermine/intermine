@@ -22,14 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlUtil;
+
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.XmlUtil;
 
 /**
  * Processes list of root DagTerms to produce the equivalent OWL OntModel
@@ -39,6 +40,8 @@ import org.intermine.util.XmlUtil;
  */
 public class Dag2Owl
 {
+    protected boolean inversePartOf; //if true, generate inverse partOf relationships
+
     protected String namespace;
     protected OntModel ontModel;
     protected Map nameToResource = new HashMap();
@@ -63,7 +66,18 @@ public class Dag2Owl
      * @param namespace the namespace to use in generating URI-based identifiers
      */
     public Dag2Owl(String namespace) {
+      this(namespace, true);
+    }
+
+    /**
+     * Constructor
+     * @param namespace the namespace to use in generating URI-based identifiers
+     * @param partOf if true, generates the partOf relationships
+     * @param inversePartOf if ture, generates the inverse partOf relationship
+     */
+    public Dag2Owl(String namespace, boolean inversePartOf) {
         this.namespace = XmlUtil.correctNamespace(namespace);
+        this.inversePartOf = inversePartOf;
         ontModel = ModelFactory.createOntologyModel();
         owlClass = ontModel.createResource(OWL_NS + "Class");
         owlInverseOf = ontModel.createProperty(OWL_NS + "inverseOf");
@@ -101,7 +115,7 @@ public class Dag2Owl
      * @return the corresponding OntClass
      */
     public Resource process(DagTerm term) {
-        System.out.print("Processing term " + term.getName() + ": ");
+        System.out.println("Processing term " + term.getName() + ": ");
         Resource cls = (Resource) nameToResource.get(term.getName());
         if (cls == null) {
             long start = System.currentTimeMillis();
@@ -114,7 +128,7 @@ public class Dag2Owl
                 statements.add(ontModel.createStatement(cls, rdfsComment,
                             "synonyms=" + StringUtil.join(term.getSynonyms(), ", ")));
             }
-            // create partof property
+            // create partof / inverse PartOf property
             for (Iterator i = term.getComponents().iterator(); i.hasNext(); ) {
                 DagTerm component = (DagTerm) i.next();
                 Resource range = process(component);
@@ -122,10 +136,12 @@ public class Dag2Owl
                 statements.add(ontModel.createStatement(prop, rdfType, owlObjectProperty));
                 statements.add(ontModel.createStatement(prop, rdfsDomain, cls));
                 statements.add(ontModel.createStatement(prop, rdfsRange, range));
-
-                Resource revProp = ontModel.createResource(generatePropertyName(component, term));
-                statements.add(ontModel.createStatement(revProp, rdfType, owlObjectProperty));
-                statements.add(ontModel.createStatement(revProp, owlInverseOf, prop));
+                if (inversePartOf) {
+                    Resource revProp =
+                        ontModel.createResource(generatePropertyName(component, term));
+                    statements.add(ontModel.createStatement(revProp, rdfType, owlObjectProperty));
+                    statements.add(ontModel.createStatement(revProp, owlInverseOf, prop));
+                }
             }
             // set subclasses
             for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
