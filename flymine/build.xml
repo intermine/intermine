@@ -146,6 +146,7 @@
       <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
       <patternset refid="lib.webapp.flymine"/>
+      <patternset refid="lib.webapp.webservice"/>
       <patternset refid="lib.acedb"/>
       <patternset refid="lib.uml"/>
     </fileset>
