@@ -17,8 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 
@@ -39,12 +37,9 @@ import org.intermine.metadata.Model;
  *
  * @author Richard Smith
  */
-
-public abstract class DataConversionTestCase extends TestCase
+public abstract class TargetItemsTestCase extends TestCase
 {
     ObjectStoreWriter osw;
-    protected Collection expectedItems;
-    protected String modelName;
 
     /**
      * Set up.
@@ -88,16 +83,17 @@ public abstract class DataConversionTestCase extends TestCase
         ItemWriter iw = new ObjectStoreItemWriter(osw);
 
         // store items
-        Iterator i = expectedItems.iterator();
+        Iterator i = getExpectedItems().iterator();
         while (i.hasNext()) {
             Item item = (Item) i.next();
             iw.store(ItemHelper.convert(item));
         }
         iw.close();
 
-        ItemToObjectTranslator t = new ItemToObjectTranslator(Model.getInstanceByName(modelName),
-                                                              osw.getObjectStore());
-        ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName(modelName),
+        ItemToObjectTranslator t
+            = new ItemToObjectTranslator(Model.getInstanceByName(getModelName()),
+                                         osw.getObjectStore());
+        ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName(getModelName()),
                                                         osw.getObjectStore(), t);
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
@@ -128,9 +124,15 @@ public abstract class DataConversionTestCase extends TestCase
     }
 
     /**
-     * Subclasses must provide access to the ontology model.
-     * @return the ontology model
+     * Get the Collection of test expected Items
+     * @return the Collection of Items
+     * @throws Exception if an error occurs
      */
-    protected abstract OntModel getOwlModel();
+    protected abstract Collection getExpectedItems() throws Exception;
 
+    /**
+     * Get the name of the Model that the target Items should conform to
+     * @return the Model name
+     */
+    protected abstract String getModelName();
 }
