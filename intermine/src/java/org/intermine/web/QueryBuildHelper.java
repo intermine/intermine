@@ -66,7 +66,7 @@ public class QueryBuildHelper
      * @param type the class name
      * @return a new alias
      */
-    protected static String aliasClass(Collection existingAliases, String type) {
+    public static String aliasClass(Collection existingAliases, String type) {
         String prefix = toAlias(type);
         int max = 0;
         for (Iterator i = existingAliases.iterator(); i.hasNext();) {
@@ -96,7 +96,7 @@ public class QueryBuildHelper
      * @param queryClasses the exiting queryClasses
      * @param className the class name
      */
-    protected static void addClass(Map queryClasses, String className) {
+    public static void addClass(Map queryClasses, String className) {
         DisplayQueryClass d = new DisplayQueryClass();
         d.setType(className);
 
@@ -112,7 +112,7 @@ public class QueryBuildHelper
      * @return the Query
      * @throws Exception if an error occurs in constructing the Query
      */
-    protected static Query createQuery(Map queryClasses, Model model, Map savedBags)
+    public static Query createQuery(Map queryClasses, Model model, Map savedBags)
         throws Exception {
         Query q = new Query();
         Map mapping = new HashMap();
@@ -166,7 +166,7 @@ public class QueryBuildHelper
      * @param qbf the form
      * @param d the class being edited
      */
-    protected static void populateForm(QueryBuildForm qbf, DisplayQueryClass d) {
+    public static void populateForm(QueryBuildForm qbf, DisplayQueryClass d) {
         for (Iterator i = d.getFieldOps().keySet().iterator(); i.hasNext();) {
             String constraintName = (String) i.next();
             qbf.setFieldOp(constraintName, ((ConstraintOp) d.getFieldOps().get(constraintName))
@@ -180,7 +180,7 @@ public class QueryBuildHelper
      * @param cld the ClassDescriptor
      * @return the relevant List
      */
-    protected static List getAllFieldNames(ClassDescriptor cld) {
+    public static List getAllFieldNames(ClassDescriptor cld) {
         List allFieldNames = new ArrayList();
         for (Iterator i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
             String fieldName = ((FieldDescriptor) i.next()).getName();
@@ -198,7 +198,7 @@ public class QueryBuildHelper
      * @param bagsPresent true if there are bags in the session, meaning extra valid ConstraintOps
      * @return the map
      */
-    protected static Map getValidOps(ClassDescriptor cld, boolean bagsPresent) {
+    public static Map getValidOps(ClassDescriptor cld, boolean bagsPresent) {
         Map fieldOps = new HashMap();
 
         //attributes - allow valid ops for simpleconstraints plus IN/NOT IN if bags present
@@ -245,7 +245,7 @@ public class QueryBuildHelper
      * @param savedBagsInverse Map used to resolve bag names
      * @return Map a map from QueryClass alias to corresponding DisplayQueryClass
      */
-    protected static Map getQueryClasses(Query q, Map savedBagsInverse) {
+    public static Map getQueryClasses(Query q, Map savedBagsInverse) {
         Map queryClasses = new LinkedHashMap();
         for (Iterator i = q.getFrom().iterator(); i.hasNext();) {
             FromElement fe = (FromElement) i.next();
@@ -321,7 +321,7 @@ public class QueryBuildHelper
      * @return the revelant Map
      * @throws Exception if an error occurs
      */
-    protected static Map getValidAliases(ClassDescriptor cld, Map queryClasses) throws Exception {
+    public static Map getValidAliases(ClassDescriptor cld, Map queryClasses) throws Exception {
         Map values = new HashMap();
 
         for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext();) {
@@ -352,7 +352,7 @@ public class QueryBuildHelper
      * @param queryClasses the DisplayQueryClass Map
      * @param alias the relevant alias
      */
-    protected static void removeContainsConstraints(Map queryClasses, String alias) {
+    public static void removeContainsConstraints(Map queryClasses, String alias) {
         for (Iterator i = queryClasses.values().iterator(); i.hasNext();) {
             DisplayQueryClass d = (DisplayQueryClass) i.next();
             // copy to avoid concurrent modification
