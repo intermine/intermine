@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +23,10 @@ import org.apache.struts.action.ActionMapping;
 
 import java.util.Map;
 import java.util.Iterator;
+import org.intermine.model.InterMineObject;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.results.PagedResults;
 
 /**
  * Action to handle submit from the template page
@@ -60,9 +63,19 @@ public class TemplateAction extends Action
         LoadQueryAction.loadQuery(template.getQuery(), request.getSession());
 
         if (request.getParameter("skipBuilder") != null) {
+            form.reset (mapping, request);
             // If the form wants to skip the query builder we need to execute the query
             if (!SessionMethods.runQuery (session, request)) {
                 return mapping.findForward("failure");
+            }
+            // Look at results, if only one result, go straight to object details page
+            PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
+            if (pr.getSize () == 1) {
+                Object o = ((List) pr.getAllRows ().get(0)).get(0);
+                if (o instanceof InterMineObject) {
+                    return new ActionForward(mapping.findForward("details").getPath () + "?id="
+                                        + ((InterMineObject) o).getId());
+                }
             }
             return mapping.findForward("results");
         }
