@@ -175,7 +175,7 @@
       <!-- this does not parse for some reason
       <property name="option" value="stmt"/>
       -->
-      <property name="tokens" value="LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_IF, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
+      <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
     </module>
 
     <module name="EmptyBlock">

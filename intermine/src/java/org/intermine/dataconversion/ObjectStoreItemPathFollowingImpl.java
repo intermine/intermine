@@ -11,27 +11,22 @@ package org.flymine.dataconversion;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import org.flymine.metadata.CollectionDescriptor;
-import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.fulldata.Attribute;
 import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStorePassthruImpl;
-import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.ContainsConstraint;
@@ -39,14 +34,15 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryCollectionReference;
 import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.CacheHoldingArrayList;
 import org.flymine.util.CacheMap;
-import org.flymine.util.TypeUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * Provides an implementation of an objectstore that fetches additional items which will be required
@@ -56,8 +52,11 @@ import org.flymine.util.TypeUtil;
  */
 public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
 {
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreItemPathFollowingImpl.class);
+
     Map descriptiveCache = Collections.synchronizedMap(new CacheMap(
                 "ObjectStoreItemPathFollowingImpl DescriptiveCache"));
+    Map classNameToDescriptors = null;
 
     /**
      * Creates an instance, from another ObjectStore instance.
@@ -66,6 +65,17 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      */
     public ObjectStoreItemPathFollowingImpl(ObjectStore os) {
         super(os);
+    }
+
+    /**
+     * Creates an instance, from another ObjectStore instance, with a path description.
+     *
+     * @param os an ObjectStore object to use
+     * @param classNameToDescriptors a Map from className to Sets of ItemPrefetchDescriptor objects
+     */
+    public ObjectStoreItemPathFollowingImpl(ObjectStore os, Map classNameToDescriptors) {
+        super(os);
+        this.classNameToDescriptors = classNameToDescriptors;
     }
 
     /**
@@ -82,24 +92,32 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             int sequence) throws ObjectStoreException {
         try {
             List retvalList = os.execute(q, start, limit, optimise, explain, sequence);
-            CacheHoldingArrayList retval;
-            if (retvalList instanceof CacheHoldingArrayList) {
-                retval = (CacheHoldingArrayList) retvalList;
+            if (classNameToDescriptors == null) {
+                return retvalList;
             } else {
-                retval = new CacheHoldingArrayList(retvalList);
-            }
-            if (retval.size() > 1) {
-                if ((q.getSelect().size() == 1) && (q.getSelect().get(0) instanceof QueryClass)) {
-                    if (Item.class.equals(((QueryClass) q.getSelect().get(0)).getClass())) {
-                        fetchRelated(retval);
+                CacheHoldingArrayList retval;
+                if (retvalList instanceof CacheHoldingArrayList) {
+                    retval = (CacheHoldingArrayList) retvalList;
+                } else {
+                    retval = new CacheHoldingArrayList(retvalList);
+                }
+                if (retval.size() > 0) {
+                    if ((q.getSelect().size() == 1)
+                            && (q.getSelect().get(0) instanceof QueryClass)) {
+                        if (Item.class.equals(((QueryClass) q.getSelect().get(0)).getType())) {
+                            fetchRelated(retval);
+                        }
                     }
                 }
+                return retval;
             }
-            return retval;
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
         }
     }
+
+    private int misses = 0;
+    private int ops = 0;
 
     /**
      * This method takes a description of Items to fetch, and returns a List of such Items.
@@ -111,7 +129,9 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      */
     public List getItemsByDescription(Set description) throws ObjectStoreException {
         List retval = (List) descriptiveCache.get(description);
+        ops++;
         if (retval == null) {
+            misses++;
             Query q = new Query();
             QueryClass item = new QueryClass(Item.class);
             q.addFrom(item);
@@ -121,15 +141,18 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             Iterator descrIter = description.iterator();
             while (descrIter.hasNext()) {
                 FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
-                if (f.getFieldName().equals("identifier")) {
-                    QueryField qf = new QueryField(item, "identifier");
+                if ((f.getFieldName().equals("identifier") || f.getFieldName().equals("className"))
+                        && (!f.isReference())) {
+                    QueryField qf = new QueryField(item, f.getFieldName());
                     SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS,
                             new QueryValue(f.getValue()));
                     cs.addConstraint(c);
                 } else {
-                    QueryClass attribute = new QueryClass(Attribute.class);
+                    QueryClass attribute = new QueryClass(f.isReference() ? Reference.class
+                            : Attribute.class);
                     q.addFrom(attribute);
-                    QueryCollectionReference r = new QueryCollectionReference(item, "attributes");
+                    QueryCollectionReference r = new QueryCollectionReference(item,
+                            (f.isReference() ? "references" : "attributes"));
                     ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
                             attribute);
                     cs.addConstraint(cc);
@@ -137,12 +160,19 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                     SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS,
                             new QueryValue(f.getFieldName()));
                     cs.addConstraint(c);
-                    qf = new QueryField(attribute, "value");
+                    qf = new QueryField(attribute, (f.isReference() ? "refId" : "value"));
                     c = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(f.getValue()));
                     cs.addConstraint(c);
                 }
             }
-            retval = os.execute(q);
+            q.setConstraint(cs);
+            //LOG.error("Fetching Items by description: " + description + ", query = "
+            //        + q.toString());
+            retval = new SingletonResults(q, os, os.getSequence());
+            descriptiveCache.put(description, retval);
+            if (misses % 1000 == 0) {
+                LOG.error("getItemsByDescription: ops = " + ops + ", misses = " + misses);
+            }
         }
         return retval;
     }
@@ -157,5 +187,242 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
      */
     private void fetchRelated(CacheHoldingArrayList batch) throws IllegalAccessException,
     ObjectStoreException {
+        Map descriptorToConstraints = new HashMap();
+        Iterator iter = batch.iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) ((ResultsRow) iter.next()).get(0);
+            Set descriptors = (Set) classNameToDescriptors.get(item.getClassName());
+            if (descriptors != null) {
+                Iterator descIter = descriptors.iterator();
+                while (descIter.hasNext()) {
+                    ItemPrefetchDescriptor desc = (ItemPrefetchDescriptor) descIter.next();
+                    try {
+                        Set constraint = desc.getConstraint(item);
+                        Set constraints = (Set) descriptorToConstraints.get(desc);
+                        if (constraints == null) {
+                            constraints = new HashSet();
+                            descriptorToConstraints.put(desc, constraints);
+                        }
+                        constraints.add(constraint);
+                    } catch (IllegalArgumentException e) {
+                        // Alright - the item didn't match the prefetch info. It's only a hint.
+                        LOG.error("IllegalArgumentException while finding constraint for " + desc
+                                + " applied to " + item);
+                    }
+                }
+            }
+        }
+
+        // Now, we have a Map from descriptor to a set of constraints, where a constraint is a Set
+        // of FieldNameAndValue objects. We can put this data onto a queue and process it that way,
+        // because processing an element will involve creating more descriptor-setofconstraints
+        // pairs.
+        
+        LinkedList queue = new LinkedList();
+        Iterator entryIter = descriptorToConstraints.entrySet().iterator();
+        while (entryIter.hasNext()) {
+            Map.Entry entry = (Map.Entry) entryIter.next();
+            ItemPrefetchDescriptor desc = (ItemPrefetchDescriptor) entry.getKey();
+            Set constraints = (Set) entry.getValue();
+            DescriptorAndConstraints dac = new DescriptorAndConstraints(desc, constraints);
+            queue.add(dac);
+        }
+
+        // Now we have a queue with DescriptorAndConstraints objects. Each of these will result in
+        // a single query being executed, which may result in extra DescriptorAndConstraints objects
+        // being put onto the queue.
+
+        while (!queue.isEmpty()) {
+            long start = (new Date()).getTime();
+            DescriptorAndConstraints dac = (DescriptorAndConstraints) queue.removeFirst();
+            int originalSize = dac.constraints.size();
+            Iterator conIter = dac.constraints.iterator();
+            while (conIter.hasNext()) {
+                Set constraint = (Set) conIter.next();
+                List results = (List) descriptiveCache.get(constraint);
+                if (results != null) {
+                    batch.addToHolder(results);
+                    conIter.remove();
+                }
+            }
+            //LOG.error(dac.descriptor + " -> (size = " + originalSize + " -> "
+            //        + dac.constraints.size() + ") " + dac.constraints);
+
+            // So, we have a constraints Set, with constraints that have all been generated from the
+            // same ItemPrefetchDescriptor. So, they can all be fetched in the same query.
+            
+
+            if (dac.constraints.size() > 1) {
+                Query q = buildQuery(dac.constraints);
+                //LOG.error(dac.descriptor + " -> " + q.toString());
+
+                Map constraintToList = new HashMap();
+                conIter = dac.constraints.iterator();
+                while (conIter.hasNext()) {
+                    constraintToList.put(conIter.next(), new ArrayList());
+                }
+
+                long afterQuery = (new Date()).getTime();
+                List results = new SingletonResults(q, os, os.getSequence());
+                long afterExecute = 0;
+                Iterator resIter = results.iterator();
+                while (resIter.hasNext()) {
+                    if (afterExecute == 0) {
+                        afterExecute = (new Date()).getTime();
+                    }
+                    Item item = (Item) resIter.next();
+                    conIter = constraintToList.entrySet().iterator();
+                    while (conIter.hasNext()) {
+                        Map.Entry conEntry = (Map.Entry) conIter.next();
+                        Set constraint = (Set) conEntry.getKey();
+                        List conResults = (List) conEntry.getValue();
+                        boolean matches = true;
+                        Iterator fIter = constraint.iterator();
+                        while (fIter.hasNext() && matches) {
+                            FieldNameAndValue f = (FieldNameAndValue) fIter.next();
+                            matches = f.matches(item);
+                        }
+                        if (matches) {
+                            conResults.add(item);
+                        }
+                    }
+                }
+
+                conIter = constraintToList.entrySet().iterator();
+                while (conIter.hasNext()) {
+                    Map.Entry conEntry = (Map.Entry) conIter.next();
+                    Set constraint = (Set) conEntry.getKey();
+                    List conResults = (List) conEntry.getValue();
+                    batch.addToHolder(conResults);
+                    descriptiveCache.put(constraint, conResults);
+                    //LOG.error("Created cache lookup for " + constraint + " to " + conResults);
+                }
+
+                // Now follow the path on...
+                Iterator descIter = dac.descriptor.getPaths().iterator();
+                while (descIter.hasNext()) {
+                    ItemPrefetchDescriptor descriptor = (ItemPrefetchDescriptor) descIter.next();
+                    Set constraints = new HashSet();
+                    resIter = results.iterator();
+                    while (resIter.hasNext()) {
+                        Item item = (Item) resIter.next();
+                        try {
+                            Set constraint = descriptor.getConstraint(item);
+                            constraints.add(constraint);
+                        } catch (IllegalArgumentException e) {
+                            LOG.error("IllegalArgumentException while finding constraint for "
+                                    + descriptor + " applied to " + item);
+                        }
+                    }
+                    queue.add(new DescriptorAndConstraints(descriptor, constraints));
+                }
+
+                long now = (new Date()).getTime();
+                LOG.error("Prefetched " + results.size() + " Items. Took " + (afterQuery - start)
+                        + " ms to build query, " + (afterExecute - afterQuery) + " ms to execute, "
+                        + (now - afterExecute) + " ms to process results");
+            }
+        }
+    }
+
+    private Query buildQuery(Set dacConstraints) {
+        // We can use the first constraint to set up the query
+        Set constraint = (Set) dacConstraints.iterator().next();
+        Query q = new Query();
+        QueryClass itemClass = new QueryClass(Item.class);
+        q.addFrom(itemClass);
+        q.addToSelect(itemClass);
+        q.setDistinct(false);
+        ConstraintSet mainCs = new ConstraintSet(ConstraintOp.AND);
+        q.setConstraint(mainCs);
+        Set references = new HashSet();
+        Set attributes = new HashSet();
+        Iterator descrIter = constraint.iterator();
+        while (descrIter.hasNext()) {
+            FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
+            if (f.isReference()) {
+                QueryClass reference = new QueryClass(Reference.class);
+                q.addFrom(reference);
+                QueryCollectionReference r = new QueryCollectionReference(itemClass,
+                        "references");
+                ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
+                        reference);
+                mainCs.addConstraint(cc);
+                references.add(reference);
+            } else {
+                if (f.getFieldName().equals("identifier")) {
+                    // Nothing to do
+                } else if (f.getFieldName().equals("className")) {
+                    // Nothing to do
+                } else {
+                    QueryClass attribute = new QueryClass(Attribute.class);
+                    q.addFrom(attribute);
+                    QueryCollectionReference r = new QueryCollectionReference(itemClass,
+                            "attributes");
+                    ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
+                            attribute);
+                    mainCs.addConstraint(cc);
+                    attributes.add(attribute);
+                }
+            }
+        }
+        ConstraintSet orCs = new ConstraintSet(ConstraintOp.OR);
+        mainCs.addConstraint(orCs);
+        
+        // Now we have the framework of the query. Each constraint must use the correct
+        // number of attributes and references.
+        QueryField identifier = new QueryField(itemClass, "identifier");
+        QueryField className = new QueryField(itemClass, "className");
+
+        Iterator conIter = dacConstraints.iterator();
+        while (conIter.hasNext()) {
+            constraint = (Set) conIter.next();
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            Iterator attributeIter = attributes.iterator();
+            Iterator referenceIter = references.iterator();
+            descrIter = constraint.iterator();
+            while (descrIter.hasNext()) {
+                FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
+                if (f.isReference()) {
+                    QueryClass reference = (QueryClass) referenceIter.next();
+                    QueryField qf = new QueryField(reference, "name");
+                    cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                new QueryValue(f.getFieldName())));
+                    qf = new QueryField(reference, "refIds");
+                    cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                new QueryValue(f.getValue())));
+                } else {
+                    if (f.getFieldName().equals("identifier")) {
+                        cs.addConstraint(new SimpleConstraint(identifier,
+                                    ConstraintOp.EQUALS, new QueryValue(f.getValue())));
+                    } else if (f.getFieldName().equals("className")) {
+                        cs.addConstraint(new SimpleConstraint(className,
+                                    ConstraintOp.EQUALS, new QueryValue(f.getValue())));
+                    } else {
+                        QueryClass attribute = (QueryClass) attributeIter.next();
+                        QueryField qf = new QueryField(attribute, "name");
+                        cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                    new QueryValue(f.getFieldName())));
+                        qf = new QueryField(attribute, "value");
+                        cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                    new QueryValue(f.getValue())));
+                    }
+                }
+            }
+            orCs.addConstraint(cs);
+        }
+        // We have a query.
+        return q;
+    }
+
+    private static class DescriptorAndConstraints
+    {
+        ItemPrefetchDescriptor descriptor;
+        Set constraints;
+
+        public DescriptorAndConstraints(ItemPrefetchDescriptor descriptor, Set constraints) {
+            this.descriptor = descriptor;
+            this.constraints = constraints;
+        }
     }
 }

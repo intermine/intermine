@@ -43,18 +43,6 @@ public interface ItemReader
     public Item getItemById(String objectId) throws ObjectStoreException;
 
     /**
-     * Returns a set of items of given class with a field constrained to the given value.
-     *
-     * @param className the class name of items to query
-     * @param fieldName the field to constrain
-     * @param value a value for fieldName
-     * @return a set of Items
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public Iterator getItemsByAttributeValue(String className, String fieldName, String value)
-        throws ObjectStoreException;
-
-    /**
      * Returns a set of items with the fields constrained to certain values. This method takes a Set
      * of FieldNameAndValue objects, each describing a constraint on a field of the items to be
      * returned. The field names "identifier" and "classname" are mapped onto the Item fields of

@@ -10,6 +10,12 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.util.Iterator;
+
+import org.flymine.model.fulldata.Attribute;
+import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.Reference;
+
 /**
  * Provides an object that describes a field name with a corresponding value.
  *
@@ -18,17 +24,20 @@ package org.flymine.dataconversion;
 public class FieldNameAndValue
 {
     private String fieldName;
-    private Object value;
+    private String value;
+    private boolean reference;
 
     /**
      * Constructs a new instance of FieldNameAndValue.
      *
      * @param fieldName a String
-     * @param value an Object
+     * @param value a String
+     * @param reference true if fieldName is a reference, false if it is an Attribute
      */
-    public FieldNameAndValue(String fieldName, Object value) {
+    public FieldNameAndValue(String fieldName, String value, boolean reference) {
         this.fieldName = fieldName;
         this.value = value;
+        this.reference = reference;
     }
 
     /**
@@ -43,10 +52,19 @@ public class FieldNameAndValue
     /**
      * Returns the field value.
      *
-     * @return an Object
+     * @return a String
      */
-    public Object getValue() {
+    public String getValue() {
         return value;
+    }
+
+    /**
+     * Returns the reference boolean.
+     *
+     * @return a boolean
+     */
+    public boolean isReference() {
+        return reference;
     }
 
     /**
@@ -55,7 +73,8 @@ public class FieldNameAndValue
     public boolean equals(Object o) {
         if (o instanceof FieldNameAndValue) {
             FieldNameAndValue f = (FieldNameAndValue) o;
-            return (f.fieldName.equals(fieldName) && f.value.equals(value));
+            return (f.fieldName.equals(fieldName) && f.value.equals(value))
+                && (f.reference == reference);
         }
         return false;
     }
@@ -64,6 +83,57 @@ public class FieldNameAndValue
      * @see Object#hashCode
      */
     public int hashCode() {
-        return 3 * fieldName.hashCode() + 5 * value.hashCode();
+        return 3 * fieldName.hashCode() + 5 * value.hashCode() + (reference ? 7 : 0);
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return (reference ? "(reference " : "(") + fieldName + " = " + value + ")";
+    }
+
+    /**
+     * Returns this object.
+     *
+     * @param item ignored
+     * @return this
+     */
+    public FieldNameAndValue getConstraint(Item item) {
+        return this;
+    }
+
+    /**
+     * Returns true if this object matches the given Item.
+     *
+     * @param item the item to compare
+     * @return a boolean
+     */
+    public boolean matches(Item item) {
+        if (reference) {
+            Iterator refIter = item.getReferences().iterator();
+            while (refIter.hasNext()) {
+                Reference ref = (Reference) refIter.next();
+                if (ref.getName().equals(fieldName)) {
+                    return ref.getRefId().equals(value);
+                }
+            }
+            return false;
+        } else {
+            if (fieldName.equals("identifier")) {
+                return value.equals(item.getIdentifier());
+            } else if (fieldName.equals("className")) {
+                return value.equals(item.getClassName());
+            } else {
+                Iterator attIter = item.getAttributes().iterator();
+                while (attIter.hasNext()) {
+                    Attribute att = (Attribute) attIter.next();
+                    if (att.getName().equals(fieldName)) {
+                        return att.getValue().equals(value);
+                    }
+                }
+                return false;
+            }
+        }
     }
 }

@@ -39,6 +39,8 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
 
+import org.apache.log4j.Logger;
+
 /**
  * Convert Ensembl data in fulldata Item format conforming to a source OWL definition
  * to fulldata Item format conforming to FlyMine OWL definition.
@@ -48,6 +50,8 @@ import org.flymine.objectstore.ObjectStoreWriterFactory;
  */
 public class EnsemblDataTranslator extends DataTranslator
 {
+    protected static final Logger LOG = Logger.getLogger(EnsemblDataTranslator.class);
+
     private Item ensemblDb;
     private Reference ensemblRef;
     private Item emblDb;
@@ -186,7 +190,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("translation".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
-                    //result.addAll(setProteinIdentifiers(srcItem, tgtItem));
+                    result.addAll(setProteinIdentifiers(srcItem, tgtItem));
                 }
 
                 if (storeTgtItem) {
@@ -397,8 +401,10 @@ public class EnsemblDataTranslator extends DataTranslator
         Set synonyms = new HashSet();
         String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         String value = srcItem.getIdentifier().substring(srcItem.getIdentifier().indexOf("_") + 1);
-        Iterator objectXrefs = srcItemReader
-            .getItemsByAttributeValue(srcNs + "object_xref", "ensembl_id", value);
+        Set constraints = new HashSet();
+        constraints.add(new FieldNameAndValue("className", srcNs + "object_xref", false));
+        constraints.add(new FieldNameAndValue("ensembl_id", value, false));
+        Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
         // set specific ids and add synonyms
         //Iterator i = objectXrefs.iterator();
         while (objectXrefs.hasNext()) {
@@ -418,7 +424,7 @@ public class EnsemblDataTranslator extends DataTranslator
                         dbname =  externalDb.getAttribute("db_name").getValue();
                     }
                 }
-                LOG.error("processing: " + accession + ", " + dbname);
+                //LOG.error("processing: " + accession + ", " + dbname);
 
                 if (accession != null && !accession.equals("")
                     && dbname != null && !dbname.equals("")) {
@@ -589,8 +595,24 @@ public class EnsemblDataTranslator extends DataTranslator
         String orgShortName = args[6];
         String orgTaxonId = args[7];
 
+        Map paths = new HashMap();
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor();
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", "identifier"));
+        paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
+                Collections.singleton(desc));
+        desc = new ItemPrefetchDescriptor();
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", "identifier"));
+        paths.put("http://www.flymine.org/model/ensembl#transcript", Collections.singleton(desc));
+        desc = new ItemPrefetchDescriptor();
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", "identifier"));
+        paths.put("http://www.flymine.org/model/ensembl#gene", Collections.singleton(desc));
+        desc = new ItemPrefetchDescriptor();
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("dna", "identifier"));
+        paths.put("http://www.flymine.org/model/ensembl#contig", Collections.singleton(desc));
+
+        
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
-        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc);
+        ItemReader srcItemReader = new ObjectStoreItemReader(osSrc, paths);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
         ItemWriter tgtItemWriter = new BufferedItemWriter(new ObjectStoreItemWriter(oswTgt));
 
