@@ -80,12 +80,12 @@
   <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
   <ant dir="../../intermine" target="jar" inheritRefs="true"/>
   <ant dir="../../intermine" target="build-testmodel-webapp" inheritRefs="true"/>
-  <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
 
   <path id="demo.class.path">
     <fileset dir="../../intermine/dist" includes="*.jar"/>
   </path>
 
+  <property name="build.model" location="../../intermine/build/model" />
   <ant dir="../../intermine" antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="demo.class.path"/>
@@ -97,7 +97,6 @@
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="demo.class.path"/>
   </taskdef>
-  <property name="build.model" location="../../intermine/build/model" />
   <insert-xml-data integrationWriter="integration.demo" xmlFile="../../intermine/resources/test/testmodel_data.xml" sourceName="demosource">
     <classpath refid="demo.class.path"/>
   </insert-xml-data>
