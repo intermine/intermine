@@ -2,7 +2,7 @@
   <query name="Object_Synonym" model="genomic" view="Synonym.subject">
     <node path="Synonym" type="Synonym"/>
     <node path="Synonym.value" type="String">
-      <constraint op="=" value="timeout"/>
+      <constraint op="=" value="timeout" editable="true"/>
     </node>
   </query>
   <query name="DM_GoTerms" model="genomic" view="Gene">
@@ -18,13 +18,13 @@
     <node path="Gene.annotations.property" type="GOTerm">
     </node>
     <node path="Gene.annotations.property.identifier" type="String">
-      <constraint op="=" value="GO:0007568"/>
+      <constraint op="=" value="GO:0007568" editable="true"/>
     </node>
   </query>
   <query name="Gene_Synonyms" model="genomic" view="Gene.organismDbId Gene.synonyms.value">
     <node path="Gene" type="Gene"/>
     <node path="Gene.organismDbId" type="String">
-      <constraint op="=" value="FBgn0004053"/>
+      <constraint op="=" value="FBgn0004053" editable="true"/>
     </node>
   </query>
 </query-list>
