@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
+import org.flymine.objectstore.query.Query;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -38,11 +39,7 @@ import org.flymine.metadata.presentation.DisplayModel;
 public class QueryBuildAction extends LookupDispatchAction
 {
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
+     * Save the Query on the and go to the FQL edit page.
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -53,17 +50,24 @@ public class QueryBuildAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward resetQuery(ActionMapping mapping,
-                                    ActionForm form,
-                                    HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward editFQL(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.removeAttribute(Constants.QUERY_CLASSES);
-        session.removeAttribute(Constants.EDITING_ALIAS);
+        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        ServletContext servletContext = session.getServletContext();
+        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
 
-        return mapping.findForward("buildquery");
+        Query q = QueryBuildHelper.createQuery(queryClasses, model, savedBags);
+        session.setAttribute(Constants.QUERY, q);
+        session.setAttribute(Constants.QUERY_CLASSES, null);
+        session.setAttribute(Constants.EDITING_ALIAS, null);
+
+        return mapping.findForward("buildfqlquery");
     }
 
     /**
@@ -200,7 +204,7 @@ public class QueryBuildAction extends LookupDispatchAction
         }
 
         session.setAttribute(Constants.QUERY, QueryBuildHelper.createQuery(queryClasses, model,
-                                                                   savedBags));
+                                                                           savedBags));
 
         return mapping.findForward("runquery");
     }
@@ -215,9 +219,8 @@ public class QueryBuildAction extends LookupDispatchAction
         Map map = new HashMap();
         map.put("button.add", "addConstraint");
         map.put("button.update", "updateClass");
-        map.put("query.reset", "resetQuery");
+        map.put("query.editfql", "editFQL");
         map.put("query.run", "runQuery");
         return map;
     }
 }
-
