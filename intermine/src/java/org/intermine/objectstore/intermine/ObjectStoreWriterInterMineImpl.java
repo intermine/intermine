@@ -222,6 +222,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
                 s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
+                logAddBatch();
                 //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
                 //        + tableName + " WHERE id = " + o.getId());
                 StringBuffer sql = new StringBuffer("INSERT INTO ")
@@ -264,6 +265,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                 indirectSql.append(inCollection.getId().toString())
                                     .append(");");
                                 s.addBatch(indirectSql.toString());
+                                logAddBatch();
                                 //System//.out.println(getModel().getName() + ": Batched SQL:  "
                                 //        + indirectSql.toString());
                             }
@@ -281,11 +283,13 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 sql.append(");");
 
                 s.addBatch(sql.toString());
+                logAddBatch();
                 //System//.out.println(getModel().getName() + ": Batched SQL:  " + sql);
             }
 
             if (batch == null) {
                 s.executeBatch();
+                logFlushBatch();
                 //System//.out.println(getModel().getName()
                 //        + ": Executed SQL batch at end of store()");
             }
@@ -369,12 +373,14 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
                 s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
+                logAddBatch();
                 //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
                 //        + tableName + " WHERE id = " + o.getId());
             }
 
             if (batch == null) {
                 s.executeBatch();
+                logFlushBatch();
                 //System//.out.println(getModel().getName()
                 //        + ": Executed SQL batch at end of delete()");
             }
@@ -504,6 +510,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             try {
                 conn = getConnection();
                 batch.executeBatch();
+                logFlushBatch();
                 //System//.out.println(getModel().getName()
                 //        + ": Executed SQL batch in flushBatch()");
                 batch = null;
@@ -513,5 +520,35 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 releaseConnection(conn);
             }
         }
+    }
+
+    private static int logOps = 0;
+    private static int logBatch = 1;
+    
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                outputLog();
+            }
+        });
+    }
+
+    private synchronized static void logAddBatch() {
+        logOps++;
+        if ((logOps % 5000) == 0) {
+            outputLog();
+        }
+    }
+
+    private synchronized static void logFlushBatch() {
+        logOps++;
+        logBatch++;
+        if ((logOps % 5000) == 0) {
+            outputLog();
+        }
+    }
+
+    private synchronized static void outputLog() {
+        LOG.error("Performed " + logOps + " write statements so far in " + logBatch + " batches. Average batch size: " + (logOps / logBatch));
     }
 }
