@@ -64,18 +64,18 @@ public class ConverterTask extends Task
                 Statement s = c.createStatement();
                 System.err .println("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
                 s.execute("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
-                String filename = "resources/" + model + "_src_items.sql";
+                // TODO: files should be placed in resources
+                String filename = model + "_src_items.sql";
                 InputStream is = ConverterTask.class.getClassLoader().getResourceAsStream(filename);
-                if (is == null) {
-                    throw new IllegalArgumentException("Model '" + model + "' does not have an"
-                            + " associated src items post-processing sql file (" + filename + ")");
-                }
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line = br.readLine();
-                while (line != null) {
-                    s.execute(line);
-                    System.err .println(line);
-                    line = br.readLine();
+                // .sql files not always being copied correctly
+                if (is != null) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    String line = br.readLine();
+                    while (line != null) {
+                        s.execute(line);
+                        System.err .println(line);
+                        line = br.readLine();
+                    }
                 }
                 System.err .println("ANALYSE");
                 s.execute("ANALYSE");
