@@ -34,7 +34,8 @@ public class DisplayObject
     InterMineObject object;
     int id;
     Set clds;
-    Map identifiers = new HashMap();
+    Map keyAttributes = new HashMap();
+    Map keyReferences = new HashMap();
     Map attributes = new HashMap();
     Map references = new HashMap();
     Map collections = new HashMap();
@@ -49,17 +50,19 @@ public class DisplayObject
         this.object = object;
         id = object.getId().intValue();
         clds = ObjectViewController.getLeafClds(object.getClass(), model);
+
+        Map referenceKeys = new HashMap();
         for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
              i.hasNext();) {
             FieldDescriptor fd = (FieldDescriptor) i.next();
             Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
             if (fieldValue != null) {
                 if (fd.isAttribute() && !fd.getName().equals("id")) {
-                    identifiers.put(fd.getName(), fieldValue);
-                } //else if (fd.isReference()) {
-                //identifiers.put(fd.getName(),
-                //new DisplayReference((InterMineObject) fieldValue, model));
-                //}
+                    keyAttributes.put(fd.getName(), fieldValue);
+                } else if (fd.isReference()) {
+                    keyReferences.put(fd.getName(),
+                                      new DisplayReference((InterMineObject) fieldValue, model));
+                }
             }
         }
 
@@ -114,11 +117,19 @@ public class DisplayObject
     }
 
     /**
-     * Get the identifier fields and values for this object
-     * @return the identifiers
+     * Get the key attribute fields and values for this object
+     * @return the key attributes
      */
-    public Map getIdentifiers() {
-        return identifiers;
+    public Map getKeyAttributes() {
+        return keyAttributes;
+    }
+
+    /**
+     * Get the key reference fields and values for this object
+     * @return the key references
+     */
+    public Map getKeyReferences() {
+        return keyReferences;
     }
 
     /**
