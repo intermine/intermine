@@ -1569,7 +1569,6 @@
   <target name="post-process">
     <antcall target="calculate-locations"/>
     <antcall target="create-references"/>
-    <antcall target="transfer-sequences"/>
   </target>
 
   <!-- ========== OBJECTSTORE EXPORT TARGETS ========== -->
