@@ -703,10 +703,10 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-                                                  merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                                                  merge-ensembl-model, merge-phenotype-model,
-                                                  merge-go-model, merge-uniprot-model,
-                                                  merge-protein_structure-model, merge-mage-model, merge-so-model">
+                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-ensembl-model, merge-phenotype-model,
+                merge-go-model, merge-uniprot-model,
+                merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1567,10 +1567,10 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <filter-uniprot tgtDir="${build.tmp}" organisms="Drosophila melanogaster, Anopheles gambiae, Caenorhabditis elegans">
+    <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165">
       <fileset dir="/shared/data/uniprot">
         <include name="uniprot_sprot.xml"/>
-        <include name="uniprot_trembl.xml"/>
+        <!--include name="uniprot_trembl.xml"/-->
       </fileset>
     </filter-uniprot>
   </target>
@@ -1617,6 +1617,7 @@
     </ant>
     <java classname="org.flymine.dataconversion.UniprotDataTranslator" fork="true"
           maxmemory="800m"  failonerror="true">
+      <!--jvmarg value="-Xrunhprof" /-->
       <classpath refid="models.class.path" />
       <arg value="os.uniprot-src-items" />
       <arg value="osw.uniprot-tgt-items" />
