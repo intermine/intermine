@@ -10,7 +10,10 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.util.List;
+
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
 
 import org.flymine.io.gff3.GFF3Record;
 
@@ -23,7 +26,6 @@ import org.flymine.io.gff3.GFF3Record;
 public class TfbsGFF3RecordHandler extends GFF3RecordHandler
 {
 
-
     /**
      * Create a new TfbsGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -32,10 +34,21 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
         super(tgtModel);
     }
 
+
     /**
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) {
-
+        if (record.getAttributes().get("zscore") != null) {
+            String crNamespace = getTargetModel().getNameSpace() + "ComputationalResult";
+            String analysisId = analysis.getIdentifier();
+            String zscore = (String) ((List) record.getAttributes().get("zscore")).get(0);
+            Item computationalResult = getItemFactory().makeItemForClass(crNamespace);
+            computationalResult.setAttribute("type", "zscore");
+            computationalResult.setAttribute("score", zscore);
+            computationalResult.setReference("analysis", analysisId);
+            addItem(computationalResult);
+        }
     }
 }
+

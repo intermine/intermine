@@ -39,7 +39,7 @@ public class GFF3RecordHandler
 {
     protected Map items = new HashMap();
     private Item sequence;
-    private Item analysis;
+    protected Item analysis;
     private Item infoSource;
     private Model tgtModel;
     private ItemFactory itemFactory;
