@@ -96,13 +96,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   </xsl:template>
 
-  <xsl:template mode="copy-no-ns" match="*">
-    <xsl:element name="{name(.)}">
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="copy-no-ns"/>
-    </xsl:element>
-  </xsl:template>
-
   <xsl:template name="gentext.nav.home">
     Table of contents
   </xsl:template>
