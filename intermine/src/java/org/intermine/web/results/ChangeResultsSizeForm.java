@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.web.Constants;
 
 /**
  * Form bean for changing the page size.
@@ -66,5 +67,9 @@ public class ChangeResultsSizeForm extends ActionForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
+        PagedResults pr = (PagedResults) request.getSession().getAttribute(Constants.RESULTS_TABLE);
+        if (pr != null) {
+            pageSize = "" + pr.getPageSize();
+        }
     }
 }
