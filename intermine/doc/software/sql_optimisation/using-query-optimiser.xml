@@ -2,26 +2,64 @@
 
 <article>
 
-<artheader>
-<date>2003-04-17</date>
-<title>Using the FlyMine Query Optimiser as a standalone module</title>
-</artheader>
+	<artheader>
+		<date>2003-04-17</date>
+		<title>Using the FlyMine Query Optimiser as a standalone module</title>
+	</artheader>
 
-<para>The FlyMine Query Optimiser can be used by itself in a number of
-ways, depending on your needs. All options require the
-<filename>flymine.jar</filename> file to be in your classpath. See the
-<ulink url="../building">download/building instructions</ulink> for
-details of how to obtain this file.</para>
+	<para>The FlyMine Query Optimiser can be used by itself in a number of ways, depending on your needs.
+		All options require the <filename>flymine.jar</filename> file to be in your classpath.
+		See the <ulink url="../building">download/building instructions</ulink> for details of how to obtain this file.</para>
 
-<sect1>
-<title>Building precomputed tables</title>
+	<sect1>
+		<title>Background</title>
+		<para>Before you use the Optimiser, it is important to know a little about how it operates.
+			<itemizedlist>
+				<listitem><highlights>The Optimiser is only suitable for use with read-only databases</highlights>.
+					The optimiser builds precomputed tables, which contain derivative data constructed from other tables in the database.
+					If the other tables in the database are altered, then these precomputed tables will be inconsistent with the data, and queries run through the optimiser will return incorrect results.
+					The expected mode of operation is to completely build the data and never alter it, then build the precomputed tables.
+					Note however that the precomputed tables can be built after the database has been opened to read access.</listitem>
+				<listitem><highlights>The Optimiser requires write access to the database if it is to build any precomputed tables</highlights>.
+					At the moment, precomputed tables are only created when the user manually calls a method - the database should be write-enabled while this is happening.
+					However, in future versions, we intend the Optimiser to be able to spot frequent slow queries and automatically create precomputed tables to speed them up, in which case the database must also be write-enabled.
+					The Optimiser never attempts to alter any of the original data tables.</listitem>
+				<listitem><highlights>The precomputed tables will take a long time to create</highlights>.
+					The whole point of creating a precomputed table is for the effort to be optimistically expended, so that when a real query comes in it can be serviced rapidly.
+					The system is also expected to lend efficiency by the fact that the precomputed table only needs to be built once, but may speed up many requests.</listitem>
+				<listitem><highlights>Each precomputed table takes the form of an SQL query</highlights>, and is stored in the database along with the results of that query.
+					The optimiser inspects the list of available precomputed tables to see if any of the results can be used as a shortcut by the database program when producing results for a real query.</listitem>
+				<listitem><highlights>The optimiser currently only supports PostgreSQL as an underlying database</highlights>.</listitem>
+			</itemizedlist>
+		</para>
+	</sect1>
 
-<para>All precomputed tables must be built by using the
-PrecomputedTableManager class, which maintains an index of the tables
-it has created, along with the SQL used to create the precomputed
-table. For example:</para>
+	<sect1>
+		<title>Setting up a database</title>
+		<para>The database must be set up in a particular order:
+			<itemizedlist>
+				<listitem><highlights>Create your database as normal</highlights>.
+					Completely set up the entire database, populate it with all data, and commit to never changing that data again.</listitem>
+				<listitem><highlights>Configure the Flymine Optimiser to access that database</highlights>.
+					This is done by editing the flymine.properties file to include a description of the database.
+					An example flymine.properties file is included in the distribution with example values.</listitem>
+				<listitem><highlights>Create some precomputed tables</highlights>.
+					This can be done by writing a program in Java as described below, and running it.
+					Precomputed tables can be created before, during, or after enabling read access to the database.</listitem>
+				<listitem><highlights>Enable read access to the database, through the Optimiser</highlights>.
+					This is also described below.</listitem>
+			</itemizedlist>
+		</para>
+	</sect1>
 
-<programlisting>
+	<sect1>
+		<title>Building precomputed tables</title>
+		<para>All precomputed tables must be built by using the
+			PrecomputedTableManager class, which maintains an index of the tables
+			it has created, along with the SQL used to create the precomputed
+			table. For example:</para>
+
+		<programlisting>
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.query.Query;
@@ -33,44 +71,31 @@ Database db = DatabaseFactory.getDatabase("db.main"); // configure db.main in fl
 PrecomputedTableManager ptm = new PrecomputedTableManager.getInstance(db);
 
 // Add a precomputed table to the database
-Query q1 = new Query("select a.column1, a.column2, b.column1, b.column2 from a, b where a.column3 = b.column3");
+Query q1 = new Query("select a.col1 as a_col1, a.col2 as a_col2, b.col1 as b_col1, b.col2 as b_col2"
+    + " from a, b where a.col3 = b.col3");
 PrecomputedTable pt1 = new PrecomputedTable(q1, "precomp1")
 ptm.add(pt1);
 
 // Add another precomputed table to the database
-Query q2 = new Query("select c.column1, count(*) as count from c group by c.column1");
+Query q2 = new Query("select c.column1 as column1, count(*) as c from c group by c.column1");
 PrecomputedTable pt2 = new PrecomputedTable(q2, "precomp2")
 ptm.add(pt2);
+		</programlisting>
+	</sect1>
 
+	<sect1>
+		<title>Query Optimising</title>
+		<sect2>
+			<title>From within an existing Java application</title>
+			<para>Simply call the function <command>optimisedSqlString = QueryOptimiser.optimise(sqlString, database)</command> (where database is an org.flymine.sql.Database as created in the above code snippet), wherever you have an sql string that needs optimising.
+				Run the resulting optimised SQL string as usual.</para>
+		</sect2>
 
-</programlisting>
-
-</sect1>
-
-<sect1>
-<title>Query Optimising</title>
-
-<sect2>
-<title>From within an existing Java application</title>
-
-<para>Simply call the function <command>optimisedSqlString =
-QueryOptimiser.optimise(sqlString)</command> wherever you have an sql
-string that needs optimising. Run the resulting optimised SQL string
-as usual.</para>
-
-</sect2>
-
-<sect2>
-<title>Intercepting JDBC calls</title>
-
-<para>The Query Optimiser can be used in conjunction with the <ulink
-url="http://www.p6spy.com">P6Spy</ulink> software to intercept JDBC
-calls and rewrite queries to use the optimiser. This has the advantage
-that no changes to the application need to be made. More details to
-follow shortly....</para>
-
-</sect2>
-
-</sect1>
-
+		<sect2>
+			<title>Intercepting JDBC calls</title>
+			<para>The Query Optimiser can be used in conjunction with the <ulink url="http://www.p6spy.com">P6Spy</ulink> software to intercept JDBC calls and rewrite queries to use the optimiser.
+				This has the advantage that no changes to the application need to be made.
+				More details to follow shortly....</para>
+		</sect2>
+	</sect1>
 </article>
