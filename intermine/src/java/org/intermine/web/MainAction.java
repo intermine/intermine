@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -24,9 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.metadata.Model;
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.TypeUtil;
 
 /**
  * Action to handle button presses on the main tile
@@ -57,20 +54,11 @@ public class MainAction extends Action
 
         RightNode node = (RightNode) qNodes.get(mf.getPath());
 
-        if (mf.getConstraintValue() != null && !mf.getConstraintValue().equals("")) {
-            List constraints = node.getConstraints();
+        if (mf.getParsedConstraintValue() != null) {
             ConstraintOp constraintOp = ConstraintOp.
                 getOpForIndex(Integer.valueOf(mf.getConstraintOp()));
-            Object constraintValue = null;
-            if (node.isAttribute()) {
-                AttributeDescriptor attr = (AttributeDescriptor) MainHelper
-                    .getFieldDescriptor(mf.getPath(), model);
-                Class fieldClass = TypeUtil.instantiate(attr.getType());
-                constraintValue = TypeUtil.stringToObject(fieldClass, mf.getConstraintValue());
-            } else {
-                constraintValue = mf.getConstraintValue(); // bag name
-            }
-            constraints.add(new Constraint(constraintOp, constraintValue));
+            Object constraintValue = mf.getParsedConstraintValue();
+            node.getConstraints().add(new Constraint(constraintOp, constraintValue));
         }
 
         if (mf.getSubclass() != null && !mf.getSubclass().equals("")) {

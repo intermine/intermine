@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.GregorianCalendar;
 import java.util.Map;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -39,6 +38,7 @@ import org.intermine.util.TypeUtil;
 public class MainForm extends ActionForm
 {
     protected String constraintOp, constraintValue, path, subclass;
+    Object parsedConstraintValue;
 
     /**
      * Gets the value of subclass
@@ -110,6 +110,15 @@ public class MainForm extends ActionForm
     public void setPath(String path) {
         this.path = path;
     }
+    
+    /**
+     * Gets the value of parsedConstraintValue
+     *
+     * @return the value of parsedConstraintValue
+     */
+    public Object getParsedConstraintValue() {
+        return parsedConstraintValue;
+    }
 
     /**
      * @see ActionForm#validate
@@ -127,19 +136,19 @@ public class MainForm extends ActionForm
             AttributeDescriptor attr = (AttributeDescriptor) fd;
             Class fieldClass = TypeUtil.instantiate(attr.getType());
             if (Date.class.equals(fieldClass)) {
+                DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,
+                                                            locale);
                 try {
-                    DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                                                   DateFormat.SHORT,
-                                                   locale).parse(constraintValue);
+                    parsedConstraintValue = df.parse(constraintValue);
                 } catch (ParseException e) {
                     errors.add(ActionErrors.GLOBAL_ERROR,
                                new ActionError("errors.date",
                                                constraintValue,
-                                               new GregorianCalendar().getTime()));
+                                               df.format(new Date())));
                 }
             } else {
                 try {
-                    TypeUtil.stringToObject(fieldClass, constraintValue);
+                    parsedConstraintValue = TypeUtil.stringToObject(fieldClass, constraintValue);
                 } catch (NumberFormatException e) {
                     String shortName = TypeUtil.unqualifiedName(fieldClass.getName()).toLowerCase();
                     errors.add(ActionErrors.GLOBAL_ERROR,
@@ -147,6 +156,8 @@ public class MainForm extends ActionForm
                                                constraintValue));
                 }
             }
+        } else {
+            parsedConstraintValue = constraintValue;
         }
         
         if (errors.size() > 0) {
