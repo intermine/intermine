@@ -117,7 +117,8 @@ public abstract class TextFileUtil
      * @param o the Object to write
      */
     public static void writeQuoted(PrintStream printStream, Object o) {
-        String objectString = o.toString();
+        // don't use toString() in case o is null
+        String objectString = "" + o;
 
         StringBuffer buffer = new StringBuffer();
 
