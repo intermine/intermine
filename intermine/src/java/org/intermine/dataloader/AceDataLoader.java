@@ -8,6 +8,7 @@ import java.util.HashSet;
 import org.acedb.Ace;
 import org.acedb.AceException;
 import org.acedb.AceURL;
+import org.acedb.AceUtils;
 import org.acedb.AceSet;
 import org.acedb.AceNode;
 import org.acedb.AceObject;
@@ -111,7 +112,7 @@ public class AceDataLoader extends AbstractDataLoader
                 clazzName = model.getModelName() + "." + clazzName;
             }
             currentObject = Class.forName(clazzName).newInstance();
-            setField(currentObject, "identifier", aceObject.getName());
+            setField(currentObject, "identifier", AceUtils.decode(aceObject.getName()));
         } catch (ClassNotFoundException e) {
             throw new FlyMineException(e);
         } catch (InstantiationException e) {
@@ -144,7 +145,7 @@ public class AceDataLoader extends AbstractDataLoader
             // nodeName is the name of the field in currentObject
             nodeName = getName(aceNode);
             // nodeValue is the identifier of the referred to object
-            nodeValue = aceNode.getName();
+            nodeValue = AceUtils.decode(aceNode.getName());
             // nodeClass is the class of the referred to object, and is part of the target AceURL
             String nodeClass = ((Reference) aceNode).getTarget().getPath();
             nodeClass = nodeClass.substring(1, nodeClass.indexOf("/", 1));
@@ -163,10 +164,10 @@ public class AceDataLoader extends AbstractDataLoader
             setField(currentObject, nodeName, nodeValue);
         } else if (aceNode instanceof StringValue) {
             nodeName = getName(aceNode);
-            nodeValue = ((StringValue) aceNode).toString();
-            setField(currentObject, nodeName, nodeValue);
+            String nodeStringValue = ((StringValue) aceNode).toString();
+            setField(currentObject, nodeName, AceUtils.decode(nodeStringValue));
         } else if (aceNode instanceof AceNode) {
-            nodeName = aceNode.getName();
+            nodeName = AceUtils.decode(aceNode.getName());
             // Give it a chance to set a Boolean flag
             Field nodeField = TypeUtil.getField(currentObject.getClass(), nodeName);
             if ((nodeField != null) && (nodeField.getType() == Boolean.class)) {
@@ -175,7 +176,7 @@ public class AceDataLoader extends AbstractDataLoader
                 // Is it a hash? If it is, currentObject will have a field of this name
                 // and node will not have any values hanging off it
                 // TODO: this logic
-                String nodeClass = nodeField.getType().getName();
+                String nodeClass = AceUtils.decode(nodeField.getType().getName());
                 StaticAceObject referredToAceObject = new StaticAceObject("", // no identifier
                                                                     null, // no parent
                                                                     nodeClass);
@@ -229,8 +230,9 @@ public class AceDataLoader extends AbstractDataLoader
      *
      * @param aceNode the node
      * @return the name of the parent of the node, or the parent's name if this node is a data node
+     * @throws AceException if error occurs with the Ace data
      */
-    protected static String getName(AceSet aceNode) {
+    protected static String getName(AceSet aceNode) throws AceException {
         String name = aceNode.getParent().getName();
         AceSet node = aceNode;
         int count = 1;
@@ -245,7 +247,7 @@ public class AceDataLoader extends AbstractDataLoader
         if (count > 1) {
             name = node.getName() + "_" + count;;
         }
-        return name;
+        return AceUtils.decode(name);
 
     }
 
@@ -296,7 +298,17 @@ public class AceDataLoader extends AbstractDataLoader
         AceURL objURL = dbURL.relativeURL(clazzName);
         AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
 
-        Collection col = processAceObjects(fetchedAceObjects, null);
+        //        Collection col = processAceObjects(fetchedAceObjects, null);
+
+        System.out.println("Retrieved + " + fetchedAceObjects.size() + " " + clazzName + "s");
+
+        Iterator iter = fetchedAceObjects.iterator();
+
+        while (iter.hasNext()) {
+            AceNode node = (AceNode) iter.next();
+            System.out.println(AceUtils.decode(node.getName()));
+        }
+
 
     }
 }
