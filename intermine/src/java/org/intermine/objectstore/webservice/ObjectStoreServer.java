@@ -10,12 +10,18 @@ package org.flymine.objectstore.webservice;
  *
  */
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
+import org.flymine.util.PropertiesUtil;
 
 /**
  * The server side of an ObjectStore webservice. This should be run in
@@ -27,6 +33,37 @@ import org.flymine.metadata.Model;
 public class ObjectStoreServer
 {
 
+    private int nextQueryId = 0;
+    private Map registeredQueries = new HashMap();
+    private ObjectStore os;
+
+    /**
+     * Construct an ObjectStoreServer that communicates with an ObjectStore
+     * given by the objectstoreserver.os property
+     *
+     */
+    public ObjectStoreServer() throws Exception {
+        // Configure from properties:
+        // objectstoreserver.os = <name of objectstore to refer requests to>
+         Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
+         String osAlias = props.getProperty("os");
+         if (osAlias == null) {
+             throw new ObjectStoreException("No 'os' property specified for ObjectStoreServer"
+                                            + " (check properties file)");
+         }
+         this.os = ObjectStoreFactory.getObjectStore(osAlias);
+    }
+
+    /**
+     * Construct an ObjectStoreServer that communicates with the given ObjectStore
+     *
+     * @param os the ObjectStore to pass calls to
+     */
+    public ObjectStoreServer(ObjectStore os) {
+        this.os = os;
+    }
+
+
     /**
      * Register a query with this class. This is useful to avoid repeated
      * transfer of query objects across the network.
@@ -35,17 +72,40 @@ public class ObjectStoreServer
      * @return an id representing the query
      */
     public int registerQuery(Query query) {
-        return 0;
+        if (query == null) {
+            throw new NullPointerException("query should not be null");
+        }
+        synchronized (registeredQueries) {
+            registeredQueries.put(new Integer(++nextQueryId), query);
+        }
+        return nextQueryId;
     }
+
     /**
      * Register a query (as a String) with this class. This is useful
      * to avoid repeated transfer of query objects across the network.
      *
      * @param query the Query to register
+     * @param namespace the namespace of the objects
      * @return an id representing the query
      */
-    public int registerQuery(String query) {
-        return 0;
+    public int registerQuery(String query, String namespace) {
+        return registerQuery(new Query(query, namespace));
+    }
+
+    /**
+     * Lookup a previously registered query
+     *
+     * @param queryId a query id
+     * @return the previously registered query
+     * @throws IllegalArgumentException if queryId has not been registered
+     */
+    protected Query lookupQuery(int queryId) {
+        Integer key = new Integer(queryId);
+        if (!registeredQueries.containsKey(key)) {
+            throw new IllegalArgumentException("Query id " + queryId + " has not been registered");
+        }
+        return (Query) registeredQueries.get(key);
     }
 
     /**
@@ -54,10 +114,11 @@ public class ObjectStoreServer
      * @param queryId the id of the query
      * @param start the start row
      * @param limit the maximum number of rows to return
+     * @throws ObjectStoreException if an error occurs executing the query
      * @return a List of ResultRows
      */
-    public List execute(int queryId, int start, int limit) {
-        return null;
+    public List execute(int queryId, int start, int limit) throws ObjectStoreException {
+        return os.execute(lookupQuery(queryId), start, limit);
     }
 
     /**
@@ -65,9 +126,10 @@ public class ObjectStoreServer
      *
      * @param queryId the id of the query on which to count rows
      * @return the number of rows to be produced by query
+     * @throws ObjectStoreException if an error occurs
      */
-    public int count(int queryId) {
-        return 72;
+    public int count(int queryId) throws ObjectStoreException {
+        return os.count(lookupQuery(queryId));
     }
 
     /**
@@ -78,7 +140,7 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(int queryId) throws ObjectStoreException {
-        return null;
+        return os.estimate(lookupQuery(queryId));
     }
 
     /**
@@ -92,7 +154,7 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(int queryId, int start, int limit) throws ObjectStoreException {
-        return null;
+        return os.estimate(lookupQuery(queryId), start, limit);
     }
 
     /**
@@ -105,7 +167,7 @@ public class ObjectStoreServer
      * @throws IllegalArgumentException if obj does not have all its primary key fields set
      */
     public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        return null;
+        return os.getObjectByExample(obj);
     }
 
     /**
@@ -114,6 +176,6 @@ public class ObjectStoreServer
      * @return the Model
      */
     public Model getModel() {
-        return null;
+        return os.getModel();
     }
 }
