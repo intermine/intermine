@@ -117,6 +117,7 @@ public class QueryBuildHelper
     public static Query createQuery(Map queryClasses, Model model, Map savedBags, Map savedQueries)
         throws Exception {
         Query q = new Query();
+        q.setDistinct(false);
         Map mapping = new HashMap();
         for (Iterator i = queryClasses.keySet().iterator(); i.hasNext();) {
             String alias = (String) i.next();
