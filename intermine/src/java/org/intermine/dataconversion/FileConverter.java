@@ -31,6 +31,12 @@ public abstract class FileConverter extends DataConverter
         super(writer);
         this.reader = reader;
     }
+    
+    /**
+     * Perform the file conversion
+     * @throws Exception if an error occurs during processing
+     */
+    public abstract void process() throws Exception;
 
     /**
      * Set some param1 to some String value.

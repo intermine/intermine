@@ -47,34 +47,27 @@ import org.intermine.xml.full.ItemHelper;
     protected Reader xsdReader;
     private int id = 1;
 
-
     /**
      * Construct with model, reader for xml data, reader for schema and an ItemWriter
      * @param model an Intermine model that describes XML format
-     * @param xmlReader reader pointing at XML data
      * @param xsdReader reader pointing at SML-Schema describing data
      * @param writer write items produced
      * @throws Exception if anything goes wrong
      */
-    public XmlConverter(Model model, Reader xmlReader, Reader xsdReader, ItemWriter writer)
+    public XmlConverter(Model model, Reader xsdReader, ItemWriter writer)
         throws Exception {
         super(writer);
         this.model = model;
-        this.xmlReader = xmlReader;
         this.xmlInfo = new XmlMetaData(xsdReader);
     }
 
     /**
     * Perform conversion form src model XML to InterMine fulldata items
+    * @param xmlReader reader pointing at XML data
     * @throws Exception if an error occurs during processing
     */
-    public void process() throws Exception {
-        XmlHandler handler = new XmlHandler();
-        try {
-            SAXParser.parse(new InputSource(xmlReader), handler);
-        } finally {
-            writer.close();
-        }
+    public void process(Reader xmlReader) throws Exception {
+        SAXParser.parse(new InputSource(xmlReader), new XmlHandler());
     }
 
     private String getIdentifier() {

@@ -57,6 +57,9 @@ public class DBConverter extends DataConverter
     protected int count = 0;
     protected long start, time, times[];
 
+    protected Map aliases = new HashMap();
+    protected int nextClsId = 0;
+
     /**
      * Constructor
      *
@@ -423,5 +426,21 @@ public class DBConverter extends DataConverter
         id = newId.toString();
         maxIdMap.put(clsName, id);
         return id;
+    }
+
+    /**
+     * Uniquely alias a className
+     * @param className the class name
+     * @return the alias
+     */
+    protected String alias(String className) {
+        String alias = (String) aliases.get(className);
+        if (alias != null) {
+            return alias;
+        }
+        String nextIndex = "" + (nextClsId++);
+        aliases.put(className, nextIndex);
+        LOG.info("Aliasing className " + className + " to index " + nextIndex);
+        return nextIndex;
     }
 }
