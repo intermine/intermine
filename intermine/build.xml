@@ -80,6 +80,15 @@
     <pathelement location="${build.test}"/>
   </path>
 
+  <path id="webapptest.class.path">
+    <path refid="test.class.path"/>
+    <fileset dir="${weblib}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement location="${build.webapp}"/>
+  </path>
+
+
   <!-- Initialisation targets -->
   <target name="prepare">
     <tstamp>
@@ -267,12 +276,29 @@
       <batchtest fork="no" todir="${results.junit}" unless="test-main.uptodate">
         <fileset dir="${build.test}">
          <include name="**/*Test.class" />
+         <exclude name="org/flymine/web/*" />
         </fileset>
       </batchtest>
     </junit>
 
     <antcall target="test-report"/>
   </target>
+
+  <target name="test-webapp" depends="compile-test, build-webapp, build-db-testmodel"
+          description="perform JUnit tests on web application" >
+   <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+      <classpath refid="webapptest.class.path"/>
+      <formatter type="xml" />
+      <batchtest fork="no" todir="${results.junit}">
+        <fileset dir="${build.test}">
+         <include name="org/flymine/web/**/*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <antcall target="test-report"/>
+  </target>
+
 
   <!-- force all the unit tests to be redone -->
   <target name="junit-clean" depends="prepare">
@@ -281,7 +307,7 @@
     </delete>
   </target>
 
-  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,checkstyle"
+  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,test-webapp,checkstyle"
           description="do a full test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
