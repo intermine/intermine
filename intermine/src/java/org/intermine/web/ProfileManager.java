@@ -21,6 +21,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
+import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -36,7 +37,8 @@ public class ProfileManager
     protected ObjectStoreWriter osw;
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
     protected PathQueryBinding queryBinding = new PathQueryBinding();
-
+    protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
+    
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
@@ -121,7 +123,13 @@ public class ProfileManager
                 SavedQuery query = (SavedQuery) i.next();
                 savedQueries.putAll(queryBinding.unmarshal(new StringReader(query.getQuery())));
             }
-            profile = new Profile(this, username, savedQueries, savedBags);
+            Map savedTemplates = new HashMap();
+            for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); i.hasNext();) {
+                SavedTemplateQuery template = (SavedTemplateQuery) i.next();
+                savedTemplates.putAll(
+                    templateBinding.unmarshal(new StringReader(template.getTemplateQuery())));
+            }
+            profile = new Profile(this, username, savedQueries, savedBags, savedTemplates);
         }
         return profile;
     }
@@ -142,6 +150,11 @@ public class ProfileManager
                     }
 
                     for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
+                        osw.delete((InterMineObject) i.next());
+                    }
+                    
+                    for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
+                                                                                i.hasNext();) {
                         osw.delete((InterMineObject) i.next());
                     }
                 } else {
@@ -168,6 +181,16 @@ public class ProfileManager
                                                              os.getModel().getName()));
                     savedQuery.setUserProfile(userProfile);
                     osw.store(savedQuery);
+                }
+                
+                for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    String templateName = (String) entry.getKey();
+                    TemplateQuery template = (TemplateQuery) entry.getValue();
+                    SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
+                    savedTemplate.setTemplateQuery(templateBinding.marshal(template));
+                    savedTemplate.setUserProfile(userProfile);
+                    osw.store(savedTemplate);
                 }
                  
                 osw.store(userProfile);
