@@ -89,6 +89,10 @@ public class SerializationUtil
                     new QName("", "model"),
                     new ModelSerializerFactory(),
                     new ModelDeserializerFactory());
+        // this really should be List.class. Axis doesn't like that, but it is necessary in the
+        //sense that List.subList() and Arrays.asList() don't return
+        //ArrayLists. this isn't a problem for fields that are lists (we do the conversion to
+        //ArrayList in ListSerializer) but is a problem for top-level lists (see Results.subList())
         tm.register(java.util.ArrayList.class,
                     new QName("http://soapinterop.org/xsd", "list"),
                     new ListSerializerFactory(), new ListDeserializerFactory());
