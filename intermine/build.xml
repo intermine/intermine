@@ -149,6 +149,8 @@
     <include name="commons-digester*"/>
     <include name="commons-fileupload*"/>
     <include name="commons-validator*"/>
+    <include name="commons-collections*"/>
+    <include name="commons-logging*"/>
     <!-- splitting OntologyUtil will avoid needing jena -->
     <include name="jena*"/>
   </patternset>
