@@ -131,8 +131,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             statement.execute("SELECT value FROM intermine_metadata WHERE key = 'model'");
             ResultSet rs = statement.getResultSet();
             if (rs.next()) {
-                String modelXML = null;
-                modelXML = rs.getString(1);
+                String modelXML = rs.getString(1);
                 
                 ModelParser parser = new InterMineModelParser();
                 StringReader reader = new StringReader(modelXML);
