@@ -11,8 +11,6 @@ package org.flymine.dataloader;
  */
 
 import java.lang.reflect.Field;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -31,6 +29,7 @@ import org.acedb.Reference;
 import org.acedb.staticobj.StaticAceObject;
 
 import org.flymine.FlyMineException;
+import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
@@ -105,7 +104,7 @@ public class AceDataLoader extends DataLoader
             Iterator clazzIter = clsNames.iterator();
             while (clazzIter.hasNext()) {
                 String clsName = (String) clazzIter.next();
-                if (true) {
+                if ("org.flymine.model.acedb.Locus".equals(clsName)) {
                     String aceClazzName = AceModelParser
                         .unformatAceName(TypeUtil.unqualifiedName(clsName));
                     AceURL objURL = source.relativeURL(aceClazzName);
@@ -154,46 +153,27 @@ public class AceDataLoader extends DataLoader
      */
     protected Object processAceObject(AceObject aceObject)
         throws AceException, FlyMineException {
-        LOG.debug("Processing Ace Object: " + aceObject.getClassName() + ", "
-                + aceObject.getName());
         if (aceObject == null) {
             throw new NullPointerException("aceObject must not be null");
         }
-        Object currentObject = null;
+        LOG.debug("Processing Ace Object: " + aceObject.getClassName() + ", "
+                + aceObject.getName());
+
+        String clsName = pkgName 
+            + AceModelParser.formatAceName(((AceObject) aceObject).getClassName());
+        Object currentObject = null;        
         try {
-            String clsName = AceModelParser.formatAceName(((AceObject) aceObject)
-                                                            .getClassName());
-            Object identifier = aceObject.getName();
-            if ("".equals(identifier)) {
-                identifier = null;
-            }
-            if ("boolean".equals(clsName)) {
-                clsName = "java.lang.Boolean";
-                currentObject = Boolean.valueOf((String) identifier);
-            } else {
-                if ("Date".equals(clsName)) {
-                    clsName = "DateType";
-                    if (identifier instanceof String) {
-                        identifier = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"))
-                            .parse((String) identifier);
-                    }
-                    LOG.error("Handled new Date object -> DateType");
-                } else if ("String".equals(clsName)) {
-                    clsName = "Text";
-                    LOG.error("Handled new String object -> Text");
-                }
-                clsName = pkgName + clsName;
-                try {
-                    currentObject = Class.forName(clsName).newInstance();
-                } catch (Exception e) {
-                    LOG.error(e.toString());
-                }
-                setField(currentObject, "identifier", identifier);
-            }
-        } catch (ParseException e) {
-            throw new FlyMineException(e);
+            currentObject = Class.forName(clsName).newInstance();
+        } catch (Exception e) {
+            LOG.error(e.toString());
         }
 
+        Object identifier = aceObject.getName();
+//         if ("".equals(identifier)) {
+//             identifier = null;
+//         }
+        setField(currentObject, "identifier", identifier);
+        
         processAceNode(aceObject, currentObject);
         return currentObject;
     }
@@ -210,17 +190,14 @@ public class AceDataLoader extends DataLoader
      */
     protected void processAceNode(AceNode aceNode, Object currentObject)
         throws AceException, FlyMineException {
-        Object nodeValue;
-        String nodeName;
+        String nodeName; //name of the field in currentObject
+        Object nodeValue; //identifier of the referred to object
         if (aceNode instanceof Reference) {
-            // nodeName is the name of the field in currentObject
             nodeName = getName(aceNode);
-            // nodeValue is the identifier of the referred to object
             nodeValue = aceNode.getName();
             // nodeClass is the class of the referred to object, and is part of the target AceURL
             String nodeClass = ((Reference) aceNode).getTarget().getPath();
             nodeClass = nodeClass.substring(0, nodeClass.indexOf("/", 1));
-            // Set up a dummy AceObject to encapsulate this info and convert to proper Object
             AceObject referredToAceObject = new StaticAceObject((String) nodeValue,
                                                                 null, nodeClass);
             Object referredToObject = processAceObject(referredToAceObject);
@@ -263,50 +240,53 @@ public class AceDataLoader extends DataLoader
             } catch (Exception e) {
                 throw new FlyMineException(e);
             }
-        } else if (aceNode instanceof AceNode) {
+        } else if (!(aceNode instanceof AceObject)) { //node representing a field
             nodeName = aceNode.getName();
-            // Give it a chance to set a Boolean flag
+            //check whether currentObject has a field of this name (if not, it's a nesting tag)
             Field nodeField = TypeUtil.getField(currentObject.getClass(), nodeName);
-            if ((nodeField != null) && (nodeField.getType().equals(Boolean.TYPE))) { // primitive!
-                setField(currentObject, nodeName, Boolean.TRUE);
-            } else if ((nodeField != null) && !hasChildValues(aceNode)) {
-                // Is it a hash? If it is, currentObject will have a field of this name
-                // and node will not have any values hanging off it
-
-                // The node could be a Collection or reference
-                String nodeClass = null;
-                ClassDescriptor cld = model.getClassDescriptorByName(currentObject
-                                                                     .getClass().getName());
-                FieldDescriptor fd = cld.getFieldDescriptorByName(nodeName);
-                if (fd instanceof CollectionDescriptor) {
-                    // Find out the type of the elements
-                    CollectionDescriptor fdCld = (CollectionDescriptor) fd;
-                    ClassDescriptor referencedCld = fdCld.getReferencedClassDescriptor();
-                    nodeClass = TypeUtil.unqualifiedName(referencedCld.getClassName());
-                } else {
-                    nodeClass = TypeUtil.unqualifiedName(nodeField.getType().getName());
+            if (nodeField != null) {
+                 if (!aceNode.iterator().hasNext()) {
+                    if (nodeField.getType().equals(Boolean.TYPE)) {
+                        // there's no boolean value type - if the tag's present, the value is true
+                        nodeValue = Boolean.TRUE;
+                    } else {
+                        // no children at all - a non-boolean tag without value. not handled (yet).
+                        nodeValue = null;
+                    }
+                    setField(currentObject, nodeName, nodeValue);
+                } else if (!hasChildValues(aceNode)) {
+                    // node has child values, so it's a hash. we create a new object in its place
+                    String nodeClass = null;
+                    ClassDescriptor cld = model.getClassDescriptorByName(currentObject
+                                                                         .getClass().getName());
+                    FieldDescriptor fd = cld.getFieldDescriptorByName(nodeName);
+                    // the node could be a collection or reference
+                    if (fd instanceof CollectionDescriptor) {
+                        // find out the type of the elements
+                        CollectionDescriptor fdCld = (CollectionDescriptor) fd;
+                        ClassDescriptor referencedCld = fdCld.getReferencedClassDescriptor();
+                        nodeClass = TypeUtil.unqualifiedName(referencedCld.getClassName());
+                    } else {
+                        nodeClass = TypeUtil.unqualifiedName(nodeField.getType().getName());
+                    }
+                    StaticAceObject referredToAceObject =
+                        new StaticAceObject(StringUtil.uniqueString(), null, nodeClass);
+                    // add all of the child nodes to our new AceObject
+                    Iterator nodesIter = aceNode.iterator();
+                    while (nodesIter.hasNext()) {
+                        referredToAceObject.addNode((AceNode) nodesIter.next());
+                    }
+                    nodeValue = processAceObject(referredToAceObject);
+                    setField(currentObject, nodeName, nodeValue);
                 }
-                StaticAceObject referredToAceObject = new StaticAceObject("", // no identifier
-                                                                    null, // no parent
-                                                                    nodeClass);
-                // Add all of the child nodes to this AceObject
-                Iterator nodesIter = aceNode.iterator();
-                while (nodesIter.hasNext()) {
-                    referredToAceObject.addNode((AceNode) nodesIter.next());
-                }
-                Object referredToObject = processAceObject(referredToAceObject);
-                setField(currentObject, nodeName, referredToObject);
+            } else {
+                LOG.debug(currentObject.getClass() + " has no field named " + nodeName);
             }
-
         }
         // Now iterate through all the child nodes
-        if (aceNode instanceof AceNode) {
-            Iterator objIter = aceNode.iterator();
-            while (objIter.hasNext()) {
-                processAceNode((AceNode) objIter.next(), currentObject);
-            }
-        } else {
-            throw new FlyMineException("Node type " + aceNode.getClass() + " not dealt with");
+        Iterator objIter = aceNode.iterator();
+        while (objIter.hasNext()) {
+            processAceNode((AceNode) objIter.next(), currentObject);
         }
     }
 
@@ -323,7 +303,7 @@ public class AceDataLoader extends DataLoader
         try {
             Field field = TypeUtil.getField(target.getClass(), fieldName);
             if (field != null) {
-                if (Collection.class.isAssignableFrom(field.getType())) {
+                if (Collection.class.isAssignableFrom(field.getType()) && fieldValue != null) {
                     LOG.debug("Adding to Collection");
                     ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
                 } else {
