@@ -17,9 +17,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -34,6 +36,7 @@ import org.apache.struts.util.ModuleException;
  */
 public class InterMineExceptionHandler extends ExceptionHandler
 {
+    protected static final Logger LOG = Logger.getLogger(InterMineExceptionHandler.class);
 
     /**
      * Handle the exception. In this case we traverse the exception
@@ -60,7 +63,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
         throws ServletException {
 
         ActionForward forward = null;
-        ActionError error = null;
+        ActionMessage error = null;
         String property = null;
 
         // Build the forward from the exception mapping if it exists
@@ -78,6 +81,8 @@ public class InterMineExceptionHandler extends ExceptionHandler
         ex.printStackTrace(new PrintWriter(sw));
         request.setAttribute("stacktrace", sw.toString());
 
+        LOG.error(sw.toString());
+        
         // Put the original exception on the request
         request.setAttribute("exception", ex);
 
@@ -87,7 +92,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
                 error = ((ModuleException) t).getError();
                 property = ((ModuleException) t).getProperty();
             } else {
-                error = new ActionError(ae.getKey(), t.getMessage());
+                error = new ActionMessage(ae.getKey(), t.getMessage());
                 property = error.getKey();
             }
 
@@ -99,7 +104,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
     }
 
     /**
-     * Default implementation for handling an <b>ActionError</b> generated
+     * Default implementation for handling an <b>ActionMessage</b> generated
      * from an Exception during <b>Action</b> delegation.  The default
      * implementation is to set an attribute of the request or session, as
      * defined by the scope provided (the scope from the exception mapping).  An
@@ -108,16 +113,16 @@ public class InterMineExceptionHandler extends ExceptionHandler
      *
      * @param request - The request we are handling
      * @param property  - The property name to use for this error
-     * @param error - The error generated from the exception mapping
+     * @param message - The message generated from the exception mapping
      * @param forward - The forward generated from the input path (from the form
      *              or exception mapping)
      * @param scope - The scope of the exception mapping.
      */
     protected void storeException(HttpServletRequest request,
-                        String property,
-                        ActionError error,
-                        ActionForward forward,
-                        String scope) {
+                                  String property,
+                                  ActionMessage message,
+                                  ActionForward forward,
+                                  String scope) {
 
         ActionErrors errors = null;
         if ("request".equals(scope)) {
@@ -128,7 +133,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
         if (errors == null) {
             errors = new ActionErrors();
         }
-        errors.add(property, error);
+        errors.add(property, message);
 
         if ("request".equals(scope)) {
             request.setAttribute(Globals.ERROR_KEY, errors);

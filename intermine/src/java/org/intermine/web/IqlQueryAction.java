@@ -18,12 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 
-import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
+
+import org.apache.log4j.Logger;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -38,8 +39,10 @@ import org.intermine.web.results.TableHelper;
  *
  * @author Andrew Varley
  */
-public class IqlQueryAction extends LookupDispatchAction
+public class IqlQueryAction extends InterMineLookupDispatchAction
 {
+    private static final Logger LOG = Logger.getLogger(IqlQueryAction.class);
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -74,18 +77,16 @@ public class IqlQueryAction extends LookupDispatchAction
             session.setAttribute(Constants.RESULTS_TABLE, TableHelper.makeTable(os, q));
             return mapping.findForward("results");
         } catch (java.lang.IllegalArgumentException e) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.iqlquery.illegalargument", e.getMessage()));
-            saveErrors(request, errors);
+            recordError(new ActionMessage("errors.iqlquery.illegalargument"), request, e, LOG);
             return mapping.findForward("iqlQuery");
         } catch (ObjectStoreException e) {
             ActionErrors errors = new ActionErrors();
-            String key = (e instanceof ObjectStoreQueryDurationException)
-                ? "errors.query.estimatetimetoolong"
-                : "errors.query.objectstoreerror";
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
-            saveErrors(request, errors);
+            if (e instanceof ObjectStoreQueryDurationException) {
+                recordError(new ActionMessage("errors.query.estimatetimetoolong"), request, e, LOG);
+            } else {
+                recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+            }
+
             return mapping.findForward("iqlQuery");
         }
     }

@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
 
@@ -184,15 +185,15 @@ public class BuildTemplateForm extends ValidatorForm
             if (errors == null) {
                 errors = new ActionErrors();
             }
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.createtemplate.existing", shortName));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.createtemplate.existing", shortName));
         }
         if (editableConstraints.size() == 0) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.createtemplate.nothingeditable"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.createtemplate.nothingeditable"));
         }
         return errors;
     }

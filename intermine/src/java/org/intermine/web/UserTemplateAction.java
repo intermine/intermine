@@ -15,9 +15,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -27,7 +25,7 @@ import org.apache.struts.action.ActionMapping;
  *
  * @author Thomas Riley
  */
-public class UserTemplateAction extends DispatchAction
+public class UserTemplateAction extends InterMineDispatchAction
 {
     /**
      * Delete a template query.
@@ -62,10 +60,7 @@ public class UserTemplateAction extends DispatchAction
                 InitialiserPlugin.loadGlobalTemplateQueries(servletContext);
             }
         } else {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_MESSAGE,
-                        new ActionError("errors.template.nosuchtemplate"));
-            saveErrors(request, errors);
+            recordError(new ActionMessage("errors.template.nosuchtemplate"), request);
         }
         
         return mapping.findForward("begin");

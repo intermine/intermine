@@ -15,12 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
@@ -33,7 +31,7 @@ import org.intermine.util.TypeUtil;
  * @author Mark Woodbridge
  */
 
-public class QueryClassSelectAction extends Action
+public class QueryClassSelectAction extends InterMineAction
 {
     /**
      * Add a QueryClass of a specified type to the current query.
@@ -59,10 +57,7 @@ public class QueryClassSelectAction extends Action
         String className = ((QueryClassSelectForm) form).getClassName();
 
         if (className == null) {
-            ActionErrors actionErrors = new ActionErrors();
-            actionErrors.add(ActionErrors.GLOBAL_ERROR,
-                             new ActionError("errors.queryClassSelect.noClass"));
-            saveErrors(request, actionErrors);
+            recordError(new ActionMessage("errors.queryClassSelect.noClass"), request);
 
             return mapping.findForward("classChooser");
         } else {

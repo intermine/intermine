@@ -17,7 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * The main form, using for editing constraints
@@ -74,20 +75,22 @@ public class LoginForm extends ActionForm
         ActionErrors errors = new ActionErrors();
         
         if (username.equals("")) {
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("login.emptyusername"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.emptyusername"));
         } else {
             if (pm.hasProfile(username)) {
                 if (!pm.validPassword(username, password)) {
-                    errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("login.wrongpassword"));
+                    errors.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionMessage("login.wrongpassword"));
                 }
             } else {
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("login.invalidusername", username));
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("login.invalidusername", username));
             }
         }
         
         return errors;
     }
+
     /**
      * @see ActionForm#reset
      */

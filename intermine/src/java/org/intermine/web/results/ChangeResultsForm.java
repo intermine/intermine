@@ -16,7 +16,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
@@ -138,19 +139,19 @@ public class ChangeResultsForm extends ActionForm
              || request.getParameter("saveNewBag") != null)
             && selectedObjects.length == 0) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.savebag.nothingSelected"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.savebag.nothingSelected"));
         }
         
         if (request.getParameter("saveNewBag") != null) {
             if (newBagName.equals("")) {
                 errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.savebag.blank"));
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.savebag.blank"));
             } else if (savedBags != null && savedBags.containsKey(newBagName)) {
                 errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.savebag.existing", newBagName));
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.savebag.existing", newBagName));
             }
         }
 

@@ -15,14 +15,13 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
+import org.apache.log4j.Logger;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.Globals;
 
 import org.intermine.objectstore.ObjectStore;
@@ -34,8 +33,10 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class SaveQueryAction extends Action
+public class SaveQueryAction extends InterMineAction
 {
+    protected static final Logger LOG = Logger.getLogger(SaveQueryAction.class);
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -69,10 +70,7 @@ public class SaveQueryAction extends Action
                 query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
             }
         } catch (ObjectStoreException e) {
-            ActionErrors actionErrors = new ActionErrors();
-            actionErrors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("errors.query.objectstoreerror"));
-            saveErrors(request, actionErrors);
+            recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
         }
         
         SessionMethods.saveQuery(request, queryName, query);

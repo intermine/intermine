@@ -11,7 +11,7 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
@@ -104,7 +104,7 @@ public class FeedbackForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("errors.email", getEmail()));
+            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getEmail()));
         }
         
         return errors;

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Arrays;
 
 import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.Globals;
 
@@ -49,9 +49,9 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             if (!request.isRequestedSessionIdValid()
                 && request.getAttribute(Globals.MESSAGE_KEY) == null
                 && !START_PATHS.contains(processPath(request, response))) {
-                ActionErrors messages = new ActionErrors();
-                messages.add(ActionErrors.GLOBAL_ERROR,
-                             new ActionError("errors.session.nosession"));
+                ActionMessages messages = new ActionMessages();
+                messages.add(ActionMessages.GLOBAL_MESSAGE,
+                             new ActionMessage("errors.session.nosession"));
                 request.setAttribute(Globals.ERROR_KEY, messages);
                 processForwardConfig(request, response, new ActionForward(LOGON_PATH + ".do"));
             }
