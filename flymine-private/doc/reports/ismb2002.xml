@@ -16,7 +16,8 @@
 <sect1>
 <title>Introduction</title>
 <para>This document is a report on other projects either similar to
-FlyMine, or that could be of some use to FlyMine.</para>
+FlyMine, or that could be of some use to FlyMine, based on information
+given at ISMB 2002.</para>
 </sect1>
 
 <sect1>
@@ -27,11 +28,10 @@ FlyMine, or that could be of some use to FlyMine.</para>
 that is aiming to provide a central registry of servers that serve up
 biological objects. All objects are referenced by a triple:
 (namespace, type, id). The MOBY-Central server records where you can
-go from each object to related objects. There is no translation of
-objects into a common model, but the objects can have
-cross-references, for example genbank_id, ensemble_id, etc. By
-building a client, you can navigate across all these servers following
-a trail of objects.</para>
+go from each object to related objects. There is a MOBY object model,
+and the objects can have cross-references to alternate ID systems, for
+example genbank_id, ensemble_id, etc. By building a client, you can
+navigate across all these servers following a trail of objects.</para>
 
 <para>So for example, say you start with a sequence object. Query
 MOBY-Central and ask "what is related to a sequence". MOBY-Central
@@ -41,14 +41,17 @@ of those servers, and repeat for as long as you need. Every navigation
 requires a call to MOBY-Central. As far as I can see there is no way
 of doing proper queries on other than by object ID. Plus, everything
 has to be pulled back to the client for filtering if the query needs
-objects from more than one server. I can see that for large queries,
-say a join of many thousand of objects from two different servers with
-a "where" clause, would be very inefficient.</para>
+objects from more than one server, or even if you need to do a sort on
+one type of object. I can see that for large queries, say a join of
+many thousand of objects from two different servers with a "where"
+clause, would be very inefficient.</para>
 
 <para>For browsing around objects I can see that MOBY will catch on
 and it would not be too difficult for FlyMine to serve up objects
-using the MOBY system - all you need is a servlet, similar to DAS, and
-register objects/relationships on MOBY-Central.</para>
+using the MOBY system - all you would need is a servlet, similar to
+DAS, and register objects/relationships on MOBY-Central. We should
+keep up to date with the development of Moby.</para>
+
 </sect1>
 
 <sect1>
@@ -111,9 +114,9 @@ into it as if we could set up a simple FlyMine in a couple of months
 it might give us a jump start to building up a user base while
 developing what we want to.</para>
 
-<para>Paul Mooney at Sanger Centre (pjm@sanger.ac.uk?) is going to use
-the GUS schema to set up some database. He would be a good person to
-talk to before deciding whether to collaborate or not.</para>
+<para>Paul Mooney at Sanger Centre (pjm@sanger.ac.uk) is going to use
+the GUS schema to set up some database. I spoke with him and he would
+be willing to meet up to discuss.</para>
 
 <sect1><title>GIMS</title>
 
@@ -134,7 +137,7 @@ whole system is a prototype and does not yet talk to a database. The
 proposed database is a extended version of BioSQL. Queries are
 assembled by a session bean and done directly in the database,
 returning a set of IDs. These are then retrived as entitly beans, if
-necessary. Looks like a wel thought out system. They have not solved
+necessary. Looks like a well thought out system. They have not solved
 the query caching problem - every query hits the database, even though
 the entity beans are cached and will be retrieved from the cache. I
 don't think that the query mechanism is very generic - there is a
@@ -152,21 +155,16 @@ reference.</para>
 <para>Did not learn a lot more about this over and above what is on
 the website. Did get the impression that they are a bit of a "we know
 best and this is the best thing since sliced bread" group. Heavily
-tied to DAS and Moby. Don't think that dynamic queries are
-supported.</para>
+tied to DAS and Moby. Don't think that dynamic queries are supported,
+and pretty sure it is more geared to browsing rather than
+querying.</para>
 
 <sect1><title>caBIO</title>
 <ulink url="ncicb.nci.nih.gov/core">
 
 <para>An object model covering genome and cancer concepts. Did not
 manage to speak to anyone on this project. Worth investigating
-further.</para>
-
-</sect1>
-
-<sect1><title>Tools</title>
-</sect1>
-
+further. Uses MAGEstk.</para>
 
 </sect1>
 
