@@ -72,6 +72,13 @@ public class MainChange extends DispatchAction
         return mapping.findForward("query");
     }
 
+    /**
+     * Remove the PathNode specified by the given (constraint) path, and it's children, from the
+     * PathQuery.  Also remove any view nodes would be illegal because they depend on a type
+     * constraint that will be removed.
+     * @param pathQuery the PathQuery
+     * @param path the path of the PathNode that should be removed.
+     */
     protected static void removeNode(PathQuery pathQuery, String path) {
         // copy because we will be remove paths from the Map as we go
         Set keys = new HashSet(pathQuery.getNodes().keySet());
@@ -88,9 +95,9 @@ public class MainChange extends DispatchAction
     }
 
     /**
-     * Remove the PathNode specified by the given (constraint) path from the PathQuery.  Also remove
-     * any view nodes would be illegal because they depend on a type constraint that will be
-     * removed.
+     * Remove the PathNode specified by the given (constraint) path, but not it's children from the
+     * PathQuery.  Also remove any view nodes would be illegal because they depend on a type
+     * constraint that will be removed.
      * @param pathQuery the PathQuery
      * @param path the path of the PathNode that should be removed.
      */
