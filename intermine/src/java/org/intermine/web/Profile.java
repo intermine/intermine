@@ -16,18 +16,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Collections;
+import java.util.TreeMap;
 
 /**
  * Class to represent a user of the webapp
+ *
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class Profile
 {
     protected ProfileManager manager;
     protected String username;
-    protected Map savedQueries = new LinkedHashMap();
-    protected Map savedBags = new LinkedHashMap();
-    protected Map savedTemplates = new LinkedHashMap();
+    protected Map savedQueries = new TreeMap();
+    protected Map savedBags = new TreeMap();
+    protected Map savedTemplates = new TreeMap();
     protected Map categoryTemplates;
     
     /**
