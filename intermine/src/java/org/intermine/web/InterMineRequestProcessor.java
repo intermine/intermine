@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,8 +20,10 @@ import java.util.Arrays;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.Globals;
+import org.apache.struts.util.MessageResources;
 
 /**
  * A RequestProcessor that sends you back to the start if your session isn't valid
@@ -60,5 +63,42 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
         }
         
         return true;
+    }
+
+    /**
+     * Overriden to copy errors and messages to session before performing
+     * a redirecting forward.
+     *
+     * @see TilesRequestProcessor#processForwardConfig
+     */
+    protected void processForwardConfig(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        ForwardConfig forward)
+                                        throws java.io.IOException, javax.servlet.ServletException {
+        ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
+        ActionMessages errors = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
+        
+        if (forward != null && forward.getRedirect()) {
+            MessageResources resources
+                = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+            if (errors != null && !errors.isEmpty()) {
+                Iterator iter = errors.get();
+                while (iter.hasNext()) {
+                    ActionMessage message = (ActionMessage) iter.next();
+                    String msg = resources.getMessage(message.getKey(), message.getValues());
+                    SessionMethods.recordError(msg, request.getSession());
+                }
+            }
+            if (messages != null && !messages.isEmpty()) {
+                Iterator iter = messages.get();
+                while (iter.hasNext()) {
+                    ActionMessage message = (ActionMessage) iter.next();
+                    String msg = resources.getMessage(message.getKey(), message.getValues());
+                    SessionMethods.recordMessage(msg, request.getSession());
+                }
+            }
+        }
+        
+        super.processForwardConfig(request, response, forward);
     }
 }
