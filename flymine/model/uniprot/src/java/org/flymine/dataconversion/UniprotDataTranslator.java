@@ -74,7 +74,10 @@ public class UniprotDataTranslator extends DataTranslator
     private int pubLinkCount = 0;
     private int drosophilaCount = 0;
     private int caenorhabditisCount = 0;
-    
+
+    private static final String SRC_NS = "http://www.flymine.org/model#";
+    private static final String TGT_NS = "http://www.flymine.org/model/genomic#";
+
     /**
      * @see DataTranslator
      */
@@ -94,7 +97,7 @@ public class UniprotDataTranslator extends DataTranslator
         q.addFrom(qc1);
         q.addToSelect(qc1);
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "className"),
-                ConstraintOp.EQUALS, new QueryValue("http://uniprot.org/uniprot#EntryType"));
+                ConstraintOp.EQUALS, new QueryValue(SRC_NS + "EntryType"));
         QueryClass qc2 = new QueryClass(org.intermine.model.fulldata.ReferenceList.class);
         q.addFrom(qc2);
         ContainsConstraint cc1 = new ContainsConstraint(new QueryObjectReference(qc2, "item"),
@@ -150,7 +153,7 @@ public class UniprotDataTranslator extends DataTranslator
      */
     protected Collection translateItem(Item srcItem) throws ObjectStoreException, InterMineException {
         // This Item should be an EntryType.
-        if ("http://uniprot.org/uniprot#EntryType".equals(srcItem.getClassName())) {
+        if ((SRC_NS + "EntryType").equals(srcItem.getClassName())) {
             // First things first: find out the taxonid of the organism of this entry.
             int taxonId = 0;
             List organisms = getItemsInCollection(srcItem.getCollection("organisms"));
@@ -184,13 +187,13 @@ public class UniprotDataTranslator extends DataTranslator
                 Set retval = new HashSet();
                 if (databaseId == null) {
                     Item database = new Item(getUniqueIdentifier(),
-                            "http://www.flymine.org/model/genomic#Database", "");
+                            TGT_NS + "Database", "");
                     database.addAttribute(new Attribute("title", "Uniprot"));
                     databaseId = database.getIdentifier();
                     retval.add(database);
                 }
                 Item protein = new Item(getUniqueIdentifier(),
-                        "http://www.flymine.org/model/genomic#Protein", "");
+                        TGT_NS + "Protein", "");
                 String proteinName = getAttributeValue(srcItem, "name");
                 protein.addAttribute(new Attribute("identifier", proteinName));
                 List srcAccessions = getItemsInCollection(srcItem.getCollection("accessions"));
@@ -205,7 +208,7 @@ public class UniprotDataTranslator extends DataTranslator
                         Item srcAccession = (Item) srcAccIter.next();
                         String srcAccessionString = getAttributeValue(srcAccession, "accession");
                         Item synonym = new Item(getUniqueIdentifier(),
-                                "http://www.flymine.org/model/genomic#Synonym", "");
+                                TGT_NS + "Synonym", "");
                         synonym.addAttribute(new Attribute("value", srcAccessionString));
                         synonym.addAttribute(new Attribute("type", "accession"));
                         synonym.addReference(new Reference("subject", protein.getIdentifier()));
@@ -221,7 +224,7 @@ public class UniprotDataTranslator extends DataTranslator
                     String srcCommentText = getAttributeValue(srcComment, "text");
                     if ((srcCommentType != null) && (srcCommentText != null)) {
                         Item comment = new Item(getUniqueIdentifier(),
-                                "http://www.flymine.org/model/genomic#Comment", "");
+                                TGT_NS + "Comment", "");
                         comment.addAttribute(new Attribute("type", srcCommentType));
                         comment.addAttribute(new Attribute("text", srcCommentText));
                         comment.addReference(new Reference("subject", protein.getIdentifier()));
@@ -243,7 +246,7 @@ public class UniprotDataTranslator extends DataTranslator
                             srcProteinNameString += " (Evidence " + srcProteinNameEvidence + ")";
                         }
                         Item comment = new Item(getUniqueIdentifier(),
-                                "http://www.flymine.org/model/genomic#Comment", "");
+                                TGT_NS + "Comment", "");
                         comment.addAttribute(new Attribute("type", "name"));
                         comment.addAttribute(new Attribute("text", srcProteinNameString));
                         comment.addReference(new Reference("subject", protein.getIdentifier()));
@@ -255,7 +258,7 @@ public class UniprotDataTranslator extends DataTranslator
                 if (taxonId == 7227) {
                     if (drosophilaId == null) {
                         Item drosophila = new Item(getUniqueIdentifier(),
-                                "http://www.flymine.org/model/genomic#Organism", "");
+                                TGT_NS + "Organism", "");
                         drosophila.addAttribute(new Attribute("taxonId", "7227"));
                         retval.add(drosophila);
                         drosophilaId = drosophila.getIdentifier();
@@ -269,7 +272,7 @@ public class UniprotDataTranslator extends DataTranslator
                 } else if (taxonId == 6239) {
                     if (caenorhabditisId == null) {
                         Item caenorhabditis = new Item(getUniqueIdentifier(),
-                                "http://www.flymine.org/model/genomic#Organism", "");
+                                TGT_NS + "Organism", "");
                         caenorhabditis.addAttribute(new Attribute("taxonId", "6239"));
                         retval.add(caenorhabditis);
                         caenorhabditisId = caenorhabditis.getIdentifier();
@@ -302,7 +305,7 @@ public class UniprotDataTranslator extends DataTranslator
                             pubLinkCount++;
                             if (publicationId == null) {
                                 Item publication = new Item(getUniqueIdentifier(),
-                                        "http://www.flymine.org/model/genomic#Publication", "");
+                                        TGT_NS + "Publication", "");
                                 publication.addAttribute(new Attribute("pubMedId", pubMedString));
                                 retval.add(publication);
                                 publicationId = publication.getIdentifier();
@@ -322,7 +325,7 @@ public class UniprotDataTranslator extends DataTranslator
                         }
                     }
                 }
-                
+
                 List srcGenes = getItemsInCollection(srcItem.getCollection("genes"));
                 ReferenceList geneCollection = null;
                 Iterator srcGeneIter = srcGenes.iterator();
@@ -411,7 +414,7 @@ public class UniprotDataTranslator extends DataTranslator
                         String geneId = (String) geneIdentifierToId.get(geneIdentifier);
                         if (geneId == null) {
                             Item gene = new Item(getUniqueIdentifier(),
-                                    "http://www.flymine.org/model/genomic#Gene", "");
+                                    TGT_NS + "Gene", "");
                             gene.addAttribute(new Attribute("organismDbId", geneIdentifier));
                             if (primaryGeneName != null) {
                                 gene.addAttribute(new Attribute("identifier", primaryGeneName));
@@ -431,7 +434,7 @@ public class UniprotDataTranslator extends DataTranslator
                                     gene.addAttribute(new Attribute("name", name));
                                 }
                                 Item synonym = new Item(getUniqueIdentifier(),
-                                        "http://www.flymine.org/model/genomic#Synonym", "");
+                                        TGT_NS + "Synonym", "");
                                 synonym.addAttribute(new Attribute("value", name));
                                 synonym.addAttribute(new Attribute("type", type));
                                 synonym.addReference(new Reference("subject",
@@ -581,7 +584,7 @@ public class UniprotDataTranslator extends DataTranslator
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
-        paths.put("http://uniprot.org/uniprot#EntryType", descs);
+        paths.put(SRC_NS + "EntryType", descs);
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
