@@ -70,6 +70,8 @@
     <include name="commons-dbcp*.jar" />
     <include name="commons-lang*.jar" />
     <include name="commons-pool*.jar" />
+    <include name="commons-digester*.jar" />
+    <include name="commons-beanutils*.jar" />
     <include name="db-ojb*.jar" />
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
@@ -874,7 +876,7 @@
         <patternset refid="lib.webapp.webservice"/>
       </lib>
       <lib dir="${dist}" includes="flymine*.jar"/>
-      <webinf dir="${resources}/webapps/webservice" excludes="web.xml"/>
+      <webinf dir="${resources}/webapps/webservice" excludes="web.xml deploy-ObjectStore.wsdd undeploy-ObjectStore.wsdd"/>
     </war>
   </target>
 
