@@ -28,7 +28,7 @@ import org.flymine.metadata.CollectionDescriptor;
  *
  * @author Mark Woodbridge
  */
-public class TorqueModelOutput extends ModelOutput
+public class OJBTorqueModelOutput extends ModelOutput
 {
     static final String ID = "ID";
     static final String CLASS = "CLASS";
@@ -39,7 +39,7 @@ public class TorqueModelOutput extends ModelOutput
     /**
      * @see ModelOutput#ModelOutput(Model, File)
      */
-    public TorqueModelOutput(Model model, File file) throws Exception {
+    public OJBTorqueModelOutput(Model model, File file) throws Exception {
         super(model, file);
     }
 
@@ -58,7 +58,7 @@ public class TorqueModelOutput extends ModelOutput
     protected String generate(Model model) {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>" + ENDL)
-            .append("<!DOCTYPE database SYSTEM \"" 
+            .append("<!DOCTYPE database SYSTEM \""
                     + "http://jakarta.apache.org/turbine/dtd/database.dtd\">" + ENDL)
             .append("<database name=\"\">" + ENDL);
 
@@ -67,12 +67,12 @@ public class TorqueModelOutput extends ModelOutput
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             sb.append(generate(cld));
         }
-        
+
         Iterator indirectionIter = indirections.iterator();
         while (indirectionIter.hasNext()) {
             sb.append(generateIndirectionTable((CollectionDescriptor) indirectionIter.next()));
         }
-        
+
         sb.append("</database>" + ENDL);
         return sb.toString();
     }
@@ -86,8 +86,8 @@ public class TorqueModelOutput extends ModelOutput
             indices = new StringBuffer();
             sb.append(INDENT + "<table name=\"" + DatabaseUtil.getTableName(cld) + "\">" + ENDL)
                 .append(generateColumn("ID", "int", true))
-                .append(cld.getSubclassDescriptors().size() > 0 
-                        ? generateColumn("CLASS", "java.lang.String", false) 
+                .append(cld.getSubclassDescriptors().size() > 0
+                        ? generateColumn("CLASS", "java.lang.String", false)
                         : "")
                 .append(generateSubclasses(cld))
                 .append(indices)
@@ -130,8 +130,8 @@ public class TorqueModelOutput extends ModelOutput
                     }
                 }
             } else {
-                String type = fd instanceof AttributeDescriptor 
-                    ? ((AttributeDescriptor) fd).getType() 
+                String type = fd instanceof AttributeDescriptor
+                    ? ((AttributeDescriptor) fd).getType()
                     : "int";
                 sb.append(generateColumn(DatabaseUtil.getColumnName(fd), type, false));
                 if (fd.isPrimaryKey()) {
@@ -180,7 +180,7 @@ public class TorqueModelOutput extends ModelOutput
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT + INDENT + "<index name=\"")
             .append(table)
-            .append("_") 
+            .append("_")
             .append(column)
             .append("\">" + ENDL)
             .append(INDENT + INDENT + INDENT + "<index-column name=\"")
