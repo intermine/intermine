@@ -53,13 +53,13 @@ public class ObjectStoreServerTest extends TestCase
     public void testValidLookup() throws Exception {
         FqlQuery query = new FqlQuery("SELECT a1_ FROM Company AS a1_", "org.flymine.model.testmodel");
         int queryId = server.registerQuery(query);
-        Query ret = server.lookupQuery(queryId);
+        Query ret = server.lookupResults(queryId).getQuery();
         assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ret.toString());
     }
 
     public void testInvalidLookup() throws Exception {
         try {
-            server.lookupQuery(Integer.MAX_VALUE);
+            server.lookupResults(Integer.MAX_VALUE);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
