@@ -58,7 +58,7 @@ public class UpdatePublications
     protected static final Logger LOG = Logger.getLogger(UpdatePublications.class);
     // see http://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
     protected static final String ESUMMARY_URL =
-        "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=";
+        "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
     // number of summaries to retrieve per request
     protected static final int BATCH_SIZE = 50;
     protected ObjectStore os;
