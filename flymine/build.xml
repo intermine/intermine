@@ -470,6 +470,12 @@
       <fileset dir="${build.java}" />
       <fileset dir="${build.resources}"/>
     </jar>
+
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist}">
+        <include name="*.jar" />
+      </fileset>
+    </chmod>
   </target>
 
 
@@ -484,13 +490,10 @@
 
   <target name="release-jar" depends="jar"
     description="releases the jar file to a release directory">
-    <copy todir="${release.serverlocation}">
-      <fileset dir="${dist}">
-        <include name="*.jar"/>
-      </fileset>
-    </copy>
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz ${dist}/flymine.jar ${release.serverlocation}/" />
+    </exec>
   </target>
-
 
 
   <!-- Cleaning-up targets -->
