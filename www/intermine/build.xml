@@ -75,6 +75,7 @@
 </target>
 
 <target name="release-demo-webapp">
+  <ant dir="../../intermine" target="distclean"/>
   <ant dir="../../intermine" target="build-testmodel-webapp"/>
   <ant dir="../../intermine" target="release-webapp"/>
 </target>
