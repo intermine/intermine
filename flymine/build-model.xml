@@ -92,7 +92,7 @@
     <model-generation
       type="acedb"
       modelname="${model.name}"
-      source="${model.src}"
+      source="${model.src}/${model.name}.wrm"
       destdir="${build.model}/${model.name}"/>
   </target>
 
