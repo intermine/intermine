@@ -708,6 +708,8 @@
       <lib dir="${lib}">
         <patternset refid="lib.webapptest"/>
       </lib>
+      <!-- struts test stuff requires messages to be in root of webapp -->
+      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
     </war>
   </target>
 
