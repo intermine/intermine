@@ -205,7 +205,7 @@ public class WriteGFFTask extends Task
             lineBuffer.append(".");
         } else {
             if (location.getStrand().intValue() == 1) {
-                lineBuffer.append("+"); 
+                lineBuffer.append("+");
             } else {
                 if (location.getStrand().intValue() == -1) {
                     lineBuffer.append("-");
@@ -247,7 +247,7 @@ public class WriteGFFTask extends Task
         flyMineIDs.add("FlyMineInternalID_" + bioEntity.getId());
         attributes.put("Alias", flyMineIDs);
         attributes.put("FlyMineInternalID", (List) flyMineIDs.clone());
- 
+
         ArrayList indexList = new ArrayList();
         indexList.add(index.toString());
         attributes.put("Index", indexList);
@@ -260,16 +260,17 @@ public class WriteGFFTask extends Task
     private void writeChromosomeFasta(File destinationDirectory, Chromosome chr)
         throws IOException, ChangeVetoException, IllegalArgumentException, IllegalSymbolException {
 
-        FileOutputStream outputStream =
-            new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
+        // commented out until Chromosome sequences sorted
+//         FileOutputStream outputStream =
+//             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
 
-        FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
+//         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
 
-        if (sequence != null) {
-            sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                 chromosomeFileNamePrefix(chr));
-            SeqIOTools.writeFasta(outputStream, sequence);
-        }
+//         if (sequence != null) {
+//             sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+//                                                  chromosomeFileNamePrefix(chr));
+//             SeqIOTools.writeFasta(outputStream, sequence);
+//         }
     }
 
     private File chromosomeFastaFile(File destinationDirectory, Chromosome chr) {
