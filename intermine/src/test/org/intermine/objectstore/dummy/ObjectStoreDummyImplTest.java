@@ -23,7 +23,7 @@ public class ObjectStoreDummyImplTest extends ObjectStoreTestCase
     }
 
     // Override setUpResults(). There are no results tests to do for an ObjectStoreDummyImpl.
-    public void setUpResults() throws Exception {
+    public static void setUpResults() throws Exception {
         // DO NOT SET UP ANY RESULTS
     }
 
