@@ -215,6 +215,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                             //LOG.debug("store() finished simply for object " + oText);
                             return obj;
                         }
+                        // materialise proxies before searching for this field
+                        if (obj instanceof ProxyReference) {
+                             obj = ((ProxyReference) obj).getObject();
+                        }
                         if (getModel().getFieldDescriptorsForClass(obj.getClass())
                                 .containsKey(fieldName)) {
                             sortedEquivalentObjects.add(obj);
