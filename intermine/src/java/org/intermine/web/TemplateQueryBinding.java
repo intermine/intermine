@@ -10,10 +10,16 @@ package org.intermine.web;
  *
  */
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
 import java.io.Reader;
-import java.util.Map;
+import java.io.StringWriter;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -35,17 +41,27 @@ public class TemplateQueryBinding
      * @return the corresponding XML String
      */
     public String marshal(TemplateQuery template) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<template name='" + template.getName()
-                + "' description='" + template.getDescription()
-                + "' category='" + template.getCategory()
-                + "'>\n");
-        sb.append(new PathQueryBinding().marshal(template.getQuery(),
-                                                 template.getName(),
-                                                 template.getQuery().getModel().getName()));
-        sb.append("</template>\n");
-        System.out.println(sb.toString());
-        return sb.toString();
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            writer.writeStartElement("template");
+            writer.writeAttribute("name", template.getName());
+            writer.writeAttribute("description", template.getDescription());
+            writer.writeAttribute("category", template.getCategory());
+            new PathQueryBinding().marshal(template.getQuery(),
+                                           template.getName(),
+                                           template.getQuery().getModel().getName(),
+                                           writer);
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(sw.toString());
+        
+        return sw.toString();
     }
 
     /**
