@@ -76,7 +76,7 @@ public class BuildBagAction extends LookupDispatchAction
                 StringBuffer buffer = new StringBuffer();
                 String thisLine;
                 while ((thisLine = reader.readLine()) != null) {
-                    StringTokenizer st = new StringTokenizer(thisLine, " \t");
+                    StringTokenizer st = new StringTokenizer(thisLine, " \n\t");
                     while (st.hasMoreTokens()) {
                         String token = st.nextToken();
                         bag.add(token);
@@ -84,7 +84,7 @@ public class BuildBagAction extends LookupDispatchAction
                 }
             }
         } else {
-            StringTokenizer st = new StringTokenizer(trimmedText, " \t");
+            StringTokenizer st = new StringTokenizer(trimmedText, " \n\t");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
                 bag.add(token);
