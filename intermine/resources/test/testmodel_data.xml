@@ -55,6 +55,7 @@
 <identifier value="3"/>
 <attribute name="debt" value="7634"/>
 <attribute name="name" value="ContractorA"/>
+<attribute name="seniority" value="128764"/>
 <reference name="businessAddress">
 <ref_id identifier="21"/>
 </reference>
@@ -73,6 +74,7 @@
 <item class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
 <identifier value="4"/>
 <attribute name="name" value="ContractorB"/>
+<attribute name="seniority" value="62341"/>
 <reference name="businessAddress">
 <ref_id identifier="17"/>
 </reference>
@@ -135,6 +137,7 @@
 <attribute name="age" value="10"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeA1"/>
+<attribute name="seniority" value="876123"/>
 <reference name="address">
 <ref_id identifier="24"/>
 </reference>
@@ -173,7 +176,11 @@
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeB1"/>
 <attribute name="salary" value="45000"/>
+<attribute name="seniority" value="76321"/>
 <attribute name="title" value="Mr."/>
+<reference name="company">
+<ref_id identifier="2"/>
+</reference>
 <reference name="department">
 <ref_id identifier="6"/>
 </reference>
@@ -195,6 +202,7 @@
 <attribute name="age" value="60"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeB3"/>
+<attribute name="seniority" value="761231"/>
 <reference name="address">
 <ref_id identifier="20"/>
 </reference>
