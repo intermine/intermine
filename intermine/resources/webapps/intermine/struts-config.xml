@@ -45,6 +45,9 @@
 
     <form-bean name="requestPasswordForm"
                type="org.intermine.web.RequestPasswordForm"/>
+    
+    <form-bean name="feedbackForm"
+               type="org.intermine.web.FeedbackForm"/>
 
   </form-beans>
 
@@ -115,6 +118,9 @@
 
     <action path="/login"
             forward="login.page"/>
+    
+    <action path="/feedback"
+            forward="feedback.page"/>
 
     <!-- Actions invoked using links -->
     <action path="/modifyQueryChange"
@@ -191,6 +197,14 @@
             input="template">
       <forward name="template" path="template.page"/>
       <forward name="query" path="query.page"/>
+    </action>
+    
+    <action path="/feedbackAction"
+            type="org.intermine.web.FeedbackAction"
+            name="feedbackForm"
+            scope="request"
+            input="feedback">
+      <forward name="feedback" path="feedback.page"/>
     </action>
 
     <action path="/modifyQuery"
@@ -337,10 +351,10 @@
 
   <plug-in className="org.intermine.web.InitialiserPlugin"/>
 
-  <!--plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
     <set-property property="pathnames"
                   value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
-  </plug-in-->
+  </plug-in>
 
   <plug-in className="org.apache.struts.tiles.TilesPlugin">
     <set-property property="definitions-config"
