@@ -182,6 +182,8 @@ constraint: (abstract_value ISNULL )=> abstract_value ISNULL
         { #constraint = #([CONSTRAINT, "CONSTRAINT"], #constraint); }
         | (abstract_value ISNOTNULL )=> abstract_value ISNOTNULL
         { #constraint = #([CONSTRAINT, "CONSTRAINT"], #constraint); }
+        | (thing ( EQ | NOT_EQ ) QUESTION_MARK )=> thing ( EQ | NOT_EQ ) QUESTION_MARK
+        { #constraint = #([CONSTRAINT, "CONSTRAINT"], #constraint); }
         | abstract_value comparison_op abstract_value
         { #constraint = #([CONSTRAINT, "CONSTRAINT"], #constraint); }
     ;
@@ -260,6 +262,7 @@ MINUS: '-';
 DIVIDE: '/';
 PERCENT: '%';
 VERTBAR: '|';
+QUESTION_MARK: '?';
 
 EQ: '=';
 NOT_EQ:
