@@ -89,27 +89,11 @@ public class SimpleConstraintTest extends TestCase {
         }
     }
 
-    public void testDualWrongTypeString() throws Exception {
-        try {
-            constraint = new SimpleConstraint(qeStr1, ConstraintOp.GREATER_THAN, qeStr1);
-            fail ("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        try {
-            constraint = new SimpleConstraint(qeStr1, ConstraintOp.GREATER_THAN_EQUALS, qeStr1);
-            fail ("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-                try {
-            constraint = new SimpleConstraint(qeStr1, ConstraintOp.LESS_THAN, qeStr1);
-            fail ("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        try {
-            constraint = new SimpleConstraint(qeStr1, ConstraintOp.LESS_THAN_EQUALS, qeStr1);
-            fail ("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
+    public void testDualTypeString() throws Exception {
+        constraint = new SimpleConstraint(qeStr1, ConstraintOp.GREATER_THAN, qeStr1);
+        constraint = new SimpleConstraint(qeStr1, ConstraintOp.GREATER_THAN_EQUALS, qeStr1);
+        constraint = new SimpleConstraint(qeStr1, ConstraintOp.LESS_THAN, qeStr1);
+        constraint = new SimpleConstraint(qeStr1, ConstraintOp.LESS_THAN_EQUALS, qeStr1);
     }
 
     public void testDualWrongTypeNumber() throws Exception {

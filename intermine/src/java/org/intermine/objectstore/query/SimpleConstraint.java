@@ -157,6 +157,10 @@ public class SimpleConstraint extends Constraint
     protected static final List STRING_OPS = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS,
+        ConstraintOp.LESS_THAN,
+        ConstraintOp.LESS_THAN_EQUALS,
+        ConstraintOp.GREATER_THAN,
+        ConstraintOp.GREATER_THAN_EQUALS,
         ConstraintOp.MATCHES,
         ConstraintOp.DOES_NOT_MATCH});
 
