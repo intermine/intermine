@@ -3,7 +3,7 @@ package org.flymine.objectstore.query;
 
 
 /**
- * Constrain whether a QueryClass is member of a QueryCollection or not.
+ * Constrain whether a QueryClass is member of a QueryReference or not.
  *
  * @author Richard Smith
  * @author Mark Woodbridge
@@ -23,39 +23,38 @@ public class ContainsConstraint implements Constraint
     public static final int DOES_NOT_CONTAIN = 2;
 
     protected boolean negated;
-    protected QueryCollection coll;
+    protected QueryReference ref;
     protected QueryClass cls;
     protected int type;
-
 
     /**
      * Constructor for ContainsConstraint.
      *
-     * @param coll the target QueryCollection
+     * @param ref the target QueryReference
      * @param type specify CONTAINS or DOES_NOT_CONTAIN
      * @param cls the QueryClass to be tested
      */
-    public ContainsConstraint (QueryCollection coll, int type, QueryClass cls) {
-        this(coll, type, cls, false);
+    public ContainsConstraint(QueryReference ref, int type, QueryClass cls) {
+        this(ref, type, cls, false);
     }
 
     /**
      * Constructor for ContainsConstraint.
      *
-     * @param coll the target QueryCollection
+     * @param ref the target QueryReference
      * @param type specify CONTAINS or DOES_NOT_CONTAIN
      * @param cls the QueryClass to be tested
      * @param negated reverse the constraint logic if true
      */
-    public ContainsConstraint (QueryCollection coll, int type, QueryClass cls, boolean negated) {
-        if (coll == null) {
-            throw (new NullPointerException("coll cannot be null"));
+    public ContainsConstraint(QueryReference ref, int type, QueryClass cls, boolean negated) {
+        if (ref == null) {
+            throw (new NullPointerException("ref cannot be null"));
         }
         if (cls == null) {
             throw (new NullPointerException("cls cannot be null"));
         }
 
-        this.coll = coll;
+        this.ref = ref;
         this.cls = cls;
         if ((type < 1) || (type > 2)) {
             throw (new IllegalArgumentException("Invalid value for type: " + type));
@@ -91,7 +90,6 @@ public class ContainsConstraint implements Constraint
     public int getType() {
         return type;
     }
-
 }
 
 

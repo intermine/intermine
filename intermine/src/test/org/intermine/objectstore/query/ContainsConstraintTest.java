@@ -8,7 +8,7 @@ import org.flymine.model.testmodel.Department;
 public class ContainsConstraintTest extends TestCase {
 
     private ContainsConstraint constraint;
-    private QueryCollection collection;
+    private QueryCollectionReference collection;
     private QueryClass cls;
 
     public ContainsConstraintTest(String arg1) {
@@ -17,7 +17,7 @@ public class ContainsConstraintTest extends TestCase {
 
     public void setUp() throws Exception {
         cls = new QueryClass(Department.class);
-        collection = new QueryCollection(cls, "employees");
+        collection = new QueryCollectionReference(cls, "employees");
     }
 
     public void testNullConstructor1() throws Exception {
