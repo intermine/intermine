@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -41,6 +42,10 @@ public class ViewChangeTest extends MockStrutsTestCase
 
         addRequestParameter("path", "Employee.age");
         addRequestParameter("method", "removeFromView");
+
+        //necessary to work-round struts test case not invoking our SessionListener
+        getSession().setAttribute(Constants.PROFILE,
+                                  new Profile(null, null, new HashMap(), new HashMap(), new HashMap()));
 
         setRequestPathInfo("/viewChange");
 

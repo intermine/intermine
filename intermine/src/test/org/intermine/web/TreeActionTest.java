@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -22,9 +23,9 @@ public class TreeActionTest extends MockStrutsTestCase
     }
 
     public void tearDown() throws Exception {
-         getActionServlet().destroy();
+        getActionServlet().destroy();
     }
-
+    
     public void testExpand() throws Exception {
         Set openClasses = new HashSet();
         openClasses.add("org.intermine.model.testmodel.Thing");
@@ -34,6 +35,10 @@ public class TreeActionTest extends MockStrutsTestCase
 
         setRequestPathInfo("/changeTree");
         addRequestParameter("method", "expand");
+
+        //necessary to work-round struts test case not invoking our SessionListener
+        getSession().setAttribute(Constants.PROFILE,
+                                  new Profile(null, null, new HashMap(), new HashMap(), new HashMap()));
 
         actionPerform();
         verifyNoActionErrors();
@@ -55,6 +60,10 @@ public class TreeActionTest extends MockStrutsTestCase
 
         setRequestPathInfo("/changeTree");
         addRequestParameter("method", "collapse");
+
+        //necessary to work-round struts test case not invoking our SessionListener
+        getSession().setAttribute(Constants.PROFILE,
+                                  new Profile(null, null, new HashMap(), new HashMap(), new HashMap()));
 
         actionPerform();
         verifyNoActionErrors();
