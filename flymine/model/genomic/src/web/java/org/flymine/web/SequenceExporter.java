@@ -34,7 +34,9 @@ import org.intermine.web.Constants;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
+import org.intermine.model.InterMineObject;
 
+import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
@@ -85,7 +87,8 @@ public class SequenceExporter implements TableExporter
                     
                     ClassDescriptor cd = (ClassDescriptor) columnType;
                     
-                    if (LocatedSequenceFeature.class.isAssignableFrom(cd.getType())) {
+                    if (LocatedSequenceFeature.class.isAssignableFrom(cd.getType())
+                        || Protein.class.isAssignableFrom(cd.getType())) {
                         featureColumn = column;
                         break;
                     }
@@ -111,7 +114,7 @@ public class SequenceExporter implements TableExporter
                     }
                 }
 
-                LocatedSequenceFeature feature = (LocatedSequenceFeature) row.get(realFeatureIndex);
+                InterMineObject object = (InterMineObject) row.get(realFeatureIndex);
 
                 StringBuffer header = new StringBuffer();
 
@@ -135,11 +138,28 @@ public class SequenceExporter implements TableExporter
                     header.append(" ");
                 }
 
-                FlyMineSequence sequence = FlyMineSequenceFactory.make(feature);
-                sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                                     header.toString());
+                FlyMineSequence sequence = null;
 
-                SeqIOTools.writeFasta(outputStream, sequence);
+                if (object instanceof LocatedSequenceFeature) {
+                    LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+                    if (feature.getResidues() != null) {
+                        sequence = FlyMineSequenceFactory.make(feature);
+                    }
+                } else {
+                    Protein protein = (Protein) object;
+//                    if (protein.getAminoAcids() != null) {  FIXME
+                        sequence = FlyMineSequenceFactory.make(protein);
+//                    }
+                }
+
+                if (sequence != null) {
+                    if (row.size() > 1) {
+                        sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                                             header.toString());
+                    }
+
+                    SeqIOTools.writeFasta(outputStream, sequence);
+                }
             }
 
             outputStream.close();
@@ -166,10 +186,9 @@ public class SequenceExporter implements TableExporter
                 Object columnType = ((Column) columns.get(i)).getType();
                 
                 if (columnType instanceof ClassDescriptor) {
-                    
                     ClassDescriptor cd = (ClassDescriptor) columnType;
-                    
-                    if (LocatedSequenceFeature.class.isAssignableFrom(cd.getType())) {
+                    if (LocatedSequenceFeature.class.isAssignableFrom(cd.getType())
+                        || Protein.class.isAssignableFrom(cd.getType())) {
                         return true;
                     }
                 }
