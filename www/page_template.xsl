@@ -26,7 +26,8 @@
       <head>
         <title><xsl:value-of select="$brand/title"/></title>
         <xsl:for-each select="$brand/stylesheet">
-          <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}" media="screen,printer"/>
+          <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}"
+                media="screen,printer"/>
         </xsl:for-each>
         <xsl:for-each select="$brand/meta">
           <meta>
@@ -40,8 +41,14 @@
       
       <body>
         <div id="header">
-          <h1><a href="{$basedir}/"><xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/></a></h1>
-          <p><xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/></p>
+          <h1>
+            <a href="{$basedir}/">
+              <xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/>
+            </a>
+          </h1>
+          <p>
+            <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
+          </p>
         </div>
         
         <!-- <p>NI: <xsl:value-of select="ni:systemId()"/></p>
@@ -70,4 +77,12 @@
       </body>
     </html>
   </xsl:template>
+
+  <xsl:template mode="copy-no-ns" match="*">
+    <xsl:element name="{name(.)}">
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="copy-no-ns"/>
+    </xsl:element>
+  </xsl:template>
+
 </xsl:stylesheet>
