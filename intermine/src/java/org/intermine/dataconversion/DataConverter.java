@@ -13,12 +13,16 @@ package org.flymine.dataconversion;
 import java.util.Map;
 import java.util.HashMap;
  
+import org.apache.log4j.Logger;
+
 /**
  * Abstract parent class of all DataConverters
  * @author Mark Woodbridge
  */
  public abstract class DataConverter
 {
+    protected static final Logger LOG = Logger.getLogger(DataConverter.class);
+
     protected ItemWriter writer;
     protected Map aliases = new HashMap();
     protected int nextClsId = 0;
@@ -49,6 +53,7 @@ import java.util.HashMap;
         }
         String nextIndex = "" + (nextClsId++);
         aliases.put(className, nextIndex);
+        LOG.error("Aliasing className " + className + " to index " + nextIndex);
         return nextIndex;
     }
 }

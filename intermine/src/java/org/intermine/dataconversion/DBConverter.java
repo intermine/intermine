@@ -52,6 +52,9 @@ public class DBConverter extends DataConverter
     protected Map uniqueRefIdMap = new HashMap();
     protected Map maxIdMap = new HashMap();
 
+    protected int count = 0;
+    protected long start, time, times[];
+
     /**
      * Constructor
      *
@@ -74,6 +77,12 @@ public class DBConverter extends DataConverter
      * @throws Exception if an error occurs in processing
      */
     public void process() throws Exception {
+        start = System.currentTimeMillis();
+        time = start;
+        times = new long[20];
+        for (int i = 0; i < 20; i++) {
+            times[i] = -1;
+        }
         try {
             // if source db table has a non-unique id need to create a unique identifier
             // references to the non-unique id will be pointed at an arbitrary unique
@@ -101,7 +110,7 @@ public class DBConverter extends DataConverter
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
-                        processClassDescriptor(cld);
+                    processClassDescriptor(cld);
                 }
             }
         } finally {
@@ -200,6 +209,25 @@ public class DBConverter extends DataConverter
                     item.addAttributes(attr);
                 }
                 writer.store(item);
+                count++;
+                if (count % 1000 == 0) {
+                    long now = System.currentTimeMillis();
+                    if (times[(count / 1000) % 20] == -1) {
+                        LOG.error("Processed " + count + " rows - running at "
+                                + (60000000 / (now - time)) + " (avg "
+                                + ((60000L * count) / (now - start))
+                                + ") rows per minute -- now on "
+                                + clsName);
+                    } else {
+                        LOG.error("Processed " + count + " rows - running at "
+                                + (60000000 / (now - time)) + " (20000 avg "
+                                + (1200000000 / (now - times[(count / 1000) % 20]))
+                                + ") (avg " + ((60000L * count) / (now - start))
+                                + ") rows per minute -- now on " + clsName);
+                    }
+                    time = now;
+                    times[(count / 1000) % 20] = now;
+                }
             }
         } finally {
             if (c != null) {
@@ -289,8 +317,13 @@ public class DBConverter extends DataConverter
                 ref.setName(fieldName);
                 Object value = row.get(fieldName + "_id");
                 if (value != null && !TypeUtil.objectToString(value).equals("0")) {
-                    String refClsName = TypeUtil.unqualifiedName(
-                        ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getName());
+                    String refClsName = ((ReferenceDescriptor) fd).getReferencedClassDescriptor()
+                        .getName();
+                    if ("org.flymine.model.FlyMineBusinessObject".equals(refClsName)) {
+                        refClsName = ((String) row.get(fieldName + "_object_type")).toLowerCase();
+                    } else {
+                        refClsName = TypeUtil.unqualifiedName(refClsName);
+                    }
                     ref.setRefId(getUniqueRefId(alias(refClsName) + "_"
                                                 + TypeUtil.objectToString(value)));
                     item.addReferences(ref);
@@ -300,8 +333,7 @@ public class DBConverter extends DataConverter
                 if (fd.relationType() == FieldDescriptor.ONE_N_RELATION) {
                     ReferenceDescriptor rd =
                         ((ReferenceDescriptor) fd).getReverseReferenceDescriptor();
-                    refClsName =  TypeUtil.unqualifiedName(
-                                                           rd.getClassDescriptor().getName());
+                    refClsName =  TypeUtil.unqualifiedName(rd.getClassDescriptor().getName());
                     sql = "SELECT " + refClsName + "_id FROM " + refClsName + " WHERE "
                         + rd.getName() + "_id = " + clsId;
                 } else {
