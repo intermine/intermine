@@ -12,6 +12,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * Derive torque db schema from OJB repository file
+ *
+ * @author Mark Woodbridge
+ */
 public class SchemaOutput
 {
     static final String INDENT = "    ";
@@ -23,6 +28,12 @@ public class SchemaOutput
     String currentTableClass;
     Map classTable = new HashMap();
 
+    /**
+     * Constructor
+     * @param repositoryFileName the filename of the input repository
+     * @param outputFileName the filename of the output schema
+     * @throws Exception if the was a problem parsing the repository or outputting the schema
+     */
     public SchemaOutput(String repositoryFileName, String outputFileName)
         throws Exception {
         SAXParserFactory.newInstance().newSAXParser().parse(
@@ -54,15 +65,6 @@ public class SchemaOutput
                         .append(c.name + "\" type=\"" + c.type + "\" />" + ENDL);
                 }
             }
-//             Iterator foreignKeys = table.foreignKeys.iterator();
-//             while (foreignKeys.hasNext()) {
-//                 ForeignKey k = (ForeignKey) foreignKeys.next();
-//                 sb.append(INDENT + INDENT + "<foreign-key foreignTable=\"")
-//                     .append((String) classTable.get(k.foreignClass) + "\">" + ENDL)
-//                     .append(INDENT + INDENT + INDENT + "<reference local=\"")
-//                     .append(k.local + "\" foreign=\"ID\"/>" + ENDL)
-//                     .append(INDENT + INDENT + "</foreign-key>" + ENDL);
-//             }
             sb.append(INDENT + "</table>" + ENDL);
         }
         sb.append("</database>" + ENDL);
@@ -75,8 +77,13 @@ public class SchemaOutput
         fos.write(sb.toString());
         fos.close();
     }
-    
-    void addTable(String tableName, boolean isIndirection) {
+
+    /**
+     * Add a table to the list if it doesn't exist
+     * @param tableName the name of table
+     * @param isIndirection  whether this table is for non-decomposed M:N mappings
+     */
+    protected void addTable(String tableName, boolean isIndirection) {
         if (tableName != null) {
             currentTable = (Table) tables.get(tableName);
             if (currentTable == null) {
@@ -86,8 +93,14 @@ public class SchemaOutput
         }
     }
 
-    class MyHandler extends DefaultHandler
+    /**
+     * Custom handler for SAX events
+     */
+    protected class MyHandler extends DefaultHandler
     {
+        /**
+         * @see DefaultHandler#startElement
+         */
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if (qName.equals("class-descriptor")) {
                 addTable(attrs.getValue("table"), false);
@@ -104,64 +117,62 @@ public class SchemaOutput
             if (qName.equals("fk-pointing-to-this-class")) {
                 currentTable.columns.add(new Column(
                                                     attrs.getValue("column"), "INTEGER"));
-                currentTable.foreignKeys.add(new ForeignKey(
-                                                      attrs.getValue("column"), currentTableClass));
-            }
-            if (qName.equals("reference-descriptor")) {
-                currentTable.foreignKeys.add(new ForeignKey(
-                                       attrs.getValue("name") + "Id", attrs.getValue("class-ref")));
             }
         }   
     }
         
-    class Table
+    /**
+     * Class to represent table in schema
+     */
+    protected class Table
     {
         boolean isIndirection;
         Set columns = new LinkedHashSet();
         Set foreignKeys = new LinkedHashSet();
+        /**
+         * Constructor
+         * @param isIndirection whether this table is for non-decomposed M:N mappings
+         */
         Table(boolean isIndirection) {
             this.isIndirection = isIndirection;
         }
     }
-        
-    class ForeignKey
-    {
-        String local, foreignClass;
-        ForeignKey(String local, String foreignClass) {
-            this.local = local;
-            this.foreignClass = foreignClass;
-        }
-        public int hashCode() {
-            return local.hashCode();
-        }
-        public boolean equals(Object obj) {
-            return (obj != null && ((ForeignKey) obj).hashCode() == hashCode());
-        }
-    }
 
-    class Column
+    /**
+     * Class to represent column of table in schema
+     */
+    protected class Column
     {
         String name, type;
+        /**
+         * Constructor
+         * @param name column name
+         * @param type the type of the column
+         */
         Column(String name, String type) {
             this.name = name;
             this.type = type;
         }
+        /**
+         * @see Object#hashCode
+         */
         public int hashCode() {
             return name.hashCode();
         }
+        /**
+         * @see Object#equals
+         */
         public boolean equals(Object obj) {
             return (obj != null && ((Column) obj).hashCode() == hashCode());
         }
     }
 
+    /**
+     * main method (soon to be replaced by a task)
+     * @param args the command line arguments
+     * @throws Exception if an error occurs
+     */
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.err.println("Usage:  SchemaOutput <repository filename> <output filename>");
-            System.exit(1);
-        }
-        String repositoryFileName = args[0];
-        String outputFileName = args[1];
-        
-        new SchemaOutput(repositoryFileName, outputFileName);
+        new SchemaOutput(args[0], args[1]);
     }
 }
