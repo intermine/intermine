@@ -25,8 +25,9 @@ public class Results extends AbstractList
 {
     protected Query query;
     protected ObjectStore os;
-    protected int size = 0;
+    protected int size = -1;
     protected int batchSize = 1;
+    protected int maxBatchNo = -1;
     protected boolean initialised = false;
 
     // A map of batch number against a List of ResultsRows
@@ -61,11 +62,11 @@ public class Results extends AbstractList
      * @param end the end index
      * @return the relevant ResultRows as a List
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @throws IndexOutOfBoundsException if end is beyond the number of rows in the results
+     * @throws IllegalArgumentException if start > end
      * @throws FlyMineException if an error occurs promoting proxies
      */
     public List range(int start, int end) throws ObjectStoreException, FlyMineException {
-        List rows;
-
         if (start > end) {
             throw new IllegalArgumentException();
         }
@@ -73,14 +74,22 @@ public class Results extends AbstractList
         int startBatch = getBatchNoForRow(start);
         int endBatch = getBatchNoForRow(end);
 
-        if (end >= size()) {
-            throw new ArrayIndexOutOfBoundsException();
+        // If we know the size of the results (ie. have had a last partial batch), check that
+        // the end is within range
+        if ((size != -1) && (end >= size)) {
+            throw new IndexOutOfBoundsException("End = " + end + ", size = " + size);
         }
-        for (int i = startBatch; i <= endBatch; i++) {
+
+        // Do the loop in reverse, so that we get IndexOutOfBoundsException first thing if we are
+        // out of range
+        for (int i = endBatch; i >= startBatch; i--) {
             // Only one thread does this test at a time to save on calls to ObjectStore
             synchronized (batches) {
                 if (!batches.containsKey(new Integer(i))) {
                     fetchBatchFromObjectStore(i);
+                    if (i > maxBatchNo) {
+                        maxBatchNo = i;
+                    }
                 }
             }
         }
@@ -102,7 +111,7 @@ public class Results extends AbstractList
 
         for (int i = startBatch; i <= endBatch; i++) {
             List rows = getRowsFromBatch(i, start, end);
-            //promoteProxies(rows);
+            promoteProxies(rows);
             ret.addAll(rows);
         }
         return ret;
@@ -118,6 +127,9 @@ public class Results extends AbstractList
      */
     protected List getRowsFromBatch(int batchNo, int start, int end) {
         List batchList = (List) batches.get(new Integer(batchNo));
+        if (batchList == null) {
+            throw new NullPointerException("Batch " + batchNo + " is not in the batches list");
+        }
 
         int startRowInBatch = batchNo * batchSize;
         int endRowInBatch = startRowInBatch + batchSize - 1;
@@ -133,12 +145,26 @@ public class Results extends AbstractList
      *
      * @param batchNo the batch number to get (zero-indexed)
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @throws IndexOutOfBoundsException if the batch is off the end of the results
      */
     protected void fetchBatchFromObjectStore(int batchNo) throws ObjectStoreException {
         int start = batchNo * batchSize;
         int end = start + batchSize - 1;
         initialised = true;
-        batches.put(new Integer(batchNo), os.execute(query, start, end));
+        // We now have 3 possibilities:
+        // a) This is a full batch
+        // b) This is a partial batch, in which case we have reached the end of the results
+        //    and can set size.
+        // c) An error has occurred - ie. we have gone beyond the end of the results
+
+        List rows = os.execute(query, start, end);
+        batches.put(new Integer(batchNo), rows);
+
+        // Now deal with a partial batch
+        if (rows.size() != batchSize) {
+            size = start + rows.size();
+        }
+
     }
 
     /**
@@ -177,21 +203,28 @@ public class Results extends AbstractList
     }
 
     /**
-     * Sets the number of results rows in this Results object
-     *
-     * @param size the number of rows in this Results object
-     */
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    /**
      * Gets the number of results rows in this Results object
      *
      * @see AbstractList#size
      * @return the number of rows in this Results object
      */
     public int size() {
+        // If we have got the last batch, then we know the size. Else, fetch batches
+        // in turn until we have got the last one.
+        // TODO: probably want to be cleverer about how we do this.
+        if (size == -1) {
+            // Find the largest batch number we already have
+            int batchNo = maxBatchNo + 1;
+            while (size == -1) {
+                try {
+                    get(batchNo * batchSize);
+                } catch (IndexOutOfBoundsException e) {
+                    // Ignore - this will happen if the end of a batch lies on the
+                    // end of the results
+                }
+                batchNo++;
+            }
+        }
         return size;
     }
 
