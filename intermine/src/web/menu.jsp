@@ -46,6 +46,11 @@
     </span>
   </c:if>
   <span class="menu-item">
+    <html:link action="/feedback.do">
+      <fmt:message key="menu.feedback"/>
+    </html:link>
+  </span>
+  <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/index.html">
       <fmt:message key="menu.help"/>
     </html:link>
