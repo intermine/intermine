@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.Database;
 import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.query.*;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.ResultsRow;
 
 import org.flymine.model.testmodel.*;
 
