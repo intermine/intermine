@@ -108,8 +108,9 @@ public class DataTranslator
     public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
         for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.flymine.model.fulldata.Item) i.next());
-            for (Iterator j = translateItem(srcItem).iterator(); j.hasNext();) {
-                if (j != null) {
+            Collection translated = translateItem(srcItem);
+            if (translated != null) {
+                for (Iterator j = translated.iterator(); j.hasNext();) {
                     tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
                 }
             }
