@@ -4,7 +4,7 @@
 <!-- begin.jsp -->
 <div>
   <html:link action="/classChooser">
-    <fmt:message key="index.classchooser"/>
+    <fmt:message key="index.classChooser"/>
   </html:link>
 </div>
 <div>
@@ -14,7 +14,7 @@
 </div>
 <div>
   <html:link action="/bagBuild">
-    <fmt:message key="index.bagbuilder"/>
+    <fmt:message key="index.bagBuild"/>
   </html:link>
 </div>
 <div>
@@ -24,7 +24,7 @@
 </div>
 <div>
   <html:link page="/buildiqlquery.do">
-    <fmt:message key="index.iqlquery"/>
+    <fmt:message key="index.iqlQuery"/>
   </html:link>
 </div>
 <br/>
