@@ -2,9 +2,6 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%--/**
      * Render a results cell
-     * The following parameters must be set:
-     * fields: a List of fields to render
-     * icons: a List of icons to display
      */
 --%>
 
@@ -13,9 +10,13 @@
 <c:choose>
   <c:when test="${cld != null}">
   <%-- Go through all the items in the WebConfig for this object --%>
-  <%-- For the moment, only do the primary keys --%>
   <table><tr>
-    <td><tiles:insert name="/pkFields.jsp" /></td>
+    <c:if test="${empty webconfig.types[cld.name].shortDisplayers}">
+      <td><tiles:insert name="/pkFields.jsp" /></td>
+    </c:if>
+    <c:forEach items="${webconfig.types[cld.name].shortDisplayers}" var="displayer">
+      <td><tiles:insert beanName="displayer" beanProperty="src"/></td>
+    </c:forEach>
   </tr></table>
 
   </c:when>
