@@ -103,16 +103,16 @@ public class ClassPathTask extends Task
 
         try {
             Class clazz;
-            if (classpath != null) {
-                loader = new AntClassLoader(project, classpath);
-            }
-            if (loader != null) {
-                clazz = loader.loadClass(actualClass);
-                loader.setThreadContextLoader();
-            } else {
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+//             if (classpath != null) {
+//                 loader = new AntClassLoader(project, classpath);
+//             }
+//             if (loader != null) {
+//                 clazz = loader.loadClass(actualClass);
+//                 loader.setThreadContextLoader();
+//             } else {
+            //Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 clazz = Class.forName(actualClass);
-            }
+                //}
             return clazz.newInstance();
         } catch (Exception e) {
             throw new BuildException(e);
