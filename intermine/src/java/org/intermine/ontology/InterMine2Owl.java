@@ -25,7 +25,6 @@ import org.intermine.metadata.*;
 import org.intermine.util.TypeUtil;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
-import org.intermine.ontology.OntologyUtil;
 import org.intermine.model.InterMineObject;
 
 /**
