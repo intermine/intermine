@@ -10,10 +10,11 @@
 <tr>
   <td valign="top" width="30%">
 <div class="heading">
-Summary for selected
+<nobr>Summary for selected
 <c:forEach items="${object.clds}" var="cld">
   ${cld.unqualifiedName}
 </c:forEach>
+</nobr>
 </div>
 
 <div class="body">
@@ -82,7 +83,7 @@ Summary for selected
 <c:forEach items="${object.clds}" var="cld">
   <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
     <div class="heading">
-      Further information for this ${cld.unqualifiedName}
+      <nobr>Further information for this ${cld.unqualifiedName}</nobr>
     </div>
     <div class="body">
       <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
@@ -99,7 +100,7 @@ Summary for selected
 </td>
 
 <td valign="top" width="66%">
-<div class="heading">Other Information</div>
+<div class="heading"><nobr>Other Information</nobr></div>
 <div class="body">
 <table>
   <c:if test="${!empty object.refsAndCollections}">
