@@ -46,6 +46,7 @@ public class ObjectStoreServer
         // Configure from properties:
         // objectstoreserver.os = <name of objectstore to refer requests to>
          Properties props = PropertiesUtil.getPropertiesStartingWith("objectstoreserver");
+         props = PropertiesUtil.stripStart("objectstoreserver", props);
          String osAlias = props.getProperty("os");
          if (osAlias == null) {
              throw new ObjectStoreException("No 'os' property specified for ObjectStoreServer"
