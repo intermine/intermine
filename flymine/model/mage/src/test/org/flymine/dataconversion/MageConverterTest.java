@@ -149,4 +149,13 @@ public class MageConverterTest extends TestCase
 
         assertEquals(expected, ItemHelper.convert(converter.createItem(bio)));
     }
+
+
+    public void testDuplicateQuotes() throws Exception {
+        String s1 = "something \"quoted\"";
+        String s2 = converter.escapeQuotes(s1);
+        System.out.println(s1);
+        System.out.println(s2);
+        assertEquals("something \\\"quoted\\\"", s2);
+    }
 }
