@@ -450,3 +450,5 @@ null:transcript_stable_id__version a owl:DatatypeProperty ;
     owl:equivalentProperty e:transcript_stable_id__version .
 
 
+null:identity_xref a owl:Class ;
+    owl:equivalentClass e:identity_xref .
