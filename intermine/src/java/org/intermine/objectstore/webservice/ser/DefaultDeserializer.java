@@ -11,6 +11,7 @@ package org.flymine.objectstore.webservice.ser;
  */
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.encoding.DeserializationContext;
@@ -24,6 +25,8 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import org.flymine.util.TypeUtil;
+import org.flymine.objectstore.proxy.LazyCollection;
+import org.flymine.objectstore.proxy.LazyInitializer;
 
 /**
  * Deserializer for (bean-like) objects sent via SOAP (i.e.everything except Lists and Models)
@@ -114,10 +117,20 @@ public class DefaultDeserializer extends DeserializerImpl
      * @see DeserializerTarget#setChildValue
      */
     public void setChildValue(Object value, Object hint) throws SAXException {
-        String fieldName = (String) hint;
         try {
+            String fieldName = (String) hint;
+            if (value instanceof ProxyBean) {
+                ProxyBean pb = (ProxyBean) value;
+                Class cls = Class.forName(pb.getType());
+                if (List.class.isAssignableFrom(cls)) {
+                    value = new LazyCollection(pb.getFqlQuery().toQuery());
+                } else {
+                    value = LazyInitializer.getDynamicProxy(cls, pb.getFqlQuery().toQuery(),
+                                                            pb.getId());
+                }
+            }
             TypeUtil.setFieldValue(this.value, fieldName, value);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new SAXException(e);
         }
     }
