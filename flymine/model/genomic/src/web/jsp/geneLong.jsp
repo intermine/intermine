@@ -5,6 +5,7 @@
 <!-- geneLong.jsp -->
 <fmt:setBundle basename="model"/>
 
+<br/>
 <html:link action="/objectDetails?id=${object.organism.id}">
   <c:out value="${object.organism.name}"/>
 </html:link>
@@ -13,15 +14,6 @@
   <c:out value="${object.name}"/>
 </c:if>
 <br/>
-
-<c:if test="${!empty object.transcripts}">
-  <fmt:message key="gene.transcipts"/>:
-  <c:forEach items="${object.transcripts}" var="thisTranscript">
-    <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
-      <c:out value="${thisTranscript}"/>
-    </html:link>
-  </c:forEach>
-</c:if>
 
 <c:if test="${!empty object.synonyms}">
   <br/>
