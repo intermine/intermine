@@ -137,7 +137,7 @@ table.noborder, table.noborder td, table.noborder th {
   border: none;
 }
 .showing {
-  background: #F5F0FF;
+  background: #E7F1FB;
   border: 1px solid #bbb;
   padding-top: 1px;
   padding-bottom: 1px;
@@ -150,6 +150,8 @@ table.noborder, table.noborder td, table.noborder th {
 /* move away from plus/minus image on left */
 .browserline .showing {
   margin-left: 0px;
+}
+.browserline {
   white-space: nowrap;
 }
 /* surrounds view paths */
@@ -159,7 +161,7 @@ div.view {
 }
 /* one path added to the view area */
 div.viewpath {
-  background: #F5F0FF;
+  background: #E7F1FB;
   border: 1px solid #bbb;
   padding: 5px;
   margin-right: 5px;
