@@ -246,8 +246,8 @@ public class MainChange extends DispatchAction
         if (prefix != null) {
             session.setAttribute("prefix", prefix);
         }
-
-        return mapping.findForward("query");
+        
+        return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
     }
 
     /**
