@@ -22,9 +22,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.dataloader.DataLoaderHelper;
   
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -51,20 +49,21 @@ public class ResultsCellController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
- public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-    HttpSession session = request.getSession();
-
-    Object obj = request.getAttribute("object");
-
-    // Put a map of all fields on to the request
-    Model model = ObjectStoreFactory.getObjectStore().getModel();
-
-    Set clds = model.getClassDescriptorsForClass(obj.getClass());
-
-    if (clds.size() > 0) {
-        context.putAttribute("clds", clds);
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        
+        Object obj = request.getAttribute("object");
+        
+        // Put a map of all fields on to the request
+        Model model = ObjectStoreFactory.getObjectStore().getModel();
+        
+        Set clds = model.getClassDescriptorsForClass(obj.getClass());
+        
+        if (clds.size() > 0) {
+            context.putAttribute("clds", clds);
+        }
+        return null;
     }
-    return null;
-  }
 }
