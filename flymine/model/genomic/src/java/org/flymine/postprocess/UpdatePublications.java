@@ -83,12 +83,13 @@ public class UpdatePublications
     public void execute() throws Exception {
         Set pubMedIds = new HashSet();
         Set toStore = new HashSet();
+        ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
         writer.write(FullRenderer.getHeader() + ENDL);
         for (Iterator i = getPublications().iterator(); i.hasNext();) {
             pubMedIds.add(((Publication) i.next()).getPubMedId());
             if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
                 SAXParser.parse(new InputSource(getReader(pubMedIds)),
-                                new Handler(toStore));
+                                new Handler(toStore, itemFactory));
                 for (Iterator j = toStore.iterator(); j.hasNext();) {
                     writer.write(FullRenderer.render((Item) j.next()));
                 }
@@ -138,10 +139,9 @@ public class UpdatePublications
          * Constructor
          * @param toStore a set in which the new publication items are stored
          */
-        public Handler(Set toStore) {
+        public Handler(Set toStore, ItemFactory itemFactory) {
             this.toStore = toStore;
-            itemFactory = new ItemFactory(os.getModel(), "-1_");
-            
+            this.itemFactory = itemFactory;
         }
 
         /**
@@ -173,7 +173,7 @@ public class UpdatePublications
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {
-                publication = itemFactory.makeItem(TARGET_NS + "Publication");
+                publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
                 toStore.add(publication);
                 publication.setAttribute("pubMedId", characters.toString());
             } else if ("PubDate".equals(name)) {
@@ -196,11 +196,15 @@ public class UpdatePublications
             } else if ("Pages".equals(name)) {
                 publication.setAttribute("pages", characters.toString());
             } else if ("Author".equals(name)) {
-                Item author = itemFactory.makeItem(TARGET_NS + "Author");
+                Item author = itemFactory.makeItemForClass(TARGET_NS + "Author");
                 toStore.add(author);
-                author.setAttribute("name", characters.toString());
+                String authorString = characters.toString();
+                author.setAttribute("name", authorString);
                 author.addToCollection("publications", publication);
                 publication.addToCollection("authors", author);
+                if (!publication.hasAttribute("firstAuthor")) {
+                    publication.setAttribute("firstAuthor", authorString);
+                }
             }
             name = null;
         }
