@@ -13,6 +13,8 @@ package org.flymine.postprocess;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
+import org.intermine.dataloader.IntegrationWriter;
+import org.intermine.dataloader.IntegrationWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
@@ -31,7 +33,7 @@ public class PostProcessTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
-    protected String type, alias;
+    protected String type, alias, integrationWriter;
 
     /**
      * Set the ObjectStoreWriter alias
@@ -101,8 +103,11 @@ public class PostProcessTask extends Task
                 if (integrationWriter == null) {
                     throw new BuildException("integrationWriter attribute is not set");
                 }
+                IntegrationWriter iw =
+                    IntegrationWriterFactory.getIntegrationWriter("integration.production");
+                iw.setIgnoreDuplicates(true);
                 LOG.info("Starting update-publications");
-                new UpdatePublications(osw).execute();
+                new UpdatePublications(iw).execute();
                 LOG.info("Finished update-publications");
             } else {
                 throw new BuildException("unknown type: " + type);
