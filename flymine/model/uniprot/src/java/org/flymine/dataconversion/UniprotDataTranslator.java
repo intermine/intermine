@@ -187,7 +187,7 @@ public class UniprotDataTranslator extends DataTranslator
                 Set retval = new HashSet();
                 if (databaseId == null) {
                     Item database = new Item(getUniqueIdentifier(), TGT_NS + "Database", "");
-                    database.addAttribute(new Attribute("title", "Uniprot"));
+                    database.addAttribute(new Attribute("title", "UniProt"));
                     databaseId = database.getIdentifier();
                     retval.add(database);
                 }
@@ -425,15 +425,16 @@ public class UniprotDataTranslator extends DataTranslator
                                 String name = getAttributeValue(srcGeneName, "name");
                                 if ("primary".equals(type)) {
                                     gene.addAttribute(new Attribute("name", name));
+                                } else {
+                                    Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym",
+                                                            "");
+                                    synonym.addAttribute(new Attribute("value", name));
+                                    synonym.addAttribute(new Attribute("type", type));
+                                    synonym.addReference(new Reference("subject",
+                                                                       gene.getIdentifier()));
+                                    synonym.addReference(new Reference("source", databaseId));
+                                    retval.add(synonym);
                                 }
-                                Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym",
-                                        "");
-                                synonym.addAttribute(new Attribute("value", name));
-                                synonym.addAttribute(new Attribute("type", type));
-                                synonym.addReference(new Reference("subject",
-                                            gene.getIdentifier()));
-                                synonym.addReference(new Reference("source", databaseId));
-                                retval.add(synonym);
                             }
                             gene.addCollection(geneSynonyms);
                             geneId = gene.getIdentifier();
