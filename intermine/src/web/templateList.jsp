@@ -22,7 +22,7 @@
       </th>
     </tr>
     <tr>
-      <td>
+      <td colspan="2">
         <c:forEach items="${templates}" var="templateQuery" varStatus="status">
           <span class="templateDesc"><c:out value="${templateQuery.value.description}"/></span>&nbsp;
           <html:link action="/template?name=${templateQuery.key}&type=${templateType}">
