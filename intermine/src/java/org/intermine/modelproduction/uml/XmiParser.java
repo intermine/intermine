@@ -299,7 +299,12 @@ public class XmiParser implements ModelParser
                 name = StringUtil.pluralise(name);
             }
         }
-        return stripIllegal(StringUtil.decapitalise(name));
+        
+        if (Character.isLowerCase(name.charAt(1))) {
+            name = StringUtil.decapitalise(name);
+        }
+
+        return stripIllegal(name);
     }
 
     // converts 'any' found in MAGE-OM to FlyMineBusinessObject - not a long term

@@ -257,14 +257,14 @@ public class TypeUtil
                             Method setter = (Method) methods.get(setterName);
                             Method proxySetter = (Method) methods.get(proxySetterName);
                             Method proxyGetter = (Method) methods.get(proxyGetterName);
-                            String fieldname = (Character.isLowerCase(getterName.charAt(3))
-                                    ? getterName.substring(3, 4).toUpperCase()
-                                    : getterName.substring(3, 4).toLowerCase())
-                                + getterName.substring(4);
+                            String fieldName = getterName.substring(3);
+                            if (Character.isLowerCase(fieldName.charAt(1))) {
+                                fieldName = StringUtil.decapitalise(fieldName);
+                            }
                             if (!getter.getName().equals("getClass")) {
-                                FieldInfo info = new FieldInfo(fieldname, getter, setter,
+                                FieldInfo info = new FieldInfo(fieldName, getter, setter,
                                         proxySetter, proxyGetter);
-                                infos.put(fieldname, info);
+                                infos.put(fieldName, info);
                             }
                         }
                     }
