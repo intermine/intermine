@@ -46,6 +46,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.translating.Translator;
 import org.intermine.ontology.OntologyUtil;
@@ -157,8 +158,8 @@ public class ItemToObjectTranslator extends Translator
         if (!(select.size() == 1
               && from.size() == 1
               && qn == from.iterator().next()
-              && qn instanceof QueryClass
-              && ((QueryClass) qn).getType().equals(InterMineObject.class))) {
+              && qn instanceof QueryClass)) {
+              //&& ((QueryClass) qn).getType().equals(InterMineObject.class))) {
             throw new ObjectStoreException("Query cannot be translated: " + query);
         }
 
@@ -198,6 +199,24 @@ public class ItemToObjectTranslator extends Translator
                 throw new ObjectStoreException("Query cannot be translated: " + query);
             }
         }
+
+        // if not querying for InterMineObject constrain Item className
+        if (!((QueryClass) qn).getType().equals(InterMineObject.class)) {
+            String clsName = ((QueryClass) qn).getType().getName();
+            String clsURI = model.getNameSpace() + TypeUtil.unqualifiedName(clsName);
+            SimpleConstraint clsNameConstraint = new SimpleConstraint(
+                                new QueryField(qc, "className"), ConstraintOp.EQUALS,
+                                new QueryValue(clsURI));
+            if (q.getConstraint() != null) {
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                cs.addConstraint(q.getConstraint());
+                cs.addConstraint(clsNameConstraint);
+                q.setConstraint(cs);
+            } else {
+                q.setConstraint(clsNameConstraint);
+            }
+        }
+
         q.setDistinct(query.isDistinct());
         return q;
     }

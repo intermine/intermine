@@ -35,6 +35,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.QueryTestCase;
 import org.intermine.objectstore.query.SingletonResults;
@@ -119,6 +120,50 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         QueryField qf2 = new QueryField(qc2, "id");
         BagConstraint bc2 = new BagConstraint(qf2, ConstraintOp.IN, Arrays.asList(new Object[] {new Integer(12), new Integer(15), new Integer(19)}));
         original.setConstraint(bc2);
+
+        assertEquals(expected, translator.translateQuery(original));
+    }
+
+    public void testTranslateQuerySpecificClass() throws Exception {
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Item.class);
+        expected.addFrom(qc);
+        expected.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "className");
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                       new QueryValue("http://www.intermine.org/model/testmodel#Department"));
+        expected.setConstraint(sc);
+
+        Query original = new Query();
+        QueryClass qc2 = new QueryClass(Department.class);
+        original.addFrom(qc2);
+        original.addToSelect(qc2);
+
+        assertEquals(expected, translator.translateQuery(original));
+    }
+
+    public void testTranslateQuerySpecificClassPlus() throws Exception {
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Item.class);
+        expected.addFrom(qc);
+        expected.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryField qf2 = new QueryField(qc, "identifier");
+        SimpleConstraint sc2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("fish_42"));
+        cs.addConstraint(sc2);
+        QueryField qf1 = new QueryField(qc, "className");
+        SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS,
+                       new QueryValue("http://www.intermine.org/model/testmodel#Department"));
+        cs.addConstraint(sc1);
+        expected.setConstraint(cs);
+
+        Query original = new Query();
+        QueryClass qc2 = new QueryClass(Department.class);
+        original.addFrom(qc2);
+        original.addToSelect(qc2);
+        QueryField qf3 = new QueryField(qc2, "id");
+        SimpleConstraint sc3 = new SimpleConstraint(qf3, ConstraintOp.EQUALS, new QueryValue(new Integer(42)));
+        original.setConstraint(sc3);
 
         assertEquals(expected, translator.translateQuery(original));
     }
