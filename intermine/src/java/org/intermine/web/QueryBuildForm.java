@@ -10,7 +10,7 @@ package org.flymine.web;
  *
  */
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +37,6 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
 
 /**
@@ -211,46 +210,49 @@ public class QueryBuildForm extends ActionForm
         parsedFieldValues = new HashMap();
         parsedFieldOps = new HashMap();
 
-        DisplayQueryClass displayQueryClass = (DisplayQueryClass) queryClasses.get(editingAlias);
+        DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
         ActionErrors errors = new ActionErrors();
         ServletContext servletContext = session.getServletContext();
         Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
 
-        ClassDescriptor cd = model.getClassDescriptorByName(displayQueryClass.getType());
+        ClassDescriptor cd = model.getClassDescriptorByName(d.getType());
         Class selectClass = cd.getType();
 
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
 
-        for (Iterator i = displayQueryClass.getConstraintNames().iterator(); i.hasNext();) {
-            String fieldName = (String) i.next();
+        for (Iterator i = new ArrayList(d.getConstraintNames()).iterator(); i.hasNext();) {
+            String constraintName = (String) i.next();
+            String fieldName = (String) d.getFieldNames().get(constraintName);
+            String fieldValue = (String) getFieldValue(constraintName);
+            String fieldOp = (String) getFieldOp(constraintName);
 
-            Object fieldValue = getFieldValue(fieldName);
-            Object fieldOp = getFieldOp(fieldName);
-
-            if (fieldValue == null || fieldOp == null) {
-                continue;
-            }
-
-            Integer opCode = Integer.valueOf((String) fieldOp);
+            Integer opCode = Integer.valueOf(fieldOp);
             ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
-            parsedFieldOps.put(fieldName, op);
-            String realFieldName = QueryBuildHelper.getFieldName(fieldName);
 
             Map fieldDescriptors = model.getFieldDescriptorsForClass(selectClass);
-            FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(realFieldName);
+            FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(fieldName);
 
             ActionError actionError = null;
             if (fd.isAttribute()) {
-                actionError = validateAttribute((AttributeDescriptor) fd, op, fieldName,
+                actionError = validateAttribute((AttributeDescriptor) fd, op, constraintName,
                                                 fieldValue, locale, savedBags);
+                if (actionError == null) {
+                    parsedFieldOps.put(constraintName, op);
+                }
             } else if (fd.isReference() || fd.isCollection()) {
-                actionError = validateReference((ReferenceDescriptor) fd, op, fieldName,
-                                                fieldValue, queryClasses.keySet());
+                //it's possible we presented the user with a blank drop-down
+                if (fieldValue == null || fieldValue.equals("")) {
+                    d.getConstraintNames().remove(constraintName);
+                    d.getFieldNames().remove(constraintName);
+                } else {
+                    parsedFieldOps.put(constraintName, op);
+                    parsedFieldValues.put(constraintName, fieldValue);
+                }
             }
 
             if (actionError != null) {
-                errors.add(fieldName, actionError);
-            }
+                errors.add(constraintName, actionError);
+            } 
 
         }
 
@@ -309,26 +311,6 @@ public class QueryBuildForm extends ActionForm
             return new ActionError("errors." + shortClassName.toLowerCase(), fieldValue);
         }
 
-        return null;
-    }
-
-    /**
-     * Check that a reference is valid and update parsedFieldOps and parsedFieldValues.
-     *
-     * @param ref the descriptor used to get type information for parsing the fieldValue
-     * @param op the ConstraintOp on this field
-     * @param fieldName the name of the field from the form
-     * @param fieldValue the value from the form
-     * @param aliases the current DisplayQueryClass aliases
-     * @return an ActionError describing a parse problem, or null if there are no problems
-     */
-    protected ActionError validateReference(ReferenceDescriptor ref, ConstraintOp op,
-                                          String fieldName, Object fieldValue, Collection aliases) {
-        //TODO check that the reference is of the right type too
-        if (!aliases.contains((String) fieldValue)) {
-            return new ActionError("error.title");
-        }
-        parsedFieldValues.put(fieldName, fieldValue);
         return null;
     }
 
