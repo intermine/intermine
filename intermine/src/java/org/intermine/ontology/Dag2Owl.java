@@ -34,6 +34,10 @@ public class Dag2Owl
     protected String namespace;
     protected OntModel ontModel;
     
+    /**
+     * Constructor
+     * @param namespace the namespace to use in generating URI-based identifiers
+     */
     public Dag2Owl(String namespace) {
         if (namespace.indexOf("#") != -1) {
             throw new IllegalArgumentException("namespace shouldn't contain '#'");
@@ -53,7 +57,6 @@ public class Dag2Owl
     /**
      * Perform the conversion by iterating over the root terms
      * @param rootTerms a collection of rootTerms
-     * @return the corresponding OntModel
      */
     public void process(Collection rootTerms) {
         for (Iterator i = rootTerms.iterator(); i.hasNext(); ) {
@@ -64,7 +67,6 @@ public class Dag2Owl
     /**
      * Convert a (root) DagTerm to a OntClass, recursing through children
      * @param term a DagTerm
-     * @param ontModel the OWL model in which the class will be created
      * @return the corresponding OntClass
      */
     public OntClass process(DagTerm term) {
@@ -93,14 +95,30 @@ public class Dag2Owl
         return cls;
     }
 
+    /**
+     * Specifies how a class name is generated
+     * @param term the relevant term
+     * @return the generated class name
+     */
     public String generateClassName(DagTerm term) {
         return namespace + "#" + filter(term.getId());
     }
 
+    /**
+     * Specifies how a property name is generated
+     * @param domain the domain term
+     * @param range the range term
+     * @return the generated property name
+     */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
         return namespace + "#" + filter(domain.getId() + "$" + range.getId());
     }
 
+    /**
+     * Filter a URI fragment to remove illegal characters
+     * @param s the relevant string
+     * @return the filtered string
+     */
     public String filter(String s) {
         return s.replaceAll(":", "_");
     }
