@@ -12,6 +12,8 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
+import java.util.Collections;
+
 import org.flymine.model.testmodel.*;
 
 public class QueryTest extends TestCase
@@ -159,6 +161,59 @@ public class QueryTest extends TestCase
         assertEquals(q1.hashCode(), q1.hashCode());
         assertEquals(q1.hashCode(), q2.hashCode());
         assertTrue("Expected q1 hashcode not to equal q3 hashcode", q1.hashCode() != q3.hashCode());
+    }
+
+    public void testAlias1() throws Exception {
+        Query q = new Query();
+        String s1 = "one";
+
+        q.alias(s1, "alias1");
+
+        try {
+            q.alias(s1, "alias2");
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+
+    }
+
+    public void testAlias2() throws Exception {
+        Query q = new Query();
+        String s1 = "one";
+        String s2 = "two";
+
+        q.alias(s1, "alias1");
+
+        try {
+            q.alias(s2, "alias1");
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+
+    }
+
+    public void testAlias3() throws Exception {
+        Query q = new Query();
+        String s1 = "one";
+
+        q.alias(s1, "alias1");
+
+        q.alias(s1, null);
+
+        assertEquals(Collections.singletonMap(s1, "alias1"), q.getAliases());
+
+    }
+
+    public void testAlias4() throws Exception {
+        Query q = new Query();
+        String s1 = "one";
+
+        q.alias(s1, "alias1");
+
+        q.alias(s1, "alias1");
+
+        assertEquals(Collections.singletonMap(s1, "alias1"), q.getAliases());
+
     }
 
 }
