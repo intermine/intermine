@@ -102,11 +102,11 @@ public class SqlGenerator
         }
         ClassDescriptor tableMaster = schema.getTableMaster(cld);
         if (schema.isTruncated(tableMaster)) {
-            return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM "
+            return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " AND a1_.class = '" + clazz.getName() + "' LIMIT 2";
         } else {
-            return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM "
+            return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " LIMIT 2";
         }
@@ -350,13 +350,51 @@ public class SqlGenerator
         buildWhereClause(state, q, offsetCon, schema);
         String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, schema) : "");
         StringBuffer retval = new StringBuffer("SELECT ")
-            .append(q.isDistinct() ? "DISTINCT " : "")
+            .append(needsDistinct(q) ? "DISTINCT " : "")
             .append(buildSelectComponent(state, q, schema, kind))
             .append(state.getFrom())
             .append(state.getWhere())
             .append(buildGroupBy(q, schema, state))
             .append(orderBy);
         return retval.toString();
+    }
+
+    /**
+     * Returns true if this query requires a DISTINCT keyword in the generated SQL.
+     *
+     * @param q the Query
+     * @return a boolean
+     */
+    protected static boolean needsDistinct(Query q) {
+        if (!q.isDistinct()) {
+            return false;
+        }
+
+        Set selectClasses = new HashSet();
+        Iterator selectIter = q.getSelect().iterator();
+        while (selectIter.hasNext()) {
+            QueryNode n = (QueryNode) selectIter.next();
+            if (n instanceof QueryClass) {
+                selectClasses.add(n);
+            } else if (n instanceof QueryField) {
+                QueryField f = (QueryField) n;
+                if ("id".equals(f.getFieldName())) {
+                    FromElement qc = f.getFromElement();
+                    if (qc instanceof QueryClass) {
+                        selectClasses.add(qc);
+                    }
+                }
+            }
+        }
+
+        boolean allPresent = true;
+        Iterator fromIter = q.getFrom().iterator();
+        while (fromIter.hasNext() && allPresent) {
+            FromElement qc = (FromElement) fromIter.next();
+            allPresent = selectClasses.contains(qc);
+        }
+
+        return !allPresent;
     }
 
     /**
