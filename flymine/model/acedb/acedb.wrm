@@ -216,13 +216,11 @@
 			Transposon_insertion Text  // Text Transposon type
 			Transposon_excision Text  //  new tag [030220 krb]
 			Transposon_mobilisation Text  // added [030220 krb]
-			Derived_from ?Allele XREF Derivative
 			// for revertants and deletions from Transposon alleles
 			Isolated_for ?Author  // person requesting allele 
 			KO_consortium_allele
         Location ?Laboratory XREF Alleles #Lab_Location
 	Species UNIQUE ?Species // added krb [021021]
-	Derivative ?Allele XREF Derived_from
         Strain ?Strain XREF Allele
         Genetics        Map ?Map #Map_position
                         Mapping_data    2_point ?2_point_data
