@@ -46,6 +46,8 @@ public class SessionMethods
     /**
      * Executes current query and sets session attributes QUERY_RESULTS and RESULTS_TABLE. If the
      * query fails for some reason, this method returns false and ActionErrors are set on the
+     * request. If the parameter <code>saveQuery</code> is true then the query is
+     * automatically saved in the user's query history and a message is added to the
      * request.
      *
      * @param session   the http session
@@ -54,7 +56,8 @@ public class SessionMethods
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */
-    public static boolean runQuery(HttpSession session, HttpServletRequest request, boolean saveQuery)
+    public static boolean runQuery(HttpSession session, HttpServletRequest request,
+                                   boolean saveQuery)
         throws Exception {
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
