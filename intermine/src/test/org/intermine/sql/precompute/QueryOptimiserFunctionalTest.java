@@ -91,6 +91,8 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
      */
     public void setUpQueries() throws Exception {
         queries.put("table2", "SELECT table2.col2 AS hello FROM table2 ORDER BY table2.col1");
+        queries.put("table2LimitOffset", "SELECT table2.col2 AS hello FROM table2 ORDER BY table2.col1 LIMIT 20 OFFSET 10");
+        queries.put("table2DifferentLimitOffset", "SELECT table2.col2 AS hello FROM table2 ORDER BY table2.col1 LIMIT 20 OFFSET 15");
         queries.put("table2Table3JoinOnCol1", "SELECT table2.col1, table2.col2, table3.col1, table3.col2 FROM table2, table3 WHERE table2.col1 = table3.col1 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
         queries.put("halfOfTable2Table3JoinOnCol1", "SELECT table2.col1, table2.col2, table3.col1, table3.col2 FROM table2, table3 WHERE table2.col1 = table3.col1 AND table2.col1 < " + (DATA_SIZE/2) + " ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
         queries.put("table2Table3JoinOnCol2", "SELECT table2.col1, table2.col2, table3.col1, table3.col2 FROM table2, table3 WHERE table2.col2 = table3.col2 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
@@ -161,7 +163,8 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
      * @throws Exception if type does not appear in the queries map
      */
     public void executeTest(String type) throws Exception {
-        Query q = new Query((String) queries.get(type));
+        String queryString = (String) queries.get(type);
+        Query q = new Query(queryString);
 
         BestQueryStorer bestQuery = new BestQueryStorer();
         Set precomps = PrecomputedTableManager.getInstance(getDatabase()).getPrecomputedTables();
@@ -182,13 +185,13 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         // set of queries we are actually going to get back, but we
         // can check that it takes less time than the original query.
 
-        Query optimisedQuery = QueryOptimiser.optimise(q, getDatabase());
-        if (q.equals(optimisedQuery)) {
+        String optimisedQuery = QueryOptimiser.optimise(queryString, getDatabase());
+        if (queryString.equals(optimisedQuery)) {
             System.out.println(": ORIGINAL ");
         } else {
             System.out.println(": OPTIMISED ");
         }
-        checkResultsForQueries(q, optimisedQuery);
+        checkResultsForQueries(q, new Query(optimisedQuery));
 
     }
 
