@@ -20,4 +20,7 @@
 <class name="org.flymine.model.genomic.ChromosomeBand" is-interface="true">
   <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="bands"/>
 </class>
+<class name="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
+  <reference name="chromosomeLocation" referenced-type="org.flymine.model.genomic.Location"/>
+</class>
 </classes>
