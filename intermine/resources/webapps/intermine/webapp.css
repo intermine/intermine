@@ -142,7 +142,7 @@ table.results tr.even {
 }
 
 .type {
-  font-style: italic;
+  color: grey;
 }
 .collectionField {
   color: green;
@@ -180,7 +180,6 @@ table.refSummary tbody tr td {
   background: #FAF8FF;
 }
 span.collectionDescription {
-  color: gray;
 }
 
 /* classes relating to the begin page */
