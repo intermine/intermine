@@ -17,11 +17,8 @@
     </c:forEach>
   </html:select>
   <br/>
-  <html:submit property="action">
+  <html:submit>
     <fmt:message key="button.selectClass"/>
-  </html:submit>
-  <html:submit property="action">
-    <fmt:message key="button.browse"/>
   </html:submit>
 </html:form>
 <!-- /queryClassSelect.jsp -->
