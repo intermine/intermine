@@ -11,13 +11,12 @@
     <put name="menu" value="/menu.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
-    <put name="right" value="fqlquery.jsp"/>
 </definition>
 <definition name="index.page" extends="layout.template">
     <put name="body" value="/index.jsp"/>
 </definition>
 <definition name="query.page" extends="layout.template">
-    <put name="body" value="query.tile"/>
+    <put name="body" value="queryMain.tile"/>
 </definition>
 <definition name="results.page" extends="layout.template">
     <put name="body" value="resultsView.tile"/>
@@ -31,24 +30,36 @@
 <definition name="documentation.page" extends="layout.template">
     <put name="body" value="/docbook.jsp"/>
 </definition>
-<definition name="tribody.template" path="/tribody.jsp">
-</definition>
-<definition name="sidebar.tile" path="/sidebar.jsp">
-    <put name="sidebarOne" value="queryClassSelect.jsp"/>
-    <put name="sidebarTwo" value="queryAliasChange.jsp"/>
-    <put name="sidebarThree" value="runQuery.jsp"/>
-    <put name="sidebarFour" value="restartQuery.jsp"/>
-    <put name="sidebarFive" value="saveQuery.jsp"/>
-</definition>
-<definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do">
-</definition>
-<definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do">
+
+<definition name="querybody.template" path="/queryMain.jsp">
 </definition>
 
-<definition name="query.tile" extends="tribody.template" controllerUrl="/initQuery.do">
-    <put name="left" value="sidebar.tile"/>
-    <put name="top" value="queryBuild.tile" />
-    <put name="bottom" value="queryView.tile"/>
+
+<definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
+    <put name="querySelectBuild" value="querySelectBuild.tile"/>
+    <put name="aliasChange" value="aliasChange.tile"/>
+    <put name="runQuery" value="runQuery.jsp"/>
+    <put name="restartQuery" value="restartQuery.jsp"/>
+    <put name="saveQuery" value="saveQuery.jsp"/>
+    <put name="queryView" value="queryView.tile"/>
+</definition>
+
+<definition name="querySelectBuild.tile" path="querySelectBuild.jsp">
+    <put name="queryClassSelect" value="queryClassSelect.tile"/>
+    <put name="queryBuild" value="queryBuild.tile"/>
+</definition>
+
+<definition name="queryClassSelect.tile" path="/queryClassSelect.jsp"
+            controllerUrl="/initQueryBuild.do">
+</definition>
+
+<definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do">
+</definition>
+
+<definition name="aliasChange.tile" path="/queryAliasChange.jsp" controllerUrl="/initQueryView.do">
+</definition>
+
+<definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do">
 </definition>
 
 <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
