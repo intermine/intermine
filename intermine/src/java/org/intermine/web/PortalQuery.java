@@ -82,6 +82,8 @@ public class PortalQuery extends TemplateAction
         PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
         // Convert path query to intermine query
         SessionMethods.loadQuery(queryCopy, request.getSession());
+        // Set a session attribute that indicates we have arrived via a portal
+        session.setAttribute(Constants.ENTERED_PORTAL, Boolean.TRUE);
         
         return handleTemplateQuery(mapping, request, response, true, false);
     }
