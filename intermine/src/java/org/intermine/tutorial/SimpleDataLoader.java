@@ -11,6 +11,7 @@ package org.flymine.tutorial;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.flymine.objectstore.ObjectStoreWriter;
@@ -66,7 +67,8 @@ public class SimpleDataLoader
         // Try and get the Company object from the database, if it exists
         // Failure to do this lookup stage will mean that the objectstore
         // will perform an insert rather than an update
-        Company companyFromDb = (Company) (osw.getObjectStore().getObjectByExample(company));
+        Company companyFromDb = (Company) (osw.getObjectStore().getObjectByExample(company,
+                    Collections.singleton("name")));
         if (companyFromDb != null) {
             // It did exist. Any attributes we alter must be done on
             // this object, then the ObjectStore will know which to
