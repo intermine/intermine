@@ -48,4 +48,5 @@
     <item name="Secretary1" _xml-id="22" xsi:type="secretary" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="Secretary2" _xml-id="23" xsi:type="secretary" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="Secretary3" _xml-id="24" xsi:type="secretary" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="Types1" intType="267" booleanType="true" floatType="0.6" doubleType="0.88" _xml-id="25" xsi:type="types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
 </items>
