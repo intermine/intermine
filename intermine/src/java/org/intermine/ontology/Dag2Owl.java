@@ -19,7 +19,6 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import org.flymine.util.StringUtil;
 import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,7 +32,7 @@ public class Dag2Owl
 {
     protected String namespace;
     protected OntModel ontModel;
-    
+
     /**
      * Constructor
      * @param namespace the namespace to use in generating URI-based identifiers
@@ -45,7 +44,7 @@ public class Dag2Owl
         this.namespace = namespace;
         ontModel = ModelFactory.createOntologyModel();
     }
-    
+
     /**
      * Return the model
      * @return the model
@@ -144,12 +143,13 @@ public class Dag2Owl
             File errorFile = new File(errorFilename);
 
             DagParser parser = new DagParser();
-            Set rootTerms = parser.process(new BufferedReader(new FileReader(dagFile)));
+            Set rootTerms = parser.process(new FileReader(dagFile));
 
             DagValidator validator = new DagValidator();
             if (!validator.validate(rootTerms)) {
                  BufferedWriter out = new BufferedWriter(new FileWriter(errorFile));
                  out.write(validator.getOutput());
+                 out.flush();
             }
 
             Dag2Owl owler = new Dag2Owl("http://www.flymine.org/namespace");

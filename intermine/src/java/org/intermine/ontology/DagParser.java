@@ -14,9 +14,9 @@ import java.util.Stack;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
-import java.io.BufferedReader;
 import java.util.StringTokenizer;
-
+import java.io.BufferedReader;
+import java.io.Reader;
 
 /**
  * Parse a file in DAG format into a tree of DagTerms.
@@ -40,26 +40,26 @@ public class DagParser
 
     /**
      * Parse a DAG file to produce a set of toplevel DagTerms.
-     * @param input text in DAG format
+     * @param in text in DAG format
      * @return a set of DagTerms - will contain only toplevel (domain) terms
      * @throws Exception if anything goes wrong
      */
-    public Set process(BufferedReader input) throws Exception {
-        readTerms(input);
+    public Set process(Reader in) throws Exception {
+        readTerms(new BufferedReader(in));
         return terms;
     }
 
     /**
      * Read DAG input line by line to generate hierarchy of DagTerms.
-     * @param input text in DAG format
+     * @param in text in DAG format
      * @throws Exception if anything goes wrong
      */
-    public void readTerms(BufferedReader input) throws Exception {
+    public void readTerms(BufferedReader in) throws Exception {
         String line;
         int prevspaces = -1;
         int currspaces;
 
-        while ((line = input.readLine()) != null) {
+        while ((line = in.readLine()) != null) {
             DagTerm term = null;
 
             if (!line.startsWith(comment) && !line.equals("")) {
@@ -90,6 +90,7 @@ public class DagParser
                 prevspaces = currspaces;
             }
         }
+        in.close();
     }
 
 
@@ -218,7 +219,7 @@ public class DagParser
 //             File dagFile = new File(dagFilename);
 //             DagParser parser = new DagParser();
 //             FileReader reader = new FileReader(dagFile);
-//             Set terms = parser.process(new BufferedReader(reader));
+//             Set terms = parser.process(reader);
 //         } catch (Exception e) {
 //             e.printStackTrace();
 //         }

@@ -10,7 +10,7 @@ package org.flymine.ontology;
  *
  */
 
-import java.io.BufferedReader;
+import java.io.Reader;
 import java.io.IOException;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -29,7 +29,7 @@ public class MergeSpec2Owl extends URL2Model
      * @return the corresponding OntModel
      * @throws IOException if something goes wrong in accessing the input
      */
-    protected OntModel process(BufferedReader in) throws IOException {
+    protected OntModel process(Reader in) throws IOException {
         OntModel model = ModelFactory.createOntologyModel();
         model.read(in, null, "N3");
         return model;

@@ -10,11 +10,17 @@ package org.flymine.ontology;
  *
  */
 
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import java.io.Reader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.File;
 
 /**
  * This class (simplistically) converts a daml+oil schema to owl by swapping the daml namespace
@@ -30,6 +36,20 @@ public class Daml2Owl extends URL2Model
     protected static final String DAML_NS_PATTERN = "http://www.daml.org/2001/03/daml[+]oil#";
     protected static final String OWL_NS = "http://www.w3.org/2002/07/owl#";
     protected static final String ENDL = System.getProperty("line.separator");
+    protected String baseURI = "http://www.flymine.org/daml";
+
+
+    /**
+     * Convert a DAML document to the corresponding OWL OntModel
+     * @param in the input document reader
+     * @param baseURI the base URI of of the source daml document
+     * @return the corresponding OntModel
+     * @throws IOException if something goes wrong in accessing the input
+     */
+    protected OntModel process(Reader in, String baseURI) throws IOException {
+        this.baseURI = baseURI;
+        return process(in);
+    }
 
     /**
      * Convert a DAML document to the corresponding OWL OntModel
@@ -37,9 +57,10 @@ public class Daml2Owl extends URL2Model
      * @return the corresponding OntModel
      * @throws IOException if something goes wrong in accessing the input
      */
-    protected OntModel process(BufferedReader in) throws IOException {
+    protected OntModel process(Reader in) throws IOException {
+        BufferedReader reader = new BufferedReader(in);
         StringBuffer sb = new StringBuffer();
-        for (String line = in.readLine(); line != null; line = in.readLine()) {
+        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             line = line.replaceAll("xmlns:daml=\"" + DAML_NS_PATTERN + "\"",
                                    "xmlns:owl=\"" + OWL_NS + "\"");
             line = line.replaceAll("daml:differentIndividualFrom", "owl:differentFrom");
@@ -53,9 +74,41 @@ public class Daml2Owl extends URL2Model
             line = line.replaceAll("daml:", "owl:");
             sb.append(line + ENDL);
         }
-        in.close();
+        reader.close();
         OntModel ontModel = ModelFactory.createOntologyModel();
-        ontModel.read(new ByteArrayInputStream(sb.toString().getBytes()), null);
+        ontModel.read(new ByteArrayInputStream(sb.toString().getBytes()), baseURI);
         return ontModel;
+    }
+
+    /**
+     * Run conversion from DAML to OWL format
+     * @param args damlFilename, owlFilename
+     * @throws Exception if anthing goes wrong
+     */
+    public static void main(String[] args) throws Exception {
+        if (args.length < 2) {
+            throw new Exception("Usage: Daml2Owl damlfile owlfile baseURI");
+        }
+
+        String damlFilename = args[0];
+        String owlFilename = args[1];
+
+        String baseURI = "";
+        if (args.length > 2) {
+            baseURI = args[2];
+        }
+
+        try {
+            Daml2Owl owler = new Daml2Owl();
+            BufferedWriter out = new BufferedWriter(new FileWriter(new File(owlFilename)));
+            if (baseURI.equals("")) {
+                owler.process(new FileReader(new File(damlFilename))).write(out);
+            } else {
+                owler.process(new FileReader(new File(damlFilename)), baseURI).write(out);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

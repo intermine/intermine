@@ -11,6 +11,7 @@ package org.flymine.ontology;
  */
 
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
@@ -39,5 +40,5 @@ public abstract class URL2Model
      * @return the corresponding OntModel
      * @throws IOException if something goes wrong in accessing the input
      */
-    protected abstract OntModel process(BufferedReader in) throws IOException;
+    protected abstract OntModel process(Reader in) throws IOException;
 }
