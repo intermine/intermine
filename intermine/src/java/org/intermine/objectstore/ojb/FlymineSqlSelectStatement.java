@@ -822,14 +822,16 @@ public class FlymineSqlSelectStatement implements SqlStatement
         Iterator selectIter = select.iterator();
         while (selectIter.hasNext()) {
             QueryNode node = (QueryNode) selectIter.next();
-            retval += (needComma ? ", " : " ORDER BY ");
-            needComma = true;
             if (node instanceof QueryClass) {
+                retval += (needComma ? ", " : " ORDER BY ");
+                needComma = true;
                 retval += queryClassToString((QueryClass) node, false, true);
             } else if (node instanceof QueryValue) {
                 // Do nothing
                 retval = retval;
             } else {
+                retval += (needComma ? ", " : " ORDER BY ");
+                needComma = true;
                 retval += queryEvaluableToString((QueryEvaluable) node);
             }
         }
