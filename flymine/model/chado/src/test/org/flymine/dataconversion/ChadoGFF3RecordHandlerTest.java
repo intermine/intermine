@@ -68,7 +68,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     }
 
     public void testHandleGene() throws Exception {
-        String gff = "4\t.\tgene\t230506\t233418\t.\t+\t.\tID=CG1587;Name=Crk;Dbxref=FlyBase:FBan0001587,FlyBase:FBgn0024811;synonym=Crk;synonym_2nd=CRK,D-CRK";
+        String gff = "4\t.\tgene\t230506\t233418\t.\t+\t.\tID=CG1234;Name=Crk;Dbxref=FlyBase:FBan0001587,FlyBase:FBgn0024811;synonym=Crk;synonym_2nd=CRK,D-CRK,Crk,CG5678";
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
         Iterator iter = GFF3Parser.parse(srcReader);
@@ -85,14 +85,18 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("name", "CG1234");
 
-        assertEquals(3, handler.getItems().size());
+        assertEquals(7, handler.getItems().size());
 
-        Iterator itemIter = handler.getItems().iterator();
-        itemIter.next(); // Synonym
-        Item actualGene = (Item) itemIter.next();
-
+        Item actualGene = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                actualGene = item;
+                expectedGene.setIdentifier(actualGene.getIdentifier());
+            }
+        }
         assertEquals(expectedGene, actualGene);
-
     }
 
 
@@ -113,7 +117,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG31667");
         expectedGene.setAttribute("organismDbId", "FBgn0051667");
 
-        assertEquals(5, handler.getItems().size());
+        assertEquals(6, handler.getItems().size());
 
         Item actualGene = null;
         iter = handler.getItems().iterator();
