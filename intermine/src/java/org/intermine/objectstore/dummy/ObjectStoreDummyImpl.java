@@ -77,12 +77,12 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      *
      * @param q the Query to execute
      * @param start the start row
-     * @param end the end row
+     * @param limit the maximum numberof rows to be returned
      * @return a list of ResultsRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int end) throws ObjectStoreException {
-        checkStartLimit(start, end - start + 1);
+    public List execute(Query q, int start, int limit) throws ObjectStoreException {
+        checkStartLimit(start, limit);
 
         List results = new ArrayList();
 
@@ -92,7 +92,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
             //throw new ArrayIndexOutOfBoundsException("Start row outside results size");
         }
 
-        for (int i = start; ((i <= end) && (i < resultsSize)); i++) {
+        for (int i = start; ((i <= (start + limit - 1)) && (i < resultsSize)); i++) {
             if (i == poisonRowNo) {
                 throw new ObjectStoreException("Poison row number " + i + " reached");
             }
@@ -184,11 +184,11 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      *
      * @param q the query to explain
      * @param start first row required, numbered from zero
-     * @param end the number of the last row required, numbered from zero
+     * @param limit the maximum number of rows to be returned
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explining the query
      */
-    public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException {
+    public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
         return new ExplainResult();
     }
 

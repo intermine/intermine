@@ -128,13 +128,12 @@ public class ObjectStoreOjbImpl implements ObjectStore
      *
      * @param q the Query to execute
      * @param start the first row to return, numbered from zero
-     * @param end the number of the last row to return, numbered from zero
+     * @param limit the maximum number of rows to return
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int end) throws ObjectStoreException {
+    public List execute(Query q, int start, int limit) throws ObjectStoreException {
         // check limit and offset are valid
-        int limit = (end - start) + 1;
         if (start > maxOffset) {
             throw (new ObjectStoreLimitReachedException("start parameter (" + start
                                             + ") is greater than permitted maximum ("
@@ -175,21 +174,20 @@ public class ObjectStoreOjbImpl implements ObjectStore
     }
 
     /**
-     * Runs an EXPLAIN for the given query with specified start and end parameters.  This
+     * Runs an EXPLAIN for the given query with specified start and limit parameters.  This
      * gives estimated time for a single 'page' of the query.
      *
      * @param q the query to explain
      * @param start first row required, numbered from zero
-     * @param end the number of the last row required, numbered from zero
+     * @param limit the maximum number of rows to return
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explining the query
      */
-    public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException {
-        return explain(q, start, end);
+    public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
+        return explain(q, start, limit);
     }
 
-    private ExplainResult explain(Query q, int start, int end) throws ObjectStoreException {
-        int limit = (end - start) + 1;
+    private ExplainResult explain(Query q, int start, int limit) throws ObjectStoreException {
         PersistenceBrokerFlyMineImpl pb = pbf.createPersistenceBroker(db, model);
         ExplainResult result = pb.explain(q, start, limit);
         pb.close();
