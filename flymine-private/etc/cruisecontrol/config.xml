@@ -13,8 +13,6 @@
       <schedule interval="300" intervaltype="relative">
         <!-- The regular build attempt -->
         <ant buildfile="./flymine-cc.xml" target="cleanbuild" multiple="1"/>
-        <!-- The official nightly build and release (midnight) -->
-        <ant buildfile="./flymine-cc.xml" target="nightlybuild" time="0000"/>
       </schedule>
 
       <log dir="/shared/log/buildlog" encoding="ISO-8859-1">
