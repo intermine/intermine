@@ -7,7 +7,7 @@
 
     <section>
       <heading>Introduction</heading>
-       <item><ulink url="../introduction.xml">The FlyMine project</ulink></item>
+       <item><ulink url="../../introduction.xml">The FlyMine project</ulink></item>
        <item><ulink url="manualQuickstart.xml">Quick start guide</ulink></item>
       </section>
 
@@ -23,19 +23,12 @@
              <item><ulink url="manualShowresults.xml">Show results</ulink></item>
              <item><ulink url="manualSavingqueries.xml">Saving queries</ulink></item>
              <item><ulink url="manualResultdisplay.xml">The result display</ulink></item>
-             <item><ulink url="manualBrowsingdata.xml">Browsing the results</ulink></item>
              <item><ulink url="manualSavingdata.xml">Saving results to bags</ulink></item>
              <item><ulink url="manualExportingdata.xml">Exporting results</ulink></item>
              <item><ulink url="manualHistory.xml">Query history</ulink></item>
              <item><ulink url="manualExamplequeries.xml">Query Examples</ulink></item>
      </section>
 
-
-      <section>
-          <heading>Building a simple query</heading>
-             <item><ulink url="manualSimplequeries.xml">Building Simple queries</ulink></item>
-      </section>
-     
 
 
       <section>
