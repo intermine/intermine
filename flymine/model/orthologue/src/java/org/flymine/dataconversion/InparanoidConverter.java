@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.LinkedHashSet;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -140,6 +138,7 @@ public class InparanoidConverter extends FileConverter
     /**
      * Convenience method to create and cache proteins by SwissProt id
      * @param swissProtId SwissProt identifier for the new Protein
+     * @param species abbreviation of species
      * @return a new protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
@@ -169,6 +168,11 @@ public class InparanoidConverter extends FileConverter
         return item;
     }
 
+    /**
+     * Create an Organism for the given species abbreviation
+     * @param abbrev species abbreviation
+     * @return a new Organism item
+     */
     protected Item newOrganism(String abbrev) {
         Item organism = newItem("Organism");
         organism.addAttribute(new Attribute("abbreviation", abbrev));

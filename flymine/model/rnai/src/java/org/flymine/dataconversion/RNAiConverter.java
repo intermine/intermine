@@ -11,7 +11,6 @@ package org.flymine.dataconversion;
  */
 
 import java.io.BufferedReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,7 +33,7 @@ import org.intermine.dataconversion.ItemWriter;
 public class RNAiConverter extends FileConverter
 {
     protected static final String RNAI_NS = "http://www.flymine.org/model/rnai#";
-    
+
     protected Map genes = new HashMap();
     protected Map synonyms = new HashMap();
     protected Map annotations = new HashMap();
@@ -80,7 +79,7 @@ public class RNAiConverter extends FileConverter
                         getPhenotype(array[4]),
                         getExperimentalResult(pubMedId).getIdentifier());
             }
-            
+
             for (Iterator i = genes.values().iterator(); i.hasNext();) {
                 writer.store(ItemHelper.convert((Item) i.next()));
             }
@@ -98,10 +97,10 @@ public class RNAiConverter extends FileConverter
     private Map annotationEvidence = new HashMap();
     private Map geneAnnotation = new HashMap();
     private Map phenotypeAnnotation = new HashMap();
-    
+
     /**
-     * Creates an Annotation, and puts it into a map for future reference. This map must be written
-     * out at the end.
+     * Creates an Annotation, and puts it into a map for future reference.
+     * This map must be written out at the end.
      *
      * @param gene the gene to be attached
      * @param phenotype the phenotype to be attached
@@ -243,7 +242,8 @@ public class RNAiConverter extends FileConverter
             Item experiment = newItem("RNAiExperiment");
             experiment.addReference(new Reference("publication", pub.getIdentifier()));
             experimentalResult = newItem("ExperimentalResult");
-            experimentalResult.addReference(new Reference("experiment", experiment.getIdentifier()));
+            experimentalResult.addReference(new Reference("experiment",
+                                                          experiment.getIdentifier()));
 
             experimentalResults.put(pubMedId, experimentalResult);
             writer.store(ItemHelper.convert(pub));
@@ -276,13 +276,13 @@ public class RNAiConverter extends FileConverter
     }
 
     /**
-     * Sets up a phenotype for a code, and puts it into a Map for future use. They must be stored
-     * afterwards.
+     * Sets up a phenotype for a code, and puts it into a Map for future use.
+     * They must be stored afterwards.
      *
      * @param code the code
      * @return an Item that is the phenotype
      */
-    protected Item getPhenotype(String code) throws ObjectStoreException {
+    protected Item getPhenotype(String code) {
         if ("prz".equals(code) || "Prz".equals(code)) {
             code = "Prl";
         }
@@ -298,7 +298,7 @@ public class RNAiConverter extends FileConverter
         }
         return phenotype;
     }
-    
+
     /**
      * Convenience method for creating a new Item
      * @param className the name of the class
