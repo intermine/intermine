@@ -17,4 +17,13 @@ public class QueryValueTest extends TestCase
         QueryValue value = new QueryValue("string");
         assertEquals(String.class, value.getType());
     }
+
+    public void testInvalidType() {
+        try {
+            QueryValue value = new QueryValue(new Object());
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
 }
