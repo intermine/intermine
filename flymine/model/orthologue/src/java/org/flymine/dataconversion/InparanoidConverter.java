@@ -191,26 +191,7 @@ public class InparanoidConverter extends FileConverter
      */
     protected void setupItems() throws ObjectStoreException {
         Item pub = newItem("Publication");
-        pub.addAttribute(new Attribute("title", "Automatic clustering of orthologs and "
-                                        + "in-paralogs from pairwise species comparisons"));
-        pub.addAttribute(new Attribute("journal", "Journal of Molecular Biology"));
-        pub.addAttribute(new Attribute("volume", "314"));
-        pub.addAttribute(new Attribute("issue", "5"));
-        pub.addAttribute(new Attribute("year", "2001"));
-        pub.addAttribute(new Attribute("pages", "1041-1052"));
         pub.addAttribute(new Attribute("pubMedId", "11743721"));
-        Item author1 = newItem("Author"), author2 = newItem("Author"), author3 = newItem("Author");
-        ReferenceList publications = new ReferenceList("publications", Arrays.asList(new Object[]
-            {pub.getIdentifier()}));
-        author1.addAttribute(new Attribute("name", "Remm, Maido"));
-        author1.addCollection(publications);
-        author2.addAttribute(new Attribute("name", "Storm, Christian E. V."));
-        author2.addCollection(publications);
-        author3.addAttribute(new Attribute("name", "Sonnhammer, Erik L. L."));
-        author3.addCollection(publications);
-        ReferenceList authors = new ReferenceList("authors", Arrays.asList(new Object[]
-            {author1.getIdentifier(), author2.getIdentifier(), author3.getIdentifier()}));
-        pub.addCollection(authors);
 
         analysis = newItem("ComputationalAnalysis");
         analysis.addAttribute(new Attribute("algorithm", "INPARANOID"));
@@ -218,14 +199,12 @@ public class InparanoidConverter extends FileConverter
 
         db = newItem("Database");
         db.addAttribute(new Attribute("title", "INPARANOID"));
-        db.addAttribute(new Attribute("url", "http://inparanoid.cgb.ki.se"));
 
-        List toStore = Arrays.asList(new Object[] {db, analysis, author1, author2, author3, pub});
+        List toStore = Arrays.asList(new Object[] {db, analysis, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {
             writer.store(ItemHelper.convert((Item) i.next()));
         }
     }
-
 
     private void addToCollection(Item item, String colName, String refid) {
         ReferenceList col = null;
