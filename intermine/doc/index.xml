@@ -1,0 +1,9 @@
+<index>
+    <section>
+        <heading>Documentation</heading>
+        <item><ulink url="software/index.xml">Software</ulink></item>
+        <item><ulink url="http://www.flymine.org/api/">API&#160;JavaDoc</ulink></item>
+        <item><ulink url="contribute/index.xml">Contributing code to InterMine</ulink></item>
+    </section>
+
+</index>
