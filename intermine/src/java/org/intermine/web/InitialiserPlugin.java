@@ -149,7 +149,19 @@ public class InitialiserPlugin implements PlugIn
      */
     private void summarizeObjectStore(ServletContext servletContext, ObjectStore os)
         throws ServletException {
-        ObjectStoreSummary oss = new ObjectStoreSummary(os);
+        Properties objectStoreSummaryProperties = new Properties();
+        InputStream objectStoreSummaryPropertiesStream =
+            servletContext.getResourceAsStream("/WEB-INF/objectstoresummary.properties");
+        if (objectStoreSummaryPropertiesStream == null) {
+            // there are no model specific properties
+        } else {
+            try {
+                objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
+            } catch (Exception e) {
+                throw new ServletException("Unable to read objectstoresummary.properties", e);
+            }
+        }
+        ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
         Model model = os.getModel();
         Map classes = new LinkedHashMap();
         Map classCounts = new LinkedHashMap();
