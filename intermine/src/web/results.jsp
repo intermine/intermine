@@ -71,9 +71,8 @@
               <%-- the checkbox to select this object --%>
               <td align="center">
                 <html:multibox property="selectedObjects">
-                  <c:out value="${status.index}"/>
+                  <c:out value="${column.index},${status.index}"/>
                 </html:multibox>
-                <c:out value="${column.index}"/>,<c:out value="${status.index}"/>
               </td>
               <td>
                 <c:out value="${row[column.index]}"/>
@@ -88,60 +87,62 @@
     </c:forEach>
   </c:if>
 
-  <%-- The footers --%>
-  <tr class="resultsFooter">
-    <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-      <td align="center">
-        <html:submit property="action">
-          <bean:message key="button.save"/>
-        </html:submit>
-      </td>
-      <td></td>
-    </c:forEach>
-  </tr>
-</table>
 
-<%-- "Displaying xxx to xxx of xxx rows" messages --%>
-<c:choose>
-  <c:when test="${resultsTable.sizeEstimate}">
-    <bean:message key="results.pageinfo.estimate"
-                  arg0="${resultsTable.start+1}"
-                  arg1="${resultsTable.end+1}"
-                  arg2="${resultsTable.size}"/>
-  </c:when>
-  <c:otherwise>
-    <bean:message key="results.pageinfo.exact"
-                  arg0="${resultsTable.start+1}"
-                  arg1="${resultsTable.end+1}"
-                  arg2="${resultsTable.size}"/>
-  </c:otherwise>
+    <%-- The footers --%>
+    <tr class="resultsFooter">
+      <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
+        <td align="center">
+        </td>
+        <td></td>
+      </c:forEach>
+    </tr>
+  </table>
 
-</c:choose>
-<br/>
+  <%-- "Displaying xxx to xxx of xxx rows" messages --%>
+  <c:choose>
+    <c:when test="${resultsTable.size == 0}">
+      <bean:message key="results.pageinfo.empty"/>
+    </c:when>
+    <c:when test="${resultsTable.sizeEstimate}">
+      <bean:message key="results.pageinfo.estimate"
+                    arg0="${resultsTable.start+1}"
+                    arg1="${resultsTable.end+1}"
+                    arg2="${resultsTable.size}"/>
+    </c:when>
+    <c:otherwise>
+      <bean:message key="results.pageinfo.exact"
+                    arg0="${resultsTable.start+1}"
+                    arg1="${resultsTable.end+1}"
+                    arg2="${resultsTable.size}"/>
+    </c:otherwise>
 
-<%-- Paging controls --%>
-<c:if test="${resultsTable.start > 0}">
-  <html:link action="/changeResults?method=first">
-    <bean:message key="results.first"/>
-  </html:link>
-</c:if>
-<c:if test="${resultsTable.previousButton}">
-  <html:link action="/changeResults?method=previous">
-    <bean:message key="results.previous"/>
-  </html:link>
-</c:if>
-<c:if test="${resultsTable.nextButton}">
-  <html:link action="/changeResults?method=next">
-    <bean:message key="results.next"/>
-  </html:link>
-</c:if>
-<c:if test="${resultsTable.sizeEstimate || (resultsTable.end != resultsTable.size - 1)}">
-  <html:link action="/changeResults?method=last">
-    <bean:message key="results.last"/>
-  </html:link>
-</c:if>
-<br/>
-<%-- Page size controls --%>
+  </c:choose>
+  <br/>
+
+  <%-- Paging controls --%>
+  <c:if test="${resultsTable.start > 0}">
+    <html:link action="/changeResults?method=first">
+      <bean:message key="results.first"/>
+    </html:link>
+  </c:if>
+  <c:if test="${resultsTable.previousButton}">
+    <html:link action="/changeResults?method=previous">
+      <bean:message key="results.previous"/>
+    </html:link>
+  </c:if>
+  <c:if test="${resultsTable.nextButton}">
+    <html:link action="/changeResults?method=next">
+      <bean:message key="results.next"/>
+    </html:link>
+  </c:if>
+  <c:if test="${resultsTable.sizeEstimate || (resultsTable.end != resultsTable.size - 1)}">
+    <html:link action="/changeResults?method=last">
+      <bean:message key="results.last"/>
+    </html:link>
+  </c:if>
+  <br/>
+
+  <%-- Page size controls --%>
 
   <bean:message key="results.changepagesize"/>
   <html:select property="pageSize">
@@ -152,6 +153,28 @@
   </html:select>
   <html:submit property="action">
     <bean:message key="button.change"/>
+  </html:submit>
+  <br/>
+  <br/>
+
+  <%-- Save bag controls --%>
+  <br/>
+  <c:if test="${!empty savedBags}">
+    <html:select property="bagName">
+
+      <c:forEach items="${savedBags}" var="entry">
+        <html:option value="${entry.key}"/>
+      </c:forEach>
+    </html:select>
+  <html:submit property="action">
+    <bean:message key="bag.existing"/>
+  </html:submit>
+  <br/>
+  </c:if>
+
+  <html:text property="newBagName"/>
+  <html:submit property="action">
+    <bean:message key="bag.new"/>
   </html:submit>
 
 </html:form>
