@@ -3,6 +3,7 @@ package org.flymine.objectstore.query;
 import java.util.List;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,9 +30,10 @@ public class Results extends AbstractList
     protected int batchSize = 1;
     protected int maxBatchNo = -1;
     protected boolean initialised = false;
+    protected boolean doPrefetch = false;
 
     // A map of batch number against a List of ResultsRows
-    protected Map batches = new HashMap();
+    protected Map batches = Collections.synchronizedMap(new HashMap());
 
     /**
      * No argument constructor for testing purposes
@@ -63,7 +65,7 @@ public class Results extends AbstractList
      * @return the relevant ResultRows as a List
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      * @throws IndexOutOfBoundsException if end is beyond the number of rows in the results
-     * @throws IllegalArgumentException if start > end
+     * @throws IllegalArgumentException if start &gt; end
      * @throws FlyMineException if an error occurs promoting proxies
      */
     public List range(int start, int end) throws ObjectStoreException, FlyMineException {
