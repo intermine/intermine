@@ -21,17 +21,28 @@
   <c:forEach items="${object.synonyms}" var="thisSynonym">
     <c:if test="${thisSynonym.source.title == 'ensembl'}">
       <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
+                 title="Ensembl: ${thisSynonym.synonym}"
                  target="view_window">
-        Ensembl: <c:out value="${thisSynonym.synonym}"/>
+        <html:img src="model/ensembl_logo_small.png"/>
+      </html:link>
+      <html:link href="http://www.ensembl.org/Drosophila_melanogaster/geneview?db=core&gene=${thisSynonym.synonym}" 
+                 title="Ensembl: ${thisSynonym.synonym}"
+                 target="view_window">
+        <c:out value="${thisSynonym.synonym}"/>
       </html:link>
     </c:if>
     <c:if test="${thisSynonym.source.title == 'flybase'}">
-      flybase link:
       <html:link href="http://www.flybase.org/.bin/fbidq.html?${thisSynonym.synonym}"
+                 title="FlyBase:: ${thisSynonym.synonym}"
                  target="view_window">
-        FlyBase: <c:out value="${thisSynonym.synonym}"/>
+        <html:img src="model/flybase_logo_small.png"/>
       </html:link>
-    </c:if>
+      <html:link href="http://www.flybase.org/.bin/fbidq.html?${thisSynonym.synonym}"
+                 title="FlyBase: ${thisSynonym.synonym}"
+                 target="view_window">
+        <c:out value="${thisSynonym.synonym}"/>
+      </html:link> 
+   </c:if>
   </c:forEach>
 </c:if>
 <!-- /geneLong.jsp -->
