@@ -71,10 +71,9 @@ public class Query implements SQLStringable
      * Construct a new parsed Query from a String.
      *
      * @param sql a SQL SELECT String to parse
-     * @throws antlr.RecognitionException if the text is not recognised properly
-     * @throws antlr.TokenStreamException if something else goes wrong
+     * @throws IllegalArgumentException if the SQL String is invalid
      */
-    public Query(String sql) throws antlr.RecognitionException, antlr.TokenStreamException {
+    public Query(String sql) {
         this();
 
         try {
