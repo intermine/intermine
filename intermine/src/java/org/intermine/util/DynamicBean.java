@@ -147,6 +147,9 @@ public class DynamicBean implements MethodInterceptor
             map.put(method.getName().substring(5), args[0]);
             return null;
         }
+        if (method.getName().startsWith("proxGet") && (args.length == 0)) {
+            return map.get(method.getName().substring(7));
+        }
         if (method.getName().startsWith("add") && (args.length == 1)
                 && (method.getReturnType() == Void.TYPE)) {
             Collection col = (Collection) map.get(method.getName().substring(3));

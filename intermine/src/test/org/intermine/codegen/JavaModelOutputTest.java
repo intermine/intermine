@@ -182,7 +182,8 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected Object rfd1;" + ENDL
             + INDENT + "public package.name.Class2 getRfd1() { if (rfd1 instanceof org.flymine.objectstore.proxy.ProxyReference) { return ((package.name.Class2) ((org.flymine.objectstore.proxy.ProxyReference) rfd1).getObject()); }; return (package.name.Class2) rfd1; }" + ENDL
             + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL
-            + INDENT + "public void proxyRfd1(org.flymine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL
+            + INDENT + "public void proxyRfd1(org.flymine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL
+            + INDENT + "public Object proxGetRfd1() { return rfd1; }" + ENDL + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
@@ -220,7 +221,8 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected Object rfd1;" + ENDL
             + INDENT + "public Class2 getRfd1() { if (rfd1 instanceof org.flymine.objectstore.proxy.ProxyReference) { return ((Class2) ((org.flymine.objectstore.proxy.ProxyReference) rfd1).getObject()); }; return (Class2) rfd1; }" + ENDL
             + INDENT + "public void setRfd1(Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL
-            + INDENT + "public void proxyRfd1(org.flymine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL;
+            + INDENT + "public void proxyRfd1(org.flymine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL
+            + INDENT + "public Object proxGetRfd1() { return rfd1; }" + ENDL + ENDL;
 
         assertEquals(mo.generate(rfd1, true) + "\n" + expected, expected, mo.generate(rfd1, true));
     }

@@ -324,14 +324,25 @@ public class JavaModelOutput extends ModelOutput
                     .append("(org.flymine.objectstore.proxy.ProxyReference ")
                     .append(name)
                     .append(")");
-                if (!fieldPresent) {
-                    sb.append(";" + ENDL);
-                } else {
+                if (fieldPresent) {
                     sb.append(" { this.")
                         .append(name)
                         .append(" = ")
                         .append(name)
                         .append("; }" + ENDL);
+                } else {
+                    sb.append(";" + ENDL);
+                }
+                sb.append(INDENT)
+                    .append("public Object proxGet")
+                    .append(StringUtil.capitalise(name))
+                    .append("()");
+                if (fieldPresent) {
+                    sb.append(" { return ")
+                        .append(name)
+                        .append("; }" + ENDL);
+                } else {
+                    sb.append(";" + ENDL);
                 }
             }
         }

@@ -145,7 +145,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                             subQ.addToSelect(qc1);
                             subQ.addToSelect(qc2);
                             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                            if (q.getConstraint() == null) {
+                            if ((q.getConstraint() == null) && q.getOrderBy().isEmpty()
+                                    && q.getGroupBy().isEmpty()) {
                                 QueryField idField = new QueryField(qc1, "id");
                                 cs.addConstraint(new SimpleConstraint(idField,
                                             ConstraintOp.GREATER_THAN_EQUALS,

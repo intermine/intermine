@@ -177,7 +177,8 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             long now = (new Date()).getTime();
             if (now - time > 10000) {
                 LOG.error(getModel().getName() + ": Executed SQL (time = "
-                        + (now - time) + "): " + sql);
+                        + (now - time) + "): " + (sql.length() > 100
+                        ? sql.substring(0, 100) : sql));
             }
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             QueryNode firstOrderBy = null;

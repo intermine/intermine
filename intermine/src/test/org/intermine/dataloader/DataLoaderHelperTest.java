@@ -86,6 +86,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("jkhsdfg")));
         q.setConstraint(cs);
+        q.setDistinct(false);
 
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
@@ -103,6 +104,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.IS_NULL));
         q.setConstraint(cs);
+        q.setDistinct(false);
 
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
@@ -128,9 +130,11 @@ public class DataLoaderHelperTest extends QueryTestCase
         ConstraintSet subCs = new ConstraintSet(ConstraintOp.AND);
         subCs.addConstraint(new SimpleConstraint(new QueryField(subQc, "address"), ConstraintOp.EQUALS, new QueryValue("10 Downing Street")));
         subQ.setConstraint(subCs);
+        subQ.setDistinct(false);
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "address"), ConstraintOp.CONTAINS, address));
         cs.addConstraint(new SubqueryConstraint(address, ConstraintOp.IN, subQ));
         q.setConstraint(cs);
+        q.setDistinct(false);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
@@ -153,6 +157,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("jkhsdfg")));
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "address"), ConstraintOp.IS_NULL));
         q.setConstraint(cs);
+        q.setDistinct(false);
 
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");

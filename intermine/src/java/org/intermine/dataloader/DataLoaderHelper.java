@@ -250,6 +250,7 @@ public class DataLoaderHelper
         try {
             int subCount = 0;
             Query q = new Query();
+            q.setDistinct(false);
             QueryClass qcFMBO = new QueryClass(FlyMineBusinessObject.class);
             q.addFrom(qcFMBO);
             q.addToSelect(qcFMBO);
@@ -263,6 +264,7 @@ public class DataLoaderHelper
                 Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
                 if (!primaryKeys.isEmpty()) {
                     subQ = new Query();
+                    subQ.setDistinct(false);
                     QueryClass qc = new QueryClass(cld.getType());
                     subQ.addFrom(qc);
                     subQ.addToSelect(qc);

@@ -17,6 +17,7 @@
   <target name="prepare"
           description="Create a directory that this model will be built to">
     <mkdir dir="${build.model}/${model.name}" />
+    <mkdir dir="${build.model}/${model.name}/resources" />
   </target>
 
 

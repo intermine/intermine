@@ -26,6 +26,7 @@ import org.flymine.model.datatracking.Source;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.proxy.ProxyReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
@@ -100,12 +101,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             retval.setNoExplain();
             return retval;
         } else {
-            //if (osw.pilferObjectById(destId) == null) {
-                //System//.out.println(" --------------------------- Cache miss");
+            FlyMineBusinessObject o = osw.pilferObjectById(destId);
+            if (o == null) {
+                return Collections.singleton(new ProxyReference(osw, destId));
             //} else {
                 //System//.out.println(" --------------------------- Cache hit");
-            //}
-            return Collections.singleton(osw.getObjectById(destId));
+            }
+            return Collections.singleton(o);
         }
     }
 
@@ -202,9 +204,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                     fieldName);
                         }
                         if (target != null) {
+                            if (target instanceof ProxyReference) {
+                                LOG.error("Reifying object for modification in place");
+                                target = ((ProxyReference) target).getObject();
+                            }
                             FlyMineBusinessObject targetsReferent = (FlyMineBusinessObject)
                                 TypeUtil.getFieldValue(target, reverseRef.getName());
-                            if (targetsReferent != null) {
+                            if ((targetsReferent != null) && (! targetsReferent.equals(dest))) {
                                 invalidateObjectById(targetsReferent.getId());
                                 TypeUtil.setFieldValue(targetsReferent, fieldName, null);
                                 store(targetsReferent);

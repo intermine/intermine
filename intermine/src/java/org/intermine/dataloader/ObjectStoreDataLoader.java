@@ -69,11 +69,6 @@ public class ObjectStoreDataLoader extends DataLoader
         res.setNoExplain();
         res.setBatchSize(1000);
         Iterator iter = res.iterator();
-        //for (int i = 0; i < 35000; i++) {
-        //    String text = iter.next().toString();
-        //    int textLen = text.length();
-        //    System//.out.println("Skipping " + text.substring(0, (textLen > 60 ? 60 : textLen)));
-        //}
         while (iter.hasNext()) {
             FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
             //if (obj.getClass().getName().equals("org.flymine.model.chado.feature")) {

@@ -33,6 +33,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryCollectionReference;
+import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SingletonResults;
@@ -193,19 +194,35 @@ public class LiteParser
                     CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
                     // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
                     //                         AND this = <this>
+                    // Or if we have a one-to-many collection, then:
+                    //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
                     Query q = new Query();
-                    QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
-                    QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor().getType());
-                    q.addFrom(qc1);
-                    q.addFrom(qc2);
-                    q.addToSelect(qc2);
-                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                    cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
-                                    coll.getName()), ConstraintOp.CONTAINS, qc2));
-                    cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
-                                ConstraintOp.EQUALS, new QueryValue(obj.getId())));
-                    q.setConstraint(cs);
-                    q.setDistinct(false);
+                    if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
+                        QueryClass qc1 = new QueryClass(coll.getReferencedClassDescriptor()
+                                .getType());
+                        q.addFrom(qc1);
+                        q.addToSelect(qc1);
+                        QueryObjectReference qor = new QueryObjectReference(qc1,
+                                coll.getReverseReferenceDescriptor().getName());
+                        ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS,
+                                obj);
+                        q.setConstraint(cc);
+                        q.setDistinct(false);
+                    } else {
+                        QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
+                        QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
+                            .getType());
+                        q.addFrom(qc1);
+                        q.addFrom(qc2);
+                        q.addToSelect(qc2);
+                        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
+                                        coll.getName()), ConstraintOp.CONTAINS, qc2));
+                        cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
+                                    ConstraintOp.EQUALS, new QueryValue(obj.getId())));
+                        q.setConstraint(cs);
+                        q.setDistinct(false);
+                    }
                     Collection lazyColl = new SingletonResults(q, os, os.getSequence());
                     TypeUtil.setFieldValue(obj, coll.getName(), lazyColl);
                 }

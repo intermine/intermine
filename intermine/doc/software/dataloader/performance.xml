@@ -61,6 +61,16 @@
 	</sect1>
 
 	<sect1>
+		<title>Improved ID Map</title>
+		<para>This is implemented.
+			The ID Map is so good at improving the performance of the IntegrationWriter that it may be a good idea to write a special class to handle it.
+			The current ID Map uses a LinkedHashMap, which uses about 40 bytes per entry.
+			Given that the Map is purely a mapping from integer to integer, it should be possible to produce a mapping class that consumes only 4 bytes per entry.
+			This class would then be able to hold the entire mapping for the Chado database (11 million entries) in only 45MB of RAM.
+		</para>
+	</sect1>
+
+	<sect1>
 		<title>Extending the FQL query language</title>
 		<para><highlights>This is partially implemented</highlights>.
 			Queries of the form:
@@ -76,6 +86,16 @@
 	</sect1>
 
 	<sect1>
+		<title>Proxy collections do not take advantage of extended FQL</title>
+		<para><highlights>This is partially implemented</highlights>.
+			Proxy collections could make use of queries of the form
+			<programlisting>SELECT Department FROM Department
+	WHERE Department.company CONTAINS <emphasis>&lt;object&gt;</emphasis></programlisting>
+			however they should, at least for the case where the collection is a one-to-many collection.
+		</para>
+	</sect1>
+
+	<sect1>
 		<title>Improved indexing</title>
 		<para><highlights>This is partially implemented</highlights>.
 			The system currently adds indexes to the primary key fields of objects in the destination database, so that primary key queries are quick.
@@ -86,16 +106,6 @@
 			The index creation code creates a multi-column index with the columns in the order specified in the model primary key config file, so reordering the fields in the config file to put the most distinct field first will help.
 		</para>
 		<para>In the future, the index creation code should probably create just a single-column index on the first field in the primary key, as multi-column indexes are rarely worth it.
-		</para>
-	</sect1>
-
-	<sect1>
-		<title>Improved ID Map</title>
-		<para>This is implemented.
-			The ID Map is so good at improving the performance of the IntegrationWriter that it may be a good idea to write a special class to handle it.
-			The current ID Map uses a LinkedHashMap, which uses about 40 bytes per entry.
-			Given that the Map is purely a mapping from integer to integer, it should be possible to produce a mapping class that consumes only 4 bytes per entry.
-			This class would then be able to hold the entire mapping for the Chado database (11 million entries) in only 45MB of RAM.
 		</para>
 	</sect1>
 
@@ -118,7 +128,7 @@
 
 	<sect1>
 		<title>ObjectStoreFastCollectionsImpl</title>
-		<para><highlights>This is partially implemented</highlights>
+		<para>This is implemented.
 			The current ObjectStoreTranslatingImpl performs a batch read of Items, and then three collection fetches per item, by dereferencing the Items' collections.
 			Much faster results can be achieved if those collection fetches are batched as well.
 			This can be achieved by writing an ObjectStoreFastCollectionsImpl, which automatically fetches the contents of all the collections of objects it returns, and places them as materialised collections in the objects.
@@ -127,10 +137,19 @@
 	</sect1>
 	
 	<sect1>
-		<title>ObjectStoreItemTranslatingImpl to batch-fetch related Items</title>
+		<title>ObjectStoreFastCollectionsForTranslatorImpl to batch-fetch related Items</title>
+		<para>This is implemented.
+			This is a reimplementation of ObjectStoreFastCollectionsImpl, which is capable of being run on top of the ObjectStoreTranslatingImpl with the ItemToObjectTranslator.
+			The difference is the different method by which the underlying objectstore handles collections, and the type of query that the underlying objectstore will accept.
+		</para>
+	</sect1>
+
+	<sect1>
+		<title>getObjectById() may be unnecessary in many situations</title>
 		<para><highlights>This is NOT implemented</highlights>.
-			It should be possible to fetch all of the Items that are likely to be accessed by Items in a batch, if the user of the ObjectStore hands the ObjectStore an method of working out which ones they will be.
-			These accesses would also be batchable.
+			getEquivalentObjects() method returns the result of getObjectById() if the id is in the ID Map.
+			This may be unnecessary.
+			We could let it return a placeholder, which can be traded in for a real object if it is really needed.
 		</para>
 	</sect1>
 
@@ -165,28 +184,9 @@
 
 	<sect1>
 		<title>Reducing the over-use of DISTINCT</title>
-		<para><highlights>This is NOT implemented</highlights>.
+		<para>This is implemented.
 			Queries using the DISTINCT keyword run slower than equivalent queries that do not.
 			The primary key query does not need to use DISTINCT, so it should not.
-		</para>
-	</sect1>
-
-	<sect1>
-		<title>Proxy collections do not take advantage of extended FQL</title>
-		<para><highlights>This is NOT implemented</highlights>.
-			Proxy collections could make use of queries of the form
-			<programlisting>SELECT Department FROM Department
-	WHERE Department.company CONTAINS <emphasis>&lt;object&gt;</emphasis></programlisting>
-			however they should, at least for the case where the collection is a one-to-many collection.
-		</para>
-	</sect1>
-
-	<sect1>
-		<title>getObjectById() may be unnecessary in many situations</title>
-		<para><highlights>This is NOT implemented</highlights>.
-			getEquivalentObjects() method returns the result of getObjectById() if the id is in the ID Map.
-			This may be unnecessary.
-			We could let it return a placeholder, which can be traded in for a real object if it is really needed.
 		</para>
 	</sect1>
 </article>

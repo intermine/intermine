@@ -26,6 +26,7 @@ import org.flymine.model.datatracking.Source;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.proxy.ProxyReference;
 import org.flymine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
@@ -116,6 +117,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         //System//.out.println(" --------------- Store called on "
         //        + o.substring(oTextLength > 60 ? 60 : oTextLength));
         Set equivalentObjects = getEquivalentObjects(o, source);
+        if ((equivalentObjects.size() == 1) && (type == SKELETON)) {
+            FlyMineBusinessObject onlyEquivalent = (FlyMineBusinessObject)
+                equivalentObjects.iterator().next();
+            if (onlyEquivalent instanceof ProxyReference) {
+                return onlyEquivalent;
+            }
+        }
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();
         if (equivalentIter.hasNext()) {
@@ -126,6 +134,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         Iterator objIter = equivalentObjects.iterator();
         while (objIter.hasNext()) {
             FlyMineBusinessObject obj = (FlyMineBusinessObject) objIter.next();
+            if (obj instanceof ProxyReference) {
+                obj = ((ProxyReference) obj).getObject();
+            }
             classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
         }
         FlyMineBusinessObject newObj = (FlyMineBusinessObject) DynamicUtil.createObject(classes);

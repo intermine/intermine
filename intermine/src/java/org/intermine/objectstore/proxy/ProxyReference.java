@@ -19,7 +19,7 @@ import org.flymine.objectstore.ObjectStoreException;
  *
  * @author Matthew Wakeling
  */
-public class ProxyReference
+public class ProxyReference implements FlyMineBusinessObject
 {
     private ObjectStore os;
     private Integer id;
@@ -55,5 +55,14 @@ public class ProxyReference
      */
     public Integer getId() {
         return id;
+    }
+
+    /**
+     * Sets the ID value
+     *
+     * @param id the id
+     */
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

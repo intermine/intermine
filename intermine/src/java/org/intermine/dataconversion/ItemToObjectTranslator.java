@@ -105,7 +105,7 @@ public class ItemToObjectTranslator extends Translator
                 namespaceToId.put(namespace, new Integer(offset));
                 LOG.error("Assigning namespace " + namespace + " to " + offset);
                 int highest = ((Integer) row.get(1)).intValue();
-                offset += highest;
+                offset += highest + 1;
             }
         }
     }
@@ -212,6 +212,21 @@ public class ItemToObjectTranslator extends Translator
         }
 
         Item item = (Item) o;
+        int itemSize = 100;
+        Iterator iter = item.getAttributes().iterator();
+        while (iter.hasNext()) {
+            itemSize += ((Attribute) iter.next()).getValue().length() + 50;
+        }
+        iter = item.getCollections().iterator();
+        while (iter.hasNext()) {
+            itemSize += ((ReferenceList) iter.next()).getRefIds().length() + 50;
+        }
+        itemSize += item.getReferences().size() * 50;
+        if (itemSize > 1000000) {
+            LOG.error("Translating large object " + item.getIdentifier() + " ("
+                    + identifierToId(item.getIdentifier()) + ") - classname = "
+                    + item.getClassName() + ", size = " + itemSize);
+        }
         FlyMineBusinessObject obj = (FlyMineBusinessObject)
             DynamicUtil.instantiateObject(
                 OntologyUtil.generateClassNames(item.getClassName(), model),

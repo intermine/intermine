@@ -430,7 +430,7 @@
     <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
       <property name="model.name" value="chado"/>
       <property name="model.src" value="${build.model}/chado"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
@@ -575,14 +575,14 @@
   <target name="build-acedbtest" depends="compile-main" >
     <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedbtest"/>
-      <property name="model.src" value="${model}/acedb/"/>
+      <property name="model.src" value="${model}/acedbtest/"/>
       <reference torefid="class.path" refid="acedbtest.class.path"/>
     </ant>
   </target>
 
   <!-- copy original .wrm file to model directory for acedataloadertest -->
   <target name="copy-model-acedbtest" depends="build-acedbtest">
-    <copy todir="${build.model}/acedbtest" file="${model}/acedb/acedbtest.wrm"/>
+    <copy todir="${build.model}/acedbtest" file="${model}/acedbtest/acedbtest.wrm"/>
   </target>
 
   <!-- copy original .xmi file to model directory for XmiParserFunctionalTest -->

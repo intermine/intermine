@@ -101,6 +101,33 @@ public class TypeUtil
     }
 
     /**
+     * Returns the value of a public or protected Field of an Object given by the field name without
+     * dereferencing any ProxyReference objects.
+     *
+     * @param o the Object
+     * @param fieldName the name of the relevant Field
+     * @return the value of the field, without dereferencing ProxyReferences
+     * @throws IllegalArgumentException if the field is inaccessible or the Field is not an Object
+     * Reference
+     */
+    public static Object getFieldProxy(Object o, String fieldName) throws IllegalArgumentException {
+        try {
+            return getProxyGetter(o.getClass(), fieldName).invoke(o, new Object[] {});
+        } catch (Exception e) {
+            String type = null;
+            try {
+                type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
+            } catch (Exception e3) {
+            }
+            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't proxyGet field \""
+                    + o.getClass().getName() + "." + fieldName + "\""
+                    + (type == null ? "" : " (a " + type + ")"));
+            e2.initCause(e);
+            throw e2;
+        }
+    }
+
+    /**
      * Sets the value of a public or protected Field of an Object given the field name
      *
      * @param o the Object
@@ -177,6 +204,21 @@ public class TypeUtil
     }
 
     /**
+     * Returns the Method object that is the proxyGetter for the field name
+     *
+     * @param c the Class
+     * @param fieldName the name of the relevant field
+     * @return the proxyGetter, or null if it is not present or the field is not found
+     */
+    public static Method getProxyGetter(Class c, String fieldName) {
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            return info.getProxyGetter();
+        }
+        return null;
+    }
+
+    /**
      * Returns the Map from field name to TypeUtil.FieldInfo objects for all the fields in a
      * given class.
      *
@@ -204,17 +246,19 @@ public class TypeUtil
                     if (getterName.startsWith("get")) {
                         String setterName = "set" + getterName.substring(3);
                         String proxySetterName = "proxy" + getterName.substring(3);
+                        String proxyGetterName = "proxGet" + getterName.substring(3);
                         if (methods.containsKey(setterName)) {
                             Method getter = (Method) methods.get(getterName);
                             Method setter = (Method) methods.get(setterName);
                             Method proxySetter = (Method) methods.get(proxySetterName);
+                            Method proxyGetter = (Method) methods.get(proxyGetterName);
                             String fieldname = (Character.isLowerCase(getterName.charAt(3))
                                     ? getterName.substring(3, 4).toUpperCase()
                                     : getterName.substring(3, 4).toLowerCase())
                                 + getterName.substring(4);
                             if (!getter.getName().equals("getClass")) {
                                 FieldInfo info = new FieldInfo(fieldname, getter, setter,
-                                        proxySetter);
+                                        proxySetter, proxyGetter);
                                 infos.put(fieldname, info);
                             }
                         }
@@ -420,6 +464,7 @@ public class TypeUtil
         private Method getter;
         private Method setter;
         private Method proxySetter;
+        private Method proxyGetter;
 
         /**
          * Construct a new FieldInfo object.
@@ -428,12 +473,16 @@ public class TypeUtil
          * @param getter the getter Method to retrieve the value
          * @param setter the setter Method to alter the value
          * @param proxySetter the setter Method to set the value to a ProxyReference
+         * @param proxyGetter the getter Method to get the value without dereferencing
+         * ProxyReferences
          */
-        public FieldInfo(String name, Method getter, Method setter, Method proxySetter) {
+        public FieldInfo(String name, Method getter, Method setter, Method proxySetter,
+                Method proxyGetter) {
             this.name = name;
             this.getter = getter;
             this.setter = setter;
             this.proxySetter = proxySetter;
+            this.proxyGetter = proxyGetter;
         }
 
         /**
@@ -470,6 +519,15 @@ public class TypeUtil
          */
         public Method getProxySetter() {
             return proxySetter;
+        }
+
+        /**
+         * Returns the proxyGetter Method.
+         *
+         * @return a proxyGetter Method
+         */
+        public Method getProxyGetter() {
+            return proxyGetter;
         }
 
         /**
