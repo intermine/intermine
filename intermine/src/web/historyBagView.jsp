@@ -35,7 +35,7 @@
         </tr>
       </c:forEach>
     </table>
-    <br/><br/>
+    <br/>
   </c:if>
 </div>
 <!-- /historyBagView.jsp -->
