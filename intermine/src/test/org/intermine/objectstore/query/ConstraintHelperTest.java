@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Collection;
 
@@ -155,6 +157,40 @@ public class ConstraintHelperTest extends TestCase
         List got = ConstraintHelper.createList(q);
 
         assertEquals(expected, got);
+    }
+
+    public void testTraverseConstraint() {
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.OR);
+
+        cs2.addConstraint(cs1);
+        QueryField qf1 = new QueryField(qc1, "name");
+        QueryValue value1 = new QueryValue("Company1");
+        simpleConstraint1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS, value1);
+        cs2.addConstraint(simpleConstraint1);
+
+        org.intermine.web.LogMe.log("con", "c: " + cs2);
+
+        final Map foundConstraints = new HashMap();
+
+        foundConstraints.put(ConstraintSet.class, new ArrayList());
+        foundConstraints.put(BagConstraint.class, new ArrayList());
+        foundConstraints.put(SimpleConstraint.class, new ArrayList());
+        foundConstraints.put(SubqueryConstraint.class, new ArrayList());
+        foundConstraints.put(ClassConstraint.class, new ArrayList());
+        foundConstraints.put(ContainsConstraint.class, new ArrayList());
+
+        ConstraintHelper.traverseConstraints(cs2, new ConstraintTraverseAction() {
+            public void apply(Constraint c) {
+                ((List) foundConstraints.get(c.getClass())).add(c);
+            }
+        });
+
+        assertEquals(2, ((List) foundConstraints.get(ConstraintSet.class)).size());
+        assertEquals(1, ((List) foundConstraints.get(BagConstraint.class)).size());
+        assertEquals(7, ((List) foundConstraints.get(SimpleConstraint.class)).size());
+        assertEquals(2, ((List) foundConstraints.get(SubqueryConstraint.class)).size());
+        assertEquals(2, ((List) foundConstraints.get(ClassConstraint.class)).size());
+        assertEquals(1, ((List) foundConstraints.get(ContainsConstraint.class)).size());
     }
 
     public void testFilterQueryClass() throws Exception {
