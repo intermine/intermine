@@ -83,7 +83,7 @@ public class QueryBuildController extends TilesAction
                 }
             }
         }
-            return null;
+        return null;
     }
 
     /**
@@ -112,6 +112,13 @@ public class QueryBuildController extends TilesAction
                     form.setFieldOp(((QueryField) sc.getArg1()).getFieldName(),
                                     sc.getType().getIndex());
                 }
+            } else if (c instanceof ContainsConstraint) {
+                ContainsConstraint cc = (ContainsConstraint) c;
+                String fieldName = cc.getReference().getFieldName();
+                form.setFieldValue(fieldName, (String) q.getAliases()
+                                   .get(cc.getQueryClass()));
+
+                form.setFieldOp(fieldName, cc.getType().getIndex());
             }
         }
     }
