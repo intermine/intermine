@@ -131,6 +131,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
             StringBuffer sqlBuffer = new StringBuffer("DELETE FROM ").append(name).append(" WHERE ")
                 .append(idField).append(" IN (");
             boolean needComma = false;
+            int statementSize = 0;
             Iterator iter = table.getIdsToDelete().iterator();
             while (iter.hasNext()) {
                 Object idValue = iter.next();
@@ -139,9 +140,20 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 }
                 needComma = true;
                 sqlBuffer.append(DatabaseUtil.objectToString(idValue));
+                statementSize++;
+                if (statementSize >= 500) {
+                    statementSize = 0;
+                    sqlBuffer.append(")");
+                    addToSimpleBatch(sqlBuffer.toString());
+                    sqlBuffer = new StringBuffer("DELETE FROM ").append(name).append(" WHERE ")
+                        .append(idField).append(" IN (");
+                    needComma = false;
+                }
             }
-            sqlBuffer.append(")");
-            addToSimpleBatch(sqlBuffer.toString());
+            if (statementSize > 0) {
+                sqlBuffer.append(")");
+                addToSimpleBatch(sqlBuffer.toString());
+            }
         }
     }
 
@@ -158,6 +170,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
         if (!rows.isEmpty()) {
             StringBuffer sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
             boolean needComma = false;
+            int statementSize = 0;
             Iterator dIter = rows.iterator();
             while (dIter.hasNext()) {
                 Row row = (Row) dIter.next();
@@ -168,9 +181,19 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     .append(row.getLeft()).append(" AND ").append(table.getRightColName())
                     .append(" = ").append(row.getRight()).append(")");
                 needComma = true;
+                statementSize++;
+                if (statementSize >= 500) {
+                    statementSize = 0;
+                    sql.append(")");
+                    addToSimpleBatch(sql.toString());
+                    sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
+                    needComma = false;
+                }
             }
-            sql.append(")");
-            addToSimpleBatch(sql.toString());
+            if (statementSize > 0) {
+                sql.append(")");
+                addToSimpleBatch(sql.toString());
+            }
         }
     }
 

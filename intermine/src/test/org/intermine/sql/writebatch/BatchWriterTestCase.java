@@ -536,6 +536,113 @@ public abstract class BatchWriterTestCase extends TestCase
         }
     }
 
+    public void testManyDeletes() throws Exception {
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection con = db.getConnection();
+        con.setAutoCommit(false);
+        try {
+            Statement s = con.createStatement();
+            try {
+                s.execute("DROP TABLE table1");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            s.addBatch("CREATE TABLE table1(a int, b int)");
+            s.executeBatch();
+            con.commit();
+            s = null;
+            BatchWriter writer = getWriter();
+            Batch batch = new Batch(writer);
+            String colNames[] = new String[] {"a", "b"};
+            for (int i = 0; i < 10000; i++) {
+                batch.addRow(con, "table1", new Integer(i), colNames, new Object[] {new Integer(i), new Integer(i * 2876123)});
+            }
+            batch.flush(con);
+            con.commit();
+            for (int i = 0; i < 10000; i++) {
+                batch.deleteRow(con, "table1", "a", new Integer(i));
+            }
+            batch.flush(con);
+            con.commit();
+            Set expected = new HashSet();
+            assertEquals(expected, getGot(con));
+        } catch (SQLException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            while (e != null) {
+                e.printStackTrace(pw);
+                e = e.getNextException();
+            }
+            pw.flush();
+            throw new Exception(sw.toString());
+        } finally {
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table1");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+    
+    public void testManyIndirectionDeletes() throws Exception {
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection con = db.getConnection();
+        con.setAutoCommit(false);
+        try {
+            Statement s = con.createStatement();
+            try {
+                s.execute("DROP TABLE table1");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            s.addBatch("CREATE TABLE table1(a int, b int)");
+            s.executeBatch();
+            con.commit();
+            s = null;
+            BatchWriter writer = getWriter();
+            Batch batch = new Batch(writer);
+            for (int i = 0; i < 10000; i++) {
+                batch.addRow(con, "table1", "a", "b", i, i * 2876123);
+            }
+            batch.flush(con);
+            con.commit();
+            for (int i = 0; i < 10000; i++) {
+                batch.deleteRow(con, "table1", "a", "b", i, i * 2876123);
+            }
+            batch.flush(con);
+            con.commit();
+            Set expected = new HashSet();
+            assertEquals(expected, getGot(con));
+        } catch (SQLException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            while (e != null) {
+                e.printStackTrace(pw);
+                e = e.getNextException();
+            }
+            pw.flush();
+            throw new Exception(sw.toString());
+        } finally {
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table1");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+    
     private Set getGot(Connection con) throws SQLException {
         Statement s = con.createStatement();
         ResultSet r = s.executeQuery("SELECT a, b FROM table1");
