@@ -10,13 +10,15 @@
     <c:out value="${object}"/>
   </c:when>
   <c:otherwise>
-    <html:link action="/objectDetails?id=${object.id}">
-      <font class="resultsCellTitle">
-        <c:forEach var="cld" items="${leafClds}">
-          <c:out value="${cld.unqualifiedName}"/>
-        </c:forEach>
-      </font>
-    </html:link>
+    <nobr>
+      <html:link action="/objectDetails?id=${object.id}">
+        <font class="resultsCellTitle">
+          <c:forEach var="cld" items="${leafClds}">
+            <c:out value="${cld.unqualifiedName}"/>
+          </c:forEach>
+        </font>
+      </html:link>
+    </nobr>
     <br/>
     <table>
       <tr>
