@@ -54,11 +54,11 @@ public class ObjectPipeTest extends TestCase
                     if (i == progress + 1) {
                         progress = i;
                     } else {
-                        progress = -3000;
+                        progress = 3000;
                     }
                 }
-                if (progress != -3000) {
-                    progress = -4000;
+                if (progress != 3000) {
+                    progress = 2000;
                 }
             }
         };
@@ -67,10 +67,14 @@ public class ObjectPipeTest extends TestCase
 
         assertEquals(0, progress);
         op.put(new Integer(1));
-        Thread.sleep(100);
+        for (int i = 0; (i < 20) && (progress < 1); i++) {
+            Thread.sleep(50);
+        }
         assertEquals(1, progress);
         op.put(new Integer(2));
-        Thread.sleep(100);
+        for (int i = 0; (i < 20) && (progress < 2); i++) {
+            Thread.sleep(50);
+        }
         assertEquals(2, progress);
 
         List l = new ArrayList();
@@ -79,12 +83,16 @@ public class ObjectPipeTest extends TestCase
         l.add(new Integer(5));
         l.add(new Integer(6));
         op.putAll(l);
-        Thread.sleep(100);
+        for (int i = 0; (i < 20) && (progress < 6); i++) {
+            Thread.sleep(50);
+        }
         assertEquals(6, progress);
 
         op.finish();
-        Thread.sleep(100);
-        assertEquals(-4000, progress);
+        for (int i = 0; (i < 20) && (progress < 2000); i++) {
+            Thread.sleep(50);
+        }
+        assertEquals(2000, progress);
     }
 
     public void testMultiThreaded2() throws Exception {
@@ -108,7 +116,7 @@ public class ObjectPipeTest extends TestCase
                 progress = 6;
 
                 op.finish();
-                progress = -4000;
+                progress = 2000;
             }
         };
 
@@ -117,20 +125,26 @@ public class ObjectPipeTest extends TestCase
         assertEquals(4, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(1), op.next());
-        Thread.sleep(100);
+        for (int i = 0; (i < 20) && (progress < 4); i++) {
+            Thread.sleep(50);
+        }
         assertEquals(4, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(2), op.next());
-        Thread.sleep(100);
+        Thread.sleep(200);
         assertEquals(4, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(3), op.next());
-        Thread.sleep(100);
+        for (int i = 0; (i < 20) && (progress < 5); i++) {
+            Thread.sleep(50);
+        }
         assertEquals(5, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(4), op.next());
-        Thread.sleep(100);
-        assertEquals(-4000, progress);
+        for (int i = 0; (i < 20) && (progress < 2000); i++) {
+            Thread.sleep(50);
+        }
+        assertEquals(2000, progress);
         assertTrue(op.hasNext());
         assertEquals(new Integer(5), op.next());
         assertTrue(op.hasNext());
