@@ -82,6 +82,7 @@ public class ChadoConvertor
             Item item = new Item();
             item.setClassName(cld.getModel().getNameSpace() + clsName);
             item.setIdentifier(clsId);
+            LOG.info("Processing item: " + clsName + " " + clsId);
             for (Iterator fdIter = cld.getFieldDescriptors().iterator(); fdIter.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) fdIter.next();
                 String fieldName = fd.getName();
