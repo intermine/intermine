@@ -13,6 +13,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.util.ModelUtil;
 
 /**
  * Implementation of ObjectStoreWriter that uses OJB as its underlying store
@@ -51,6 +52,9 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * @see ObjectStoreWriter#store
      */
     public void store(Object o) throws ObjectStoreException {
+        if (! ModelUtil.hasValidKey(o)) {
+            throw new ObjectStoreException("Cannot store " + o + ": primary key is not set (key = " + ModelUtil.getKey(o.getClass()) + ")");
+        }
         try {
             pb.store(o);
         } catch (Exception e) {
