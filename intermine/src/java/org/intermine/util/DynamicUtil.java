@@ -79,7 +79,8 @@ public class DynamicUtil
             }
             if (interfaces.isEmpty()) {
                 if (clazz == null) {
-                    throw new IllegalArgumentException("Cannot create a class from nothing");
+                    throw new IllegalArgumentException("Cannot create an object without a class "
+                                                       + "for: " + classes);
                 } else {
                     try {
                         classMap.put(classes, clazz);
