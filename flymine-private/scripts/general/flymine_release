@@ -57,8 +57,11 @@ jarfilename=flymine-$version.jar
 
 
 ### Remove releases older than 7 days
-command="ssh $server \"find $destdir -mtime +7 | xargs rm\""
-eval $command
+if [ $1 == "nightly" ]
+then
+    command="ssh $server \"find $destdir -mtime +7 | xargs rm\""
+    eval $command
+fi
 
 ### Copy the jar file(s) to the destination
 command="scp dist/flymine.jar $server:$destdir/$jarfilename"
