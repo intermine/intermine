@@ -171,11 +171,11 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                                         + " does not have a model specified ("
                                         + modelName + ") - check properties");
         }
-        Model model = Model.getInstanceByName(modelName);
-        if (model == null) {
+        Model classpathModel = Model.getInstanceByName(modelName);
+        if (classpathModel == null) {
             throw new MetaDataException("Model is null despite load from classpath");
         }
-        return model;
+        return classpathModel;
     }
 
     /**
