@@ -393,13 +393,7 @@ public class JavaModelOutput extends ModelOutput
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 String field = (String) iter.next();
-                if (cls.getClass().isPrimitive()) {
-                    sb.append("((" + cls.getName() + ")o)." + field + "==" + field);
-                } else {
-                    String thisField = "((" + cls.getName() + ") o)." + field;
-                    sb.append("(" + thisField + " == null ? (" + field + " == null) : "
-                            + thisField + ".equals(" + field + "))");
-                }
+                sb.append("((" + cls.getName() + ")o)." + field + "==" + field);
                 if (iter.hasNext()) {
                     sb.append(" && ");
                 }
