@@ -11,7 +11,7 @@ version="1.0">
 <html>
 <head>
 <title>FlyMine</title>
-<link rel="stylesheet" href="flymine.css" type="text/css" />
+<link rel="stylesheet" href="http://www.flymine.org/flymine.css" type="text/css" />
 <meta name="keywords" content="microarray, bioinformatics, drosophila, genomics" />
 <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
