@@ -16,7 +16,7 @@ public class PrecomputedTable
      * Construct a new PrecomputedTable
      *
      * @param q the Query that this PrecomputedTable stores
-     * @param name the name of the PrecomputedTable
+     * @param name the name of this PrecomputedTable
      */
     public PrecomputedTable(Query q, String name) {
         if (q == null) {
@@ -27,6 +27,24 @@ public class PrecomputedTable
         }
         this.q = q;
         this.name = name;
+    }
+
+    /**
+     * Gets the Query that is materialised in this PrecomputedTable
+     *
+     * @return the Query that is this PrecomputedTable materialises
+     */
+    public Query getQuery() {
+        return q;
+    }
+
+    /**
+     * Gets the name of this PrecomputedTable
+     *
+     * @return the name of the PrecomputedTable
+     */
+    public String getName() {
+        return name;
     }
 
     /**
