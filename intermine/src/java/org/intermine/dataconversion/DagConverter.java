@@ -115,11 +115,9 @@ public class DagConverter extends DataConverter
             if (term.getId() != null) {
                 item.addAttribute(new Attribute("identifier", term.getId()));
             }
-            ReferenceList parentRelations = new ReferenceList();
-            parentRelations.setName("parentRelations");
+            ReferenceList parentRelations = new ReferenceList("parentRelations");
             item.addCollection(parentRelations);
-            ReferenceList childRelations = new ReferenceList();
-            childRelations.setName("childRelations");
+            ReferenceList childRelations = new ReferenceList("childRelations");
             item.addCollection(childRelations);
             nameToTerm.put(termId, item);
             Iterator iter = term.getChildren().iterator();

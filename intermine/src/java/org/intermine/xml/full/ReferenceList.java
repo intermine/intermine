@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class ReferenceList
 {
-    protected String name = "";
+    protected String name;
     protected List refIds = new ArrayList();
 
     /**
@@ -32,16 +32,23 @@ public class ReferenceList
     /**
      * Constructor
      * @param name the name
+     */
+    public ReferenceList(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Constructor
+     * @param name the name
      * @param refIds the refIds
      */
     public ReferenceList(String name, List refIds) {
-        this.name = name;
-        this.refIds = refIds;
+        this(name);
+        this.refIds.addAll(refIds);
     }
 
     /**
      * Set the name of this field.
-     *
      * @param name the name
      */
     public void setName(String name) {
@@ -91,7 +98,7 @@ public class ReferenceList
         if (o instanceof ReferenceList) {
             ReferenceList r = (ReferenceList) o;
             return name.equals(r.name)
-            && refIds.equals(r.refIds);
+                && refIds.equals(r.refIds);
         }
         return false;
     }

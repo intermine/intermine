@@ -240,9 +240,7 @@ public class DataTranslator
                                            + " in class " + tgtClsName);
             }
             if (XmlUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
-                ReferenceList newCol = new ReferenceList();
-                newCol.setName(colTgtURI.split("__")[1]);
-                newCol.setRefIds(col.getRefIds());
+                ReferenceList newCol = new ReferenceList(colTgtURI.split("__")[1], col.getRefIds());
                 tgtItem.addCollection(newCol);
             }
         }
@@ -281,8 +279,7 @@ public class DataTranslator
     protected void promoteCollection(Item srcItem, String colName, String colFieldName,
                                      Item tgtItem, String fieldName)
         throws ObjectStoreException {
-        ReferenceList refList = new ReferenceList();
-        refList.setName(fieldName);
+        ReferenceList refList = new ReferenceList(fieldName);
         for (Iterator i = srcItem.getCollection(colName).getRefIds().iterator(); i.hasNext(); ) {
             Item colItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
             for (Iterator j = colItem.getCollection(colFieldName).getRefIds().iterator();
@@ -312,14 +309,11 @@ public class DataTranslator
             ref.setRefId(fromItem.getReference(oldFieldName).getRefId());
             toItem.addReference(ref);
         } else if (fromItem.hasCollection(oldFieldName)) {
-            ReferenceList col = new ReferenceList();
-            col.setName(newFieldName);
-            col.setRefIds(fromItem.getCollection(oldFieldName).getRefIds());
+            ReferenceList col = new ReferenceList(newFieldName,
+                                                  fromItem.getCollection(oldFieldName).getRefIds());
             toItem.addCollection(col);
         }
     }
-
-
 
     /**
      * Add a reference from tgtItem to a newItem and set reverse reference in newItem as
@@ -367,6 +361,14 @@ public class DataTranslator
         }
     }
 
+    /**
+     * Convenience method to create an item in the target namespace
+     * @param className the (un-namespaced) class name
+     * @return the new item
+     */
+    protected Item createItem(String className) {
+        return createItem(tgtNs + className, "");
+    }
 
     /**
      * Create a new item and assign it an id.
@@ -633,6 +635,66 @@ public class DataTranslator
             }
         }
         stmtIter.close();
+    }
+
+    /**
+     * Retrieve a reference of an Item
+     * @param item the Item
+     * @param refName the name of the reference
+     * @return the referenced Item
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected Item getReference(Item item, String refName) throws ObjectStoreException {
+        Reference ref = item.getReference(refName);
+        return (ref == null ? null : ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
+    }    
+
+    /**
+     * Retrieve an Iterator over the elements of a collection field of an Item
+     * @param item the Item
+     * @param refListName the name of the collection
+     * @return the Iterator
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected Iterator getCollection(Item item, String refListName) throws ObjectStoreException {
+        ReferenceList refList = item.getCollection(refListName);
+        return (refList == null ? null : new ItemIterator(refList.getRefIds()));
+    }
+
+    private class ItemIterator implements Iterator
+    {
+        Iterator i;
+        public ItemIterator(Collection ids) {
+            i = ids.iterator();
+        }
+        public Object next() {
+            try {
+                return ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        public boolean hasNext() {
+            return i.hasNext();
+        }
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Add an element to a collection field of an Item
+     * @param item the item
+     * @param refListName the collection name
+     * @param element the element
+     */
+    protected void addToCollection(Item item, String refListName, Item element) {
+        ReferenceList refList = item.getCollection(refListName);
+        if (refList == null) {
+            refList = new ReferenceList("comments");
+            item.addCollection(refList);
+        }
+        refList.addRefId(element.getIdentifier());
     }
 
     /**
