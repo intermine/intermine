@@ -17,7 +17,10 @@
         <th align="right">
           <fmt:message key="query.savedbags.countcolumnheader"/>
         </th>
-        <th/>
+        <%-- add a space so that IE renders the borders --%>
+        <th>
+          &nbsp;
+        </th>
       </tr>
       <c:forEach items="${SAVED_BAGS}" var="savedBag">
         <tr>
