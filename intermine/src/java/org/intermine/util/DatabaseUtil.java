@@ -12,6 +12,7 @@ package org.intermine.util;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
 
 import org.intermine.metadata.ClassDescriptor;
@@ -19,6 +20,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.sql.Database;
 
 /**
  * Collection of commonly used Database utilities
@@ -184,6 +186,47 @@ public class DatabaseUtil
             return "NULL";
         } else {
             throw new IllegalArgumentException("Can't convert " + o + " into an SQL String");
+        }
+    }
+
+    /**
+     * Analyse given database, perform vacuum full analyse if full parameter true.
+     * WARNING: currently PostgreSQL specifice
+     * @param db the database to analyse
+     * @param full if true perform VACUUM FULL ANALYSE
+     * @throws SQLException if db problem
+     */
+    public static void analyse(Database db, boolean full) throws SQLException {
+        Connection conn = db.getConnection();
+        try {
+            Statement s = conn.createStatement();
+            if (full) {
+                s.execute("VACUUM FULL ANALYSE");
+            } else {
+                s.execute("ANALYSE");
+            }
+        } finally {
+            conn.close();
+        }
+    }
+
+    /**
+     * Grant permission on all tables for given user on specified database.
+     * @param db the database to grant permissions on
+     * @param user the username to grant permission to
+     * @param perm permission to grant
+     * @throws SQLException if db problem
+     */
+    public static void grant(Database db, String user, String perm) throws SQLException {
+        Connection conn = db.getConnection();
+        try {
+            Statement s = conn.createStatement();
+            ResultSet res = conn.getMetaData().getTables(null, null, null, null);
+            while (res.next()) {
+                s.execute("GRANT " + perm + " ON " + res.getString(3) + " TO " + user);
+            }
+        } finally {
+            conn.close();
         }
     }
 }
