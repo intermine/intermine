@@ -216,19 +216,26 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
     public void checkResultsForQueries(Query q1, Query q2) throws Exception {
         Connection con1 = null;
         Connection con2 = null;
-
+        String sql = null;
+        
         try {
             // The original query
             con1 = getDatabase().getConnection();
             Statement stmt1 = con1.createStatement();
+            sql = q1.getSQLString();
             ResultSet rs1 = stmt1.executeQuery(q1.getSQLString());
 
             // The optimised query
             con2 = getDatabase().getConnection();
             Statement stmt2 = con2.createStatement();
+            sql = q2.getSQLString();
             ResultSet rs2 = stmt2.executeQuery(q2.getSQLString());
 
             assertEquals("Results for queries do not match: Q1 = \"" + q1.getSQLString() + "\", Q2 = \"" + q2.getSQLString() + "\"", rs1, rs2);
+        } catch (SQLException e) {
+            SQLException e2 = new SQLException(sql);
+            e2.initCause(e);
+            throw e2;
         } finally {
             con1.close();
             con2.close();

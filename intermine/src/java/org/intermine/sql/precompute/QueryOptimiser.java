@@ -397,7 +397,8 @@ public class QueryOptimiser
                     // Populate the WHERE clause of newQuery with the contents of the WHERE clause
                     // of currentQuery, leaving out those constraints in whereConstraintEqualsSet.
                     List precompOrderBy = precompQuery.getOrderBy();
-                    if (precompOrderBy.isEmpty() || (precomputedTable.getOrderByField() == null)) {
+                    if ((precomputedTable.getOrderByField() == null) || (!query.getGroupBy()
+                                .isEmpty())) {
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, null, 0, null);
@@ -419,7 +420,8 @@ public class QueryOptimiser
 
                     // Now populate the ORDER BY clause of newQuery from the contents of the ORDER
                     // BY clause of currentQuery.
-                    if (precompOrderBy.isEmpty() || (precomputedTable.getOrderByField() == null)) {
+                    if ((precomputedTable.getOrderByField() == null) || (!query.getGroupBy()
+                                .isEmpty())) {
                         reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getOrderBy());
                     } else {
@@ -447,26 +449,21 @@ public class QueryOptimiser
                                 if (!precompOrderByIter.hasNext()) {
                                     precompOrderByIter = precompOrderBy.iterator();
                                 }
-                                nextPrecompOrderBy = new Field(((SelectValue) valueMap
-                                            .get(precompOrderByIter.next())).getAlias(),
-                                        precomputedSqlTable);
                             } else {
-                                if (inARow == 1) {
-                                    newOrderBy.add(new Field(((Field) firstPrecompOrderBy)
-                                                .getName(), precomputedSqlTable));
-                                } else if (inARow > 1) {
+                                if (inARow >= 1) {
                                     newOrderBy.add(new Field(precomputedTable.getOrderByField(),
                                                 precomputedSqlTable));
                                 }
                                 inARow = 0;
+                                precompOrderByIter = precompOrderBy.iterator();
                                 //System.out .println("inARow now " + inARow);
                                 newOrderBy.add(origValue);
                             }
+                            nextPrecompOrderBy = new Field(((SelectValue) valueMap
+                                        .get(precompOrderByIter.next())).getAlias(),
+                                    precomputedSqlTable);
                         }
-                        if (inARow == 1) {
-                            newOrderBy.add(new Field(((Field) firstPrecompOrderBy).getName(),
-                                        precomputedSqlTable));
-                        } else if (inARow > 1) {
+                        if (inARow >= 1) {
                             newOrderBy.add(new Field(precomputedTable.getOrderByField(),
                                         precomputedSqlTable));
                         }

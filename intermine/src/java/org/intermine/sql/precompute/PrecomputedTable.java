@@ -78,49 +78,56 @@ public class PrecomputedTable implements SQLStringable, Comparable
                 Iterator orderByIter = q.getOrderBy().iterator();
                 while (orderByIter.hasNext() && useOrderByField) {
                     AbstractValue column = (AbstractValue) orderByIter.next();
-                    if (column instanceof Field) {
-                        AbstractTable table = ((Field) column).getTable();
-                        if (table instanceof Table) {
-                            String tableName = ((Table) table).getName().toLowerCase();
-                            String columnName = ((Field) column).getName().toLowerCase();
-                            ResultSet r = conn.getMetaData().getColumns(null, null, tableName,
-                                    columnName);
-                            if (r.next()) {
-                                if (tableName.equals(r.getString(3))
-                                        && columnName.equals(r.getString(4))) {
-                                    int columnType = r.getInt(5);
-                                    if (!((columnType == Types.SMALLINT)
-                                                || (columnType == Types.INTEGER)
-                                                || (columnType == Types.BIGINT))) {
+                    if (valueMap.containsKey(column)) {
+                        if (column instanceof Field) {
+                            AbstractTable table = ((Field) column).getTable();
+                            if (table instanceof Table) {
+                                String tableName = ((Table) table).getName().toLowerCase();
+                                String columnName = ((Field) column).getName().toLowerCase();
+                                ResultSet r = conn.getMetaData().getColumns(null, null, tableName,
+                                        columnName);
+                                if (r.next()) {
+                                    if (tableName.equals(r.getString(3))
+                                            && columnName.equals(r.getString(4))) {
+                                        int columnType = r.getInt(5);
+                                        if (!((columnType == Types.SMALLINT)
+                                                    || (columnType == Types.INTEGER)
+                                                    || (columnType == Types.BIGINT))) {
+                                            useOrderByField = false;
+                                            LOG.info("Cannot generate order field for precomputed"
+                                                    + " table - column " + column.getSQLString()
+                                                    + " is type " + columnType);
+                                        }
+                                    } else {
                                         useOrderByField = false;
-                                        LOG.info("Cannot generate order field for precomputed"
-                                                + " table - column " + column.getSQLString()
-                                                + " is type " + columnType);
+                                        LOG.error("getColumns returned wrong data for column "
+                                                + column.getSQLString());
                                     }
                                 } else {
                                     useOrderByField = false;
-                                    LOG.error("getColumns returned wrong data for column "
+                                    LOG.error("getColumns return no data for column "
+                                            + column.getSQLString() + " in table " + tableName);
+                                }
+                                if (r.next()) {
+                                    useOrderByField = false;
+                                    LOG.error("getColumns returned too much data for column "
                                             + column.getSQLString());
                                 }
                             } else {
                                 useOrderByField = false;
-                                LOG.error("getColumns return no data for column "
-                                        + column.getSQLString() + " in table " + tableName);
-                            }
-                            if (r.next()) {
-                                useOrderByField = false;
-                                LOG.error("getColumns returned too much data for column "
-                                        + column.getSQLString());
+                                LOG.info("Cannot generate order field for precomputed table - column "
+                                        + column.getSQLString() + " does not belong to a Table");
                             }
                         } else {
                             useOrderByField = false;
                             LOG.info("Cannot generate order field for precomputed table - column "
-                                    + column.getSQLString() + " does not belong to a Table");
+                                    + column.getSQLString() + " is not a Field");
                         }
                     } else {
                         useOrderByField = false;
                         LOG.info("Cannot generate order field for precomputed table - column "
-                                + column.getSQLString() + " is not a Field");
+                                + column.getSQLString() + " is not present in the precomputed"
+                                + " table");
                     }
                 }
             }
