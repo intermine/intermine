@@ -34,7 +34,7 @@ public class OJBModelOutput extends ModelOutput
 {
     static final String ID = "ID";
     static final String CLASS = "CLASS";
-   
+
     protected StringBuffer references, collections;
 
     /**
@@ -210,7 +210,7 @@ public class OJBModelOutput extends ModelOutput
                 .append(INDENT + INDENT + INDENT)
                 .append("<fk-pointing-to-this-class column=\"")
                 // Name of this class's primary key in linkage table
-                .append(DatabaseUtil.getInwardIndirectionColumnName(col)) 
+                .append(DatabaseUtil.getInwardIndirectionColumnName(col))
                 .append("\"/>" + ENDL)
                 .append(INDENT + INDENT + INDENT)
                 .append("<fk-pointing-to-element-class column=\"")
@@ -305,7 +305,10 @@ public class OJBModelOutput extends ModelOutput
             return "INTEGER";
         }
         if (type.equals("float") || type.equals("java.lang.Float")) {
-            return "FLOAT";
+            return "REAL";
+        }
+        if (type.equals("double") || type.equals("java.lang.Double")) {
+            return "DOUBLE";
         }
         if (type.equals("java.util.Date")) {
             return "DATE";
