@@ -97,8 +97,12 @@ public class TransferSequences
                          contigOnChrLocation.getEnd().intValue(),
                          contigOnChrLocation.getStrand().intValue());
         }
-        storeNewSequence(currentChr, currentChrBases);
-        LOG.info("finished Chromosome: " + currentChr.getIdentifier());
+        if (currentChrBases == null) {
+            LOG.error("in transferToChromosome(): no Contig sequences found");
+        } else {
+            storeNewSequence(currentChr, currentChrBases);
+            LOG.info("finished Chromosome: " + currentChr.getIdentifier());
+        }
         osw.commitTransaction();
     }
 
@@ -145,6 +149,11 @@ public class TransferSequences
 
             Chromosome chr = (Chromosome) os.getObjectById(chrId);
             Sequence chromosomeSequence = chr.getSequence();
+
+            if (chromosomeSequence == null) {
+                throw new Exception("no sequence found for: " + chr.getIdentifier() + "  id: "
+                                    + chr.getId());
+            }
 
             String featureSeq = getSubSequence(chromosomeSequence, locationOnChr);
 
@@ -297,7 +306,11 @@ public class TransferSequences
                         + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
            }
         }
-        storeNewSequence(currentTranscript, currentTranscriptBases.toString().toCharArray());
+        if (currentTranscript == null) {
+            LOG.error("in transferToTranscripts(): no Transcripts found");
+        } else {
+            storeNewSequence(currentTranscript, currentTranscriptBases.toString().toCharArray());
+        }
 
         osw.commitTransaction();
     }
