@@ -24,17 +24,6 @@ function unselectColumnCheckbox(column) {
 }
 </script>
 
-<c:out value="columns: ${RESULTS_TABLE.columns}"/><br/>
-<c:out value="visibleColumnCount: ${RESULTS_TABLE.visibleColumnCount}"/><br/>
-<c:out value="columnCount: ${RESULTS_TABLE.columnCount}"/><br/>
-<c:out value="startIndex: ${RESULTS_TABLE.startIndex}"/><br/>
-<c:out value="endIndex: ${RESULTS_TABLE.endIndex}"/><br/>
-<c:out value="pageSize: ${RESULTS_TABLE.pageSize}"/><br/>
-<c:out value="firstPage: ${RESULTS_TABLE.firstPage}"/><br/>
-<c:out value="lastPage: ${RESULTS_TABLE.lastPage}"/><br/>
-<c:out value="size: ${RESULTS_TABLE.size}"/><br/>
-<c:out value="sizeEstimate: ${RESULTS_TABLE.sizeEstimate}"/><br/><br/>
-
 <html:form action="/changeResultsSize" styleId="changeResultsForm">
 
   <table class="results" cellspacing="0" width="1%">
