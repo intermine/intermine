@@ -11,11 +11,12 @@ package org.intermine.util;
  */
 
 import java.lang.ref.WeakReference;
-import java.io.Writer;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
@@ -27,12 +28,16 @@ import org.apache.log4j.Logger;
  * wrapped in a WeakReference, so that the shutdown hook does not preclude those objects
  * from being garbage collected.
  *
+ * The objects are shut down in the opposite order to them being added to this ShutdownHook.
+ * Therefore, if you register objects to be shut down from the constructor, no object will be
+ * shut down before another object that relies on it for its own shutdown.
+ *
  * @author Matthew Wakeling
  */
 public class ShutdownHook extends Thread
 {
     private static final Logger LOG = Logger.getLogger(ShutdownHook.class);
-    private static Set objects = new HashSet();
+    private static Stack objects = new Stack();
     private static ShutdownHook instance = new ShutdownHook();
 
     static {
@@ -51,16 +56,15 @@ public class ShutdownHook extends Thread
      * @param object the object
      */
     public static synchronized void registerObject(Object object) {
-        objects.add(object);
+        objects.push(object);
     }
 
     /**
      * Performs the shutdown.
      */
     private static synchronized void shutdown() {
-        Iterator iter = objects.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        while (!objects.empty()) {
+            Object o = objects.pop();
             try {
                 if (o instanceof WeakReference) {
                     o = ((WeakReference) o).get();
@@ -77,7 +81,15 @@ public class ShutdownHook extends Thread
                     LOG.error("Do not know how to shut down " + o);
                 }
             } catch (Exception e) {
-                LOG.error("Exception while shutting down " + o + ": " + e);
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                try {
+                    pw.close();
+                    sw.close();
+                } catch (IOException e2) {
+                }
+                LOG.error("Exception while shutting down " + o + ": " + sw.toString());
             }
         }
     }
