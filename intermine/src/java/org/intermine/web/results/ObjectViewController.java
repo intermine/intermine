@@ -82,30 +82,43 @@ public class ObjectViewController extends TilesAction
             }
         }
 
-        if (o instanceof InterMineObject) {
-            List leafClds = new ArrayList();
-            for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
-                leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
-            }
-            context.putAttribute("leafClds", leafClds);
+        List leafClds = null;
+        Map primaryKeyFields = null;
 
-            String viewType = (String) request.getAttribute("viewType");
-        
-            if (viewType.equals("summary")) {
-                Map primaryKeyFieldsMap = new LinkedHashMap();
+        if (o instanceof InterMineObject) {
+            leafClds = getLeafClds(o.getClass(), model);
+
+            if ("summary".equals((String) request.getAttribute("viewType"))) {
+                primaryKeyFields = new LinkedHashMap();
                 Class c = o.getClass();
                 for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, c).iterator();
                      i.hasNext();) {
                     String fieldName = (String) i.next();
-                    primaryKeyFieldsMap.put(fieldName, fieldName);
+                    primaryKeyFields.put(fieldName, fieldName);
                 }
-                context.putAttribute("primaryKeyFields", primaryKeyFieldsMap);
             }
         } else {
-            context.putAttribute("leafClds", new ArrayList());
-            context.putAttribute("primaryKeyFields", new HashMap());
+            leafClds = new ArrayList();
+            primaryKeyFields = new HashMap();
         }
 
+        context.putAttribute("leafClds", leafClds);
+        context.putAttribute("primaryKeyFields", primaryKeyFields);
+
         return null;
+    }
+
+    /**
+     * Get the class descriptors for a Class in the Model
+     * @param c the Class
+     * @param model the Model
+     * @return the List of ClassDescriptors
+     */
+    public static List getLeafClds(Class c, Model model) {
+        List leafClds = new ArrayList();
+        for (Iterator i = DynamicUtil.decomposeClass(c).iterator(); i.hasNext();) {
+            leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
+        }
+        return leafClds;
     }
 }
