@@ -192,4 +192,24 @@ public interface ObjectStore
      * @return an integer
      */
     public int getSequence();
+
+    /**
+     * Get the maximum LIMIT that can be used in an SQL query without throwing an
+     * ObjectStoreLimitReachedException
+     * @return the maximum limit
+     */
+    public int getMaxLimit();
+
+    /** 
+     * Get the maximum range start index a that can be accessed in a Results object without throwing
+     * an ObjectStoreLimitReachedException
+     * @return the maximum offset
+     */
+    public int getMaxOffset();
+
+    /**
+     * Get the maximum time a query may take before throwing an ObjectStoreQueryDurationException
+     * @return the maximum query time
+     */
+    public long getMaxTime();
 }

@@ -289,5 +289,26 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public int getSequence() {
         return sequence;
     }
+
+    /**
+     * @see ObjectStore#getMaxLimit
+     */
+    public int getMaxLimit() {
+        return maxLimit;
+    }
+
+    /**
+     * @see ObjectStore#getMaxOffset
+     */
+    public int getMaxOffset() {
+        return maxOffset;
+    }
+
+    /**
+     * @see ObjectStore#getMaxTime
+     */
+    public long getMaxTime() {
+        return maxTime;
+    }
 }
 

@@ -144,4 +144,25 @@ public class ObjectStorePassthruImpl implements ObjectStore
     public int getSequence() {
         return os.getSequence();
     }
+
+    /**
+     * @see ObjectStore#getMaxLimit
+     */
+    public int getMaxLimit() {
+        return os.getMaxLimit();
+    }
+
+    /**
+     * @see ObjectStore#getMaxOffset
+     */
+    public int getMaxOffset() {
+        return os.getMaxOffset();
+    }
+
+    /**
+     * @see ObjectStore#getMaxTime
+     */
+    public long getMaxTime() {
+        return os.getMaxTime();
+    }
 }
