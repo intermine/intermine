@@ -50,7 +50,7 @@ zip -r flymine-src-$version.zip flymine-$version
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
 then
-    command="ssh $server \"find $destdir -mtime +7 | xargs rm -f\""
+    command="ssh $server \"find $destdir -mtime +7 -name \"flymine*\" | xargs rm -f\""
     eval $command
 fi
 
@@ -59,7 +59,7 @@ command="scp *.tar.gz *.zip $server:$destdir/"
 eval $command
 
 ### Make sure all permissions are world-readable
-command="ssh $server \"find $destdir -type f | xargs chmod a+r\""
+command="ssh $server \"find $destdir -type f -name \"flymine*\"| xargs chmod a+r\""
 eval $command
 
 cd $origdir
