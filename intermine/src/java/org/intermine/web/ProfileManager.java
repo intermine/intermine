@@ -149,7 +149,7 @@ public class ProfileManager
                 } catch (Exception _) {
                     // Ignore rows that don't unmarshal (they probably reference
                     // another model.
-                    LOG.warn("Failed to unmarshal saved temlplate query: "
+                    LOG.warn("Failed to unmarshal saved template query: "
                               + template.getTemplateQuery());
                 }
             }

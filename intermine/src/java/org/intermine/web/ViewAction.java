@@ -55,6 +55,7 @@ public class ViewAction extends InterMineAction
         
         /** Clear stored DisplayObjects. */
         session.removeAttribute("displayObjects");
+        //SessionMethods.getObjectDetailsTrail(session).reset();
 
         final OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
         String msg = getResources(request).getMessage("query.runningquery");

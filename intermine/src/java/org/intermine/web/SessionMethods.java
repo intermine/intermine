@@ -11,7 +11,9 @@ package org.intermine.web;
  */
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -126,6 +128,7 @@ public class SessionMethods
                     StringWriter sw = new StringWriter();
                     err.printStackTrace(new PrintWriter(sw));
                     recordError(sw.toString(), session);
+                    LOG.error(sw.toString());
                     error = true;
                 }
                 
@@ -291,5 +294,47 @@ public class SessionMethods
         }
         
         log.info(username + "\t" + exampleName);
+    }
+    
+    /**
+     * Get the 
+     *
+    public static ObjectDetailsTrail getObjectDetailsTrail(HttpSession session) {
+        ObjectDetailsTrail trail
+                = (ObjectDetailsTrail) session.getAttribute(Constants.OBJECT_DETAILS_TRAIL);
+        if (trail == null) {
+            trail = new ObjectDetailsTrail();
+            session.setAttribute(Constants.OBJECT_DETAILS_TRAIL, trail);
+        }
+        return trail;
+    }*/
+    
+    /**
+     * Get the COLLAPSED map from the session. If the attribute is not present then a new
+     * map will be created.
+     *
+     * @param session the curren session
+     * @return the COLLAPSED map attribute
+     */
+    public static Map getCollapsedMap(HttpSession session) {
+        Map collapsed = (Map) session.getAttribute(Constants.COLLAPSED);
+        if (collapsed == null) {
+            collapsed = new HashMap();
+            session.setAttribute(Constants.COLLAPSED, collapsed);
+        }
+        return collapsed;
+    }
+    
+    /**
+     * Initialise a new session. Adds a profile to the session.
+     * 
+     * @param session the new session to initialise
+     */
+    public static void initSession(HttpSession session) {
+        ServletContext servletContext = session.getServletContext();
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        session.setAttribute(Constants.PROFILE,
+                             new Profile(pm, null, new HashMap(), new HashMap(), new HashMap()));
+        session.setAttribute(Constants.COLLAPSED, new HashMap());
     }
 }

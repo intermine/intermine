@@ -120,9 +120,21 @@ public interface Constants
     public static final String RESULTS_TABLE = "RESULTS_TABLE";
     
     /**
+     * Session attribute storing a bean exposing the user's trail through the object details
+     * pages.
+     */
+    public static final String OBJECT_DETAILS_TRAIL = "OBJECT_DETAILS_TRAIL";
+    
+    /**
      * Session attribute equals Boolean.TRUE when logged in user is superuser.
      */
     public static final String IS_SUPERUSER = "IS_SUPERUSER";
+    
+    /**
+     * Session attribute containing Map containing 'collapsed' state of objectDetails.jsp
+     * UI elements.
+     */
+    public static final String COLLAPSED = "COLLAPSED";
     
     /**
      * Servlet attribute used to store username of superuser (this attribute
