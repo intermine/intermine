@@ -300,13 +300,11 @@ public class AceDataLoader extends AbstractDataLoader
 
         //        Collection col = processAceObjects(fetchedAceObjects, null);
 
-        System.out.println("Retrieved + " + fetchedAceObjects.size() + " " + clazzName + "s");
 
         Iterator iter = fetchedAceObjects.iterator();
 
         while (iter.hasNext()) {
             AceNode node = (AceNode) iter.next();
-            System.out.println(AceUtils.decode(node.getName()));
         }
 
 
