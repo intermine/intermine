@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>The model browser</heading>
+          <item>The FlyMine model browser allows you to select the classes that contain the objects you require. Depending on the starting class you will be able to navigate to other classes as defined by the references between the classes (see <ulink url= "manualCOF.xml">Classes , objects and fileds</ulink> .  In other words, to combine classes containing the objects you require, you find a path though the classes that link together the information you require. Within the model browser classes that can be accessed from a parent class (ie are linked to the parent class through a reference) are shown as fields within that class.</item>
+           <item>For each class and field within the model browser there is a 'show' and a 'Constrain' (->) option.  These are used to either select a field to show in the results output or to constrain in the constraints list.  These options are described in more detail in <ulink url= "manualSimplequeries.xml">Building simple queries</ulink> </item>
+
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="interface.gif" format="GIF"/>
+	  </entry>
+ 
+
+     </section>
+
+
+     <section>
+       <heading>Fields</heading>
+        <item>The following is an explanation of the classes and fields displayed by the model browser.  The Gene class is used as an example, but the information is easily transferable to other classes.  The screenshot below shows the model browser displaying the Gene class.</item>
+        <item>The folowing fields are of the type 'String': name, residues, gcgApprovedName and wormBaseSequenceName.  These fields hold just one piece of information of the type string.</item>
+        <item>The field called Organism is a reference (ie a link) to the organism class.  Fields which are references to other classes have a field name (in this case organism) followed by the name of the class it is referencing (in this case Organism).</item>
+        <item>The field called Transcript is also a reference to a class - the Transcript class.  This field, however, also has the type 'collection'.  This is becuase a particular gene object in the Gene class will reference (link to) one or more transcript objects in the Transcipts class.  The Transcript collection is a list of references to these Transcript objects.</item>
+        <item>The other fields in the gene class are all of the type class collection as described above.  For an explanation of the meaning of the actual classes see <ulink url= "manualFlyMineclasses.xml">FlyMine classes</ulink> </item>
+      </section>
+
+
+
+</index>
+
+</article>
+

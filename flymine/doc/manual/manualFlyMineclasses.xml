@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>FlyMine classes</heading>
+      <item><ulink url= "manualAnnotationclass.xml">Annotation</ulink> </item>
+      <item><ulink url= "manualAnalysisresultclass.xml">AnalysisReuslt</ulink> </item>
+      <item><ulink url= "manualAnalysisclass.xml">Analysis</ulink> </item>
+      <item><ulink url= "manualAuthorclass.xml">Author</ulink> </item>
+      <item><ulink url= "manualBioEntityclass.xml">BioEntity</ulink> </item>
+      <item><ulink url= "manualBioPropertyclass.xml">BioProperty</ulink> </item>
+      <item><ulink url= "manualComputationalAnalysisclass.xml">ComputationalAnlaysis</ulink> </item>
+      <item><ulink url= "manualComputaionalResultclass.xml">ComputationalResult</ulink> </item>
+      <item><ulink url= "manualDagTermclass.xml">DagTerm</ulink> </item>
+      <item><ulink url= "manualDagRelationclass.xml">DagRelation</ulink> </item>
+      <item><ulink url= "manualDatabaseclass.xml">Database</ulink> </item>
+      <item><ulink url= "manualExperimentclass.xml">Experiment</ulink> </item>
+      <item><ulink url= "manualEvidenceclass.xml">Evidence</ulink> </item>
+      <item><ulink url= "manualInfosourceclass.xml">InfoSource</ulink> </item>
+      <item><ulink url= "manualRelationclass.xml">Relation</ulink> </item>
+      <item><ulink url= "manualOrganismclass.xml">Organism</ulink> </item>
+      <item><ulink url= "manualPublicationclass.xml">Publication</ulink> </item>
+      <item><ulink url= "manualSynonymclass.xml">Synonym</ulink> </item>
+
+   </section>      
+</index>
+
+</article>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Saving bags of data</heading>
+      <item>
+      Data can be saved into 'bags' and stored in your query history.  To save your data to a bag select the required data and either add it to an existing bag or save it to a new bag. Selecting the checkboxes next to the column headings will select the entire column for export.  Alternativly, individual items can be saved by selecting checkboxes next to the items. Saved bags of data can be viewed from the History page (accessable form the menu bar).</item>
+     <item>Saved bags of data can be used to constrain new queries.  If you have saved bags of data these will become available for constraining queries in the constaint list of the query builder page.</item>
+
+        
+  </section>
+
+</index>
+
+</article>

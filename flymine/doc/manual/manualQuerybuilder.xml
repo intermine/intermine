@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+<section>
+       <heading>The query builder page</heading>
+       <item>
+       The main FlyMine query builder page is composed of 3 sections: 
+       </item>
+       <item>
+       <ulink url= "manualModelbrowser.xml">a model browser (left)</ulink> 
+       </item>
+       <item>
+       <ulink url= "manualConstraintslist.xml">a constraints list (right)</ulink>
+       </item>
+       <item>
+       <ulink url= "manualOutputfields.xml">an output fields list (bottom)</ulink>. The output fields list will initially say 'No fields selected for output'.
+       </item>
+         
+   </section>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="interface.gif" format="GIF"/>
+	  </entry>
+ 
+
+
+
+
+
+
+
+</index>
+
+</article>
+

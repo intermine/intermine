@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Results page</heading>
+      <item>
+        The results page displays the first 10 objects returned by your query.
+</item>
+     <item>
+       The number of objects displayed can be changed by changing the number in the Page size box and pressing Change.
+</item>
+      <item>
+      You can scroll though the objects using Next, or go to the last 10 objects using Last.
+</item>
+      <item>
+      The total number of objects returned by your query is estimated. An estimate is given because, for large queries, only a subset of the total number of objects is initially returned by the query.  This is to improve query run time for large queries.
+      </item>
+      <item>From the results page you can save your data to a bag (see <ulink url= "manualSavingdata.xml">Saving bags of data)</ulink> and export your data in various formats (see <ulink url= "manualExportingdata.xml">Exporting data)</ulink>
+      </item>
+
+        
+  </section>
+
+</index>
+
+</article>
