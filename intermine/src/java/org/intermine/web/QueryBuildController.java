@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,8 +49,8 @@ public class QueryBuildController extends TilesAction
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         String editingAlias = (String) session.getAttribute("editingAlias");
         Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
-        Model model = ((DisplayModel) session.getServletContext()
-                       .getAttribute(Constants.MODEL)).getModel();
+        ServletContext servletContext = session.getServletContext();
+        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
         Query q = (Query) session.getAttribute("query");
 
         if (queryClasses == null) {

@@ -22,7 +22,7 @@ import org.apache.struts.config.ModuleConfig;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.web.config.WebConfig;
-
+import org.flymine.objectstore.ObjectStoreFactory;
 
 /**
  * Initialiser for the FlyMine web application
@@ -51,16 +51,14 @@ public class InitialiserPlugin implements PlugIn
         ServletContext context = servlet.getServletContext();
 
         try {
-
-        Model model = org.flymine.objectstore.ObjectStoreFactory.getObjectStore().getModel();
-        context.setAttribute(Constants.MODEL, new DisplayModel(model));
-
-
             InputStream is = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
             WebConfig wc = WebConfig.parse(is);
             context.setAttribute("webconfig", wc);
+
+            Model model = ObjectStoreFactory.getObjectStore().getModel();
+            context.setAttribute(Constants.MODEL, new DisplayModel(model));
         } catch (Exception e) {
-            throw new ServletException(e);
+            throw new ServletException("there was a problem while initialising", e);
         }
     }
 
@@ -69,5 +67,4 @@ public class InitialiserPlugin implements PlugIn
      */
     public void destroy() {
     }
-
 }

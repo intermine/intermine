@@ -13,6 +13,7 @@ package org.flymine.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -58,8 +59,8 @@ public class TreeController extends TilesAction
         if (rootClass == null) {
             rootClass = "org.flymine.model.FlyMineBusinessObject";
         }
-        Model model = ((DisplayModel) session.getServletContext()
-                       .getAttribute(Constants.MODEL)).getModel();
+        ServletContext servletContext = session.getServletContext();
+        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
         request.setAttribute("nodes", makeNodes(root, openClasses, 0));

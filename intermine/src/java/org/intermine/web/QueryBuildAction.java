@@ -19,6 +19,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletContext;
 
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -53,9 +54,9 @@ public class QueryBuildAction extends LookupDispatchAction
      *  an exception
      */
     public ActionForward resetQuery(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+                                    ActionForm form,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
@@ -141,9 +142,9 @@ public class QueryBuildAction extends LookupDispatchAction
      *  an exception
      */
     public ActionForward updateClass(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
@@ -178,16 +179,16 @@ public class QueryBuildAction extends LookupDispatchAction
      *  an exception
      */
     public ActionForward runQuery(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         Map savedBags = (Map) session.getAttribute("savedBags");
-        Model model = ((DisplayModel) session.getServletContext()
-                       .getAttribute(Constants.MODEL)).getModel();
+        ServletContext servletContext = session.getServletContext();
+        Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
 
         if (queryClasses.size() == 0) {
             throw new Exception("There are no classes present in the query");
