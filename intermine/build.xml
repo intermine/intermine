@@ -1,4 +1,4 @@
-<project name="FlyMine" default="all" basedir=".">
+<project name="FlyMine" default="help" basedir=".">
   <description>FlyMine build file</description>
 
   <!-- Property setup targets -->
@@ -175,6 +175,26 @@
       <property name="model.name" value="acedb"/>
     </ant>
   </target>
+
+
+
+  <!-- Help -->
+  <target name="help" description="Displays user targets">
+    <echo message=""/>
+    <echo message="FlyMine build file - available targets are:"/>
+    <echo message=""/>
+    <echo message="compile-main           --> compiles the source code"/>
+    <echo message="compile-java-testmodel --> generate testmodel java classes"/>
+    <echo message="build-db-testmodel     --> create the testmodel database tables"/>
+    <echo message="insert-data-testmodel  --> store testmodel test data"/>
+    <echo message="test-main              --> runs the unit tests"/>
+    <echo message="clean                  --> cleans up the directory"/>
+    <echo message="jar                    --> builds the FlyMine jar"/>
+    <echo message=""/>
+    <echo message="See 'ant -projecthelp' for full target list"/>
+  </target>
+
+
 
   <!-- Compilation targets -->
 
@@ -920,7 +940,7 @@
     <delete dir="${build.resources}"/>
     <delete dir="${build.schema}"/>
     <delete file="velocity.log" />
-    <delete file="${build}/flymine.log" />
+    <delete file="flymine.log" />
     <delete file="${build}/testmodel_.xmi" />
     <antcall target="prepare" />
   </target>
