@@ -10,6 +10,7 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,9 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
                 toRemove.add(e);
             }
             writer.commitTransaction();
+            Connection c = os.getConnection();
+            c.createStatement().execute("ANALYSE");
+            os.releaseConnection(c);
             Query q1 = new Query();
             QueryClass qc1 = new QueryClass(Department.class);
             QueryClass qc2 = new QueryClass(Employee.class);
@@ -62,6 +66,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             long time1 = System.currentTimeMillis();
             Results r1 = os.execute(q1);
             r1.setBatchSize(1000);
+            r1.setNoExplain();
             int counter = 0;
             Iterator rowIter = r1.iterator();
             while (rowIter.hasNext()) {
@@ -81,6 +86,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             System.out.println("Precomputing took " + (time3 - time2) + " ms");
             Results r2 = os.execute(q2);
             r2.setBatchSize(1000);
+            r2.setNoExplain();
             counter = 0;
             rowIter = r2.iterator();
             while (rowIter.hasNext()) {
@@ -94,6 +100,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             assertEquals(40000, counter);
             long time4 = System.currentTimeMillis();
             System.out.println("Access to precomputed results took " + (time4 - time3) + " ms");
+            //Thread.sleep(200000);
             Department newD = new Department();
             newD.setName("Flibble200");
             writer.store(newD);
@@ -101,6 +108,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             Query q3 = QueryCloner.cloneQuery(q1);
             Results r3 = os.execute(q3);
             r3.setBatchSize(1000);
+            r3.setNoExplain();
             counter = 0;
             rowIter = r3.iterator();
             while (rowIter.hasNext()) {

@@ -341,6 +341,15 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Returns the List of queries in the UNION set of this query.
+     *
+     * @return a List of Query objects
+     */
+    public List getUnion() {
+        return queriesInUnion;
+    }
+
+    /**
      * Convert this Query into a SQL String query.
      *
      * @return this Query in String form
@@ -378,6 +387,27 @@ public class Query implements SQLStringable
     }
 
     /**
+     * Convert this Query into a SQL String query, without regard to the other members of the the
+     * UNION, with an extra field in the SELECT list.
+     *
+     * @param extraSelect an extra String to put into the select list
+     * @return this Query in String form
+     */
+    public String getSQLStringForPrecomputedTable(String extraSelect) {
+        List augmentedSelect = new ArrayList(select);
+        augmentedSelect.add(extraSelect);
+        return (explain ? "EXPLAIN " : "") + "SELECT " + (distinct ? "DISTINCT " : "")
+            + collectionToSQLString(augmentedSelect, ", ")
+            + (from.isEmpty() ? "" : " FROM " + collectionToSQLString(from, ", "))
+            + (where.isEmpty() ? "" : " WHERE " + collectionToSQLString(where, " AND "))
+            + (groupBy.isEmpty() ? "" : " GROUP BY " + collectionToSQLString(groupBy, ", ")
+                + (having.isEmpty() ? "" : " HAVING " + collectionToSQLString(having, " AND ")))
+            + (orderBy.isEmpty() ? "" : " ORDER BY " + collectionToSQLString(orderBy, ", "))
+            + (limit == 0 ? "" : " LIMIT " + limit
+                + (offset == 0 ? "" : " OFFSET " + offset));
+    }
+
+    /**
      * Converts a collection of objects that implement the getSQLString method into a String,
      * with the given comma string between each element.
      *
@@ -390,12 +420,16 @@ public class Query implements SQLStringable
         boolean needComma = false;
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
-            SQLStringable o = (SQLStringable) iter.next();
             if (needComma) {
                 retval += comma;
             }
             needComma = true;
-            retval += o.getSQLString();
+            Object o = iter.next();
+            if (o instanceof SQLStringable) {
+                retval += ((SQLStringable) o).getSQLString();
+            } else {
+                retval += (String) o;
+            }
         }
         return retval;
     }

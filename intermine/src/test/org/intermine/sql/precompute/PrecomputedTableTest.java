@@ -10,23 +10,35 @@ package org.intermine.sql.precompute;
  *
  */
 
-import junit.framework.*;
-import org.intermine.sql.query.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import junit.framework.*;
+
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.query.*;
+
 public class PrecomputedTableTest extends TestCase
 {
     private PrecomputedTable pt1, pt2, pt3, pt4;
+    private Database database;
+    private Connection con;
 
     public PrecomputedTableTest(String arg1) {
         super(arg1);
+        try {
+            database = DatabaseFactory.getDatabase("db.unittest");
+        } catch (Exception e) {
+        }
     }
 
-    public void setUp()
-    {
+    public void setUp() throws SQLException {
+        con = database.getConnection();
         Query q1 = new Query();
         Table t = new Table("mytable");
         Constant c = new Constant("1");
@@ -45,16 +57,19 @@ public class PrecomputedTableTest extends TestCase
         q2.addSelect(sv);
         q2.addWhere(new Constraint(f, Constraint.LT, c));
 
-        pt1 = new PrecomputedTable(q1, "precomp1");
-        pt2 = new PrecomputedTable(q1, "precomp1");
-        pt3 = new PrecomputedTable(q1, "precomp2");
-        pt4 = new PrecomputedTable(q2, "precomp2");
+        pt1 = new PrecomputedTable(q1, "precomp1", con);
+        pt2 = new PrecomputedTable(q1, "precomp1", con);
+        pt3 = new PrecomputedTable(q1, "precomp2", con);
+        pt4 = new PrecomputedTable(q2, "precomp2", con);
+    }
 
+    public void tearDown() throws SQLException {
+        con.close();
     }
 
     public void testPrecomputedTableWithNullName() throws Exception {
         try {
-            PrecomputedTable pt = new PrecomputedTable(new Query(), null);
+            PrecomputedTable pt = new PrecomputedTable(new Query(), null, con);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -63,7 +78,7 @@ public class PrecomputedTableTest extends TestCase
 
     public void testPrecomputedTableWithNullQuery() throws Exception {
         try {
-            PrecomputedTable pt = new PrecomputedTable(null, "precomp");
+            PrecomputedTable pt = new PrecomputedTable(null, "precomp", con);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -114,7 +129,7 @@ public class PrecomputedTableTest extends TestCase
         result.put(v3, s3);
 
         Query q1 = new Query("SELECT 'c1' AS alias1, 'c2' AS alias2, 'c3' AS alias3 FROM table");
-        PrecomputedTable pt = new PrecomputedTable(q1, "name");
+        PrecomputedTable pt = new PrecomputedTable(q1, "name", con);
         assertEquals(result, pt.getValueMap());
     }
 

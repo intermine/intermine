@@ -48,7 +48,9 @@ public class PrecomputedTableManagerTest extends TestCase
         q1.addWhere(new Constraint(f1, Constraint.LT, c));
         q1.addOrderBy(f1);
 
-        pt1 = new PrecomputedTable(q1, "precomp1");
+        Connection con = database.getConnection();
+        pt1 = new PrecomputedTable(q1, "precomp1", con);
+        con.close();
 
     }
 
@@ -177,22 +179,26 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
     public void testAddInvalid() throws Exception {
+        Connection c = database.getConnection();
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
-            ptm.add(new PrecomputedTable(new Query("select table.blah from table"), "precomp1"));
+            ptm.add(new PrecomputedTable(new Query("select table.blah from table"), "precomp1", c));
             fail("Expected: SQLException");
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
+        } finally {
+            c.close();
         }
     }
 
     public void testDeleteInvalid() throws Exception {
+        Connection c = database.getConnection();
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
-            ptm.delete(new PrecomputedTable(new Query(), "tablenotthere"));
+            ptm.delete(new PrecomputedTable(new Query(), "tablenotthere", c));
             fail("Expected: IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
+        } finally {
+            c.close();
         }
     }
 

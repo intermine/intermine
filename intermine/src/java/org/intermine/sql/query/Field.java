@@ -95,4 +95,13 @@ public class Field extends AbstractValue
     public AbstractTable getTable() {
         return table;
     }
+
+    /**
+     * Returns the name of the field.
+     *
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
 }
