@@ -29,6 +29,8 @@ public class TemplateQuery
 
     /**
      * Constructor
+     * @param identifier unique name for query
+     * @param category name of category that this query falls under
      * @param description the description, containing references to paths in the query
      * @param query the query itself
      */

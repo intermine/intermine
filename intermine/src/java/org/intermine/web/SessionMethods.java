@@ -1,19 +1,5 @@
 package org.intermine.web;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
-import org.intermine.objectstore.query.Query;
-import org.intermine.web.results.ChangeResultsForm;
-import org.intermine.web.results.PagedResults;
-import org.intermine.web.results.TableHelper;
-
 /*
  * Copyright (C) 2002-2004 FlyMine
  *
@@ -23,6 +9,22 @@ import org.intermine.web.results.TableHelper;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.objectstore.query.Query;
+
+import org.intermine.web.results.PagedResults;
+import org.intermine.web.results.TableHelper;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -42,6 +44,7 @@ public class SessionMethods
      * @param session  the http session
      * @param request  the current http request
      * @return         true if query ran successfully, false if an error occured
+     * @throws Exception if getting results info from paged results fails
      */
     public static boolean runQuery(HttpSession session, HttpServletRequest request)
                                                                         throws Exception {
