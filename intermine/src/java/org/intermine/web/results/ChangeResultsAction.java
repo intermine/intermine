@@ -172,7 +172,7 @@ public class ChangeResultsAction extends DispatchAction
 
     /**
      * Show a column. Must pass in a parameter "columnAlias" to
-     * indicate the column being hidden.
+     * indicate the column being shown.
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -198,4 +198,63 @@ public class ChangeResultsAction extends DispatchAction
 
         return mapping.findForward("results");
     }
+
+    /**
+     * Move a column nearer the top of the list of columns. Must pass
+     * in a parameter "columnAlias" to indicate the column being
+     * moved.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward moveUp(ActionMapping mapping, ActionForm form,
+                              HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        HttpSession session = request.getSession();
+
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+
+        String columnAlias = request.getParameter("columnAlias");
+        if (columnAlias == null) {
+            throw new IllegalArgumentException("A columnAlias parameter must be present");
+        }
+
+        dr.moveColumnUp(columnAlias);
+        return mapping.findForward("results");
+    }
+
+    /**
+     * Move a column nearer to the bottom of the list of columns. Must
+     * pass in a parameter "columnAlias" to indicate the column being
+     * moved.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward moveDown(ActionMapping mapping, ActionForm form,
+                              HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        HttpSession session = request.getSession();
+
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+
+        String columnAlias = request.getParameter("columnAlias");
+        if (columnAlias == null) {
+            throw new IllegalArgumentException("A columnAlias parameter must be present");
+        }
+
+        dr.moveColumnDown(columnAlias);
+        return mapping.findForward("results");
+    }
+
 }
