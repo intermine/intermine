@@ -17,6 +17,7 @@ prepend MANPATH $JDK/man
 append CLASSPATH /software/noarch/biojava/biojava.jar
 append CLASSPATH /software/noarch/jaxb/lib/jaxb-rt-1.0-ea.jar
 append CLASSPATH /software/noarch/mage/MAGE-2002-02-22.jar
+append CLASSPATH /software/noarch/ojb/ojb-0.8.400.jar
 append CLASSPATH .
 
 append JIKESPATH $JDK/jre/lib/rt.jar
