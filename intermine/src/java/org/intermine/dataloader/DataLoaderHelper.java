@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -143,7 +144,7 @@ public class DataLoaderHelper
      * @return the Map from key names to PrimaryKeys
      */
     public static Map getPrimaryKeys(ClassDescriptor cld) {
-        Map keyMap = new HashMap();
+        Map keyMap = new LinkedHashMap();
         Properties keys = getKeyProperties(cld.getModel());
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
