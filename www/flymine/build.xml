@@ -45,6 +45,7 @@
         <fileset dir="${build.www}/internal/">
             <include name="**/*.pdf"/>
             <include name="**/*.sxi"/>
+            <include name="**/*.ppt"/>
             <include name="**/*.png"/>
             <include name="**/*.gif"/>
             <include name="**/*.zargo"/>
