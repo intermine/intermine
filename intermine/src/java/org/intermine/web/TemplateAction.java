@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import java.util.Map;
+import java.util.Iterator;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
@@ -50,9 +51,9 @@ public class TemplateAction extends Action
             int j = template.getNodes().indexOf(node);
             String op = (String) ((TemplateForm) form).getAttributeOps("" + (j + 1));
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
-
+            
             Object constraintValue = ((TemplateForm) form).getParsedAttributeValues("" + (j + 1));
-
+            
             node.getConstraints().set(0, new Constraint(constraintOp, constraintValue));
         }
         
