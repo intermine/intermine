@@ -90,6 +90,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
     private Set cloneSet = new HashSet();
     private Map seqIdMap = new HashMap();
 
+
     /**
      * @see DataTranslator#DataTranslator
      */
@@ -169,16 +170,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     if (!comments.isEmpty()) {
                         tgtItem.addCollection(new ReferenceList("comments", comments));
                     }
-                    // gene name should be its stable id (or identifier if none)
+                    // gene organismDbId should be its stable id (or identifier if none)
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
                     if (stableId != null) {
-                         moveField(stableId, tgtItem, "stable_id", "identifier");
+                         moveField(stableId, tgtItem, "stable_id", "organismDbId");
                     } else {
-                        tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
+                        tgtItem.addAttribute(new Attribute("organismDbId",
+                                             srcItem.getIdentifier()));
                     }
-                    // display_xref is gene name (?)
-                    //promoteField(tgtItem, srcItem, "name", "display_xref", "display_label");
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
                     // if no organismDbId set to be same as identifier
                     if (!tgtItem.hasAttribute("organismDbId")) {
@@ -245,9 +245,8 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         locationIds.add(location.getIdentifier());
                         result.add(location);
                     }
-                    //tgtItem.addCollection(new ReferenceList("locations", locationIds));
+
                     setNameAttribute(srcItem, tgtItem);
-                    //setSynonym
                 } else if ("marker_synonym".equals(className)) {
                     tgtItem.addAttribute(new Attribute("type", "identifier"));
                     if (srcItem.hasAttribute("source")) {
@@ -300,8 +299,12 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         String namespace = XmlUtil.getNamespaceFromURI(tgtItem.getClassName());
         Item location = createItem(namespace + "Location", "");
         Item seq = new Item();
-        moveField(srcItem, location, "seq_region_start", "start");
-        moveField(srcItem, location, "seq_region_end", "end");
+        if (srcItem.hasAttribute("seq_region_start")) {
+            moveField(srcItem, location, "seq_region_start", "start");
+        }
+        if (srcItem.hasAttribute("seq_region_end")) {
+            moveField(srcItem, location, "seq_region_end", "end");
+        }
         location.addAttribute(new Attribute("startIsPartial", "false"));
         location.addAttribute(new Attribute("endIsPartial", "false"));
 
@@ -324,11 +327,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         if (srcItemIsChild) {
             addReferencedItem(tgtItem, location, "objects", true, "subject", false);
             location.addReference(new Reference("object", seq.getIdentifier()));
-            //moveField(srcItem, location, "seq_region", "object");
+
         } else {
             addReferencedItem(tgtItem, location, "subjects", true, "object", false);
             location.addReference(new Reference("subject", seq.getIdentifier()));
-            //moveField(srcItem, location, "seq_region", "subject");
+
         }
         return location;
     }
@@ -420,6 +423,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 end = start + length - 1;
             }
         }
+
         Item location = createItem(tgtNs + "Location", "");
         location.addAttribute(new Attribute("start", Integer.toString(start)));
         location.addAttribute(new Attribute("end", Integer.toString(end)));
@@ -538,6 +542,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         String value = srcItem.getIdentifier();
         String swissProtId = null;
         String tremblId = null;
+        String identifier = null;
         if (srcItem.hasReference("transcript")) {
             Item transcript = ItemHelper.convert(srcItemReader.getItemById(
                                     srcItem.getReference("transcript").getRefId()));
@@ -558,28 +563,35 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     && dbname != null && !dbname.equals("")) {
                     if (dbname.equals("Uniprot/SWISSPROT")) { //Uniprot/SWISSPROT
                         swissProtId = accession;
-                        Item synonym = createItem(tgtNs + "Synonym", "");
+                        Item synonym = createSynonym(srcItem.getIdentifier(),
+                                                     "accession", accession, getSwissprotRef());
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "identifier"));
-                        synonym.addReference(getSwissprotRef());
                         synonyms.add(synonym);
+
+                        if (xref.hasAttribute("display_label")
+                            && !xref.getAttribute("display_label").getValue().equals("")) {
+                            identifier = xref.getAttribute("display_label").getValue();
+                            synonym = createSynonym(srcItem.getIdentifier(),
+                                                   "identifier", identifier, getSwissprotRef());
+                            addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
+                            synonyms.add(synonym);
+                        }
                     } else if (dbname.equals("Uniprot/SPTREMBL")) { // Uniprot/SPTREMBL
                         tremblId = accession;
-                        Item synonym = createItem(tgtNs + "Synonym", "");
+                        Item synonym =  createSynonym(srcItem.getIdentifier(),
+                                                     "accession", accession, getTremblRef());
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "identifier"));
-                        synonym.addReference(getTremblRef());
                         synonyms.add(synonym);
-                    } else if (dbname.equals("protein_id")
-                        || dbname.equals("prediction_SPTREMBL")) {
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                        synonym.addAttribute(new Attribute("value", accession));
-                        synonym.addAttribute(new Attribute("type", "identifier"));
-                        synonym.addReference(getEmblRef());
-                        synonyms.add(synonym);
+
+                         if (xref.hasAttribute("display_label")
+                            && !xref.getAttribute("display_label").getValue().equals("")) {
+                             identifier = xref.getAttribute("display_label").getValue();
+                             synonym = createSynonym(srcItem.getIdentifier(),
+                                                     "identifier", identifier, getTremblRef());
+                             addReferencedItem(protein, synonym, "synonyms",
+                                               true, "subject", false);
+                             synonyms.add(synonym);
+                         }
                     }
                 }
             }
@@ -600,6 +612,9 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         Item chosenProtein = (Item) proteins.get(primaryAcc);
         if (chosenProtein == null && primaryAcc != null) {
             protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
+            if (identifier != null) {
+                protein.addAttribute(new Attribute("identifier", identifier));
+            }
             addReferencedItem(protein, getEnsemblDb(), "evidence", true, "", false);
             // set up additional references/collections
             protein.addReference(getOrgRef());
@@ -657,21 +672,29 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             }
            if (accession != null && !accession.equals("")
                 && dbname != null && !dbname.equals("")) {
-                if (dbname.equals("HUGO") || dbname.equals("RefSeq")) { //?HUGO RefSeq
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("value", accession));
+                if (dbname.equals("HUGO") || dbname.equals("RefSeq_dna")) {
+                    //?HUGO RefSeq_dna RefSeq_peptide
+                    Item synonym = new Item();
                     if (dbname.equals("HUGO")) {
-                        synonym.addReference(getHugoRef());
-                        synonym.addAttribute(new Attribute("type", "identifier"));
-                        tgtItem.addAttribute(new Attribute("organismDbId", accession));
+                        synonym = createSynonym(tgtItem.getIdentifier(),
+                                                "name", name, getHugoRef());
+                        synonyms.add(synonym);
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        synonym = createSynonym(tgtItem.getIdentifier(),
+                                               "accession", accession, getHugoRef());
+                        synonyms.add(synonym);
+
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        tgtItem.addAttribute(new Attribute("identifier", accession));
                         tgtItem.addAttribute(new Attribute("name", name));
                     } else {
-                        synonym.addReference(getRefSeqRef());
-                        synonym.addAttribute(new Attribute("type", "identifier"));
-                        tgtItem.addAttribute(new Attribute("name", accession));
+                        synonym = createSynonym(tgtItem.getIdentifier(),
+                                               "accession", accession, getRefSeqRef());
+                        synonyms.add(synonym);
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        tgtItem.addAttribute(new Attribute("accession", accession));
                     }
-                    synonyms.add(synonym);
+
                 }
             }
         }
@@ -701,6 +724,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         } else {
             return null;
         }
+    }
+
+    private Item createSynonym(String subjectId, String type, String value, Reference ref) {
+        Item synonym = createItem("Synonym");
+        synonym.addReference(new Reference("subject", subjectId));
+        synonym.addAttribute(new Attribute("type", type));
+        synonym.addAttribute(new Attribute("value", value));
+        synonym.addReference(ref);
+        return synonym;
     }
 
     /**
@@ -1006,9 +1038,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
-        String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
-        String classname = ObjectStoreItemPathFollowingImpl.CLASSNAME;
-
         String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
         String classname = ObjectStoreItemPathFollowingImpl.CLASSNAME;
 
