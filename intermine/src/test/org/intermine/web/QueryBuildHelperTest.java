@@ -25,6 +25,7 @@ import org.flymine.objectstore.query.*;
 import org.flymine.testing.OneTimeTestCase;
 
 import org.flymine.model.testmodel.Department;
+import org.flymine.model.testmodel.Employee;
 
 import junit.framework.TestCase;
 import junit.framework.Test;
@@ -97,6 +98,39 @@ public class QueryBuildHelperTest extends QueryTestCase
         queryClasses.put("Department_0", d);
         
         assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, new HashMap()));
+    }
+
+    public void testCreateQueryWithBag() throws Exception{
+        Class cls = Employee.class;
+        
+        DisplayQueryClass d = new DisplayQueryClass();
+        d.setType(cls.getName());
+        d.getConstraintNames().add("age_0");
+        d.getFieldNames().put("age_0", "age");
+        d.getFieldOps().put("age_0", ConstraintOp.IN);
+
+        Map savedBags = new HashMap();
+        List myBag = new ArrayList();
+        myBag.add(new Integer(20));
+        myBag.add(new Integer(30));
+
+        savedBags.put("my_saved_bag", myBag);
+        
+        d.getFieldValues().put("age_0", "my_saved_bag");
+        
+        Query q = new Query();
+        QueryClass qc = new QueryClass(cls);
+        q.alias(qc, "Employee_0");
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        BagConstraint sc =
+            new BagConstraint(new QueryField(qc, "age"), ConstraintOp.IN, myBag);
+        q.setConstraint(sc);
+
+        Map queryClasses = new HashMap();
+        queryClasses.put("Employee_0", d);
+        
+        assertEquals(q, QueryBuildHelper.createQuery(queryClasses, model, savedBags));
     }
 
     public void testToStrings() throws Exception {
