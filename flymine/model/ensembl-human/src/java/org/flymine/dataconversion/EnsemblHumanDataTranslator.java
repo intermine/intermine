@@ -238,8 +238,12 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     storeTgtItem = false;
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
-                    tgtItem.addReference(getEnsemblRef());
-                    tgtItem.addAttribute(new Attribute("type", "identifier"));
+                    if (className.endsWith("translation_stable_id")) {
+                        storeTgtItem = false;
+                    } else {
+                        tgtItem.addReference(getEnsemblRef());
+                        tgtItem.addAttribute(new Attribute("type", "identifier"));
+                    }
 
                 // } else if ("prediction_transcript".equals(className)) {
                 //   tgtItem.addReference(getOrgRef());
@@ -606,7 +610,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                 }
             }
         }
-
 
         String primaryAcc = null;
         if (swissProtId != null) {
