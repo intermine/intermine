@@ -64,6 +64,8 @@ public class LoadDefaultTemplatesTask extends Task
      */
     public void execute() throws BuildException {
         // Needed so that STAX can find it's implementation classes
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         
         try {
@@ -101,6 +103,8 @@ public class LoadDefaultTemplatesTask extends Task
             }
         } catch (Exception e) {
             throw new BuildException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(cl);
         }
     }
 }
