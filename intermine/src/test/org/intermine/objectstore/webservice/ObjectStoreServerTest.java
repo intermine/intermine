@@ -15,9 +15,10 @@ import junit.framework.*;
 import java.util.List;
 
 import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.query.*;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryTestCase;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.ObjectStoreException;
-import org.flymine.testing.OneTimeTestCase;
 
 public class ObjectStoreServerTest extends TestCase
 {
@@ -33,23 +34,14 @@ public class ObjectStoreServerTest extends TestCase
     }
 
     public void testRegisterQueryObject() throws Exception {
-        Query q = new Query();
+        FqlQuery q = new FqlQuery("select a1_ from Company as a1_", "org.flymine.model.testmodel");
 
         assertEquals(1, server.registerQuery(q));
         assertEquals(2, server.registerQuery(q));
     }
 
-
-    public void testRegisterQueryString() throws Exception {
-        String queryString = "select a1_ from Company as a1_";
-        String pkg = "org.flymine.model.testmodel";
-
-        assertEquals(1, server.registerQuery(queryString, pkg));
-        assertEquals(2, server.registerQuery(queryString, pkg));
-    }
-
     public void testRegisterNullQueryObject() throws Exception {
-        Query q = null;
+        FqlQuery q = null;
 
         try {
             server.registerQuery(q);
@@ -58,31 +50,11 @@ public class ObjectStoreServerTest extends TestCase
         }
     }
 
-    public void testRegisterNullQueryString() throws Exception {
-        String queryString = null;
-
-        try {
-            server.registerQuery(queryString, "org.flymine.model.testmodel");
-            fail("Expected: NullPointerException");
-        } catch (NullPointerException e) {
-        }
-    }
-
-    public void testRegisterEmptyQueryString() throws Exception {
-        String queryString = "";
-
-        try {
-            server.registerQuery(queryString, "org.flymine.model.testmodel");
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-    }
-
     public void testValidLookup() throws Exception {
-        Query query = new Query();
+        FqlQuery query = new FqlQuery("SELECT a1_ FROM Company AS a1_", "org.flymine.model.testmodel");
         int queryId = server.registerQuery(query);
         Query ret = server.lookupQuery(queryId);
-        assertTrue(ret == query);
+        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ret.toString());
     }
 
     public void testInvalidLookup() throws Exception {

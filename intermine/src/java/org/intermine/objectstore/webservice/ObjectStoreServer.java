@@ -19,6 +19,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.sql.query.ExplainResult;
 import org.flymine.metadata.Model;
 import org.flymine.util.PropertiesUtil;
@@ -70,29 +71,19 @@ public class ObjectStoreServer
      * Register a query with this class. This is useful to avoid repeated
      * transfer of query objects across the network.
      *
-     * @param query the Query to register
+     * @param query the FqlQuery to register
      * @return an id representing the query
      */
-    public int registerQuery(Query query) {
+    public int registerQuery(FqlQuery query) {
         if (query == null) {
             throw new NullPointerException("query should not be null");
         }
+
+        Query q = query.toQuery();
         synchronized (registeredQueries) {
-            registeredQueries.put(new Integer(++nextQueryId), query);
+            registeredQueries.put(new Integer(++nextQueryId), q);
         }
         return nextQueryId;
-    }
-
-    /**
-     * Register a query (as a String) with this class. This is useful
-     * to avoid repeated transfer of query objects across the network.
-     *
-     * @param query the Query to register
-     * @param namespace the namespace of the objects
-     * @return an id representing the query
-     */
-    public int registerQuery(String query, String namespace) {
-        return registerQuery(new Query(query, namespace));
     }
 
     /**

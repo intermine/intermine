@@ -21,7 +21,7 @@ import org.apache.struts.util.MessageResources;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
 
 /**
@@ -64,8 +64,8 @@ public class QueryAction extends Action
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
 
-            Results results = os.execute(new Query(queryform.getQuerystring(),
-                                                   "org.flymine.model.testmodel"));
+            Results results = os.execute(new FqlQuery(queryform.getQuerystring(),
+                                                  "org.flymine.model.testmodel").toQuery());
             request.setAttribute("results", results);
         } catch (Exception e) {
             return (mapping.findForward("error"));
