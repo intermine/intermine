@@ -203,17 +203,20 @@
         </c:if>
         <br/>
         
-      <%-- Page size controls --%>
+        <%-- Page size controls --%>
         <fmt:message key="results.changepagesize"/>
-        <html:select property="pageSize">
+        <html:select property="pageSize" onchange="document.location.href='${requestScope['javax.servlet.include.context_path']}/changeResultsSize.do?changePageSize=1&pageSize='+document.changeResultsForm.pageSize.options[document.changeResultsForm.pageSize.selectedIndex].value">
           <html:option value="10">10</html:option>
           <html:option value="25">25</html:option>
           <html:option value="50">50</html:option>
           <html:option value="100">100</html:option>
         </html:select>
-        <html:submit property="changePageSize">
-          <fmt:message key="button.change"/>
-        </html:submit>
+        <noscript>
+          <html:submit property="changePageSize">
+            <fmt:message key="button.change"/>
+          </html:submit>
+        </noscript>
+      
         <br/>
       </c:if>
 
@@ -224,9 +227,9 @@
           <fmt:message key="results.return"/>
         </html:link>
       </c:if>
-    
+
       </div> <%-- end of main results table body div --%>
-      
+   
       <%-- Save bag controls --%>
       <br/><br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
