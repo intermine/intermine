@@ -104,20 +104,14 @@ public class Daml2Owl extends URL2Model
         String damlFilename = args[0];
         String owlFilename = args[1];
 
-        String baseURI = "";
-        if (args.length > 2) {
-            baseURI = args[2];
-        }
-
         try {
             Daml2Owl owler = new Daml2Owl();
             BufferedWriter out = new BufferedWriter(new FileWriter(new File(owlFilename)));
-            if (baseURI.equals("")) {
-                owler.process(new FileReader(new File(damlFilename))).write(out, "N3");
+            if (args.length > 2) {
+                owler.process(new FileReader(new File(damlFilename)), args[2]).write(out, "N3");
             } else {
-                owler.process(new FileReader(new File(damlFilename)), baseURI).write(out, "N3");
+                owler.process(new FileReader(new File(damlFilename))).write(out, "N3");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

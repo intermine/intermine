@@ -259,27 +259,11 @@ public class MergeOwl
                                 + "src_namespace src_format do_subclasses(y|n)");
         }
 
-        String tgtModelName = args[0];
-        String tgtNs = args[1];
-        String srcModelName = args[2];
-        String srcNs = args[3];
-        String srcFormat = args[4];
-
-        boolean buildRestrictedSubclasses;
-        if ("y".equals(args[5])) {
-            buildRestrictedSubclasses = true;
-        } else if ("n".equals(args[5])) {
-            buildRestrictedSubclasses = false;
-        } else {
-            throw new Exception("Usage: MergeOwl tgt_model.n3 tgt_namespace src_model "
-                                + "src_namespace src_format do_subclasses(y|n)");
-        }
-
-        File tgtModel = new File(tgtModelName);
-        MergeOwl merger = new MergeOwl(new FileReader(tgtModel), tgtNs, buildRestrictedSubclasses);
-        merger.addToTargetOwl(new FileReader(new File(srcModelName)), srcNs, srcFormat);
+        File tgtModelFile = new File(args[0]);
+        MergeOwl merger = new MergeOwl(new FileReader(tgtModelFile), args[1], "y".equals(args[5]));
+        merger.addToTargetOwl(new FileReader(new File(args[2])), args[3], args[4]);
         OntModel ont = merger.getTargetModel();
-        ont.write(new FileWriter(tgtModel), "N3");
+        ont.write(new FileWriter(tgtModelFile), "N3");
     }
 }
 
