@@ -24,19 +24,16 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.DataTranslator;
-import org.intermine.dataconversion.DataConversionTestCase;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 
-public class EnsemblDataTranslatorTest extends DataConversionTestCase {
+public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
     public void setUp() throws Exception {
         super.setUp();
-        expectedItems = getExpectedItems();
-        modelName = "genomic";
     }
-
 
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
@@ -45,15 +42,14 @@ public class EnsemblDataTranslatorTest extends DataConversionTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        assertEquals(new HashSet(expectedItems), tgtIw.getItems());
+        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
-
-    private Collection getExpectedItems() throws Exception {
+    protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
     }
 
-    private Collection getSrcItems() throws Exception {
+    protected Collection getSrcItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_src.xml"));
     }
 
@@ -63,5 +59,9 @@ public class EnsemblDataTranslatorTest extends DataConversionTestCase {
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(reader, null, "N3");
         return ont;
+    }
+
+    protected String getModelName() {
+        return "genomic";
     }
 }

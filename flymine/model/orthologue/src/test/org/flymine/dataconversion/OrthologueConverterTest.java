@@ -24,17 +24,15 @@ import java.util.HashSet;
 import java.util.Collection;
 
 import org.intermine.xml.full.FullParser;
-import org.intermine.dataconversion.DataConversionTestCase;
+import org.intermine.dataconversion.TargetItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 
-public class OrthologueConverterTest extends DataConversionTestCase
+public class OrthologueConverterTest extends TargetItemsTestCase
 {
     private String ENDL = System.getProperty("line.separator");
 
     public void setUp() throws Exception {
         super.setUp();
-        expectedItems = getExpectedItems();
-        modelName = "genomic";
     }
 
     public void testProcess() throws Exception {
@@ -49,21 +47,15 @@ public class OrthologueConverterTest extends DataConversionTestCase
         converter.setParam2("ORG2");
         converter.process();
 
-        Set expected = new HashSet(expectedItems);
+        Set expected = new HashSet(getExpectedItems());
         assertEquals(expected, itemWriter.getItems());
     }
 
-    private Collection getExpectedItems() throws Exception {
+    protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/OrthologueConverterTest.xml"));
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
+    protected String getModelName() {
+        return "genomic";
     }
-
-
 }
