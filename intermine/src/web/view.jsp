@@ -39,11 +39,6 @@
       <fmt:message key="view.showresults"/>
     </html:link>
   </div>
-  <div>
-    <html:link action="/viewChange?method=export">
-      <fmt:message key="results.export"/>
-    </html:link>
-  </div>
 </c:if>
 
 <%--     

@@ -19,4 +19,6 @@
     </html:messages>
   </logic:messagesPresent>
 </div>
+
+<br/>
 <!-- /errorMessages.jsp -->

@@ -11,4 +11,6 @@
 <div>
   <html:link action="/exportAction?method=tab"><fmt:message key="export.tabdelimited"/></html:link>
 </div>
+<br/>
+<html:link action="/results">Return to results</html:link>
 <!-- /export.jsp -->
