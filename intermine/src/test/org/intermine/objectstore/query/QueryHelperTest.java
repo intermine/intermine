@@ -12,11 +12,13 @@ package org.flymine.objectstore.query;
 
 import junit.framework.TestCase;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 import java.text.SimpleDateFormat;
 
 import org.flymine.metadata.Model;
@@ -24,7 +26,6 @@ import org.flymine.metadata.ClassDescriptor;
 import org.flymine.model.testmodel.Employee;
 import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Company;
-
 
 public class QueryHelperTest extends TestCase
 {
@@ -39,69 +40,73 @@ public class QueryHelperTest extends TestCase
     }
 
     public void testAddToQuery() throws Exception {
+        Query q = new Query();
+
         Map fields = new HashMap();
-        fields.put("name", "Dennis");
-        fields.put("fullTime", "true");
+        fields.put("name_1", "Dennis");
+        fields.put("fullTime_1", "true");
 
         Map ops = new HashMap();
-        ops.put("name", ConstraintOp.EQUALS.getIndex().toString());
-        ops.put("fullTime", ConstraintOp.EQUALS.getIndex().toString());
+        ops.put("name_1", ConstraintOp.EQUALS.getIndex().toString());
+        ops.put("fullTime_1", ConstraintOp.EQUALS.getIndex().toString());
 
-        Query q = new Query();
         QueryHelper.addToQuery(q, new QueryClass(Employee.class), fields, ops, model);
 
-        ArrayList from = new ArrayList(q.getFrom());
-        assertEquals(Employee.class, ((QueryClass) from.get(0)).getType());
+        assertEquals(Employee.class, ((QueryClass) q.getFrom().iterator().next()).getType());
 
-        ArrayList list = new ArrayList(((ConstraintSet) q.getConstraint()).getConstraints());
-        SimpleConstraint res1 = (SimpleConstraint) list.get(0);
-        assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());
-        assertEquals(Boolean.class, ((QueryField) res1.getArg1()).getType());
-        assertEquals(new Boolean(true), ((QueryValue) res1.getArg2()).getValue());
-        assertEquals(Boolean.class, ((QueryValue) res1.getArg2()).getType());
+        Iterator i = ((ConstraintSet) q.getConstraint()).getConstraints().iterator();
 
-        SimpleConstraint res2 = (SimpleConstraint) list.get(1);
-        assertEquals("name", ((QueryField) res2.getArg1()).getFieldName());
-        assertEquals(String.class, ((QueryField) res2.getArg1()).getType());
-        assertEquals("Dennis", ((QueryValue) res2.getArg2()).getValue());
-        assertEquals(String.class, ((QueryValue) res2.getArg2()).getType());
+        SimpleConstraint sc = (SimpleConstraint) i.next();
+        assertEquals("name", ((QueryField) sc.getArg1()).getFieldName());
+        assertEquals(String.class, ((QueryField) sc.getArg1()).getType());
+        assertEquals("Dennis", ((QueryValue) sc.getArg2()).getValue());
+        assertEquals(String.class, ((QueryValue) sc.getArg2()).getType());
+
+        sc = (SimpleConstraint) i.next();
+        assertEquals("fullTime", ((QueryField) sc.getArg1()).getFieldName());
+        assertEquals(Boolean.class, ((QueryField) sc.getArg1()).getType());
+        assertEquals(new Boolean(true), ((QueryValue) sc.getArg2()).getValue());
+        assertEquals(Boolean.class, ((QueryValue) sc.getArg2()).getType());
+
     }
-
 
     // Add a QueryClass and its constraints to a query then alter and add
     // the same again - i.e. editing existing QueryClass
     public void testAddToQueryExists() throws Exception {
+        Query q = new Query();
+
         Map fields1 = new HashMap();
-        fields1.put("name", "Dennis");
-        fields1.put("fullTime", "true");
+        fields1.put("name_1", "Dennis");
+        fields1.put("fullTime_1", "true");
 
         Map ops1 = new HashMap();
-        ops1.put("name", ConstraintOp.EQUALS.getIndex().toString());
-        ops1.put("fullTime", ConstraintOp.EQUALS.getIndex().toString());
+        ops1.put("name_1", ConstraintOp.EQUALS.getIndex().toString());
+        ops1.put("fullTime_1", ConstraintOp.EQUALS.getIndex().toString());
 
-        Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
+
         QueryHelper.addToQuery(q, qc, fields1, ops1, model);
+
         assertEquals(1, q.getFrom().size());
         assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
 
-
         Map fields2 = new HashMap();
-        fields2.put("name", "Gerald");
-        fields2.put("fullTime", "true");
-        fields2.put("age", "43");
+        fields2.put("name_1", "Gerald");
+        fields2.put("fullTime_1", "true");
+        fields2.put("age_1", "43");
 
         Map ops2 = new HashMap();
-        ops2.put("name", ConstraintOp.EQUALS.getIndex().toString());
-        ops2.put("fullTime", ConstraintOp.NOT_EQUALS.getIndex().toString());
-        ops2.put("age", ConstraintOp.EQUALS.getIndex().toString());
+        ops2.put("name_1", ConstraintOp.EQUALS.getIndex().toString());
+        ops2.put("fullTime_1", ConstraintOp.NOT_EQUALS.getIndex().toString());
+        ops2.put("age_1", ConstraintOp.EQUALS.getIndex().toString());
 
         QueryHelper.addToQuery(q, qc, fields2, ops2, model);
-        assertEquals(1, q.getFrom().size());
-        List list = new ArrayList(((ConstraintSet) q.getConstraint()).getConstraints());
-        assertFalse(list.get(0) instanceof ConstraintSet);
-        assertEquals(3, ((ConstraintSet) q.getConstraint()).getConstraints().size());
 
+        assertEquals(1, q.getFrom().size());
+
+        Set constraints = ((ConstraintSet) q.getConstraint()).getConstraints();
+        assertFalse(constraints.iterator().next() instanceof ConstraintSet);
+        assertEquals(3, constraints.size());
     }
 
     public void testAddToQueryNullParameters() throws Exception {
@@ -219,43 +224,44 @@ public class QueryHelperTest extends TestCase
 
     public void testGenerateConstraintsAttribute() throws Exception {
         Map fields = new HashMap();
-        fields.put("name", "Dennis");
-        fields.put("fullTime", "true");
+        fields.put("name_1", "Dennis");
+        fields.put("fullTime_1", "true");
 
         Map ops = new HashMap();
-        ops.put("name", ConstraintOp.EQUALS.getIndex().toString());
-        ops.put("fullTime", ConstraintOp.EQUALS.getIndex().toString());
+        ops.put("name_1", ConstraintOp.EQUALS.getIndex().toString());
+        ops.put("fullTime_1", ConstraintOp.EQUALS.getIndex().toString());
 
         QueryClass qc = new QueryClass(Employee.class);
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
 
         ConstraintSet c = QueryHelper.generateConstraints(qc, fields, ops, new HashMap(), model);
-        ArrayList list = new ArrayList(c.getConstraints());
-        SimpleConstraint res1 = (SimpleConstraint) list.get(0);
-        assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());
-        assertEquals(Boolean.class, ((QueryField) res1.getArg1()).getType());
-        assertEquals(new Boolean(true), ((QueryValue) res1.getArg2()).getValue());
-        assertEquals(Boolean.class, ((QueryValue) res1.getArg2()).getType());
 
-        SimpleConstraint res2 = (SimpleConstraint) list.get(1);
-        assertEquals("name", ((QueryField) res2.getArg1()).getFieldName());
-        assertEquals(String.class, ((QueryField) res2.getArg1()).getType());
-        assertEquals("Dennis", ((QueryValue) res2.getArg2()).getValue());
-        assertEquals(String.class, ((QueryValue) res2.getArg2()).getType());
+        Iterator i = c.getConstraints().iterator();
+
+        SimpleConstraint sc = (SimpleConstraint) i.next();
+        assertEquals("name", ((QueryField) sc.getArg1()).getFieldName());
+        assertEquals(String.class, ((QueryField) sc.getArg1()).getType());
+        assertEquals("Dennis", ((QueryValue) sc.getArg2()).getValue());
+        assertEquals(String.class, ((QueryValue) sc.getArg2()).getType());
+
+        sc = (SimpleConstraint) i.next();
+        assertEquals("fullTime", ((QueryField) sc.getArg1()).getFieldName());
+        assertEquals(Boolean.class, ((QueryField) sc.getArg1()).getType());
+        assertEquals(new Boolean(true), ((QueryValue) sc.getArg2()).getValue());
+        assertEquals(Boolean.class, ((QueryValue) sc.getArg2()).getType());
     }
 
     public void testGenerateConstraintsReference() throws Exception {
         Map fields = new HashMap();
-        fields.put("department", "a1_");
+        fields.put("department_1", "a1_");
 
         Map ops = new HashMap();
-        ops.put("department", ConstraintOp.CONTAINS.getIndex().toString());
+        ops.put("department_1", ConstraintOp.CONTAINS.getIndex().toString());
 
         QueryClass qc1 = new QueryClass(Employee.class);
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
+        QueryClass qc2 = new QueryClass(Department.class);
 
         Map aliases = new HashMap();
-        QueryClass qc2 = new QueryClass(Department.class);
         aliases.put("a1_", qc2);
 
         ConstraintSet cs = QueryHelper.generateConstraints(qc1, fields, ops, aliases, model);
@@ -269,16 +275,15 @@ public class QueryHelperTest extends TestCase
 
     public void testGenerateConstraintsCollection() throws Exception {
         Map fields = new HashMap();
-        fields.put("employees", "a1_");
+        fields.put("employees_1", "a1_");
 
         Map ops = new HashMap();
-        ops.put("employees", ConstraintOp.CONTAINS.getIndex().toString());
+        ops.put("employees_1", ConstraintOp.CONTAINS.getIndex().toString());
 
         QueryClass qc1 = new QueryClass(Department.class);
-        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+        QueryClass qc2 = new QueryClass(Employee.class);
 
         Map aliases = new HashMap();
-        QueryClass qc2 = new QueryClass(Employee.class);
         aliases.put("a1_", qc2);
 
         ConstraintSet cs = QueryHelper.generateConstraints(qc1, fields, ops, aliases, model);
