@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
 
 import net.sf.cglib.*;
 
@@ -57,6 +58,9 @@ public class DynamicUtil
                 throw new IllegalArgumentException("Cannot create a class from multiple classes");
             }
         }
+        if (clazz != null) {
+            interfaces.removeAll(Arrays.asList(clazz.getInterfaces()));
+        }
         if (interfaces.isEmpty()) {
             if (clazz == null) {
                 throw new IllegalArgumentException("Cannot create a class from nothing");
@@ -78,7 +82,7 @@ public class DynamicUtil
         }
         return DynamicBean.create(clazz, (Class []) interfaces.toArray(new Class[] {}));
     }
-    
+
     /**
      * Create a DynamicBean from a set of interface names
      *

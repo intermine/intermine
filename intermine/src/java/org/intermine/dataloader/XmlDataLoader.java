@@ -12,7 +12,7 @@ package org.flymine.dataloader;
 
 import java.util.Iterator;
 import java.util.List;
-import org.xml.sax.InputSource;
+import java.io.InputStream;
 
 import org.flymine.FlyMineException;
 import org.flymine.model.FlyMineBusinessObject;
@@ -40,15 +40,14 @@ public class XmlDataLoader extends DataLoader
      * Static method to unmarshall business objects from a given xml file and call
      * store on each.
      *
-     * @param source access to xml file
+     * @param is access to xml file
      * @throws FlyMineException if anything goes wrong with xml or storing
      */
-    public void processXml(InputSource source) throws FlyMineException {
+    public void processXml(InputStream is) throws FlyMineException {
         try {
-            String modelName = iw.getObjectStore().getModel().getName();
-            XmlBinding binding = new XmlBinding("castor_xml_" + modelName + ".xml");
-            
-            List objects = (List) binding.unmarshal(source);
+            XmlBinding binding = new XmlBinding(iw.getObjectStore().getModel());
+
+            List objects = (List) binding.unmarshal(is);
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {

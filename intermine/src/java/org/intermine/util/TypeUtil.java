@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Date;
 import java.lang.reflect.Method;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -162,7 +163,7 @@ public class TypeUtil
         Map infos = null;
         synchronized (classToFieldnameToFieldInfo) {
             infos = (Map) classToFieldnameToFieldInfo.get(c);
-            
+
             if (infos == null) {
                 infos = new HashMap();
 
@@ -209,7 +210,7 @@ public class TypeUtil
     public static FieldInfo getFieldInfo(Class c, String fieldname) {
         return (FieldInfo) getFieldInfos(c).get(fieldname);
     }
-    
+
     /**
      * Gets the getter methods for the bean properties of a class
      *
@@ -314,6 +315,45 @@ public class TypeUtil
         return cls;
     }
 
+
+    /**
+     * Returns an object for a given String
+     *
+     * @param clazz the class to convert to
+     * @param value the value to convert
+     * @return the corresponding Class
+     */
+    public static Object stringToObject(Class clazz, String value) {
+        if (clazz.equals(Integer.class) || clazz.equals(Integer.TYPE)) {
+            return Integer.valueOf(value);
+        }
+        if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
+            return Boolean.valueOf(value);
+        }
+        if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
+            return Double.valueOf(value);
+        }
+        if (clazz.equals(Float.class) || clazz.equals(Float.TYPE)) {
+            return Float.valueOf(value);
+        }
+        if (clazz.equals(Long.class)  || clazz.equals(Long.TYPE)) {
+            return Long.valueOf(value);
+        }
+        if (clazz.equals(Short.class) || clazz.equals(Short.TYPE)) {
+            return Short.valueOf(value);
+        }
+        if (clazz.equals(Byte.class) || clazz.equals(Byte.TYPE)) {
+            return Byte.valueOf(value);
+        }
+        if (clazz.equals(Character.class) || clazz.equals(Character.TYPE)) {
+            return new Character(value.charAt(0));
+        }
+        if (clazz.equals(Date.class)) {
+            return new Date(Long.parseLong(value));
+        }
+        return value;
+    }
+
     /**
      * Inner class to hold info on a field.
      *
@@ -325,7 +365,7 @@ public class TypeUtil
         private String name;
         private Method getter;
         private Method setter;
-       
+
         /**
          * Construct a new FieldInfo object.
          *

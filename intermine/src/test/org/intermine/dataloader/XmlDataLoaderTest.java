@@ -21,10 +21,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.Reader;
-import java.io.FileReader;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.lang.reflect.Field;
-import org.xml.sax.InputSource;
 
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
@@ -56,7 +55,7 @@ public class XmlDataLoaderTest extends TestCase
         writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         iw = new IntegrationWriterSingleSourceImpl("test", writer);
 
-        binding = new XmlBinding("castor_xml_testmodel.xml");
+        binding = new XmlBinding(writer.getModel());
         toDelete = new ArrayList();
     }
 
@@ -86,11 +85,10 @@ public class XmlDataLoaderTest extends TestCase
         file = File.createTempFile("temp", "xml");
         marshalList(list, file);
 
-        Reader reader = new FileReader(file);
-        InputSource source = new InputSource(reader);
+        InputStream is = new FileInputStream(file);
 
         XmlDataLoader dl = new XmlDataLoader(iw);
-        dl.processXml(source);
+        dl.processXml(is);
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1, Collections.singletonList("address"));
@@ -121,11 +119,10 @@ public class XmlDataLoaderTest extends TestCase
         file = File.createTempFile("temp", "xml");
         marshalList(list, file);
 
-        Reader reader = new FileReader(file);
-        InputSource source = new InputSource(reader);
+        InputStream is = new FileInputStream(file);
 
         XmlDataLoader dl = new XmlDataLoader(iw);
-        dl.processXml(source);
+        dl.processXml(is);
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1, Collections.singletonList("address"));
@@ -144,7 +141,7 @@ public class XmlDataLoaderTest extends TestCase
     public void testStoreFromFile() throws Exception {
         XmlDataLoader dl = new XmlDataLoader(iw);
         InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel_data.xml");
-        dl.processXml(new InputSource(testData));
+        dl.processXml(testData);
 
         // Just test that a specific Company is there
         Address a1 = new Address();
@@ -174,9 +171,7 @@ public class XmlDataLoaderTest extends TestCase
     private void marshalList(List list, File file) throws Exception {
         List flat = TypeUtil.flatten(list);
         setIds(flat);
-        ListBean bean = new ListBean();
-        bean.setItems(flat);
-        binding.marshal(bean, new BufferedWriter(new FileWriter(file)));
+        binding.marshal(flat, new BufferedWriter(new FileWriter(file)));
         stripIds(flat);
     }
 

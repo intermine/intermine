@@ -11,11 +11,9 @@ package org.flymine.task;
  */
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 
 import org.apache.tools.ant.BuildException;
-
-import org.xml.sax.InputSource;
 
 import org.flymine.dataloader.XmlDataLoader;
 import org.flymine.dataloader.IntegrationWriter;
@@ -39,10 +37,9 @@ public class XmlDataLoaderDriver
         throws BuildException {
 
         try {
-            InputSource source = new InputSource(new FileReader(file));
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias, null);
             XmlDataLoader dl = new XmlDataLoader(iw);
-            dl.processXml(source);
+            dl.processXml(new FileInputStream(file));
         } catch (Exception e) {
             throw new BuildException(e);
         }

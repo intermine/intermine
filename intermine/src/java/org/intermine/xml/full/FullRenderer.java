@@ -67,8 +67,12 @@ public class FullRenderer
      * @return an XML representation of the object
      */
     protected static String renderObject(FlyMineBusinessObject obj, Model model) {
+        if (obj.getId() == null) {
+            throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
+        }
+
         StringBuffer sb = new StringBuffer();
-        sb.append("<object class=\"")
+        sb.append("<object xml_id=\"" + obj.getId() + "\" class=\"")
             .append(getClassName(obj, model))
             .append("\" implements=\"")
             .append(getImplements(obj, model))
@@ -167,15 +171,17 @@ public class FullRenderer
                         .append(((FlyMineBusinessObject) value).getId())
                         .append("\"/>" + ENDL);
                 } else {
-                    sb.append("<field name=\"")
-                        .append(fieldname)
-                        .append("\" value=\"");
-                    if (value instanceof Date) {
-                        sb.append(((Date) value).getTime());
-                    } else {
-                        sb.append(value);
+                    if (!fieldname.equalsIgnoreCase("id")) {
+                        sb.append("<field name=\"")
+                            .append(fieldname)
+                            .append("\" value=\"");
+                        if (value instanceof Date) {
+                            sb.append(((Date) value).getTime());
+                        } else {
+                            sb.append(value);
+                        }
+                        sb.append("\"/>" + ENDL);
                     }
-                    sb.append("\"/>" + ENDL);
                 }
             }
 

@@ -20,7 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.xml.sax.InputSource;
+import java.io.FileWriter;
+import java.io.File;
 
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.model.testmodel.*;
@@ -39,6 +40,8 @@ import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
 import org.flymine.util.DynamicUtil;
 import org.flymine.util.XmlBinding;
+import org.flymine.util.TypeUtil;
+import org.flymine.metadata.Model;
 
 import org.apache.log4j.Logger;
 
@@ -128,12 +131,31 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         }
     }
 
+
+
+
     /*
     public static void setUpData() throws Exception {
         XmlBinding binding = new XmlBinding("castor_xml_testmodel.xml");
         map((List) binding.unmarshal(new InputSource(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"))));
     }
     */
+
+
+//     public void testWriteTestData() throws Exception {
+//         XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
+//         Collection col = data.values();
+//         setIds(col);
+//         binding.marshal(col, new FileWriter(File.createTempFile("testmodel_data", "xml")));
+//     }
+
+    protected void setIds(Collection c) throws Exception {
+        int i=1;
+        Iterator iter = c.iterator();
+        while (iter.hasNext()) {
+            TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+        }
+    }
 
     public static void setUpData() throws Exception {
         Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -235,6 +257,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         types1.setFloatObjType(new Float(1.6F));
         types1.setDoubleObjType(new Double(1.88D));
         types1.setStringObjType("A test String");
+        types1.setDateObjType(new Date(7777777l));
 
         companyA.setAddress(address7);
         companyA.setDepartments(Collections.singletonList(departmentA1));

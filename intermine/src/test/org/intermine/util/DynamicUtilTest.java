@@ -75,6 +75,16 @@ public class DynamicUtilTest extends TestCase
         assertEquals(Employee.class, obj.getClass());
     }
 
+    public void testCreateObjectClassAndRedundantInterfaces() {
+       Set intSet = new HashSet();
+        intSet.add(Employee.class);
+        intSet.add(Employable.class);
+        Object obj = DynamicUtil.createObject(intSet);
+        assertEquals(Employee.class, obj.getClass());
+        assertTrue(obj instanceof Employee);
+        assertTrue(obj instanceof Employable);
+    }
+
     public void testCreateObjectClassInterfaces() throws Exception {
         Set intSet = new HashSet();
         intSet.add(Manager.class);
@@ -86,7 +96,7 @@ public class DynamicUtilTest extends TestCase
         assertTrue(obj instanceof Employable);
         assertTrue(obj instanceof HasAddress);
         assertTrue(obj instanceof Broke);
-        
+
         Manager m = (Manager) obj;
         m.setName("Frank");
         m.setTitle("Mr.");

@@ -41,11 +41,9 @@ public class FullRendererTest extends TestCase
         List list = Arrays.asList(new Object[] {d1, d2});
 
         String expected = "<items>" + ENDL
-            + "<object class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
-            + "<field name=\"id\" value=\"5678\"/>" + ENDL
+            + "<object xml_id=\"5678\" class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
             + "</object>" + ENDL
-            + "<object class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
-            + "<field name=\"id\" value=\"6789\"/>" + ENDL
+            + "<object xml_id=\"6789\" class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
             + "</object>" + ENDL
             + "</items>" + ENDL;
 
@@ -60,15 +58,25 @@ public class FullRendererTest extends TestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<object class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
+        String expected = "<object xml_id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
             + "<field name=\"age\" value=\"0\"/>" + ENDL
             + "<field name=\"fullTime\" value=\"false\"/>" + ENDL
             + "<field name=\"name\" value=\"Employee1\"/>" + ENDL
-            + "<field name=\"id\" value=\"1234\"/>" + ENDL
             + "<reference name=\"department\" ref_id=\"5678\"/>" + ENDL
             + "</object>" + ENDL;
 
         assertEquals(expected, FullRenderer.renderObject(e, model));
+    }
+
+    public void testRenderObjectNoId() throws Exception {
+        Employee e = new Employee();
+        e.setName("Employee1");
+
+        try {
+            FullRenderer.renderObject(e, model);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException ex) {
+        }
     }
 
     public void testRenderObjectDynamic() throws Exception {
@@ -86,7 +94,7 @@ public class FullRendererTest extends TestCase
         Broke b = (Broke) o;
         b.setDebt(10);
 
-        String expected = "<object class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
+        String expected = "<object xml_id=\"1234\" class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
             + "<field name=\"vatNumber\" value=\"0\"/>" + ENDL
             + "<field name=\"debt\" value=\"10\"/>" + ENDL
             + "<collection name=\"departments\">" + ENDL
@@ -94,7 +102,6 @@ public class FullRendererTest extends TestCase
             + "<reference ref_id=\"6789\"/>" + ENDL
             + "</collection>" + ENDL
             + "<field name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
-            + "<field name=\"id\" value=\"1234\"/>" + ENDL
             + "</object>" + ENDL;
 
         assertEquals(expected, FullRenderer.renderObject(b, model));
@@ -115,7 +122,7 @@ public class FullRendererTest extends TestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<object class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
+        String expected = "<object xml_id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
             + "<field name=\"intObjType\" value=\"4\"/>" + ENDL
             + "<field name=\"booleanObjType\" value=\"true\"/>" + ENDL
             + "<field name=\"doubleType\" value=\"1.3\"/>" + ENDL
@@ -126,7 +133,6 @@ public class FullRendererTest extends TestCase
             + "<field name=\"doubleObjType\" value=\"2.3\"/>" + ENDL
             + "<field name=\"intType\" value=\"2\"/>" + ENDL
             + "<field name=\"name\" value=\"Types1\"/>" + ENDL
-            + "<field name=\"id\" value=\"1234\"/>" + ENDL
             + "<field name=\"dateObjType\" value=\"7777777777\"/>" + ENDL
             + "</object>" + ENDL;
 

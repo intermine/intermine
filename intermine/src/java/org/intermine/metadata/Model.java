@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 
 import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
-
+import org.flymine.util.TypeUtil;
 /**
  * Represents a named business model, makes available metadata for each class
  * within model.
@@ -141,6 +141,15 @@ public class Model
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cld.setAllFieldDescriptors();
         }
+    }
+
+    /**
+     * Return name of the model's package.
+     * @return package name
+     */
+    public String getPackageName() {
+        return TypeUtil.packageName(((ClassDescriptor) cldMap.values().iterator().next())
+                                    .getName());
     }
 
     /**

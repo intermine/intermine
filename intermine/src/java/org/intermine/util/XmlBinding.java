@@ -11,77 +11,55 @@ package org.flymine.util;
  */
 
 import java.io.Writer;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
-import org.xml.sax.InputSource;
-
-import org.exolab.castor.mapping.Mapping;
-import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.Unmarshaller;
-
-import org.flymine.FlyMineException;
 
 import org.apache.log4j.Logger;
 
+import org.flymine.metadata.Model;
+import org.flymine.FlyMineException;
+import org.flymine.xml.full.FullParser;
+import org.flymine.xml.full.FullRenderer;
+
 /**
- * Represents an XML mapping - performs XML (un)marshalling of objects using Castor
+ * Represents an XML mapping - performs XML (un)marshalling of objects/Full Data XML
  * @author Mark Woodbridge
  */
 public class XmlBinding
 {
     protected static final Logger LOG = Logger.getLogger(XmlBinding.class);
 
-    protected Mapping mapping;
+    protected Model model;
 
     /**
      * Constructor
-     * @param filename a Castor mapping file
-     * @throws FlyMineException if an error occurs in initialising the mapping
+     * @param model an object model
      */
-    public XmlBinding(String filename) throws FlyMineException {
-        mapping = new Mapping();
-        try {
-            mapping.loadMapping(getClass().getClassLoader().getResource(filename));
-        } catch (Exception e) {
-            throw new FlyMineException("Unable to initialise mapping: " + e);
-        }
+    public XmlBinding(Model model) {
+        this.model = model;
     }
 
     /**
-     * Marshal an object to an XML file
-     * @param obj the object to marshal
+     * Marshal a collection of objects to an XML file.
+     * @param col business objects to marshal into XML
      * @param writer the Writer to use
-     * @throws FlyMineException if an error occurs during marshalling
+     * @throws IOException if error encountered with writer
      */
-    public void marshal(Object obj, Writer writer) throws FlyMineException {
-        try {
-            Marshaller marshaller = new Marshaller(writer);
-            marshaller.setMapping(mapping);
-            marshaller.marshal(obj);
-        } catch (Exception e) {
-            throw new FlyMineException("Error during marshalling: " + e);
-        }
+    public void marshal(Collection col, Writer writer) throws IOException {
+        writer.write(FullRenderer.render(col, model));
+        writer.flush();
     }
 
     /**
-     * Unmarshal an XML file to an object
-     * @param source the InputSource to read from
-     * @return the object
+     * Unmarshal an XML file to an object.
+     * @param is the InputStream to read from
+     * @return a collection of business objects
      * @throws FlyMineException if an error occurs during unmarshalling
      */
-    public Object unmarshal(InputSource source) throws FlyMineException {
+    public Collection unmarshal(InputStream is) throws FlyMineException {
         try {
-            Unmarshaller unmarshaller = new Unmarshaller(mapping);
-            Object retval = unmarshaller.unmarshal(source);
-            if (retval instanceof Collection) {
-                Iterator iter = ((Collection) retval).iterator();
-                while (iter.hasNext()) {
-                    TypeUtil.setFieldValue(iter.next(), "id", null);
-                }
-            } else {
-                TypeUtil.setFieldValue(retval, "id", null);
-            }
-            return retval;
+            return FullParser.realiseObjects(FullParser.parse(is), model);
         } catch (Exception e) {
             throw new FlyMineException("Error during unmarshalling: " + e);
         }

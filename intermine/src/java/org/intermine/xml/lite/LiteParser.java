@@ -13,7 +13,6 @@ package org.flymine.xml.lite;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -99,7 +98,8 @@ public class LiteParser
             while (fieldIter.hasNext()) {
                 Field field = (Field) fieldIter.next();
                 Class fieldClass = TypeUtil.getFieldInfo(obj.getClass(), field.getName()).getType();
-                TypeUtil.setFieldValue(obj, field.getName(), convert(fieldClass, field.getValue()));
+                TypeUtil.setFieldValue(obj, field.getName(),
+                                       TypeUtil.stringToObject(fieldClass, field.getValue()));
             }
 
             // Set the data for every given reference
@@ -117,43 +117,4 @@ public class LiteParser
 
         return obj;
     }
-
-    /**
-     * Returns an object for a given String
-     *
-     * @param clazz the class to convert to
-     * @param value the value to convert
-     * @return the corresponding Class
-     */
-    private static Object convert(Class clazz, String value) {
-        if (clazz.equals(Integer.class) || clazz.equals(Integer.TYPE)) {
-            return Integer.valueOf(value);
-        }
-        if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
-            return Boolean.valueOf(value);
-        }
-        if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
-            return Double.valueOf(value);
-        }
-        if (clazz.equals(Float.class) || clazz.equals(Float.TYPE)) {
-            return Float.valueOf(value);
-        }
-        if (clazz.equals(Long.class)  || clazz.equals(Long.TYPE)) {
-            return Long.valueOf(value);
-        }
-        if (clazz.equals(Short.class) || clazz.equals(Short.TYPE)) {
-            return Short.valueOf(value);
-        }
-        if (clazz.equals(Byte.class) || clazz.equals(Byte.TYPE)) {
-            return Byte.valueOf(value);
-        }
-        if (clazz.equals(Character.class) || clazz.equals(Character.TYPE)) {
-            return new Character(value.charAt(0));
-        }
-        if (clazz.equals(Date.class)) {
-            return new Date(Long.parseLong(value));
-        }
-        return value;
-    }
-
 }
