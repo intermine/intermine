@@ -52,7 +52,7 @@ public class SessionMethods
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        
         PagedResults pr;
         try {
             Query q = MainHelper.makeQuery(query, profile.getSavedBags());
@@ -75,7 +75,7 @@ public class SessionMethods
         session.setAttribute(Constants.RESULTS_TABLE, pr);
         String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
         query.setInfo(pr.getResultsInfo());
-        SaveQueryAction.saveQuery(request, queryName, query);
+        saveQuery(request, queryName, query);
         
         return true;
     }
@@ -95,5 +95,21 @@ public class SessionMethods
         }
         session.setAttribute("path", path);
         session.removeAttribute("prefix");
+    }
+    
+    /**
+     * Save a query in the Map on the session, and clone it to allow further editing
+     * @param request The HTTP request we are processing
+     * @param queryName the name to save the query under
+     * @param query the PathQuery
+     */
+    public static void saveQuery(HttpServletRequest request,
+                                 String queryName,
+                                 PathQuery query) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
+        profile.saveQuery(queryName, query);
+        session.setAttribute(Constants.QUERY, query.clone());
     }
 }
