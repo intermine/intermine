@@ -20,7 +20,7 @@
               <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
               <c:forEach items="${classes}" var="classname" varStatus="status">
                 <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-                <span class="type">${classname}</span></a><c:if test="${!status.last}">,</c:if>
+                ${classname}</a><c:if test="${!status.last}">,</c:if>
               </c:forEach>
               <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
                 <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
