@@ -7,16 +7,43 @@
 
 <!-- table.jsp -->
 
-<html:form action="/changeResultsSize">
+<script>
+function selectColumnCheckboxes(column) {
+  var columnCheckBox = 'selectedObjects_' + column;
+  with(document.changeResultsForm) {
+    for(i=0;i < elements.length;i++) {
+      thiselm = elements[i];
+      var testString = 'selectedObjects_' + column + '_';
+      if(thiselm.id.indexOf(testString) != -1)
+        thiselm.checked = document.getElementById(columnCheckBox).checked;
+    }
+  }
+}
+function unselectColumnCheckbox(column) {
+  document.getElementById('selectedObjects_' + column).checked = false;
+}
+</script>
+
+<html:form action="/changeResultsSize" styleId="changeResultsForm">
 
   <%-- The following should probably be turned into a tag at some stage --%>
-  <table class="results" cellspacing="0">
+  <table class="results" cellspacing="0" width="1%">
     <%-- The headers --%>
     <tr>
       <c:forEach var="column" items="${RESULTS_TABLE.columns}" varStatus="status">
-        <th colspan=2 align="center">
-          <c:out value="${column.name}"/>
+        <th align="center" width="1%">
+          <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
+                         onclick="selectColumnCheckboxes(${status.index})">
+            <c:out value="${status.index}"/>
+          </html:multibox>
+        </th>
 
+        <th align="center" width="1%">
+          <nobr>
+            <c:out value="${column.name}"/>
+          </nobr>
+          <br/>
+          <nobr>
           <%-- right/left --%>
           <c:if test="${not status.first}">
             [<html:link action="/changeResults?method=moveColumnLeft&index=${status.index}">
@@ -44,7 +71,7 @@
               </html:link>]
             </c:otherwise>
           </c:choose>
-
+          </nobr>
         </th>
       </c:forEach>
     </tr>
@@ -73,11 +100,13 @@
                        collection.  Collections will have only one column so
                        don't do the check if there is only one column --%>
                   <c:when test="${RESULTS_TABLE.tableWidth == 1 ||
-                                  ((status.count == 1) || 
+                                  ((status.count == 1) ||
                                    (row[status2.index] != prevrow[status2.index]))}">
                     <%-- the checkbox to select this object --%>
-                    <td align="center" width="1">
-                      <html:multibox property="selectedObjects">
+                    <td align="center" width="1%">
+                      <html:multibox property="selectedObjects"
+                                     styleId="selectedObjects_${status2.index}_${status.index}"
+                                     onclick="unselectColumnCheckbox(${status2.index})">
                         <c:out value="${status2.index},${status.index}"/>
                       </html:multibox>
                     </td>
@@ -176,6 +205,7 @@
       <html:submit property="buttons(addToExistingBag)">
         <fmt:message key="bag.existing"/>
       </html:submit>
+      <br/>
       <br/>
     </c:if>
 
