@@ -28,6 +28,7 @@ import java.util.Collection;
 import org.intermine.metadata.Model;
 import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
@@ -39,10 +40,10 @@ public class UpdatePublicationsTest extends TestCase
 {
     public void testUpdatePublications() throws Exception {
         StringWriter sw = new StringWriter();
-        new TestUpdatePublications(null, sw).execute();
+        new TestUpdatePublications(ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test"), sw).execute();
 
         List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/UpdatePublicationsTest_tgt.xml"));
-        
+
         assertEquals(new HashSet(expected), new HashSet(FullParser.parse(new ByteArrayInputStream(sw.toString().getBytes()))));
     }
 
