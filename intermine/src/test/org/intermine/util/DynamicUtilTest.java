@@ -11,6 +11,8 @@ package org.intermine.util;
  */
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -159,4 +161,57 @@ public class DynamicUtilTest extends TestCase
         assertTrue(obj instanceof Manager);
         assertTrue(obj instanceof Broke);
     }
+
+/*    public void testComposedClass() throws Exception {
+        StringBuffer b = new StringBuffer();
+        Class c = DynamicUtil.composeClass(Collections.singleton(Company.class));
+        Set alreadySeen = new HashSet();
+        while (c != null) {
+            Method methods[] = c.getDeclaredMethods();
+            for (int i = 0; i < methods.length; i++) {
+                Method m = methods[i];
+                if (! Modifier.isPrivate(methods[i].getModifiers())) {
+                    MethodDescriptor md = new MethodDescriptor(m.getName(), m.getParameterTypes());
+                    if (! alreadySeen.contains(md)) {
+                        b.append(m.toString()).append("\n");
+                        alreadySeen.add(md);
+                    }
+                }
+            }
+            c = c.getSuperclass();
+        }
+        throw new Exception(b.toString());
+    }
+
+    private static class MethodDescriptor
+    {
+        public String name;
+        public Class[] parameters;
+
+        public MethodDescriptor(String name, Class parameters[]) {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof MethodDescriptor) {
+                if (name.equals(((MethodDescriptor) o).name)) {
+                    Class oparameters[] = ((MethodDescriptor) o).parameters;
+                    if (parameters.length == oparameters.length) {
+                        for (int i = 0; i < parameters.length; i++) {
+                            if (parameters[i] != oparameters[i]) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            return name.hashCode();
+        }
+    }*/
 }
