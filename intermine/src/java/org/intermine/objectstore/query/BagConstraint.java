@@ -87,7 +87,8 @@ public class BagConstraint extends Constraint
     public int hashCode() {
         return bag.hashCode() + 5 * qn.hashCode();
     }
-
-    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
+    
+    /** List of possible operations */
+    public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
         ConstraintOp.NOT_IN});
 }
