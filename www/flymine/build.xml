@@ -3,6 +3,7 @@
 
   <property file="${build.properties.local}"/>
   <property name="src.www" location="site"/>
+  <property name="common.src.www" location="../site"/>
   <property name="src.doc" location="../../flymine/doc"/>
   <property name="src.internal" location="../../flymine-private/doc"/>
   <property name="common.style" location="../style"/>
@@ -19,6 +20,9 @@
   <target name="prepare">
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
+        <include name="**/*"/>
+      </fileset>
+      <fileset dir="${common.src.www}">
         <include name="**/*"/>
       </fileset>
     </copy>
@@ -59,6 +63,8 @@
         <exclude name="**/*.xsl"/>
       </fileset>
     </copy>
+    
+    <copy file="rss.xml" todir="${dist.www}"/>
 
     <mkdir dir="${build.www}/tmp"/>
   </target>
@@ -66,22 +72,7 @@
   <target name="style-site" depends="prepare">
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${flymine.main.stylesheet}" includes="**/*.xml"
-           excludes="index.xml" force="false">
-      <param name="branding" expression="flymine" />
-      <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
-      <param name="outputext" expression="${output.extension}" />
-      <param name="file" expression="systemId()" />
-      <param name="sourceref" expression="${build.www}" />
-      <factory>
-        <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
-      </factory>
-    </style>
-  </target>
-
-  <target name="style-front-page" depends="prepare">
-    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
-           style="${flymine.frontpage.stylesheet}" includes="index.xml" force="false">
+           force="false">
       <param name="branding" expression="flymine" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
@@ -100,12 +91,13 @@
         <exclude name="internal/**"/>
         <!-- necessary until we can accommodate "presentation" within docbook -->
         <exclude name="doc/presentations/index.xml"/>
+        <exclude name="index.xml"/>
       </fileset>
    </xmlvalidate>
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-front-page, style-site, webapp-manual-html"
+          depends="validate-site-xml, style-site, webapp-manual-html"
           description="Transform the website contents from XML to HTML"/>
 
   <target name="release-www" depends="transform-site"
