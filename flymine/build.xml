@@ -231,7 +231,7 @@
     </depend>
   </target>
 
-  <target name="compile-test" depends="prepare-test"
+  <target name="compile-test" depends="prepare-test, compile-flymine-java"
           description="compile the java test source" >
     <javac destdir="${build.test}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="test.class.path"/>
