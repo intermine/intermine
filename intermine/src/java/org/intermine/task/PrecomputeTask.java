@@ -38,7 +38,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -176,6 +175,7 @@ public class PrecomputeTask extends Task
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
      * @param os the ObjectStore to call precompute() on
      * @param query the query to precompute
+     * @throws BuildException if the query cannot be precomputed.
      */
     protected void precompute(ObjectStore os, Query query) throws BuildException {
         try {
