@@ -22,7 +22,9 @@ public class BatchWriterSimpleImplTest extends BatchWriterTestCase
     }
 
     public BatchWriter getWriter() {
-        return new BatchWriterSimpleImpl();
+        BatchWriterSimpleImpl bw = new BatchWriterSimpleImpl();
+        bw.setThreshold(getThreshold());
+        return bw;
     }
 }
 

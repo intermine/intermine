@@ -302,7 +302,8 @@ public abstract class BatchWriterTestCase extends TestCase
             s = null;
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
-            batch.addRow(con, "table1", new Integer(1), new String[] {"key", "int2", "int4", "int8", "float", "double", "bool", "bigdecimal", "string"},
+            String colNames[] = new String[] {"key", "int2", "int4", "int8", "float", "double", "bool", "bigdecimal", "string"};
+            batch.addRow(con, "table1", new Integer(1), colNames,
                     new Object[] {new Integer(1),
                         new Short((short) 45),
                         new Integer(765234),
@@ -312,6 +313,36 @@ public abstract class BatchWriterTestCase extends TestCase
                         Boolean.TRUE,
                         new BigDecimal("982413415465245.87639871238764321"),
                         "kjhlasdurhe"});
+            batch.addRow(con, "table1", new Integer(2), colNames,
+                    new Object[] {new Integer(2),
+                        new Short((short) 0),
+                        new Integer(0),
+                        new Long(0L),
+                        new Float(0.0),
+                        new Double(0.0),
+                        Boolean.FALSE,
+                        new BigDecimal("0.0"),
+                        "turnip"});
+            batch.addRow(con, "table1", new Integer(3), colNames,
+                    new Object[] {new Integer(3),
+                        new Short((short) -1),
+                        new Integer(-12342),
+                        new Long(-12465432646L),
+                        new Float(-5.4),
+                        new Double(-234.342),
+                        Boolean.FALSE,
+                        new BigDecimal("0"),
+                        "blooglark"});
+            batch.addRow(con, "table1", new Integer(4), colNames,
+                    new Object[] {new Integer(4),
+                        new Short((short) -6),
+                        new Integer(-54321),
+                        new Long(-98765432198L),
+                        new Float(-5.4321),
+                        new Double(-543.21),
+                        Boolean.TRUE,
+                        new BigDecimal("0.000000"),
+                        "wmd"});
             batch.close(con);
             con.commit();
             s = con.createStatement();
@@ -331,6 +362,30 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(16), Boolean.TRUE);
             expected.put(new Integer(17), new BigDecimal("982413415465245.87639871238764321"));
             expected.put(new Integer(18), "kjhlasdurhe");
+            expected.put(new Integer(21), new Short((short) 0));
+            expected.put(new Integer(22), new Integer(0));
+            expected.put(new Integer(23), new Long(0L));
+            expected.put(new Integer(24), new Float(0.0));
+            expected.put(new Integer(25), new Double(0.0));
+            expected.put(new Integer(26), Boolean.FALSE);
+            expected.put(new Integer(27), new BigDecimal("0.0"));
+            expected.put(new Integer(28), "turnip");
+            expected.put(new Integer(31), new Short((short) -1));
+            expected.put(new Integer(32), new Integer(-12342));
+            expected.put(new Integer(33), new Long(-12465432646L));
+            expected.put(new Integer(34), new Float(-5.4));
+            expected.put(new Integer(35), new Double(-234.342));
+            expected.put(new Integer(36), Boolean.FALSE);
+            expected.put(new Integer(37), new BigDecimal("0"));
+            expected.put(new Integer(38), "blooglark");
+            expected.put(new Integer(41), new Short((short) -6));
+            expected.put(new Integer(42), new Integer(-54321));
+            expected.put(new Integer(43), new Long(-98765432198L));
+            expected.put(new Integer(44), new Float(-5.4321));
+            expected.put(new Integer(45), new Double(-543.21));
+            expected.put(new Integer(46), Boolean.TRUE);
+            expected.put(new Integer(47), new BigDecimal("0.000000"));
+            expected.put(new Integer(48), "wmd");
             assertEquals(expected, got);
         } catch (SQLException e) {
             StringWriter sw = new StringWriter();
@@ -373,6 +428,7 @@ public abstract class BatchWriterTestCase extends TestCase
             s.executeBatch();
             con.commit();
             s = null;
+            long start = System.currentTimeMillis();
             BatchWriter writer = getWriter();
             Batch batch = new Batch(writer);
             String[] colNames = new String[] {"key", "int4"};
@@ -384,22 +440,25 @@ public abstract class BatchWriterTestCase extends TestCase
             }
             batch.flush(con);
             con.commit();
+            System.out.println("Took " + (System.currentTimeMillis() - start) + "ms to insert 100000 rows");
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = 'table1'");
             assertTrue(r.next());
             assertTrue("Expected rows to be > 60000 and < 101000 - was " + r.getInt(1),
                     r.getInt(1) > 60000 && r.getInt(1) < 101000);
             assertFalse(r.next());
+            start = System.currentTimeMillis();
             for (int i = 0; i < 100000; i++) {
                 if (i % 5 != 0) {
                     batch.deleteRow(con, "table1", "key", new Integer(i));
                 }
-                if (i % 10000 == 9999) {
-                    batch.flush(con);
-                }
+                //if (i % 10000 == 9999) {
+                //    batch.flush(con);
+                //}
             }
             batch.close(con);
             con.commit();
+            System.out.println("Took " + (System.currentTimeMillis() - start) + "ms to delete 80000 rows");
             r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = 'table1'");
             assertTrue(r.next());
             assertTrue("Expected rows to be > 19000 and < 35000 - was " + r.getInt(1),
@@ -845,4 +904,7 @@ public abstract class BatchWriterTestCase extends TestCase
     }
 
     public abstract BatchWriter getWriter();
+    public int getThreshold() {
+        return Integer.MAX_VALUE;
+    }
 }

@@ -43,6 +43,20 @@ public class IndirectionTableBatch implements Table
     }
 
     /**
+     * Constructor for dodgy temp table deleting stuff
+     *
+     * @param leftColName the left column name
+     * @param rightColName the right column name
+     * @param toInsert the Set of Rows to insert
+     */
+    protected IndirectionTableBatch(String leftColName, String rightColName, Set toInsert) {
+        this.leftColName = leftColName;
+        this.rightColName = rightColName;
+        rowsToDelete = new LinkedHashSet();
+        this.rowsToInsert = toInsert;
+    }
+
+    /**
      * Adds a row to the batch. Whatever the previous state of the database and batch, the table
      * will end up with one row matching the arguments.
      *
