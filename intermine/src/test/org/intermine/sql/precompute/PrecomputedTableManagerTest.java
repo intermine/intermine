@@ -185,23 +185,23 @@ public class PrecomputedTableManagerTest extends TestCase
     }
 
 
-//     public void testExistingTables() throws Exception {
-//         synchronized (pt1) {
-//             PrecomputedTableManager ptm1 = new PrecomputedTableManager("db.unittest");
-//             try {
-//                 createTable();
-//                 ptm1.add(pt1);
+    public void testExistingTables() throws Exception {
+        synchronized (pt1) {
+            PrecomputedTableManager ptm1 = new PrecomputedTableManager("db.unittest");
+            try {
+                createTable();
+                ptm1.add(pt1);
 
-//                 PrecomputedTableManager ptm2 = new PrecomputedTableManager("db.unittest");
+                PrecomputedTableManager ptm2 = new PrecomputedTableManager("db.unittest");
 
-//                 PrecomputedTable pt2 = (PrecomputedTable) ptm2.getPrecomputedTables().iterator().next();
+                PrecomputedTable pt2 = (PrecomputedTable) ptm2.getPrecomputedTables().iterator().next();
 
-//                 assertEquals(pt1, pt2);
-//             }
-//             finally {
-//                 ptm1.delete(pt1);
-//                 deleteTable();
-//             }
-//         }
-//     }
+                assertEquals(pt1, pt2);
+            }
+            finally {
+                ptm1.delete(pt1);
+                deleteTable();
+            }
+        }
+    }
 }
