@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 /**
@@ -74,7 +75,8 @@ public class TemplateController extends Action
                 Constraint c = (Constraint) node.getConstraints().get(0);
                 int j = template.getNodes().indexOf(node);
                 
-                ((TemplateForm) form).setAttributeValues("" + (j + 1), "" + c.getValue());
+                ((TemplateForm) form).setAttributeValues("" + (j + 1), "" + c.getDisplayValue());
+                
                 ((TemplateForm) form).setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
             }
         }
