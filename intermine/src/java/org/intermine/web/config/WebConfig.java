@@ -11,8 +11,9 @@ package org.flymine.web.config;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.digester.*;
 
@@ -24,18 +25,22 @@ import org.xml.sax.SAXException;
  */
 public class WebConfig
 {
-    private List types = new ArrayList();
+    private Map types = new HashMap();
 
     /**
      * Parse a WebConfig XML file
      *
-     * @param filename the name of the file
+     * @param is the InputStream to parse
      * @return a WebConfig object
      * @throws SAXException if there is an error in the XML file
      * @throws IOException if there is an error reading the XML file
      */
-    public static WebConfig parse(String filename)
+    public static WebConfig parse(InputStream is)
         throws IOException, SAXException {
+
+        if (is == null) {
+            throw new NullPointerException("Parameter 'is' cannot be null");
+        }
 
         Digester digester = new Digester();
         digester.setValidating(false);
@@ -55,8 +60,7 @@ public class WebConfig
 
         digester.addSetNext("webconfig/class", "addType");
 
-        return (WebConfig) digester.parse(WebConfig.class.getClassLoader()
-                                          .getResourceAsStream(filename));
+        return (WebConfig) digester.parse(is);
 
    }
 
@@ -66,7 +70,7 @@ public class WebConfig
      * @param type the Type to add
      */
     public void addType(Type type) {
-        types.add(type);
+        types.put(type.getName(), type);
     }
 
     /**
@@ -74,7 +78,7 @@ public class WebConfig
      *
      * @return the types
      */
-    public List getTypes() {
+    public Map getTypes() {
         return this.types;
     }
 
