@@ -659,12 +659,12 @@ public class DatabaseUtil
     }
 
     /**
-     * Create a new (temporary) table the holds the contents of the given Collection (bag).  The
-     * "Class c" parameter selects which objects from the bag are put in the new table.  eg. if the
-     * bag contains Integers and Strings and the parameter is Integer.class then the table will
-     * contain only the Integers from the bag.  A Class of InterMineObject is handled specially: the
-     * new table .
-     * The table will have one column ("value").
+     * Create a new table the holds the contents of the given Collection (bag).  The "Class c"
+     * parameter selects which objects from the bag are put in the new table.  eg. if the bag
+     * contains Integers and Strings and the parameter is Integer.class then the table will contain
+     * only the Integers from the bag.  A Class of InterMineObject is handled specially: the new
+     * table will contain the IDs of the objects, not the objects themselves.  The table will have
+     * one column ("value").
      * @param db the Database to access
      * @param con the Connection to use
      * @param tableName the name to use for the new table
@@ -689,8 +689,7 @@ public class DatabaseUtil
             }
         }
 
-        String tableCreateSql = "CREATE TEMPORARY TABLE " + tableName + " (value "
-            + typeString + ")";
+        String tableCreateSql = "CREATE TABLE " + tableName + " (value " + typeString + ")";
 
         Statement s = con.createStatement();
         s.execute(tableCreateSql);
@@ -718,6 +717,8 @@ public class DatabaseUtil
         String indexCreateSql = "CREATE INDEX " + tableName + "_index ON " + tableName + "(value)";
 
         s.execute(indexCreateSql);
+
+        s.execute("ANALYSE " + tableName);
     }
 }
 
