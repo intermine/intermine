@@ -110,4 +110,21 @@ public class FeedbackForm extends ValidatorForm
         
         return errors;
     }
+
+    /**
+     * Reset form bean. If user is logged in then the <code>email</code>
+     * property is set to the profile username.
+     *
+     * @param mapping  the action mapping associated with this form bean
+     * @param request  the current http servlet request
+     */
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        super.reset(mapping, request);
+        
+        Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+        if (profile != null)
+            email = profile.getUsername();
+    }
+    
+    
 }
