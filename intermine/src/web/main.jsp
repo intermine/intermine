@@ -53,7 +53,8 @@
               </span>
             </c:if>
             <span class="type">
-              <c:out value="${node.type}"/><c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup></c:if>
+              <c:if test="${node.indentation == 0}"><c:out value="${node.type}"/></c:if>
+              <c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup></c:if>
               <c:if test="${node.collection}">
                 <fmt:message key="query.collection"/>
               </c:if>
@@ -109,7 +110,7 @@
                   <span class="type">
                     <c:choose>
                       <c:when test="${node.attribute}">
-                        <c:out value="${node.type}"/>
+                        <%--<c:out value="${node.type}"/>--%>
                       </c:when>
                       <c:otherwise>
                         <fmt:message key="query.changePath" var="changePathTitle">
