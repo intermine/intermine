@@ -47,8 +47,16 @@ public class CreateReferencesTest extends TestCase {
     private Model model;
     private Chromosome storedChromosome = null;
     private Protein storedProtein = null;
+    private Protein storedProtein1 = null;
+    private Protein storedProtein2 = null;
+    private Protein storedProtein3 = null;
     private Gene storedGene = null;
+    private Gene storedGene1 = null;
+    private Gene storedGene2 = null;
     private Transcript storedTranscript = null;
+    private Transcript storedTranscript1 = null;
+    private Transcript storedTranscript2 = null;
+    private Transcript storedTranscript3 = null;
     private Exon storedExon = null;
     private Location storedChromosomeRelation = null;
     private SimpleRelation storedTranscriptRelation = null;
@@ -130,10 +138,23 @@ public class CreateReferencesTest extends TestCase {
         cl.fixPartials();
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences(Chromosome.class, "subjects", Relation.class, "subject",
-                            Exon.class, "chromosome");
+        cr.insertReferenceField(Chromosome.class, "subjects", Relation.class, "subject",
+                                Exon.class, "chromosome");
 
         compareChromosomeExonResultsToExpected();
+    }
+
+    public void testInsertCollectionField1() throws Exception {
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.fixPartials();
+        cl.createLocations();
+        CreateReferences cr = new CreateReferences(osw);
+
+        cr.insertCollectionField(Gene.class, "transcripts", Transcript.class, "protein",
+                                 Protein.class, "genes", false);
+
+        compareCollectionField1ResultsToExpected();
+
     }
 
     public void testInsertReferences() throws Exception {
@@ -214,6 +235,111 @@ public class CreateReferencesTest extends TestCase {
         assertEquals(expExonItem, resExonItem);
     }
 
+    private void compareCollectionField1ResultsToExpected() throws Exception {
+        osw.flushObjectById();
+
+        Gene expectedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        expectedGene1.setIdentifier("gene1");
+        expectedGene1.setId(storedGene1.getId());
+
+        Gene expectedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        expectedGene2.setIdentifier("gene2");
+        expectedGene2.setId(storedGene2.getId());
+
+        Transcript expectedTranscript1 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript1.setIdentifier("trans1");
+        expectedTranscript1.setId(storedTranscript1.getId());
+
+        Transcript expectedTranscript2 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript2.setIdentifier("trans2");
+        expectedTranscript2.setId(storedTranscript2.getId());
+
+        Transcript expectedTranscript3 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        expectedTranscript3.setIdentifier("trans3");
+        expectedTranscript3.setId(storedTranscript3.getId());
+
+        Protein expectedProtein1 =
+            (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        expectedProtein1.setIdentifier("protein1");
+        expectedProtein1.setId(storedProtein1.getId());
+
+        Protein expectedProtein2 =
+            (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        expectedProtein2.setIdentifier("protein2");
+        expectedProtein2.setId(storedProtein2.getId());
+
+        Protein expectedProtein3 =
+            (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        expectedProtein3.setIdentifier("protein3");
+        expectedProtein3.setId(storedProtein3.getId());
+
+        expectedGene1.setTranscripts(Arrays.asList(new Object[] {
+                                                       expectedTranscript2, expectedTranscript1
+                                                   }));
+
+        expectedGene2.setTranscripts(Arrays.asList(new Object[] {
+                                                       expectedTranscript3
+                                                   }));
+
+        expectedGene1.setProteins(Arrays.asList(new Object[] {expectedProtein2, expectedProtein1}));
+        expectedGene2.setProteins(Arrays.asList(new Object[] {expectedProtein3}));
+
+        Item expGene1Item = toItem(expectedGene1);
+        Item expGene2Item = toItem(expectedGene2);
+
+        ObjectStore os = osw.getObjectStore();
+
+        os.flushObjectById();
+
+        Query q;
+        Results res;
+        ResultsRow row;
+
+
+        q = new Query();
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+
+        QueryField qf1 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc1 =
+            new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("gene1"));
+        q.setConstraint(sc1);
+
+        res = new Results(q, os, os.getSequence());
+        row = (ResultsRow) res.iterator().next();
+
+        Gene resGene1 = (Gene) row.get(0);
+        Item resGene1Item = toItem(resGene1);
+
+        assertEquals(2, resGene1.getProteins().size());
+
+        assertEquals(expGene1Item, resGene1Item);
+
+
+        q = new Query();
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+
+        QueryField qf2 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc2 =
+            new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene2"));
+        q.setConstraint(sc2);
+
+        res = new Results(q, os, os.getSequence());
+        row = (ResultsRow) res.iterator().next();
+
+        Gene resGene2 = (Gene) row.get(0);
+        Item resGene2Item = toItem(resGene2);
+
+        assertEquals(1, resGene2.getProteins().size());
+
+        assertEquals(expGene2Item, resGene2Item);
+    }
+
     private void compareGeneTranscriptResultsToExpected() throws Exception {
         osw.flushObjectById();
 
@@ -231,7 +357,7 @@ public class CreateReferencesTest extends TestCase {
         expectedProtein.setId(storedProtein.getId());
             
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setIdentifier("gene1");
+        expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
         expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
         expectedGene.setAnnotations(Arrays.asList(new Object[] {expectedPhenotypeAnnotation}));
@@ -239,7 +365,7 @@ public class CreateReferencesTest extends TestCase {
 
         Transcript expectedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        expectedTranscript.setIdentifier("trans1");
+        expectedTranscript.setIdentifier("trans0");
         expectedTranscript.setId(storedTranscript.getId());
         expectedTranscript.setGene(expectedGene);
         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
@@ -276,6 +402,11 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcTranscript);
         q.addToSelect(qcTranscript);
 
+        QueryField qf1 = new QueryField(qcTranscript, "identifier");
+        SimpleConstraint sc1 =
+            new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("trans0"));
+        q.setConstraint(sc1);
+
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -303,7 +434,7 @@ public class CreateReferencesTest extends TestCase {
         expectedOrthologue1.setId(storedOrthologue1.getId());
         expectedOrthologue1.setObject(storedGene);
 
-        // in gene1 objects collection
+        // in gene0 objects collection
         Orthologue expectedOrthologue2 =
             (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         expectedOrthologue2.setId(storedOrthologue2.getId());
@@ -326,7 +457,7 @@ public class CreateReferencesTest extends TestCase {
         expectedProtein.setId(storedProtein.getId());
 
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setIdentifier("gene1");
+        expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
         expectedGene.setAnnotations(Arrays.asList(new Object[] {expectedPhenotypeAnnotation}));
         expectedGene.setOrthologues(Arrays.asList(new Object[] {expectedOrthologue1}));
@@ -353,6 +484,11 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
 
+        QueryField qf1 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc1 =
+            new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("gene0"));
+        q.setConstraint(sc1);
+
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -373,6 +509,11 @@ public class CreateReferencesTest extends TestCase {
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
+
+        QueryField qf1 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc1 =
+            new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("gene0"));
+        q.setConstraint(sc1);
 
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
@@ -418,7 +559,7 @@ public class CreateReferencesTest extends TestCase {
         expectedProtein.setId(storedProtein.getId());
 
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setIdentifier("gene1");
+        expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
         expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
         expectedGene.setOrthologues(Arrays.asList(new Object[] {expectedOrthologue1}));
@@ -430,7 +571,7 @@ public class CreateReferencesTest extends TestCase {
 
         Transcript expectedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        expectedTranscript.setIdentifier("trans1");
+        expectedTranscript.setIdentifier("trans0");
         expectedTranscript.setId(storedTranscript.getId());
         expectedTranscript.setGene(expectedGene);
         expectedGene.setTranscripts(Arrays.asList(new Object[] { expectedTranscript }));
@@ -494,6 +635,11 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcTranscript);
         q.addToSelect(qcTranscript);
 
+        QueryField qf1 = new QueryField(qcTranscript, "identifier");
+        SimpleConstraint sc1 =
+            new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("trans0"));
+        q.setConstraint(sc1);
+
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -509,6 +655,12 @@ public class CreateReferencesTest extends TestCase {
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
+
+        QueryField qf2 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc2 = new SimpleConstraint(qf2, ConstraintOp.EQUALS,
+                                                    new QueryValue("gene0"));
+        q.setConstraint(sc2);
+        
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -594,7 +746,7 @@ public class CreateReferencesTest extends TestCase {
         expectedProtein.setId(storedProtein.getId());
 
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setIdentifier("gene1");
+        expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
         expectedGene.setObjects(Arrays.asList(new Object[] {expectedOrthologue2}));
         expectedGene.setSubjects(Arrays.asList(new Object[] {expectedOrthologue1, 
@@ -618,6 +770,12 @@ public class CreateReferencesTest extends TestCase {
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
+
+        QueryField qf1 = new QueryField(qcGene, "identifier");
+        SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS,
+                                                    new QueryValue("gene0"));
+        q.setConstraint(sc1);
+
         res = new Results(q, os, os.getSequence());
         row = (ResultsRow) res.iterator().next();
 
@@ -652,14 +810,39 @@ public class CreateReferencesTest extends TestCase {
         storedChromosome.setIdentifier("chr1");
 
         storedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        storedGene.setIdentifier("gene1");
+        storedGene.setIdentifier("gene0");
+
+        // used by testInsertCollectionField1
+        storedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        storedGene1.setIdentifier("gene1");
+
+        storedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        storedGene2.setIdentifier("gene2");
 
         storedTranscript =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        storedTranscript.setIdentifier("trans1");
+        storedTranscript.setIdentifier("trans0");
         // currently the gene reference in Transcript is set before post-processing but the
         // transcripts reference in Gene isn't set
         storedTranscript.setGene(storedGene);
+
+        storedTranscript1 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        storedTranscript1.setIdentifier("trans1");
+        // currently the gene reference in Transcript is set before post-processing but the
+        // transcripts reference in Gene isn't set
+
+        storedTranscript2 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        storedTranscript2.setIdentifier("trans2");
+        // currently the gene reference in Transcript is set before post-processing but the
+        // transcripts reference in Gene isn't set
+
+        storedTranscript3 =
+            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        storedTranscript3.setIdentifier("trans3");
+        // currently the gene reference in Transcript is set before post-processing but the
+        // transcripts reference in Gene isn't set
 
         storedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon.setIdentifier("exon1");
@@ -681,8 +864,17 @@ public class CreateReferencesTest extends TestCase {
         storedChromosomeRelation.setSubject(storedExon);
 
         storedProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        storedProtein.setIdentifier("Protein1");
+        storedProtein.setIdentifier("Protein0");
         storedProtein.setGenes(Arrays.asList(new Object[] {storedGene}));
+
+        storedProtein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        storedProtein1.setIdentifier("Protein1");
+
+        storedProtein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        storedProtein2.setIdentifier("Protein1");
+
+        storedProtein3 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        storedProtein3.setIdentifier("Protein3");
 
         storedPhenotypeEvidence =
             (Evidence) DynamicUtil.createObject(Collections.singleton(Evidence.class));
@@ -716,15 +908,28 @@ public class CreateReferencesTest extends TestCase {
             (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         storedOrthologue2.setSubject(storedGene);
 
+
+        // used by testInsertCollectionField1()
+        storedTranscript1.setGene(storedGene1);
+        storedTranscript2.setGene(storedGene1);
+        storedTranscript3.setGene(storedGene2);
+
+        storedTranscript1.setProtein(storedProtein1);
+        storedTranscript2.setProtein(storedProtein2);
+        storedTranscript3.setProtein(storedProtein3);
         
         Set toStore = new HashSet(Arrays.asList(new Object[] {
-                                                    storedGene, storedTranscriptRelation,
+                                                    storedGene, storedGene1, storedGene2,
+                                                    storedTranscriptRelation,
                                                     storedExonRelation, storedTranscript,
+                                                    storedTranscript1,
+                                                    storedTranscript2, storedTranscript3,
                                                     storedExon, storedChromosomeRelation,
                                                     storedChromosome, storedOrthologue1,
                                                     storedOrthologue2, storedGOTermAnnotation,
                                                     storedGOTerm, storedPhenotype,
                                                     storedPhenotypeAnnotation, storedProtein,
+                                                    storedProtein1, storedProtein2, storedProtein3,
                                                     storedPhenotypeEvidence
                                                 }));
         Iterator i = toStore.iterator();
