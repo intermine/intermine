@@ -59,8 +59,6 @@ public class QueryClassSelectAction extends LookupDispatchAction
                                      HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String className = ((QueryClassSelectForm) form).getClassName();
 
         if (className == null) {
@@ -68,15 +66,28 @@ public class QueryClassSelectAction extends LookupDispatchAction
             actionErrors.add(ActionErrors.GLOBAL_ERROR,
                              new ActionError("errors.queryClassSelect.noClass"));
             saveErrors(request, actionErrors);
+
             return mapping.findForward("classChooser");
         } else {
-            PathQuery query = new PathQuery(os.getModel());
-            session.setAttribute(Constants.QUERY, query);
-            query.addNode(TypeUtil.unqualifiedName(className));
+            newQuery(className, session);
+
             return mapping.findForward("query");
         }
     }
 
+    /**
+     * Add a new query, based on the specified class, to the session
+     * @param className the class name
+     * @param session the session
+     */
+    public static void newQuery(String className, HttpSession session) {
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        PathQuery query = new PathQuery(os.getModel());
+        session.setAttribute(Constants.QUERY, query);
+        query.addNode(TypeUtil.unqualifiedName(className));
+    }
+    
     /**
      * Browse the full class hierarchy and allow the user to choose a type to add
      * to the current query.

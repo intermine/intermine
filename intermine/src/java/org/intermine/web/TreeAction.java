@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.util.Set;
 
@@ -103,10 +104,11 @@ public class TreeAction extends DispatchAction
                                 HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
-
+        HttpSession session = request.getSession();
         String className = (String) request.getParameter("node");
 
-        request.setAttribute("class", className);
+        QueryClassSelectAction.newQuery(className, session);
+
         return mapping.findForward("query");
     }
 }
