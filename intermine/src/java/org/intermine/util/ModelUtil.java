@@ -31,10 +31,13 @@ public class ModelUtil
      *
      * @param c the Class
      * @param fieldName the name of the relevant Field
-     * @return the type of the Field
+     * @return the type of the Field, or -1 if the field is not found
      */
     public static int getFieldType(Class c, String fieldName) {
         Field f = TypeUtil.getField(c, fieldName);
+        if (f == null) {
+            return -1;
+        }
         Class type = f.getType();
         if (isCollection(type)) {
             return COLLECTION;
