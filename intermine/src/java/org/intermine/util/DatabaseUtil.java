@@ -94,18 +94,19 @@ public class DatabaseUtil
      * @return a valid table name
      */
     public static String getIndirectionTableName(CollectionDescriptor col) {
-        String indirectionTableName = null;
-        if (FieldDescriptor.M_N_RELATION == col.relationType()) {
-            ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
-            String cldName = col.getClassDescriptor().getClassName();
-            String name1 = StringUtil.capitalise(rd == null 
-                                      ? TypeUtil.unqualifiedName(col.getClassDescriptor()
-                                                                 .getClassName())
-                                      : rd.getName());
-            String name2 = StringUtil.capitalise(col.getName());
-            indirectionTableName = name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
+        if (FieldDescriptor.M_N_RELATION != col.relationType()) {
+            throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
+                                               + "many-to-many relation");
         }
-        return indirectionTableName;
+        
+        ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
+        String cldName = col.getClassDescriptor().getClassName();
+        String name1 = StringUtil.capitalise(rd == null 
+                                             ? TypeUtil.unqualifiedName(col.getClassDescriptor()
+                                                                        .getClassName())
+                                             : rd.getName());
+        String name2 = StringUtil.capitalise(col.getName());
+        return name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
     }
     
     /**
