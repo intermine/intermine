@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Iterator;
@@ -23,9 +24,16 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
+import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.objectstore.query.*;
+
+import org.flymine.objectstore.query.QueryValue;
+
+import org.flymine.web.results.ResultsViewController;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -56,6 +64,7 @@ public class QueryBuildAction extends LookupDispatchAction
                              HttpServletRequest request,
                              HttpServletResponse response)
         throws Exception {
+
         HttpSession session = request.getSession();
 
         QueryClass qc = (QueryClass) session.getAttribute("queryClass");
@@ -69,11 +78,24 @@ public class QueryBuildAction extends LookupDispatchAction
                 throw new Exception("Model not found in session");
             }
             QueryBuildForm queryBuildForm = (QueryBuildForm) form;
-            QueryHelper.addToQuery(q, qc, queryBuildForm.getFieldValues(),
-                                    queryBuildForm.getFieldOps(), model);
-            session.setAttribute("query", q);
-            session.removeAttribute("queryClass");
-            session.removeAttribute("constraints");
+            Map newFieldValues;
+
+            QueryHelper.removeFromQuery(q, qc);
+            
+            QueryHelper.addQueryClass(q, qc);
+            
+            Map errors =
+                addToQuery(q, qc, queryBuildForm, model,
+                           (Map) session.getAttribute(ResultsViewController.SAVEDBAGS_NAME),
+                           (Map) session.getAttribute(SaveQueryController.SAVEDQUERIES_NAME));
+            
+            if (errors == null) {
+                session.setAttribute("query", q);
+                session.removeAttribute("queryClass");
+                session.removeAttribute("constraints");
+            } else {
+                request.setAttribute("constraintErrors", errors);
+            }
         }
 
         return mapping.findForward("buildquery");
@@ -96,9 +118,9 @@ public class QueryBuildAction extends LookupDispatchAction
      *  an exception
      */
     public ActionForward remove(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
 
@@ -113,7 +135,7 @@ public class QueryBuildAction extends LookupDispatchAction
                 } else {
                     session.removeAttribute("query");
                 }
-                
+
                 session.removeAttribute("queryClass");
             }
         }
@@ -158,8 +180,72 @@ public class QueryBuildAction extends LookupDispatchAction
 
         constraints.put(fieldName + "_" + (maxNum + 1), fieldName);
         session.setAttribute("constraints", constraints);
-        
+
         return mapping.findForward("buildquery");
+    }
+
+    /**
+     * Examine a QueryBuildForm and add the appropriate QueryClass and
+     * constraints to the current Query.  When a saved query name appears in
+     * the form the corresponding Query from savedQueries is substituted into
+     * the Query as a SubqueryConstraint.  When a saved collection/bag name
+     * appears in the form the corresponding Collection from savedBags is
+     * substituted into the Query as a BagConstraint.
+     *
+     * @param q a query to add QueryClass and constraints to
+     * @param qc QueryClass to add to query
+     * @param queryBuildForm the QueryBuildForm to extract the constraint values from
+     * @param model the business model
+     * @param savedBags map of saved bag names to Collections
+     * @param savedQueries map of saved query names to queries
+     */
+    private Map addToQuery(Query q, QueryClass qc, QueryBuildForm queryBuildForm,
+                            Model model, Map savedBags, Map savedQueries) {
+        Map errors = null;
+
+        Map fieldDescriptors = model.getFieldDescriptorsForClass(qc.getType());
+        Map fieldValues = queryBuildForm.getFieldValues();
+        Map fieldOps = queryBuildForm.getFieldOps();
+
+        for (Iterator i = fieldValues.keySet().iterator(); i.hasNext();) {
+            String fieldName = (String) i.next();
+            Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
+            ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
+            String realFieldName = fieldName.substring(0, fieldName.lastIndexOf("_"));
+            FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(realFieldName);
+            String fieldValue = (String) fieldValues.get(fieldName);
+
+            if (fd.isAttribute()) {
+                try {
+                    if (BagConstraint.VALID_OPS.contains(op)) {
+                        if (savedBags.containsKey(fieldValue)) {
+                            Collection bag = (Collection) savedBags.get(fieldValue);
+                            QueryHelper.addConstraint(q, realFieldName, qc, op, bag);
+                        } else {
+                            if (savedQueries.containsKey(fieldValue)) {
+                                Query subQuery = (Query) savedQueries.get(fieldValue);
+                                QueryHelper.addConstraint(q, realFieldName, qc, op, subQuery);
+                            } else {
+                                new Error ("FIXME");
+                            }
+                        }
+                    } else {
+                        Class fieldClass =
+                            TypeUtil.instantiate(((AttributeDescriptor) fd).getType());
+                        Object parsedFieldValue = TypeUtil.stringToObject(fieldClass, fieldValue);
+                        QueryHelper.addConstraint(q, realFieldName, qc, op,
+                                                  new QueryValue(parsedFieldValue));
+                    }
+                } catch (Exception e) {
+                    if (errors == null) {
+                        errors = new HashMap();
+                    }
+                    errors.put(fieldName, "Exception: " + e);
+                }
+            }
+        }
+
+        return errors;
     }
 
     /**

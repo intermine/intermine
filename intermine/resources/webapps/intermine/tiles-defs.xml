@@ -38,6 +38,7 @@
 
 
 <definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
+    <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
     <put name="querySelectBuild" value="querySelectBuild.tile"/>
     <put name="aliasChange" value="aliasChange.tile"/>
     <put name="runQuery" value="runQuery.jsp"/>
@@ -50,6 +51,8 @@
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
     <put name="queryBuild" value="queryBuild.tile"/>
 </definition>
+
+<definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
 
 <definition name="queryClassSelect.tile" path="/queryClassSelect.jsp"
             controllerUrl="/initQueryBuild.do">

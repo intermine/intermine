@@ -23,9 +23,14 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.model.testmodel.Employee;
+import org.flymine.model.testmodel.Types;
+
+import org.apache.log4j.Logger;
 
 public class QueryBuildActionTest extends MockStrutsTestCase
 {
+    protected static final Logger LOG = Logger.getLogger(QueryBuildActionTest.class);
+
     protected Model model;
     protected ClassDescriptor cld;
 
@@ -39,7 +44,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
-    public void testAddSuccessful() throws Exception {
+    public void testAddNoConstraint() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Add to query");
@@ -48,16 +53,43 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         session.setAttribute("model", new DisplayModel(model));
 
         QueryBuildForm form = new QueryBuildForm();
-        form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", ConstraintOp.EQUALS.toString());
         setActionForm(form);
 
         actionPerform();
+
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNotNull(session.getAttribute("query"));
         assertNull(session.getAttribute("queryClass"));
         assertNull(session.getAttribute("constraints"));
+        LOG.info("testAddNoConstraint(): query: " + ((Query) session.getAttribute("query")));
+        assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
+    }
+
+    public void testAddConstraint() throws Exception {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Add to query");
+        session.setAttribute("query", new Query());
+        session.setAttribute("queryClass", new QueryClass(Employee.class));
+        session.setAttribute("model", new DisplayModel(model));
+
+        QueryBuildForm form = new QueryBuildForm();
+        setActionForm(form);
+
+        form.setFieldValue("name_1", "Dave");
+        form.setFieldOp("name_1", ConstraintOp.EQUALS.getIndex().toString());
+
+        actionPerform();
+
+        LOG.info("testAddConstraint(): query: " + ((Query) session.getAttribute("query")));
+
+        verifyForward("buildquery");
+        verifyNoActionErrors();
+        assertNotNull(session.getAttribute("query"));
+        assertNull(session.getAttribute("queryClass"));
+        assertNull(session.getAttribute("constraints"));
+        assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
@@ -69,8 +101,8 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         session.setAttribute("model", new DisplayModel(model));
 
         QueryBuildForm form = new QueryBuildForm();
-        form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", ConstraintOp.EQUALS.toString());
+        form.setFieldValue("name_1", "Dave");
+        form.setFieldOp("name_1", ConstraintOp.EQUALS.getIndex().toString());
         setActionForm(form);
 
         actionPerform();
@@ -90,8 +122,8 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         session.setAttribute("query", new Query());
 
         QueryBuildForm form = new QueryBuildForm();
-        form.setFieldValue("name", "Dave");
-        form.setFieldOp("name", ConstraintOp.EQUALS);
+        form.setFieldValue("name_1", "Dave");
+        form.setFieldOp("name_1", ConstraintOp.EQUALS.getIndex().toString());
         setActionForm(form);
 
         actionPerform();
@@ -100,27 +132,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertNotNull(getSession().getAttribute("query"));
         assertNotNull(getSession().getAttribute("queryClass"));
     }
-
-    //commented out because we're overriding the ActionForm reset() method in QueryActionForm,
-    //which is called before the form is displayed, clearing anything we set in preparation for
-    //testing. The alternative is to use our own reset (clear()?) method and call it explicitly
-    //in QueryAction.
-
-//     public void testSubmitSuccessfulConstraint() throws Exception {
-//         setRequestPathInfo("/query");
-//         addRequestParameter("action", "Submit");
-//         QueryBuildForm queryBuildForm = new QueryBuildForm();
-//         queryBuildForm.setFieldValue("name", "bob");
-//         setActionForm(queryBuildForm);
-//         getSession().setAttribute("cld", cld);
-//         actionPerform();
-//         queryBuildForm = (QueryBuildForm) getActionForm();
-//         assertNull(queryBuildForm.getFieldValue("name"));
-//         verifyForward("buildquery");
-//         verifyNoActionErrors();
-//         System.out.println(getSession().getAttribute("query").toString());
-//         assertEquals("SELECT  FROM org.flymine.model.testmodel.Types AS a1_ WHERE (a1_.name = 'bob')", getSession().getAttribute("query").toString());
-//     }
 
     public void testAddNoQueryClass() throws Exception {
         HttpSession session = getSession();
@@ -135,29 +146,136 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertNull(session.getAttribute("queryClass"));
     }
 
-     public void testAddUnparseable() {
-         HttpSession session = getSession();
-         setRequestPathInfo("/query");
-         addRequestParameter("action", "Add to query");
-         session.setAttribute("query", new Query());
-         session.setAttribute("model", new DisplayModel(model));
-         session.setAttribute("queryClass", new QueryClass(Employee.class));
 
-         QueryBuildForm queryBuildForm = new QueryBuildForm();
-         queryBuildForm.setFieldValue("dateObjType", "not_a_date");
-         setActionForm(queryBuildForm);
+    // test that we report an error if the user puts something unparsable in
+    // a constraint value field
+    public void testAddUnparseable() {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Add to query");
+        session.setAttribute("query", new Query());
+        session.setAttribute("model", new DisplayModel(model));
+        session.setAttribute("queryClass", new QueryClass(Types.class));
 
-         actionPerform();
-         verifyForward("error");
-         assertNotNull(session.getAttribute("query"));
-         assertNull(session.getAttribute("queryClass"));
-     }
+        QueryBuildForm queryBuildForm = new QueryBuildForm();
+        queryBuildForm.setFieldValue("floatType_0", "can't parse this");
+        queryBuildForm.setFieldOp("floatType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("doubleType_0", "can't parse this");
+        queryBuildForm.setFieldOp("doubleType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("shortType_0", "can't parse this");
+        queryBuildForm.setFieldOp("shortType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("intType_0", "can't parse this");
+        queryBuildForm.setFieldOp("intType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("longType_0", "can't parse this");
+        queryBuildForm.setFieldOp("longType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("floatObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("floatObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("doubleObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("doubleObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("shortObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("shortObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("intObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("intObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("longObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("longObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("bigDecimalObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("bigDecimalObjType_0",
+                                  ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("dateObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("dateObjType_0",
+                                  ConstraintOp.EQUALS.getIndex().toString());
 
-    public void testAddConstraint() {
-         HttpSession session = getSession();
-         setRequestPathInfo("/query");
-         addRequestParameter("action", "Add constraint");
-         session.setAttribute("constraints", new HashMap());
+        setActionForm(queryBuildForm);
+
+        actionPerform();
+        verifyForward("buildquery");
+        assertNotNull(session.getAttribute("query"));
+        assertNotNull(getRequest().getAttribute("constraintErrors"));
+
+        Map constraintErrors = (Map) getRequest().getAttribute("constraintErrors");
+
+        assertNotNull(constraintErrors.get("doubleType_0"));
+        assertNotNull(constraintErrors.get("shortType_0"));
+        assertNotNull(constraintErrors.get("intType_0"));
+        assertNotNull(constraintErrors.get("longType_0"));
+        assertNotNull(constraintErrors.get("floatObjType_0"));
+        assertNotNull(constraintErrors.get("doubleObjType_0"));
+        assertNotNull(constraintErrors.get("shortObjType_0"));
+        assertNotNull(constraintErrors.get("intObjType_0"));
+        assertNotNull(constraintErrors.get("longObjType_0"));
+        assertNotNull(constraintErrors.get("bigDecimalObjType_0"));
+        assertNotNull(constraintErrors.get("dateObjType_0"));
+
+        assertNotNull(session.getAttribute("queryClass"));
+    }
+
+
+    // test that the constraintErrors attribute it cleared
+    public void testAddUnparseable() {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Add to query");
+        session.setAttribute("query", new Query());
+        session.setAttribute("model", new DisplayModel(model));
+        session.setAttribute("queryClass", new QueryClass(Types.class));
+
+        QueryBuildForm queryBuildForm = new QueryBuildForm();
+        queryBuildForm.setFieldValue("floatType_0", "can't parse this");
+        queryBuildForm.setFieldOp("floatType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("doubleType_0", "can't parse this");
+        queryBuildForm.setFieldOp("doubleType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("shortType_0", "can't parse this");
+        queryBuildForm.setFieldOp("shortType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("intType_0", "can't parse this");
+        queryBuildForm.setFieldOp("intType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("longType_0", "can't parse this");
+        queryBuildForm.setFieldOp("longType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("floatObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("floatObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("doubleObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("doubleObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("shortObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("shortObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("intObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("intObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("longObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("longObjType_0", ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("bigDecimalObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("bigDecimalObjType_0",
+                                  ConstraintOp.EQUALS.getIndex().toString());
+        queryBuildForm.setFieldValue("dateObjType_0", "can't parse this");
+        queryBuildForm.setFieldOp("dateObjType_0",
+                                  ConstraintOp.EQUALS.getIndex().toString());
+
+        setActionForm(queryBuildForm);
+
+        actionPerform();
+        verifyForward("buildquery");
+        assertNotNull(session.getAttribute("query"));
+        assertNotNull(getRequest().getAttribute("constraintErrors"));
+
+        Map constraintErrors = (Map) getRequest().getAttribute("constraintErrors");
+
+        assertNotNull(constraintErrors.get("doubleType_0"));
+        assertNotNull(constraintErrors.get("shortType_0"));
+        assertNotNull(constraintErrors.get("intType_0"));
+        assertNotNull(constraintErrors.get("longType_0"));
+        assertNotNull(constraintErrors.get("floatObjType_0"));
+        assertNotNull(constraintErrors.get("doubleObjType_0"));
+        assertNotNull(constraintErrors.get("shortObjType_0"));
+        assertNotNull(constraintErrors.get("intObjType_0"));
+        assertNotNull(constraintErrors.get("longObjType_0"));
+        assertNotNull(constraintErrors.get("bigDecimalObjType_0"));
+        assertNotNull(constraintErrors.get("dateObjType_0"));
+
+        assertNotNull(session.getAttribute("queryClass"));
+    }
+
+    public void testAddIncompleteConstraint() {
+        HttpSession session = getSession();
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Add constraint");
+        session.setAttribute("constraints", new HashMap());
 
         QueryBuildForm queryBuildForm = new QueryBuildForm();
         queryBuildForm.setNewFieldName("name");

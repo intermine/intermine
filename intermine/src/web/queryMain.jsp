@@ -2,6 +2,7 @@
 
 <!-- queryMain.jsp -->
 <table border="0" cellpadding="2" bordercolor="blue" height="100%">
+    <tr><td align="top" height="15%"><tiles:get name="queryErrorMessage"/></td></tr>
     <tr><td align="top" height="15%"><tiles:get name="querySelectBuild"/></td></tr>
     <tr><td align="top" height="15%"><tiles:get name="aliasChange"/></td></tr>
     <tr><td align="top" height="15%"><tiles:get name="runQuery"/></td></tr>

@@ -10,13 +10,10 @@ package org.flymine.objectstore.query;
  *
  */
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
 
 import org.flymine.metadata.*;
 
@@ -27,43 +24,146 @@ import org.flymine.metadata.*;
  */
 public abstract class QueryHelper
 {
-    protected static final String DATE_FORMAT = "dd/MM/yyyy";
-
     /**
-     * Add a QueryClass to the from list of query and add constraints
-     * generated from a map of fields/values.
+     * Add a QueryClass to a Query.  Do nothing if it's already there.
      *
-     * @param q a query to add QueryClass and constraints to
-     * @param qc QueryClass to add to query
-     * @param fieldValues map of fieldname/value to build constraints from
-     * @param fieldOps map of fieldname/operation to build constraints from
-     * @param model the business model
-     * @throws Exception if an error occurs
+     * @param q a query to add QueryClass to
+     * @param qc QueryClass to add
      */
-    public static void addToQuery(Query q, QueryClass qc, Map fieldValues,
-                                  Map fieldOps, Model model) throws Exception {
-        if (q == null) {
-            throw new NullPointerException("Query q parameter is null");
-        } else if (qc == null) {
-            throw new NullPointerException("QueryClass qc parameter is null");
-        } else if (fieldValues == null) {
-            throw new NullPointerException("fieldValues parameter is null");
-        } else if (fieldOps == null) {
-            throw new NullPointerException("fieldOps parameter is null");
-        } else if (model == null) {
-            throw new NullPointerException("model parameter is null");
-        }
-
-        // if QueryClass already on query, remove existing constraints and
-        // generate again
-        if (q.getFrom().contains(qc)) {
-            removeConstraints(q, qc, false);
-        } else {
+    public static void addQueryClass(Query q, QueryClass qc) {
+        if (!q.getFrom().contains(qc)) {
             q.addFrom(qc);
             q.addToSelect(qc);
         }
-        addConstraint(q, generateConstraints(qc, fieldValues, fieldOps,
-                                             q.getReverseAliases(), model));
+    }
+
+    /**
+     * Add a SimpleConstraint to a Query
+     *
+     * @param q a query to add QueryClass and constraints to
+     * @param fieldName name of the attribute in the QueryClass to constraint
+     * @param qc QueryClass to pass to the Constraint constructor
+     * @param op operation for the new Constraint
+     * @param qv the QueryValue to pass to the SimpleConstraint constructor
+     * @throws Exception if an error occurs
+     */
+    public static void addConstraint(Query q, String fieldName, QueryClass qc, ConstraintOp op,
+                                     QueryValue qv) throws Exception {
+        if (q == null) {
+            throw new NullPointerException("Query q parameter is null");
+        } else if (qc == null) {
+            throw new NullPointerException("QueryField qf parameter is null");
+        } else if (op == null) {
+            throw new NullPointerException("ConstraintOp parameter is null");
+        } else if (qv == null) {
+            throw new NullPointerException("QueryValue parameter is null");
+        }
+        QueryField qf = new QueryField(qc, fieldName);
+        addConstraint(q, qc, new SimpleConstraint(qf, op, qv));
+    }
+
+    /**
+     * Add a BagConstraint to a Query
+     *
+     * @param q a query to add QueryClass and constraints to
+     * @param fieldName name of the attribute in the QueryClass to constraint
+     * @param qc QueryClass to pass to the Constraint constructor
+     * @param op operation for the new Constraint
+     * @param collection the Collection to pass to the BagConstraint constructor
+     * @throws Exception if an error occurs
+     */
+    public static void addConstraint(Query q, String fieldName, QueryClass qc, ConstraintOp op,
+                                     Collection collection) throws Exception {
+        if (q == null) {
+            throw new NullPointerException("Query q parameter is null");
+        } else if (qc == null) {
+            throw new NullPointerException("QueryField qf parameter is null");
+        } else if (op == null) {
+            throw new NullPointerException("ConstraintOp parameter is null");
+        } else if (collection == null) {
+            throw new NullPointerException("Collection parameter is null");
+        }
+
+        QueryField qf = new QueryField(qc, fieldName);
+        addConstraint(q, qc, new BagConstraint(qf, op, collection));
+    }
+
+    /**
+     * Add a SubqueryConstraint to a Query
+     *
+     * @param q a query to add QueryClass and constraints to
+     * @param fieldName name of the attribute in the QueryClass to constraint
+     * @param qc QueryClass to pass to the Constraint constructor
+     * @param op operation for the new Constraint
+     * @param subQuery the Query to pass to the SubqueryConstraint constructor
+     * @throws Exception if an error occurs
+     */
+    public static void addConstraint(Query q, String fieldName, QueryClass qc, ConstraintOp op,
+                                     Query subQuery) throws Exception {
+        if (q == null) {
+            throw new NullPointerException("Query q parameter is null");
+        } else if (qc == null) {
+            throw new NullPointerException("QueryField qf parameter is null");
+        } else if (op == null) {
+            throw new NullPointerException("ConstraintOp parameter is null");
+        } else if (subQuery == null) {
+            throw new NullPointerException("Query subQuery parameter is null");
+        }
+
+        addConstraint(q, qc, new SubqueryConstraint(qc, op, subQuery));
+    }
+
+    /**
+     * Add a constraint to those present in a Query.  If the Query currently
+     * has no constraints just add the newConstraint.  If q.getConstraint()
+     * returns a ConstraintSet add newConstraint to it.  If q.getConstraint()
+     * returns something that isn't a ConstraintSet make and add a new
+     * ConstraintSet that contains both the old and new constraints.  If the
+     * QueryClass
+     *
+     * @param q the query in question
+     * @param qc the QueryClass referred to by the Constraint
+     * @param newConstraint the constraint to add
+     */
+    public static void addConstraint(Query q, QueryClass qc, Constraint newConstraint) {
+        if (q == null) {
+            throw new NullPointerException("q cannot be null");
+        }
+
+        if (newConstraint == null) {
+            throw new NullPointerException("constraint cannot be null");
+        }
+
+        addQueryClass(q, qc);
+
+        Constraint queryConstraint = q.getConstraint();
+
+        if (queryConstraint == null) {
+            q.setConstraint(newConstraint);
+        } else if (queryConstraint instanceof ConstraintSet) {
+            // add all constraints, avoid nesting ConstraintSets
+            if (newConstraint instanceof ConstraintSet) {
+                Iterator iter = ((ConstraintSet) newConstraint).getConstraints().iterator();
+                while (iter.hasNext()) {
+                    ((ConstraintSet) queryConstraint).addConstraint((Constraint) iter.next());
+                }
+            } else {
+                ((ConstraintSet) queryConstraint).addConstraint(newConstraint);
+            }
+        } else { // any other type of constraint, avoid nesting ConstraintSets
+            ConstraintSet newConstraints = new ConstraintSet(ConstraintOp.AND);
+            newConstraints.addConstraint(queryConstraint);
+            if (newConstraint instanceof ConstraintSet) {
+                Iterator iter = ((ConstraintSet) newConstraint).getConstraints().iterator();
+                while (iter.hasNext()) {
+                   newConstraints.addConstraint((Constraint) iter.next());
+                }
+            } else {
+                newConstraints.addConstraint(newConstraint);
+            }
+
+            q.setConstraint(newConstraints);
+        }
     }
 
     /**
@@ -87,82 +187,6 @@ public abstract class QueryHelper
         removeConstraints(q, qc, true);
     }
 
-    /**
-     * Generate ConstraintSet of SimpleConstraints for a QueryClass from a map of field/value pairs
-     *
-     * @param qc QueryClass to constrain
-     * @param fieldValues map of fieldname/value to build constraints from
-     * @param fieldOps map of fieldname/operation to build constraints from
-     * @param aliases map of alias/QueryNode of items on query
-     * @param model the business model
-     * @return a populated ConstraintSet
-     * @throws Exception if it goes wrong
-     */
-    protected static ConstraintSet generateConstraints(QueryClass qc, Map fieldValues,
-                                                       Map fieldOps, Map aliases,
-                                                       Model model) throws Exception {
-        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
-        ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
-
-        Iterator iter = fieldValues.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry fieldEntry = (Map.Entry) iter.next();
-            String fieldValue = (String) fieldEntry.getValue();
-            if (!"".equals(fieldValue)) {
-                String fieldName = (String) fieldEntry.getKey();
-                Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
-                fieldName = fieldName.substring(0, fieldName.lastIndexOf("_"));
-                FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
-                ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
-                if (field instanceof AttributeDescriptor) {
-                    QueryField qf = new QueryField(qc, field.getName());
-                    QueryValue qv = createQueryValue(qf.getType(), fieldValue);
-                    constraints.addConstraint(new SimpleConstraint(qf, op, qv));
-                } else if (field instanceof CollectionDescriptor) {
-                    QueryReference qr = new QueryCollectionReference(qc, field.getName());
-                    QueryClass qc2 = (QueryClass) aliases.get(fieldValue);
-                    constraints.addConstraint(new ContainsConstraint(qr, op, qc2));
-                } else if (field instanceof ReferenceDescriptor) {
-                    QueryReference qr = new QueryObjectReference(qc, field.getName());
-                    QueryClass qc2 = (QueryClass) aliases.get(fieldValue);
-                    constraints.addConstraint(new ContainsConstraint(qr, op, qc2));
-                }
-            }
-        }
-        return constraints;
-    }
-
-    /**
-     * Adds the constraints in a ConstraintSet to those present in a Query
-     *
-     * @param q the query in question
-     * @param constraints the new constraints
-     */
-    public static void addConstraint(Query q, ConstraintSet constraints) {
-        if (q == null) {
-            throw new NullPointerException("q cannot be null");
-        }
-
-        if (constraints == null) {
-            throw new NullPointerException("constraints cannot be null");
-        }
-
-        if (constraints.getConstraints().size() > 0) {
-            Constraint c = q.getConstraint();
-            if (c == null) {
-                q.setConstraint(constraints);
-            }  else if (c instanceof ConstraintSet) {
-                // add all constraints, avoid nesting ConstraintSets
-                Iterator iter = constraints.getConstraints().iterator();
-                while (iter.hasNext()) {
-                    ((ConstraintSet) c).addConstraint((Constraint) iter.next());
-                }
-            }  else { // any other type of constraint
-                constraints.addConstraint(c);
-                q.setConstraint(constraints);
-            }
-        }
-    }
 
     /**
      * Remove all constraints associated with or related to a given QueryClass.
@@ -175,6 +199,7 @@ public abstract class QueryHelper
      */
     protected static void removeConstraints(Query q, QueryClass qc, boolean related)
         throws Exception {
+
         Constraint c = q.getConstraint();
         if (c == null) {
             return;
@@ -193,40 +218,6 @@ public abstract class QueryHelper
         while (iter.hasNext()) {
             cs.removeConstraint((Constraint) iter.next());
         }
-    }
-
-    /**
-     * Create a QueryValue by parsing a string for the appropriate class type
-     * (common java.lang complex types and java.util.Date supported).
-     *
-     * @param type java type of the QueryValue to be created
-     * @param value string to be parsed for value
-     * @return a new QueryValue
-     * @throws ParseException if an error occurs parsing date string
-     */
-    protected static QueryValue createQueryValue(Class type, String value)
-        throws ParseException {
-        QueryValue qv = null;
-        if (type.equals(Integer.class)) {
-            qv = new QueryValue(Integer.valueOf(value));
-        } else if (type.equals(Float.class)) {
-            qv = new QueryValue(Float.valueOf(value));
-        } else if (type.equals(Double.class)) {
-            qv = new QueryValue(Double.valueOf(value));
-        } else if (type.equals(Long.class)) {
-            qv = new QueryValue(Long.valueOf(value));
-        } else if (type.equals(Short.class)) {
-            qv = new QueryValue(Short.valueOf(value));
-        } else if (type.equals(Boolean.class)) {
-            qv = new QueryValue(Boolean.valueOf(value));
-        } else if (type.equals(Date.class)) {
-            qv = new QueryValue(new SimpleDateFormat(DATE_FORMAT).parse(value));
-        } else if (type.equals(String.class)) {
-            qv = new QueryValue(value);
-        } else {
-            throw new IllegalArgumentException("Invalid type for QueryValue: " + type);
-        }
-        return qv;
     }
 
     /**
