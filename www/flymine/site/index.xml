@@ -47,53 +47,5 @@ database and data by the community.</listitem>
 </itemizedlist>
 
 </sect1>
-<sect1>
-<title>Personnel</title>
 
-<table>
-    <tbody>
-        <row>
-            <entry>Gos Micklem</entry>
-	    <entry>Project Leader</entry>
-	    <entry><email>gos[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Francois Guillier</entry>
-	    <entry>System Administrator</entry>
-	    <entry><email>francois[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Andrew Varley</entry>
-	    <entry>Senior Developer</entry>
-	    <entry><email>andy[at]flymine.org</email></entry>
-	</row>
-	<row>
-	    <entry>Hiring in process</entry>
-	    <entry>Developer</entry>
-	    <entry></entry>
-	</row>
-	<row>
-	    <entry>Hiring in process</entry>
-	    <entry>Developer</entry>
-	    <entry></entry>
-	</row>
-	<row>
-	    <entry>Hiring in process</entry>
-	    <entry>Developer</entry>
-	    <entry></entry>
-	</row>
-	<row>
-	    <entry>Hiring in process</entry>
-	    <entry>Production DBA</entry>
-	    <entry></entry>
-	</row>
-	<row>
-	    <entry>Hiring in process</entry>
-	    <entry>Analysis/User support</entry>
-	    <entry></entry>
-	</row>
-    </tbody>
-</table>
-
-</sect1>
 </article>
