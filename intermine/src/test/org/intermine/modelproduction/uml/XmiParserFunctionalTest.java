@@ -27,22 +27,24 @@ import junit.framework.TestCase;
 public class XmiParserFunctionalTest extends TestCase
 {
     private static final String MODEL = "xmitest";
-    private static final String PKG = "org.intermine.model." + MODEL + ".";
-    private String nameSpace = "http://www.intermine.org/model";
+    private static final String PKG = "org.intermine.model." + MODEL;
+    private static final String NS = "http://www.intermine.org/model";
 
     public XmiParserFunctionalTest(String arg) {
         super(arg);
     }
 
     public void testProcess() throws Exception {
-        ModelParser parser1 = new XmiParser(nameSpace, MODEL);
-        Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xmi"));
+        // expected
+        ModelParser parser1 = new InterMineModelParser();
+        Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xml"));
         Model model1 = parser1.process(reader1);
-        ModelParser parser2 = new InterMineModelParser();
-        Reader reader2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xml"));
+        // actual
+        ModelParser parser2 = new XmiParser(MODEL, PKG, NS);
+        Reader reader2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xmi"));
         Model model2 = parser2.process(reader2);
         assertEquals(model1, model2);
     }
 
 }
-    
+
