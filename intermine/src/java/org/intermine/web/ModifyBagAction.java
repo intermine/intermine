@@ -80,9 +80,9 @@ public class ModifyBagAction extends InterMineAction
             combined.addAll((Collection) savedBags.get(selectedBags[i]));
         }
 
-        int DEFAULT_MAX = 10000;
+        int defaultMax = 10000;
 
-        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", DEFAULT_MAX);
+        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
         if (combined.size () > maxBagSize) {
             ActionMessage actionMessage =

@@ -12,7 +12,6 @@ package org.intermine.web;
 
 import java.util.List;
 import java.util.Date;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -46,7 +45,7 @@ public class ExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(ExportAction.class);
 
-    /** 
+    /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
      * export method.
      * @param mapping The ActionMapping used to select this instance
@@ -63,7 +62,7 @@ public class ExportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
-        
+
         if (type.equals("excel")) {
             return excel(mapping, form, request, response);
         } else if (type.equals("csv")) {
@@ -112,16 +111,16 @@ public class ExportAction extends InterMineAction
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int DEFAULT_MAX = 10000;
+        int defaultMax = 10000;
 
         int maxExcelSize =
-            WebUtil.getIntSessionProperty(session, "max.excel.export.size", DEFAULT_MAX);
+            WebUtil.getIntSessionProperty(session, "max.excel.export.size", defaultMax);
 
         if (pt.getSize() > maxExcelSize) {
             ActionMessage actionMessage =
                 new ActionMessage("export.excelExportTooBig", new Integer(maxExcelSize));
             recordError(actionMessage, request);
-            
+
             return mapping.getInputForward();
         }
 

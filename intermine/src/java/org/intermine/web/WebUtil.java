@@ -31,7 +31,7 @@ public abstract class WebUtil
      * @param session the current session
      * @param propertyName the property to find
      * @param defaultValue the value to return if the property isn't present
-     * @returns the int value of the property
+     * @return the int value of the property
      */
     public static int getIntSessionProperty(HttpSession session, String propertyName,
                                             int defaultValue) {
