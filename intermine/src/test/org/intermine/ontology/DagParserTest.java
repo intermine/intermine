@@ -37,7 +37,7 @@ public class DagParserTest extends TestCase
             + "    <term4 ; id4\n"
             + "  %term5 ; id5\n";
 
-        Set terms = parser.process(new BufferedReader(new StringReader(test)));
+        Set terms = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test)));
         assertEquals(1, terms.size());
 
         DagTerm domain = (DagTerm) terms.iterator().next();
@@ -55,9 +55,9 @@ public class DagParserTest extends TestCase
             + "  %term5 ; id5\n";
 
         parser.readTerms(new BufferedReader(new StringReader(test)));
-        assertEquals(1, parser.terms.size());
+        assertEquals(1, parser.rootTerms.size());
 
-        DagTerm domain = (DagTerm) parser.terms.iterator().next();
+        DagTerm domain = (DagTerm) parser.rootTerms.iterator().next();
         assertEquals(0, domain.getChildren().size());
         assertEquals(1, domain.getComponents().size());
 
@@ -120,7 +120,7 @@ public class DagParserTest extends TestCase
         DagTerm term = new DagTerm("id", "name");
 
         assertTrue(term.equals(parser.makeDagTerm(test)));
-        assertEquals(1, parser.terms.size());
+        assertEquals(1, parser.rootTerms.size());
         assertEquals(2, parser.seenTerms.size());
     }
 
