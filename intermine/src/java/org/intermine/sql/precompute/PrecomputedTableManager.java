@@ -211,7 +211,8 @@ public class PrecomputedTableManager
             // Create the table
             Statement stmt = con.createStatement();
             String sql = pt.getSQLString();
-            BestQuery bq = QueryOptimiser.optimise(sql, null, this, con);
+            BestQuery bq = QueryOptimiser.optimise(sql, null, this, con,
+                    QueryOptimiserContext.DEFAULT);
             sql = "CREATE TABLE " + pt.getName() + " AS " + bq.getBestQueryString();
             LOG.info("Creating new precomputed table " + sql);
             stmt.execute(sql);

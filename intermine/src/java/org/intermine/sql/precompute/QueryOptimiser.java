@@ -59,14 +59,6 @@ public class QueryOptimiser
 {
     private static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
     private static final int REPORT_INTERVAL = 10000;
-    /** Normal operation - no logging */
-    public static final String MODE_NORMAL = "MODE_NORMAL";
-    /** Normal operation, plus logging to stdout */
-    public static final String MODE_VERBOSE = "MODE_VERBOSE";
-    /** Logs all generated queries to the stdout, without explaining */
-    public static final String MODE_VERBOSE_LIST = "MODE_VERBOSE_LIST";
-    /** Summarises all generated queries to the stdout, without explaining */
-    public static final String MODE_VERBOSE_SUMMARY = "MODE_VERBOSE_SUMMARY";
 
     private static final String ALIAS_PREFIX = "P";
     private static int callCount = 0;
@@ -81,24 +73,22 @@ public class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     public static String optimise(String query, Database database) throws SQLException {
-        return optimise(query, null, database, null).getBestQueryString();
+        return optimise(query, database, QueryOptimiserContext.DEFAULT);
     }
-
-    private static ThreadLocal doLogging = new ThreadLocal();
 
     /**
-     * Allows the caller to tell the optimiser to print log messages to the stdout. This operation
-     * only applies to the current Thread.
+     * Runs the optimiser through the query represented in the String, given the database. If
+     * anything goes wrong, then the original String is returned.
      *
-     * @param mode MODE_NORMAL, MODE_VERBOSE, or MODE_VERBOSE_NOEXPLAIN
+     * @param query the query to optimise
+     * @param database the database to use to find precomputed tables
+     * @param context a QueryOptimiserContext, to alter settings
+     * @return a String representing the optimised query
+     * @throws SQLException if a database error occurs
      */
-    public static void setMode(String mode) {
-        doLogging.set(mode);
-    }
-
-    private static boolean isVerbose() {
-        return (MODE_VERBOSE == doLogging.get()) || (MODE_VERBOSE_LIST == doLogging.get())
-            || (MODE_VERBOSE_SUMMARY == doLogging.get());
+    public static String optimise(String query, Database database, QueryOptimiserContext context)
+        throws SQLException {
+        return optimise(query, null, database, null, context).getBestQueryString();
     }
 
     /**
@@ -110,7 +100,21 @@ public class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     protected static Query optimise(Query query, Database database) throws SQLException {
-        return optimise(query.toString(), query, database, null).getBestQuery();
+        return optimise(query, database, QueryOptimiserContext.DEFAULT);
+    }
+
+    /**
+     * Runs the optimiser through the query, given the database.
+     *
+     * @param query the Query to optimise
+     * @param database the database to use to find precomputed tables
+     * @param context a QueryOptimiserContext, to alter settings
+     * @return the optimised Query
+     * @throws SQLException if a database error occurs
+     */
+    protected static Query optimise(Query query, Database database, QueryOptimiserContext context)
+        throws SQLException {
+        return optimise(query.toString(), query, database, null, context).getBestQuery();
     }
 
     /**
@@ -122,11 +126,12 @@ public class QueryOptimiser
      * @param precompLookup a Database or Connection to lookup a PrecomputedTableManager
      * @param explainConnection the database connection to use, or null if precompLookup is a
      * Database
+     * @param context a QueryOptimiserContext, to alter settings
      * @return a BestQuery object
      * @throws SQLException if a database error occurs
      */
     public static BestQuery optimise(String query, Query originalQuery, Object precompLookup,
-            Connection explainConnection)  throws SQLException {
+            Connection explainConnection, QueryOptimiserContext context) throws SQLException {
         Database database = null;
         PrecomputedTableManager ptm = null;
         if (precompLookup instanceof Database) {
@@ -141,7 +146,7 @@ public class QueryOptimiser
                     + precompLookup);
         }
         if (ptm.getPrecomputedTables().isEmpty()) {
-            if (isVerbose()) {
+            if (context.isVerbose()) {
                 System.out .println("QueryOptimiser: no Precomputed Tables");
             }
             return new BestQueryFallback(null, query);
@@ -163,7 +168,7 @@ public class QueryOptimiser
         if (cachedQuery != null) {
             LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
-            if (isVerbose()) {
+            if (context.isVerbose()) {
                 System.out .println("QueryOptimiser: cache hit");
             }
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
@@ -173,14 +178,14 @@ public class QueryOptimiser
                 explainConnection = database.getConnection();
             }
             BestQuery bestQuery;
-            if (MODE_VERBOSE == doLogging.get()) {
-                bestQuery = new BestQueryExplainerVerbose(explainConnection);
-            } else if (MODE_VERBOSE_LIST == doLogging.get()) {
+            if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE) {
+                bestQuery = new BestQueryExplainerVerbose(explainConnection, context.getTimeLimit());
+            } else if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE_LIST) {
                 bestQuery = new BestQueryLogger(true);
-            } else if (MODE_VERBOSE_SUMMARY == doLogging.get()) {
+            } else if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE_SUMMARY) {
                 bestQuery = new BestQueryLogger(false);
             } else {
-                bestQuery = new BestQueryExplainer(explainConnection);
+                bestQuery = new BestQueryExplainer(explainConnection, context.getTimeLimit());
             }
             String optimisedQuery = null;
             int expectedRows = 0;
@@ -198,15 +203,15 @@ public class QueryOptimiser
                 recursiveOptimise(precomputedTables, originalQuery, bestQuery, originalQuery);
             } catch (BestQueryException e) {
                 // Ignore - bestQuery decided to cut short the search
-                if (bestQuery instanceof BestQueryExplainer) {
-                    expectedTime = (int) ((BestQueryExplainer) bestQuery).getBestExplainResult()
-                        .getComplete();
-                }
-                if (isVerbose()) {
+                //if (bestQuery instanceof BestQueryExplainer) {
+                //    expectedTime = (int) ((BestQueryExplainer) bestQuery).getBestExplainResult()
+                //        .getComplete();
+                //}
+                if (context.isVerbose()) {
                     System.out .println("QueryOptimiser: bailing out early: " + e);
                 }
             } finally {
-                if (isVerbose()) {
+                if (context.isVerbose()) {
                     System.out .println("Optimised SQL: " + bestQuery.getBestQueryString());
                 } else {
                     bestQuery.getBestQueryString();
@@ -240,7 +245,7 @@ public class QueryOptimiser
         }
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
-        if (isVerbose()) {
+        if (context.isVerbose()) {
             System.out .println("QueryOptimiser: unparsable query");
         }
         return new BestQueryFallback(originalQuery, query);

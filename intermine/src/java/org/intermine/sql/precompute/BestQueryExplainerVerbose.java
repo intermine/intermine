@@ -29,9 +29,10 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
      * Constructs an empty BestQueryExplainerVerbose.
      *
      * @param con the Connection to use
+     * @param timeLimit the time limit
      */
-    public BestQueryExplainerVerbose(Connection con) {
-        super(con);
+    public BestQueryExplainerVerbose(Connection con, long timeLimit) {
+        super(con, timeLimit);
     }
 
     /**

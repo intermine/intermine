@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.sql.precompute.QueryOptimiser;
+import org.intermine.sql.precompute.QueryOptimiserContext;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -193,21 +194,21 @@ public class IqlShell
         
         boolean doDots = false;
         boolean noExplain = false;
-        String optimiseMode = QueryOptimiser.MODE_NORMAL;
+        String optimiseMode = QueryOptimiserContext.MODE_NORMAL;
 
         if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE ")) {
             iql = iql.substring(17);
-            optimiseMode = QueryOptimiser.MODE_VERBOSE;
+            optimiseMode = QueryOptimiserContext.MODE_VERBOSE;
         }
 
         if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE_LIST ")) {
             iql = iql.substring(22);
-            optimiseMode = QueryOptimiser.MODE_VERBOSE_LIST;
+            optimiseMode = QueryOptimiserContext.MODE_VERBOSE_LIST;
         }
 
         if (iql.toUpperCase().startsWith("VERBOSE_OPTIMISE_SUMMARY ")) {
             iql = iql.substring(25);
-            optimiseMode = QueryOptimiser.MODE_VERBOSE_SUMMARY;
+            optimiseMode = QueryOptimiserContext.MODE_VERBOSE_SUMMARY;
         }
 
         if (iql.toUpperCase().startsWith("NOEXPLAIN ")) {
@@ -223,23 +224,23 @@ public class IqlShell
         Query q = iq.toQuery();
 
         out.println("Query to run: " + q.toString());
-        QueryOptimiser.setMode(optimiseMode);
         if (os instanceof ObjectStoreInterMineImpl) {
             String sqlString =
                 SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
                                       ((ObjectStoreInterMineImpl) os).getSchema(),
                                       ((ObjectStoreInterMineImpl) os).getDatabase(), (Map) null);
             out.println("SQL: " + sqlString);
-            if ((optimiseMode == QueryOptimiser.MODE_VERBOSE_LIST)
-                    || (optimiseMode == QueryOptimiser.MODE_VERBOSE_SUMMARY)) {
-                sqlString = QueryOptimiser.optimise(sqlString,
-                        ((ObjectStoreInterMineImpl) os).getDatabase());
-                out.println("Optimised SQL: " + sqlString);
+            QueryOptimiserContext context = new QueryOptimiserContext();
+            context.setMode(optimiseMode);
+            if (!noExplain) {
+                context.setTimeLimit(os.getMaxTime() / 10);
             }
+            sqlString = QueryOptimiser.optimise(sqlString + " LIMIT 5000",
+                    ((ObjectStoreInterMineImpl) os).getDatabase(), context);
         }
 
-        if ((optimiseMode == QueryOptimiser.MODE_NORMAL)
-                || (optimiseMode == QueryOptimiser.MODE_VERBOSE)) {
+        if ((optimiseMode == QueryOptimiserContext.MODE_NORMAL)
+                || (optimiseMode == QueryOptimiserContext.MODE_VERBOSE)) {
             Results res = os.execute(q);
             res.setBatchSize(5000);
             if (noExplain) {
@@ -268,7 +269,6 @@ public class IqlShell
                 rowNo++;
             }
         }
-        QueryOptimiser.setMode(QueryOptimiser.MODE_NORMAL);
     }
 
     private static void outputList(List l) {
