@@ -46,8 +46,18 @@ public abstract class AbstractTable
     /**
      * Compare this AbstractTable to another, ignoring little details like aliases.
      *
-     * @param obj a Table to compare to
+     * @param obj an AbstractTable to compare to
      * @return true if obj is equal
      */
     public abstract boolean equalsIgnoreAlias(AbstractTable obj);
+
+    /**
+     * Compare this AbstractTable to another, only comparing the alias.
+     *
+     * @param obj an AbstractTable to compare to
+     * @return true if obj has the same alias
+     */
+    public boolean equalsOnlyAlias(AbstractTable obj) {
+        return alias.equals(obj.alias);
+    }
 }
