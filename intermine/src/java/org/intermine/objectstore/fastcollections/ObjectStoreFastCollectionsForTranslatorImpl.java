@@ -204,16 +204,9 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             Integer toId = (Integer) toIdIter.next();
                             if (doneAlready.contains(toId)) {
                                 toIdIter.remove();
-                                //LOG.debug("Avoiding loading object with id " + toId);
                                 idsToProxy.add(toId);
                             }
                         }
-
-                        //if (toIdSize > 0) {
-                        //    LOG.debug("Fetching batch of collection items - size: " + toIdSize
-                        //            + ", after cache: " + toIdSizeAfterCache
-                        //            + ", after doneAlready: " + toIds.size());
-                        //}
 
                         while (!toIds.isEmpty()) {
                             Set bag = new HashSet();
@@ -280,9 +273,10 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                 throw new ObjectStoreException("Couldn't find"
                                                         + " object with id " + idToAdd
                                                         + " but we don't want to proxy it"
-                                                        + "(populating object id:" + objToPopulate.getId() + ","
-                                                        + "collection name: " + collectionName + ","
-                                                        + "contents: " + contents + ")");
+                                                        + "(populating object id:"
+                                                        + objToPopulate.getId()
+                                                        + ", collection name: " + collectionName
+                                                        + ", contents: " + contents + ")");
                                             }
                                         }
                                         substituteCollection.add(objToAdd);
