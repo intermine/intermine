@@ -94,8 +94,7 @@
   <definition name="bagBuilder.tile" path="/bagBuilder.jsp">
     <put name="bagBuilder" value="bagBuilder.jsp"/>
   </definition>
-  <definition name="classChooser.tile" path="/queryClassSelect.jsp"
-              controllerUrl="/initQueryClassSelect.do"/>
+  <definition name="classChooser.tile" path="/queryClassSelect.jsp"/>
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
   <definition name="queryStatistics.tile" path="/queryStatistics.jsp"/>
   <definition name="resultsView.tile" path="/table.jsp"/>
