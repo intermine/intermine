@@ -19,7 +19,11 @@ import org.flymine.util.StringUtil;
 public class Database
 {
     protected DataSource datasource;
-    protected String type;
+    protected String platform;
+    protected String driver;
+
+    // Store all the properties this Database was configured with
+    protected Properties settings;
 
     /**
      * No argument constructor for testing purposes
@@ -35,6 +39,7 @@ public class Database
      * @throws ClassNotFoundException if there is a class in props that cannot be found
      */
     protected Database(Properties props) throws ClassNotFoundException {
+        settings = props;
         configure(props);
     }
 
@@ -57,16 +62,52 @@ public class Database
         return datasource.getConnection();
     }
 
-
     /**
-     * Gets the type of this Database
+     * Gets the platform of this Database
      *
      * @return the datasource for this Database
      */
-    public String getType() {
-        return type;
+    public String getPlatform() {
+        return platform;
     }
 
+    /**
+     * Gets the driver this Database
+     *
+     * @return the driver for this Database
+     */
+    public String getDriver() {
+        return driver;
+    }
+
+    /**
+     * Gets the username for this Database
+     *
+     * @return the username for this Database
+     */
+    public String getUser() {
+        return (String) settings.get("datasource.user");
+    }
+
+    /**
+     * Gets the password for this Database
+     *
+     * @return the password for this Database
+     */
+    public String getPassword() {
+        return (String) settings.get("datasource.password");
+    }
+
+    /**
+     * Gets the URL from this database
+     *
+     * @return the URL for this database
+     */
+    public String getURL() {
+        return "jdbc:" + platform.toLowerCase() + "://"
+            + (String) settings.get("datasource.serverName")
+            + "/" + (String) settings.get("datasource.databaseName");
+    }
 
     /**
      * Configures a datasource from a Properties object
