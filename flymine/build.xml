@@ -598,6 +598,7 @@
       <fileset dir="${src.java}">
         <include name="**/*.java" />
       </fileset>
+      <property key="checkstyle.header.file" value="${resources}/copyright_header.txt"/>
     </checkstyle>
 
     <style in="${results.checkstyle}/checkstyle_report.xml"

@@ -44,6 +44,10 @@
       <property name="scope" value="public" />
     </module>
 
+    <module name="Header">
+      <property name="headerFile" value="${checkstyle.header.file}"/>
+    </module>
+    
     <!--                         code conventions -->
 
     <!-- naming conventions -->
