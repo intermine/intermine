@@ -26,8 +26,6 @@ import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
 import org.intermine.util.Util;
 
-import org.apache.log4j.Logger;
-
 /**
  * The server side of an ObjectStore webservice. This should be run in
  * session scope, ie. there is one example of this object per user.

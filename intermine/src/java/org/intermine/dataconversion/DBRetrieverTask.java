@@ -24,8 +24,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import org.apache.log4j.Logger;
-
 /**
  * Initiates retrieval and conversion of data from a source database
  *

@@ -375,7 +375,8 @@ public class Results extends AbstractList
                 try {
                     int toGt = (maxSize == originalMaxSize ? minSize * 2
                             : (minSize + maxSize) / 2);
-                    //LOG.debug("size - getting " + toGt + "                                   Result "
+                    //LOG.debug("size - getting " + toGt
+                    //        + "                                   Result "
                     //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
                     get(toGt);
                 } catch (ObjectStoreLimitReachedException e) {

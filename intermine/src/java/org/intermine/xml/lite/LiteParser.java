@@ -40,7 +40,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicBean;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.apache.log4j.Logger;
+
 /**
  * Read XML Lite format into an Object
  *

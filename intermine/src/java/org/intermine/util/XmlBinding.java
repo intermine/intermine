@@ -15,8 +15,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
-
 import org.intermine.metadata.Model;
 import org.intermine.InterMineException;
 import org.intermine.xml.full.FullParser;

@@ -48,8 +48,6 @@ import java.util.Collection;
 import java.io.Reader;
 import org.xml.sax.InputSource;
 
-import org.apache.log4j.Logger;
-
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.util.StringUtil;
 import org.intermine.metadata.*;

@@ -27,8 +27,6 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 
-import org.apache.log4j.Logger;
-
 /**
  * Parses the AceDB model file given, and produces a InterMine model.
  *

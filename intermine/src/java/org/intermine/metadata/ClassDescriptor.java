@@ -19,8 +19,6 @@ import java.util.Set;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * Describe a business model class.  Gives access to attribute, reference and collection
  * descriptors.  Includes primary key information.

@@ -10,8 +10,6 @@ package org.intermine.objectstore.query;
  *
  */
 
-import org.apache.log4j.Logger;
-
 import java.util.Set;
 import java.util.Map;
 import java.util.Iterator;

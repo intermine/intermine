@@ -21,8 +21,6 @@ import java.util.Set;
 
 import net.sf.cglib.proxy.*;
 
-import org.apache.log4j.Logger;
-
 /**
  * Utilities to create DynamicBeans
  *

@@ -23,8 +23,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 
-import org.apache.log4j.Logger;
-
 /**
  * Provides an interface between a DataTranslator and the source Item ObjectStore which it wishes to
  * read.

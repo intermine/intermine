@@ -25,8 +25,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.xml.XmlHelper;
 
-import org.apache.log4j.Logger;
-
 /**
  * Render an object in InterMine Full XML format
  *

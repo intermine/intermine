@@ -111,7 +111,7 @@ public class OptimiserCache
     public synchronized String lookup(String original, int limit, int offset) {
         expire();
         //LOG.debug("Looking up query \"" + original + "\" with limit " + limit
-                + " and offset " + offset + " - ");
+        //        + " and offset " + offset + " - ");
         boolean originalWasExplain = false;
         if (original.toUpperCase().startsWith("EXPLAIN ")) {
             original = original.substring(8);

@@ -26,8 +26,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * Simple implementation of IntegrationWriter. Always overrides whatever is already in the
  * objectstore.
