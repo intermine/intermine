@@ -116,6 +116,21 @@ public class PrecomputedTableManagerTest extends TestCase
         }
     }
 
+    public void testGetInstanceForNullName() throws Exception {
+        try {
+            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance((String) null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
+
+    public void testGetInstance() throws Exception {
+        PrecomputedTableManager ptm1 = PrecomputedTableManager.getInstance("db.unittest");
+        PrecomputedTableManager ptm2 = PrecomputedTableManager.getInstance("db.unittest");
+        assertEquals(ptm1, ptm2);
+    }
+
     public void testAddNew() throws Exception {
         synchronized (pt1) {
             PrecomputedTableManager ptm = new PrecomputedTableManager("db.unittest");
