@@ -11,7 +11,6 @@ package org.intermine.web.config;
  */
 
 import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -29,15 +28,15 @@ public class FieldConfigHelper
 {
     /**
      * Find the FieldConfig objects for the the given ClassDescriptor.
-     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webConfig the WebConfig object for this webapp
      * @param cd a ClassDescriptor
      * @return the FieldConfig objects for the the given ClassDescriptor
      */
-    public static List getClassFieldConfigs(Map webconfigTypeMap, ClassDescriptor cd) {
-        Type type = (Type) webconfigTypeMap.get(cd.getName());
+    public static List getClassFieldConfigs(WebConfig webConfig, ClassDescriptor cd) {
+        Type type = (Type) webConfig.getTypes().get(cd.getName());
 
         if (type != null) {
-            List fieldConfigs = type.getFieldConfigs();
+            List fieldConfigs = new ArrayList(type.getFieldConfigs());
 
             if (fieldConfigs.size() > 0) {
                 return fieldConfigs;

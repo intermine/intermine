@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Class to represent a collection field of an object for the webapp
@@ -25,12 +26,12 @@ public class DisplayCollection extends DisplayField
      * Construct a new DisplayCollection object
      * @param collection the actual collection
      * @param cld the type of this collection
-     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
     public DisplayCollection(List collection, ClassDescriptor cld,
-                             Map webconfigTypeMap, Map webProperties) throws Exception {
-        super(collection, cld, webconfigTypeMap, webProperties);
+                             WebConfig webConfig, Map webProperties) throws Exception {
+        super(collection, cld, webConfig, webProperties);
     }
 }

@@ -29,6 +29,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.
@@ -130,8 +131,8 @@ public class ObjectDetailsController extends InterMineAction
         throws Exception {
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Map webconfigTypeMap = (Map) servletContext.getAttribute(Constants.DISPLAYERS);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        return new DisplayObject(object, os.getModel(), webconfigTypeMap, webPropertiesMap);
+        return new DisplayObject(object, os.getModel(), webConfig, webPropertiesMap);
     }
 }

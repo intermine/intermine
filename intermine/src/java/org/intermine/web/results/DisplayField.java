@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Class to represent a field of an object for the webapp
@@ -33,14 +34,14 @@ public class DisplayField
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
      * @param cld metadata for the referenced object
-     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
     public DisplayField(List collection, ClassDescriptor cld,
-                        Map webconfigTypeMap, Map webProperties) throws Exception {
+                        WebConfig webConfig, Map webProperties) throws Exception {
         this.cld = cld;
-        table = new InlineResultsTable(collection, cld, webconfigTypeMap, webProperties);
+        table = new InlineResultsTable(collection, cld, webConfig, webProperties);
         if (collection instanceof LazyCollection) {
             size = ((LazyCollection) collection).getInfo().getRows();
         } else {
