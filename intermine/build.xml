@@ -466,11 +466,32 @@
           <exclude name="org/intermine/dataloader/XmlDataLoaderTest.class" />
           <exclude name="org/intermine/dataconversion/*TranslatorTest.class" />
           <exclude name="org/intermine/dataconversion/ItemToObject*" />
+          <exclude name="org/intermine/util/CacheMapTest.class" />
         </fileset>
       </batchtest>
     </junit>
 
+    <antcall target="test-cachemap"/>
     <antcall target="test-report"/>
+  </target>
+
+   <!-- run cachmap test in a separate jvm with memory limit -->
+  <target name="test-cachemap" depends="compile-test"
+          description="perform cache map test in a separate jvm" >
+
+    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+      <jvmarg value="-Xmx200M"/>
+      <classpath refid="test.class.path"/>
+      <formatter type="xml" />
+      <batchtest fork="yes" todir="${results.junit}">
+        <fileset dir="${build.test}" includes="org/intermine/util/CacheMapTest.class">
+          <depend targetdir="${results.junit}">
+            <mapper type="package" from="*.class" to="TEST-*.xml" />
+          </depend>
+        </fileset>
+      </batchtest>
+    </junit>
+
   </target>
 
   <target name="test-webapp" depends="compile-test, build-testable-webapp"

@@ -21,14 +21,14 @@ public class CacheMapTest extends TestCase
 
     public void test() throws Exception {
         CacheMap cm = new CacheMap();
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 300; i++) {
             Integer iI = new Integer(i);
             cm.put(iI, new byte[1048576]);
         }
 
         assertTrue(cm.size() < 1500);
         assertTrue("Expected first two to be missing",!(cm.containsKey(new Integer(2)) && cm.containsKey(new Integer(1))));
-        assertTrue("Expected last two to be present", cm.containsKey(new Integer(1998)) || cm.containsKey(new Integer(1997)));
+        assertTrue("Expected last two to be present", cm.containsKey(new Integer(298)) || cm.containsKey(new Integer(297)));
     }
 
     public void test2() throws Exception {
