@@ -206,6 +206,12 @@ public class MainHelper
                 QueryClass qc = new QueryClass(getClass(node.getType(), model));
                 q.addFrom(qc);
                 queryBits.put(path, qc);
+                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                    Constraint c = (Constraint) j.next();
+                    cs.addConstraint(new BagConstraint(qc,
+                                                       c.getOp(), 
+                                                       (Collection) savedBags.get(c.getValue())));
+                }
                 continue;
             }
             
