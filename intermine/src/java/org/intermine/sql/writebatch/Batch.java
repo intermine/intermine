@@ -204,17 +204,7 @@ public class Batch
      */
     public void flush(Connection con, Set filter) throws SQLException {
         backgroundFlush(con, filter);
-        synchronized (this) {
-            while (flushJobs != null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                }
-            }
-            if (problem != null) {
-                throw problem;
-            }
-        }
+        putFlushJobs(Collections.EMPTY_LIST);
     }
 
     /**
@@ -233,17 +223,23 @@ public class Batch
         }
         long start = System.currentTimeMillis();
         List jobs = batchWriter.write(con, tables, filter);
-        long middle = System.currentTimeMillis();
-        putFlushJobs(jobs);
         int oldBatchSize = batchSize;
         batchSize = 0;
+        Iterator tableIter = tables.entrySet().iterator();
+        while (tableIter.hasNext()) {
+            Map.Entry tableEntry = (Map.Entry) tableIter.next();
+            Table table = (Table) tableEntry.getValue();
+            batchSize += table.getSize();
+        }
+        long middle = System.currentTimeMillis();
+        putFlushJobs(jobs);
         long end = System.currentTimeMillis();
         if ((end > middle + 10) && (lastDutyCycle < 75)) {
-            LOG.info("Enqueued batch of size " + oldBatchSize + " to flush - took "
-                    + (middle - start) + " + " + (end - middle) + " ms");
+            LOG.info("Enqueued " + (oldBatchSize - batchSize) + " of " + oldBatchSize
+                    + " byte batch - took " + (middle - start) + " + " + (end - middle) + " ms");
         } else {
-            LOG.debug("Enqueued batch of size " + oldBatchSize + " to flush - took "
-                    + (middle - start) + " + " + (end - middle) + " ms");
+            LOG.debug("Enqueued " + (oldBatchSize - batchSize) + " of " + oldBatchSize
+                    + " byte batch - took " + (middle - start) + " + " + (end - middle) + " ms");
         }
     }
 
@@ -351,8 +347,10 @@ public class Batch
             } catch (InterruptedException e) {
             }
         }
-        flushJobs = jobs;
-        notifyAll();
+        if (!jobs.isEmpty()) {
+            flushJobs = jobs;
+            notifyAll();
+        }
         if (problem != null) {
             throw problem;
         }

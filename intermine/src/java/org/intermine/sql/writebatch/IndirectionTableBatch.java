@@ -27,6 +27,7 @@ public class IndirectionTableBatch implements Table
     private String leftColName, rightColName;
     private Set rowsToDelete;
     private Set rowsToInsert;
+    private int size = 0;
 
     /**
      * Constructor for this class. Generates a batch with no data to write.
@@ -53,7 +54,9 @@ public class IndirectionTableBatch implements Table
         Row row = new Row(left, right);
         boolean removedDelete = rowsToDelete.remove(row);
         boolean addedInsert = rowsToInsert.add(row);
-        return (addedInsert ? (removedDelete ? 0 : 16) : 0);
+        int deltaSize = (addedInsert ? (removedDelete ? 0 : 16) : 0);
+        size += deltaSize;
+        return deltaSize;
     }
 
     /**
@@ -68,7 +71,9 @@ public class IndirectionTableBatch implements Table
         Row row = new Row(left, right);
         boolean removedInsert = rowsToInsert.remove(row);
         boolean addedDelete = rowsToDelete.add(row);
-        return (addedDelete ? (removedInsert ? 0 : 16) : 0);
+        int deltaSize = (addedDelete ? (removedInsert ? 0 : 16) : 0);
+        size += deltaSize;
+        return deltaSize;
     }
 
     /**
@@ -113,5 +118,13 @@ public class IndirectionTableBatch implements Table
     public void clear() {
         rowsToInsert.clear();
         rowsToDelete.clear();
+        size = 0;
+    }
+
+    /**
+     * @see Table#getSize
+     */
+    public int getSize() {
+        return size;
     }
 }
