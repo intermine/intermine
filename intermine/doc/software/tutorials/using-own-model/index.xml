@@ -64,30 +64,7 @@
 	 <listitem> Open the main flymine directory and then the lib directory.  From here copy the file called <command>nsuml.jar</command> to the lib folder in the main tutorial directory.
 	 </listitem>
 
-	 <listitem> Back in <command>build.xml</command> scroll down to where the compile target is :- 
-<table>
-    <tbody>
-        <row>
-	  <entry>
-	      <inlinegraphic fileref="compile.gif" format="GIF"/>
-	  </entry>
-	</row>
-    </tbody>
-</table>
-then cut this section and paste it in between <command>create database</command> and <command>insert data into the database.</command>
-         </listitem>
-
-<table>
-    <tbody>
-        <row>
-	  <entry>
-	      <inlinegraphic fileref="compile1.gif" format="GIF"/>
-	  </entry>
-       	</row>
-    </tbody>
-</table>
-
-         <listitem>The <command>insert data into the database</command> section now needs to be changed: First you must change the depends statement at the top of the target (see above). It should now read <command> depends="build-model, compile"</command>.</listitem>
+	 <listitem> Back in <command>build.xml</command> the <command>insert data into the database</command> section now needs to be changed: First you must change the depends statement at the top of the target (see below). It should now read <command> depends="build-model, compile"</command>.</listitem>
 	 <listitem>The rest of that target now needs to be modified to accept the data from the java program you have created. Below is an exampe of how to do this, but obviously this will be specific to your programs.</listitem>
 
 <table>
