@@ -164,7 +164,6 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
                     if (stableId != null) {
-                        LOG.error("gene stableId not null");
                         moveField(stableId, tgtItem, "stable_id", "name");
                     }
                     if (!tgtItem.hasAttribute("name")) {
@@ -513,7 +512,6 @@ public class EnsemblDataTranslator extends DataTranslator
         constraints.add(new FieldNameAndValue("className",
                                               srcNs + ensemblType + "_stable_id", false));
         constraints.add(new FieldNameAndValue(ensemblType, value, true));
-        LOG.error(constraints);
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
         if (stableIds.hasNext()) {
