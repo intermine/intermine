@@ -830,7 +830,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated" sourceName="orthologue-inparanoid"/>
+    <load-orthologue integrationWriter="integration.production" source="os.inparanoid-orthologue-translated" 
+              sourceName="orthologue-inparanoid" ignoreDuplicates="true"/>
   </target>
 
 
@@ -1724,7 +1725,7 @@
   <target name="build-ensembl-anopheles-production" depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
 
   <!-- Retrieve and load orthologue data -->
-  <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
+  <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="production-build" 
