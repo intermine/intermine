@@ -22,6 +22,7 @@ import org.flymine.codegen.JavaModelOutput;
 import org.flymine.codegen.ModelOutput;
 import org.flymine.codegen.CastorModelOutput;
 import org.flymine.codegen.OJBTorqueModelOutput;
+import org.flymine.codegen.FlyMineTorqueModelOutput;
 
 /**
  * Creates and runs a ModelOutput process to generate java or config files.
@@ -91,6 +92,8 @@ public class ModelOutputTask extends Task
                 mo = new CastorModelOutput(model, destDir);
             } else if (type.equals("ojbtorque")) {
                 mo = new OJBTorqueModelOutput(model, destDir);
+            } else if (type.equals("flyminetorque")) {
+                mo = new FlyMineTorqueModelOutput(model, destDir);
             } else {
                 throw new BuildException("Unrecognised value for output type: " + type);
             }
