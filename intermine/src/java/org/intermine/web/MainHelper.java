@@ -235,10 +235,24 @@ public class MainHelper
                         || c.getOp() == ConstraintOp.IS_NULL) {
                         cs.addConstraint(
                             new ContainsConstraint((QueryObjectReference) qr, c.getOp()));
-                    } else {
-                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
-                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
                     }
+                }
+            }
+        }
+        
+        // Now process loop constraints. The constraint parameter refers backwards and
+        // forwards in the query so we can't process these in the above loop.
+        for (Iterator i = query.getNodes().values().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            String path = node.getPath();
+            QueryNode qn = (QueryNode) queryBits.get(path);
+            
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                Constraint c = (Constraint) j.next();
+                if (node.isReference() && c.getOp() != ConstraintOp.IS_NOT_NULL
+                    && c.getOp() != ConstraintOp.IS_NULL) {
+                    QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
+                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
                 }
             }
         }

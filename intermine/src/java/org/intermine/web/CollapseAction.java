@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -48,11 +47,7 @@ public class CollapseAction extends InterMineAction
         HttpSession session = request.getSession();
         String forward = request.getParameter("forward");
         String id = request.getParameter("id");
-        Map collapsed = (Map) session.getAttribute("COLLAPSED");
-        if (collapsed == null) {
-            collapsed = new HashMap();
-            session.setAttribute("COLLAPSED", collapsed);
-        }
+        Map collapsed = SessionMethods.getCollapsedMap(session);
         Boolean b = (Boolean.TRUE == collapsed.get(id) ? Boolean.FALSE : Boolean.TRUE);
         collapsed.put(id, b);
         return new ActionForward(forward, true);

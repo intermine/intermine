@@ -10,12 +10,9 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionListener;
 import javax.servlet.http.HttpSessionEvent;
-
-import java.util.HashMap;
 
 /**
  * Perform InterMine-specific actions when a Session is constructed or destroyed
@@ -28,11 +25,7 @@ public class SessionListener implements HttpSessionListener
      */
     public void sessionCreated(HttpSessionEvent se) {
         HttpSession session = se.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        session.setAttribute(Constants.PROFILE,
-                             new Profile(pm, null, new HashMap(), new HashMap(), new HashMap()));
-        session.setAttribute("COLLAPSED", new HashMap());
+        SessionMethods.initSession(session);
     }
 
     /**

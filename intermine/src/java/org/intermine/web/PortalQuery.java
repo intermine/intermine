@@ -102,7 +102,7 @@ public class PortalQuery extends TemplateAction
         SessionMethods.recordMessage(properties.getProperty("portal.welcome" + origin), session);
         
         // Set collapsed/uncollapsed state of object details UI
-        Map collapsed = (Map) session.getAttribute("COLLAPSED");
+        Map collapsed = SessionMethods.getCollapsedMap(session);
         collapsed.put("fields", Boolean.TRUE);
         collapsed.put("further", Boolean.TRUE);
         collapsed.put("other", Boolean.TRUE);
