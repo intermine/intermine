@@ -15,13 +15,16 @@
     <c:otherwise>
       <c:if test="${viewType == 'summary'}">
         <nobr>
-          <html:link action="/objectDetails?id=${object.id}">
+          <b>
             <c:forEach var="cld" items="${leafClds}">
               <c:out value="${cld.unqualifiedName}"/>
             </c:forEach>
-          </html:link>
+          </b>
+          [<html:link action="/objectDetails?id=${object.id}">
+             <fmt:message key="results.details"/>
+           </html:link>]
         </nobr>
-        <br/><br/>
+        <br/>
       </c:if>
       <c:forEach var="cld" items="${leafClds}">
         <c:set var="cld" value="${cld}" scope="request"/>
