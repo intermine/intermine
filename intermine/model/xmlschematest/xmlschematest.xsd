@@ -13,10 +13,13 @@
      </xs:complexType>
     </xs:element>
     <xs:element name="address">
-      <xs:complexType>      
+     <xs:complexType>      
+      <xs:simpleContent>
+       <xs:extension base="xs:string">
         <xs:attribute name="id" type="xs:ID" use="required"/>
-        <xs:attribute name="addressString" type="xs:string"/>
-      </xs:complexType>
+       </xs:extension>
+      </xs:simpleContent>
+     </xs:complexType>
     </xs:element>
     <xs:element name="addressBook">
      <xs:complexType>

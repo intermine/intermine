@@ -30,7 +30,6 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 
-import org.apache.log4j.Logger;
 
 /**
  * Convert XML format data conforming to given InterMine model to fulldata
@@ -41,7 +40,6 @@ import org.apache.log4j.Logger;
  */
  public class XmlConverter extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
     protected Model model;
     protected XmlMetaData xmlInfo;
@@ -64,7 +62,6 @@ import org.apache.log4j.Logger;
         this.model = model;
         this.xmlReader = xmlReader;
         this.xmlInfo = new XmlMetaData(xsdReader);
-        LOG.debug(xmlInfo.toString());
     }
 
     /**
@@ -96,7 +93,9 @@ import org.apache.log4j.Logger;
         Stack items = new Stack();
         Stack paths = new Stack();
         String attributeName = null;
+        StringBuffer attValue = new StringBuffer();
         Map identifiers = new HashMap();
+        boolean isAttribute = false;
 
 
         /**
@@ -121,20 +120,20 @@ import org.apache.log4j.Logger;
                 }
                 items.push(new Item(getIdentifier(), clsName, ""));
                 elements.push(qName);
-                LOG.debug("pushed elements: " + qName);
                 pushPaths(qName);
             } else {
                 Item item = (Item) items.peek();
                 ClassDescriptor cld = model.getClassDescriptorByName(item.getClassName());
-                if (cld.getAttributeDescriptorByName(qName) != null) {
+                if (cld.getAttributeDescriptorByName(qName, true) != null) {
                     attributeName = qName;
-                } else if (cld.getReferenceDescriptorByName(qName) != null) {
+                    isAttribute = true;
+                } else if (cld.getReferenceDescriptorByName(qName, true) != null) {
                     if (item.hasReference(qName)) {
                         throw new SAXException("Field (" + cld.getName() + "." + qName
                                                + ") is defined in model as"
                                                + " a reference but attempted to add two values");
                     }
-                    ReferenceDescriptor rfd = cld.getReferenceDescriptorByName(qName);
+                    ReferenceDescriptor rfd = cld.getReferenceDescriptorByName(qName, true);
                     String clsName = rfd.getReferencedClassDescriptor().getName();
                     String path = pushPaths(qName);
                     String identifier = null;
@@ -155,10 +154,10 @@ import org.apache.log4j.Logger;
                     }
                     item.addReference(new Reference(qName, identifier));
                     elements.push(qName);
-                    LOG.debug("pushed elements: " + qName);
-                } else if (cld.getCollectionDescriptorByName(StringUtil.pluralise(qName)) != null) {
+                } else if (cld.getCollectionDescriptorByName(StringUtil.pluralise(qName), true)
+                           != null) {
                     CollectionDescriptor cod
-                        = cld.getCollectionDescriptorByName(StringUtil.pluralise(qName));
+                        = cld.getCollectionDescriptorByName(StringUtil.pluralise(qName), true);
                     String clsName = cod.getReferencedClassDescriptor().getName();
                     String path = pushPaths(qName);
                     String identifier = null;
@@ -183,12 +182,12 @@ import org.apache.log4j.Logger;
                     }
                     item.getCollection(StringUtil.pluralise(qName)).addRefId(identifier);
                     elements.push(qName);
-                    LOG.debug("pushed elements: " + qName);
                 } else {
                     throw new SAXException("Field (" + qName + "[s]) not found in class ("
                                            + cld.getName() + ")");
                 }
             }
+            // create attributes specified within tag
             if (attrs.getLength() > 0) {
                 Item item = (Item) items.peek();
                 String path = (String) paths.peek();
@@ -210,6 +209,8 @@ import org.apache.log4j.Logger;
          */
         public void characters(char[] ch, int start, int length) throws SAXException
         {
+            // DefaultHandler may call this method more than once for a single
+            // attribute content -> hold text & create attribute in endElement
             while (length > 0) {
                 boolean whitespace = false;
                 switch(ch[start]) {
@@ -232,29 +233,21 @@ import org.apache.log4j.Logger;
             if (length > 0) {
                 StringBuffer s = new StringBuffer();
                 s.append(ch, start, length);
-                LOG.debug("attributeName = " + attributeName + " ch: " + s.toString());
-                // if attribute_name not null - create string and set to named att
-                // else create string and set to 'content' field of current item
                 Item item = (Item) items.peek();
                 ClassDescriptor cld = model.getClassDescriptorByName(item.getClassName());
+                String tmpName = null;
                 if (attributeName == null) {
-                    // TODO possibly look up xmlInfo for defined name for 'content' attribute
-                    // currently possibility of a clash
-                    if (cld.getAttributeDescriptorByName("content") == null) {
+                    // If no attribute name set, will be name og last element
+                    String path = (String) paths.peek();
+                    attributeName = path.substring(path.lastIndexOf('/') + 1);
+
+                    if (cld.getAttributeDescriptorByName(attributeName) == null) {
                         throw new SAXException("Class (" + cld.getName() + ") does not have"
-                                               + " default 'content' attribute");
+                                               + " default content attribute named: "
+                                               + attributeName);
                     }
-                    attributeName = "content";
                 }
-                if (item.hasAttribute(attributeName)) {
-                    throw new SAXException("A value has already been set for attribute ("
-                                           + attributeName + ") in item: " + item.getClassName()
-                                           + " [" + item.getIdentifier() + "]");
-                } else {
-                    StringBuffer sb = new StringBuffer(length);
-                    sb.append(ch, start, length);
-                    item.addAttribute(new Attribute(attributeName, sb.toString()));
-                }
+                attValue.append(s);
             }
         }
 
@@ -266,11 +259,24 @@ import org.apache.log4j.Logger;
             // if qName is top of element stack and is item/ref/col
             // -> store item
 
-            if (attributeName == null) {
+            if (attributeName != null) {
+                // create attributes specified in content of tags
+                Item item = (Item) items.peek();
+                ClassDescriptor cld = model.getClassDescriptorByName(item.getClassName());
+
+                if (item.hasAttribute(attributeName)) {
+                    throw new SAXException("A value has already been set for attribute ("
+                                           + attributeName + ") in item: " + item.getClassName()
+                                           + " [" + item.getIdentifier() + "]");
+                } else {
+                    item.addAttribute(new Attribute(attributeName, attValue.toString()));
+                }
+                attValue = new StringBuffer();
+                attributeName = null;
+            }
+            if (!isAttribute) {
                 String tmp = (String) elements.pop();
-                LOG.debug("popped elements: " + tmp);
                 String path = (String) paths.pop();
-                LOG.debug("popped paths: " + path);
                 try {
                     if (!xmlInfo.isReference(path)) {
                         writer.store((ItemHelper.convert((Item) items.pop())));
@@ -279,7 +285,7 @@ import org.apache.log4j.Logger;
                     throw new SAXException(e);
                 }
             }
-            attributeName = null;
+            isAttribute = false;
         }
 
 
@@ -297,7 +303,6 @@ import org.apache.log4j.Logger;
             if (!paths.empty()) {
                 path = (String) paths.peek() + "/" + path;
             }
-            LOG.debug("pushing paths: " + path);
             paths.push(path);
             return path;
         }

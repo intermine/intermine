@@ -21,7 +21,7 @@
     <collection name="employees" referenced-type="org.intermine.model.xmlschematest.Employee" ordered="true"/>
   </class>
   <class name="org.intermine.model.xmlschematest.Address_Company" is-interface="true">
-    <attribute name="addressString" type="java.lang.String"/>
+    <attribute name="address" type="java.lang.String"/>
     <attribute name="identifier" type="java.lang.String"/>
   </class>
   <class name="org.intermine.model.xmlschematest.AddressBook_Company" is-interface="true">

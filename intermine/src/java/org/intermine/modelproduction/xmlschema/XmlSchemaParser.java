@@ -321,6 +321,16 @@ public class XmlSchemaParser implements ModelParser
             clsStack.push(clsName);
         }
 
+        if (complexType.isSimpleContent() && complexType.getAttributeDecls().hasMoreElements()) {
+            String path = (String) paths.peek();
+            String attrName = path.substring(path.lastIndexOf('/') + 1);
+
+            AttributeDescriptor atd = new AttributeDescriptor(attrName,
+                                   OntologyUtil.xmlToJavaType(complexType.getBaseType().getName()));
+            Set atds = getFieldSetForClass(attributes, (String) clsStack.peek());
+            atds.add(atd);
+        }
+
         // create AttributeDescrptors for class
         processAttributes(complexType);
 
