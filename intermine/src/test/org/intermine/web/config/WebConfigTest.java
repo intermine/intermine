@@ -27,26 +27,42 @@ public class WebConfigTest extends TestCase
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/WebConfigTest.xml");
         WebConfig wc1 = WebConfig.parse(is, Model.getInstanceByName("testmodel"));
 
-        Displayer disp1 = new Displayer();
-        disp1.setSrc("/model/page2.jsp");
-        Type type1 = new Type();
-        type1.setClassName("org.intermine.model.testmodel.Employable");
-        type1.addLongDisplayer(disp1);
+        Displayer employeeDisplayer = new Displayer();
+        employeeDisplayer.setSrc("/model/employee.jsp");
+
+        Type employableType = new Type();
+        employableType.setClassName("org.intermine.model.testmodel.Employable");
+        employableType.addLongDisplayer(employeeDisplayer);
         FieldConfig df1 = new FieldConfig();
         df1.setFieldExpr("class1field1");
-        type1.addFieldConfig(df1);
+        employableType.addFieldConfig(df1);
         FieldConfig df2 = new FieldConfig();
         df2.setFieldExpr("class1field2.field");
-        type1.addFieldConfig(df2);
+        employableType.addFieldConfig(df2);
+
+        Displayer managerDisplayer = new Displayer();
+        managerDisplayer.setSrc("/model/manager.jsp");
+
+        Type managerType = new Type();
+        managerType.setClassName("org.intermine.model.testmodel.Manager");
+        managerType.addLongDisplayer(managerDisplayer);
+
+        FieldConfig df3 = new FieldConfig();
+        df3.setFieldExpr("name");
+        managerType.addFieldConfig(df3);
+        FieldConfig df4 = new FieldConfig();
+        df4.setFieldExpr("seniority");
+        managerType.addFieldConfig(df4);
 
         Displayer disp2 = new Displayer();
         disp2.setSrc("/model/page4.jsp");
         Displayer disp3 = new Displayer();
         disp3.setSrc("tile2.tile");
-        Type type2 = new Type();
-        type2.setClassName("org.intermine.model.testmodel.Thing");
-        type2.addLongDisplayer(disp2);
-        type2.addLongDisplayer(disp3);
+
+        Type thingType = new Type();
+        thingType.setClassName("org.intermine.model.testmodel.Thing");
+        thingType.addLongDisplayer(disp2);
+        thingType.addLongDisplayer(disp3);
 
         Exporter exporter = new Exporter();
         exporter.setId("myExporter");
@@ -54,12 +70,18 @@ public class WebConfigTest extends TestCase
         exporter.setClassName("java.lang.String");
 
         WebConfig wc2 = new WebConfig();
-        wc2.addType(type1);
-        wc2.addType(type2);
+        wc2.addType(employableType);
+        wc2.addType(managerType);
+        wc2.addType(thingType);
         wc2.addExporter(exporter);
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
 
+        assertEquals(1, managerType.getLongDisplayers().size());
+        assertEquals("/model/manager.jsp",
+                     ((Displayer) managerType.getLongDisplayers().iterator().next()).getSrc());
+
         assertEquals(wc2, wc1);
+
     }
 
     public void testParseNull() throws Exception{
