@@ -131,25 +131,19 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         }
     }
 
-
-
-
-    /*
     public static void setUpData() throws Exception {
-        XmlBinding binding = new XmlBinding("castor_xml_testmodel.xml");
-        map((List) binding.unmarshal(new InputSource(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml"))));
+        XmlBinding binding = new XmlBinding(writer.getModel());
+        map((List) binding.unmarshal(SetupDataTestCase.class.getClassLoader().getResourceAsStream("test/testmodel_data.xml")));
     }
-    */
 
+    public static void main(String[] args) throws Exception {
+        XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
+        Collection col = data.values();
+        setIds(col);
+        binding.marshal(col, new FileWriter(File.createTempFile("testmodel_data", "xml")));
+    }
 
-//     public void testWriteTestData() throws Exception {
-//         XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
-//         Collection col = data.values();
-//         setIds(col);
-//         binding.marshal(col, new FileWriter(File.createTempFile("testmodel_data", "xml")));
-//     }
-
-    protected void setIds(Collection c) throws Exception {
+    protected static void setIds(Collection c) throws Exception {
         int i=1;
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
@@ -157,7 +151,8 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         }
     }
 
-    public static void setUpData() throws Exception {
+    // Used to re-generate testmodel_data.xml file from java objects, called by main method
+    public static void setUpDataObjects() throws Exception {
         Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         companyA.setName("CompanyA");
         companyA.setVatNumber(1234);
