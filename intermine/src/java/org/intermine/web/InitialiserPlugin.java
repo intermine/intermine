@@ -11,41 +11,45 @@ package org.intermine.web;
  */
 
 import java.io.IOException;
-import java.util.TreeMap;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.TreeSet;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.RAMDirectory;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
-
-import org.intermine.util.TypeUtil;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetadataManager;
-import org.intermine.web.config.WebConfig;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Initialiser for the InterMine web application
@@ -93,9 +97,10 @@ public class InitialiserPlugin implements PlugIn
         createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
-        // Load default templates if required
-        loadDefaultGlobalTemplateQueries(servletContext);
+        // Load global template queries from superuser account
         loadGlobalTemplateQueries(servletContext);
+        // Build lucene index
+        createTemplateIndex(servletContext);
     }
 
     /**
@@ -272,6 +277,50 @@ public class InitialiserPlugin implements PlugIn
         
         String superuser = properties.getProperty("superuser.account");
         servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
+    }
+    
+    /**
+     * Create the lucene search index of all global template queries.
+     * @param servletContext the servlet context
+     * @throws ServletException if something goes wrong
+     */
+    private static void createTemplateIndex(ServletContext servletContext)
+        throws ServletException {
+        long time = System.currentTimeMillis();
+        LOG.info("Indexing template queries");
+        
+        RAMDirectory ram = new RAMDirectory();
+        IndexWriter writer;
+        try {
+            writer = new IndexWriter(ram, new StandardAnalyzer(), true);
+        } catch (IOException err) {
+            throw new ServletException("Failed to create lucene IndexWriter", err);
+        }
+        
+        // step through global templates, indexing a Document for
+        // each template
+        Map templates = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+        Iterator iter = templates.values().iterator();
+        while (iter.hasNext()) {
+            TemplateQuery template = (TemplateQuery) iter.next();
+            
+            Document doc = new Document();
+            doc.add(Field.Text("name", template.getName()));
+            doc.add(Field.Text("description", template.getDescription()));
+            doc.add(Field.Keyword("category", template.getCategory()));
+            // TODO
+            //doc.add(Field.Keyword("keywords", template.getKeywords()));
+            
+            try {
+                writer.addDocument(doc);
+            } catch (IOException e) {
+                LOG.error("Failed to add template " + template.getName()
+                        + " to the index", e);
+            }
+        }
+        
+        time = System.currentTimeMillis() - time;
+        LOG.info("Finished indexing templates (took " + time + " milliseconds)");
     }
     
     /**
