@@ -43,6 +43,7 @@ public class PathQueryBindingTest extends TestCase
     public void testProcess() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/PathQueryBindingTest.xml");
         Map savedQueries = queryBinding.unmarshal(new InputStreamReader(is));
+
         Map expected = new LinkedHashMap();
 
         //allCompanies
@@ -68,7 +69,7 @@ public class PathQueryBindingTest extends TestCase
         employeesWithOldManagers.setView(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
-                                                "age is greater than 10", "age_gt_10"));
+                                                true, "age is greater than 10", "age_gt_10"));
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
 
         //vatNumberInBag
