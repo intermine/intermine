@@ -4,7 +4,7 @@ img {
 form { 
   margin: 0px
 }
-body {
+.main-layout {
   margin: 3px;
 }
 
@@ -19,23 +19,8 @@ body {
   padding-right: 1em;
   padding-left: 1em;
 }
-.menu-heading {
-  font-weight: bold;
-}
 .paneTitle {
   font-weight: bold;
-}
-.headerTitle {
-  font-size: x-large;
-  font-weight: bold;
-  color: #220077;
-}
-.headerTitle a {
-  color: #220077;
-  text-decoration: none
-}
-.headerSubtitle {
-  font-size: large;
 }
 .description {
   font-weight: bold;
