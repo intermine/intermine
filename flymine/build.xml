@@ -1794,6 +1794,14 @@
     <mappings alias="osw.production" type="create-references"/>
   </target>
 
+  <target name="make-spanning-locations" depends="compile-genomic-java">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+  
+    <mappings alias="osw.production" type="make-spanning-locations"/>
+  </target>
+
   <target name="transfer-sequences" depends="compile-genomic-java">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
@@ -1828,6 +1836,8 @@
     <antcall target="calculate-locations"/>
     <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
+    <antcall target="analyse-db-production"/>
+    <antcall target="make-spanning-locations"/>
     <antcall target="analyse-db-production"/>
     <antcall target="transfer-sequences"/>
     <antcall target="create-indexes-production-attribute"/>
@@ -2038,7 +2048,7 @@
     </ant>
   </target>
 
-  <target name="genomic-test" depends ="prepare-build-model, prepare-test">
+  <target name="genomic-test" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="test.class.path"/>
