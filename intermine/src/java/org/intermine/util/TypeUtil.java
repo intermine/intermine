@@ -275,36 +275,41 @@ public class TypeUtil
     }
 
     /**
-     * Returns the container class for a given primitive type
+     * Returns the Class for a given name (promoting primitives to their container class)
      *
-     * @param c one of the 8 primitive types
-     * @return the corresponding container class
+     * @param type a classname
+     * @return the corresponding Class
      */
-    public static Class toContainerType(Class c) {
-        if (c.equals(Integer.TYPE)) {
+    public static Class instantiate(String type) {
+        if (type.equals(Integer.TYPE.toString())) {
             return Integer.class;
         }
-        if (c.equals(Boolean.TYPE)) {
+        if (type.equals(Boolean.TYPE.toString())) {
             return Boolean.class;
         }
-        if (c.equals(Double.TYPE)) {
+        if (type.equals(Double.TYPE.toString())) {
             return Double.class;
         }
-        if (c.equals(Float.TYPE)) {
+        if (type.equals(Float.TYPE.toString())) {
             return Float.class;
         }
-        if (c.equals(Long.TYPE)) {
+        if (type.equals(Long.TYPE.toString())) {
             return Long.class;
         }
-        if (c.equals(Short.TYPE)) {
+        if (type.equals(Short.TYPE.toString())) {
             return Short.class;
         }
-        if (c.equals(Byte.TYPE)) {
+        if (type.equals(Byte.TYPE.toString())) {
             return Byte.class;
         }
-        if (c.equals(Character.TYPE)) {
+        if (type.equals(Character.TYPE.toString())) {
             return Character.class;
         }
-        return c;
+        Class cls = null;
+        try {
+            cls = Class.forName(type);
+        } catch (Exception e) {
+        }
+        return cls;
     }
 }

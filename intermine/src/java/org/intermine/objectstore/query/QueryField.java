@@ -11,6 +11,8 @@ package org.flymine.objectstore.query;
  */
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Date;
 
 import org.flymine.util.TypeUtil;
 
@@ -48,20 +50,21 @@ public class QueryField implements QueryEvaluable
             throw new NoSuchFieldException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
-        if (java.util.Collection.class.isAssignableFrom(field.getType())) {
+        if (Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
         }
         if (!(Number.class.isAssignableFrom(field.getType())
                 || String.class.isAssignableFrom(field.getType())
                 || Boolean.class.isAssignableFrom(field.getType())
-                || java.util.Date.class.isAssignableFrom(field.getType())
+                || Date.class.isAssignableFrom(field.getType())
                 || field.getType().isPrimitive())) {
             throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
         }
         this.qc = qc;
         this.fieldName = fieldName;
-        this.secondFieldName = null;
-        this.type = TypeUtil.toContainerType(field.getType());
+        secondFieldName = null;
+        Class fieldType = field.getType();
+        type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
     }
 
     /**
@@ -97,8 +100,9 @@ public class QueryField implements QueryEvaluable
         }
         this.qc = q;
         this.fieldName = (String) q.getAliases().get(qc);
-        this.secondFieldName = fieldName;
-        this.type = TypeUtil.toContainerType(field.getType());
+        secondFieldName = fieldName;
+        Class fieldType = field.getType();
+        type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
     }
 
     /**
