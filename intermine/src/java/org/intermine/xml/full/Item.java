@@ -386,6 +386,7 @@ public class Item
 
     /**
      * Throw RuntimeException if the given implementations don't match the model.
+     * @param implementations the interfaces that this item implements
      */
     protected void checkImplementations(String implementations) {
         if (model == null) {
