@@ -1,10 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
-<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%--/**
-     * Render the primary key fields of an object
-     */
---%>
 
 <tiles:importAttribute/>
 
