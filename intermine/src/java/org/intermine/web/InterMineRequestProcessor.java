@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +50,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         try {
+            if (request.getSession().getAttribute(Constants.PROFILE) == null) {
+                request.getSession().invalidate();
+            }
+            
             if (!request.isRequestedSessionIdValid()
                 && request.getAttribute(Globals.MESSAGE_KEY) == null
                 && !START_PATHS.contains(processPath(request, response))) {
