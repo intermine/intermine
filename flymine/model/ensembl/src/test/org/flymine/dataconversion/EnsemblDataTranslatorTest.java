@@ -235,6 +235,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         protein.addAttribute(new Attribute("primaryAccession", "Q1001"));
         protein.addReference(new Reference("organism", "-1_1"));
         protein.addCollection(new ReferenceList("synonyms", new ArrayList(Collections.singleton("-1_8"))));
+        protein.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
         Item synonym0 = createItem(tgtNs + "Synonym", "-1_8", "");
         synonym0.addAttribute(new Attribute("type", "accession"));
         synonym0.addAttribute(new Attribute("value", "Q1001"));
@@ -247,6 +248,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         trans1.addReference(new Reference("organism", "-1_1"));
         trans1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_6"))));
         trans1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_9"))));
+        trans1.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
 
         Item trans2 = createItem(tgtNs + "Transcript", "2_1", "");
         trans2.addAttribute(new Attribute("identifier", "2_1"));
@@ -254,6 +256,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         trans2.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_12"))));
         trans2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton("-1_13"))));
         trans2.addReference(new Reference("organism", "-1_1"));
+        trans2.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
 
         Set expected = new HashSet(Arrays.asList(new Object[] {protein, trans1, trans2, synonym0}));
 

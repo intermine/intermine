@@ -150,6 +150,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 Item tgtItem = (Item) i.next();
                 if ("karyotype".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item location = createLocation(srcItem, tgtItem, "chromosome", "chr", true);
                     location.addAttribute(new Attribute("strand", "0"));
                     result.add(location);
@@ -171,13 +172,12 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("simple_feature".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
-                    result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
-                } else if ("prediction_transcript".equals(className)) {
-                    tgtItem.addReference(getOrgRef());
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("repeat_feature".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                     promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
@@ -207,9 +207,10 @@ public class EnsemblDataTranslator extends DataTranslator
 
                 } else if ("contig".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(getOrgRef());
-
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                     Item geneRelation = createItem(tgtNs + "SimpleRelation", "");
                     addReferencedItem(tgtItem, geneRelation, "objects", true, "subject", false);
                     moveField(srcItem, geneRelation, "gene", "object");
@@ -244,6 +245,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 } else if ("chromosome".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
                 } else if ("translation".equals(className)) {
                     // no UNIPROT id is available so id will be ensembl stable id
                     // Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
@@ -355,6 +357,7 @@ public class EnsemblDataTranslator extends DataTranslator
             supercontig.addCollection(subjects);
             supercontig.addCollection(new ReferenceList("objects",
                            new ArrayList(Collections.singletonList(chrLoc.getIdentifier()))));
+            addReferencedItem(supercontig, getEnsemblDb(), "evidence", true, "", false);
             supercontig.addReference(getOrgRef());
             supercontigs.put(name, supercontig);
             scLocs.put(name, chrLoc);
@@ -479,6 +482,7 @@ public class EnsemblDataTranslator extends DataTranslator
             }
         }
         protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
+        addReferencedItem(protein, getEnsemblDb(), "evidence", true, "", false);
 
         Item chosenProtein = (Item) proteins.get(primaryAcc);
         if (chosenProtein == null) {

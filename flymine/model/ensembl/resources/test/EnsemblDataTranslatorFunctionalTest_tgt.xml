@@ -26,6 +26,9 @@
     <attribute name="stain" value=""/>
     <reference name="chromosome" ref_id="18_1"/>
     <reference name="organism" ref_id="-1_1"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
     <collection name="objects">
       <reference ref_id="-1_9"/>
     </collection>
@@ -65,6 +68,9 @@
     <attribute name="identifier" value="AAAB01008846_377"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="sequence" ref_id="12_11169"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
   </item>
   <item id="12_11169" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
@@ -105,6 +111,9 @@
     <attribute name="identifier" value="AAAB01008846_375"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="sequence" ref_id="12_11167"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
   </item>
   <item id="12_11167" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
@@ -126,6 +135,9 @@
     <reference name="endExon" ref_id="0_2"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="startExon" ref_id="0_1"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
     <collection name="synonyms">
       <reference ref_id="-1_19"/>
       <reference ref_id="-1_20"/>
@@ -184,6 +196,9 @@
   <item id="-1_13" class="http://www.flymine.org/model/genomic#Supercontig">
     <attribute name="identifier" value="AAAB01008846"/>
     <reference name="organism" ref_id="-1_1"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
     <collection name="objects">
       <reference ref_id="-1_14"/>
     </collection>
@@ -217,6 +232,9 @@
     <reference name="gene" ref_id="5_1"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="protein" ref_id="-1_18"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
     <collection name="objects">
       <reference ref_id="-1_24"/>
     </collection>
@@ -341,6 +359,9 @@
     <attribute name="length" value="22145176"/>
     <attribute name="identifier" value="X"/>
     <reference name="organism" ref_id="-1_1"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="value" value="ENSANGE00000019935"/>
@@ -364,6 +385,9 @@
     <attribute name="identifier" value="AAAB01008846_376"/>
     <reference name="organism" ref_id="-1_1"/>
     <reference name="sequence" ref_id="12_11168"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
   </item>
   <item id="12_11168" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
