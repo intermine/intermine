@@ -1,9 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- begin.jsp -->
-
 
 <%-- Build a query --%>
 
@@ -11,7 +11,7 @@
   <tr>
   
     <th class="title" align="left"><fmt:message key="begin.heading.build"/></th>
-    <th class="help" align="right">
+    <th class="help" align="right" nowrap>
       [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
         <fmt:message key="begin.link.help"/>
       </html:link>]
@@ -22,13 +22,15 @@
     
   </tr>
   <tr>
-    <td valign="top">
+    <td valign="top" align="left">
       <c:forEach items="${CATEGORIES}" var="category">
         <b><c:out value="${category}"/></b>
-        <p>
-          <c:set var="subnames" value="${CATEGORY_CLASSES[category]}"/>
-          <c:forEach items="${subnames}" var="subname">
-            <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&className=${subname}" title="<c:out value="${classDescriptions[subname]}"/>">${subname}</a>,
+        <p style="text-align: left;">
+          <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
+          <c:set var="catSize" value="${fn:length(classes)}"/>
+          <c:forEach items="${classes}" var="classname" varStatus="status">
+            <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
+            ${classname}</a><c:if test="${status.index+1 < catSize}">,</c:if>
           </c:forEach>
           <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
             <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
@@ -39,7 +41,7 @@
       </c:forEach>
       
     </td>
-    <td valign="bottom" align="right">
+    <td valign="bottom" align="right" nowrap>
     
       <fmt:message key="begin.list.all.classes"/>
       <html:link action="/classChooser">
