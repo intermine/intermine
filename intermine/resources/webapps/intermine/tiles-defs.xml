@@ -11,6 +11,7 @@
     <put name="menu" value="/menu.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
+    <put name="right" value="fqlquery.jsp"/>
 </definition>
 <definition name="index.page" extends="layout.template">
     <put name="body" value="/index.jsp"/>
