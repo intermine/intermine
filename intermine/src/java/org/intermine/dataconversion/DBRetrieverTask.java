@@ -11,14 +11,12 @@ package org.flymine.dataconversion;
  */
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.ObjectStoreWriter;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
@@ -87,24 +85,15 @@ public class DBRetrieverTask extends Task
             throw new BuildException("destFile attribute is not set");
         }
 
-        BufferedWriter writer = null;
         try {
             Database db = DatabaseFactory.getDatabase(database);
             Model m = Model.getInstanceByName(model);
-            writer = new BufferedWriter(new FileWriter (destFile));
-            new DBConvertor(m, db, new ObjectStoreItemProcessor(ObjectStoreWriterFactory
-                                          .getObjectStoreWriter(osName))).process();
-            //new ChadoConvertor(m, db, new XmlItemProcessor(writer)).process();
+            ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            new DBConverter(m, db,
+                            new BufferedItemWriter(
+                                                   new ObjectStoreItemWriter(osw))).process();
         } catch (Exception e) {
             throw new BuildException(e);
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                throw new BuildException(e);
-            }
         }
     }
 }
