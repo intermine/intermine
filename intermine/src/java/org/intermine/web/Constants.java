@@ -59,8 +59,12 @@ public interface Constants
     public static final String QUERY = "QUERY";
 
     /**
-     * Session attribute used to store the current results table
+     * Session attribute used to store the results of running the current query
+     */
+    public static final String QUERY_RESULTS = "QUERY_RESULTS";
+
+    /**
+     * Session attribute used to store the active results table (which may be QUERY_RESULTS)
      */
     public static final String RESULTS_TABLE = "RESULTS_TABLE";
 }
-

@@ -82,6 +82,7 @@ public class ViewAction extends Action
             return mapping.findForward("query");
         }
 
+        session.setAttribute(Constants.QUERY_RESULTS, pr);
         session.setAttribute(Constants.RESULTS_TABLE, pr);
         String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
         query.setInfo(pr.getResultsInfo());

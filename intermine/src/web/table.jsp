@@ -213,6 +213,14 @@
         <br/>
       </c:if>
 
+      <%-- Return to main results link --%>
+      <c:if test="${RESULTS_TABLE.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null}">
+        <br>
+        <html:link action="/changeResults?method=reset">
+          <fmt:message key="results.return"/>
+        </html:link>
+      </c:if>
+
       <%-- Save bag controls --%>
       <br/><br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
