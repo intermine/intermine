@@ -196,9 +196,13 @@ public class DagParser
     protected String stripEscaped(String s) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < s.length(); i++) {
-            if ('\\' != s.charAt(i) && !Character.isLetterOrDigit((char) (i + 1))) {
+            if ('\\' != s.charAt(i)) {
                 sb.append(s.charAt(i));
             }
+            //if ('\\' != s.charAt(i) && !Character.isLetterOrDigit((char) (i + 1))) {
+                //sb.append(s.charAt(i));
+            //} else {
+            //    ab.append(s.charAt(i));
         }
         return sb.toString();
     }

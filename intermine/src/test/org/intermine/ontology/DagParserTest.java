@@ -178,6 +178,17 @@ public class DagParserTest extends TestCase
         assertTrue(parser.seenTerms.size() == 1);
     }
 
+    public void testDagFromStringNoId() throws Exception {
+        String test = "name ; ";
+
+
+        try {
+            parser.dagTermFromString(test);
+            fail("Expected exception");
+        } catch (Exception e) {
+        }
+    }
+
     public void testIdentifierEquals() throws Exception {
         String name1 = "name1";
         String name2 = "name2";
@@ -208,4 +219,14 @@ public class DagParserTest extends TestCase
         assertEquals("", parser.trimLeft(""));
 
     }
+
+    public void testSpecificNameProblems() throws Exception {
+        String test = "positive regulation of transcription from Pol II promoter ; GO:0045944";
+
+        DagTerm term = new DagTerm("GO:0045944", "positive regulation of transcription from Pol II promoter");
+
+        assertTrue(term.equals(parser.dagTermFromString(test)));
+    }
+
+
 }
