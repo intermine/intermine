@@ -33,6 +33,8 @@ public class BuildTemplateForm extends ValidatorForm
     protected Map editableConstraints;
     /** Map from constraint to constraint label. */
     protected Map constraintLabels;
+    /** Map from constraint to constraint identifier. */
+    protected Map constraintIds;
     /** Category entered. */
     protected String category;
     /** Template description. */
@@ -105,6 +107,26 @@ public class BuildTemplateForm extends ValidatorForm
      */
     public void setConstraintEditable(String index, boolean value) {
         editableConstraints.put(index, value ? Boolean.TRUE : Boolean.FALSE);
+    }
+    
+    /**
+     * Get a constraint identifier.
+     *
+     * @param index  constraint index key
+     * @return       identifier for constraint
+     */
+    public Object getConstraintIdentifier(String index) {
+        return constraintIds.get(index);
+    }
+    
+    /**
+     * Set constraint identifier.
+     *
+     * @param index  constraint index key
+     * @param value  constraint identifier
+     */
+    public void setConstraintIdentifier(String index, Object value) {
+        constraintIds.put(index, value);
     }
     
     /**
@@ -188,6 +210,7 @@ public class BuildTemplateForm extends ValidatorForm
     protected void reset() {
         editableConstraints = new HashMap();
         constraintLabels = new HashMap();
+        constraintIds = new HashMap();
         templateDescription = "";
         shortName = "";
     }
@@ -217,6 +240,7 @@ public class BuildTemplateForm extends ValidatorForm
                     String key = "" + (j + 1);
                     setConstraintLabel(key, c.getDescription());
                     setConstraintEditable(key, c.isEditable());
+                    setConstraintIdentifier(key, c.getIdentifier());
                     j++;
                 }
             }
