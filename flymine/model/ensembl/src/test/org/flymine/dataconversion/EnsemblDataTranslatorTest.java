@@ -101,7 +101,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
         Item exp1 = createItem(tgtNs + "Synonym", "-1_1", "");
         exp1.addAttribute(new Attribute("value", "FBgn1001"));
-        exp1.addAttribute(new Attribute("type", "accession"));
+        exp1.addAttribute(new Attribute("type", "identifier"));
         exp1.addReference(new Reference("source", "-1_2"));
         exp1.addReference(new Reference("subject", "1_1"));
 
@@ -274,6 +274,51 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, result);
     }
 
+    public void testMergeProteinEmblOnly() throws Exception {
+        String srcNs = "http://www.flymine.org/model/ensembl#";
+        Item transcript1 = createItem(srcNs + "transcript", "1_1", "");
+        Item translation1 = createItem(srcNs + "translation", "1_2", "");
+        transcript1.addReference(new Reference("translation", "1_2"));
+        Item stableId1 = createItem(srcNs + "translation_stable_id", "1_6", "");
+        stableId1.addAttribute(new Attribute("stable_id", "TRANSLATION1"));
+        stableId1.addReference(new Reference("translation", "1_1"));
+
+        Item objectXref1 = createItem(srcNs + "object_xref", "1_3", "");
+        Item xref1 = createItem(srcNs + "xref", "1_4", "");
+        Item externalDb1 = createItem(srcNs + "external_db", "1_5", "");
+        objectXref1.addReference(new Reference("ensembl", "1_2"));
+        objectXref1.addReference(new Reference("xref", "1_4"));
+        xref1.addAttribute(new Attribute("dbprimary_acc", "Q1001"));
+        xref1.addReference(new Reference("external_db", "1_5"));
+        externalDb1.addAttribute(new Attribute("db_name", "prediction_SPTREMBL"));
+
+
+        Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {transcript1, translation1, objectXref1, xref1, stableId1, externalDb1})));
+        EnsemblDataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap),
+                                                                      getOwlModel(), tgtNs, "WB");
+
+
+        Item trans1 = createItem(tgtNs + "Transcript", "1_1", "");
+        trans1.addAttribute(new Attribute("identifier", "1_1"));
+        trans1.addReference(new Reference("organism", "-1_1"));
+        trans1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_8"))));
+        trans1.addCollection(new ReferenceList("evidence", new ArrayList(Collections.singleton("-1_2"))));
+
+        Set expected = new HashSet(Arrays.asList(new Object[] {trans1}));
+
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+        Set result = new HashSet();
+        Iterator resIter = tgtIw.getItems().iterator();
+        while (resIter.hasNext()) {
+            Item item = (Item) resIter.next();
+            if (!(item.getClassName().equals(tgtNs + "Database")|| item.getClassName().equals(tgtNs + "SimpleRelation") || item.getClassName().equals(tgtNs + "Organism"))) {
+                result.add(item);
+            }
+        }
+        assertEquals(expected, result);
+    }
 
 
     protected Collection getExpectedItems() throws Exception {
