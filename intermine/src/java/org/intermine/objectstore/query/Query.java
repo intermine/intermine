@@ -1,5 +1,7 @@
 package org.flymine.objectstore.query;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,8 +20,8 @@ public class Query
     private int maxResults = -1;
     private Constraint constraint = null;
     private Set queryClasses = new HashSet(); // @element-type QueryClass
-    private Set select = new HashSet(); // @element-type QueryNode
-    private Set orderBy = new HashSet(); // @element-type QueryNode
+    private List select = new ArrayList(); // @element-type QueryNode
+    private List orderBy = new ArrayList(); // @element-type QueryNode
     private Set groupBy = new HashSet(); // @element-type QueryNode
     private Map aliases = new HashMap();
 
@@ -139,6 +141,15 @@ public class Query
     }
 
     /**
+     * Gets the SELECT list
+     *
+     * @return the (unmodifiable) list
+     */    
+    public List getSelect() {
+        return Collections.unmodifiableList(select);
+    }
+
+    /**
      * Get the number of results returned by this Query
      *
      * @return the number of results
@@ -174,7 +185,6 @@ public class Query
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
     }
-
 
     /**
      * Returns the map of SELECTed QueryNodes to String aliases
