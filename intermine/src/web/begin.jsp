@@ -99,16 +99,20 @@
   </im:box>
 </c:if>
 
-<c:if test="${!empty PROFILE.savedTemplates}">
+<c:if test="${!empty PROFILE.categoryTemplates}">
   <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}" titleKey="begin.heading.mytemplates">
-    <c:forEach items="${CATEGORIES}" var="category">
-      <c:if test="${!empty PROFILE.categoryTemplates[category]}">
-        <div class="heading">${category}</div>
-        <div class="body"><im:templateList type="user" category="${category}"/></div>
+    <c:forEach items="${PROFILE.categoryTemplates}" var="entry">
+      <c:if test="${!empty entry.value && !empty entry.key}">
+        <div class="heading">${entry.key}</div>
+        <div class="body"><im:templateList type="user" category="${entry.key}"/></div>
         <im:vspacer height="5"/>
       </c:if>
     </c:forEach>
+    <c:if test="${!empty PROFILE.categoryTemplates['']}">
+      <div class="heading"><fmt:message key="begin.noCategory"/></div>
+      <div class="body"><im:templateList type="user" category=""/></div>
+    </c:if>
   </im:box>
 </c:if>
   
