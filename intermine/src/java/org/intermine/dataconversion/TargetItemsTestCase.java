@@ -47,7 +47,8 @@ public abstract class TargetItemsTestCase extends TestCase
      * @see TestCase#SetUp
      */
     public void setUp() throws Exception {
-        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter(oswAlias);
+        ObjectStore objectStore = ObjectStoreWriterFactory.getObjectStoreWriter(oswAlias);
+        osw = (ObjectStoreWriterInterMineImpl) objectStore;
     }
 
 
@@ -115,7 +116,7 @@ public abstract class TargetItemsTestCase extends TestCase
 
     /**
      * Store collection of Items in the ObjectStore specified by this.oswAlias.
-     * @param a collection of Items to store
+     * @param items a collection of Items to store
      * @throws ObjectStoreException if problem storing
      */
     protected void storeItems(Collection items) throws ObjectStoreException {

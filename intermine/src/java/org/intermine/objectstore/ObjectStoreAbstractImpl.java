@@ -235,6 +235,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      *
      * @param start the start row
      * @param limit the number of rows
+     * @param query the current Query (for adding to error messages)
      * @throws ObjectStoreLimitReachedException if the start is greater than the
      * maximum start allowed or the limit greater than the maximum
      * limit allowed
