@@ -85,7 +85,6 @@ public class XmlConverterTask extends ConverterTask
                 System.err .println("Processing file " + toRead.toString());
                 converter.process(new BufferedReader(new FileReader(toRead)));
             }
-            doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
@@ -95,6 +94,12 @@ public class XmlConverterTask extends ConverterTask
             } catch (Exception e) {
                 throw new BuildException(e);
             }
+        }
+
+        try {
+            doSQL(osw.getObjectStore());
+        } catch (Exception e) {
+            throw new BuildException(e);
         }
     }
 }
