@@ -14,7 +14,14 @@ import servletunit.struts.MockStrutsTestCase;
 
 import javax.servlet.http.HttpSession;
 
+import java.util.Map;
+import java.util.HashMap;
+
+import org.flymine.metadata.Model;
+import org.flymine.metadata.presentation.DisplayModel;
+
 public class RestartQueryActionTest extends MockStrutsTestCase {
+    protected Model model;
 
     public RestartQueryActionTest(String testName) {
         super(testName);
@@ -22,6 +29,7 @@ public class RestartQueryActionTest extends MockStrutsTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        model = Model.getInstanceByName("testmodel");
     }
 
     public void tearDown() throws Exception {
@@ -29,16 +37,28 @@ public class RestartQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testRestart() throws Exception {
-        setRequestPathInfo("/restartQuery");
         HttpSession session = getSession();
-        session.setAttribute("query", "query");
-        session.setAttribute("queryClass", "queryClass");
-        session.setAttribute("ops", "ops");
-        actionPerform();
-        verifyForward("buildquery");
-        assertNull(session.getAttribute("query"));
-        assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("ops"));
-    }
+        setRequestPathInfo("/query");
+        addRequestParameter("action", "Reset query");
 
+        String anAlias = "ClassAlias_0";
+
+        Map queryClasses = new HashMap();
+        DisplayQueryClass displayQueryClass = new DisplayQueryClass();
+
+        displayQueryClass.setType("org.flymine.model.testmodel.Department");
+
+        queryClasses.put(anAlias, displayQueryClass);
+
+        session.setAttribute("queryClasses", queryClasses);
+        session.setAttribute("editingAlias", anAlias);
+        session.setAttribute("model", new DisplayModel(model));
+
+        actionPerform();
+        
+        verifyForward("buildquery");
+        assertNull(session.getAttribute("queryClasses"));
+        assertNull(session.getAttribute("editingAlias"));
+        assertNotNull(session.getAttribute("model"));
+    }
 }
