@@ -63,16 +63,7 @@ public class ViewAction extends InterMineAction
         writer.write(msg);
         writer.flush();
 
-        RunQueryMonitor monitor = new RunQueryMonitor() {
-            public void queryProgress(Results r) {
-                try {
-                    writer.write(".");
-                    writer.flush();
-                } catch (IOException _) {
-                    // Cancel query here
-                }
-            }
-        };
+        RunQueryMonitorDots monitor = new RunQueryMonitorDots(writer);
         
         String destUrl = null;
         
@@ -82,9 +73,7 @@ public class ViewAction extends InterMineAction
             destUrl = mapping.findForward("query").getPath();
         }
         
-        writer.write("<script language=\"JavaScript\">document.location=\""
-                + request.getContextPath() + destUrl + "\"</script>");
-        writer.flush();
+        monitor.forwardClient(request.getContextPath() + destUrl);
         
         return null;
     }
