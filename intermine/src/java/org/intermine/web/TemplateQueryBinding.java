@@ -58,8 +58,6 @@ public class TemplateQueryBinding
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
-        System.out.println(sw.toString());
         
         return sw.toString();
     }
