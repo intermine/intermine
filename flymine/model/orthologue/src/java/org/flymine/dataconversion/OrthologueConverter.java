@@ -156,6 +156,7 @@ public class OrthologueConverter extends FileConverter
         
         db = newItem("Database");
         db.addAttribute(new Attribute("title", "INPARANOID"));
+        db.addAttribute(new Attribute("url", "http://inparanoid.cgb.ki.se"));
         
         List toStore = Arrays.asList(new Object[] {db, analysis, author1, author2, author3, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {

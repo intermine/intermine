@@ -28,6 +28,7 @@
   </item>
   <item id="3_5" class="http://flymine.org/model/genomic#Database">
     <attribute name="title" value="INPARANOID"/>
+    <attribute name="url" value="http://inparanoid.cgb.ki.se"/>
   </item>
   <item id="4_6" class="http://flymine.org/model/genomic#Protein">
     <attribute name="swissprotId" value="O01438"/>
