@@ -28,6 +28,6 @@
 
 <html:link action="/contextHelp" name="linkParams"
    onclick="document.getElementById('ctxHelpTxt').innerHTML='${text}';document.getElementById('ctxHelpDiv').style.display='';return false"
-   title="${text}">
+   titleKey="tag.helplink.title">
   <jsp:doBody/>
 </html:link>
