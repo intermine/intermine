@@ -19,7 +19,9 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import org.flymine.objectstore.query.fql.FqlQuery;
+import javax.xml.namespace.QName;
+import org.apache.axis.encoding.TypeMapping;
+
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
 
@@ -75,48 +77,33 @@ public class SerializationUtil
     }
 
     /**
-     * Bean that represents a proxy (reference or collection), used in serialization
+     * Register the default FlyMine type mappings
+     * These should match those in the axis deployment descriptor
+     * @param tm the type mapping to register to
      */
-    public static class ProxyBean
-    {
-        String type;
-        FqlQuery fqlQuery;
-        Integer id;
+    public static void registerMappings(TypeMapping tm) {
+        registerDefaultMapping(tm, org.flymine.objectstore.query.fql.FqlQuery.class);
+        registerDefaultMapping(tm, org.flymine.sql.query.ExplainResult.class);
+        registerDefaultMapping(tm, ProxyBean.class);
+        tm.register(org.flymine.metadata.Model.class,
+                    new QName("", "model"),
+                    new ModelSerializerFactory(),
+                    new ModelDeserializerFactory());
+        tm.register(java.util.ArrayList.class,
+                    new QName("http://soapinterop.org/xsd", "list"),
+                    new ListSerializerFactory(), new ListDeserializerFactory());
+    }
 
-        /**
-         * Constructor
-          * @param type the type of the underlying object
-          * @param fqlQuery the query to retrieve the object
-          * @param id the internal id of the underlying object
-          */
-        public ProxyBean(String type, FqlQuery fqlQuery, Integer id) {
-            this.type = type;
-            this.fqlQuery = fqlQuery;
-            this.id = id;
-        }
-
-        /**
-         * Returns the type of the underlying object
-         * @return the type
-         */
-        public String getType() {
-            return type;
-        }
-
-        /**
-         * Returns the query to retrieve the object
-         * @return the query
-         */
-        public FqlQuery getFqlQuery() {
-            return fqlQuery;
-        }
-
-        /**
-         * Returns the internal id of the underlying object
-         * @return the id
-         */
-        public Integer getId() {
-            return id;
-        }
+    /**
+     * Register type with our default (bean-like) serializer
+     * @param tm the type mapping to register to
+     * @param type the type to register
+     */
+    public static void registerDefaultMapping(TypeMapping tm, Class type) {
+        QName qname = new QName("", TypeUtil.unqualifiedName(type.getName()));
+        tm.register(type,
+                    qname,
+                    new DefaultSerializerFactory(),
+                    new DefaultDeserializerFactory(type, qname));
     }
 }
