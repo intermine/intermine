@@ -882,7 +882,7 @@
                   osName="osw.ensembl-orthologue-tgt-items"
                   param1="AG"
                   param2="DM">
-       <fileset dir="/shared/data/orthologues/ensembl" includes="/orthologues.AG-DM"/>
+       <fileset dir="/shared/data/orthologues/ensembl" includes="orthologues.AG-DM"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
