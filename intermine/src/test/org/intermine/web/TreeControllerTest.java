@@ -34,8 +34,6 @@ public class TreeControllerTest extends MockStrutsTestCase
         openClasses.add(model + "Thing");
         getSession().setAttribute("openClasses", openClasses);
         getRequest().setAttribute("rootClass", model + "Thing");
-        Model m = Model.getInstanceByName("testmodel");
-        getSession().setAttribute("model", new DisplayModel(m));
         setRequestPathInfo("/initTree");
 
         actionPerform();

@@ -17,23 +17,10 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.presentation.DisplayModel;
-
-public class RestartQueryActionTest extends MockStrutsTestCase {
-    protected Model model;
-
+public class RestartQueryActionTest extends MockStrutsTestCase
+{
     public RestartQueryActionTest(String testName) {
         super(testName);
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-        model = Model.getInstanceByName("testmodel");
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     public void testRestart() throws Exception {
@@ -52,7 +39,6 @@ public class RestartQueryActionTest extends MockStrutsTestCase {
 
         session.setAttribute("queryClasses", queryClasses);
         session.setAttribute("editingAlias", anAlias);
-        session.setAttribute("model", new DisplayModel(model));
 
         actionPerform();
         

@@ -32,13 +32,11 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
+import org.flymine.metadata.Model;
 
 public class QueryBuildActionTest extends MockStrutsTestCase
 {
-    protected Model model;
     protected ClassDescriptor cld;
 
     public QueryBuildActionTest(String testName) {
@@ -47,15 +45,13 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        model = Model.getInstanceByName("testmodel");
-        cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Types");
+        cld = Model.getInstanceByName("testmodel").getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
     public void testAddConstraint() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Add");
-        session.setAttribute("model", new DisplayModel(model));
 
         Map queryClasses = new HashMap();
 
@@ -119,7 +115,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         setRequestPathInfo("/query");
         addRequestParameter("action", "Add");
         session.setAttribute("query", new Query());
-        session.setAttribute("model", new DisplayModel(model));
 
         actionPerform();
         verifyForward("error");
@@ -132,7 +127,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Update");
-        session.setAttribute("model", new DisplayModel(model));
         //this is necessary because the mock session is US locale by default
         session.setAttribute(Globals.LOCALE_KEY, Locale.getDefault());
 
@@ -258,7 +252,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Update");
-        session.setAttribute("model", new DisplayModel(model));
 
         Map queryClasses = new HashMap();
 
@@ -390,7 +383,6 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Run query");
-        session.setAttribute("model", new DisplayModel(model));
 
         String anAlias = "ClassAlias_0";
         Map queryClasses = new HashMap();
