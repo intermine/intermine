@@ -48,16 +48,17 @@
     <item><ulink url="objectstore/results_prefetch">Results prefetching</ulink></item>
     <item><ulink url="objectstore/related">Fetching related objects in the Results object</ulink></item>
     <item><ulink url="objectstore/query_explain">Explain plans for FlyMine queries</ulink></item>
-    <item><menu>
-    <section>
+    <item><menu><section>
       <heading>OJB implementation</heading>
       <item><ulink url="objectstore/ojb/OJB-details">Details of O/R mapping layer</ulink></item>
       <item><ulink url="objectstore/ojb/ResultsToJdbc">How a results object accesses JDBC (directly through ObjectStoreOjbImpl)</ulink></item>
       <item><ulink url="objectstore/ojb/sql_gen_notes">SQL generation notes</ulink></item>
-      <item><ulink url="objectstore/ojb/polymorphism_and_sql_generation">Polymorphism and SQL generation</ulink></item>    
-    </section>
-    </menu>
-    </item>
+      <item><ulink url="objectstore/ojb/polymorphism_and_sql_generation">Polymorphism and SQL generation</ulink></item>
+    </section></menu></item>
+    <item><menu><section>
+      <heading>Safe implementation</heading>
+      <item><ulink url="objectstore/safe/characteristics">Characteristics</ulink></item>
+    </section></menu></item>
   </section>
 
   <section>
