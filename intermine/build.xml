@@ -44,7 +44,7 @@
   <property name="build.www-internal" location="${build}/www/internal"/>
   <property name="build.tmp" location="${build}/tmp"/>
 
-  <!-- model directory -->
+  <!-- tutorial directory -->
   <property name="tutorial" location="${build}/tutorial"/>
 
   <!-- results directories -->
@@ -231,7 +231,7 @@
     <mkdir dir="${tutorial}/lib"/>
     <mkdir dir="${tutorial}/model"/>
     <mkdir dir="${tutorial}/resources"/>
-    <mkdir dir="${tutorial}/src/java/org/flymine"/>
+    <mkdir dir="${tutorial}/src/java/org/flymine/tutorial"/>
 
     <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
     <copy todir="${build.resources}">
@@ -485,7 +485,7 @@
     </delete>
   </target>
 
-  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,test-webapp,checkstyle"
+  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,test-webapp,test-tutorial,checkstyle"
           description="do a full test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
@@ -830,9 +830,19 @@
       <fileset dir="${resources}/tutorial" includes="tutorial_data.xml"/>
     </copy>
     <!-- src dir -->
-    <copy todir="${tutorial}/src/java/org/flymine">
+    <copy todir="${tutorial}/src/java/org/flymine/tutorial">
       <fileset dir="${src.java}/org/flymine/tutorial"/>
     </copy>
+  </target>
+
+  <target name="compile-tutorial" depends="build-tutorial">
+    <ant dir="${tutorial}" target="compile" inheritAll="false">
+    </ant>        
+  </target>
+
+  <target name="test-tutorial" depends="compile-tutorial">
+    <!-- Currently the only test for the tutorial is that it compiles. -->
+    <!-- This may change at a later date. -->
   </target>
 
   <!-- Releasing targets -->
