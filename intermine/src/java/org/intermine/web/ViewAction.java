@@ -50,11 +50,10 @@ public class ViewAction extends InterMineAction
             resultsForm.reset(mapping, request);
         }
         
-        if (session.getAttribute("displayObjects") != null) {
-            session.removeAttribute("displayObjects");
-        }
+        /** Clear stored DisplayObjects. */
+        session.removeAttribute("displayObjects");
         
-        if (SessionMethods.runQuery (session, request, true)) {
+        if (SessionMethods.runQuery (this, session, request, true)) {
             return mapping.findForward ("results");
         } else {
             return mapping.findForward("query");

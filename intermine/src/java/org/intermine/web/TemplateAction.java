@@ -111,7 +111,7 @@ public class TemplateAction extends InterMineAction
         
         if (skipBuilder) {
             // If the form wants to skip the query builder we need to execute the query
-            if (!SessionMethods.runQuery (session, request, saveQuery)) {
+            if (!SessionMethods.runQuery (this, session, request, saveQuery)) {
                 return mapping.findForward("failure");
             }
             // Look at results, if only one result, go straight to object details page
