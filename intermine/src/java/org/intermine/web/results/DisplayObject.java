@@ -25,7 +25,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 
 import org.intermine.util.TypeUtil;
@@ -41,6 +40,7 @@ public class DisplayObject
     Map attributes = new HashMap();
     Map references = new HashMap();
     Map collections = new HashMap();
+    Map refsAndCollections = new HashMap();
     List keyAttributes = new ArrayList();
     List keyReferences = new ArrayList();
     Map verbosity = new HashMap();
@@ -49,9 +49,12 @@ public class DisplayObject
      * Constructor
      * @param object the object to display
      * @param model the metadata for the object
+     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayObject(InterMineObject object, Model model) throws Exception {
+    public DisplayObject(InterMineObject object, Model model,
+                         Map webconfigTypeMap, Map webProperties) throws Exception {
         this.object = object;
         clds = ObjectViewController.getLeafClds(object.getClass(), model);
 
@@ -59,6 +62,7 @@ public class DisplayObject
             ClassDescriptor cld = (ClassDescriptor) i.next();
             for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) j.next();
+
                 if (fd.isAttribute() && !fd.getName().equals("id")) {
                     Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                     if (fieldValue != null) {
@@ -70,18 +74,20 @@ public class DisplayObject
                     ProxyReference proxy = (ProxyReference) TypeUtil.getFieldProxy(object,
                                                                                    ref.getName());
                     if (proxy != null) {
-                        references.put(fd.getName(),
-                                       new DisplayReference(proxy,
-                                                            ref.getReferencedClassDescriptor()));
+                        DisplayReference newReference = 
+                            new DisplayReference(proxy, ref.getReferencedClassDescriptor(),
+                                                 webconfigTypeMap, webProperties);
+                        references.put(fd.getName(), newReference);
                     }
                 } else if (fd.isCollection()) {
                     Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                     ClassDescriptor refCld =
                         ((CollectionDescriptor) fd).getReferencedClassDescriptor();
-                    DisplayCollection collection =
-                        new DisplayCollection((LazyCollection) fieldValue, refCld);
-                    if (collection.getSize() > 0) {
-                        collections.put(fd.getName(), collection);
+                    DisplayCollection newCollection =
+                        new DisplayCollection((List) fieldValue, refCld, 
+                                              webconfigTypeMap, webProperties);
+                    if (newCollection.getSize() > 0) {
+                        collections.put(fd.getName(), newCollection);
                     }
                 }
             }
@@ -98,6 +104,10 @@ public class DisplayObject
                 }
             }
         }
+
+        // make a combined Map
+        refsAndCollections.putAll(references);
+        refsAndCollections.putAll(collections);
     }
     
     /**
@@ -162,6 +172,14 @@ public class DisplayObject
      */
     public Map getCollections() {
         return collections;
+    }
+
+    /**
+     * Get all the reference and collection fields and values for this object
+     * @return the collections
+     */
+    public Map getRefsAndCollections() {
+        return refsAndCollections;
     }
 
     /**
