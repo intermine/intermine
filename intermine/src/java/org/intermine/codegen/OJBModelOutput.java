@@ -119,7 +119,7 @@ public class OJBModelOutput extends ModelOutput
         StringBuffer sb = new StringBuffer ();
         sb.append(INDENT + "<class-descriptor class=\"")
             .append(generateQualified(cls) + "\"")
-            //.append(parent == null ? "" : " extends=\"" + generateQualified(parent) + "\"")
+            .append(parent == null ? "" : " extends=\"" + generateQualified(parent) + "\"")
             .append((cls.isAbstract() || cls instanceof MInterface) 
                     ? "" : " table=\"" + tableName + "\"")
             .append(">\n");
