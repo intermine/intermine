@@ -25,10 +25,10 @@
         <html:img src="model/${sourceTitle}_logo_small.png"/>
         <c:choose>
           <c:when test="${empty WEB_PROPERTIES[linkProperty]}">
-            <c:out value="${thisSynonym.synonym}"/>
+            <c:out value="${thisSynonym.value}"/>
           </c:when>
           <c:otherwise>
-            <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
+            <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"
                        title="${sourceTitle}: ${thisSynonym.synonym}"
                        target="view_window">
               <c:out value="${thisSynonym.synonym}"/>

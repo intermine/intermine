@@ -87,7 +87,7 @@ public class RNAiConverter extends FileConverter
         store(annotations.values());
         store(phenotypes.values());
     }
-    
+
     private Map annotationEvidence = new HashMap();
     private Map geneAnnotation = new HashMap();
     private Map phenotypeAnnotation = new HashMap();
@@ -200,7 +200,8 @@ public class RNAiConverter extends FileConverter
             return (Item) synonyms.get(synonym);
         }
         Item item = newItem("Synonym");
-        item.addAttribute(new Attribute("synonym", synonym));
+        item.addAttribute(new Attribute("value", synonym));
+        item.addAttribute(new Attribute("type", "accession"));
         item.addReference(new Reference("subject", subject.getIdentifier()));
         item.addReference(new Reference("source", db.getIdentifier()));
         writer.store(ItemHelper.convert(item));

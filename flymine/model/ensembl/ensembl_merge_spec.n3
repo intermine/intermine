@@ -476,7 +476,7 @@ null:identity_xref a owl:Class ;
 :Synonym a owl:Class ;
     owl:equivalentClass e:exon_stable_id, e:gene_stable_id, e:translation_stable_id, e:transcript_stable_id .
 
-:Synonym__synonym a owl:DatatypeProperty ;
+:Synonym__value a owl:DatatypeProperty ;
     owl:equivalentProperty e:exon_stable_id__stable_id, e:gene_stable_id__stable_id, e:translation_stable_id__stable_id, e:transcript_stable_id__stable_id .
 
 :Synonym__subject a owl:ObjectProperty ;

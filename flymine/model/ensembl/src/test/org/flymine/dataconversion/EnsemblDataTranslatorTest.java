@@ -74,7 +74,8 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
                                                                       getOwlModel(), tgtNs, "WB");
 
         Item exp1 = createItem(tgtNs + "Synonym", "-1_1", "");
-        exp1.addAttribute(new Attribute("synonym", "FBgn1001"));
+        exp1.addAttribute(new Attribute("value", "FBgn1001"));
+        exp1.addAttribute(new Attribute("type", "accession"));
         exp1.addReference(new Reference("source", "-1_2"));
         exp1.addReference(new Reference("subject", "1_1"));
 

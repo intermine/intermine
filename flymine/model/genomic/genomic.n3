@@ -246,7 +246,11 @@
     rdfs:domain :Synonym ;
     rdfs:range :InfoSource .
 
-:Synonym__synonym a owl:DatatypeProperty ;
+:Synonym__value a owl:DatatypeProperty ;
+    rdfs:domain :Synonym ;
+    rdfs:range xsd:string .
+
+:Synonym__type a owl:DatatypeProperty ;
     rdfs:domain :Synonym ;
     rdfs:range xsd:string .
 

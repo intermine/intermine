@@ -164,8 +164,8 @@ null:feature_cvterm a owl:Class ;
 :Synonym__source a owl:ObjectProperty ;
     owl:equivalentProperty chado:feature_synonym__pub .
 
-# ChadoDataTranslator promotes feature_synonym.synonym.name as Synonym__synonym
-# ChadoDataTranslator promotes feature_dbxref.dbxref.accession  as Synonym__synonym
+# ChadoDataTranslator promotes feature_synonym.synonym.name as Synonym__value
+# ChadoDataTranslator promotes feature_dbxref.dbxref.accession  as Synonym__value
 
 null:feature_synonym__synonym a owl:ObjectProperty ;
       owl:equivalentProperty chado:feature_synonym__synonym .

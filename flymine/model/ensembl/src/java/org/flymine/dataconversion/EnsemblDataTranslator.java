@@ -215,13 +215,15 @@ public class EnsemblDataTranslator extends DataTranslator
                 // stable_ids become syonyms, need ensembl Database as source
                 } else if (className.endsWith("_stable_id")) {
                     tgtItem.addReference(getEnsemblRef());
+                    tgtItem.addAttribute(new Attribute("type", "accession"));
                 } else if ("clone".equals(className)) {
                     // clone embl_acc needs to be a synonym in embl database
 
                     tgtItem.addReference(getOrgRef());
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    moveField(srcItem, synonym, "embl_acc", "synonym");
+                    moveField(srcItem, synonym, "embl_acc", "value");
+                    synonym.addAttribute(new Attribute("type", "accession"));
                     synonym.addReference(getEmblRef());
                     result.add(synonym);
                 } else if ("chromosome".equals(className)) {
@@ -396,28 +398,32 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addAttribute(new Attribute("swissProtId", accession));
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
                     synonym.addReference(getSwissprotRef());
                     synonyms.add(synonym);
                 } else if (dbname.equals("SPTREMBL")) {
                     tgtItem.addAttribute(new Attribute("spTREMBLId", accession));
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
                     synonym.addReference(getTremblRef());
                     synonyms.add(synonym);
                 } else if (dbname.equals("protein_id")) {
                     tgtItem.addAttribute(new Attribute("emblId", accession));
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
                     synonym.addReference(getEmblRef());
                     synonyms.add(synonym);
                 } else if (dbname.equals("prediction_SPTREMBL")) {
                     tgtItem.addAttribute(new Attribute("emblId", accession));
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addAttribute(new Attribute("value", accession));
+                    synonym.addAttribute(new Attribute("type", "accession"));
                     synonym.addReference(getEmblRef());
                     synonyms.add(synonym);
                 }
@@ -495,7 +501,12 @@ public class EnsemblDataTranslator extends DataTranslator
                     // TODO: if synonym changed to have a type need to separate these
                     Item synonym = createItem(tgtNs + "Synonym", "");
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("synonym", accession));
+                    synonym.addAttribute(new Attribute("value", accession));
+                    if (dbname.equals("flybase_gene")) {
+                        synonym.addAttribute(new Attribute("type", "accession"));
+                    } else {
+                        synonym.addAttribute(new Attribute("type", "name"));
+                    }
                     synonym.addReference(getFlyBaseRef());
                     synonyms.add(synonym);
                 }

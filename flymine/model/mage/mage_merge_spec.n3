@@ -249,7 +249,7 @@ null:BioSequence__ontologyEntries a owl:DatatypeProperty;
 :Synonym a owl:Class;
     owl:equivalentClass mage:DatabaseEntry.
 
-:Synonym__name a owl:DatatypeProperty;
+:Synonym__value a owl:DatatypeProperty;
     owl:equivalentProperty mage:DatabaseEntry__accession.
 
 :Database__title a owl:DatatypeProperty;
