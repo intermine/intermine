@@ -48,7 +48,7 @@ public class Results extends AbstractList
     // -1 stands for "not estimated yet"
     protected int estimatedSize = -1;
     protected int originalMaxSize = maxSize;
-    protected int batchSize = 100;
+    protected int batchSize = 1000;
     protected boolean initialised = false;
 
     // Some prefetch stuff.
