@@ -68,6 +68,7 @@
     <include name="commons-collections*.jar" />
     <include name="commons-dbcp*.jar" />
     <include name="commons-lang*.jar" />
+    <include name="commons-logging*.jar" />
     <include name="commons-pool*.jar" />
     <include name="commons-digester*.jar" />
     <include name="commons-beanutils*.jar" />
@@ -109,7 +110,6 @@
   <patternset id="lib.webapptest">
     <include name="cactus*.jar" />
     <include name="commons-httpclient*.jar" />
-    <include name="commons-logging*.jar" />
     <include name="httpunit*.jar" />
     <include name="struts-test*.jar" />
   </patternset>
@@ -1003,9 +1003,11 @@
     </manifest>
 
     <jar destfile="${dist}/flymine.jar" manifest="${build.tmp}/MANIFEST.MF">
-      <fileset dir="${build.java}" />
-      <fileset dir="${build.resources}"/>
+      <fileset dir="${build.java}"/>
       <fileset dir="${build.model}/fulldata"/>
+      <fileset dir="${build.model}/datatracking"/>
+      <fileset file="${build.resources}/flymine.properties"/>
+      <fileset file="${build.resources}/log4j.properties"/>
     </jar>
 
   </target>
