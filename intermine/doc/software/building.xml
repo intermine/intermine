@@ -4,16 +4,16 @@
 
 <artheader>
 <date>2003-04-17</date>
-<title>Downloading and building FlyMine</title>
+<title>Downloading and building InterMine</title>
 </artheader>
 
 <para>In order to improve the chance of continued funding for the
-FlyMine project it would be really appreciated if anyone that uses
-FlyMine or parts of FlyMine would let us know. Just drop a quick email
-to <email>info[at]flymine.org</email>.</para>
+InterMine project it would be really appreciated if anyone that uses
+InterMine or parts of InterMine would let us know. Just drop a quick email
+to <email>info[at]intermine.org</email>.</para>
 
 <para>Depending on your needs, you can either download precompiled jar
-files of the FlyMine distribution, or build these yourself from
+files of the InterMine distribution, or build these yourself from
 source.</para>
 
 <sect1>
@@ -30,13 +30,13 @@ or a nightly build. The source code is available in tar.gz or ZIP
 format.</para>
 
 <para><ulink
-url="http://download.flymine.org/releases/">Official releases</ulink> -
-this is where the official FlyMine release appear. Official releases are planned to occur 
+url="http://download.intermine.org/releases/">Official releases</ulink> -
+this is where the official InterMine release appear. Official releases are planned to occur 
 every couple of months, on average.</para>
 
 <para><ulink
-url="http://download.flymine.org/nightly/">Nightly build</ulink> - this
-is a snapshot of the FlyMine source code taken last night. This will work, but may be in a state of flux, and with
+url="http://download.intermine.org/nightly/">Nightly build</ulink> - this
+is a snapshot of the InterMine source code taken last night. This will work, but may be in a state of flux, and with
 portions undocumented, or not conforming to the documentation.</para>
 
 </sect2>
@@ -51,9 +51,9 @@ portions undocumented, or not conforming to the documentation.</para>
 </sect1>
 
 <sect1>
-<title>Building FlyMine from the source code</title>
+<title>Building InterMine from the source code</title>
 
-<para>The only prerequisite for building FlyMine is <ulink
+<para>The only prerequisite for building InterMine is <ulink
 url="http://ant.apache.org">Ant</ulink>. This should be downloaded and
 installed on your machine.</para>
 
@@ -61,30 +61,30 @@ installed on your machine.</para>
 that you can build.</para>
 
 <sect2>
-<title>Building a FlyMine client</title>
+<title>Building an InterMine client</title>
 
-<para>A FlyMine client is simply a program that accesses the FlyMine
-data, the data being on a local machine, or accessed via a FlyMine
+<para>An InterMine client is simply a program that accesses the InterMine
+data, the data being on a local machine, or accessed via an InterMine
 webservice.</para>
 
 <itemizedlist>
 
 <listitem>Issue the command <command>ant jar</command> (if building
-from source). This will create a file <filename>flymine.jar</filename>
+from source). This will create a file <filename>intermine.jar</filename>
 in the <filename>dist</filename> directory.</listitem>
 
-<listitem>Copy the file <filename>flymine.jar</filename> to
+<listitem>Copy the file <filename>intermine.jar</filename> to
 a directory on your classpath</listitem>
 
 <listitem>Copy any of the jars in the <filename>lib/</filename>
 directory that you don't already have to a directory on your
 classpath</listitem>
 
-<listitem>Write a program using the FlyMine Query API. Many things
+<listitem>Write a program using the InterMine Query API. Many things
 (such as locations of the data) are configurable by having a file
-<filename>flymine.properties</filename> in your classpath (earlier
-than <filename>flymine.jar</filename>). An example
-<filename>flymine.properties</filename> can be found in the jar
+<filename>intermine.properties</filename> in your classpath (earlier
+than <filename>intermine.jar</filename>). An example
+<filename>intermine.properties</filename> can be found in the jar
 file.</listitem>
 
 </itemizedlist>
@@ -92,16 +92,16 @@ file.</listitem>
 </sect2>
 
 <sect2>
-<title>Building a FlyMine database</title>
+<title>Building an InterMine database</title>
 
-<para>A FlyMine database contains data in a certain format that has
+<para>An InterMine database contains data in a certain format that has
 been integrated from various other data sources. These data sources
 must be installed locally and their locations configures in
-<filename>flymine.properties</filename>.</para>
+<filename>intermine.properties</filename>.</para>
 
 <itemizedlist>
 
-<listitem>Edit the file <filename>flymine.properties</filename>,
+<listitem>Edit the file <filename>intermine.properties</filename>,
 changing the locations of servers and datasources to match your local
 site. This file is commented so should be
 self-explanatory.</listitem>
@@ -115,9 +115,9 @@ depending on the number of datasources configured.</listitem>
 </sect2>
 
 <sect2>
-<title>Building a FlyMine web site</title>
+<title>Building an InterMine web site</title>
 
-<para>A FlyMine website is the front end to a FlyMine ObjectStore.</para>
+<para>An InterMine website is the front end to an InterMine ObjectStore.</para>
 
 <itemizedlist>
 
@@ -128,7 +128,7 @@ the manager application.</listitem>
 <filename>build.properties</filename> file.</listitem>
 
 <listitem>Configure the underlying ObjectStore properties in the
-<filename>flymine.properties</filename> file.</listitem>
+<filename>intermine.properties</filename> file.</listitem>
 
 <listitem>Issue the command <command>ant release-webapp</command>.</listitem>
 
@@ -138,9 +138,9 @@ the manager application.</listitem>
 
 
 <sect2>
-<title>Building a FlyMine web service</title>
+<title>Building an InterMine web service</title>
 
-<para>A FlyMine webservice provides SOAP access to an underlying ObjectStore.</para>
+<para>An InterMine webservice provides SOAP access to an underlying ObjectStore.</para>
 
 <itemizedlist>
 
@@ -151,7 +151,7 @@ the manager application.</listitem>
 <filename>build.properties</filename> file.</listitem>
 
 <listitem>Configure the underlying ObjectStore properties in the
-<filename>flymine.properties</filename> file.</listitem>
+<filename>intermine.properties</filename> file.</listitem>
 
 <listitem>Issue the command <command>ant release-webservice</command>.</listitem>
 

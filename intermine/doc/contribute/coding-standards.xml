@@ -14,10 +14,10 @@
 </artheader>
 
 <sect1>
-<title>FlyMine coding standards</title>
+<title>InterMine coding standards</title>
 
 <para>This document presents the standards to which all Java code in
-the FlyMine project should adhere. These coding standards are intended
+the InterMine project should adhere. These coding standards are intended
 to ensure that all code is understandable and maintainable by
 everyone, and that the whole project remains robust and buildable by
 anyone. All code should follow the <ulink

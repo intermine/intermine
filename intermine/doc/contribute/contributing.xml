@@ -4,11 +4,11 @@
 
 <artheader>
 <date>2003-06-20</date>
-<title>Contributing code to FlyMine</title>
+<title>Contributing code to InterMine</title>
 </artheader>
 
 <sect1>
-<title>Contributing code to the FlyMine project</title>
+<title>Contributing code to the InterMine project</title>
 
 <para>We warmly welcome contributions to the project, however big or
 small. If you would like to get involved, the best thing to do is talk
@@ -17,7 +17,7 @@ unnecessary duplication of work.</para>
 
 <para>We prefer to accept patches against the current CVS
 repository. All code must adhere to the <ulink
-url="coding-standards">FlyMine coding standards</ulink> (note
+url="coding-standards">InterMine coding standards</ulink> (note
 specifically that every method of every class must have comprehensive
 unit tests), and not cause any existing unit tests to fail.</para>
 

@@ -5,24 +5,24 @@
     <item><ulink url="tutorials/getting_started">Getting started - a tutorial</ulink></item>
     <item><ulink url="tutorials/biologist">Getting started - a biologist's perspective</ulink></item>
     <item><ulink url="tutorials/using-own-model">Creating your own database</ulink></item>
-    <item><ulink url="tutorials/webservice">The FlyMine web service</ulink></item>
+    <item><ulink url="tutorials/webservice">The InterMine web service</ulink></item>
   </section>
 
   <section>
     <heading>System documentation</heading>
     <item><ulink url="overview">Technical overview</ulink></item>
-    <item><ulink url="FlyMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
-    <item><ulink url="FlyMineArchitecture">System architecture</ulink></item>
+    <item><ulink url="InterMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
+    <item><ulink url="InterMineArchitecture">System architecture</ulink></item>
   </section>
 
   <section>
-    <heading>Obtaining and building FlyMine</heading>
-    <item><ulink url="building">Downloading and building FlyMine</ulink></item>
+    <heading>Obtaining and building InterMine</heading>
+    <item><ulink url="building">Downloading and building InterMine</ulink></item>
     <item><ulink url="cvs-user">Obtaining source code via anonymous CVS</ulink></item>
   </section>
 
   <section>
-    <heading>Using FlyMine models</heading>
+    <heading>Using InterMine models</heading>
     <item><ulink url="metadata/model_creation">Creating a model</ulink></item>
     <item><ulink url="metadata/model_behaviour">Bahaviour of a model</ulink></item>
   </section>
@@ -36,20 +36,20 @@
   </section>
 
   <section>
-    <heading>Querying FlyMine</heading>
+    <heading>Querying InterMine</heading>
     <item><ulink url="howto_query">Query overview</ulink></item>
-    <item><ulink url="fql_query/spec">OQL-like query interface specification</ulink></item>
+    <item><ulink url="iql_query/spec">OQL-like query interface specification</ulink></item>
     <item><ulink url="java_query/spec">Java query interface specification</ulink></item>
     <item><ulink url="graphical_query/spec">Graphical query interface specification</ulink></item>
     </section>
 
   <section>
     <heading>ObjectStore</heading>
-    <item><ulink url="objectstore/FlyMineArchObjectStore">ObjectStore Architecture</ulink></item>
+    <item><ulink url="objectstore/InterMineArchObjectStore">ObjectStore Architecture</ulink></item>
     <item><ulink url="objectstore/proxies">Reference and collection proxies</ulink></item>
     <item><ulink url="objectstore/results_prefetch">Results prefetching</ulink></item>
     <item><ulink url="objectstore/related">Fetching related objects in the Results object</ulink></item>
-    <item><ulink url="objectstore/query_explain">Explain plans for FlyMine queries</ulink></item>
+    <item><ulink url="objectstore/query_explain">Explain plans for InterMine queries</ulink></item>
     <item><menu><section>
       <heading>Safe implementation</heading>
       <item><ulink url="objectstore/safe/characteristics">Characteristics</ulink></item>
@@ -73,11 +73,11 @@
   </section>
 
   <section>
-    <heading>Contributing code to FlyMine</heading>
+    <heading>Contributing code to InterMine</heading>
     <item><ulink url="contributing">Introduction</ulink></item>
     <item><ulink url="coding-standards">Coding standards</ulink></item>
     <item><ulink url="cvs-developer">Writable CVS access for developers</ulink></item>
-    <item><ulink url="http://www.flymine.org/autobuild">Automated build daemon results</ulink></item>
+    <item><ulink url="http://www.intermine.org/autobuild">Automated build daemon results</ulink></item>
   </section>
 
 </menu>
