@@ -17,7 +17,7 @@
   <property name="packagename" value="org.flymine.model"/>
 
   <property name="intermine.dist.path" location="../intermine/dist"/>
-  <property name="intermine.jar.path" location="${intermine.dist.path}/intermine.jar"/>
+  <property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/>
   <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
 
   <!-- libraries and binaries -->
@@ -33,7 +33,6 @@
   <!-- build directories -->
   <property name="build" location="build"/>
   <property name="build.resources" location="${build}/resources"/>
-  <property name="build.resources.test" location="${build}/resources/test"/>
   <property name="build.model" location="${build}/model" />
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
@@ -53,57 +52,10 @@
 
   <!-- set up library filesets -->
 
-  <!-- Libraries that everything needs -->
-  <patternset id="lib.common">
-    <include name="jasper*.jar"/>
-    <include name="ant*.jar"/>
-    <include name="cglib*.jar" />
-    <include name="commons-collections*.jar" />
-    <include name="commons-dbcp*.jar" />
-    <include name="commons-lang*.jar" />
-    <include name="commons-logging*.jar" />
-    <include name="commons-pool*.jar" />
-    <include name="commons-digester*.jar" />
-    <include name="commons-beanutils*.jar" />
-    <include name="libreadline-java*.jar" />
-    <include name="log4j*.jar" />
-    <include name="postgresql*.jar" />
-    <include name="pg*.jar" />
-    <include name="mysql*.jar" />
-    <include name="torque*.jar" />
-    <include name="velocity*.jar" />
-    <include name="jena*.jar" />
-    <include name="icu4j*.jar"/>
-    <include name="MAGE*.jar"/>
-    <include name="xerces*.jar"/>
-    <include name="xml-apis*.jar"/>
-    <include name="p6spy.jar"/>
-  </patternset>
-
   <!-- Ant tasks and unit testing stuff -->
   <patternset id="lib.build">
     <include name="AntDoc*.jar" />
-    <include name="catalina-ant*.jar" />
     <include name="junit*.jar" />
-    <include name="mockobjects*.jar" />
-    <include name="nsuml*.jar" />
-    <include name="xmlunit*.jar" />
-  </patternset>
-
-  <!-- Libraries relevant to building from UML models -->
-  <patternset id="lib.uml">
-    <include name="nsuml*.jar" />
-  </patternset>
-
-  <!-- Libraries relevant to building from AceDB models and data -->
-  <patternset id="lib.acedb">
-    <include name="acedb*.jar" />
-    <include name="biojava*.jar" />
-  </patternset>
-
-  <!-- Antlr library -->
-  <patternset id="lib.antlr">
-    <include name="antlr*.jar"/>
   </patternset>
 
   <!-- Checkstyle library -->
@@ -131,28 +83,14 @@
 
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
-    <pathelement path="${build.java}"/>
     <pathelement path="${build.resources}"/>
     <fileset dir="${lib}">
-      <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
-      <patternset refid="lib.webapp.flymine"/>
       <patternset refid="lib.jasper"/>
-      <patternset refid="lib.acedb"/>
-      <patternset refid="lib.uml"/>
     </fileset>
     <fileset dir="${intermine.dist.path}">
       <include name="intermine*.jar" />
     </fileset>
-  </path>
-
-  <path id="project.class.path">
-    <path refid="base.class.path"/>
-    <fileset dir="${lib}">
-      <patternset refid="lib.antlr"/>
-    </fileset>
-    <pathelement location="${build.model}/datatracking"/>
-    <pathelement location="${build.model}/fulldata"/>
   </path>
 
   <path id="checkstyle.class.path">
@@ -162,7 +100,7 @@
   </path>
 
   <path id="models.class.path">
-    <path refid="project.class.path"/>
+    <path refid="base.class.path"/>
     <pathelement location="${build.model}/mage"/>
     <pathelement location="${build.model}/chado"/>
     <pathelement location="${build.model}/so"/>
@@ -172,10 +110,6 @@
     <pathelement location="${build.model}/orthologue"/>
   </path>
 
-  <path id="acedb.class.path">
-    <path refid="project.class.path"/>
-    <pathelement location="${build.model}/acedb"/>
-  </path>
 
   <!-- Initialisation targets -->
 
@@ -187,7 +121,6 @@
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.resources}"/>
-    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
@@ -440,7 +373,7 @@
     </ant>
   </target>
 
-  <target name="ensembl-test" depends="prepare-build-model, convert-ensembl">
+  <target name="ensembl-test" depends="prepare-build-model, convert-ensembl, jar-genomic">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
       <property name="model.src" value="${model}/ensembl"/>
@@ -456,52 +389,6 @@
   <target name="test-models-full"
           depends="compile-genomic-model, chado-test, mage-test, ensembl-test">
     <antcall target="test-report"/>
-  </target>
-
-  <!-- Stress build targets (currently uses ace model) -->
-
-  <!-- generate acedb model from acemodel file -->
-  <target name="build-acedb" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="build-model-from-ace" inheritRefs="true">
-      <property name="model.name" value="acedb"/>
-      <property name="model.src" value="${model}/acedb/"/>
-      <reference torefid="class.path" refid="acedb.class.path"/>
-    </ant>
-  </target>
-
-
-  <target name="build-db-acedb" depends="build-acedb">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="acedb"/>
-      <reference torefid="class.path" refid="acedb.class.path"/>
-      <property name="db.name" value="db.acedb"/>
-    </ant>
-  </target>
-
-  <!-- insert the ace data into the database -->
-   <target name="insert-data-acedb" depends="build-db-acedb">
-    <taskdef
-          name="insert-ace-data"
-          classname="org.flymine.dataloader.InsertAceDataTask">
-      <classpath refid="acedb.class.path"/>
-    </taskdef>
-
-    <insert-ace-data integrationWriter="integration.acedb" user="${acedb.user}" password="${acedb.password}" host="${acedb.host}" port="${acedb.port}">
-      <classpath refid="acedb.class.path"/>
-    </insert-ace-data>
-  </target>
-
-  <!-- test target to put the ace data into the database without deleting what's already there-->
-  <target name="insert-only-acedb-data">
-    <taskdef
-          name="insert-ace-data"
-          classname="org.flymine.dataloader.InsertAceDataTask">
-      <classpath refid="acedb.class.path"/>
-    </taskdef>
-
-    <insert-ace-data integrationWriter="integration.acedb" user="${acedb.user}" password="${acedb.password}" host="${acedb.host}" port="${acedb.port}">
-      <classpath refid="acedb.class.path"/>
-    </insert-ace-data>
   </target>
 
 
@@ -1008,7 +895,7 @@
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
     <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="FlyMine API" additionalparam="-breakiterator">
-      <classpath refid="project.class.path"/>
+      <classpath refid="base.class.path"/>
       <fileset dir="${src.java}" defaultexcludes="yes" />
       <doctitle><![CDATA[<h1>FlyMine</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; ${YEAR} FlyMine. All Rights Reserved.</i>]]></bottom>
@@ -1057,7 +944,7 @@
 
     <style basedir="${src.www}" destdir="${build.www}" extension=".html"
       style="${src.www}/flymine.xsl" includes="**/*.xml">
-      <classpath refid="project.class.path"/>
+      <classpath refid="base.class.path"/>
       <param name="basedir" expression="${www.location}" />
     </style>
 
@@ -1093,7 +980,7 @@
 
     <style basedir="${src.www-internal}" destdir="${build.www-internal}" extension=".html"
       style="${src.www}/flymine.xsl" includes="**/*.xml">
-      <classpath refid="project.class.path"/>
+      <classpath refid="base.class.path"/>
       <param name="basedir" expression="${www.location}" />
     </style>
 
@@ -1134,7 +1021,7 @@
 
   <target name="release-webapp">
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
-      <classpath refid="project.class.path"/>
+      <classpath refid="base.class.path"/>
     </taskdef>
     <tomcat-deploy url="${webapp.baseurl}/manager"
                    username="${webapp.manager}" 
@@ -1146,7 +1033,7 @@
   <target name="remove-webapp">
     <taskdef name="tomcat-undeploy" 
       classname="org.apache.catalina.ant.UndeployTask">
-      <classpath refid="project.class.path"/>
+      <classpath refid="base.class.path"/>
     </taskdef>
     <tomcat-undeploy url="${webapp.baseurl}/manager"
                      username="${webapp.manager}" 
@@ -1208,7 +1095,7 @@
   <!-- AntDoc target -->
 
   <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
-    <classpath refid="project.class.path"/>
+    <classpath refid="base.class.path"/>
   </taskdef>
 
    <target name="ant-doc">
