@@ -131,7 +131,7 @@ public class TableBatch implements Table
         } else if (!this.idField.equals(idField)) {
             throw new IllegalStateException("Cannot change idField once it is set");
         }
-        int retval = 20;
+        int retval = 50;
         if (idsToInsert != null) {
             Object removed = idsToInsert.remove(idValue);
             if (removed != null) {
