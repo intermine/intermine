@@ -34,7 +34,12 @@ import org.flymine.util.StringUtil;
 
 /**
  * Task to create indexes on a database holding objects conforming to a given model by
- * reading that model's primary key configuration information
+ * reading that model's primary key configuration information.
+ * Three types of index are created: for the specified primary key fields, for all N-1 relations,
+ * and for the indirection table columns of M-N relations.
+ * This should speed up primary key queries, and other common queries
+ * Note that all "id" columns are indexed automatically by virtue of FlyMineTorqueModelOuput
+ * specifying them as primary key columns.
  * @author Mark Woodbridge
  */
 public class CreateIndexesTask extends Task
