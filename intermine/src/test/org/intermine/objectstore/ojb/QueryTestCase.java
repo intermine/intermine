@@ -85,6 +85,8 @@ public abstract class QueryTestCase extends TestCase
         queries.put("SimpleGroupBy", simpleGroupBy());
         queries.put("MultiJoin", multiJoin());
         queries.put("SelectComplex", selectComplex());
+        queries.put("SelectClassAndSubClasses", selectInterfaceAndSubClasses());
+        queries.put("SelectInterfaceAndSubClasses", selectInterfaceAndSubClasses());
     }
 
     /**
@@ -638,6 +640,31 @@ public abstract class QueryTestCase extends TestCase
         return q1;
     }
 
+    /*
+      SHOULD PICK UP THE MANAGERS AND ALL EMPLOYEES
+      select employee
+      from Employee
+    */
+    public Query selectClassAndSubClasses() throws Exception {
+        QueryClass qc1 = new QueryClass(Employee.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        return q1;
+    }
+
+    /*
+      SHOULD PICK UP THE MANAGERS, CONTRACTORS AND ALL EMPLOYEES
+      select employable
+      from Employable
+    */
+    public Query selectInterfaceAndSubClasses() throws Exception {
+        QueryClass qc1 = new QueryClass(Employable.class);
+        Query q1 = new Query();
+        q1.addToSelect(qc1);
+        q1.addFrom(qc1);
+        return q1;
+    }
 
     private Collection data() throws Exception {
         Company p1 = p1(), p2 = p2();
