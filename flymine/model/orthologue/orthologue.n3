@@ -12,8 +12,40 @@
     rdfs:range xsd:string.
 
 :Orthologue a owl:Class;
-    rdfs:subClassOf :Relation.
+    rdfs:subClassOf :Relation;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Orthologue__objectProtein ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Orthologue__subjectProtein ] .
+
+:Orthologue__objectProtein a owl:ObjectProperty ;
+    rdfs:domain :Orthologue ;
+    rdfs:range :Protein .
+
+:Orthologue__subjectProtein a owl:ObjectProperty ;
+    rdfs:domain :Orthologue ;
+    rdfs:range :Protein .
 
 :Paralogue a owl:Class;
-    rdfs:subClassOf :Relation.
+    rdfs:subClassOf :Relation;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Paralogue__objectProtein ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Paralogue__subjectProtein ] .
+
+:Paralogue__objectProtein a owl:ObjectProperty ;
+    rdfs:domain :Paralogue ;
+    rdfs:range :Protein .
+
+:Paralogue__subjectProtein a owl:ObjectProperty ;
+    rdfs:domain :Paralogue ;
+    rdfs:range :Protein .
 

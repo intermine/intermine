@@ -72,23 +72,19 @@ public class InparanoidConverter extends FileConverter
             Item newProtein = newProtein(array[4], getOrganism(array[2]));
             Item result = newResult(array[3]);
 
-            // create two organisms with subjects and objects reversed
+            // create two organisms with subjectProtein and objectProtein reversed
             Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-            item.addReference(new Reference("subject", newProtein.getIdentifier()));
-            item.addReference(new Reference("object", protein.getIdentifier()));
+            item.addReference(new Reference("subjectProtein", newProtein.getIdentifier()));
+            item.addReference(new Reference("objectProtein", protein.getIdentifier()));
             item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier(), result.getIdentifier()})));
-            addToCollection(newProtein, "objects", item.getIdentifier());
-            addToCollection(protein, "subjects", item.getIdentifier());
             writer.store(ItemHelper.convert(item));
 
             item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-            item.addReference(new Reference("subject", protein.getIdentifier()));
-            item.addReference(new Reference("object", newProtein.getIdentifier()));
+            item.addReference(new Reference("subjectProtein", protein.getIdentifier()));
+            item.addReference(new Reference("objectProtein", newProtein.getIdentifier()));
             item.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
                 {db.getIdentifier(), result.getIdentifier()})));
-            addToCollection(newProtein, "subjects", item.getIdentifier());
-            addToCollection(protein, "objects", item.getIdentifier());
             writer.store(ItemHelper.convert(item));
 
             if (!species.equals(array[2])) {
