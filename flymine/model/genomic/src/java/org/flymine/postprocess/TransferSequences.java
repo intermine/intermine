@@ -206,7 +206,7 @@ public class TransferSequences
 
             sourceArray = symbolList.seqString().toCharArray();
         } else {
-            sourceArray = sourceSequence.toCharArray();
+            sourceArray = sourceSequence.toLowerCase().toCharArray();
         }
 
         int charsToCopy = end - start + 1;
