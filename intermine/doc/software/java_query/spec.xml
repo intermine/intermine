@@ -15,7 +15,7 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>This document is intended to provide information on the Java interface to the Flymine Query.
-			The <ulink url="../fql_query/specification">FQL document</ulink> provides a reasonable background to the structure of the interface, since FQL maps fairly directly onto the Java interface.
+			The <ulink url="../fql_query/spec">FQL document</ulink> provides a reasonable background to the structure of the interface, since FQL maps fairly directly onto the Java interface.
 			In fact, by far the easiest method of creating a Java Flymine Query object is to use the following constructor:</para>
 		<programlisting>
 import <ulink url="/api/org/flymine/objectstore/query/Query">org.flymine.objectstore.query.Query</ulink>;

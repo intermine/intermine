@@ -26,20 +26,12 @@
   </section>
 
   <section>
-    <heading>Graphical query interface</heading>
-    <item><ulink url="graphical_query/spec">Specification</ulink></item>
-  </section>
-
-  <section>
-    <heading>OQL-like query interface</heading>
-    <item><!--ulink url="fql_query/tutorial"-->Tutorial (coming soon)<!--/ulink--></item>
-    <item><ulink url="fql_query/specification">Specification (for developers)</ulink></item>
-  </section>
-
-  <section>
-    <heading>Java query interface</heading>
-    <item><ulink url="java_query/spec">Specification</ulink></item>
-  </section>
+    <heading>Querying FlyMine</heading>
+    <item><ulink url="howto_query">Query overview</ulink></item>
+    <item><ulink url="fql_query/spec">OQL-like query interface specification</ulink></item>
+    <item><ulink url="java_query/spec">Java query interface specification</ulink></item>
+    <item><ulink url="graphical_query/spec">Graphical query interface specification</ulink></item>
+    </section>
 
   <section>
     <heading>ObjectStore</heading>
