@@ -1155,6 +1155,16 @@
     <antcall target="test-report"/>
   </target>
 
+ 
+  <target name="build-db-production" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.production"/>
+    </ant>
+  </target>
+
+
   <target name="test-translation" depends="compile-test, build-db-fulldatatest">
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="test.class.path"/>
