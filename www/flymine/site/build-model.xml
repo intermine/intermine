@@ -45,7 +45,6 @@
   <!-- Model generation targets -->
   <target name="generate-xmi-model" depends="unpack-xmi-model"
           description="Generate FlyMine model from an XMI file">
-
     <taskdef name="model-generation" classname="org.flymine.task.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
@@ -54,8 +53,7 @@
       type="xmi"
       modelname="${model.name}"
       source="${build.tmp}/${model.name}_.xmi"
-      destdir="${build.model}/${model.name}"
-      />   
+      destdir="${build.model}/${model.name}" />   
   </target>
 
 
@@ -72,7 +70,6 @@
       modelname="${model.name}"
       source="${model.src}"
       destdir="${build.model}/${model.name}"/>
-
   </target>
 
 
@@ -126,7 +123,7 @@
 
     <model-output type="torque" model="${model.name}" destdir="${build.model}/${model.name}"/>
     <copy todir="${build.model}/${model.name}">
-      <fileset dir="${src.schema}">
+      <fileset dir="${resources}">
         <include name="**/*-schema.xml"/>
       </fileset>
     </copy>
@@ -158,6 +155,9 @@
   </target>
 
   <!-- Targets that could be called from another build script -->
+  <target name="build-model-from-xml" depends="compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
+          description="Build a usable model from a .zargo file">
+  </target>
 
   <target name="build-model-from-zargo" depends="generate-xmi-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
           description="Build a usable model from a .zargo file">
