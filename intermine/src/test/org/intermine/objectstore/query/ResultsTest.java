@@ -572,6 +572,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(50);
+        os2.setEstimatedResultsSize(1);
 
         Results res = os2.execute(q);
         res.setBatchSize(30);
@@ -585,7 +586,7 @@ public class ResultsTest extends TestCase
         assertEquals(ResultsInfo.ESTIMATE, i.getStatus());
 
         res.get(0);
- 
+
         i = res.getInfo();
         assertEquals(30, i.getRows());
         assertEquals(ResultsInfo.AT_LEAST, i.getStatus());
@@ -597,7 +598,7 @@ public class ResultsTest extends TestCase
         assertEquals(ResultsInfo.AT_LEAST, i.getStatus());
 
         res.get(30);
-        
+
         i = res.getInfo();
         assertEquals(50, i.getRows());
         assertEquals(ResultsInfo.SIZE, i.getStatus());
