@@ -10,21 +10,18 @@ package org.flymine.util;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import net.sf.cglib.*;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
+import org.apache.log4j.Logger;
 
 /**
  * Utilities to create DynamicBeans
@@ -33,6 +30,7 @@ import org.flymine.metadata.ClassDescriptor;
  */
 public class DynamicUtil
 {
+    protected static final Logger LOG = Logger.getLogger(DynamicUtil.class);
     private static Map classMap = new HashMap();
 
     /**
@@ -126,51 +124,22 @@ public class DynamicUtil
         }
         return retval;
     }
-    
-    /**
-     * Create a DynamicBean from a set of interface names
-     *
-     * @param model the Model we are using
-     * @param interfaces the interfaces to implement
-     * @return the DynamicBean
-     * @throws ClassNotFoundException if any class cannot be found
-     */
-    public static Object createObject(Model model, Set interfaces) throws ClassNotFoundException {
-        Set expandedInterfaces = new HashSet();
-        Iterator intIter = interfaces.iterator();
-        while (intIter.hasNext()) {
-            String intName = (String) intIter.next();
-            ClassDescriptor cld = model.getClassDescriptorByName(intName);
-            if (cld == null) {
-                throw new ClassNotFoundException("Cannot find " + intName
-                                                 + " in " + model.getName());
-            }
-            if (!cld.isInterface()) {
-                throw new IllegalArgumentException(intName + " is not an interface");
-            }
-        }
-
-        // Now create the object
-        return DynamicBean.create(null, convertToClassArray(interfaces));
-
-    }
 
     /**
-     * Convert a set of interface names to an array of Class objects
+     * Convert a set of interface names to a set of Class objects
      *
      * @param names the set of interface names
-     * @return array of Class objects
+     * @return set of Class objects
      * @throws ClassNotFoundException if class cannot be found
      */
-    protected static Class [] convertToClassArray(Set names) throws ClassNotFoundException {
+    protected static Set convertToClasses(Set names) throws ClassNotFoundException {
+        Set classes = new HashSet();
         Iterator iter = names.iterator();
-        List list = new ArrayList();
-
         while (iter.hasNext()) {
-            list.add(Class.forName((String) iter.next()));
+            classes.add(Class.forName((String) iter.next()));
         }
 
-        return (Class []) list.toArray(new Class [] {});
+        return classes;
     }
 
     /**
@@ -213,6 +182,31 @@ public class DynamicUtil
         } else {
             // Normal class - return it.
             return Collections.singleton(clazz);
+        }
+    }
+    
+    /**
+     * Create an outline business object from a class name and a list of interface names
+     * @param className the class name
+     * @param implementations a space separated list of interface names
+     * @return the materialised business object
+     */
+    public static Object instantiateObject(String className, String implementations) {
+        
+        Set classNames = new HashSet();
+        
+        if (className != null && !"".equals(className) && !"".equals(className.trim())) {
+            classNames.add(className.trim());
+        }
+        
+        if (implementations != null) {
+            classNames.addAll(StringUtil.tokenize(implementations));
+        }
+        
+        try {
+            return DynamicUtil.createObject(convertToClasses(classNames));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Cannot find one of '" + classNames + "' in model", e);
         }
     }
 }

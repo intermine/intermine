@@ -270,7 +270,7 @@ public class FullRendererTest extends XMLTestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<item id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
+        String expected = "<item id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Types\">" + ENDL
             + "<attribute name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>" + ENDL
             + "<attribute name=\"booleanObjType\" value=\"true\"/>" + ENDL
             + "<attribute name=\"booleanType\" value=\"true\"/>" + ENDL

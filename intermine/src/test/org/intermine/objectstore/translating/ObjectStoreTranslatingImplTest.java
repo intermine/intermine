@@ -12,6 +12,7 @@ package org.flymine.objectstore.translating;
 
 import junit.framework.Test;
 
+import org.flymine.metadata.Model;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.Results;
@@ -20,6 +21,7 @@ import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreException;
 
 import org.flymine.model.testmodel.Bank;
 import org.flymine.model.testmodel.Company;
@@ -27,7 +29,7 @@ import org.flymine.model.testmodel.Company;
 public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        os = new ObjectStoreTranslatingImpl(ObjectStoreFactory.getObjectStore("os.unittest"), new DummyTranslator());
+        os = new ObjectStoreTranslatingImpl(Model.getInstanceByName("testmodel"), ObjectStoreFactory.getObjectStore("os.unittest"), new DummyTranslator());
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 
@@ -72,7 +74,7 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
     }
     
     public void testTranslation() throws Exception {
-        ObjectStore os2 = new ObjectStoreTranslatingImpl(ObjectStoreFactory.getObjectStore("os.unittest"), new CompanyTranslator());
+        ObjectStore os2 = new ObjectStoreTranslatingImpl(Model.getInstanceByName("testmodel"), ObjectStoreFactory.getObjectStore("os.unittest"), new CompanyTranslator());
         Query q = new Query();
         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
         q.addToSelect(qc);
@@ -83,9 +85,12 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         assertEquals("CompanyB", ((Bank) ((ResultsRow) res.get(1)).get(0)).getName());
     }
     
-    static class DummyTranslator implements Translator
+    static class DummyTranslator extends Translator
     {
-        public Query translateQuery(Query query) {
+        public void setObjectStore(ObjectStore os) {
+        }
+        
+        public Query translateQuery(Query query) throws ObjectStoreException {
             return query;
         }
         
@@ -98,9 +103,12 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         }
     }
     
-    static class CompanyTranslator implements Translator
+    static class CompanyTranslator extends Translator
     {
-        public Query translateQuery(Query query) {
+        public void setObjectStore(ObjectStore os) {
+        }
+        
+        public Query translateQuery(Query query) throws ObjectStoreException {
             Query q = new Query();
             QueryClass qc = new QueryClass(Company.class);
             q.addToSelect(qc);

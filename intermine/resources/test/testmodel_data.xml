@@ -147,13 +147,13 @@
 <reference name="address" ref_id="20"/>
 <reference name="department" ref_id="7"/>
 </item>
-<item id="14" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<item id="14" class="http://www.flymine.org/model/testmodel#Secretary">
 <attribute name="name" value="Secretary1"/>
 </item>
-<item id="15" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<item id="15" class="http://www.flymine.org/model/testmodel#Secretary">
 <attribute name="name" value="Secretary2"/>
 </item>
-<item id="16" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<item id="16" class="http://www.flymine.org/model/testmodel#Secretary">
 <attribute name="name" value="Secretary3"/>
 </item>
 <item id="17" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
@@ -180,7 +180,7 @@
 <item id="24" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Employee Street, AVille"/>
 </item>
-<item id="25" class="http://www.flymine.org/model/testmodel#Types" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<item id="25" class="http://www.flymine.org/model/testmodel#Types">
 <attribute name="bigDecimalObjType" value="876323428764587621764532432.8768173432887324123645"/>
 <attribute name="booleanObjType" value="true"/>
 <attribute name="booleanType" value="true"/>

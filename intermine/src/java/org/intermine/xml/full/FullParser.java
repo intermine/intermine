@@ -25,6 +25,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.xml.sax.SAXException;
 
+import org.flymine.ontology.OntologyUtil;
+import org.flymine.util.DynamicUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.metadata.Model;
 
@@ -95,7 +97,12 @@ public class FullParser
 
         for (Iterator i = items.iterator(); i.hasNext();) {
             Item item = (Item) i.next();
-            objMap.put(item.getIdentifier(), ItemHelper.instantiateObject(item, model));
+            objMap.put(item.getIdentifier(),
+                DynamicUtil.instantiateObject(
+                    OntologyUtil.generateClassNames(item.getClassName(),
+                                                    model),
+                    OntologyUtil.generateClassNames(item.getImplementations(),
+                                                    model)));
         }
 
         List result = new ArrayList();
@@ -105,7 +112,7 @@ public class FullParser
 
         return result;
     }
-
+    
     /**
      * Fill in fields of an outline business object which is in the map under item.identifier
      * Note that this modifies the relevant object in the map

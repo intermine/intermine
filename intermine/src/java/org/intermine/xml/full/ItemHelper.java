@@ -10,13 +10,9 @@ package org.flymine.xml.full;
  *
  */
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Iterator;
 
-import org.flymine.metadata.Model;
 import org.flymine.util.StringUtil;
-import org.flymine.util.DynamicUtil;
 
 /**
 * Class providing Item utility methods
@@ -24,49 +20,86 @@ import org.flymine.util.DynamicUtil;
 */
 public class ItemHelper
 {
-
     /**
-    * Create an outline business object from an Item, does not fill in fields.
-    * @param item a the Item to realise
-    * @param model the parent model
-    * @return the materialised business object
+    * Convert an XML item to a data model one
+    * @param item the XML item
+    * @return an equivalent data model item
     */
-    public static Object instantiateObject(Item item, Model model) {
-        String classNames = "";
-        if (item.getClassName() != null) {
-            classNames += item.getClassName();
-        }
-        if (item.getImplementations() != null) {
-            classNames += " " + item.getImplementations();
+    public static org.flymine.model.fulldata.Item convert(Item item) {
+        org.flymine.model.fulldata.Item newItem = new org.flymine.model.fulldata.Item();
+        
+        newItem.setIdentifier(item.getIdentifier());
+        newItem.setClassName(item.getClassName());
+        newItem.setImplementations(item.getImplementations());
+        
+        for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
+            Attribute attr = (Attribute) i.next();
+            org.flymine.model.fulldata.Attribute newAttr 
+                = new org.flymine.model.fulldata.Attribute();
+            newAttr.setName(attr.getName());
+            newAttr.setValue(attr.getValue());
+            newItem.getAttributes().add(newAttr);
         }
         
-        try {
-            Set classes = new HashSet();
-            for (Iterator i = StringUtil.tokenize(classNames).iterator(); i.hasNext();) {
-                classes.add(generateClass((String) i.next(), model));
-            }
-            return DynamicUtil.createObject(classes);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot find one of '" + classNames + "' in model", e);
+        for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
+            Reference ref = (Reference) i.next();
+            org.flymine.model.fulldata.Reference newRef
+                = new org.flymine.model.fulldata.Reference();
+            newRef.setName(ref.getName());
+            newRef.setRefId(ref.getRefId());
+            newItem.getReferences().add(newRef);
         }
+
+        for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
+            ReferenceList refs = (ReferenceList) i.next();
+            org.flymine.model.fulldata.ReferenceList newRefs
+                = new org.flymine.model.fulldata.ReferenceList();
+            newRefs.setName(refs.getName());
+            newRefs.setRefIds(StringUtil.join(refs.getRefIds(), " "));
+            newItem.getCollections().add(newRefs);
+        }
+
+        return newItem;
     }
     
     /**
-     * Create a class given a namspace qualified string, if class is not in the
-     * the given model looks for core classes in org.flymine.model package.
-     * @param a namespace qualified class name
-     * @param model the parent model
-     * @throws ClassNotFoundException if invalid class string
-     */
-    private static Class generateClass(String namespacedClass, Model model)
-        throws ClassNotFoundException {
-        String localName = namespacedClass.substring(namespacedClass.indexOf("#") + 1);
-        Class cls;
-        try {
-            cls = Class.forName(model.getPackageName() + "." + localName);
-        } catch (ClassNotFoundException e) {
-            cls = Class.forName("org.flymine.model." + localName);
+    * Convert a data model item to an XML one
+    * @param item the data model Item
+    * @return an equivalent XML Item
+    */
+    public static Item convert(org.flymine.model.fulldata.Item item) {
+        Item newItem = new Item();
+        newItem.setIdentifier(item.getIdentifier());
+        newItem.setClassName(item.getClassName());
+        newItem.setImplementations(item.getImplementations());
+        
+        for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
+            org.flymine.model.fulldata.Attribute attr =
+                (org.flymine.model.fulldata.Attribute) i.next();
+            Attribute newAttr = new Attribute();
+            newAttr.setName(attr.getName());
+            newAttr.setValue(attr.getValue());
+            newItem.addAttribute(newAttr);
         }
-        return cls;
+
+        for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
+            org.flymine.model.fulldata.Reference ref =
+                (org.flymine.model.fulldata.Reference) i.next();
+            Reference newRef = new Reference();
+            newRef.setName(ref.getName());
+            newRef.setRefId(ref.getRefId());
+            newItem.addReference(newRef);
+        }
+
+        for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
+            org.flymine.model.fulldata.ReferenceList refs
+                = (org.flymine.model.fulldata.ReferenceList) i.next();
+            ReferenceList newRefs = new ReferenceList();
+            newRefs.setName(refs.getName());
+            newRefs.setRefIds(StringUtil.tokenize(refs.getRefIds()));
+            newItem.addCollection(newRefs);
+        }
+
+        return newItem;
     }
 }

@@ -28,6 +28,8 @@ import com.hp.hpl.jena.rdf.model.Property;
 
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.Model;
+import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -385,7 +387,6 @@ public class OntologyUtil
         return uri;
     }
 
-
     /**
      * If a given namespace uri does not end in a '#' add one, rmoving trailing '/' if present.
      * @param ns the namespace uri
@@ -401,7 +402,6 @@ public class OntologyUtil
         }
     }
 
-
     /**
      * Return a valid resource given a resource name fragment, currently just replaces
      * spaces with underscores.
@@ -412,4 +412,22 @@ public class OntologyUtil
         return fragment.replace(' ', '_');
     }
 
+    /**
+     * Generate a package qualified class name within the specified model from a space separated
+     * list of namespace qualified names
+     * 
+     * @param classNames the list of namepace qualified names
+     * @param model the relevant model
+     * @return the package qualified names
+     */
+    public static String generateClassNames(String classNames, Model model) {
+        if (classNames == null) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (Iterator i = StringUtil.tokenize(classNames).iterator(); i.hasNext();) {
+            sb.append(model.getPackageName() + "." + getFragmentFromURI((String) i.next()) + " ");
+        }
+        return sb.toString().trim();
+    }
 }

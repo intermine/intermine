@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class StringUtilTest extends TestCase
 {
@@ -92,5 +93,17 @@ public class StringUtilTest extends TestCase
         list.add("two");
         list.add("three");
         assertEquals("one, two, three", StringUtil.join(list, ", "));
+    }
+    
+    public void testTokenize() throws Exception {
+        try {
+            StringUtil.tokenize(null);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+        }
+        assertEquals(StringUtil.tokenize(""), new ArrayList());
+        assertEquals(StringUtil.tokenize(" "), new ArrayList());
+        assertEquals(StringUtil.tokenize(" one"), Arrays.asList(new Object[] {"one"}));
+        assertEquals(StringUtil.tokenize(" one  two"), Arrays.asList(new Object[] {"one", "two"}));
     }
 }

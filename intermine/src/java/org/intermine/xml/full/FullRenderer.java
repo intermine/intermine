@@ -247,7 +247,8 @@ public class FullRenderer
 
         for (int i = 0; i < interfaces.length; i++) {
             ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
-            if (cld != null && cld.isInterface()) {
+            if (cld != null && cld.isInterface()
+                    && !cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
                 sb.append(model.getNameSpace().toString()
                           + TypeUtil.unqualifiedName(interfaces[i].getName()))
                     .append(" ");

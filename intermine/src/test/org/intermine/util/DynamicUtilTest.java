@@ -133,4 +133,30 @@ public class DynamicUtilTest extends TestCase
         obj.setName("Fred");
         assertEquals("Fred", obj.getName());
     }
+    
+    public void testInstantiateObjectNullClassName() throws Exception {
+        Object obj = DynamicUtil.instantiateObject(null, "org.flymine.model.testmodel.Broke");
+        assertTrue(obj instanceof Broke);
+    }
+    
+    public void testInstantiateObjectEmptyClassName() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("", "org.flymine.model.testmodel.Broke");
+        assertTrue(obj instanceof Broke);
+    }
+    
+    public void testInstantiateObjectNullImplementations() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("org.flymine.model.testmodel.Manager", null);
+        assertTrue(obj instanceof Manager);
+    }
+    
+    public void testInstantiateObjectEmptyImplementations() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("org.flymine.model.testmodel.Manager", "");
+        assertTrue(obj instanceof Manager);
+    }
+    
+    public void testInstantiateObject() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("org.flymine.model.testmodel.Manager", "org.flymine.model.testmodel.Broke");
+        assertTrue(obj instanceof Manager);
+        assertTrue(obj instanceof Broke);
+    }
 }

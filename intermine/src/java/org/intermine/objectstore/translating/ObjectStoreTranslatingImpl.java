@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.flymine.metadata.Model;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
@@ -35,13 +36,15 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     
     /**
      * Constructor
+     * @param model the Model that this ObjectStore appears to use
      * @param os the underlying ObjectStore
      * @param translator the Translator used to translate queries and objects
      */
-    public ObjectStoreTranslatingImpl(ObjectStore os, Translator translator) {
-        super(os.getModel());
+    public ObjectStoreTranslatingImpl(Model model, ObjectStore os, Translator translator) {
+        super(model);
         this.os = os;
         this.translator = translator;
+        translator.setObjectStore(this);
     }
     
     /**

@@ -470,4 +470,24 @@ public class OntologyUtilTest extends TestCase
         assertNull(equiv.get(tgtNs + "Address"));
     }
 
+    public void testGenerateClassNamesNull() throws Exception {
+        assertNull(OntologyUtil.generateClassNames(null, null));
+    }
+    
+    public void testGenerateClassNamesEmpty() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertEquals("", OntologyUtil.generateClassNames("", model));
+    }
+    
+    public void testGenerateClassNamesSingle() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertEquals("org.flymine.model.testmodel.Company", OntologyUtil.generateClassNames(model.getNameSpace() + "Company", model));
+    }
+    
+    public void testGenerateClassNamesMultiple() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        String classNames = " " + model.getNameSpace() + "Company " + model.getNameSpace() + "Department ";
+        String expected = "org.flymine.model.testmodel.Company org.flymine.model.testmodel.Department";
+        assertEquals(expected, OntologyUtil.generateClassNames(classNames, model));
+    }
 }
