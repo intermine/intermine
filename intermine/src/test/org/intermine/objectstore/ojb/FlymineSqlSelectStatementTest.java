@@ -23,7 +23,7 @@ import org.apache.ojb.broker.metadata.FieldDescriptor;
 import org.flymine.model.testmodel.Department;
 import org.flymine.model.testmodel.Company;
 
-public class FlymineSqlSelectStatementTest extends TestCase
+public class FlymineSqlSelectStatementTest extends QueryTestCase
 {
     private DescriptorRepository dr;
 
@@ -32,12 +32,39 @@ public class FlymineSqlSelectStatementTest extends TestCase
     }
 
     public void setUp() throws Exception {
+        super.setUp();
         Database db = DatabaseFactory.getDatabase("db.unittest");
         ObjectStoreOjbImpl os = ObjectStoreOjbImpl.getInstance(db);
         PersistenceBroker broker = os.getPersistenceBroker();
         dr = broker.getDescriptorRepository();
     }
-    
+
+    public void setUpResults() throws Exception {
+        results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS a2_ FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.a2_ LIMIT 10000 OFFSET 0");
+        results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.vatNumber AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 5 ORDER BY a1_.vatNumber LIMIT 10000 OFFSET 0");
+        results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.vatNumber AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 5 ORDER BY a1_.vatNumber LIMIT 10000 OFFSET 0");
+        results.put("WhereSimpleLike", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name LIKE 'flibble' ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereEqualsString", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name = 'flibble' ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereAndSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'flibble' AND a1_.vatNumber > 5) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereOrSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'flibble' OR a1_.vatNumber > 5) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereNotSet", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE ( NOT (a1_.name LIKE 'flibble' AND a1_.vatNumber > 5)) ORDER BY a1_.name LIMIT 10000 OFFSET 0");
+        results.put("WhereSubQueryField", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereNotSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereNegSubQueryClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE (a1_.ID = a2_.ID) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereNotClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereNegClassClass", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0");
+        results.put("WhereClassObject", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = 2345) ORDER BY a1_.ID LIMIT 10000 OFFSET 0");
+
+    }
+
+    public void executeTest(String type) throws Exception {
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement((Query) queries.get(type), dr, 0, 10000);
+        assertEquals(type + " has failed", results.get(type), s1.getStatement());
+    }
+
+
     public void testSelectQueryValue() throws Exception {
         QueryValue v1 = new QueryValue(new Integer(5));
         QueryValue v2 = new QueryValue("Hello");
@@ -122,7 +149,7 @@ public class FlymineSqlSelectStatementTest extends TestCase
         q1.addFrom(c1);
         q1.addFrom(c2);
         q1.addToSelect(c1);
-        QueryExpression e1 = new QueryExpression(new QueryFunction(f2, QueryFunction.AVERAGE), 
+        QueryExpression e1 = new QueryExpression(new QueryFunction(f2, QueryFunction.AVERAGE),
                 QueryExpression.ADD, new QueryValue(new Integer(20)));
         q1.addToSelect(e1);
         q1.addToSelect(f3);
@@ -149,7 +176,7 @@ public class FlymineSqlSelectStatementTest extends TestCase
         FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr);
         assertEquals("(SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_) AS a1_", s1.buildFromComponent());
     }
-    
+
     public void testFromMulti() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryClass c2 = new QueryClass(Department.class);
@@ -163,254 +190,6 @@ public class FlymineSqlSelectStatementTest extends TestCase
         org.flymine.sql.query.Query oq1 = new org.flymine.sql.query.Query("SELECT DISTINCT 5 as a from (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_) AS a2_, Department as a1_");
         org.flymine.sql.query.Query oq2 = new org.flymine.sql.query.Query("SELECT DISTINCT 5 as a from " + s1.buildFromComponent());
         assertEquals(oq1, oq2);
-    }
-
-    public void testSubquery() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue(new Integer(5));
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        q1.addToSelect(v1);
-        Query q2 = new Query();
-        q2.addFrom(q1);
-        QueryField f1 = new QueryField(q1, c1, "name");
-        QueryField f2 = new QueryField(q1, v1);
-        q2.addToSelect(f1);
-        q2.addToSelect(f2);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.a1_name AS a2_, a1_.a2_ AS a3_ FROM (SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS a2_ FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.a2_ LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereSimpleEquals() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue(new Integer(5));
-        QueryField f1 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(sc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.vatNumber AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 5 ORDER BY a1_.vatNumber LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereSimpleNotEquals() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue(new Integer(5));
-        QueryField f1 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.NOT_EQUALS, v1);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(sc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.vatNumber AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 5 ORDER BY a1_.vatNumber LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereSimpleLike() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryField f1 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(sc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name LIKE 'flibble' ORDER BY a1_.name LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereSimpleEqualString() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryField f1 = new QueryField(c1, "name");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(sc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.name = 'flibble' ORDER BY a1_.name LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereAndSet() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryValue v2 = new QueryValue(new Integer(5));
-        QueryField f1 = new QueryField(c1, "name");
-        QueryField f2 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        SimpleConstraint sc2 = new SimpleConstraint(f2, SimpleConstraint.GREATER_THAN, v2);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        cs1.addConstraint(sc1);
-        cs1.addConstraint(sc2);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(cs1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'flibble' AND a1_.vatNumber > 5) ORDER BY a1_.name LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereOrSet() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryValue v2 = new QueryValue(new Integer(5));
-        QueryField f1 = new QueryField(c1, "name");
-        QueryField f2 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        SimpleConstraint sc2 = new SimpleConstraint(f2, SimpleConstraint.GREATER_THAN, v2);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.OR);
-        cs1.addConstraint(sc1);
-        cs1.addConstraint(sc2);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(cs1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE (a1_.name LIKE 'flibble' OR a1_.vatNumber > 5) ORDER BY a1_.name LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNotSet() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryValue v1 = new QueryValue("flibble");
-        QueryValue v2 = new QueryValue(new Integer(5));
-        QueryField f1 = new QueryField(c1, "name");
-        QueryField f2 = new QueryField(c1, "vatNumber");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.MATCHES, v1);
-        SimpleConstraint sc2 = new SimpleConstraint(f2, SimpleConstraint.GREATER_THAN, v2);
-        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
-        cs1.addConstraint(sc1);
-        cs1.addConstraint(sc2);
-        cs1.setNegated(true);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        q1.setConstraint(cs1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE ( NOT (a1_.name LIKE 'flibble' AND a1_.vatNumber > 5)) ORDER BY a1_.name LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereSubqueryField() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        QueryField f1 = new QueryField(c1, "name");
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(f1);
-        QueryClass c2 = new QueryClass(Department.class);
-        QueryField f2 = new QueryField(c2, "name");
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, f2);
-        Query q2 = new Query();
-        q2.addFrom(c2);
-        q2.addToSelect(c2);
-        q2.setConstraint(sqc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.name IN (SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereSubqueryClass() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryClass c2 = new QueryClass(Department.class);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
-        Query q2 = new Query();
-        q2.addFrom(c2);
-        q2.addToSelect(c2);
-        q2.setConstraint(sqc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNotSubqueryClass() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryClass c2 = new QueryClass(Department.class);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.DOES_NOT_CONTAIN, c2);
-        Query q2 = new Query();
-        q2.addFrom(c2);
-        q2.addToSelect(c2);
-        q2.setConstraint(sqc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNegSubqueryClass() throws Exception {
-        QueryClass c1 = new QueryClass(Company.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryClass c2 = new QueryClass(Department.class);
-        SubqueryConstraint sqc1 = new SubqueryConstraint(q1, SubqueryConstraint.CONTAINS, c2);
-        sqc1.setNegated(true);
-        Query q2 = new Query();
-        q2.addFrom(c2);
-        q2.addToSelect(c2);
-        q2.setConstraint(sqc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q2, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ WHERE a1_.ID NOT IN (SELECT DISTINCT a1_.ID AS a1_ID FROM Company AS a1_) ORDER BY a1_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereClassClass() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, qc2);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        q1.addToSelect(qc2);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE (a1_.ID = a2_.ID) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNotClassClass() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.NOT_EQUALS, qc2);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        q1.addToSelect(qc2);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereNegClassClass() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, qc2);
-        cc1.setNegated(true);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addFrom(qc2);
-        q1.addToSelect(qc1);
-        q1.addToSelect(qc2);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.ID AS a2_ID, a2_.addressId AS a2_addressId, a2_.name AS a2_name, a2_.vatNumber AS a2_vatNumber FROM Company AS a1_, Company AS a2_ WHERE ( NOT (a1_.ID = a2_.ID)) ORDER BY a1_.ID, a2_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
-    }
-
-    public void testWhereClassObject() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        Company obj = new Company();
-        ClassDescriptor cld = dr.getDescriptorFor(Company.class);
-        FieldDescriptor fld = cld.getFieldDescriptorByName("id");
-        fld.getPersistentField().set(obj, new Integer(2345));
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addToSelect(qc1);
-        q1.setConstraint(cc1);
-        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q1, dr, 0, 10000);
-        assertEquals("SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.ID = 2345) ORDER BY a1_.ID LIMIT 10000 OFFSET 0", s1.getStatement());
     }
 
 }
