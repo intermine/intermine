@@ -29,6 +29,52 @@ public class CastorModelOutputTest extends TestCase
         mo = new CastorModelOutput(model, file);
     }
 
+    public void testProcess() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
+
+        File path = new File("./");
+        CastorModelOutput mo = new CastorModelOutput(model, path);
+        mo.process();
+
+        File file = new File("./castor_xml_model.xml");
+        FileReader reader = null;
+        try {
+            reader = new FileReader(file);
+
+        } catch (FileNotFoundException e) {
+            fail("file (" + file.getName() + ") not created successfully");
+        } finally {
+            file.delete();
+        }
+
+        try {
+            char[] text = new char[1024];
+            reader.read(text);
+
+            String expected = "<!DOCTYPE databases PUBLIC \"-//EXOLAB/Castor Mapping DTD Version 1.0//EN\" "
+            + "\"http://castor.exolab.org/mapping.dtd\">" + ENDL + "<mapping>" + ENDL
+            + INDENT + "<include href=\"castor_xml_include.xml\"/>" + ENDL + ENDL
+            + INDENT + "<class name=\"Class1\" auto-complete=\"true\" identity=\"id\">" + ENDL
+            + INDENT + INDENT + "<field name=\"id\" type=\"java.lang.Integer\">" + ENDL
+            + INDENT + INDENT + INDENT + "<bind-xml name=\"_xml-id\" type=\"string\" node=\"attribute\"/>" + ENDL
+            + INDENT + INDENT + "</field>" + ENDL
+            + INDENT + "</class>" + ENDL + ENDL
+            + INDENT + "<class name=\"Class2\" auto-complete=\"true\" identity=\"id\">" + ENDL
+            + INDENT + INDENT + "<field name=\"id\" type=\"java.lang.Integer\">" + ENDL
+            + INDENT + INDENT + INDENT + "<bind-xml name=\"_xml-id\" type=\"string\" node=\"attribute\"/>" + ENDL
+            + INDENT + INDENT + "</field>" + ENDL
+            + INDENT + "</class>" + ENDL + ENDL
+            + "</mapping>" + ENDL;
+
+            // trim text then add a single ENDL
+            assertEquals(expected, (new String(text)).trim() + ENDL);
+        } finally {
+            file.delete();
+        }
+    }
+
     public void testGenerateModel() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new HashSet(), new HashSet(), new HashSet());
