@@ -32,21 +32,16 @@
     <tiles:get name="header"/>
     <tiles:get name="menu"/>
     <div id="pagecontent">
-      
+      <%-- Render messages --%>
       <tiles:get name="errorMessages"/>
-      
+      <%-- Construct help page key --%>
       <fmt:message key="${pageName}.help" var="help"/>
-      <c:if test="${empty help}">
-        &nbsp;
-      </c:if>
       <c:if test="${!empty help}">
         <c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"/>
       </c:if>
-      
       <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
         <tiles:get name="body"/>
       </im:box>
-
     </div>
     
     <c:if test="${IS_SUPERUSER}">
