@@ -10,7 +10,7 @@
 <para>The FlyMine Query Optimiser can be used by itself in a number of
 ways, depending on your needs. All options require the
 <filename>flymine.jar</filename> file to be in your classpath. See the
-<ulink url="building">download/building instructions</ulink> for
+<ulink url="../building">download/building instructions</ulink> for
 details of how to obtain this file.</para>
 
 <sect1>
