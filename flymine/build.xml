@@ -1,6 +1,6 @@
 <project name="flymine" default="help" basedir=".">
   <description>FlyMine build file</description>
-
+  
   <!-- SETUP TARGETS -->
 
   <!-- Property setup targets -->
@@ -699,7 +699,7 @@
        merge-uniprot-model, merge-mage-model">
     <antcall target="create-genomic-model"/>
   </target>
- 
+  
   <!-- create genomic InterMine model from currently merged OWL ontologies -->
   <target name="create-genomic-model" depends="prepare-genomic-model, prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-owl" inheritRefs="true">
@@ -1233,7 +1233,7 @@
     <analyse-db database="db.common-src-items"/>
   </target>
 
- <target name="translate-psi" depends="prepare-build-model, compile-psi-java">
+  <target name="translate-psi" depends="prepare-build-model, compile-psi-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1241,7 +1241,7 @@
       <property name="objectstore.name" value="os.psi-tgt-items-std"/>
     </ant>
     <java classname="org.flymine.dataconversion.PsiDataTranslator" fork="true"
-      maxmemory="800m"  failonerror="true">
+          maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="os.psi-src-items" />
       <arg value="osw.psi-tgt-items" />
@@ -1249,28 +1249,28 @@
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
     </java>
-
+    
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
-
+    
     <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
-       <classpath refid="models.class.path"/>
+      <classpath refid="models.class.path"/>
     </taskdef>
-
+    
     <analyse-db database="db.common-tgt-items"/>
   </target>
-
+  
   <target name="load-psi">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
+    
     <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi" ignoreDuplicates="true"/>
   </target>
-
+  
   <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi, translate-psi, load-psi"/>
 
   <!-- TAXONOMY PIPELINE -->
@@ -1395,14 +1395,14 @@
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
+    
     <load-mage integrationWriter="integration.production" source="os.mage-translated" sourceName="mage" ignoreDuplicates="false"/>
   </target>
-
+  
   <target name="build-mage-production" depends="retrieve-mage, translate-mage, load-mage"/>
-
+  
   <!-- PROTEIN_STRUCTURE PIPELINE -->
-
+  
   <target name="retrieve-protein_structure" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1410,29 +1410,59 @@
       <property name="db.name" value="db.common-src-items"/>
       <property name="objectstore.name" value="os.protein_structure-src-items-std"/>
     </ant>
-    
     <taskdef name="convert-xml" classname="org.intermine.task.XmlConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    
     <convert-xml schema="${model}/protein_structure/protein_structure.xsd"
                  model="protein_structure"
                  osName="osw.protein_structure-src-items">
       <fileset dir="/shared/data/kenji" includes="**/*.xml"/>
     </convert-xml>
-    
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-src-items"/>
     </ant>
-    
     <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    
     <analyse-db database="db.common-src-items"/>
   </target>
+  
+  <target name="translate-protein_structure" depends="prepare-build-model, compile-protein_structure-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.protein_structure-tgt-items-std"/>
+    </ant>
+    <java classname="org.flymine.dataconversion.ProteinStructureDataTranslator" fork="true" maxmemory="800m" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.protein_structure-src-items" />
+      <arg value="osw.protein_structure-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <analyse-db database="db.common-tgt-items"/>
+  </target>
+  
+  <target name="load-protein_structure">
+    <taskdef name="load-protein_structure" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <load-protein_structure integrationWriter="integration.production" source="os.protein_structure-translated" sourceName="protein_structure" ignoreDuplicates="true"/>
+  </target>
+  
+  <target name="build-protein_structure-production" depends="retrieve-protein_structure, translate-protein_structure, load-protein_structure"/>
   
   <!-- GO PIPELINE -->
 
@@ -1648,6 +1678,7 @@
   <target name="production-build" depends="create-production-model, compile-genomic-model, jar-genomic,
                                            build-db-production,create-indexes-production,
                                            load-static,
+
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
                                            build-psi-production,
@@ -1865,6 +1896,14 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
+
+  <target name="compile-protein_structure-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="protein_structure"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
 
   <target name="psi-test" depends="prepare-test, prepare-build-model, build-db-fulldatatest">
     <copy file="${model}/psi/psi.xsd" toDir="${build.model}/psi"/>
