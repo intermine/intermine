@@ -29,6 +29,7 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.web.Constants;
 
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the
@@ -38,8 +39,6 @@ import org.flymine.objectstore.query.ResultsRow;
  */
 public class ChangeResultsSizeAction extends LookupDispatchAction
 {
-    protected static final String DISPLAYABLERESULTS_NAME = "resultsTable";
-
     /**
      * Change the page size of the DisplayableResults
      *
@@ -56,7 +55,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
         ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
 
         dr.setPageSize(Integer.parseInt(changeResultsForm.getPageSize()));
@@ -125,9 +124,9 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
 
         HttpSession session = request.getSession();
 
-        Map savedBags = (Map) session.getAttribute(ResultsViewController.SAVEDBAGS_NAME);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         Map savedBagsInverse =
-            (Map) session.getAttribute(ResultsViewController.SAVEDBAGSINVERSE_NAME);
+            (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         Results results = (Results) session.getAttribute("results");
         String[] selectedObjects = changeResultsForm.getSelectedObjects();
 
