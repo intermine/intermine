@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsInfo;
 
 /**
  * Displayable section of a Results object, containing various
@@ -39,7 +41,7 @@ public class DisplayableResults
         this.results = results;
 
         // Add some blank column configurations
-        Iterator columnIter = results.getQuery().getSelect().iterator();
+        Iterator columnIter = results.getColumnAliases().iterator();
         while (columnIter.hasNext()) {
             columnIter.next();
             columns.add(new Column());
@@ -86,8 +88,9 @@ public class DisplayableResults
      * Get the end row of this table
      *
      * @return the end row
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public int getEnd() {
+    public int getEnd() throws ObjectStoreException {
         int size = getSize();
         if (this.end >= size) {
             this.end = size - 1;
@@ -118,18 +121,20 @@ public class DisplayableResults
      * NOTE: this may be approximate
      *
      * @return the size of the underlying results object
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public int getSize() {
-        return results.size();
+    public int getSize() throws ObjectStoreException {
+        return results.getInfo().getRows();
     }
 
     /**
      * Gets whether or not the size is an estimate
      *
      * @return true if size is an estimate
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public boolean isSizeEstimate() {
-        return true;
+    public boolean isSizeEstimate() throws ObjectStoreException {
+        return !(results.getInfo().getStatus() == ResultsInfo.SIZE);
     }
 
 }
