@@ -438,6 +438,7 @@
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
           <exclude name="org/flymine/web/*" />
+          <exclude name="org/flymine/objectstore/webservice/*" />
         </fileset>
       </batchtest>
     </junit>
@@ -457,8 +458,24 @@
       </batchtest>
     </junit>
 
-    <antcall target="test-report"/>
     <antcall target="remove-webapp"/>
+    <antcall target="test-report"/>
+  </target>
+
+  <target name="test-webservice" depends="compile-test, build-db-testmodel, build-testable-webservice, release-webservice"
+          description="perform JUnit tests on web service" >
+   <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+      <classpath refid="webapptest.class.path"/>
+      <formatter type="xml" />
+      <batchtest fork="no" todir="${results.junit}">
+        <fileset dir="${build.test}">
+         <include name="org/flymine/objectstore/webservice/**/*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <antcall target="remove-webservice"/>
+    <antcall target="test-report"/>
   </target>
 
   <!-- force all the unit tests to be redone -->
@@ -676,7 +693,7 @@
 
   <!-- The FlyMine webservice -->
 
-  <target name="build-webservice" depends="prepare,jar"
+  <target name="build-webservice" depends="prepare,prepare-dist,jar"
           description="Build the FlyMine webservice application">
 
     <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
@@ -691,6 +708,28 @@
       <lib dir="${dist}">
         <include name="flymine*.jar" />
       </lib>
+    </war>
+  </target>
+
+  <target name="build-testable-webservice" depends="prepare,prepare-dist,compile-test,jar,jar-testmodel"
+          description="Build the FlyMine webservice including the test classes and libraries">
+    <!-- Add test classes and libraries to war file -->
+    <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
+      <webinf dir="${resources}/webapps/webservice">
+        <exclude name="web.xml" />
+      </webinf>
+      <lib dir="${lib}">
+        <patternset refid="lib.common" />
+        <patternset refid="lib.antlr" />
+        <patternset refid="lib.webapp.webservice" />
+        <patternset refid="lib.webapptest" />
+      </lib>
+      <lib dir="${dist}">
+        <include name="flymine*.jar" />
+      </lib>
+      <classes dir="${build.test}">
+        <include name="**/*.class"/>
+      </classes>
     </war>
   </target>
 
