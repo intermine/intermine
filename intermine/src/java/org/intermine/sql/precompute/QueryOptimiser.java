@@ -10,7 +10,25 @@ package org.intermine.sql.precompute;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
+
 import org.intermine.sql.Database;
 import org.intermine.sql.query.Query;
 import org.intermine.sql.query.AbstractTable;
@@ -29,20 +47,6 @@ import org.intermine.sql.query.Table;
 import org.intermine.util.ConsistentSet;
 import org.intermine.util.MappingUtil;
 import org.intermine.util.StringUtil;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * A static class providing the code to optimise a query, given a database (presumably with a table
@@ -55,6 +59,14 @@ public class QueryOptimiser
 {
     private static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
     private static final int REPORT_INTERVAL = 10000;
+    /** Normal operation - no logging */
+    public static final String MODE_NORMAL = "MODE_NORMAL";
+    /** Normal operation, plus logging to stdout */
+    public static final String MODE_VERBOSE = "MODE_VERBOSE";
+    /** Logs all generated queries to the stdout, without explaining */
+    public static final String MODE_VERBOSE_LIST = "MODE_VERBOSE_LIST";
+    /** Summarises all generated queries to the stdout, without explaining */
+    public static final String MODE_VERBOSE_SUMMARY = "MODE_VERBOSE_SUMMARY";
 
     private static final String ALIAS_PREFIX = "P";
     private static int callCount = 0;
@@ -70,6 +82,23 @@ public class QueryOptimiser
      */
     public static String optimise(String query, Database database) throws SQLException {
         return optimise(query, null, database, null).getBestQueryString();
+    }
+
+    private static ThreadLocal doLogging = new ThreadLocal();
+
+    /**
+     * Allows the caller to tell the optimiser to print log messages to the stdout. This operation
+     * only applies to the current Thread.
+     *
+     * @param mode MODE_NORMAL, MODE_VERBOSE, or MODE_VERBOSE_NOEXPLAIN
+     */
+    public static void setMode(String mode) {
+        doLogging.set(mode);
+    }
+
+    private static boolean isVerbose() {
+        return (MODE_VERBOSE == doLogging.get()) || (MODE_VERBOSE_LIST == doLogging.get())
+            || (MODE_VERBOSE_SUMMARY == doLogging.get());
     }
 
     /**
@@ -112,6 +141,9 @@ public class QueryOptimiser
                     + precompLookup);
         }
         if (ptm.getPrecomputedTables().isEmpty()) {
+            if (isVerbose()) {
+                System.out .println("QueryOptimiser: no Precomputed Tables");
+            }
             return new BestQueryFallback(null, query);
         }
         callCount++;
@@ -131,13 +163,25 @@ public class QueryOptimiser
         if (cachedQuery != null) {
             LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                     + " ms - cache hit: " + query);
+            if (isVerbose()) {
+                System.out .println("QueryOptimiser: cache hit");
+            }
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
         try {
             if (database != null) {
                 explainConnection = database.getConnection();
             }
-            BestQueryExplainer bestQuery = new BestQueryExplainer(explainConnection);
+            BestQuery bestQuery;
+            if (MODE_VERBOSE == doLogging.get()) {
+                bestQuery = new BestQueryExplainerVerbose(explainConnection);
+            } else if (MODE_VERBOSE_LIST == doLogging.get()) {
+                bestQuery = new BestQueryLogger(true);
+            } else if (MODE_VERBOSE_SUMMARY == doLogging.get()) {
+                bestQuery = new BestQueryLogger(false);
+            } else {
+                bestQuery = new BestQueryExplainer(explainConnection);
+            }
             String optimisedQuery = null;
             int expectedRows = 0;
             int expectedTime = 0;
@@ -145,7 +189,6 @@ public class QueryOptimiser
                 // First, add the original string to the BestQuery object, so it has an opportunity
                 // to say optimisation is not worth it, before parsing.
                 bestQuery.add(query);
-                expectedTime = (int) bestQuery.getBestExplainResult().getComplete();
                 if (originalQuery == null) {
                     originalQuery = new Query(query);
                 }
@@ -155,14 +198,25 @@ public class QueryOptimiser
                 recursiveOptimise(precomputedTables, originalQuery, bestQuery, originalQuery);
             } catch (BestQueryException e) {
                 // Ignore - bestQuery decided to cut short the search
-                expectedTime = (int) bestQuery.getBestExplainResult().getComplete();
+                if (bestQuery instanceof BestQueryExplainer) {
+                    expectedTime = (int) ((BestQueryExplainer) bestQuery).getBestExplainResult()
+                        .getComplete();
+                }
+                if (isVerbose()) {
+                    System.out .println("QueryOptimiser: bailing out early: " + e);
+                }
             } finally {
+                if (isVerbose()) {
+                    System.out .println("Optimised SQL: " + bestQuery.getBestQueryString());
+                } else {
+                    bestQuery.getBestQueryString();
+                }
                 if (database != null) {
                     explainConnection.close();
                 }
             }
             optimisedQuery = bestQuery.getBestQueryString();
-            expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
+            //expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
             // HACKHACKHACK this following line turns the cache into a really dumb one:
             expectedRows = Integer.MAX_VALUE;
             // Add optimised query to the cache here.
@@ -171,17 +225,24 @@ public class QueryOptimiser
                     + limitOffsetQuery.getLimit());
             cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
                     limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
-            LOG.debug("Optimising " + expectedTime + " ms query took "
-                    + ((new Date()).getTime() - start)
+            LOG.debug("Optimising " + (expectedTime == 0 ? "" : expectedTime + " ms ")
+                    + "query took " + ((new Date()).getTime() - start)
                     + (parseTime == 0 ? " ms without parsing " : " ms including "
                         + (parseTime - start) + " ms for parse ") + "- cache miss: " + query);
             return bestQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
-            LOG.warn("Exception: " + e.toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.close();
+            LOG.warn("Exception: " + sw.toString());
         }
         LOG.debug("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
+        if (isVerbose()) {
+            System.out .println("QueryOptimiser: unparsable query");
+        }
         return new BestQueryFallback(originalQuery, query);
     }
 
@@ -310,7 +371,7 @@ public class QueryOptimiser
             Query originalQuery) {
         Query precompQuery = precomputedTable.getQuery();
         if (!precompQuery.getGroupBy().isEmpty()) {
-            return mergeGroupBy(precomputedTable, query);
+            return mergeGroupBy(precomputedTable, query, originalQuery);
         }
         Set retval = new HashSet();
 
@@ -338,7 +399,7 @@ public class QueryOptimiser
             // TODO: query.getFrom() is really the wrong thing to use. To be extra-specially
             // paranoid about realiasing things so they clash, this should be the getFrom() of the
             // original Query, before any precomputed tables have been inserted.
-            remapAliases(mapping, query.getFrom());
+            remapAliases(mapping, originalQuery.getFrom());
 
             // Compare the WHERE constraints.
             Set whereConstraintEqualsSet = new HashSet();
@@ -517,9 +578,11 @@ public class QueryOptimiser
      *
      * @param precomputedTable the PrecomputedTable to use in the new Query
      * @param query the Query object to try to fit the PrecomputedTable into
+     * @param originalQuery the original query object
      * @return a Set containing maybe a new Query object with the PrecomputedTable inserted
      */
-    protected static Set mergeGroupBy(PrecomputedTable precomputedTable, Query query) {
+    protected static Set mergeGroupBy(PrecomputedTable precomputedTable, Query query,
+            Query originalQuery) {
         Query precompQuery = precomputedTable.getQuery();
         Set retval = new HashSet();
         if (precompQuery.getGroupBy().size() != query.getGroupBy().size()) {
@@ -550,7 +613,7 @@ public class QueryOptimiser
             // TODO: query.getFrom() is really the wrong thing to use. To be extra-specially
             // paranoid about realiasing things so they clash, this should be the getFrom() of the
             // original Query, before any precomputed tables have been inserted.
-            remapAliases(mapping, query.getFrom());
+            remapAliases(mapping, originalQuery.getFrom());
 
             // The constraints must all be exactly the same as those in the Query.
             // TODO: This should probably be replaced by
@@ -739,7 +802,6 @@ public class QueryOptimiser
         }
         return matchingTable;
     }
-
 
     /**
      * Compares two AbstractTables using their equalsIgnoreAlias() method.

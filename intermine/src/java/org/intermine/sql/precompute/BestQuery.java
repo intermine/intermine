@@ -44,13 +44,15 @@ public abstract class BestQuery
      * Gets the best Query found so far
      *
      * @return the best Query, or null if no Queries added to this object
+     * @throws SQLException if error occurs in the underlying database
      */
-    public abstract Query getBestQuery();
+    public abstract Query getBestQuery() throws SQLException;
 
     /**
      * Gets the best query String found so far
      *
      * @return the best Query, or null if no Queries added to this object
+     * @throws SQLException if error occurs in the underlying database
      */
-    public abstract String getBestQueryString();
+    public abstract String getBestQueryString() throws SQLException;
 }

@@ -10,11 +10,15 @@ package org.intermine.sql.precompute;
  *
  */
 
-import org.intermine.sql.query.Query;
-import org.intermine.sql.query.ExplainResult;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.intermine.sql.query.ExplainResult;
+import org.intermine.sql.query.Query;
 
 /**
  * Gets the database to explain each Query added and keeps hold of the best one so far.
@@ -24,10 +28,12 @@ import java.util.Date;
 public class BestQueryExplainer extends BestQuery
 {
     private static final int OVERHEAD = 300;
+    protected static final int ALWAYS_EXPLAIN_TABLES = 3;
+    protected static final int NEVER_EXPLAIN_TABLES = 8;
 
-    protected Query bestQuery;
-    protected String bestQueryString;
-    protected ExplainResult bestExplainResult;
+    protected List candidates = new ArrayList();
+    protected int candidateTables = Integer.MAX_VALUE;
+    protected Candidate bestCandidate;
     protected Connection con;
     protected Date start = new Date();
 
@@ -60,30 +66,8 @@ public class BestQueryExplainer extends BestQuery
      */
     public void add(Query q) throws BestQueryException, SQLException {
 
-        ExplainResult er = ExplainResult.getInstance(q, con);
-
-        // store if this is the first we have seen
-        if ((bestQuery == null) && (bestQueryString == null)) {
-            bestQuery = q;
-            bestQueryString = null;
-            bestExplainResult = er;
-        }
-
-        // store if better than anything we have already seen
-        if (er.getTime() < bestExplainResult.getTime()) {
-            bestQuery = q;
-            bestQueryString = null;
-            bestExplainResult = er;
-        }
-
-        // throw BestQueryException if the bestQuery is will take less time to run than the
-        // amount of time we have spent optimising so far
-        Date now = new Date();
-        long elapsed = now.getTime() - start.getTime();
-        if (bestExplainResult.getTime() < (elapsed + OVERHEAD)) {
-            throw (new BestQueryException("Explain time: " + bestExplainResult.getTime()
-                        + ", elapsed time: " + elapsed));
-        }
+        Candidate c = new Candidate(q);
+        add(c);
     }
 
     /**
@@ -95,54 +79,256 @@ public class BestQueryExplainer extends BestQuery
      */
     public void add(String q) throws BestQueryException, SQLException {
 
-        ExplainResult er = ExplainResult.getInstance(q, con);
+        Candidate c = new Candidate(q);
+        add(c);
+    }
 
-        // store if this is the first we have seen
-        if ((bestQuery == null) && (bestQueryString == null)) {
-            bestQuery = null;
-            bestQueryString = q;
-            bestExplainResult = er;
+    /**
+     * Allows a Candidate to be added to this tracker.
+     *
+     * @param c the Candidate
+     * @throws BestQueryException if the current best Candidate is the best we think we are going to
+     * get
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    protected void add(Candidate c) throws BestQueryException, SQLException {
+        int tableCount = c.getTableCount();
+        boolean doExplain = (tableCount <= ALWAYS_EXPLAIN_TABLES);
+        if (tableCount < candidateTables) {
+            candidateTables = tableCount;
+            candidates.clear();
+            if (tableCount < NEVER_EXPLAIN_TABLES) {
+                doExplain = true;
+            }
+        }
+        if (doExplain) {
+            if (c.betterThan(bestCandidate)) {
+                bestCandidate = c;
+            }
+        } else {
+            didNotExplain(c);
+            if (tableCount == candidateTables) {
+                candidates.add(c);
+            }
         }
 
-        // store if better than anything we have already seen
-        if (er.getTime() < bestExplainResult.getTime()) {
-            bestQuery = null;
-            bestQueryString = q;
-            bestExplainResult = er;
+        if (bestCandidate != null) {
+            // throw BestQueryException if the bestQuery will take less time to run than the
+            // amount of time we have spent optimising so far
+            long elapsed = System.currentTimeMillis() - start.getTime();
+            if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
+                throw (new BestQueryException("Explain time: "
+                            + bestCandidate.getExplain().getTime() + ", elapsed time: "
+                            + elapsed));
+            }
         }
+    }
 
-        // throw BestQueryException if the bestQuery is will take less time to run than the
-        // amount of time we have spent optimising so far
-        Date elapsed = new Date();
-        if (bestExplainResult.getTime() < (elapsed.getTime() + OVERHEAD - start.getTime())) {
-            throw (new BestQueryException());
-        }
+    /**
+     * Internal method that creates an ExplainResult. It can be overridden by subclasses.
+     *
+     * @param q the Query
+     * @return an ExplainResult
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    protected ExplainResult getExplainResult(Query q) throws SQLException {
+        return ExplainResult.getInstance(q, con);
+    }
+
+    /**
+     * Internal method that creates an ExplainResult. It can be overridden by subclasses.
+     *
+     * @param q the query String
+     * @return an ExplainResult
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    protected ExplainResult getExplainResult(String q) throws SQLException {
+        return ExplainResult.getInstance(q, con);
+    }
+
+    /**
+     * Internal method that records that a query was not explained. It can be overridden by
+     * subclasses.
+     *
+     * @param c the Candidate
+     */
+    protected void didNotExplain(Candidate c) {
     }
 
     /**
      * Gets the best Query found so far
      *
      * @return the best Query, or null if no Queries added to this object
+     * @throws SQLException if an error occurs in the underlying database
      */
-    public Query getBestQuery() {
-        return (bestQueryString == null ? bestQuery : new Query(bestQueryString));
+    public Query getBestQuery() throws SQLException {
+        Candidate best = getBest();
+        if (best == null) {
+            return null;
+        }
+        return best.getQuery();
     }
 
     /**
-     * Gets the best query String found so far
+     * Gets the best query String found so far.
      *
      * @return the best Query, or null if no Queries added to this object
+     * @throws SQLException if an error occurs in the underlying database
      */
-    public String getBestQueryString() {
-        return (bestQuery == null ? bestQueryString : bestQuery.getSQLString());
+    public String getBestQueryString() throws SQLException {
+        Candidate best = getBest();
+        if (best == null) {
+            return null;
+        }
+        return best.getQueryString();
     }
 
     /**
-     * Gets the ExpainResult for the best Query found so far
+     * Gets the ExpainResult for the best Query found so far.
      *
      * @return the best ExplainResult, or null if no Queries added to this object
+     * @throws SQLException if an error occurs in the underlying database
      */
-    public ExplainResult getBestExplainResult() {
-        return bestExplainResult;
+    public ExplainResult getBestExplainResult() throws SQLException {
+        Candidate best = getBest();
+        if (best == null) {
+            return null;
+        }
+        return best.getExplain();
+    }
+
+    /**
+     * Gets the best Candidate found so far.
+     *
+     * @return the best Candidate
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    protected Candidate getBest() throws SQLException {
+        Iterator iter = candidates.iterator();
+        while (iter.hasNext()) {
+            if (bestCandidate != null) {
+                long elapsed = System.currentTimeMillis() - start.getTime();
+                if (bestCandidate.getExplain().getTime() < (elapsed + OVERHEAD)) {
+                    return bestCandidate;
+                }
+            }
+            Candidate c = (Candidate) iter.next();
+            iter.remove();
+            if (c.betterThan(bestCandidate)) {
+                bestCandidate = c;
+            }
+        }
+        return bestCandidate;
+    }
+
+    /**
+     * A class representing a candidate optimised query.
+     */
+    protected class Candidate
+    {
+        protected String queryString;
+        protected Query query;
+        protected ExplainResult explainResult = null;
+        protected int tableCount;
+
+        /**
+         * Constructor.
+         *
+         * @param queryString an SQL query String
+         */
+        public Candidate(String queryString) {
+            this.queryString = queryString;
+            this.query = null;
+            String afterFrom = queryString.substring(queryString.indexOf(" FROM ") + 6);
+            int wherePos = afterFrom.indexOf(" WHERE ");
+            if (wherePos == -1) {
+                wherePos = afterFrom.indexOf(" GROUP BY ");
+            }
+            if (wherePos == -1) {
+                wherePos = afterFrom.indexOf(" HAVING ");
+            }
+            if (wherePos == -1) {
+                wherePos = afterFrom.indexOf(" ORDER BY ");
+            }
+            afterFrom = afterFrom.substring(0, wherePos);
+            tableCount = 1;
+            int commaPos = afterFrom.indexOf(", ");
+            while (commaPos != -1) {
+                afterFrom = afterFrom.substring(commaPos + 2);
+                tableCount++;
+                commaPos = afterFrom.indexOf(", ");
+            }
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param query a Query
+         */
+        public Candidate(Query query) {
+            this.query = query;
+            this.queryString = null;
+            tableCount = query.getFrom().size();
+        }
+
+        /**
+         * Returns the number of tables in this query.
+         *
+         * @return an int
+         */
+        public int getTableCount() {
+            return tableCount;
+        }
+
+        /**
+         * Returns the String query of this Candidate, converting from Query if necessary.
+         *
+         * @return a String
+         */
+        public String getQueryString() {
+            return (queryString == null ? query.getSQLString() : queryString);
+        }
+
+        /**
+         * Returns the Query of this Candidate, converting from a String if necessary.
+         *
+         * @return a Query
+         */
+        public Query getQuery() {
+            return (query == null ? new Query(queryString) : query);
+        }
+
+        /**
+         * Returns the ExplainResult of this Candidate, fetching the data if not already present.
+         *
+         * @return an ExplainResult
+         * @throws SQLException if an error occurs in the underlying database
+         */
+        public ExplainResult getExplain() throws SQLException {
+            if (explainResult == null) {
+                explainResult = (query == null ? getExplainResult(queryString)
+                        : getExplainResult(query));
+            }
+            return explainResult;
+        }
+
+        /**
+         * Returns true if the argument is slower than this, or if the argument is null.
+         *
+         * @param c a Candidate
+         * @return a boolean
+         * @throws SQLException if an error occurs in the underlying database
+         */
+        public boolean betterThan(Candidate c) throws SQLException {
+            return (c == null ? true : getExplain().getTime() < c.getExplain().getTime());
+        }
+
+        /**
+         * @see Object#toString
+         */
+        public String toString() {
+            return "tables = " + tableCount + (query != null ? ", query = " + query
+                    : ", queryString = " + queryString);
+        }
     }
 }
