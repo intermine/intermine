@@ -245,9 +245,7 @@ public class OJBModelOutput extends ModelOutput
                 .append(col.getReferencedClassDescriptor().getClassName())
                 .append("\" collection-class=\"")
                 .append(col.getCollectionClass().getName())
-                .append("\" proxy=\"true\"/>" + ENDL)
-                .append(INDENT + INDENT)
-                .append("</collection-descriptor>" + ENDL);
+                .append("\" proxy=\"true\"/>" + ENDL);
         }
 
 
