@@ -65,6 +65,10 @@
     <put name="body" value="feedback.jsp"/>
     <put name="pageName" value="feedback"/>
   </definition>
+  <definition name="confirm.page" extends="layout.template">
+    <put name="body" value="confirm.jsp"/>
+    <put name="pageName" value="confirm"/>
+  </definition>
   <definition name="classChooser.page" extends="layout.template">
     <put name="body" value="queryClassSelect.jsp"/>
     <put name="pageName" value="classChooser"/>
