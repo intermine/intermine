@@ -149,4 +149,30 @@ public class SimpleConstraintTest extends TestCase {
 
     }
 
+    public void testEquals() throws Exception {
+        SimpleConstraint c1 = new SimpleConstraint(qeNum1, SimpleConstraint.EQUALS, qeNum1);
+        SimpleConstraint c2 = new SimpleConstraint(qeNum1, SimpleConstraint.EQUALS, qeNum1);
+        SimpleConstraint c3 = new SimpleConstraint(qeStr1, SimpleConstraint.EQUALS, qeStr2);
+        SimpleConstraint c4 = new SimpleConstraint(qeStr1, SimpleConstraint.EQUALS, qeStr2, true);
+
+        assertEquals(c1, c1);
+        assertEquals(c1, c2);
+        assertTrue("Expected c1 to not equal c3:", !c1.equals(c3));
+        assertTrue("Expected c3 to not equal c4:", !c3.equals(c4));
+    }
+
+    public void testHashCode() throws Exception {
+        SimpleConstraint c1 = new SimpleConstraint(qeNum1, SimpleConstraint.EQUALS, qeNum1);
+        SimpleConstraint c2 = new SimpleConstraint(qeNum1, SimpleConstraint.EQUALS, qeNum1);
+        SimpleConstraint c3 = new SimpleConstraint(qeStr1, SimpleConstraint.EQUALS, qeStr2);
+        SimpleConstraint c4 = new SimpleConstraint(qeStr1, SimpleConstraint.EQUALS, qeStr2, true);
+
+        assertEquals(c1.hashCode(), c1.hashCode());
+        assertEquals(c1.hashCode(), c2.hashCode());
+        assertTrue("Expected c1 hashCode() to not equal c3.hashCode():", c1.hashCode() != c3.hashCode());
+        assertTrue("Expected c3.hashCode() to not equal c4.hashCode():", c3.hashCode() != c4.hashCode());
+
+    }
+
+
 }
