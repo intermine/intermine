@@ -85,13 +85,14 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("name", "CG1234");
 
-        assertEquals(2, handler.getItems().size());
+        assertEquals(3, handler.getItems().size());
 
         Iterator itemIter = handler.getItems().iterator();
         itemIter.next(); // Synonym
         Item actualGene = (Item) itemIter.next();
 
         assertEquals(expectedGene, actualGene);
+
     }
 
 
@@ -112,7 +113,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("identifier", "CG31667");
         expectedGene.setAttribute("organismDbId", "FBgn0051667");
 
-        assertEquals(4, handler.getItems().size());
+        assertEquals(5, handler.getItems().size());
 
         Item actualGene = null;
         iter = handler.getItems().iterator();
@@ -124,6 +125,23 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
             }
         }
         assertEquals(expectedGene, actualGene);
+
+
+
+        Item expectedRelation = itemFactory.makeItem(null, tgtNs + "SimpleRelation", "");
+        expectedRelation.setReference("object", expectedGene.getIdentifier());
+        expectedRelation.setReference("subject", feature.getIdentifier());
+
+        Item actualRelation = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "SimpleRelation")) {
+                actualRelation = item;
+                expectedRelation.setIdentifier(actualRelation.getIdentifier());
+            }
+        }
+        assertEquals(expectedRelation, actualRelation);
     }
 
 
