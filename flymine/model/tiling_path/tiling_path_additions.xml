@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.PCRProduct" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <reference name="forwardPrimer" referenced-type="org.flymine.model.genomic.ForwardPrimer"/>
+  <reference name="reversePrimer" referenced-type="org.flymine.model.genomic.ReversePrimer"/>
+</class>
+<class name="org.flymine.model.genomic.Primer" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <reference name="pcrProduct" referenced-type="org.flymine.model.genomic.PCRProduct"/>
+</class>
+<class name="org.flymine.model.genomic.ForwardPrimer" extends="org.flymine.model.genomic.Primer" is-interface="true">
+</class>
+<class name="org.flymine.model.genomic.ReversePrimer" extends="org.flymine.model.genomic.Primer" is-interface="true">
+</class>
+</classes>
