@@ -201,6 +201,11 @@ public class DynamicUtil
             classNames.addAll(StringUtil.tokenize(implementations));
         }
 
+        if (classNames.size() == 0) {
+            throw new RuntimeException("attempted to create an object without specifying any "
+                                       + "classes or interfaces");
+        }
+
         try {
             return DynamicUtil.createObject(convertToClasses(classNames));
         } catch (ClassNotFoundException e) {
