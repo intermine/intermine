@@ -128,10 +128,14 @@ public class InitialiserPlugin implements PlugIn
         }
         InputStream modelPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/web.properties");
-        try {
-            webProperties.load(modelPropertiesStream);
-        } catch (Exception e) {
-            throw new ServletException("Unable to find web.properties", e);
+        if (modelPropertiesStream == null) {
+            // there are no model specific properties
+        } else {
+            try {
+                webProperties.load(modelPropertiesStream);
+            } catch (Exception e) {
+                throw new ServletException("Unable to find web.properties", e);
+            }
         }
         servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
     }
@@ -216,7 +220,7 @@ public class InitialiserPlugin implements PlugIn
                     }
                 }
             }
-
+            
             servletContext.setAttribute(Constants.DISPLAYERS, displayersMap);
         } catch (ClassNotFoundException e) {
             throw new ServletException("Unable to process webconfig", e);
