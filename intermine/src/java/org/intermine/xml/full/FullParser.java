@@ -129,7 +129,12 @@ public class FullParser
             Iterator attrIter = item.getAttributes().iterator();
             while (attrIter.hasNext()) {
                 Attribute attr = (Attribute) attrIter.next();
-                Class attrClass = TypeUtil.getFieldInfo(obj.getClass(), attr.getName()).getType();
+                TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
+                if (info == null) {
+                    throw new IllegalArgumentException("Field " + attr.getName()
+                            + " not found in " + DynamicUtil.decomposeClass(obj.getClass()));
+                }
+                Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
                     TypeUtil.setFieldValue(obj, attr.getName(),
                                            TypeUtil.stringToObject(attrClass, attr.getValue()));

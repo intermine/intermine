@@ -57,7 +57,7 @@ public class XmlBinding
         try {
             return FullParser.realiseObjects(FullParser.parse(is), model);
         } catch (Exception e) {
-            throw new InterMineException("Error during unmarshalling: " + e);
+            throw new InterMineException("Error during unmarshalling", e);
         }
     }
 }
