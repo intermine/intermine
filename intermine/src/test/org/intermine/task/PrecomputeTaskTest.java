@@ -83,9 +83,15 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
         task.precomputeAll(os, oss);
         
-        assertEquals(14, task.queries.size());
+        assertEquals(20, task.queries.size());
 
         String[] expectedQueries = new String[] {
+            "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.name AS a6_, a5_.id AS a7_, a8_, a8_.salary AS a9_, a8_.title AS a10_, a8_.age AS a11_, a8_.end AS a12_, a8_.fullTime AS a13_, a8_.name AS a14_, a8_.id AS a15_, a8_.seniority AS a16_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a5_, org.intermine.model.testmodel.CEO AS a8_ WHERE (a1_.departments CONTAINS a5_ AND a5_.employees CONTAINS a8_) ORDER BY a1_, a5_, a8_",
+            "SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.CEO AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_) ORDER BY a1_, a2_, a3_",
+            "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.name AS a6_, a5_.id AS a7_, a8_, a8_.age AS a9_, a8_.end AS a10_, a8_.fullTime AS a11_, a8_.name AS a12_, a8_.id AS a13_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a5_, org.intermine.model.testmodel.Employee AS a8_ WHERE (a1_.departments CONTAINS a5_ AND a5_.employees CONTAINS a8_) ORDER BY a1_, a5_, a8_",
+            "SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_) ORDER BY a1_, a2_, a3_",
+            "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.name AS a6_, a5_.id AS a7_, a8_, a8_.title AS a9_, a8_.age AS a10_, a8_.end AS a11_, a8_.fullTime AS a12_, a8_.name AS a13_, a8_.id AS a14_, a8_.seniority AS a15_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a5_, org.intermine.model.testmodel.Manager AS a8_ WHERE (a1_.departments CONTAINS a5_ AND a5_.employees CONTAINS a8_) ORDER BY a1_, a5_, a8_",
+            "SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Manager AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_) ORDER BY a1_, a2_, a3_",
             "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.name AS a6_, a5_.id AS a7_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a5_ WHERE a1_.departments CONTAINS a5_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.departments CONTAINS a2_ ORDER BY a1_",
             "SELECT DISTINCT a1_, a1_.vatNumber AS a2_, a1_.name AS a3_, a1_.id AS a4_, a5_, a5_.address AS a6_, a5_.id AS a7_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Address AS a5_ WHERE a1_.address CONTAINS a5_ ORDER BY a1_",
