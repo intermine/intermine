@@ -49,15 +49,20 @@
              <p>Source file: <xsl:value-of select="$source"/></p>
              <p>Menu path: <xsl:call-template name="menupath"/></p> -->
              
-        <div id="nav">
-          <xsl:call-template name="sidebar"/>
-        </div>
-        
+
         <div id="pagecontent">
-          <xsl:apply-templates/>
+          <table id="static-table" width="100%">
+            <tr>
+              <td cellpadding="0" valign="top" id="sidebar" width="15%">
+                <xsl:call-template name="sidebar"/>
+              </td>
+              <td cellpadding="0" valign="top" id="static-content" width="85%">
+                <xsl:apply-templates/>
+              </td>
+            </tr>
+          </table>
         </div>
-        
-        
+
         <div id="footer">
           <div id="address"><a href="mailto:info%5Bat%5Dflymine.org">info[at]flymine.org</a> - Tel: +44 (0)1223 333377 - University of Cambridge - UK</div>
           <div id="wellcome"><xsl:apply-templates mode="copy-no-ns" select="$brand/funding/node()"/></div>
