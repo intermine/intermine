@@ -18,6 +18,7 @@ import java.io.IOException;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.metadata.Model;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
@@ -57,7 +58,7 @@ public class DBRetrieverTask extends Task
 
     /**
      * Set the objectstore name
-     * @param model the model name
+     * @param osName the model name
      */
     public void setOsName(String osName) {
         this.osName = osName;
@@ -91,7 +92,8 @@ public class DBRetrieverTask extends Task
             Database db = DatabaseFactory.getDatabase(database);
             Model m = Model.getInstanceByName(model);
             writer = new BufferedWriter(new FileWriter (destFile));
-            new DBConvertor(m, db, new ObjectStoreItemProcessor(org.flymine.objectstore.ObjectStoreWriterFactory.getObjectStoreWriter(osName))).process();
+            new DBConvertor(m, db, new ObjectStoreItemProcessor(ObjectStoreWriterFactory
+                                          .getObjectStoreWriter(osName))).process();
             //new ChadoConvertor(m, db, new XmlItemProcessor(writer)).process();
         } catch (Exception e) {
             throw new BuildException(e);
