@@ -1666,7 +1666,8 @@
       <reference torefid="file.names" refid="lib.flymine"/>
     </ant>
 
-    <copy todir="${build.tmp}"
+    <filter token="SITE_PREFIX" value="${www.location}"/>
+    <copy todir="${build.tmp}" filtering="true"
           file="${resources}/webapp/flymine/global.web.properties" 
           overwrite="true" verbose="true"/>
     <patternset id="flymine-global-web-properties-patternset">
