@@ -232,7 +232,7 @@ sub get_server_equivalent
 
     chomp($serverroot);
 
-    if ($serverroot =~ m/^:ext:([a-z0-9\.]+):?(.*)/) {
+    if ($serverroot =~ m/^:ext:([a-z0-9\-\.]+):?(.*)/) {
 	$cvsserver = $1;
 	$cvsroot=$2;
     }
