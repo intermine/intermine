@@ -12,7 +12,10 @@
 
       <schedule interval="300" intervaltype="relative">
         <!-- The regular build attempt -->
-        <ant buildfile="./flymine-cc.xml" target="cleanbuild" multiple="1"/>
+        <ant buildfile="./flymine-cc.xml" target="cleanbuild" multiple="1">
+          <JVMArg arg="-XX:MaxPermSize=256M"/>
+          <JVMArg arg="-Xmx1200M"/>
+      </ant>
       </schedule>
 
       <log dir="/shared/log/buildlog" encoding="ISO-8859-1">
@@ -26,7 +29,7 @@
           returnaddress="flymine@flymine.org"
           defaultsuffix="@flymine.org"
           spamwhilebroken="false"
-          buildresultsurl="http://www1.flymine.org:8080/cruisecontrol/buildresults">
+          buildresultsurl="http://www.flymine.org/autobuild">
           <always address="andy@flymine.org"/>
           <failure address="andy@flymine.org"/>
         </email>
