@@ -47,6 +47,7 @@
   <property name="results"  location="results"/>
   <property name="results.junit"  location="${results}/junit"/>
   <property name="results.checkstyle"  location="${results}/checkstyle"/>
+  <property name="results.antdoc" location="${results}/antdoc"/>
 
   <!-- distributable directories -->
   <property name="dist"  location="dist"/>
@@ -130,6 +131,7 @@
     <mkdir dir="${results}"/>
     <mkdir dir="${results.junit}"/>
     <mkdir dir="${results.checkstyle}"/>
+    <mkdir dir="${results.antdoc}"/>
 
     <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
     <copy todir="${build.resources}">
@@ -471,6 +473,18 @@
 
   <!-- insert the ace data into the database -->
    <target name="insert-acedb-data" depends="build-db-acedb, compile-acedb">
+    <taskdef
+          name="insert-ace-data"
+          classname="org.flymine.task.InsertAceDataTask">
+      <classpath refid="acedb.class.path"/>
+    </taskdef>
+
+    <insert-ace-data integrationWriter="integration.acedb" user="${acedb.user}" password="${acedb.password}" host="${acedb.host}" port="${acedb.port}">
+      <classpath refid="acedb.class.path"/>
+    </insert-ace-data>
+  </target>
+
+  <target name="insert-only-acedb-data">
     <taskdef
           name="insert-ace-data"
           classname="org.flymine.task.InsertAceDataTask">
@@ -919,7 +933,7 @@
 
    <target name="ant-doc"> 
      <AntDoc
-	destination="antdoc"
+	destination="${results.antdoc}"
 	buildfile="${ant.file}"
       />
     </target>
