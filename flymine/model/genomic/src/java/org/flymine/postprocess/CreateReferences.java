@@ -442,11 +442,12 @@ public class CreateReferences
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Gene thisGene = (Gene) rr.get(0);
-            Protein thisProtein = (Protein) rr.get(1);
-            Annotation thisAnnotation = (Annotation) rr.get(2);
+            Annotation thisAnnotation = (Annotation) rr.get(1);
 
             Annotation tempAnnotation =
                 (Annotation) PostProcessUtil.cloneInterMineObject(thisAnnotation);
+            // generate a new ID
+            tempAnnotation.setId(null);
             tempAnnotation.setSubject(thisGene);
             osw.store(tempAnnotation);
 
@@ -480,7 +481,6 @@ public class CreateReferences
 
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
-        q.addToSelect(qcProtein);
 
         QueryClass qcAnnotation = new QueryClass(Annotation.class);
         q.addFrom(qcAnnotation);
@@ -500,7 +500,8 @@ public class CreateReferences
             new QueryCollectionReference(qcProtein, "annotations");
         ContainsConstraint protAnnConstraint =
             new ContainsConstraint(protAnnRef, ConstraintOp.CONTAINS, qcAnnotation);
-
+        cs.addConstraint(protAnnConstraint);
+        
         QueryObjectReference annPropertyRef =
             new QueryObjectReference(qcAnnotation, "property");
         ContainsConstraint annPropertyConstraint =
