@@ -28,6 +28,7 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.web.Constants;
 
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the
@@ -37,8 +38,6 @@ import org.flymine.objectstore.query.ResultsRow;
  */
 public class ChangeResultsAction extends DispatchAction
 {
-    protected static final String DISPLAYABLERESULTS_NAME = "resultsTable";
-
     /**
      * Change to the next results page
      *
@@ -55,7 +54,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         int prevStart = dr.getStart();
         int pageSize = dr.getPageSize();
@@ -81,7 +80,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         int prevStart = dr.getStart();
         int pageSize = dr.getPageSize();
@@ -112,7 +111,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
         dr.setStart(0);
 
         return mapping.findForward("results");
@@ -134,7 +133,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         int pageSize = dr.getPageSize();
 
@@ -167,7 +166,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
@@ -196,7 +195,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
@@ -226,7 +225,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
@@ -255,7 +254,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
@@ -283,7 +282,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         Query q = dr.getResults().getQuery();
 
@@ -326,7 +325,7 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
 
         Results results = dr.getResults();
         String column = request.getParameter("columnIndex");

@@ -23,6 +23,7 @@ import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.DynamicUtil;
+import org.flymine.web.Constants;
 
 public class ChangeResultsActionTest extends MockStrutsTestCase
 {
@@ -55,7 +56,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "next");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         dr.setStart(0);
 
         actionPerform();
@@ -70,7 +71,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "previous");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         dr.setStart(10);
 
         actionPerform();
@@ -85,7 +86,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "first");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         dr.setStart(10);
 
         actionPerform();
@@ -100,7 +101,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "last");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         dr.setStart(0);
 
         actionPerform();
@@ -116,7 +117,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("columnAlias", "c");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         dr.getColumn("c").setVisible(true);
         assertTrue(dr.getColumn("c").isVisible());
 
@@ -133,7 +134,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("columnAlias", "c");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
         dr.getColumn("c").setVisible(false);
         assertFalse(dr.getColumn("c").isVisible());
 
@@ -156,7 +157,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("columnAlias", "d");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
         assertEquals(dr.getColumn("c"), dr.getColumns().get(0));
 
@@ -173,7 +174,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("columnAlias", "c");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
         assertEquals(dr.getColumn("c"), dr.getColumns().get(0));
 
@@ -189,7 +190,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "orderByColumn");
         addRequestParameter("columnAlias", "d");
 
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
         Query q = results.getQuery();
         QueryNode qnc = (QueryNode) q.getReverseAliases().get("c");
@@ -215,7 +216,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("rowIndex", "0");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute("resultsTable", dr);
+        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
         Object obj = ((ResultsRow) results.get(0)).get(1);
 
