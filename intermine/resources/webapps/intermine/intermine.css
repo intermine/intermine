@@ -32,8 +32,12 @@ a:hover {
 .subtitle {
   font-size: large;
 }
-.errorMessages { 
+.errors { 
   color: red;
+}
+.messages { 
+  color: black;
+  font-weight: bold;
 }
 
 table.query, table.results {
