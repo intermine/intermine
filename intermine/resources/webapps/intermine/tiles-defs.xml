@@ -36,7 +36,7 @@
   <definition name="tree.page" extends="layout.template">
     <put name="body" value="tree.tile"/>
   </definition>
-  
+
   <definition name="queryMain.tile" path="/queryMain.jsp">
     <put name="savedBagView" value="savedBagView.jsp"/>
     <put name="savedQueryView" value="savedQueryView.jsp"/>
@@ -45,23 +45,25 @@
     <put name="queryBuild" value="queryBuild.tile"/>
     <put name="queryClassSelect" value="queryClassSelect.tile"/>
   </definition>
-  
+
   <definition name="fqlQueryMain.tile" path="/fqlQueryMain.jsp">
     <put name="savedBagView" value="savedBagView.jsp"/>
     <put name="savedQueryView" value="savedQueryView.jsp"/>
     <put name="restartQuery" value="restartQuery.jsp"/>
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>
-    <put name="fqlQuery" value="fqlquery.jsp"/>
+    <put name="fqlQuery" value="fqlQuery.tile"/>
   </definition>
-  
+
   <definition name="queryErrorMessage.tile" path="queryErrorMessage.jsp"/>
-  
+
   <definition name="queryClassSelect.tile" path="/queryClassSelect.jsp"/>
-  
+
   <definition name="queryBuild.tile" path="/queryBuild.jsp" controllerUrl="/initQueryBuild.do"/>
-  
+
+  <definition name="fqlQuery.tile" path="/fqlquery.jsp" controllerUrl="/initFqlQuery.do"/>
+
   <definition name="queryView.tile" path="/queryView.jsp" controllerUrl="/initQueryView.do"/>
-  
+
   <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
     <put name="saveQuery" value="saveQuery.tile"/>
   </definition>
