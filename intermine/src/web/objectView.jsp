@@ -20,37 +20,30 @@
       </nobr>
       <br/>
       <c:forEach var="cld" items="${leafClds}">
+        <c:set var="cld" value="${cld}" scope="request"/>
+        <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
+        <c:set var="object" value="${object}" scope="request"/>
+        <c:set var="primaryKeyFields" value="${primaryKeyFields}" scope="request"/>
         <c:choose>
-          <c:when test="${!empty webconfig.types[cld.name].shortDisplayers}">
-            <c:forEach items="${webconfig.types[cld.name].shortDisplayers}" var="displayer">
-              <c:set var="cld" value="${cld}" scope="request"/>
+
+          <c:when test="${viewType == 'summary' &&
+                        !empty DISPLAYERS[cld.name].shortDisplayers}">
+            <c:forEach items="${DISPLAYERS[cld.name].shortDisplayers}" var="displayer">
               <tiles:insert beanName="displayer" beanProperty="src"/>
             </c:forEach>
           </c:when>
+
+          <c:when test="${viewType == 'detail' &&
+                        !empty DISPLAYERS[cld.name].longDisplayers}">
+            <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
+              <tiles:insert beanName="displayer" beanProperty="src"/>
+            </c:forEach>
+          </c:when>
+
           <c:otherwise>
-            <c:set var="cld" value="${cld}" scope="request"/>
-            <c:choose>
-              <c:when test="${!empty primaryKeyFields}"> 
-                <c:forEach items="${cld.allFieldDescriptors}" var="fieldDescriptor">
-                  <c:set var="fieldName" value="${fieldDescriptor.name}"/>
-                  <c:if test="${primaryKeyFields[fieldName] == fieldName}">
-                    <div>     
-                      <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
-                      <c:set var="object" value="${object}" scope="request"/>
-                      <tiles:insert name="/oneField.jsp"/>
-                    </div>
-                  </c:if>
-                </c:forEach>
-              </c:when>
-              <c:otherwise>
-                <c:forEach items="${cld.allFieldDescriptors}" var="fieldDescriptor">
-                  <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
-                  <c:set var="object" value="${object}" scope="request"/>
-                  <tiles:insert name="/oneField.jsp"/>
-                </c:forEach>
-              </c:otherwise>
-            </c:choose>
+            <tiles:insert name="/objectFields.jsp"/>
           </c:otherwise>
+          
         </c:choose>
       </c:forEach>
     </c:otherwise>
