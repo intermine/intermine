@@ -12,6 +12,7 @@ package org.flymine.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
@@ -46,7 +48,7 @@ import org.intermine.util.XmlUtil;
  */
 public class PsiDataTranslator extends DataTranslator
 {
-    private Item db, swissProt, psiMi;
+    private Item db, swissProt;
     private Map pubs = new HashMap();
 
     /**
@@ -63,12 +65,9 @@ public class PsiDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
         swissProt = createItem("Database");
         swissProt.addAttribute(new Attribute("title", "Swiss-Prot"));
-        psiMi = createItem("Ontology");
-        psiMi.addAttribute(new Attribute("title", "PSI-MI"));
         db = createItem("Database");
 
         tgtItemWriter.store(ItemHelper.convert(swissProt));
-        tgtItemWriter.store(ItemHelper.convert(psiMi));
 
         super.translate(tgtItemWriter);
     }
@@ -127,11 +126,10 @@ public class PsiDataTranslator extends DataTranslator
                             }
                         }
                     }
-                    Item interaction = createProteinInteraction(srcItem);
+                    Item interaction = createProteinInteraction(srcItem, result);
                     addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
-                    // protein needs swissprot id set and synonym to swissprot
                     Item xref = getReference(srcItem, "xref");
                     Item dbXref = getReference(xref, "primaryRef");
                     if (dbXref.getAttribute("db").getValue().equals("uniprot")) {
@@ -162,7 +160,6 @@ public class PsiDataTranslator extends DataTranslator
                         tgtItem.addAttribute(new Attribute("identifier",
                                                            primaryRef.getAttribute("id")
                                                            .getValue()));
-                        tgtItem.addReference(new Reference("ontology", psiMi.getIdentifier()));
                     }
                 }
                 result.add(tgtItem);
@@ -171,14 +168,18 @@ public class PsiDataTranslator extends DataTranslator
         return result;
     }
     
-    private Item createProteinInteraction(Item intElType) throws ObjectStoreException {
+    private Item createProteinInteraction(Item intElType, Collection result)
+        throws ObjectStoreException {
         Item interaction = createItem("ProteinInteraction");
         Item participants = getReference(intElType, "participantList");
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
+            Item participant = (Item) i.next();
+            if (getReference(participant, "featureList") != null) {
+                createProteinRegion(participant, result);
+            }
             // protein has role attribute which is either prey or bait
-            Item protein = (Item) i.next();
-            interaction.addReference(new Reference(protein.getAttribute("role").getValue(),
-                                                   protein.getReference("proteinInteractorRef")
+            interaction.addReference(new Reference(participant.getAttribute("role").getValue(),
+                                                   participant.getReference("proteinInteractorRef")
                                                    .getRefId()));
         }
         // object = prey, subject = bait
@@ -189,6 +190,48 @@ public class PsiDataTranslator extends DataTranslator
         return interaction;
     }
     
+    private void createProteinRegion(Item participant, Collection result)
+        throws ObjectStoreException {
+        Item featureList = getReference(participant, "featureList");
+        Item feature = (Item) getCollection(featureList, "features").next();
+        Item featureDescription = getReference(feature, "featureDescription");
+        Item xref = getReference(featureDescription, "xref");
+        Item primaryRef = getReference(xref, "primaryRef");
+        if ("MI:0117".equals(primaryRef.getAttribute("id").getValue())) {
+            Item location = getReference(feature, "location");
+            Item tgtProteinRegion = createItem("ProteinRegion");
+            tgtProteinRegion.addReference(new Reference("protein", participant
+                                                        .getReference("proteinInteractorRef")
+                                                        .getRefId()));
+            Item tgtLocation = createItem("Location");
+            tgtLocation.addAttribute(new Attribute("start",
+                                                   getReference(location, "begin")
+                                                   .getAttribute("position").getValue()));
+            tgtLocation.addAttribute(new Attribute("end", getReference(location, "end")
+                                                   .getAttribute("position").getValue()));
+            tgtLocation.addReference(new Reference("object", participant
+                                                   .getReference("proteinInteractorRef")
+                                                   .getRefId()));
+            tgtLocation.addReference(new Reference("subject", tgtProteinRegion.getIdentifier()));
+            
+            tgtLocation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {db.getIdentifier()})));
+            Item tgtTerm = createItem("ProteinInteractionTerm");
+            tgtTerm.addAttribute(new Attribute("identifier",
+                                               primaryRef.getAttribute("id")
+                                               .getValue()));
+            Item tgtAnnotation = createItem("Annotation");
+            tgtAnnotation.addReference(new Reference("property", tgtTerm.getIdentifier()));
+            tgtAnnotation.addReference(new Reference("subject", tgtProteinRegion.getIdentifier()));
+            tgtAnnotation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {db.getIdentifier()})));
+            result.add(tgtProteinRegion);
+            result.add(tgtLocation);
+            result.add(tgtTerm);
+            result.add(tgtAnnotation);
+        }
+    }
+
     // Return the publication for a given experiment, creating it if necessary
     // Note that experiments known not to have a publication are stored in the map with a null pub
     private Item getPub(Item exptType) throws ObjectStoreException {
