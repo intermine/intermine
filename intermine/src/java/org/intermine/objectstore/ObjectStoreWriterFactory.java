@@ -27,7 +27,7 @@ public class ObjectStoreWriterFactory
     /**
      * Return an ObjectStoreWriter configured using properties file
      * @param alias identifier for properties defining integration/writer parameters
-     * @return instance of a concrete IntegrationWriter according to property
+     * @return instance of a concrete ObjectStoreWriter according to property
      * @throws ObjectStoreException if anything goes wrong
      */
 
