@@ -62,8 +62,8 @@ public class TransferSequences
         ObjectStore os = osw.getObjectStore();
         Results results = PostProcessUtil.findLocations(os, Chromosome.class, Contig.class, false);
         results.setBatchSize(500);
-        
-        Iterator resIter = results.iterator();        
+
+        Iterator resIter = results.iterator();
 
         Chromosome currentChr = null;
         char[] currentChrBases = null;
@@ -88,7 +88,7 @@ public class TransferSequences
                 currentChr = chr;
             }
 
-            copySeqArray(currentChrBases, contig.getSequence().getSequence(),
+            copySeqArray(currentChrBases, contig.getSequence().getResidues(),
                          contigOnChrLocation.getStart().intValue(),
                          contigOnChrLocation.getEnd().intValue(),
                          contigOnChrLocation.getStrand().intValue());
@@ -101,7 +101,7 @@ public class TransferSequences
         throws ObjectStoreException {
         Sequence sequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        sequence.setSequence(new String(featureBases));
+        sequence.setResidues(new String(featureBases));
         feature.setSequence(sequence);
         osw.store(feature);
         osw.store(sequence);
@@ -122,7 +122,7 @@ public class TransferSequences
         Results results = PostProcessUtil.findLocations(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
 
-        Iterator resIter = results.iterator();        
+        Iterator resIter = results.iterator();
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -142,7 +142,7 @@ public class TransferSequences
 
             Sequence sequence =
                 (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-            sequence.setSequence(featureSeq);
+            sequence.setResidues(featureSeq);
             feature.setSequence(sequence);
             osw.store(feature);
             osw.store(sequence);
@@ -155,7 +155,7 @@ public class TransferSequences
         throws IllegalSymbolException, IllegalAlphabetException {
         int charsToCopy =
             locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
-        String chromosomeSequenceString = chromosomeSequence.getSequence();
+        String chromosomeSequenceString = chromosomeSequence.getResidues();
         int startPos = locationOnChr.getStart().intValue() - 1;
         int endPos = startPos + charsToCopy;
         String subSeqString = new String(chromosomeSequenceString.substring(startPos, endPos));
@@ -261,7 +261,7 @@ public class TransferSequences
            RankedRelation rankedRelation = (RankedRelation) rr.get(1);
            Exon exon = (Exon) rr.get(2);
            Sequence sequence = (Sequence) rr.get(3);
-           String sequenceString = sequence.getSequence();
+           String sequenceString = sequence.getResidues();
 
            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                if (currentTranscript != null) {
@@ -272,7 +272,7 @@ public class TransferSequences
                currentTranscript = transcript;
            }
 
-           currentTranscriptBases.append(exon.getSequence().getSequence());
+           currentTranscriptBases.append(exon.getSequence().getResidues());
         }
 
         storeNewSequence(currentTranscript, currentTranscriptBases.toString().toCharArray());

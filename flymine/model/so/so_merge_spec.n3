@@ -30,7 +30,7 @@ null:Transcript__genes a owl:ObjectProperty;
 
 :Sequence a owl:Class.
 
-:Sequence__sequence a owl:DatatypeProperty;
+:Sequence__residues a owl:DatatypeProperty;
     rdfs:domain :Sequence;
     rdfs:range xsd:string.
 

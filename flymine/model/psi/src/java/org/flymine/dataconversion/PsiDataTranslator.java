@@ -216,7 +216,7 @@ public class PsiDataTranslator extends DataTranslator
     // tgtItem = Protein
     private Item createSequence(Item srcItem, Item tgtItem) {
         Item seq = createItem(tgtNs + "Sequence", "");
-        seq.addAttribute(new Attribute("sequence", srcItem.getAttribute("sequence").getValue()));
+        seq.addAttribute(new Attribute("residues", srcItem.getAttribute("sequence").getValue()));
         tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
         return seq;
     }
