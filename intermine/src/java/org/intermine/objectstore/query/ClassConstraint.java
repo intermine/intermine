@@ -213,12 +213,12 @@ public class ClassConstraint extends Constraint
     /**
      * Classes are equal to one another
      */
-    public static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
+    protected static final ConstraintOp EQUALS = ConstraintOp.EQUALS;
     
     /**
      * Classes are not equal to one another
      */
-    public static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
+    protected static final ConstraintOp NOT_EQUALS = ConstraintOp.NOT_EQUALS;
 
     protected static final ConstraintOp[] VALID_OPS = new ConstraintOp[] {EQUALS, NOT_EQUALS};
 
