@@ -11,7 +11,7 @@ for i in $FLYMINE/lib/*.jar ; do
     CP=$CP:$i
 done
 
-CP=$CP:build:build/test:build/java:build/model/testmodel:build/model/fulldata
+CP=$CP:build/test:build/java:build/model/testmodel:build/model/fulldata
 
 java -cp $CP org.flymine.objectstore.SetupDataTestCase $*
 
