@@ -81,9 +81,18 @@
       </div>
     </div>
     <br/>
-    <div>
-      <tiles:get name="saveQuery"/>
-    </div>
+    <table border="0" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="left">
+          <tiles:get name="saveQuery"/>
+        </td>
+        <c:if test="${!empty PROFILE.username}">
+          <td align="right">
+            <tiles:get name="createTemplate"/>
+          </td>
+        </c:if>
+      </tr>
+    </table>
   </c:otherwise>
 </c:choose>
 <!-- /view.jsp -->
