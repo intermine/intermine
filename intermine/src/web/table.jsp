@@ -31,7 +31,11 @@
       var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
       var pagesize = document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value;
       var page = ${RESULTS_TABLE.startRow}/pagesize;
-      url += 'page=' + (page).toFixed() + '&size=' + pagesize;
+      url += 'page=' + Math.floor(page) + '&size=' + pagesize;
+      if ('${param.trail}' != '')
+      {
+      	url += '&trail=${param.trail}';
+      }
       document.location.href=url;
     }
     //]]>-->
@@ -89,7 +93,7 @@
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
                   [
-                  <html:link action="/changeResults?method=moveColumnLeft&amp;index=${status.index}"
+                  <html:link action="/changeResults?method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${moveLeftTitle}">
                     <fmt:message key="view.moveLeftSymbol"/>
                   </html:link>
@@ -100,7 +104,7 @@
                     <fmt:param value="${column.name}"/>
                   </fmt:message>
                   [
-                  <html:link action="/changeResults?method=moveColumnRight&amp;index=${status.index}"
+                  <html:link action="/changeResults?method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
                              title="${moveRightTitle}">
                     <fmt:message key="view.moveRightSymbol"/>
                   </html:link>
@@ -115,7 +119,7 @@
                         <fmt:param value="${column.name}"/>
                       </fmt:message>
                       [
-                      <html:link action="/changeResults?method=hideColumn&amp;index=${status.index}"
+                      <html:link action="/changeResults?method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                  title="${hideColumnTitle}">
                         <fmt:message key="results.hideColumn"/>
                       </html:link>
@@ -127,7 +131,7 @@
                       <fmt:param value="${column.name}"/>
                     </fmt:message>
                     [
-                    <html:link action="/changeResults?method=showColumn&amp;index=${status.index}"
+                    <html:link action="/changeResults?method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${showColumnTitle}">
                       <fmt:message key="results.showColumn"/>
                     </html:link>
@@ -212,19 +216,19 @@
         
         <%-- Paging controls --%>
         <c:if test="${!RESULTS_TABLE.firstPage}">
-          <html:link action="/results?page=0&size=${RESULTS_TABLE.pageSize}">
+          <html:link action="/results?page=0&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
             <fmt:message key="results.first"/>
           </html:link>
-          <html:link action="/results?page=${RESULTS_TABLE.page-1}&size=${RESULTS_TABLE.pageSize}">
+          <html:link action="/results?page=${RESULTS_TABLE.page-1}&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
             <fmt:message key="results.previous"/>
           </html:link>
         </c:if>
         <c:if test="${!RESULTS_TABLE.lastPage}">
-          <html:link action="/results?page=${RESULTS_TABLE.page+1}&size=${RESULTS_TABLE.pageSize}">
+          <html:link action="/results?page=${RESULTS_TABLE.page+1}&amp;size=${RESULTS_TABLE.pageSize}&amp;trail=${param.trail}">
             <fmt:message key="results.next"/>
           </html:link>
           <c:if test="${RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
-            <html:link action="/changeResults?method=last">
+            <html:link action="/changeResults?method=last&amp;trail=${param.trail}">
               <fmt:message key="results.last"/>
             </html:link>
           </c:if>
