@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.poi.hssf.usermodel.*;
 
 import org.intermine.web.results.PagedTable;
+import org.intermine.web.results.Column;
 import org.intermine.util.TextFileUtil;
 
 /**
@@ -60,19 +61,39 @@ public class ExportAction extends DispatchAction
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("results");
 
+        List columns = pt.getColumns();
         List rowList = pt.getList();
 
-        for (int i = 0; i < rowList.size(); i++) {
-            List row = (List) rowList.get(i);
-            HSSFRow excelRow = sheet.createRow((short) i);
-            for (int j = 0; j < row.size(); j++) {
-                Object thisObject = row.get(j);
+        for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
+            List row = (List) rowList.get(rowIndex);
+            HSSFRow excelRow = sheet.createRow((short) rowIndex);
+
+            // a count of the columns that we have seen so far are invisble - used to get the
+            // correct columnIndex for the call to createCell()
+            int invisibleColumns = 0;
+                
+            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                Column thisColumn = (Column) columns.get(columnIndex);
+
+                // the column order from PagedTable.getList() isn't necessarily the order that the
+                // user has chosen for the columns
+                int realColumnIndex = thisColumn.getIndex();
+
+                if (!thisColumn.isVisible()) {
+                    invisibleColumns++;
+                    continue;
+                }
+
+                Object thisObject = row.get(realColumnIndex);
+
+                // see comment on invisibleColumns
+                short outputColumnIndex = (short) (columnIndex - invisibleColumns);
 
                 if (thisObject instanceof Number) {
                     float objectAsFloat = ((Number) thisObject).floatValue();
-                    excelRow.createCell((short) j).setCellValue(objectAsFloat);
+                    excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
                 } else {
-                    excelRow.createCell((short) j).setCellValue(thisObject.toString());
+                    excelRow.createCell(outputColumnIndex).setCellValue(thisObject.toString());
                 }
 
             }
@@ -106,7 +127,9 @@ public class ExportAction extends DispatchAction
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getList());
+        
+        TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getList(),
+                                   getOrder(pt), getVisible(pt));
 
         return null;
     }
@@ -134,8 +157,43 @@ public class ExportAction extends DispatchAction
 
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getList());
+        TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), pt.getList(),
+                                            getOrder(pt), getVisible(pt));
 
         return null;
     }
+
+    /**
+     * Return an int array containing the real column indexes to use while writing the given
+     * PagedTable.
+     * @param pt the PagedTable
+     */
+    private static int [] getOrder(PagedTable pt) {
+        List columns = pt.getColumns();
+
+        int [] returnValue = new int [columns.size()];
+
+        for (int i = 0; i < columns.size(); i++) {
+            returnValue[i] = ((Column) columns.get(i)).getIndex();
+        }
+
+        return returnValue;
+    }
+    
+    /**
+     * Return an array containing the visibility of each column in the output
+     * @param pt the PagedTable
+     */
+    private static boolean [] getVisible(PagedTable pt) {
+        List columns = pt.getColumns();
+
+        boolean [] returnValue = new boolean [columns.size()];
+
+        for (int i = 0; i < columns.size(); i++) {
+            returnValue[i] = ((Column) columns.get(i)).isVisible();
+        }
+
+        return returnValue;
+    }
+    
 }
