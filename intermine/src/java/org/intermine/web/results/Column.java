@@ -22,6 +22,21 @@ public class Column
     protected int index;
 
     /**
+     * Update the user-selectable attributes of this column from another
+     *
+     * @param other the column to update from
+     */
+    public void update(Column other) {
+        if (!(this.equals(other))) {
+            throw new IllegalArgumentException("Cannot update a column from one"
+                                               + " with a different alias");
+        }
+        setVisible(other.isVisible());
+    }
+
+
+
+    /**
      * Is the column visible
      *
      * @return true if the column is visible
