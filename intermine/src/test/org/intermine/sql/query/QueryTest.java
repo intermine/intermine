@@ -1030,4 +1030,40 @@ public class QueryTest extends TestCase
         assertEquals("SELECT table.field FROM table WHERE table.field NOT IN (SELECT table2.field2 FROM table2)", q1.getSQLString());
         assertEquals(q2, q1);
     }
+
+    public void testNullStuff() throws Exception {
+        Query q1 = new Query("select t.a from t where t.b is null");
+        Query q2 = new Query("select t.a from t where not t.b is not null");
+        Query q3 = new Query();
+        Table t1 = new Table("t");
+        Field f1 = new Field("a", t1);
+        Field f2 = new Field("b", t1);
+        q3.addSelect(new SelectValue(f1, null));
+        q3.addFrom(t1);
+        q3.addWhere(new Constraint(f2, Constraint.EQ, new Constant("null")));
+        assertEquals("SELECT t.a FROM t WHERE t.b IS NULL", q1.getSQLString());
+        assertEquals("SELECT t.a FROM t WHERE t.b IS NULL", q2.getSQLString());
+        assertEquals("SELECT t.a FROM t WHERE t.b IS NULL", q3.getSQLString());
+        assertEquals(q2, q1);
+        assertEquals(q3, q1);
+        assertEquals(q3, q2);
+    }
+
+    public void testNotNullStuff() throws Exception {
+        Query q1 = new Query("select t.a from t where t.b is not null");
+        Query q2 = new Query("select t.a from t where not t.b is null");
+        Query q3 = new Query();
+        Table t1 = new Table("t");
+        Field f1 = new Field("a", t1);
+        Field f2 = new Field("b", t1);
+        q3.addSelect(new SelectValue(f1, null));
+        q3.addFrom(t1);
+        q3.addWhere(new NotConstraint(new Constraint(f2, Constraint.EQ, new Constant("null"))));
+        assertEquals("SELECT t.a FROM t WHERE t.b IS NOT NULL", q1.getSQLString());
+        assertEquals("SELECT t.a FROM t WHERE t.b IS NOT NULL", q2.getSQLString());
+        assertEquals("SELECT t.a FROM t WHERE t.b IS NOT NULL", q3.getSQLString());
+        assertEquals(q2, q1);
+        assertEquals(q3, q1);
+        assertEquals(q3, q2);
+    }
 }

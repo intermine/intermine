@@ -64,20 +64,24 @@ public class Constraint extends AbstractConstraint
      * @return the String representation
      */
     public String getSQLString() {
-        String op = null;
-        switch (operation) {
-            case EQ:
-                op = " = ";
-                break;
-            case LT:
-                op = " < ";
-                break;
-            case LIKE:
-                op = " LIKE ";
-                break;
+        if (right.getSQLString().equals("null")) {
+            return left.getSQLString() + " IS NULL";
+        } else {
+            String op = null;
+            switch (operation) {
+                case EQ:
+                    op = " = ";
+                    break;
+                case LT:
+                    op = " < ";
+                    break;
+                case LIKE:
+                    op = " LIKE ";
+                    break;
+            }
+
+            return left.getSQLString() + op + right.getSQLString();
         }
-            
-        return left.getSQLString() + op + right.getSQLString();
     }
 
     /**

@@ -33,6 +33,7 @@ tokens {
     SAFE_FUNCTION;
     UNSAFE_FUNCTION;
     CONSTRAINT;
+    NULL_CONSTRAINT;
     NOT_CONSTRAINT;
     AND_CONSTRAINT_SET;
     OR_CONSTRAINT_SET;
@@ -102,7 +103,7 @@ unsafe_function: #( UNSAFE_FUNCTION abstract_value
 field_name: #( FIELD_NAME IDENTIFIER );
 
 abstract_constraint: constraint | not_constraint | and_constraint_set | or_constraint_set
-        | subquery_constraint ;
+        | subquery_constraint | null_constraint;
 
 constraint:
         // (aleft != aleft) becomes NOT (aleft = aright)
@@ -125,6 +126,13 @@ constraint:
             #( CONSTRAINT dleft:abstract_value GT dright:abstract_value )
             { #constraint = #(#[CONSTRAINT], #dright, #[LT, "<"], #dleft); }
         | #( CONSTRAINT abstract_value comparison_op abstract_value )
+    ;
+
+null_constraint:
+        ! ( #(NULL_CONSTRAINT abstract_value "not" ))=> 
+            #( NULL_CONSTRAINT v:abstract_value "not" ) 
+            { #null_constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"], #(#[NULL_CONSTRAINT], #v) ); }
+        | #( NULL_CONSTRAINT abstract_value )
     ;
 
 not_constraint:
@@ -248,9 +256,11 @@ abstract_constraint_list_notor: ( constraint | not_constraint | and_constraint_s
 
 n_abstract_constraint: n_constraint | n_not_constraint
         | n_and_constraint_set | n_or_constraint_set
-        | subquery_constraint ;
+        | subquery_constraint | n_null_constraint;
 
 n_constraint: #( CONSTRAINT abstract_value comparison_op abstract_value ) ;
+
+n_null_constraint: #( NULL_CONSTRAINT abstract_value );
 
 n_not_constraint: #( NOT_CONSTRAINT n_abstract_constraint ) ;
 
@@ -262,11 +272,11 @@ n_abstract_constraint_list: ( n_abstract_constraint )+ ;
 
 n_abstract_constraint_list_notand: ( n_constraint
             | n_not_constraint | n_or_constraint_set
-            | subquery_constraint )+ ;
+            | subquery_constraint | n_null_constraint )+ ;
 
 n_abstract_constraint_list_notor: ( n_constraint
             | n_not_constraint | n_and_constraint_set
-            | subquery_constraint )+ ;
+            | subquery_constraint | n_null_constraint )+ ;
 
 
 
@@ -426,8 +436,10 @@ safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | not_constraint
     ;
 
-constraint: abstract_value comparison_op abstract_value
+constraint: (abstract_value comparison_op)=> abstract_value comparison_op abstract_value
         { #constraint = #([CONSTRAINT, "CONSTRAINT"], #constraint); }
+            | abstract_value null_comparison
+        { #constraint = #([NULL_CONSTRAINT, "NULL_CONSTRAINT"], #constraint); }
     ;
 
 not_constraint: "not"! safe_abstract_constraint
@@ -457,6 +469,7 @@ subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! s
 
 comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | "like";
 
+null_comparison: "is"! "null"! | "is"! "not" "null"!;
 
 
 

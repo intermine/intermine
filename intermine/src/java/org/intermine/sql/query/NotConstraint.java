@@ -37,19 +37,23 @@ public class NotConstraint extends AbstractConstraint
     public String getSQLString() {
         if (con instanceof Constraint) {
             Constraint conC = (Constraint) con;
-            String op = null;
-            switch (conC.operation) {
-                case Constraint.EQ:
-                    op = " != ";
-                    break;
-                case Constraint.LT:
-                    op = " >= ";
-                    break;
-                case Constraint.LIKE:
-                    op = " NOT LIKE ";
-                    break;
+            if (conC.right.getSQLString().equals("null")) {
+                return conC.getLeft().getSQLString() + " IS NOT NULL";
+            } else {
+                String op = null;
+                switch (conC.operation) {
+                    case Constraint.EQ:
+                        op = " != ";
+                        break;
+                    case Constraint.LT:
+                        op = " >= ";
+                        break;
+                    case Constraint.LIKE:
+                        op = " NOT LIKE ";
+                        break;
+                }
+                return conC.left.getSQLString() + op + conC.right.getSQLString();
             }
-            return conC.left.getSQLString() + op + conC.right.getSQLString();
         } else if (con instanceof SubQueryConstraint) {
             SubQueryConstraint conC = (SubQueryConstraint) con;
             if (conC.right.getSelect().size() != 1) {

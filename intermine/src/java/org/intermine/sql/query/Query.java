@@ -904,6 +904,7 @@ public class Query implements SQLStringable
                 case SqlTokenTypes.CONSTRAINT:
                 case SqlTokenTypes.NOT_CONSTRAINT:
                 case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                case SqlTokenTypes.NULL_CONSTRAINT:
                     addWhere(processNewAbstractConstraint(ast));
                     break;
                 default:
@@ -930,6 +931,7 @@ public class Query implements SQLStringable
                 case SqlTokenTypes.CONSTRAINT:
                 case SqlTokenTypes.NOT_CONSTRAINT:
                 case SqlTokenTypes.SUBQUERY_CONSTRAINT:
+                case SqlTokenTypes.NULL_CONSTRAINT:
                     addHaving(processNewAbstractConstraint(ast));
                     break;
                 default:
@@ -971,6 +973,10 @@ public class Query implements SQLStringable
                 subAST = subAST.getNextSibling();
                 AbstractValue right = processNewAbstractValue(subAST);
                 return new Constraint(left, op, right);
+            case SqlTokenTypes.NULL_CONSTRAINT:
+                subAST = ast.getFirstChild();
+                AbstractValue bleft = processNewAbstractValue(subAST);
+                return new Constraint(bleft, Constraint.EQ, new Constant("null"));
             case SqlTokenTypes.NOT_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 AbstractConstraint a = processNewAbstractConstraint(subAST);
