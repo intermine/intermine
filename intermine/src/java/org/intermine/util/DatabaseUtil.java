@@ -63,7 +63,7 @@ public class DatabaseUtil
     public static String getTableName(ClassDescriptor cld) {
         return cld.getUnqualifiedName();
     }
-    
+
     /**
      * Creates a column name for a field descriptor
      *
@@ -82,7 +82,7 @@ public class DatabaseUtil
         }
         return null;
     }
-  
+
     /**
      * Creates an indirection table name for a many-to-many collection descriptor
      *
@@ -94,13 +94,13 @@ public class DatabaseUtil
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");
         }
-        
+
         String cldName = col.getClassDescriptor().getName();
         String name1 = getInwardIndirectionColumnName(col);
         String name2 = getOutwardIndirectionColumnName(col);
         return name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
     }
-    
+
     /**
      * Creates a column name for the "inward" key of a many-to-many collection descriptor
      *
@@ -112,8 +112,8 @@ public class DatabaseUtil
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");
         }
-        
-        return StringUtil.capitalise(col.getName());
+
+        return StringUtil.capitalise(generateSqlCompatibleName(col.getName()));
     }
 
     /**
@@ -127,11 +127,12 @@ public class DatabaseUtil
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");
         }
-        
+
         ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
-        return StringUtil.capitalise(rd == null
-                ? TypeUtil.unqualifiedName(col.getClassDescriptor().getName())
-                : rd.getName());
+        String colName = (rd == null
+            ? TypeUtil.unqualifiedName(col.getClassDescriptor().getName())
+            : rd.getName());
+        return StringUtil.capitalise(generateSqlCompatibleName(colName));
     }
 
     /**
@@ -155,6 +156,9 @@ public class DatabaseUtil
         }
         if (n.equalsIgnoreCase("offset")) {
             return StringUtil.toSameInitialCase("offst", n);
+        }
+        if (n.equalsIgnoreCase("references")) {
+            return StringUtil.toSameInitialCase("refs", n);
         }
         return n;
     }
