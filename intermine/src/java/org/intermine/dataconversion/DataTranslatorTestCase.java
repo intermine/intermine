@@ -11,6 +11,11 @@ package org.intermine.dataconversion;
  */
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import org.intermine.xml.full.Item;
 
 import com.hp.hpl.jena.ontology.OntModel;
 
@@ -34,4 +39,31 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * @return the ontology model
      */
     protected abstract OntModel getOwlModel();
+
+
+
+    /**
+     * Given two sets of Items (a and b) return a set of Items that are present in a
+     * but not b.
+     * @param a a set of Items
+     * @param b a set of Items
+     * @return the set of Items in a but not in b
+     */
+    public Set compareItemSets(Set a, Set b) {
+        Set diff = new HashSet(a);
+        Iterator i = a.iterator();
+        while (i.hasNext()) {
+            Item itemA = (Item) i.next();
+            Iterator j = b.iterator();
+            while (j.hasNext()) {
+                Item itemB = (Item) j.next();
+                if (itemA.equals(itemB)) {
+                    diff.remove(itemA);
+                }
+            }
+        }
+        return diff;
+    }
+
+
 }
