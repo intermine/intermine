@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE form-validation PUBLIC
+          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+          "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+  <global>
+  </global>
+  
+  <formset>
+    <form name="feedbackForm">
+      <field
+        property="name"
+        depends="required">
+        <arg key="feedback.name"/>
+      </field>
+      <field
+        property="email"
+        depends="required,email">
+        <arg key="feedback.email"/>
+      </field>
+      <field
+        property="subject"
+        depends="required">
+        <arg key="feedback.subject"/>
+      </field>
+      <field
+        property="message"
+        depends="required">
+        <arg key="feedback.message"/>
+      </field>
+    </form>
+  </formset>
+  
+</form-validation>
