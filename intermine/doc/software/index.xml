@@ -13,5 +13,6 @@
     <item><ulink url="architecture/query_explain">Explain plans for FlyMine queries</ulink></item>
 	<item><ulink url="architecture/results_prefetch">Prefetch in the Results object</ulink></item>
     <item><ulink url="dataloader/">The dataloader store() method</ulink></item>
+    <item><ulink url="proxies">Reference and collection proxies</ulink></item>
   </section>
 </menu>
