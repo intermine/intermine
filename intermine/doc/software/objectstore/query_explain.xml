@@ -54,7 +54,7 @@
             This is called as required by the client application and is not necessary for normal query execution.
             In future this could be modified to provide an actual computed number of rows.
             An EXPLAIN could check whether COUNT(*) for the query would be fast to run, if so run it and return the actual number of rows.</listitem>
-        <listitem><function>ObjectStoreOjbImpl.execute(query, start, limit)</function> calls <function>Objectstore.explain(query, start, limit)</function> and decides if the query is faster or slower that the given threshold.
+        <listitem><function>ObjectStoreFlyMineImpl.execute(query, start, limit)</function> calls <function>Objectstore.explain(query, start, limit)</function> and decides if the query is faster or slower that the given threshold.
             If the query is too slow an Exception is thrown, otherwise the query runs as normal.
             The threshold is provided in the properties file, so that users could set their own maximum execution time (such that it is less than our global threshold).</listitem>
         </itemizedlist>
@@ -67,16 +67,5 @@
     <para>Our system of paging means that queries will often be run multiple times with different LIMIT and OFFSET parameters.
         It might be thought therefore that it would be beneficial to implement a cache of generated SQL text.
         However, the Query.equals() and Query.hashCode() methods are relatively heavy methods, so looking up an entry in such a cache would take as much time as generating the SQL in the first place.</para>
-  </sect1>
-
-  <sect1>
-    <title>Implementation</title>
-    <para>Diagrammatic overview of implementation (see notes below)</para>
-      <inlinegraphic fileref="ojb/explain_implementation"/>
-    <highlights>NOTES</highlights>
-    <itemizedlist>
-      <listitem><classname>ExplainResult</classname> is already used in <packagename>org.flymine.sql package</packagename>.
-        It can be constructed with the <classname>PreparedStatement</classname> available in <classname>JdbcAccessFlymineImpl</classname>.</listitem>
-    </itemizedlist>
   </sect1>
 </article>
