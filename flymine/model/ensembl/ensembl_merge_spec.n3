@@ -281,8 +281,9 @@ null:transcript__display_xref a owl:ObjectProperty ;
 
 :TRNA__contig a owl:ObjectProperty;
     rdfs:domain :TRNA;
-    rdfs:range :Contig;
-    owl:equivalentProperty e:simple_feature__contig.
+    rdfs:range :Contig.
+# currently cannot have a src Resource equivalent to two tgt resources
+#    owl:equivalentProperty e:simple_feature__contig.
 
 
 :CpGIsland a owl:Class ;
@@ -307,8 +308,9 @@ null:transcript__display_xref a owl:ObjectProperty ;
 
 :CpGIsland__contig a owl:ObjectProperty;
     rdfs:domain :CpGIsland;
-    rdfs:range :Contig;
-    owl:equivalentProperty e:simple_feature__contig.
+    rdfs:range :Contig.
+# currently cannot have a src Resource equivalent to two tgt resources
+#    owl:equivalentProperty e:simple_feature__contig.
 
 null:simple_feature a owl:Class ;
     owl:equivalentClass e:simple_feature .
