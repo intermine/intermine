@@ -11,8 +11,10 @@ then
 fi
 
 server=flymine@download.flymine.org
+apiserver=flymine@www.flymine.org
 tempdir=/tmp/intermine-release-$$
 
+apidir=/var/www/intermine/api
 destdirbase=/chroot/download
 
 if [ $1 == "nightly" ]
@@ -56,6 +58,20 @@ mv intermine-$version/build/tutorial intermine-tutorial-$version
 tar czvf intermine-tutorial-$version.tar.gz intermine-tutorial-$version
 zip -r intermine-tutorial-$version.zip intermine-tutorial-$version
 
+### Release javadoc
+if [ $1 == "nightly" ]
+then
+    cd $tempdir/intermine-$version
+    ant dist-javadoc
+
+    command="ssh $apiserver \"find $apidir | xargs rm -f\""
+    eval $command
+
+    command="scp -r dist/api/* $apiserver:$apidir/"
+    eval $command
+fi
+
+
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
 then
@@ -63,6 +79,7 @@ then
     eval $command
 fi
 
+cd $tempdir
 ### Copy the source archives to the destination
 command="scp *.tar.gz *.zip $server:$destdir/"
 eval $command
