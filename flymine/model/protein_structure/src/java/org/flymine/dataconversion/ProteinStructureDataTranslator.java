@@ -44,12 +44,14 @@ import org.intermine.util.XmlUtil;
 public class ProteinStructureDataTranslator extends DataTranslator
 {
     protected static final String ENDL = System.getProperty("line.separator");
+    proected String dataLocation;
 
     /**
      * @see DataTranslator#DataTranslator
      */
-    public ProteinStructureDataTranslator(ItemReader srcItemReader, OntModel model, String ns) {
+    public ProteinStructureDataTranslator(ItemReader srcItemReader, OntModel model, String ns, String dataLocation) {
         super(srcItemReader, model, ns);
+        this.dataLocation = dataLocation;
     }
 
    /**
@@ -90,7 +92,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             String str;
             StringBuffer atm = new StringBuffer();
             try {
-                String filename = "/shared/data/kenji/data/pfam-3d/model/" + id + "/" + id + ".atm";
+                String filename = dataLocation + id + "/" + id + ".atm";
                 if (new File(filename).exists()) {
                     BufferedReader in = new BufferedReader(new FileReader(filename));
                     while ((str = in.readLine()) != null) {
@@ -150,7 +152,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
         ProteinStructureDataTranslator dt =
-            new ProteinStructureDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace);
+            new ProteinStructureDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace, dataLocation);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();

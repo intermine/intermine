@@ -1443,6 +1443,7 @@
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="/shared/data/kenji/data/pfam-3d/model/"/>
     </java>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
