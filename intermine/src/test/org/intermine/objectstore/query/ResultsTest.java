@@ -375,7 +375,7 @@ public class ResultsTest extends TestCase
         assertEquals(5000, count);
     }
 
-    public void testSizeUsesFewBatchFetches() throws Exception {
+    public void testSizeUsesCount() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
@@ -386,7 +386,27 @@ public class ResultsTest extends TestCase
         res.setBatchSize(1);
         res.batches = Collections.synchronizedMap(new HashMap());
         assertEquals(5000, res.size());
-        assertTrue("Expected size to not need more than 25 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() <= 25);
+        assertTrue("Expected size to not need to fetch batches, but fetched " + res.batches.size() + ".", res.batches.size() == 0);
+    }
+
+    public void testSizeUsesFewBatchFetches() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(5000);
+        
+        Results.LOG.info("testSizeUsesFewBatchFetches starting");
+        Results res = os2.execute(q);
+        res.setBatchSize(1);
+        res.get(3000);
+        try {
+            res.get(6002);
+        } catch (Exception e) {
+            // Expected.
+        }
+        res.batches = Collections.synchronizedMap(new HashMap());
+        assertEquals(5000, res.size());
+        assertTrue("Expected size to need exactly 12 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() == 12);
     }
 
     public void testSizeUsesFewBatchFetches2() throws Exception {
@@ -398,9 +418,15 @@ public class ResultsTest extends TestCase
         Results.LOG.info("testSizeUsesFewBatchFetches2 starting");
         Results res = os2.execute(q);
         res.setBatchSize(30);
+        res.get(3000);
+        try {
+            res.get(6031);
+        } catch (Exception e) {
+            // Expected.
+        }
         res.batches = Collections.synchronizedMap(new HashMap());
         assertEquals(5000, res.size());
-        assertTrue("Expected size to not need more than 12 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() <= 12);
+        assertTrue("Expected size to need exactly 6 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() == 6);
     }
 
     public void testIteratorPropagatesObjectStoreException() throws Exception {
