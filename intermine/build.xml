@@ -1031,12 +1031,12 @@
   </target>
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
-<!--
+
   <property name="os.summary.properties.file" 
             value="${model}/testmodel/resources/objectstoresummary.config.properties" />
   <property name="summarise.output.properties" 
             value="${build.model}/testmodel/objectstoresummary.properties"/>
-
+<!--
   <target name="check-testmodel-objectstore-summary">
     <uptodate property="testmodel-objectstore-is-summarised"
               srcfile="${os.summary.properties.file}"
