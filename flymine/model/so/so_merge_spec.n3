@@ -9,7 +9,5 @@
 
 
 :BioEntity a owl:Class ;
-    owl:equivalentClass so:So .
+    owl:equivalentClass so:SequenceFeatureOntology, so:So.
 
-null:SequenceFeatureOntology a owl:Class ;
-    owl:equivalentClass so:SequenceFeatureOntology .
