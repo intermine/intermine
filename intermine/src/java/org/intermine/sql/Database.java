@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.flymine.util.PropertiesUtil;
 import org.flymine.util.StringUtil;
 
 
@@ -33,6 +32,7 @@ public class Database
      * Constructs a Database object from a set of properties
      *
      * @param props the properties by which this Database is configured
+     * @throws ClassNotFoundException if there is a class in props that cannot be found
      */
     protected Database(Properties props) throws ClassNotFoundException {
         configure(props);
@@ -53,7 +53,7 @@ public class Database
      * @return a Connection to this Database
      * @throws SQLException if there is a problem in the underlying database
      */
-    public Connection getConnection() throws SQLException{
+    public Connection getConnection() throws SQLException {
         return datasource.getConnection();
     }
 
@@ -72,7 +72,6 @@ public class Database
      * Configures a datasource from a Properties object
      *
      * @param props the properties for configuring the Database
-     * @return the configured Database
      * @throws ClassNotFoundException if the class given in the properties file cannot be found
      * @throws IllegalArgumentException if the configuration properties are empty
      * @throws NullPointerException if props is null
@@ -129,16 +128,14 @@ public class Database
                 } catch (Exception e) {
                     continue;
                 }
-            }
-            else if (subAttribute.equals("")) {
+            } else if (subAttribute.equals("")) {
                 // Set this attribute directly
                 try {
                     field.set(this, propertyValue);
                 } catch (Exception e) {
                     continue;
                 }
-            }
-            else {
+            } else {
                 // Set parameters on the attribute
                 Method m = null;
                 // Set this configuration parameter on the DataSource;
@@ -162,10 +159,12 @@ public class Database
                 }
                 try {
                     if (m == null) {
-                        m = field.get(this).getClass().getMethod("set" + StringUtil.capitalise(subAttribute),
-                                                                 new Class[] {int.class});
+                        m = field.get(this).getClass().
+                            getMethod("set" + StringUtil.capitalise(subAttribute),
+                                      new Class[] {int.class});
                         if (m != null) {
-                            m.invoke(field.get(this), new Object [] {Integer.valueOf(propertyValue.toString())});
+                            m.invoke(field.get(this),
+                                     new Object [] {Integer.valueOf(propertyValue.toString())});
                         }
                     }
                 } catch (Exception e) {
