@@ -264,7 +264,7 @@
     <analyse-db database="${db.name}"/>
   </target>
 
-  <target name="retrieve-metadata">
+  <target name="retrieve-metadata" depends="prepare">
     <taskdef name="retrieve-metadata" classname="org.intermine.objectstore.intermine.RetrieveMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
