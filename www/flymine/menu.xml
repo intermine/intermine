@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
+    <item url="/index.xml" title="Home"/>
 <!--    <item url="http://www.flymine.org/query/" title="Query"/> -->
 
     <item url="/doc/index.xml" title="Documentation">
