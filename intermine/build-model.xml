@@ -175,32 +175,23 @@
     <model-output type="java" model="${model.name}" destdir="${build.model.dir}"/>
   </target>
 
-  <target name="generate-torque"
-          description="Generate Torque schema description from a InterMine model file">
-    <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
-      <classpath refid="class.path" />
-    </taskdef>
-
-    <model-output type="interminetorque" model="${model.name}" destdir="${build.model.dir}"/>
-  </target>
-
   <!-- compile java source -->
   <target name="compile-model-java" depends="generate-model-java">
-    <javac destdir="${build.model.dir}" listfiles="yes">
+    <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="class.path"/>
       <src path="${build.model.dir}" />
     </javac>
   </target>
 
   <target name="compile-java" depends="prepare">
-    <javac destdir="${build.model.dir}" listfiles="yes">
+    <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/java"/>
     </javac>
   </target>
 
   <target name="compile-webapp-java" depends="prepare">
-    <javac destdir="${build.model.dir}" listfiles="yes">
+    <javac destdir="${build.model.dir}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/web/java"/>
     </javac>
@@ -212,7 +203,7 @@
         <pathelement path="${build.model.dir}"/>
       </classpath>
     </depend>
-    <javac destdir="${build.model.dir.tmp}/" listfiles="yes">
+    <javac destdir="${build.model.dir.tmp}/" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/test"/>
     </javac>
@@ -259,12 +250,12 @@
 
   <!-- Targets that could be called from another build script -->
   <target name="build-model-from-xml"
-          depends="copy-xml-model, compile-model-java, copy-keydefs, generate-torque"
+          depends="copy-xml-model, compile-model-java, copy-keydefs"
           description="Build a usable model from a InterMine model XML file">
   </target>
 
   <target name="generate-model-from-xml"
-          depends="copy-xml-model, copy-keydefs, generate-torque"
+          depends="copy-xml-model, copy-keydefs"
           description="Generate a InterMine xml model from a xml file"/>
 
   <target name="build-model-from-zargo" depends="generate-model-from-zargo, compile-model-java"
@@ -272,37 +263,37 @@
   </target>
 
   <target name="generate-model-from-zargo"
-          depends="unpack-xmi-model, generate-xmi-model, copy-keydefs, generate-torque"
+          depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
           description="Generate a InterMine xml model from a .zargo file">
   </target>
 
   <target name="build-model-from-xmi"
-          depends="generate-xmi-model, compile-model-java, copy-keydefs, generate-torque"
+          depends="generate-xmi-model, compile-model-java, copy-keydefs"
           description="Build a usable model from a .zargo file">
   </target>
 
   <target name="generate-model-from-xmi"
-          depends="copy-xmi, generate-xmi-model, copy-keydefs, generate-torque"
+          depends="copy-xmi, generate-xmi-model, copy-keydefs"
           description="Generate a InterMine xml model from a xmi file">
   </target>
   
   <target name="build-model-from-xmlschema"
-          depends="generate-xmlschema-model, compile-model-java, copy-keydefs, generate-torque"
+          depends="generate-xmlschema-model, compile-model-java, copy-keydefs"
           description="Build a usable model from an xmlschema">
   </target>
 
   <target name="generate-model-from-xmlschema"
-          depends="generate-xmlschema-model, copy-keydefs, generate-torque"
+          depends="generate-xmlschema-model, copy-keydefs"
           description="Generate a InterMine xml model from an xml schema">
   </target>
   
   <target name="generate-model-from-owl" 
-          depends="generate-owl-model, copy-keydefs, generate-torque"
+          depends="generate-owl-model, copy-keydefs"
           description="Generate a InterMine xml model from an OWL file">
   </target>
   
   <target name="build-model-from-ace" 
-          depends="generate-acedb-model, compile-model-java, copy-keydefs, generate-torque"
+          depends="generate-acedb-model, compile-model-java, copy-keydefs"
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
