@@ -216,13 +216,14 @@ public class CastorModelOutputTest extends TestCase
         assertEquals(expected, mo.generate(atd1));
     }
 
+    // Just test with an object that is not one of the basic types
     public void testGenerateAttributeDescriptorObject() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.util.Date");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.util.Currency");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
-        String expected = INDENT + INDENT + "<field name=\"atd1\" type=\"java.util.Date\">" + ENDL
+        String expected = INDENT + INDENT + "<field name=\"atd1\" type=\"java.util.Currency\">" + ENDL
             + INDENT + INDENT + INDENT + "<bind-xml name=\"atd1\" node=\"element\"/>" + ENDL
             + INDENT + INDENT + "</field>" + ENDL;
 
