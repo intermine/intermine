@@ -43,10 +43,12 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
+
         // print out source items XML - result of running XmlConverter on PSI XML
-        // FileWriter writer = new FileWriter(new File("src.xml"));
-        // writer.write(FullRenderer.render(srcItems));
-        // writer.flush(); writer.close();
+        FileWriter writer = new FileWriter(new File("src.xml"));
+        writer.write(FullRenderer.render(srcItems));
+        writer.flush(); writer.close();
+
         DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
                                                               getOwlModel(), tgtNs);
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
