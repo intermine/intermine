@@ -32,7 +32,6 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
     }
 
     public void executeTest(String type) {
-        
     }
 
     public static Test suite() {
@@ -41,26 +40,17 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
 
     public void testGetCount() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        assertNotNull(os);
-        Properties objectStoreSummaryProperties = new Properties();
-        ClassLoader classLoader = ObjectStoreSummaryTest.class.getClassLoader();
-        InputStream objectStoreSummaryPropertiesStream =
-            classLoader.getResourceAsStream("objectstoresummary.properties");
-        objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
-        ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, new Properties());
         assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
     }
 
     public void testGetFieldValues() throws Exception {
+        Properties config = new Properties();
+        config.put("max.field.value", "10");
+        config.put("org.intermine.model.testmodel.Employee.fields", "age name");
+        config.put("org.intermine.model.testmodel.Manager.fields", "title");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        assertNotNull(os);
-        Properties objectStoreSummaryProperties = new Properties();
-        ClassLoader classLoader = ObjectStoreSummaryTest.class.getClassLoader();
-        InputStream objectStoreSummaryPropertiesStream =
-            classLoader.getResourceAsStream("objectstoresummary.properties");
-        objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
-        ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
-
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
         assertEquals(Arrays.asList(new Object [] {"10", "20", "30", "40", "50", "60"}),
                      oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
 

@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.StringReader;
 import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
@@ -56,7 +55,6 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 
 import org.apache.log4j.Logger;
 
@@ -113,27 +111,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         this.db = db;
         this.schema = schema;
         ShutdownHook.registerObject(new WeakReference(this));
-    }
-
-    /**
-     * Read the Model from the intermine_metadata table of the given Database.
-     * @param db the Database to read from
-     * @return the Model
-     */
-    protected static Model getModelFromDatabase(Database db) {
-        String modelXml = null;
-        try {
-            modelXml = MetadataManager.retrieveModel(db);
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to retrieve model from database", e);
-        }
-        Model model = null;
-        try {
-            model = new InterMineModelParser().process(new StringReader(modelXml));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to parse model retrieved from database");
-        }
-        return model;
     }
 
     /**
@@ -228,13 +205,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
                 Model osModel;
                 try {
-                    osModel = getModelFromDatabase(database);
-                } catch (Exception e) {
-                    try {
-                        osModel = getModelFromClasspath(osAlias, props);
-                    } catch (MetaDataException mde) {
-                        throw new ObjectStoreException("Cannot load model", mde);
-                    }
+                    osModel = getModelFromClasspath(osAlias, props);
+                } catch (MetaDataException e) {
+                    throw new ObjectStoreException("Cannot load model", e);
                 }
                 if (truncatedClassesString != null) {
                     List truncatedClasses = new ArrayList();

@@ -10,8 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -28,6 +26,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
@@ -117,7 +116,8 @@ public class DataLoaderHelper
             descriptorSources = (Map) modelDescriptors.get(model);
             if (descriptorSources == null) {
                 descriptorSources = new HashMap();
-                Properties priorities = loadProperties(model.getName() + "_priorities.properties");
+                Properties priorities = PropertiesUtil.loadProperties(model.getName()
+                                                                      + "_priorities.properties");
                 for (Iterator i = priorities.entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     String descriptorName = (String) entry.getKey();
@@ -196,7 +196,7 @@ public class DataLoaderHelper
         synchronized (sourceKeys) {
             keys = (Properties) sourceKeys.get(source);
             if (keys == null) {
-                keys = loadProperties(source.getName() + "_keys.properties");
+                keys = PropertiesUtil.loadProperties(source.getName() + "_keys.properties");
                 sourceKeys.put(source, keys);
             }
         }
@@ -209,35 +209,14 @@ public class DataLoaderHelper
      * @param model the Model
      * @return the relevant Properties
      */
-    protected static Properties getKeyProperties(Model model) {
+    public static Properties getKeyProperties(Model model) {
         Properties keys = null;
         synchronized (modelKeys) {
             keys = (Properties) modelKeys.get(model);
             if (keys == null) {
-                keys = loadProperties(model.getName() + "_keyDefs.properties");
+                keys = MetadataManager.loadKeyDefinitions(model.getName());
                 modelKeys.put(model, keys);
             }
-        }
-        return keys;
-    }
-
-    /**
-     * Load a specified properties file
-     *
-     * @param filename the filename of the properties file
-     * @return the corresponding Properties object
-     */
-    protected static Properties loadProperties(String filename) {
-        Properties keys = new Properties();
-        try {
-            InputStream is = DataLoaderHelper.class.getClassLoader()
-                .getResourceAsStream(filename);
-            if (is == null) {
-                throw new IllegalArgumentException("Cannot find properties file " + filename);
-            }
-            keys.load(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         return keys;
     }

@@ -222,7 +222,7 @@
     </build-db>
 
     <taskdef name="db-insert-model" 
-             classname="org.intermine.objectstore.intermine.InsertModelTask">
+             classname="org.intermine.objectstore.intermine.StoreMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
     <db-insert-model database="${db.name}" modelName="${model.name}"/>
@@ -235,12 +235,12 @@
     <analyse-db database="${db.name}"/>
   </target>
 
-  <target name="get-model-from-os">
-    <taskdef name="get-model-from-os"
-             classname="org.intermine.objectstore.intermine.GetModelFromObjectStoreTask">
+  <target name="retrieve-metadata">
+    <taskdef name="retrieve-metadata"
+             classname="org.intermine.objectstore.intermine.RetrieveMetadataTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <get-model-from-os osAlias="${objectstore.name}" destFile="${build.model.dir}/${model.name}_model.xml"/>
+    <retrieve-metadata database="${db.name}" destDir="${build.model.dir}"/>
   </target>
 
   <!-- Targets that could be called from another build script -->
@@ -278,8 +278,8 @@
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
-  <target name="build-model-from-os"
-          depends="get-model-from-os, compile-model-java, copy-keydefs"
+  <target name="build-model-from-db"
+          depends="retrieve-metadata, compile-model-java, copy-keydefs"
           description="Build model from description stored in database"/>
 
   <target name="jar" description="create a jar of a model">
@@ -299,7 +299,7 @@
                     attributeIndexes="${create.attribute.indexes}"/>
   </target>
 
-  <target name="add-model-to-webapp" depends="build-model-from-os, compile-java, compile-webapp-java"
+  <target name="add-model-to-webapp" depends="build-model-from-db, compile-java, compile-webapp-java"
           description="Add a model to the webapp">
     <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>   
     <unwar src="${war}" dest="${build.tmp}">   

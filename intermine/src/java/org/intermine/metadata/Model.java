@@ -10,8 +10,6 @@ package org.intermine.metadata;
  *
  */
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,8 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.XmlUtil;
 
@@ -57,20 +53,7 @@ public class Model
      */
     public static Model getInstanceByName(String name) throws MetaDataException {
         if (!models.containsKey(name)) {
-            Model model = null;
-            String filename = name + "_model.xml";
-            InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
-            if (is == null) {
-                throw new IllegalArgumentException("Model '" + name + "' cannot be found ("
-                                                   + filename + ")");
-            }
-            try {
-                ModelParser parser = new InterMineModelParser();
-                model = parser.process(new InputStreamReader(is));
-            } catch (Exception e) {
-                throw new MetaDataException("Error parsing metadata", e);
-            }
-            models.put(name, model);
+            models.put(name, MetadataManager.loadModel(name));
         }
         return (Model) models.get(name);
     }

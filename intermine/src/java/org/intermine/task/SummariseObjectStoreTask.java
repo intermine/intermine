@@ -10,13 +10,11 @@ package org.intermine.task;
  *
  */
 
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummaryGenerator;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreFactory;
 
 import org.apache.tools.ant.BuildException;
@@ -44,7 +42,6 @@ public class SummariseObjectStoreTask extends Task
     /**
      * Set the input file - a Properties file containing the names of the classes and fields to
      * summarise.
-     * @see ObjectStoreSummaryGenerator#getAsProperties
      * @param inputFile the properties file
      */
     public void setInputFile(String inputFile) {
@@ -64,15 +61,11 @@ public class SummariseObjectStoreTask extends Task
      */
     public void execute() throws BuildException {
         try {
-            InputStream is = new FileInputStream(inputFile);
-            Properties configProperties = new Properties();
-            configProperties.load(is);
-            ObjectStore os = ObjectStoreFactory.getObjectStore(alias);
-            Properties outputProperties =
-                ObjectStoreSummaryGenerator.getAsProperties(os, configProperties);
-            FileOutputStream fos = new FileOutputStream(outputFile);
-            outputProperties.store(fos, "automatically generated from " + alias
-                                   + " with settings from " + inputFile);
+            Properties config = new Properties();
+            config.load(new FileInputStream(inputFile));
+            String header = "Automatically generated for " + alias + " using config " + inputFile;
+            new ObjectStoreSummary(ObjectStoreFactory.getObjectStore(alias), config)
+                .toProperties().store(new FileOutputStream(outputFile), header);
         } catch (Exception e) {
             throw new BuildException(e);
         }

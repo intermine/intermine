@@ -12,6 +12,7 @@ package org.intermine.util;
 
 import java.util.Properties;
 import java.util.Enumeration;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -125,5 +126,35 @@ public class PropertiesUtil
         return ret;
     }
 
+    /**
+     * Serialize properties to a string suitable for a subsequent load()
+     * @param props the properties
+     * @return the string
+     * @throws IOException if an error occurs
+     */
+    public static String serialize(Properties props) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        props.store(baos, null);
+        return baos.toString();
+    }
 
+    /**
+     * Load a specified properties file
+     * @param filename the filename of the properties file
+     * @return the corresponding Properties object
+     */
+    public static Properties loadProperties(String filename) {
+        Properties props = new Properties();
+        try {
+            InputStream is = PropertiesUtil.class.getClassLoader()
+                .getResourceAsStream(filename);
+            if (is == null) {
+                return null;
+            }
+            props.load(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return props;
+    }
 }
