@@ -191,13 +191,14 @@
       <srcfiles dir="${build.model}/testmodel" includes="**/*.java"/>
     </uptodate>
   </target>
-  
+
   <!-- generate java source for model -->
   <target name="generate-java-testmodel" depends="testmodel-java.check, model-output-prepare"
           description="generate testmodel classes from xmi"
           if="testmodel-java.outofdate">
     <model-output type="java" model="testmodel" destdir="${build.model}/testmodel"/>
   </target>
+
 
   <!-- compile java source for model -->
   <target name="compile-testmodel" depends="generate-java-testmodel">
@@ -214,6 +215,7 @@
     </uptodate>
   </target>
 
+
   <!-- generate repository descriptor for model -->
   <target name="generate-repository-testmodel" depends="testmodel-repository.check, model-output-prepare"
           if="testmodel-repository.outofdate">
@@ -225,11 +227,10 @@
         <include name="**/repository*"/>
       </fileset>
     </copy>
-    
   </target>
 
   <!-- generate mapping file for castor xml binding -->
-  <target name="generate-castor-xml-mapping" depends="testmodel-repository.check, model-output-prepare"
+  <target name="generate-castorxmlmapping-testmodel" depends="testmodel-repository.check, model-output-prepare"
           if="testmodel-repository.outofdate">
     <model-output type="castor" model="testmodel" destdir="${build.model}/testmodel"/>
 
@@ -242,7 +243,7 @@
 
 
   <!-- generate schema from repository descriptor and use to create database tables -->
-  <target name="build-db-testmodel" depends="generate-repository-testmodel, generate-castor-xml-mapping"
+  <target name="build-db-testmodel" depends="generate-repository-testmodel, generate-castorxmlmapping-testmodel"
           if="testmodel-repository.outofdate">
     <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
       <classpath refid="base.class.path" />
@@ -269,7 +270,41 @@
         </fileset>
     </build-db>
   </target>
-  
+
+
+  <!-- Model generation targets -->
+  <target name="prepare-model-generation" depends="compile-main" >
+     <taskdef
+       name="model-generation"
+       classname="org.flymine.task.ModelGenerationTask">
+       <classpath refid="project.class.path"/>
+     </taskdef>
+  </target>
+
+  <!-- generate test model from xmi -->
+  <target name="generate-testmodel" depends="prepare-model-generation, unpack-testmodel">
+    <model-generation
+      type="xmi"
+      modelname="testmodel"      
+      source="${build}/TestModel_.xmi"
+
+      destdir="${build.resources}"
+    />     
+  </target>
+
+  <!-- generate acedb model from acemodel file -->
+  <target name="generate-acemodel" depends="prepare-model-generation">
+    <model-generation
+      type="acedb"
+      modelname="acedb"
+      source="${src.java}/org/flymine/model/acedb/acemodel.wrm"
+      destdir="${build.resources}"
+   />     
+
+
+  </target>
+
+
   <!-- Unit test targets -->
 
   <!-- compile the tests -->
@@ -633,7 +668,7 @@
 
   </target>
 
-  <target name="jar-testmodel" depends="prepare-dist, compile-testmodel, generate-repository-testmodel, generate-castor-xml-mapping"
+  <target name="jar-testmodel" depends="prepare-dist, compile-testmodel, generate-repository-testmodel, generate-castorxmlmapping-testmodel"
           description="create a jar of the testmodel">
     <jar destfile="${dist}/flymine-testmodel.jar">
       <fileset dir="${build.model}/testmodel" >
@@ -676,6 +711,11 @@
     <tomcat-remove url="${webapp.managerurl}" username="${webapp.manager}" 
             password="${webapp.password}" path="${webapp.path}"/>
   </target>
+  
+
+
+
+
 
   <!-- Cleaning-up targets -->
 
