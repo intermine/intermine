@@ -3,6 +3,8 @@ package org.flymine.modelproduction.xml;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import java.io.InputStream;
+
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
@@ -10,23 +12,39 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.flymine.modelproduction.ModelParser;
 import org.flymine.metadata.*;
 
 /**
- * DefaultHandler extension to support parsing of metadata XML
+ * Parse FlyMine metadata XML to produce a FlyMine Model
  *
  * @author Mark Woodbridge
  */
-public class FlyMineModelParser
+public class FlyMineModelParser implements ModelParser
 {
     protected ModelHandler handler = new ModelHandler();
+
+
+    /**
+     * Read source model information in FlyMine XML format and
+     * construct a FlyMine Model object.
+     *
+     * @param is the source model to parse
+     * @return the FlyMine Model created
+     * @throws Exception if Model not created successfully
+     */
+    public Model process(InputStream is) throws Exception {
+        parse(new InputSource(is));
+        return new Model(handler.modelName, handler.classes);
+    }
+
 
     /**
      * Parse the metadata xml file
      * @param is the inputsource to parse
      * @throws Exception if an error occuring during parsing
      */
-    public void parse(InputSource is) throws Exception {
+    protected void parse(InputSource is) throws Exception {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(true);
@@ -37,22 +55,6 @@ public class FlyMineModelParser
         } catch (SAXException e) {
             throw new Exception("Error parsing XML document: " + e);
         }
-    }
-
-    /**
-     * Return model name
-     * @return model name
-     */
-    public String getModelName() {
-        return handler.modelName;
-    }
-
-    /**
-     * Return set of class descriptors
-     * @return Set of class descriptors
-     */
-    public Set getClasses() {
-        return handler.classes;
     }
 
     /**
