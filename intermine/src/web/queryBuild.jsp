@@ -133,7 +133,12 @@
   <c:if test="${queryClass != null}">
     <br/>
     <html:submit property="action"><fmt:message key="query.run"/></html:submit>
+
+    <c:if test="${EDITING_ALIAS == null && ADVANCED_MODE}">
+      <html:submit property="action">
+        <fmt:message key="query.editfql"/>
+      </html:submit>
+    </c:if>
   </c:if>
-  <html:submit property="action"><fmt:message key="query.editfql"/></html:submit>
 </html:form>
 <!-- /queryBuild.jsp -->
