@@ -26,6 +26,7 @@ import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.sql.Database;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.DatabaseUtil;
+import org.flymine.util.StringUtil;
 import org.flymine.xml.full.Attribute;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Reference;
@@ -96,7 +97,7 @@ public class ChadoConvertor extends DataConvertor
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         ResultSet r = executeQuery(c, "SELECT * FROM " + clsName
                                    + " ORDER BY " + clsName + "_id LIMIT 1");
-        while (r.next()) {
+	while (r.next()) {
             String clsId = r.getObject(clsName + "_id").toString();
             Item item = new Item();
             item.setClassName(cld.getModel().getNameSpace() + clsName);
@@ -110,7 +111,7 @@ public class ChadoConvertor extends DataConvertor
                     attr.setName(fieldName);
                     Object value = r.getObject(fieldName);
                     if (value != null) {
-                        attr.setValue(TypeUtil.objectToString(value));
+                        attr.setValue(StringUtil.duplicateQuotes(TypeUtil.objectToString(value)));
                         item.addAttribute(attr);
                     }
                 } else if (fd.isReference()) {
