@@ -427,6 +427,14 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         assertEquals(e1, os.getObjectByExample(e));
     }
 
+    public void testDataTypes() throws Exception {
+        Types d1 = (Types) data.get("Types1");
+        Types d = new Types();
+        d.setName(d1.getName());
+        assertEquals(d1, os.getObjectByExample(d));
+    }
+
+
     // helper method
 
     protected static List toList(Object[][] o) {
