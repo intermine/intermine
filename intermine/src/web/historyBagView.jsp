@@ -22,7 +22,7 @@
       <c:forEach items="${SAVED_BAGS}" var="savedBag">
         <tr>
           <td align="left">
-            <html:link action="/bagDetails?bagName=${savedBag.key}">
+            <html:link action="/viewBag?bagName=${savedBag.key}">
               <c:out value="${savedBag.key}"/>
             </html:link>
           </td>
