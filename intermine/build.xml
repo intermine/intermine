@@ -958,7 +958,8 @@
       <fileset dir="${dist}" includes="intermine.jar intermine-webapp.jar"/>
     </copy>
     
-    <copy todir="${build.webapp}/intermine/WEB-INF/classes">
+    <filter token="HELP_LOCATION" value="${www.help.location}"/>
+    <copy todir="${build.webapp}/intermine/WEB-INF/classes" filtering="true">
       <fileset dir="${resources}/webapps/intermine">
         <include name="InterMineWebApp*.properties"/>
         <include name="default.intermine.properties"/>
