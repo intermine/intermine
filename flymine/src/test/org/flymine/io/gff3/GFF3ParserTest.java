@@ -32,7 +32,14 @@ public class GFF3ParserTest extends TestCase
     public void testParse() throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/gff_test_data.gff3")));
 
-        List records = GFF3Parser.parse(reader);
+        List records = new ArrayList();
+
+        Iterator iter = GFF3Parser.parse(reader);
+
+        while (iter.hasNext()) {
+            GFF3Record record = (GFF3Record) iter.next();
+            records.add(record);
+        }
 
         String [] expected =
             new String[]{
@@ -93,7 +100,7 @@ public class GFF3ParserTest extends TestCase
         String original="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013:2;Parent=CG32013-RA\n"
             + "4\t.\texon\t22335\t22528\t1000.0\t-\t1\tID=CG32013:2;Parent=CG32013-RA\n";
         StringBuffer sb = new StringBuffer();
-        Iterator iter = GFF3Parser.parse(new BufferedReader(new StringReader(original))).iterator();
+        Iterator iter = GFF3Parser.parse(new BufferedReader(new StringReader(original)));
         while (iter.hasNext()) {
             sb.append(((GFF3Record) iter.next()).toGFF3());
         }
