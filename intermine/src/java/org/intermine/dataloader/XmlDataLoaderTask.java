@@ -28,6 +28,7 @@ public class XmlDataLoaderTask extends Task
     protected String integrationWriter;
     protected File xmlFile;
     protected String sourceName;
+    protected boolean ignoreDuplicates = false;
 
     /**
      * Set the IntegrationWriter.
@@ -57,6 +58,15 @@ public class XmlDataLoaderTask extends Task
     }
 
     /**
+     * Set the value of ignoreDuplicates for the IntegrationWriter
+     * @param ignoreDuplicates the value of ignoreDuplicates
+     */
+    public void setIgnoreDuplicates(boolean ignoreDuplicates) {
+        this.ignoreDuplicates = ignoreDuplicates;
+    }
+
+
+    /**
      * @see Task#execute
      * @throws BuildException
      */
@@ -73,6 +83,7 @@ public class XmlDataLoaderTask extends Task
 
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
+            iw.setIgnoreDuplicates(ignoreDuplicates);
             new XmlDataLoader(iw).processXml(new FileInputStream(xmlFile),
                                              iw.getMainSource(sourceName),
                                              iw.getSkeletonSource(sourceName));
