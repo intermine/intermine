@@ -14,13 +14,45 @@ import junit.framework.*;
 
 import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.flymine.util.TypeUtil;
+import org.flymine.util.DynamicUtil;
 import org.flymine.model.testmodel.*;
+import org.flymine.metadata.Model;
 
 public class FullRendererTest extends TestCase
 {
+    private Model model;
+    private final String ENDL = System.getProperty("line.separator");
+
+    public void setUp() throws Exception {
+        model = Model.getInstanceByName("testmodel");
+    }
+
     public void testRender() throws Exception {
+        Department d1 = new Department();
+        d1.setId(new Integer(5678));
+        Department d2 = new Department();
+        d2.setId(new Integer(6789));
+
+        List list = Arrays.asList(new Object[] {d1, d2});
+
+        String expected = "<items>" + ENDL
+            + "<object class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
+            + "<field name=\"id\" value=\"5678\"/>" + ENDL
+            + "</object>" + ENDL
+            + "<object class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
+            + "<field name=\"id\" value=\"6789\"/>" + ENDL
+            + "</object>" + ENDL
+            + "</items>" + ENDL;
+
+        assertEquals(expected, FullRenderer.render(list, model));
+    }
+
+    public void testRenderObjectMaterial() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
         e.setId(new Integer(1234));
@@ -28,15 +60,44 @@ public class FullRendererTest extends TestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<object class=\"org.flymine.model.testmodel.Employee\" implements=\"org.flymine.model.testmodel.Employable org.flymine.model.testmodel.HasAddress\">"
-            + "<field name=\"age\" value=\"0\"/>"
-            + "<field name=\"fullTime\" value=\"false\"/>"
-            + "<field name=\"name\" value=\"Employee1\"/>"
-            + "<field name=\"id\" value=\"1234\"/>"
-            + "<reference name=\"department\" value=\"5678\"/>"
-            + "</object>";
+        String expected = "<object class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
+            + "<field name=\"age\" value=\"0\"/>" + ENDL
+            + "<field name=\"fullTime\" value=\"false\"/>" + ENDL
+            + "<field name=\"name\" value=\"Employee1\"/>" + ENDL
+            + "<field name=\"id\" value=\"1234\"/>" + ENDL
+            + "<reference name=\"department\" ref_id=\"5678\"/>" + ENDL
+            + "</object>" + ENDL;
 
-        assertEquals(expected, FullRenderer.render(e));
+        assertEquals(expected, FullRenderer.renderObject(e, model));
+    }
+
+    public void testRenderObjectDynamic() throws Exception {
+        Department d1 = new Department();
+        d1.setId(new Integer(5678));
+        Department d2 = new Department();
+        d2.setId(new Integer(6789));
+
+        Object o = DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
+        Company c = (Company) o;
+        c.setId(new Integer(1234));
+        c.setName("BrokeCompany1");
+        c.setDepartments(Arrays.asList(new Object[] {d1, d2}));
+
+        Broke b = (Broke) o;
+        b.setDebt(10);
+
+        String expected = "<object class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
+            + "<field name=\"vatNumber\" value=\"0\"/>" + ENDL
+            + "<field name=\"debt\" value=\"10\"/>" + ENDL
+            + "<collection name=\"departments\">" + ENDL
+            + "<reference ref_id=\"5678\"/>" + ENDL
+            + "<reference ref_id=\"6789\"/>" + ENDL
+            + "</collection>" + ENDL
+            + "<field name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
+            + "<field name=\"id\" value=\"1234\"/>" + ENDL
+            + "</object>" + ENDL;
+
+        assertEquals(expected, FullRenderer.renderObject(b, model));
     }
 
     public void testRenderTypes() throws Exception {
@@ -54,21 +115,21 @@ public class FullRendererTest extends TestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<object class=\"org.flymine.model.testmodel.Types\" implements=\"org.flymine.model.FlyMineBusinessObject\">"
-            + "<field name=\"intObjType\" value=\"4\"/>"
-            + "<field name=\"booleanObjType\" value=\"true\"/>"
-            + "<field name=\"doubleType\" value=\"1.3\"/>"
-            + "<field name=\"floatType\" value=\"1.2\"/>"
-            + "<field name=\"floatObjType\" value=\"2.2\"/>"
-            + "<field name=\"booleanType\" value=\"true\"/>"
-            + "<field name=\"stringObjType\" value=\"A String\"/>"
-            + "<field name=\"doubleObjType\" value=\"2.3\"/>"
-            + "<field name=\"intType\" value=\"2\"/>"
-            + "<field name=\"name\" value=\"Types1\"/>"
-            + "<field name=\"id\" value=\"1234\"/>"
-            + "<field name=\"dateObjType\" value=\"7777777777\"/>"
-            + "</object>";
+        String expected = "<object class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
+            + "<field name=\"intObjType\" value=\"4\"/>" + ENDL
+            + "<field name=\"booleanObjType\" value=\"true\"/>" + ENDL
+            + "<field name=\"doubleType\" value=\"1.3\"/>" + ENDL
+            + "<field name=\"floatType\" value=\"1.2\"/>" + ENDL
+            + "<field name=\"floatObjType\" value=\"2.2\"/>" + ENDL
+            + "<field name=\"booleanType\" value=\"true\"/>" + ENDL
+            + "<field name=\"stringObjType\" value=\"A String\"/>" + ENDL
+            + "<field name=\"doubleObjType\" value=\"2.3\"/>" + ENDL
+            + "<field name=\"intType\" value=\"2\"/>" + ENDL
+            + "<field name=\"name\" value=\"Types1\"/>" + ENDL
+            + "<field name=\"id\" value=\"1234\"/>" + ENDL
+            + "<field name=\"dateObjType\" value=\"7777777777\"/>" + ENDL
+            + "</object>" + ENDL;
 
-        assertEquals(expected, FullRenderer.render(t));
+        assertEquals(expected, FullRenderer.renderObject(t, model));
     }
 }

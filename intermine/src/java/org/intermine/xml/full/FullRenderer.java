@@ -10,14 +10,17 @@ package org.flymine.xml.full;
  *
  */
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.flymine.util.TypeUtil;
+import org.flymine.metadata.Model;
+import org.flymine.metadata.ClassDescriptor;
+import org.flymine.model.FlyMineBusinessObject;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +32,7 @@ import org.apache.log4j.Logger;
 public class FullRenderer
 {
     protected static final Logger LOG = Logger.getLogger(FullRenderer.class);
+    protected static final String ENDL = System.getProperty("line.separator");
 
     /**
      * Don't allow construction
@@ -37,73 +41,102 @@ public class FullRenderer
     }
 
     /**
-     * Render the given object as XML in FlyMine Full format
+     * Render a collection of objects as XML in FlyMine Full format.
      *
-     * @param obj the object to render
+     * @param objects a collection of objects to render
+     * @param model the parent model
      * @return the XML for that object
      */
-    public static String render(Object obj) {
+    public static String render(Collection objects, Model model) {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("<object class=\"")
-            .append(getClassName(obj))
-            .append("\" implements=\"")
-            .append(getImplements(obj))
-            .append("\">")
-            .append(getFields(obj))
-            .append("</object>");
+        sb.append("<items>" + ENDL);
+        Iterator iter = objects.iterator();
+        while (iter.hasNext()) {
+            sb.append(renderObject((FlyMineBusinessObject) iter.next(), model));
+        }
+        sb.append("</items>" + ENDL);
+
         return sb.toString();
     }
+
+    /**
+     * Render the given object as XML.
+     * @param obj the object to render
+     * @param model the parent model
+     * @return an XML representation of the object
+     */
+    protected static String renderObject(FlyMineBusinessObject obj, Model model) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<object class=\"")
+            .append(getClassName(obj, model))
+            .append("\" implements=\"")
+            .append(getImplements(obj, model))
+            .append("\">" + ENDL)
+            .append(getFields(obj))
+            .append("</object>" + ENDL);
+        return sb.toString();
+    }
+
 
     /**
      * Get all interfaces that an object implements.
      *
      * @param obj the object
+     * @param model the parent model
      * @return space separated list of extended/implemented classes/interfaces
      */
-    protected static String getImplements(Object obj) {
+    protected static String getImplements(FlyMineBusinessObject obj, Model model) {
         StringBuffer sb = new StringBuffer();
 
         Class [] interfaces = obj.getClass().getInterfaces();
+        Arrays.sort(interfaces, new SimpleComparator());
 
         for (int i = 0; i < interfaces.length; i++) {
-            sb.append(interfaces[i].getName())
-                .append(" ");
+            ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
+            if (cld != null && cld.isInterface()) {
+                sb.append(model.getNameSpace().toString() + "#"
+                          + TypeUtil.unqualifiedName(interfaces[i].getName()))
+                    .append(" ");
+            }
         }
         return sb.toString().trim();
     }
 
     /**
-     * Get all interfaces that an object implements.
+     * Get the class name if object represents a material class in model.
      *
      * @param obj the object
-     * @return space separated list of extended/implemented classes/interfaces
+     * @param model the parent model
+     * @return class name
      */
-    protected static String getClassName(Object obj) {
+    protected static String getClassName(FlyMineBusinessObject obj, Model model) {
         StringBuffer sb = new StringBuffer();
 
-        // This class - will need to be cleverer when dynamic classes introduced
-        sb.append(obj.getClass().getName())
-            .append(" ");
-        return sb.toString().trim();
+        ClassDescriptor cld = model.getClassDescriptorByName(obj.getClass().getName());
+        if (cld != null && !cld.isInterface()) {
+            sb.append(model.getNameSpace() + "#"
+                      + TypeUtil.unqualifiedName(obj.getClass().getName()));
+        }
+        return sb.toString();
     }
 
     /**
-     * Get all classes and interfaces that an object extends/implements.
+     * Get all fields of an object.
      *
      * @param obj the object
-     * @return string separated list of extended/implemented classes/interfaces
+     * @return string containing XML representation of all fields
      */
-    protected static String getFields(Object obj) {
+    protected static String getFields(FlyMineBusinessObject obj) {
         StringBuffer sb = new StringBuffer();
 
-        Map infos = TypeUtil.getFieldInfos(obj.getClass());
-        Iterator iter = infos.keySet().iterator();
         try {
+            Map infos = TypeUtil.getFieldInfos(obj.getClass());
+            Iterator iter = infos.keySet().iterator();
             while (iter.hasNext()) {
                 // If reference, value is id of referred-to object
                 // If field, value is field value
-                // If collection, no element output
+                // If collection, ...............
                 // Element is not output if the value is null
 
                 String fieldname = (String) iter.next();
@@ -114,34 +147,57 @@ public class FullRenderer
                 }
                 // Collection
                 if (Collection.class.isAssignableFrom(value.getClass())) {
-                    continue;
-                }
-
-                Object id = null;
-
-                // Reference
-                try {
-                    Method m = value.getClass().getMethod("getId", new Class[] {});
-                    id = m.invoke(value, null);
-                } catch (InvocationTargetException e) {
-                } catch (IllegalAccessException e) {
-                } catch (NoSuchMethodException e) {
-                }
-                if (id != null) {
-                    value = id;
-                }
-                sb.append((id == null ? "<field" : "<reference") + " name=\"")
-                    .append(fieldname)
-                    .append("\" value=\"");
+                    Collection col = (Collection) value;
+                    if (col.size() > 0) {
+                        sb.append("<collection name=\"")
+                            .append(fieldname)
+                            .append("\">" + ENDL);
+                        Iterator i = col.iterator();
+                        while (i.hasNext()) {
+                            sb.append("<reference ref_id=\"")
+                                .append(((FlyMineBusinessObject) i.next()).getId())
+                            .append("\"/>" + ENDL);
+                        }
+                        sb.append("</collection>" + ENDL);
+                    }
+                } else if (value instanceof FlyMineBusinessObject) {
+                    sb.append("<reference name=\"")
+                        .append(fieldname)
+                        .append("\" ref_id=\"")
+                        .append(((FlyMineBusinessObject) value).getId())
+                        .append("\"/>" + ENDL);
+                } else {
+                    sb.append("<field name=\"")
+                        .append(fieldname)
+                        .append("\" value=\"");
                     if (value instanceof Date) {
                         sb.append(((Date) value).getTime());
                     } else {
                         sb.append(value);
                     }
-                    sb.append("\"/>");
+                    sb.append("\"/>" + ENDL);
+                }
             }
+
         } catch (IllegalAccessException e) {
         }
-        return sb.toString().trim();
+        return sb.toString();
+    }
+
+    /**
+     * A simple implementation of Comparator to order pairs of Class objects.
+     */
+    static class SimpleComparator implements Comparator
+    {
+
+        /**
+         * Compare two Class objects by name.
+         * @param a an object to compare
+         * @param b an object to compare
+         * @return integer result of comparason
+         */
+        public int compare(Object a, Object b) {
+            return ((Class) a).getName().compareTo(((Class) b).getName());
+        }
     }
 }
