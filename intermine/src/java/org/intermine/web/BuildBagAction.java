@@ -65,9 +65,6 @@ public class BuildBagAction extends LookupDispatchAction
         throws Exception {
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
-        LogMe.log("i", "form: " + buildBagForm.getText());
-        LogMe.log("i", "form: " + buildBagForm.getFormFile());
-
         InterMineBag bag = new InterMineBag();
         String trimmedText = buildBagForm.getText().trim();
 
