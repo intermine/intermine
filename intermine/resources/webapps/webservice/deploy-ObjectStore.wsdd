@@ -36,6 +36,11 @@
       deserializer="org.flymine.objectstore.webservice.ser.DefaultDeserializerFactory"
       encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 
+    <typeMapping qname="Address"
+      type="java:org.flymine.model.testmodel.Address"
+      serializer="org.flymine.objectstore.webservice.ser.DefaultSerializerFactory"
+      deserializer="org.flymine.objectstore.webservice.ser.DefaultDeserializerFactory"
+      encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
     <typeMapping qname="Company"
       type="java:org.flymine.model.testmodel.Company"
       serializer="org.flymine.objectstore.webservice.ser.DefaultSerializerFactory"
