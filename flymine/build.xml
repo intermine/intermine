@@ -1984,7 +1984,7 @@
       <arg value="dbi::Pg"/>
       <arg value="--create"/>
       <arg value="--dsn"/>
-      <arg value="dbi:Pg:dbname=${gbrowse.database}"/>
+      <arg value="dbi:Pg:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
       <arg value="--user"/>
       <arg value="${gbrowse.database.user}"/>
       <arg value="--password"/>
@@ -1994,7 +1994,7 @@
       <arg value="--adaptor"/>
       <arg value="dbi::Pg"/>
       <arg value="--dsn"/>
-      <arg value="dbi:Pg:dbname=${gbrowse.database}"/>
+      <arg value="dbi:Pg:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
       <arg value="--user"/>
       <arg value="${gbrowse.database.user}"/>
       <arg value="--password"/>
