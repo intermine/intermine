@@ -35,8 +35,8 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("querystring","select a1_ from Company as a1_");
         addRequestParameter("action", "Run");
         actionPerform();
-        verifyForward("results");
-        assertNotNull((List) getRequest().getAttribute("results"));
+        verifyForward("runquery");
+        assertNotNull(getSession().getAttribute("query"));
         verifyNoActionErrors();
     }
 
@@ -46,7 +46,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("error");
-        assertNull((String) getRequest().getAttribute("results"));
+        assertNull(getSession().getAttribute("query"));
     }
 
     public void testSubmitRubbishQuery() {
@@ -55,7 +55,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("error");
-        assertNull((String) getRequest().getAttribute("results"));
+        assertNull(getSession().getAttribute("query"));
     }
 
     public void testViewSuccessfulQuery() {
@@ -74,7 +74,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "View");
         actionPerform();
         verifyForward("error");
-        assertNull((String) getRequest().getAttribute("query"));
+        assertNull((String) getSession().getAttribute("query"));
     }
 
     public void testViewRubbishQuery() {
@@ -83,6 +83,6 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "View");
         actionPerform();
         verifyForward("error");
-        assertNull((String) getRequest().getAttribute("query"));
+        assertNull((String) getSession().getAttribute("query"));
     }
 }
