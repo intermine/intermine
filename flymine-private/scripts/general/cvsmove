@@ -58,10 +58,14 @@ use strict;
 use File::Basename;
 use Cwd;
 use Env;
+use Getopt::Std;
 
 if ($#ARGV < 1) {
-    die "Usage: $0 <file1> [ <file2> [...] ] <destination>";
+    die "Usage: $0 [options] <file1> [ <file2> [...] ] <destination>";
 }
+
+use vars qw($opt_d);
+getopts('d') or die "getopts() failed!";
 
 my ($file, $files);
 my ($localdestination);
@@ -83,12 +87,15 @@ $localdestination = get_absolute($localdestination);
 $serverdestination = get_server_equivalent($localdestination);
 
 print "Moving @files to $localdestination\n";
-print "You will lose any changes to original files - check them in before running cvsmove\n";
-print "Continue (y/N)\n";
-my $yn = <STDIN>;
-$yn =~ s/\n$//;
 
-exit unless ($yn =~ /[Yy]/);
+if (not $opt_d) {
+    print "You will lose any changes to original files - check them in before running cvsmove\n";
+    print "Continue (y/N)\n";
+    my $yn = <STDIN>;
+    $yn =~ s/\n$//;
+
+    exit unless ($yn =~ /[Yy]/);
+}
 
 foreach $file (@files) {
 
@@ -117,7 +124,7 @@ foreach $file (@files) {
     # 1. Copy the archive file in the repository
 
     print "Copying $serverfile to $serverdestination\n";
-    `scp $serverfile $serverdestination`;
+    `scp $serverfile $serverdestination` unless $opt_d;
 
     # 2. Remove the old working file
 
@@ -127,18 +134,18 @@ foreach $file (@files) {
 #      cvs commit [ofile]
     chdir $localdir;
     print "Deleting $localfile\n";
-    unlink $localfile;
+    unlink $localfile unless $opt_d;
     print "Doing \"cvs remove $localfile\"\n";
-    `cvs remove $localfile`;
+    `cvs remove $localfile` unless $opt_d;
     print "Doing \"cvs commit $localfile\"\n";
-    `cvs commit -m \"Moving to $localdestfile\" $localfile`;
+    `cvs commit -m \"Moving to $localdestfile\" $localfile` unless $opt_d;
 
     # 3. Grab the new file from the repository
 
     chdir $localdestdir;
     print "Doing \"cvs update $localdestfile\"\n";
-    `cvs update $localdestfile`;
-    remove_tags($localdestfile);
+    `cvs update $localdestfile` unless $opt_d;
+    remove_tags($localdestfile) unless $opt_d;
 
 }
 
@@ -225,7 +232,7 @@ sub get_server_equivalent
 
     chomp($serverroot);
 
-    if ($serverroot =~ m/^:ext:([a-z0-9\.]+):(.*)/) {
+    if ($serverroot =~ m/^:ext:([a-z0-9\.]+):?(.*)/) {
 	$cvsserver = $1;
 	$cvsroot=$2;
     }
