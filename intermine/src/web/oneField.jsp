@@ -1,7 +1,7 @@
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- oneField.jsp -->
@@ -44,7 +44,7 @@
         </c:when>
 
         <c:when test="${fieldDescriptor.collection}">
-          <bean:size collection="${object[fieldDescriptor.name]}" id="listSize"/>
+          <c:set var="listSize" value="${fn:length(object[fieldDescriptor.name])}"/>
           <c:if test="${listSize > 0}">
             <div>
               <nobr>

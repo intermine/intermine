@@ -1,7 +1,7 @@
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- historyBagView.jsp -->
 <c:if test="${!empty PROFILE.savedBags}">
@@ -42,8 +42,7 @@
     <html:submit property="delete">
       <fmt:message key="history.delete"/>
     </html:submit>
-    <bean:size collection="${PROFILE.savedBags}" id="size"/>
-    <c:if test="${size >= 2}">
+    <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
       <html:submit property="union">
         <fmt:message key="history.union"/>
       </html:submit>
