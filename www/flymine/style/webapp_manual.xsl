@@ -47,7 +47,7 @@
         <xsl:call-template name="sidebar"/>
         
         <div id="pagecontent">
-          <div id="docbook-page">
+          <div class="docbook-page">
             <xsl:call-template name="body.attributes"/>
             <xsl:call-template name="user.header.navigation"/>
             

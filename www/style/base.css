@@ -393,7 +393,7 @@ table.box th.title {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
 
-#docbook-page {
+div.docbook-page {
   background-color: white;
   border: solid #888 1px;
   padding: 5px;
