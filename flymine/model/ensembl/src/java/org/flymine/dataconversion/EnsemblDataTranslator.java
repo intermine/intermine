@@ -175,13 +175,15 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
                     if (stableId != null) {
-                        moveField(stableId, tgtItem, "stable_id", "name");
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        moveField(stableId, synonym, "stable_id", "synonym");
-                        synonym.addReference(getEnsemblRef());
-                        result.add(synonym);
+                         moveField(stableId, tgtItem, "stable_id", "name");
                     }
+                    // synonym already added by default
+//                         Item synonym = createItem(tgtNs + "Synonym", "");
+//                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+//                         moveField(stableId, synonym, "stable_id", "synonym");
+//                         synonym.addReference(getEnsemblRef());
+//                         result.add(synonym);
+//                     }
                     if (!tgtItem.hasAttribute("name")) {
                         tgtItem.addAttribute(new Attribute("name", srcItem.getIdentifier()));
                     }
