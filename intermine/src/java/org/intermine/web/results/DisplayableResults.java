@@ -62,6 +62,36 @@ public class DisplayableResults
     }
 
     /**
+     * Update from another DisplayableResults
+     *
+     * @param other the DisplayableResults to update from
+     */
+    public void update(DisplayableResults other) {
+        setStart(other.getStart());
+        setPageSize(other.getPageSize());
+
+        // For now we are not dealing with adding more columns. If
+        // more have been added, then just return, ie. only update
+        // start and pageSize
+        if (!(getColumns().containsAll(other.getColumns())
+              && other.getColumns().containsAll(getColumns()))) {
+            return;
+        }
+
+        Iterator columnIter = other.getColumns().iterator();
+        List newColumns = new LinkedList();
+        while (columnIter.hasNext()) {
+            Column otherCol = (Column) columnIter.next();
+            Column thisCol = (Column) aliasToColumn.get(otherCol.getAlias());
+            thisCol.update(otherCol);
+            newColumns.add(thisCol);
+        }
+        // Set the ordering
+        columns = newColumns;
+    }
+
+
+    /**
      * Get the list of column configurations
      *
      * @return the List of columns in the order they are to be displayed
