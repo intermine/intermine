@@ -296,7 +296,7 @@ public class InitialiserPlugin implements PlugIn
             
             subcats = StringUtils.stripAll(subcats);
             
-            for (int i = 0;i < subcats.length;i++) {
+            for (int i = 0; i < subcats.length; i++) {
                 String className = os.getModel().getPackageName() + "." + subcats[i];
                 if (os.getModel().hasClassDescriptor(className)) {
                     subcatlist.add(subcats[i]);
