@@ -7,7 +7,6 @@
     <property name="src.internal" location="../../flymine-private/doc"/>
     <property name="build.www" location="build"/>
     <property name="dist.www" location="dist"/>
-    <property name="www.location" value="/tests/FlyMine/f"/> <!-- TO BE REMOVED !!! -->
 
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
 
