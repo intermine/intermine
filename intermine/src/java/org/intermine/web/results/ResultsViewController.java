@@ -65,8 +65,6 @@ public class ResultsViewController extends TilesAction
 
     // The DisplayableResults object
     session.setAttribute(DISPLAYABLERESULTS_NAME, dr);
-    // The query - we need this for the column headings
-    context.putAttribute("query", results.getQuery());
 
     return null;
   }
