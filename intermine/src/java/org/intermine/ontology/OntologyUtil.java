@@ -297,25 +297,65 @@ public class OntologyUtil
         return subclasses;
     }
 
+
     /**
      * Create a map of class URI -> restricted subclass URIs
      * @param model the model to process
      * @return restricted subclass map
      */
     public static Map getRestrictedSubclassMap(OntModel model) {
-        // build a map of class/restricted subclasses
-        Map classesMap = new HashMap();
+
+        Set restrictions = new HashSet();
+        ExtendedIterator resIter = model.listRestrictions();
+        while (resIter.hasNext()) {
+            Restriction res = (Restriction) resIter.next();
+            if (res.isHasValueRestriction()) {
+                restrictions.add(res);
+            }
+        }
+        resIter.close();
+
+        Set hasValueClasses = new HashSet();
         ExtendedIterator clsIter = model.listClasses();
         while (clsIter.hasNext()) {
             OntClass cls = (OntClass) clsIter.next();
             if (!cls.isAnon()) {
-                Set subs = OntologyUtil.findRestrictedSubclasses(model, cls);
-                if (subs.size() > 0) {
-                    classesMap.put(cls, subs);
+                ExtendedIterator superIter = cls.listSuperClasses(true); // direct
+                boolean added = false;
+                while (superIter.hasNext() && !added) {
+                    if (restrictions.contains((Resource) superIter.next())) {
+                        hasValueClasses.add(cls);
+                        added = true;
+                    }
                 }
+                superIter.close();
             }
         }
         clsIter.close();
+
+        Set candidates = new HashSet();
+        Iterator candIter = hasValueClasses.iterator();
+        while (candIter.hasNext()) {
+            OntClass cls = (OntClass) candIter.next();
+            ExtendedIterator superIter = cls.listSuperClasses(true); // direct
+            while (superIter.hasNext()) {
+                Resource candidate = (Resource) superIter.next();
+                if (!candidate.isAnon() && candidate.canAs(OntClass.class)) {
+                    candidates.add((OntClass) candidate.as(OntClass.class));
+                }
+            }
+            superIter.close();
+        }
+
+        Map classesMap = new HashMap();
+        Iterator i = candidates.iterator();
+        while (i.hasNext()) {
+            OntClass cls = (OntClass) i.next();
+            Set subs = OntologyUtil.findRestrictedSubclasses(model, cls);
+            if (subs.size() > 0) {
+                classesMap.put(cls, subs);
+            }
+        }
         return classesMap;
     }
 
@@ -452,15 +492,30 @@ public class OntologyUtil
             }
         }
 
+
         propIter = props.iterator();
         while (propIter.hasNext()) {
             OntProperty prop = (OntProperty) propIter.next();
-            OntProperty newProp = renameProperty(prop, prop.getDomain(), model, ns);
-
-            if (!newProp.getURI().equals(prop.getURI())) {
+            OntProperty newProp = null;
+            String newPropName = ns + generatePropertyName(prop, prop.getDomain());
+            if (newPropName.equals(prop.getURI())) {
+                newProp = prop;
+                prop.setRange(pickRange(prop));
+            } else {
+                newProp = renameProperty(prop, prop.getDomain(), model, ns);
                 prop.remove();
             }
         }
+
+//         propIter = props.iterator();
+//         while (propIter.hasNext()) {
+//             OntProperty prop = (OntProperty) propIter.next();
+//             OntProperty newProp = renameProperty(prop, prop.getDomain(), model, ns);
+
+//             if (!newProp.getURI().equals(prop.getURI())) {
+//                 prop.remove();
+//             }
+//         }
     }
 
     /**
