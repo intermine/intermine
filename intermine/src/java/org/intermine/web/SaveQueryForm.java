@@ -10,7 +10,10 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean to represent the inputs to the query saving action
@@ -43,7 +46,7 @@ public class SaveQueryForm extends ActionForm
     /**
      * @see ActionForm#reset
      */
-    public void reset() {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         queryName = "";
     }
 }

@@ -10,7 +10,10 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * The main form, using for editing constraints
@@ -94,7 +97,7 @@ public class MainForm extends ActionForm
     /**
      * @see ActionForm#reset
      */
-    public void reset() {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         constraintOp = null;
         constraintValue = null;
         path = null;
