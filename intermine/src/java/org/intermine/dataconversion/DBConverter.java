@@ -16,6 +16,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
@@ -44,6 +45,7 @@ public class DBConverter extends DataConverter
     protected Connection c = null;
     protected Model model;
     protected Database db;
+    protected DBReader reader;
 
     /**
      * Constructor
@@ -56,6 +58,7 @@ public class DBConverter extends DataConverter
         super(writer);
         this.model = model;
         this.db = db;
+        reader = new DirectDBReader(db);
     }
 
     /**
@@ -88,27 +91,22 @@ public class DBConverter extends DataConverter
      */
     protected void processClassDescriptor(ClassDescriptor cld) throws Exception {
         String clsName = TypeUtil.unqualifiedName(cld.getName());
-        ResultSet r;
+        Iterator iter;
 
         LOG.error("Processing class: " + clsName);
 
         boolean idsProvided = idsProvided(cld);
         if (idsProvided) {
-            r = executeQuery(c, "SELECT * FROM " + clsName + " ORDER BY " + clsName
-                             + "_id LIMIT 1");
+            iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
         } else {
-            r = executeQuery(c, "SELECT * FROM " + clsName);
+            iter = reader.execute("SELECT * FROM " + clsName).iterator();
         }
 
         int identifier = 0;
-        while (r.next()) {
-            int clsId = idsProvided ? r.getInt(clsName + "_id") : identifier++;
-            writer.store(getItem(cld, clsId, r));
-            if (idsProvided) {
-                r.close();
-                r = executeQuery(c, "SELECT * FROM " + clsName + " WHERE " + clsName + "_id > "
-                                 + clsId + " ORDER BY " + clsName + "_id LIMIT 1");
-            }
+        while (iter.hasNext()) {
+            Map row = (Map) iter.next();
+            int clsId = idsProvided ? ((Integer) row.get(clsName + "_id")).intValue() : identifier++;
+            writer.store(getItem(cld, clsId, row));
         }
      }
 
@@ -136,11 +134,11 @@ public class DBConverter extends DataConverter
      * to that class
      * @param cld metadata for the class
      * @param clsId the id to use as the basis for the Item's identifier
-     * @param r the ResultSet from which to retrieve data
+     * @param row the Map from which to retrieve data
      * @return the Item that has been constructed
      * @throws SQLException if an error occurs when accessing the database
      */
-    protected Item getItem(ClassDescriptor cld, int clsId, ResultSet r) throws SQLException {
+    protected Item getItem(ClassDescriptor cld, int clsId, Map row) throws SQLException {
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         Item item = new Item();
         item.setIdentifier(clsName + "_" + clsId);
@@ -153,7 +151,7 @@ public class DBConverter extends DataConverter
                 Attribute attr = new Attribute();
                 attr.setItem(item);
                 attr.setName(fieldName);
-                Object value = r.getObject(fieldName);
+                Object value = row.get(fieldName);
                 if (value != null) {
                     attr.setValue(StringUtil.duplicateQuotes(TypeUtil.objectToString(value)));
                     item.addAttributes(attr);
@@ -162,7 +160,7 @@ public class DBConverter extends DataConverter
                 Reference ref = new Reference();
                 ref.setItem(item);
                 ref.setName(fieldName);
-                Object value = r.getObject(fieldName + "_id");
+                Object value = row.get(fieldName + "_id");
                 if (value != null) {
                     String refClsName = TypeUtil.unqualifiedName(
                         ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getName());
@@ -185,13 +183,14 @@ public class DBConverter extends DataConverter
                     sql = "SELECT " + refClsName + "_id FROM " + tableName + " WHERE "
                         + clsName + "_id = " + clsId;
                 }
-                ResultSet idSet = executeQuery(c, sql);
+                Iterator idSet = reader.execute(sql).iterator();
                 ReferenceList refs = new ReferenceList();
                 refs.setItem(item);
                 refs.setName(fieldName);
                 StringBuffer refIds = new StringBuffer();
-                while (idSet.next()) {
-                    refIds.append(refClsName + "_" + idSet.getObject(1).toString() + " ");
+                while (idSet.hasNext()) {
+                    Map idRow = (Map) idSet.next();
+                    refIds.append(refClsName + "_" + idRow.get(refClsName + "_id").toString() + " ");
                 }
                 if (refIds.length() > 0) {
                     refs.setRefIds(refIds.toString());
