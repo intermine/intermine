@@ -402,6 +402,35 @@
     </java>
   </target>
 
+  <!-- merge the mage owl model with the current genomic model owl -->
+  <target name="merge-mage-model" depends="prepare-genomic-model, mage-to-owl">
+    <copy file="${model}/mage/mage_merge_spec.n3" todir="${build.model}/mage/"/>
+
+    <!-- combine the mage merge_spec with current genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/mage/mage_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+
+    <!-- merge mage model with target genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/mage/mage.n3" />
+      <arg value="http://www.flymine.org/model/mage#" />
+      <arg value="N3" />
+      <arg value="y" />
+    </java>
+  </target>
+
 
   <!-- RNAi MODEL GENERATION -->
 
@@ -1223,6 +1252,29 @@
   </target>
 
   <target name="build-taxonomy-production" depends="retrieve-taxonomy, load-taxonomy"/>
+
+  <!-- MAGE PIPELINE -->
+    <path id="mage.class.path">
+      <path refid="models.class.path"/>
+      <pathelement location="${build.tmp}"/>
+      <fileset dir="${model}/mage/">
+        <include name="lib/*.jar"/>
+        <include name="resources/MAGE-ML.dtd"/>
+      </fileset>
+    </path>
+
+
+  <target name="retrieve-mage-test" depends="prepare-test, compile-mage-java, convert-mage">
+    <copy file="/shared/data/mage/FlyChip_002.adf.clean.feb_04_current.txt.xml" tofile="${build.tmp}/test_mage.xml"/>
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}"/>
+
+    <java classname="org.flymine.dataconversion.MageConverter" fork="true" maxmemory="600m"
+      failonerror="true">
+      <classpath refid="mage.class.path" />
+      <arg value="test_mage.xml" />
+      <arg value="tmp.xml" />
+    </java>
+  </target>
 
   <!-- GO PIPELINE -->
 
