@@ -43,7 +43,8 @@ public class ConnectionFactory
             if (dataSources.containsKey(instance)) {
                 ds = (DataSource) dataSources.get(instance);
             } else {
-                ds = configureDataSource(instance, PropertiesUtil.getPropertiesStartingWith(instance));
+                ds = configureDataSource(instance,
+                                         PropertiesUtil.getPropertiesStartingWith(instance));
             }
         }
         return ds.getConnection();
