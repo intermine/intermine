@@ -44,21 +44,33 @@
 
 
   <!-- set the classpath for the build - basically everything in lib -->
-  <path id="project.class.path">
+  <path id="base.class.path">
     <pathelement path="${build.java}"/>
     <pathelement path="${lib}"/>
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
+      <exclude name="antlr.jar"/>
     </fileset>
     <pathelement path="${buildlib}"/>
     <fileset dir="${buildlib}">
       <include name="**/*.jar"/>
+      <exclude name="checkstyle-all-3.0b1.jar"/>
     </fileset>
+  </path>
+
+  <path id="project.class.path">
+    <pathelement location="${lib}/antlr.jar"/>
+    <path refid="base.class.path"/>
   </path>
 
   <path id="test.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${build.test}"/>
+  </path>
+
+  <path id="checkstyle.class.path">
+    <path refid="base.class.path"/>
+    <pathelement location="${buildlib}/checkstyle-all-3.0b1.jar"/>
   </path>
 
   <!-- Initialisation targets -->
@@ -168,12 +180,12 @@
   <target name="checkstyle" depends="prepare"
           description="checks the coding style of all the java files in the project">
     <taskdef resource="checkstyletask.properties">
-      <classpath refid="project.class.path"/>
+      <classpath refid="checkstyle.class.path"/>
     </taskdef>
     <checkstyle config="${resources}/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
-      <classpath refid="project.class.path"/>
+      <classpath refid="checkstyle.class.path"/>
       <formatter type="xml" tofile="${results.checkstyle}/checkstyle_report.xml" />
       <fileset dir="${src.java}">
         <include name="**/*.java" />
