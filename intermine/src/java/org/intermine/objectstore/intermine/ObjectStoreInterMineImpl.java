@@ -175,10 +175,18 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             long now = (new Date()).getTime();
-            if (now - time > (objResults.size() * 2) + 50 + start) {
-                LOG.error(getModel().getName() + ": Executed SQL (time = "
-                        + (now - time) + ", rows = " + objResults.size() + "): "
-                        + (sql.length() > 1000 ? sql.substring(0, 1000) : sql));
+            long permittedTime = (objResults.size() * 2) - 100 + start + (150 * q.getFrom().size())
+                    + (sql.length() / 20);
+            if (now - time > permittedTime) {
+                if (now - time > 100000) {
+                    LOG.error(getModel().getName() + ": Executed SQL (time = "
+                            + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
+                            + "): " + sql);
+                } else {
+                    LOG.error(getModel().getName() + ": Executed SQL (time = "
+                            + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
+                            + "): " + (sql.length() > 1000 ? sql.substring(0, 1000) : sql));
+                }
             }
             QueryNode firstOrderBy = null;
             try {
