@@ -184,7 +184,7 @@ function unselectColumnCheckbox(column) {
     <html:option value="50">50</html:option>
     <html:option value="100">100</html:option>
   </html:select>
-  <html:submit property="buttons(changePageSize)">
+  <html:submit property="changePageSize">
     <fmt:message key="button.change"/>
   </html:submit>
   <br/>
@@ -193,21 +193,19 @@ function unselectColumnCheckbox(column) {
   <br/>
   <c:if test="${RESULTS_TABLE.size > 0}">
     <c:if test="${!empty SAVED_BAGS}">
-      <html:select property="bagName">
-
+      <html:select property="existingBagName">
         <c:forEach items="${SAVED_BAGS}" var="entry">
           <html:option value="${entry.key}"/>
         </c:forEach>
       </html:select>
-      <html:submit property="buttons(addToExistingBag)">
+      <html:submit property="addToExistingBag">
         <fmt:message key="bag.existing"/>
       </html:submit>
       <br/>
       <br/>
     </c:if>
-
-    <html:text property="bagName"/>
-    <html:submit property="buttons(saveNewBag)">
+    <html:text property="newBagName"/>
+    <html:submit property="saveNewBag">
       <fmt:message key="bag.new"/>
     </html:submit>
     <br/>

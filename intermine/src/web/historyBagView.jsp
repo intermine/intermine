@@ -41,13 +41,14 @@
           </tr>
         </c:forEach>
       </table>
-      <html:submit property="action">
+      <br/>
+      <html:submit property="delete">
         <fmt:message key="history.delete"/>
       </html:submit>
-      <html:submit property="action">
+      <html:submit property="union">
         <fmt:message key="history.union"/>
       </html:submit>
-      <html:submit property="action">
+      <html:submit property="intersect">
         <fmt:message key="history.intersect"/>
       </html:submit>
     </html:form>

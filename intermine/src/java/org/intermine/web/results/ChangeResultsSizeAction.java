@@ -52,16 +52,12 @@ public class ChangeResultsSizeAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        ActionForward forward = null;
 
-        ChangeResultsForm crsForm = (ChangeResultsForm) form;
-        String button = crsForm.getButton();
-
-        if ("changePageSize".equals(button)) {
+        if (request.getParameter("changePageSize") != null) {
             return changePageSize(mapping, form, request, response);
-        } else if ("saveNewBag".equals(button)) {
+        } else if (request.getParameter("saveNewBag") != null) {
             return saveBag(mapping, form, request, response);
-        } else if ("addToExistingBag".equals(button)) {
+        } else if (request.getParameter("addToExistingBag") != null) {
             return saveBag(mapping, form, request, response);
         } else {
             // the form was submitted without pressing a submit button, eg. using submit() from
@@ -136,11 +132,17 @@ public class ChangeResultsSizeAction extends Action
             }
         }
 
-        BagHelper.saveBag(bag, crf.getBagName(), BagHelper.getSavedBags(session));
+        String bagName;
+        if (request.getParameter("saveNewBag") != null) {
+            bagName = crf.getNewBagName();
+        } else {
+            bagName = crf.getExistingBagName();
+        }
+        BagHelper.saveBag(bag, bagName, BagHelper.getSavedBags(session));
     
         ActionMessages actionMessages = new ActionMessages();
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                           new ActionError("bag.saved", crf.getBagName()));
+                           new ActionError("bag.saved", bagName));
         saveMessages(request, actionMessages);
 
         return mapping.findForward("results");

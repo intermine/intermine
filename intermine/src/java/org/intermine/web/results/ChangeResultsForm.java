@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
@@ -31,11 +30,8 @@ import org.intermine.web.BagHelper;
 public class ChangeResultsForm extends ActionForm
 {
 
-    protected String pageSize;
+    protected String pageSize, existingBagName, newBagName;
     protected String[] selectedObjects;
-    protected String bagName;
-    // map from "name" of last button pressed to text of that button
-    protected Map buttons;
 
     /**
      * Constructor
@@ -49,9 +45,9 @@ public class ChangeResultsForm extends ActionForm
      */
     public void initialise() {
         pageSize = "10";
+        existingBagName = null;
+        newBagName = null;
         selectedObjects = new String[0];
-        bagName = null;
-        buttons = new HashMap();
     }
 
     /**
@@ -89,73 +85,41 @@ public class ChangeResultsForm extends ActionForm
     public String[] getSelectedObjects() {
         return selectedObjects;
     }
-
+ 
     /**
-     * Set the bag name (existing bags)
+     * Gets the value of existingBagName
      *
-     * @param bagName the bag name to save to
+     * @return the value of existingBagName
      */
-    public void setBagName(String bagName) {
-        this.bagName = bagName;
+    public String getExistingBagName()  {
+        return existingBagName;
     }
 
     /**
-     * Get the bag name (existing bags)
+     * Sets the value of existingBagName
      *
-     * @return the bag name
+     * @param existingBagName Value to assign to this.existingBagName
      */
-    public String getBagName() {
-        return bagName;
+    public void setExistingBagName(String existingBagName) {
+        this.existingBagName = existingBagName;
     }
 
     /**
-     * Set the buttons map
+     * Gets the value of newBagName
      *
-     * @param buttons the map
+     * @return the value of newBagName
      */
-    public void setButtons(Map buttons) {
-        this.buttons = buttons;
+    public String getNewBagName()  {
+        return newBagName;
     }
 
     /**
-     * Get the buttons map
+     * Sets the value of newBagName
      *
-     * @return the map
+     * @param newBagName Value to assign to this.newBagName
      */
-    public Map getButtons() {
-        return this.buttons;
-    }
-
-    /**
-     * Set a value for the given field
-     *
-     * @param key the field name
-     * @param value value to set
-     */
-    public void setButton(String key, Object value) {
-        buttons.put(key, value);
-    }
-
-    /**
-     * Get the value for the given field
-     *
-     * @param key the field name
-     * @return the field value
-     */
-    public Object getButton(String key) {
-        return buttons.get(key);
-    }
-
-    /**
-     * Return the name of the last button pressed
-     * @return the button name
-     */
-    public String getButton() {
-        if (buttons.size() == 0) {
-            return "";
-        } else {
-            return (String) buttons.keySet().iterator().next();
-        }
+    public void setNewBagName(String newBagName) {
+        this.newBagName = newBagName;
     }
 
     /**
@@ -166,25 +130,25 @@ public class ChangeResultsForm extends ActionForm
         Map savedBags = BagHelper.getSavedBags(session);
 
         ActionErrors errors = null;
-
-        if (("addToExistingBag".equals(getButton()) || "saveNewBag".equals(getButton()))
+        
+        if ((request.getParameter("addToExistingBag") != null
+             || request.getParameter("saveNewBag") != null)
             && selectedObjects.length == 0) {
             errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.savebag.nothingSelected", bagName));
+                       new ActionError("errors.savebag.nothingSelected"));
         }
-
-        if ("saveNewBag".equals(getButton())) {
-            if (bagName.equals("")) {
+        
+        if (request.getParameter("saveNewBag") != null) {
+            if (newBagName.equals("")) {
                 errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.savebag.blank", bagName));
-            } else if (savedBags != null && savedBags.containsKey(bagName)) {
+                           new ActionError("errors.savebag.blank"));
+            } else if (savedBags != null && savedBags.containsKey(newBagName)) {
                 errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.savebag.existing", bagName));
+                           new ActionError("errors.savebag.existing", newBagName));
             }
-            return errors;
         }
 
         return errors;
