@@ -1,5 +1,5 @@
 package org.flymine.objectstore.webservice.ser;
- 
+
 /*
  * Copyright (C) 2002-2003 FlyMine
  *
@@ -13,6 +13,7 @@ package org.flymine.objectstore.webservice.ser;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
+import org.apache.axis.encoding.Deserializer;
 
 /**
  * Produce DefaultDeserializers
@@ -23,10 +24,21 @@ public class DefaultDeserializerFactory extends BaseDeserializerFactory
 {
     /**
      * Constructor
-     * @param javaType the type of the object to instantiate
-     * @param xmlType the qname (tag) of the xml version of the object
+     * @param javaType the type of the object that the serializer will deserialize
+     * @param xmlType the corresponding QName in the XML
      */
     public DefaultDeserializerFactory(Class javaType, QName xmlType) {
-        super(DefaultDeserializer.class, xmlType, javaType);
+        super(DefaultDeserializer.class, xmlType, javaType);      
+    }
+
+    /**
+     * @see BaseDeserializerFactory#getGeneralPurpose
+     */
+    protected Deserializer getGeneralPurpose(String mechanismType) {
+        if (javaType == null || xmlType == null) {
+           return super.getGeneralPurpose(mechanismType);
+        }
+
+        return new DefaultDeserializer(javaType, xmlType);
     }
 }

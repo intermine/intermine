@@ -10,97 +10,115 @@ package org.flymine.objectstore.webservice.ser;
  *
  */
 
-import javax.xml.namespace.QName;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import java.lang.reflect.Field;
 
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.soap.SOAPConstants;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import javax.xml.namespace.QName;
 
 import org.flymine.util.TypeUtil;
 
-import org.apache.log4j.Logger;
-
 /**
- * This the deserializer (xml->object) for all objects used in objectstore calls
- * (except lists...which will eventually be handled by axis)
+ * Deserializer for (bean-like) objects sent via SOAP (i.e.everything except Lists and Models)
  *
  * @author Mark Woodbridge
  */
 public class DefaultDeserializer extends DeserializerImpl
 {
-    protected static final Logger LOG = Logger.getLogger(DefaultDeserializer.class);
-
-    QName xmlType;
-    Class javaType;
+    protected QName xmlType;
+    protected Class javaType;
 
     /**
      * Constructor
-     * @param javaType the type of the object to instantiate
-     * @param xmlType the qname (tag) of the xml version of the object
+     * @param javaType the type of the object that this instance will deserialize
+     * @param xmlType the corresponding QName in the XML
      */
     public DefaultDeserializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
-    }
 
-    /**
-     * @see DeserializerImpl#onStartElement
-     */
-    public void onStartElement(String namespace, String localName, String prefix,
-                               Attributes attributes, DeserializationContext context)
-        throws SAXException {
-        
-        if (context.isNil(attributes)) { 
-            return;
-        }
-        
         try {
-            setValue(javaType.newInstance());
+            value = javaType.newInstance();
         } catch (Exception e) {
-            throw new SAXException(e);
+            e.printStackTrace();
         }
     }
 
     /**
      * @see DeserializerImpl#onStartChild
      */
-    public SOAPHandler onStartChild(String namespace, String localName, String prefix, 
-                                    Attributes attributes, DeserializationContext context) 
+    public SOAPHandler onStartChild(String namespace, String localName, String prefix,
+                                    Attributes attributes, DeserializationContext context)
         throws SAXException {
-        
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+
         if (context.isNil(attributes)) {
             return null;
         }
+        
+        Field field = TypeUtil.getField(javaType, localName);
 
-        QName itemType = context.getTypeFromAttributes(namespace, localName, attributes);
-        Deserializer dSer = null;
-        if (itemType != null) {
-           dSer = context.getDeserializerForType(itemType);
+        if (field == null) {
+            throw new SAXException("field not found");
         }
+
+        QName childXMLType = context.getTypeFromXSITypeAttr(namespace, localName, attributes);
+
+        String href = attributes.getValue(soapConstants.getAttrHref());
+        
+        Deserializer dSer = getDeserializer(childXMLType, field.getType(), href, context);
+
         if (dSer == null) {
             dSer = new DeserializerImpl();
+            return (SOAPHandler) dSer;
         }
 
-        dSer.registerValueTarget(new DeserializerTarget(this, localName));
-        
+        dSer.registerValueTarget(new DeserializerTarget(this, field.getName()));
         addChildDeserializer(dSer);
-        
+
         return (SOAPHandler) dSer;
     }
 
     /**
-     * @see DeserializerImpl#setChildValue
+     * @see DeserializerImpl#getDeserializer
      */
-   public void setChildValue(Object value, Object hint) throws SAXException {
-       String fieldName = (String) hint;
-       try {
-           TypeUtil.setFieldValue(this.value, fieldName, value);
-       } catch (IllegalAccessException e) {
-           throw new SAXException(e);
-       }
+    protected Deserializer getDeserializer(QName xmlType, 
+                                           Class javaType, 
+                                           String href,
+                                           DeserializationContext context) {
+        Deserializer dSer = null;
+
+        if (xmlType != null && href == null) {
+            dSer = context.getDeserializerForType(xmlType);
+        } else {
+            TypeMapping tm = context.getTypeMapping();
+            QName defaultXMLType = tm.getTypeQName(javaType);
+            if (href == null) {
+                dSer = context.getDeserializer(javaType, defaultXMLType);
+            } else {
+                dSer = new DeserializerImpl();
+                dSer.setDefaultType(defaultXMLType);
+            }
+        }
+        return dSer;
+    }
+
+    /**
+     * @see DeserializerTarget#setChildValue
+     */
+    public void setChildValue(Object value, Object hint) throws SAXException {
+        String fieldName = (String) hint;
+        try {
+            TypeUtil.setFieldValue(this.value, fieldName, value);
+        } catch (IllegalAccessException e) {
+            throw new SAXException(e);
+        }
     }
 }
