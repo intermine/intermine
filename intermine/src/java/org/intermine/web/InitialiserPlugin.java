@@ -330,8 +330,12 @@ public class InitialiserPlugin implements PlugIn
     }
     
     /**
-     * Return a List of the names of the classes for which this template is relevant - ie. it
-     * should appear on the object details page for objects of the class.
+     * Return two Maps with information about the relations between classnames, a given template and
+     * its template categories.
+     * @param classCategoryTemplates a Map from class name to a Map from category to template
+     * @param classTemplateExprs a Map from class name to a Map from template name to field name
+     * List - the field names/expressions are the ones that should be set when a template is linked
+     * to from the object details page eg. Gene.identifier
      */
     private static void setClassesForTemplate(ObjectStore os, TemplateQuery template,
                                               Map classCategoryTemplates,
