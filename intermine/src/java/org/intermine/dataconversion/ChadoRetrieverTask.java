@@ -84,11 +84,8 @@ public class ChadoRetrieverTask extends Task
             Database db = DatabaseFactory.getDatabase(database);
             Model m = Model.getInstanceByName(model);
             
-            Collection items = new ChadoConvertor().process(m, db);
-            String xml = FullRenderer.render(items);
-            
             writer = new BufferedWriter(new FileWriter (destFile));
-            writer.write(xml);
+            new ChadoConvertor(m, db).process(writer);
         } catch (Exception e) {            
             throw new BuildException(e);
         } finally {

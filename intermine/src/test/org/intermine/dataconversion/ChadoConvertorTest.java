@@ -12,6 +12,8 @@ package org.flymine.dataconversion;
 
 import junit.framework.TestCase;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +23,7 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.ArrayList;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
@@ -33,6 +36,7 @@ import org.flymine.util.TypeUtil;
 import org.flymine.xml.full.Field;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.ReferenceList;
+import org.flymine.xml.full.FullRenderer;
 
 public class ChadoConvertorTest extends TestCase {
     private Map map;
@@ -40,12 +44,14 @@ public class ChadoConvertorTest extends TestCase {
     private ChadoConvertor convertor;
     private Database db;
     private MockSingleRowResultSet blank;
+    private Collection items;
     
     public void setUp() throws Exception {
         map = new HashMap();
         model = Model.getInstanceByName("testmodel");
-        convertor = new MockChadoConvertor();
         db = DatabaseFactory.getDatabase("db.unittest");
+        items = new ArrayList();
+        convertor = new MockChadoConvertor(model, db, items);
         blank = new MockSingleRowResultSet();
         blank.next();
     }
@@ -71,7 +77,8 @@ public class ChadoConvertorTest extends TestCase {
         field.setValue("DepartmentA1");
         item.addField(field);
 
-        assertEquals(Collections.singletonList(item), convertor.processClassDescriptor(cld));
+        convertor.processClassDescriptor(cld);
+        assertEquals(Collections.singletonList(item), items);
     }
 
     public void testReference() throws Exception {
@@ -95,7 +102,8 @@ public class ChadoConvertorTest extends TestCase {
         field.setValue("14");
         item.addReference(field);
 
-        assertEquals(Collections.singletonList(item), convertor.processClassDescriptor(cld));
+        convertor.processClassDescriptor(cld);
+        assertEquals(Collections.singletonList(item), items);
     }
 
     public void test1NCollection() throws Exception {
@@ -125,7 +133,8 @@ public class ChadoConvertorTest extends TestCase {
         refs.addValue("2");
         item.addCollection(refs);
 
-        assertEquals(Collections.singletonList(item), convertor.processClassDescriptor(cld));
+        convertor.processClassDescriptor(cld);
+        assertEquals(Collections.singletonList(item), items);
     }
 
     public void testMNCollection() throws Exception {
@@ -156,7 +165,8 @@ public class ChadoConvertorTest extends TestCase {
         refs.addValue("2");
         item.addCollection(refs);
 
-        assertEquals(Collections.singletonList(item), convertor.processClassDescriptor(cld));
+        convertor.processClassDescriptor(cld);
+        assertEquals(Collections.singletonList(item), items);
     }
 
     public void testUnidirectional() throws Exception {
@@ -179,7 +189,8 @@ public class ChadoConvertorTest extends TestCase {
         field.setValue("14");
         item.addReference(field);
 
-        assertEquals(Collections.singletonList(item), convertor.processClassDescriptor(cld));
+        convertor.processClassDescriptor(cld);
+        assertEquals(Collections.singletonList(item), items);
     }
     
     public void testMultipleInstances() throws Exception {
@@ -214,8 +225,8 @@ public class ChadoConvertorTest extends TestCase {
         field2.setValue("DepartmentA2");
         item2.addField(field2);
 
-        Collection c = Arrays.asList(new Object[] {item, item2});
-        assertEquals(c, convertor.processClassDescriptor(cld));
+        convertor.processClassDescriptor(cld);
+        assertEquals(Arrays.asList(new Object[] {item, item2}), items);
     }
 
     public void testMultipleClasses() throws Exception {
@@ -256,11 +267,70 @@ public class ChadoConvertorTest extends TestCase {
         item2.setClassName(model.getNameSpace() + "Company");
         item2.setIdentifier("13");
 
-        Collection c = Arrays.asList(new Object[] {item, item2});
-        assertEquals(c, convertor.process(model, db));
+        convertor.process();
+        assertEquals(Arrays.asList(new Object[] {item, item2}), items); 
+    }
+
+    public void testProcessWriter() throws Exception {
+        for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
+            String clsName = (String) iter.next();
+            map.put("SELECT * FROM " + TypeUtil.unqualifiedName(clsName), blank);
+        }
+
+        MockSingleRowResultSet mrs = new MockSingleRowResultSet();
+        mrs.addExpectedNamedValues(
+                                   new String[] {"Department_id", "name", "company_id", "manager_id"},
+                                   new Object[] {new Integer(12), "DepartmentA1", null, null});
+
+        map.put("SELECT * FROM Department", mrs);
+
+        map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
+
+        Item item = new Item();
+        item.setClassName(model.getNameSpace() + "Department");
+        item.setIdentifier("12");
+        Field field = new Field();
+        field.setName("name");
+        field.setValue("DepartmentA1");
+        item.addField(field);
+
+        MockSingleRowResultSet mrs2 = new MockSingleRowResultSet();
+        mrs2.addExpectedNamedValues(
+                                   new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
+                                   new Object[] {new Integer(13), null, null, null});
+
+        map.put("SELECT * FROM Company", mrs2);
+
+        map.put("SELECT Department_id FROM Department WHERE company_id = 13", blank);
+        map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 13", blank);
+
+        Item item2 = new Item();
+        item2.setClassName(model.getNameSpace() + "Company");
+        item2.setIdentifier("13");
+
+        convertor = new MockChadoConvertor(model, db, null);
+        StringWriter sw = new StringWriter();
+        convertor.process(sw);
+        assertEquals(FullRenderer.render(Arrays.asList(new Object[] {item, item2})), sw.toString()); 
     }
 
     class MockChadoConvertor extends ChadoConvertor {
+        protected Collection items;
+
+        public MockChadoConvertor(Model model, Database db, Collection items) {
+            super(model, db);
+            this.items = items;
+        }
+
+        protected void processItem(Item item) throws IOException {
+            if (items == null) {
+                super.processItem(item);
+            } else {
+                items.add(item);
+            }
+        }
+
         protected ResultSet executeQuery(Connection c, String sql) throws SQLException {
             System.out.println(sql);
             ResultSet rs = (ResultSet) map.get(sql);
@@ -269,6 +339,7 @@ public class ChadoConvertorTest extends TestCase {
             }
             return rs;
         }
+
         protected String findIndirectionTable(String clsName, String otherClsName) throws SQLException {
             return clsName + "_" + otherClsName;
         }

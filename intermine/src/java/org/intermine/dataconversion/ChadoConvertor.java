@@ -10,6 +10,8 @@ package org.flymine.dataconversion;
  *
  */
 
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +31,7 @@ import org.flymine.util.DatabaseUtil;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Field;
 import org.flymine.xml.full.ReferenceList;
+import org.flymine.xml.full.FullRenderer;
 
 import org.apache.log4j.Logger;
 
@@ -41,39 +44,61 @@ import org.apache.log4j.Logger;
 public class ChadoConvertor 
 {
     protected static final Logger LOG = Logger.getLogger(ChadoConvertor.class);
+    protected final String ENDL = System.getProperty("line.separator");
     protected Connection c = null;
+    protected Writer writer;
+    protected Model model;
+    protected Database db;
 
     /**
-     * Produce a list of Items representing all the instances of all the classes in the model
-     * present in a database
+     * Constructor
+     *
      * @param model the Model
      * @param db the Database
-     * @return a collection of all the items
+     */
+    protected ChadoConvertor(Model model, Database db) {
+        this.model = model;
+        this.db = db;
+    }
+
+    /**
+     * Output representations of  all the instances of all the classes in the model present in a
+     * database to a Writer
+     *
+     * @param writer the Writer
+     */
+    public void process(Writer writer) throws SQLException, IOException  {
+        this.writer = writer;
+        writer.write(FullRenderer.getHeader() + ENDL);
+        process();
+        writer.write(FullRenderer.getFooter() + ENDL);
+    }
+
+    /**
+     * Produce all the instances of all the classes in the model present in a database
+     *
      * @throws SQLException if an error occurs when accessing the Database
      */
-    public Collection process(Model model, Database db) throws SQLException {
-        List items = new ArrayList();
+    protected void process() throws SQLException, IOException {
         try {
             c = db.getConnection();
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
-                items.addAll(processClassDescriptor((ClassDescriptor) cldIter.next()));
+                processClassDescriptor((ClassDescriptor) cldIter.next());
             }
         } finally {
             if (c != null) {
                 c.close();
             }
         }
-        return items;
     }
 
     /** 
-     * Process a ClassDescriptor to generate a Collection of Items representing all the instances
-     * of this class in the target database
+     * Process the items in the database for a given ClassDescriptor
+     *
      * @param cld the ClassDescriptor
-     * @return a Collection of Items
      * @throws SQLException if an error occurs in accessing the database
      */
-    protected Collection processClassDescriptor(ClassDescriptor cld) throws SQLException {
+    protected void processClassDescriptor(ClassDescriptor cld) throws SQLException, IOException {
         List items = new ArrayList();
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         ResultSet r = executeQuery(c, "SELECT * FROM " + clsName);
@@ -129,9 +154,17 @@ public class ChadoConvertor
                     }
                 }
             }
-            items.add(item);
+            processItem(item);
         }
-        return items;
+    }
+
+    /**
+     * Process an item
+     *
+     * @param item the Item
+     */
+    protected void processItem(Item item) throws IOException {
+        writer.write(FullRenderer.render(item));
     }
 
     /**
