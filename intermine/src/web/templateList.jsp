@@ -48,10 +48,10 @@
           </c:if>
           <c:if test="${showEdit == 1}">
             <html:link action="/editTemplate?name=${templateQuery.key}">
-              <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
+              <img border="0" class="arrow" src="images/edit.png" alt="->"/>
             </html:link>
           </c:if>
-          <br/>
+          <p>
         </c:forEach>
       </td>
     </tr>
