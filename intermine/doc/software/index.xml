@@ -32,6 +32,7 @@
   <section>
     <heading>Java query interface</heading>
     <item><!--ulink url="java_query/tutorial"-->Tutorial (coming soon)<!--/ulink--></item>
+    <item><ulink url="java_query/spec">Specification</ulink></item>
   </section>
 
   <section>
