@@ -33,7 +33,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testSubmitSuccessfulQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","select a1_ from Company as a1_");
-        addRequestParameter("action", "Run");
+        addRequestParameter("action", "Run query");
         actionPerform();
         verifyForward("runquery");
         assertNotNull(getSession().getAttribute(Constants.QUERY));
@@ -43,7 +43,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testSubmitEmptyQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","");
-        addRequestParameter("action", "Run");
+        addRequestParameter("action", "Run query");
         actionPerform();
         verifyForward("error");
         assertNull(getSession().getAttribute(Constants.QUERY));
@@ -52,7 +52,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testSubmitRubbishQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","some rubbish");
-        addRequestParameter("action", "Run");
+        addRequestParameter("action", "Run query");
         actionPerform();
         verifyForward("error");
         assertNull(getSession().getAttribute(Constants.QUERY));
@@ -61,17 +61,18 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testViewSuccessfulQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","select a1_ from Company as a1_");
-        addRequestParameter("action", "View");
+        addRequestParameter("action", "Query composer");
         actionPerform();
         verifyForward("buildquery");
-        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getSession().getAttribute(Constants.QUERY)).toString());
+        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_",
+                     ((Query) getSession().getAttribute(Constants.QUERY)).toString());
         verifyNoActionErrors();
     }
 
     public void testViewEmptyQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","");
-        addRequestParameter("action", "View");
+        addRequestParameter("action", "Query composer");
         actionPerform();
         verifyForward("error");
         assertNull((String) getSession().getAttribute(Constants.QUERY));
@@ -80,7 +81,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
     public void testViewRubbishQuery() {
         setRequestPathInfo("/fqlquery");
         addRequestParameter("querystring","some rubbish");
-        addRequestParameter("action", "View");
+        addRequestParameter("action", "Query composer");
         actionPerform();
         verifyForward("error");
         assertNull((String) getSession().getAttribute(Constants.QUERY));
