@@ -156,61 +156,62 @@
           </c:forEach>
         </c:if>
       </table>
-      <br/>
 
-      <%-- "Displaying xxx to xxx of xxx rows" messages --%>
-      <c:choose>
-        <c:when test="${RESULTS_TABLE.sizeEstimate}">
-          <fmt:message key="results.pageinfo.estimate">
-            <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
-            <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
-            <fmt:param value="${RESULTS_TABLE.size}"/>
-          </fmt:message>
-        </c:when>
-        <c:otherwise>
-          <fmt:message key="results.pageinfo.exact">
-            <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
-            <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
-            <fmt:param value="${RESULTS_TABLE.size}"/>
-          </fmt:message>
-        </c:otherwise>
-      </c:choose>
-      <br/>
-
-      <%-- Paging controls --%>
-      <c:if test="${!RESULTS_TABLE.firstPage}">
-        <html:link action="/changeResults?method=first">
-          <fmt:message key="results.first"/>
-        </html:link>
-        <html:link action="/changeResults?method=previous">
-          <fmt:message key="results.previous"/>
-        </html:link>
-      </c:if>
-      <c:if test="${!RESULTS_TABLE.lastPage}">
-        <html:link action="/changeResults?method=next">
-          <fmt:message key="results.next"/>
-        </html:link>
-        <c:if test="${RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
-          <html:link action="/changeResults?method=last">
-            <fmt:message key="results.last"/>
+      <c:if test="${RESULTS_TABLE.size > 1}">
+        <%-- "Displaying xxx to xxx of xxx rows" messages --%>
+        <br/>
+        <c:choose>
+          <c:when test="${RESULTS_TABLE.sizeEstimate}">
+            <fmt:message key="results.pageinfo.estimate">
+              <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
+              <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
+              <fmt:param value="${RESULTS_TABLE.size}"/>
+            </fmt:message>
+          </c:when>
+          <c:otherwise>
+            <fmt:message key="results.pageinfo.exact">
+              <fmt:param value="${RESULTS_TABLE.startRow+1}"/>
+              <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
+              <fmt:param value="${RESULTS_TABLE.size}"/>
+            </fmt:message>
+          </c:otherwise>
+        </c:choose>
+        <br/>
+        
+        <%-- Paging controls --%>
+        <c:if test="${!RESULTS_TABLE.firstPage}">
+          <html:link action="/changeResults?method=first">
+            <fmt:message key="results.first"/>
+          </html:link>
+          <html:link action="/changeResults?method=previous">
+            <fmt:message key="results.previous"/>
           </html:link>
         </c:if>
-      </c:if>
-      <br/>
-
+        <c:if test="${!RESULTS_TABLE.lastPage}">
+          <html:link action="/changeResults?method=next">
+            <fmt:message key="results.next"/>
+          </html:link>
+          <c:if test="${RESULTS_TABLE.maxRetrievableIndex > RESULTS_TABLE.size}">
+            <html:link action="/changeResults?method=last">
+              <fmt:message key="results.last"/>
+            </html:link>
+          </c:if>
+        </c:if>
+        <br/>
+        
       <%-- Page size controls --%>
-
-      <fmt:message key="results.changepagesize"/>
-      <html:select property="pageSize">
-        <html:option value="10">10</html:option>
-        <html:option value="25">25</html:option>
-        <html:option value="50">50</html:option>
-        <html:option value="100">100</html:option>
-      </html:select>
-      <html:submit property="changePageSize">
-        <fmt:message key="button.change"/>
-      </html:submit>
-      <br/>
+        <fmt:message key="results.changepagesize"/>
+        <html:select property="pageSize">
+          <html:option value="10">10</html:option>
+          <html:option value="25">25</html:option>
+          <html:option value="50">50</html:option>
+          <html:option value="100">100</html:option>
+        </html:select>
+        <html:submit property="changePageSize">
+          <fmt:message key="button.change"/>
+        </html:submit>
+        <br/>
+      </c:if>
 
       <%-- Save bag controls --%>
       <br/><br/>
