@@ -62,8 +62,6 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
                     while (iter.hasNext()) {
                         Map.Entry entry = (Map.Entry) iter.next();
                         Field field = (Field) entry.getKey();
-                        int fieldType = describeRelation(field);
-
                         Method method = (Method) entry.getValue();
                         Object value = method.invoke(obj, new Object[] {});
                         retval.put(field, value);
