@@ -34,12 +34,12 @@ form {
 .paneTitle {
   font-weight: bold;
 }
-.title {
+.headerTitle {
   font-size: x-large;
   font-weight: bold;
   color: #220077;
 }
-.subtitle {
+.headerSubtitle {
   font-size: large;
 }
 .errors {
