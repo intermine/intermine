@@ -185,9 +185,9 @@
     <action path="/buildBag"
             type="org.intermine.web.BuildBagAction"
             name="buildBagForm"
-            scope="session"
             parameter="action">
       <forward name="bagDetails" path="/bagDetails.do"/>
+      <forward name="buildBag" path="bagBuild.page"/>
     </action>
 
     <!-- Action to view a collection from an object -->
@@ -200,7 +200,7 @@
     <action path="/createBoolean"
             type="org.intermine.web.HistoryAction"
             name="historyForm">
-      <forward name="history" path="/history"/>
+      <forward name="history" path="/history.dod"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
@@ -262,6 +262,10 @@
 
     <action path="/initTree"
             type="org.intermine.web.TreeController"/>
+
+    <action path="/initBagBuild"
+            type="org.intermine.web.BuildBagController"
+            name="buildBagForm"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
