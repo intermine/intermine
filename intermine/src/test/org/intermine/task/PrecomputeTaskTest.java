@@ -15,17 +15,24 @@ import org.intermine.metadata.Model;
 import junit.framework.*;
 
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.io.InputStream;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.MainHelper;
+
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Department;
 
 /**
  * Tests for PrecomputeTask.
@@ -213,6 +220,37 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
     public void testQueries() {
 
+    }
+
+    // test that correct query and list of indexes generate for pre-computing
+    public void testPrecomputeTemplate() throws Exception {
+        PrecomputeTask task = new PrecomputeTask();
+        Map templates = task.getPrecomputeTemplateQueries();
+        TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
+        System.out.println(MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap()));
+
+        Query q = new Query();
+        q.setDistinct(true);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryClass qcEmp = new QueryClass(Employee.class);
+        QueryField qfAge = new QueryField(qcEmp, "age");
+        q.addFrom(qcEmp);
+        QueryClass qcDept = new QueryClass(Department.class);
+        q.addFrom(qcDept);
+        QueryObjectReference deptRef = new QueryObjectReference(qcEmp, "department");
+        ContainsConstraint cc = new ContainsConstraint(deptRef, ConstraintOp.CONTAINS, qcDept);
+        cs.addConstraint(cc);
+        QueryField qfName = new QueryField(qcDept, "name");
+        SimpleConstraint sc = new SimpleConstraint(qfName, ConstraintOp.EQUALS, new QueryValue("DepartmentA"));
+        cs.addConstraint(sc);
+        q.addToSelect(qcEmp);
+        q.addToSelect(qfAge);
+        q.setConstraint(cs);
+
+        PrecomputeTask.QueryAndIndexes expected = task.new QueryAndIndexes();
+        expected.setQuery(q);
+        expected.addIndex(qfAge);
+        assertEquals(expected.toString(), task.processTemplate(template).toString());
     }
 
     class DummyPrecomputeTask extends PrecomputeTask {

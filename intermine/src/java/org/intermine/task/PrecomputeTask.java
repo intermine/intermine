@@ -262,40 +262,127 @@ public class PrecomputeTask extends Task
 
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            ArrayList indexes = new ArrayList();
             HashMap pathToQueryNode = new HashMap();
             TemplateQuery template = (TemplateQuery) entry.getValue();
-            Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
 
-            Iterator niter = template.getNodes().iterator();
-            while (niter.hasNext()) {
-                PathNode node = (PathNode) niter.next();
-                List ecs = template.getConstraints(node);
-                if (ecs != null && ecs.size() > 0) {
-                    // node has editable constraints
-                    QueryNode qn = (QueryNode) pathToQueryNode.get(node.getPath());
-                    if (qn == null) {
-                        throw new BuildException("no QueryNode for path " + node.getPath());
-                    }
-                    indexes.add(qn);
-                    if (!query.getSelect().contains(qn)) {
-                        query.addToSelect(qn);
-                    }
-                }
-            }
+            QueryAndIndexes qai = processTemplate(template);
 
             ResultsInfo resultsInfo;
-
             try {
-                resultsInfo = os.estimate(query);
+                resultsInfo = os.estimate(qai.getQuery());
             } catch (ObjectStoreException e) {
                 throw new BuildException("Exception while calling ObjectStore.estimate()", e);
             }
 
             if (resultsInfo.getRows() >= minRows) {
                 LOG.info("precomputing template " + entry.getKey());
-                precompute(os, query, indexes);
+                precompute(os, qai.getQuery(), qai.getIndexes());
             }
+        }
+    }
+
+
+    /**
+     * For a template alter the query ready to pre-compute: remove editable constraints
+     * and add editable fields to the select list.  Generate list of additional indexes
+     * to create.
+     * @param template the template query to alter
+     * @return altered query and a list of indexes
+     */
+    protected QueryAndIndexes processTemplate(TemplateQuery template) {
+        QueryAndIndexes qai = new QueryAndIndexes();
+        HashMap pathToQueryNode = new HashMap();
+        Query tmp = MainHelper.makeQuery(template.getQuery(), new HashMap(), pathToQueryNode);
+
+        // find nodes with editable constraints to index and possibly add to select list
+        Iterator niter = template.getNodes().iterator();
+        while (niter.hasNext()) {
+            PathNode node = (PathNode) niter.next();
+            List ecs = template.getConstraints(node);
+            if (ecs != null && ecs.size() > 0) {
+                // node has editable constraints
+                QueryNode qn = (QueryNode) pathToQueryNode.get(node.getPath());
+                if (qn == null) {
+                    throw new BuildException("no QueryNode for path " + node.getPath());
+                }
+                template.getQuery().getView().add(node.getPath());
+                qai.addIndex(qn);
+            }
+        }
+
+        // now generate query with editable constraints removed
+        template.removeEditableConstraints();
+        Query query = MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap());
+        qai.setQuery(query);
+
+        return qai;
+    }
+
+
+    /**
+     * Class to associate a query with a list of query nodes that will need to have
+     * indexes created for them
+     */
+    protected class QueryAndIndexes
+    {
+        Query query = null;
+        List indexes = new ArrayList();
+
+        /**
+         * add to the list of indexes
+         * @param qn to add to list of indexes
+         */
+        public void addIndex(QueryNode qn) {
+            this.indexes.add(qn);
+        }
+
+        /**
+         * Return the list if indexes
+         * @return list of indexes
+         */
+        public List getIndexes() {
+            return this.indexes;
+        }
+
+        /**
+         * set the query object
+         * @param q the query object
+         */
+        public void setQuery(Query q) {
+            this.query = q;
+        }
+
+        /**
+         * get the query object
+         * @return the query object
+         */
+        public Query getQuery() {
+            return this.query;
+        }
+
+        /**
+         * @see Object#equals
+         */
+        public boolean equals(Object o) {
+            if (o instanceof QueryAndIndexes) {
+                return query.equals(((QueryAndIndexes) o).query)
+                    && indexes.equals(((QueryAndIndexes) o).indexes);
+            }
+            return false;
+        }
+
+        /**
+         * @see Object#hashCode
+         */
+        public int hashCode() {
+            return 3 * query.hashCode() + 7 * indexes.hashCode();
+        }
+
+        /**
+         * @see Object#toString
+         */
+        public String toString() {
+            return "query: " + query.toString() + ", indexes: " + indexes.toString();
         }
     }
 
