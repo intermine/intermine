@@ -81,6 +81,7 @@ public class CreateIndexesTask extends Task
                 processClassDescriptor(cld);
             }
         } catch (Exception e) {
+            e.printStackTrace(System.out);
             throw new BuildException(e);
         } finally {
             if (c != null) {

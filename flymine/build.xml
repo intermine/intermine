@@ -484,6 +484,15 @@
     </ant>
   </target>
 
+  <target name="create-indexes-dros-test" depends="build-db-dros-test">
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-dros-test"/>
+    </ant>
+  </target>
+
   <!-- Data Translation targets -->
 
   <!-- Build Chado target items database -->
@@ -709,7 +718,7 @@
   </target>
 
   <!-- Load data from chado-items into chado-test -->
-  <target name="load-chado" depends="compile-main, convert-chado, build-db-chado-test, create-indexes-chado-test">
+  <target name="load-chado" depends="compile-main, convert-chado">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -737,7 +746,7 @@
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
-  <target name="load-ensembl-drosophila" depends="compile-main, build-db-dros-test">
+  <target name="load-ensembl-drosophila" depends="compile-main, build-db-dros-test, create-indexes-dros-test">
 
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -749,15 +758,15 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-dros integrationWriter="integration.dros-test" source="os.dros-translated" sourceName="ensembl"/>
+    <load-dros integrationWriter="integration.ensembl-dros-test" source="os.ensembl-dros-translated" sourceName="ensembl"/>
   </target>
 
   <!-- Build temporary flymine database to hold ensembl anopheles data -->
-  <target name="build-db-dros-test">
+  <target name="build-db-dros-test" depends="create-genomic-model">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.dros-test"/>
+      <property name="db.name" value="db.ensembl-dros-test"/>
     </ant>
   </target>
 

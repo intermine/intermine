@@ -92,7 +92,7 @@ public class TypeUtil
                 type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
             } catch (Exception e3) {
             }
-            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't get field \""
+            IllegalAccessException e2 = new IllegalAccessException("Couldn't get field \""
                     + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""
                     + (type == null ? "" : " (a " + type + ")"));
             e2.initCause(e);
@@ -107,19 +107,22 @@ public class TypeUtil
      * @param o the Object
      * @param fieldName the name of the relevant Field
      * @return the value of the field, without dereferencing ProxyReferences
-     * @throws IllegalArgumentException if the field is inaccessible or the Field is not an Object
-     * Reference
+     * @throws IllegalAccessException if the field is inaccessible
      */
-    public static Object getFieldProxy(Object o, String fieldName) throws IllegalArgumentException {
+    public static Object getFieldProxy(Object o, String fieldName) throws IllegalAccessException {
         try {
-            return getProxyGetter(o.getClass(), fieldName).invoke(o, new Object[] {});
+            Method proxyGetter = getProxyGetter(o.getClass(), fieldName);
+            if (proxyGetter == null) {
+                proxyGetter = getGetter(o.getClass(), fieldName);
+            }
+            return proxyGetter.invoke(o, new Object[] {});
         } catch (Exception e) {
             String type = null;
             try {
                 type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
             } catch (Exception e3) {
             }
-            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't proxyGet field \""
+            IllegalAccessException e2 = new IllegalAccessException("Couldn't proxyGet field \""
                     + o.getClass().getName() + "." + fieldName + "\""
                     + (type == null ? "" : " (a " + type + ")"));
             e2.initCause(e);

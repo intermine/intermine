@@ -559,21 +559,17 @@ public class SqlGenerator
      */
     public static void objectToString(StringBuffer buffer, Object value)
             throws ObjectStoreException {
-        try {
-            buffer.append(DatabaseUtil.objectToString(value));
-        } catch (IllegalArgumentException e) {
-            if (value instanceof UnknownTypeValue) {
-                buffer.append(value.toString());
-            } else if (value instanceof FlyMineBusinessObject) {
-                Integer id = ((FlyMineBusinessObject) value).getId();
-                if (id == null) {
-                    throw new ObjectStoreException("FlyMineBusinessObject found"
-                            + " without an ID set");
-                }
-                buffer.append(id.toString());
-            } else {
-                throw (new IllegalArgumentException("Invalid Object in QueryValue: " + value));
+        if (value instanceof UnknownTypeValue) {
+            buffer.append(value.toString());
+        } else if (value instanceof FlyMineBusinessObject) {
+            Integer id = ((FlyMineBusinessObject) value).getId();
+            if (id == null) {
+                throw new ObjectStoreException("FlyMineBusinessObject found"
+                        + " without an ID set");
             }
+            buffer.append(id.toString());
+        } else {
+            buffer.append(DatabaseUtil.objectToString(value));
         }
     }
 

@@ -207,7 +207,7 @@ public class LiteRenderer
                 // Element is not output if the value is null
 
                 String fieldname = (String) iter.next();
-                Object value = TypeUtil.getFieldValue(obj, fieldname);
+                Object value = TypeUtil.getFieldProxy(obj, fieldname);
 
                 if (value == null) {
                     continue;
@@ -247,6 +247,7 @@ public class LiteRenderer
                 }
             }
         } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 }

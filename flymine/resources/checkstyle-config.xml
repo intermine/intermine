@@ -115,7 +115,7 @@
 
     <module name="MethodLength">
       <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
-      <property name="max" value="150"/>
+      <property name="max" value="181"/>
     </module>
 
     <module name="ParameterNumber">

@@ -12,6 +12,7 @@ package org.flymine.dataloader;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -80,8 +81,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
         }
-        String oText = obj.toString();
-        int oTextLength = oText.length();
+        //String oText = obj.toString();
+        //int oTextLength = oText.length();
         //System//.out.println(" --------------- getEquivalentObjects() called on "
         //        + oText.substring(0, oTextLength > 60 ? 60 : oTextLength));
         Integer destId = null;
@@ -89,6 +90,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             destId = idMap.get(obj.getId());
         }
         if (destId == null) {
+            if (obj instanceof ProxyReference) {
+                throw new IllegalArgumentException("Given a ProxyReference, but id not in ID Map");
+            }
             Query q = null;
             try {
                 q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap);
@@ -101,13 +105,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             retval.setNoExplain();
             return retval;
         } else {
-            FlyMineBusinessObject o = osw.pilferObjectById(destId);
-            if (o == null) {
-                return Collections.singleton(new ProxyReference(osw, destId));
-            //} else {
-                //System//.out.println(" --------------------------- Cache hit");
-            }
-            return Collections.singleton(o);
+            return Collections.singleton(new ProxyReference(osw, destId));
         }
     }
 
@@ -119,7 +117,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (o == null) {
             throw new NullPointerException("Object o should not be null");
         }
+        long time = (new Date()).getTime();
         store(o, source, skelSource, SOURCE);
+        long now = (new Date()).getTime();
+        if (now - time > 20000) {
+            LOG.error("Stored object " + o.getClass().getName() + ":" + o.getId() + " - took "
+                    + (now - time) + " ms");
+        }
     }
 
 
@@ -167,10 +171,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                 dest.getClass(), fieldName, source)) {
                         if (type == FROM_DB) {
                             TypeUtil.setFieldValue(dest, fieldName,
-                                    TypeUtil.getFieldValue(srcObj, fieldName));
+                                    TypeUtil.getFieldProxy(srcObj, fieldName));
                         } else {
-                            FlyMineBusinessObject target = store((FlyMineBusinessObject)
-                                    TypeUtil.getFieldValue(srcObj, fieldName), source, skelSource,
+                            FlyMineBusinessObject sourceTarget = (FlyMineBusinessObject)
+                                TypeUtil.getFieldProxy(srcObj, fieldName);
+                            if (sourceTarget instanceof ProxyReference) {
+                                if (idMap.get(sourceTarget.getId()) == null) {
+                                    sourceTarget = ((ProxyReference) sourceTarget).getObject();
+                                }
+                            }
+                            FlyMineBusinessObject target = store(sourceTarget, source, skelSource,
                                     SKELETON);
                             TypeUtil.setFieldValue(dest, fieldName, target);
                         }
@@ -210,7 +220,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             }
                             FlyMineBusinessObject targetsReferent = (FlyMineBusinessObject)
                                 TypeUtil.getFieldValue(target, reverseRef.getName());
-                            if ((targetsReferent != null) && (! targetsReferent.equals(dest))) {
+                            if ((targetsReferent != null) && (!targetsReferent.equals(dest))) {
                                 invalidateObjectById(targetsReferent.getId());
                                 TypeUtil.setFieldValue(targetsReferent, fieldName, null);
                                 store(targetsReferent);

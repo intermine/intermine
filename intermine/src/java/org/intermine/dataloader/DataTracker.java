@@ -87,13 +87,10 @@ public class DataTracker
             storeConn.setAutoCommit(false);
             Statement s = conn.createStatement();
             try {
-                s.executeQuery("drop table tracker");
+                s.executeQuery("SELECT * FROM tracker LIMIT 1");
             } catch (SQLException e2) {
+                clear();
             }
-            s = conn.createStatement();
-            s.execute("create table tracker (objectid int, fieldname text, sourcename text,"
-                    + " version int)");
-            s.execute("create index tracker_objectid on tracker (objectid);");
         } catch (SQLException e) {
             throw new IllegalArgumentException("Could not access SQL database");
         }
@@ -101,6 +98,23 @@ public class DataTracker
         Thread cacheStorerThread = new Thread(cacheStorer, "DataTracker CacheStorer");
         cacheStorerThread.setDaemon(true);
         cacheStorerThread.start();
+    }
+
+    /**
+     * Clears the data tracker of all entries
+     *
+     * @throws SQLException sometimes
+     */
+    public void clear() throws SQLException {
+        Statement s = conn.createStatement();
+        try {
+            s.executeQuery("drop table tracker");
+        } catch (SQLException e) {
+        }
+        s = conn.createStatement();
+        s.execute("create table tracker (objectid int, fieldname text, sourcename text,"
+                + " version int)");
+        s.execute("create index tracker_objectid on tracker (objectid);");
     }
 
     /**

@@ -64,6 +64,7 @@ public class ObjectStoreDataLoader extends DataLoader
         q.setDistinct(false);
         int opCount = 0;
         long time = (new Date()).getTime();
+        long startTime = time;
         iw.beginTransaction();
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         res.setNoOptimise();
@@ -84,14 +85,17 @@ public class ObjectStoreDataLoader extends DataLoader
                 long now = (new Date()).getTime();
                 if (times[(opCount / 1000) % 20] == -1) {
                     LOG.error("Dataloaded " + opCount + " objects - running at "
-                            + (60000000 / (now - time)) + " objects per minute"
-                            + " -- now on " + DynamicUtil.decomposeClass(obj.getClass()));
+                            + (60000000 / (now - time)) + " (avg "
+                            + ((60000L * opCount) / (now - startTime))
+                            + ") objects per minute -- now on "
+                            + DynamicUtil.decomposeClass(obj.getClass()));
                 } else {
                     LOG.error("Dataloaded " + opCount + " objects - running at "
-                            + (60000000 / (now - time)) + " (avg "
-                            + (1200000000 / (now - times[(opCount / 1000) % 20]))
-                            + ") objects per minute -- now on " + DynamicUtil
-                              .decomposeClass(obj.getClass()));
+                            + (60000000 / (now - time)) + " (20000 avg "
+                            + (1200000000 / (now - times[(opCount / 1000) % 20])) + ") (avg = "
+                            + ((60000L * opCount) / (now - startTime))
+                            + ") objects per minute -- now on "
+                            + DynamicUtil.decomposeClass(obj.getClass()));
                 }
                 time = now;
                 times[(opCount / 1000) % 20] = now;

@@ -54,6 +54,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
 {
     protected static final Logger LOG = Logger.getLogger(ObjectStoreFlyMineImpl.class);
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
+    protected static final int LOG_TIME = 10000;
     protected static Map instances = new HashMap();
     protected Database db;
     protected boolean everOptimise = true;
@@ -175,10 +176,10 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             long time = (new Date()).getTime();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             long now = (new Date()).getTime();
-            if (now - time > 10000) {
+            if (now - time > LOG_TIME) {
                 LOG.error(getModel().getName() + ": Executed SQL (time = "
-                        + (now - time) + "): " + (sql.length() > 100
-                        ? sql.substring(0, 100) : sql));
+                        + (now - time) + "): " + (sql.length() > 1000
+                        ? sql.substring(0, 1000) : sql));
             }
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             QueryNode firstOrderBy = null;

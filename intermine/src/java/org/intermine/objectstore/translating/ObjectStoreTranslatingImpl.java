@@ -31,6 +31,8 @@ import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.ResultsRow;
 
+import org.apache.log4j.Logger;
+
 /**
  * ObjectStore that transparently translates incoming queries and outgoing objects
  * @author Andrew Varley
@@ -38,6 +40,7 @@ import org.flymine.objectstore.query.ResultsRow;
  */
 public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
 {
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreTranslatingImpl.class);
     private ObjectStore os;
     private Translator translator;
     private Map queryCache = Collections.synchronizedMap(new WeakHashMap());
@@ -102,6 +105,9 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
+        //if (start == 0) {
+        //    LOG.error("Fetching batch 0 for query " + q.toString());
+        //}
         Query q2 = translateQuery(q);
         List results = new ArrayList();
         Iterator resIter = os.execute(q2, start, limit, optimise, explain, sequence).iterator();
@@ -174,5 +180,27 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      */
     public int getSequence() {
         return os.getSequence();
+    }
+
+    private int internalGetObjectByIdCount = 0;
+    /**
+     * @see ObjectStoreAbstractImpl#internalGetObjectById
+     */
+    public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
+        //Exception e = new Exception("internalGetObjectById called for id " + id);
+        //e.fillInStackTrace();
+        //StringWriter sw = new StringWriter();
+        //PrintWriter pw = new PrintWriter(sw);
+        //e.printStackTrace(pw);
+        //pw.flush();
+        //LOG.error(sw.toString());
+        FlyMineBusinessObject retval = super.internalGetObjectById(id);
+        //LOG.error("internalGetObjectById called for " + retval.getClass().toString() + " with id "
+        //        + id);
+        internalGetObjectByIdCount++;
+        if (internalGetObjectByIdCount % 1000 == 0) {
+            LOG.error("internalGetObjectById run " + internalGetObjectByIdCount + " times");
+        }
+        return retval;
     }
 }

@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import java.util.Set;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.FieldDescriptor;
-import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
@@ -231,7 +231,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
                 TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldEntry.getValue();
                 if (FlyMineBusinessObject.class.isAssignableFrom(fieldInfo.getType())) {
-                    FlyMineBusinessObject obj = (FlyMineBusinessObject) TypeUtil.getFieldValue(o,
+                    FlyMineBusinessObject obj = (FlyMineBusinessObject) TypeUtil.getFieldProxy(o,
                             fieldInfo.getName());
                     if ((obj != null) && (obj.getId() == null)) {
                         obj.setId(getSerial());
@@ -249,7 +249,6 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                     }
                 }
             }
-
             String xml = LiteRenderer.render(o, model);
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
@@ -317,17 +316,9 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                 }
                             }
                         }
-                    } else if (field instanceof ReferenceDescriptor) {
-                        sql.append(", ");
-                        Object value = TypeUtil.getFieldProxy(o, field.getName());
-                        if (value == null) {
-                            sql.append("NULL");
-                        } else {
-                            SqlGenerator.objectToString(sql, value);
-                        }
                     } else {
                         sql.append(", ");
-                        Object value = TypeUtil.getFieldValue(o, field.getName());
+                        Object value = TypeUtil.getFieldProxy(o, field.getName());
                         if (value == null) {
                             sql.append("NULL");
                         } else {
@@ -574,13 +565,13 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             Connection conn = null;
             try {
                 conn = getConnection();
-                //long time = (new Date()).getTime();
+                long time = (new Date()).getTime();
                 batch.executeBatch();
-                //long now = (new Date()).getTime();
-                //if (now - time > 10) {
-                //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
-                //            + (now - time) + "): Flushed batch");
-                //}
+                long now = (new Date()).getTime();
+                if (now - time > LOG_TIME) {
+                    LOG.error(getModel().getName() + ": Executed SQL (time = "
+                            + (now - time) + "): Flushed batch");
+                }
                 logFlushBatch();
                 batch = null;
             } catch (SQLException e) {
