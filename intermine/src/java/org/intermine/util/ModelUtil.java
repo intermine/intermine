@@ -1,10 +1,11 @@
 package org.flymine.util;
 
+import java.util.Set;
 import java.util.Collection;
 import java.util.StringTokenizer;
 //import java.util.Iterator;
 //import java.util.Set;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 //import java.util.Map;
 import java.lang.reflect.Field;
 
@@ -31,7 +32,7 @@ public class ModelUtil
      * @param c the Class
      * @param fieldName the name of the relevant Field
      * @return the type of the Field
-     */ 
+     */
     public static int getFieldType(Class c, String fieldName) {
         Field f = TypeUtil.getField(c, fieldName);
         Class type = f.getType();
@@ -52,7 +53,7 @@ public class ModelUtil
      *
      * @param c the Class
      * @return whether the Field is a Collection
-     */ 
+     */
     public static boolean isCollection(Class c) {
         return Collection.class.isAssignableFrom(c);
     }
@@ -61,7 +62,7 @@ public class ModelUtil
      *
      * @param c the Class
      * @return whether the Field is an Attribute
-     */ 
+     */
     public static boolean isAttribute(Class c) {
         return c.isPrimitive() || c.getName().startsWith("java");
     }
@@ -71,31 +72,31 @@ public class ModelUtil
      *
      * @param c the Class
      * @return whether the Field is a Reference
-     */ 
+     */
     public static boolean isReference(Class c) {
         return !(isCollection(c) || isAttribute(c));
     }
-    
+
     /**
-     * Returns a Collection of Strings which is a list of the primary key fields of this Class
+     * Returns a Set of Strings which is a list of the primary key fields of this Class
      *
      * @param c the Class
      * @return the list of keys
      */
-    public static Collection getKey(Class c) {
-        Collection col = new HashSet();
+    public static Set getKey(Class c) {
+        Set set = new LinkedHashSet();
         try {
             do {
                 Field f = TypeUtil.getField(c, "key");
                 f.setAccessible(true);
                 StringTokenizer st = new StringTokenizer((String) f.get(null), ", ");
                 while (st.hasMoreTokens()) {
-                    col.add(st.nextToken());
+                    set.add(st.nextToken());
                 }
             } while ((c = c.getSuperclass()) != null);
         } catch (Exception e) {
         }
-        return col;
+        return set;
     }
 
 //     public static void makeMap(Object o, Map m) throws Exception {
@@ -111,7 +112,7 @@ public class ModelUtil
 //             s.add(o);
 //             m.put(c, s);
 //         }
-        
+
 //         Iterator fields = getKey(c).iterator();
 //         while (fields.hasNext()) {
 //             String field = (String) fields.next();
