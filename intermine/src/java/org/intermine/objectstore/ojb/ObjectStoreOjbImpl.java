@@ -120,7 +120,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int end) throws ObjectStoreException {
-        return execute(q, start, end);
+        return pb.execute(q, start, end);
     }
 
 }
