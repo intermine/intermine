@@ -40,14 +40,14 @@ public class BeginControllerTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         
-        List cats = (List) getActionServlet ().getServletContext ().getAttribute(Constants.CATEGORIES);
-        Map subcats = (Map) getActionServlet ().getServletContext ().getAttribute(Constants.CATEGORY_CLASSES);
+        List cats = (List) getActionServlet().getServletContext().getAttribute(Constants.CATEGORIES);
+        Map subcats = (Map) getActionServlet().getServletContext().getAttribute(Constants.CATEGORY_CLASSES);
         
         assertNotNull(cats);
         assertNotNull(subcats);
         
-        assertEquals(2, cats.size());
-        assertEquals(2, subcats.keySet().size());
+        assertEquals(3, cats.size());
+        assertEquals(3, subcats.keySet().size());
         assertEquals("People", cats.get(0));
         assertEquals(Arrays.asList(new Object[]
                     {"Employee","Manager","CEO","Contractor","Secretary"}), subcats.get("People"));
