@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
@@ -112,21 +113,27 @@ public class MainController extends TilesAction
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         request.setAttribute("viewPaths", listToMap(query.getView()));
-        request.setAttribute("viewPathTypes", getViewPathTypes(query));
-        request.setAttribute("viewPathLinkPaths", getViewPathLinkPaths(query));
-
+        request.setAttribute("viewPathTypes", getPathTypes(query.getView(), query));
+        Map prefixes = getViewPathLinkPaths(query);
+        request.setAttribute("viewPathLinkPrefixes", prefixes);
+        request.setAttribute("viewPathLinkPaths", getPathTypes(prefixes.values(), query));
+        
         // set up the navigation links (eg. Department > employees > department)
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
         Map navigation = new LinkedHashMap();
+        Map navigationPaths = new LinkedHashMap();
         if (prefix != null && prefix.indexOf(".") != -1) {
             for (StringTokenizer st = new StringTokenizer(prefix, "."); st.hasMoreTokens();) {
                 String token = st.nextToken();
                 current = (current == null ? token : current + "." + token);
                 navigation.put(token, current);
+                navigationPaths.put(token,
+                        TypeUtil.unqualifiedName(MainHelper.getTypeForPath(current, query)));
             }
         }
         request.setAttribute("navigation", navigation);
+        request.setAttribute("navigationPaths", navigationPaths);
 
         return null;
     }
@@ -165,14 +172,15 @@ public class MainController extends TilesAction
     }
 
     /**
-     * Return a Map from paths in the view list of the given PathQuery to their types.
-     * @param pathquery the PathQuery containing the paths
-     * @return the path Map
+     * Return a Map from path to unqualified type name.
+     * @param paths collection of paths
+     * @param pathquery related PathQuery
+     * @return Map from path to type
      */
-    protected static Map getViewPathTypes(PathQuery pathquery) {
+    protected static Map getPathTypes(Collection paths, PathQuery pathquery) {
         Map viewPathTypes = new HashMap();
 
-        Iterator iter = pathquery.getView().iterator();
+        Iterator iter = paths.iterator();
 
         while (iter.hasNext()) {
             String path = (String) iter.next();
