@@ -50,7 +50,7 @@ public class CreateReferences
     public void insertReferences() throws Exception {
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
         insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
-        
+
         insertReferences(Chromosome.class, "subjects", Location.class, "subject",
                          Exon.class, "chromosome");
         insertReferences(Gene.class, "subjects", SimpleRelation.class, "subject",
@@ -189,7 +189,6 @@ public class CreateReferences
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisDestObject);
                 TypeUtil.setFieldValue(tempObject, destinationFieldName, thisSourceObject);
                 count++;
-                LOG.info("stored: " + tempObject.getId());
                 osw.store(tempObject);
             } catch (IllegalAccessException e) {
                 LOG.error("Object with ID: " + thisDestObject.getId()
