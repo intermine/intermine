@@ -532,14 +532,18 @@ public class DatabaseUtil
      */
     public static void analyse(Database db, boolean full) throws SQLException {
         Connection conn = db.getConnection();
+        boolean autoCommit = conn.getAutoCommit();
         try {
+            conn.setAutoCommit(true);
             Statement s = conn.createStatement();
             if (full) {
                 s.execute("VACUUM FULL ANALYSE");
             } else {
                 s.execute("ANALYSE");
             }
+            conn.setAutoCommit(autoCommit);
         } finally {
+            conn.setAutoCommit(autoCommit);
             conn.close();
         }
     }
