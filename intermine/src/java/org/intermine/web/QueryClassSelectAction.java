@@ -33,8 +33,7 @@ import org.apache.struts.action.ActionMapping;
 public class QueryClassSelectAction extends LookupDispatchAction
 {
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
+     * Add a QueryClass of a specified type to the current query.
      * Return an <code>ActionForward</code> instance describing where and how
      * control should be forwarded, or <code>null</code> if the response has
      * already been completed.
@@ -48,10 +47,10 @@ public class QueryClassSelectAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward select(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward addClass(ActionMapping mapping,
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
         throws Exception {
         //duplication: see TreeAction#select
         HttpSession session = request.getSession();
@@ -68,8 +67,8 @@ public class QueryClassSelectAction extends LookupDispatchAction
     }
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
+     * Browse the full class hierarchy and allow the user to choose a type to add 
+     * to the current query.
      * Return an <code>ActionForward</code> instance describing where and how
      * control should be forwarded, or <code>null</code> if the response has
      * already been completed.
@@ -100,7 +99,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("button.select", "select");
+        map.put("button.addclass", "addClass");
         map.put("button.browse", "browse");
         return map;
     }
