@@ -58,8 +58,8 @@ public class Query implements SQLStringable
         queriesInUnion = new ArrayList();
         queriesInUnion.add(this);
         onlyTable = null;
-        aliasToTable = new HashMap();
-        originalAliasToTable = new HashMap();
+        this.aliasToTable = null;
+        this.originalAliasToTable = null;
     }
 
     /**
@@ -71,6 +71,7 @@ public class Query implements SQLStringable
     public Query(Map aliasToTable) {
         this();
 
+        this.aliasToTable = new HashMap();
         this.aliasToTable.putAll(aliasToTable);
         this.originalAliasToTable = aliasToTable;
     }
@@ -86,6 +87,7 @@ public class Query implements SQLStringable
     public Query(Map aliasToTable, List queriesInUnion) {
         this();
 
+        this.aliasToTable = new HashMap();
         this.aliasToTable.putAll(aliasToTable);
         this.originalAliasToTable = aliasToTable;
 
@@ -102,6 +104,8 @@ public class Query implements SQLStringable
     public Query(String sql) {
         this();
 
+        aliasToTable = new HashMap();
+        originalAliasToTable = new HashMap();
         try {
             InputStream is = new ByteArrayInputStream(sql.getBytes());
 
@@ -203,7 +207,9 @@ public class Query implements SQLStringable
      */
     public void addFrom(AbstractTable obj) {
         from.add(obj);
-        aliasToTable.put(obj.getAlias(), obj);
+        if (aliasToTable != null) {
+            aliasToTable.put(obj.getAlias(), obj);
+        }
         onlyTable = obj;
     }
 
