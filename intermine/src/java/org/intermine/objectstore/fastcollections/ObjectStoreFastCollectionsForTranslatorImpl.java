@@ -260,7 +260,8 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 String collectionName = (String) collectionEntry.getKey();
                                 Object contents = collectionEntry.getValue();
                                 if (contents instanceof Collection) {
-                                    List collectionContents = (List) collectionEntry.getValue();
+                                    Collection collectionContents = (Collection)
+                                        collectionEntry.getValue();
                                     Collection substituteCollection = (contents instanceof List
                                             ? (Collection) new ArrayList()
                                             : (Collection) new HashSet());
