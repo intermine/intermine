@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.io.StringReader;
 import java.util.Set;
+import java.util.Map;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -391,6 +392,88 @@ public class OntologyUtilTest extends TestCase
         assertFalse(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop1")));
         assertFalse(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop2")));
         assertFalse(OntologyUtil.isObjectProperty(ont.getOntProperty(ns + "prop5")));
+    }
+
+    public void testBuildEquivalenceMap() throws Exception {
+        String tgtNs = "http://www.flymine.org/target#";
+        String src1Ns = "http://www.flymine.org/source1#";
+        String src2Ns = "http://www.flymine.org/source2#";
+
+        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
+            + "@prefix src1: <" + src1Ns + "> ." + ENDL
+            + "@prefix src2: <" + src2Ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "           owl:equivalentClass src1:LtdCompany ;" + ENDL
+            + "           owl:equivalentClass src2:Corporation ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "        owl:equivalentProperty src1:companyName ;" + ENDL
+            + "        owl:equivalentProperty src2:corpName ." + ENDL
+            + ":Address a owl:Class ." + ENDL
+            + ":vatNumber a rdf:Property ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+        Map equiv = OntologyUtil.buildEquivalenceMap(model);
+
+        assertNotNull(equiv);
+        assertNotNull(equiv.get(src1Ns + "LtdCompany"));
+        assertTrue(model.getOntClass(tgtNs + "Company")
+                   .equals((Resource) equiv.get(src1Ns + "LtdCompany")));
+        assertNotNull(equiv.get(src2Ns + "Corporation"));
+        assertTrue(model.getOntClass(tgtNs + "Company")
+                   .equals((Resource) equiv.get(src2Ns + "Corporation")));
+        assertNotNull(equiv.get(src1Ns + "companyName"));
+        assertTrue(model.getOntProperty(tgtNs + "name")
+                   .equals((Resource) equiv.get(src1Ns + "companyName")));
+        assertNotNull(equiv.get(src2Ns + "corpName"));
+        assertTrue(model.getOntProperty(tgtNs + "name")
+                   .equals((Resource) equiv.get(src2Ns + "corpName")));
+        assertNull(equiv.get(src1Ns + "Address"));
+        assertNull(equiv.get(tgtNs + "Address"));
+    }
+
+
+
+    public void testBuildEquivalenceMapSrcNs() throws Exception {
+        String tgtNs = "http://www.flymine.org/target#";
+        String src1Ns = "http://www.flymine.org/source1#";
+        String src2Ns = "http://www.flymine.org/source2#";
+
+        String owl = "@prefix : <" + tgtNs + "> ." + ENDL
+            + "@prefix src1: <" + src1Ns + "> ." + ENDL
+            + "@prefix src2: <" + src2Ns + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "           owl:equivalentClass src1:LtdCompany ;" + ENDL
+            + "           owl:equivalentClass src2:Corporation ." + ENDL
+            + ":name a rdf:Property ;" + ENDL
+            + "        owl:equivalentProperty src1:companyName ;" + ENDL
+            + "        owl:equivalentProperty src2:corpName ." + ENDL
+            + ":Address a owl:Class ." + ENDL
+            + ":vatNumber a rdf:Property ." + ENDL;
+
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(new StringReader(owl), null, "N3");
+        Map equiv = OntologyUtil.buildEquivalenceMap(model, src1Ns);
+
+        assertNotNull(equiv);
+        assertNotNull(equiv.get(src1Ns + "LtdCompany"));
+        assertTrue(model.getOntClass(tgtNs + "Company")
+                   .equals((Resource) equiv.get(src1Ns + "LtdCompany")));
+        assertNotNull(equiv.get(src1Ns + "companyName"));
+        assertTrue(model.getOntProperty(tgtNs + "name")
+                   .equals((Resource) equiv.get(src1Ns + "companyName")));
+        assertNull(equiv.get(src1Ns + "Address"));
+        assertNull(equiv.get(tgtNs + "Address"));
     }
 
 }

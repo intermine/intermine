@@ -175,41 +175,6 @@ public class MergeOwlTest extends TestCase
     }
 
 
-    public void testEquivMap() throws Exception {
-        String mergeSpec = getMergeSpec();
-
-        String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
-            + ENDL
-            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-            + ENDL
-            + ":LtdCompany a owl:Class ." + ENDL
-            + ":Address a owl:Class ." + ENDL
-            + ":companyName a rdf:Property ;" + ENDL
-            + "             rdfs:domain :LtdCompany ." + ENDL
-            + ":vatNumber a rdf:Property ;" + ENDL
-            + "           rdfs:domain :LtdCompany ." + ENDL;
-
-
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
-        OntModel src1 = ModelFactory.createOntologyModel();
-        src1.read(new StringReader(src1Str), null, "N3");
-
-        merger.mergeByEquivalence(src1, src1Namespace);
-
-        assertNotNull(merger.equiv);
-        assertNotNull(merger.equiv.get(src1Namespace + "LtdCompany"));
-        assertTrue(merger.tgtModel.getOntClass(tgtNamespace + "Company")
-                   .equals((Resource) merger.equiv.get(src1Namespace + "LtdCompany")));
-        assertNotNull(merger.equiv.get(src1Namespace + "companyName"));
-        assertTrue(merger.tgtModel.getOntProperty(tgtNamespace + "name")
-                   .equals((Resource) merger.equiv.get(src1Namespace + "companyName")));
-        assertNull(merger.equiv.get(src1Namespace + "Address"));
-        assertNull(merger.equiv.get(src1Namespace + "vatNumber"));
-    }
-
-
     public void testAddEquivalenceStatement() throws Exception {
         String mergeSpec = getMergeSpec();
 

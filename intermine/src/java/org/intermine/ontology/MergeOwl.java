@@ -95,22 +95,7 @@ public class MergeOwl
      */
     protected void mergeByEquivalence(OntModel srcModel, String srcNamespace) {
         // map of URIs (i.e. names of resources) in srcNamespace to equivalent Resources in target
-        equiv = new HashMap();
-
-        // find classes/properties/individuals in source namespace that are equivalent to
-        // classes/properties/individuals already in target namespace (from merge spec)
-        Iterator stmtIter = tgtModel.listStatements();
-        while (stmtIter.hasNext()) {
-            Statement stmt = (Statement) stmtIter.next();
-            if (stmt.getPredicate().getLocalName().equals("equivalentClass")
-                || stmt.getPredicate().getLocalName().equals("equivalentProperty")
-                || stmt.getPredicate().getLocalName().equals("sameAs")) {
-                Resource res = stmt.getResource();
-                if (res.getNameSpace().equals(srcNamespace)) {
-                    equiv.put(res.getURI(), stmt.getSubject());
-                }
-            }
-        }
+        equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNamespace);
 
         subMap = new HashMap();
         Iterator clsIter = srcModel.listClasses();
@@ -128,7 +113,7 @@ public class MergeOwl
         List statements = new ArrayList();
 
         // transfer statements to target namespace
-        stmtIter = srcModel.listStatements();
+        Iterator stmtIter = srcModel.listStatements();
         while (stmtIter.hasNext()) {
             Statement stmt = (Statement) stmtIter.next();
             HashSet subjects = new HashSet(Collections.singleton(stmt.getSubject()));

@@ -13,6 +13,8 @@ package org.flymine.ontology;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -251,6 +253,53 @@ public class OntologyUtil
         return subclasses;
     }
 
+
+    /**
+     * Build a map of resources in source namespaces to the equivalent resources
+     * in target namespace.
+     * @param model an OWL model specifying mapping
+     * @return mappings between source and target namespaces
+     */
+    public static Map buildEquivalenceMap(OntModel model) {
+        return buildEquivalenceMap(model, null);
+    }
+
+    /**
+     * Build a map of resource URIs in source namespaces to equivalent resources
+     * in target namespace if defined in model.  Only include equivalence to srcNs
+     * if parameter is not null.
+     * @param model an OWL model specifying mapping
+     * @param srcNs only include statements in this namespace, can be null
+     * @return mappings between source and target namespaces
+     */
+    public static Map buildEquivalenceMap(OntModel model, String srcNs) {
+        Map equivMap = new HashMap();
+
+        Iterator stmtIter = model.listStatements();
+        while (stmtIter.hasNext()) {
+            Statement stmt = (Statement) stmtIter.next();
+            if (stmt.getPredicate().getLocalName().equals("equivalentClass")
+                || stmt.getPredicate().getLocalName().equals("equivalentProperty")
+                || stmt.getPredicate().getLocalName().equals("sameAs")) {
+                Resource res = stmt.getResource();
+                if (srcNs == null) {
+                    equivMap.put(res.getURI(), stmt.getSubject());
+                } else if (res.getNameSpace().equals(srcNs)) {
+                    equivMap.put(res.getURI(), stmt.getSubject());
+                }
+// uncomment this code for mapping one source class to more than one target
+//                if (equivMap.containsKey(res.getURI())) {
+//                     Object obj = equivMap.get(res.getURI());
+//                     if (!(obj instanceof HashSet)) {
+//                         obj = new HashSet();
+//                         ((Set) obj).add(equivMap.get(res.getURI()));
+//                         equivMap.put(res.getURI(), obj);
+//                     }
+//                     ((Set) obj).add(stmt.getSubject().getURI());
+            }
+        }
+        return equivMap;
+    }
 
     /**
      * Test whether a OntProperty is a datatype property - if type of property

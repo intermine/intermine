@@ -67,7 +67,7 @@ public class DataTranslatorTest extends TestCase
         src1.setClassName(srcNs + "LtdCompany");
         src1.setImplementations(srcNs + "Organisation");
 
-        Map equivMap = DataTranslator.buildEquivalenceMap(getFlyMineOwl());
+        Map equivMap = OntologyUtil.buildEquivalenceMap(getFlyMineOwl());
 
         Item expected = new Item();
         expected.setIdentifier("1");
@@ -90,7 +90,7 @@ public class DataTranslatorTest extends TestCase
 
         System.out.println(OntologyUtil.getNamespaceFromURI(src1.getClassName()) + "......");
 
-        Map equivMap = DataTranslator.buildEquivalenceMap(getFlyMineOwl());
+        Map equivMap = OntologyUtil.buildEquivalenceMap(getFlyMineOwl());
         System.out.println(equivMap.toString());
         Item expected = new Item();
         expected.setIdentifier("1");
@@ -115,7 +115,7 @@ public class DataTranslatorTest extends TestCase
         f1.setValue("2");
         src1.addReference(f1);
 
-        Map equivMap = DataTranslator.buildEquivalenceMap(getFlyMineOwl());
+        Map equivMap = OntologyUtil.buildEquivalenceMap(getFlyMineOwl());
 
         Item expected = new Item();
         expected.setIdentifier("1");
@@ -140,7 +140,7 @@ public class DataTranslatorTest extends TestCase
         r1.addValue("3");
         src1.addCollection(r1);
 
-        Map equivMap = DataTranslator.buildEquivalenceMap(getFlyMineOwl());
+        Map equivMap = OntologyUtil.buildEquivalenceMap(getFlyMineOwl());
 
         Item expected = new Item();
         expected.setIdentifier("1");
@@ -197,6 +197,4 @@ public class DataTranslatorTest extends TestCase
         ont.read(new StringReader(owl), null, "N3");
         return ont;
     }
-
-
 }

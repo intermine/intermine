@@ -15,12 +15,10 @@ import java.util.LinkedHashSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
 
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Field;
@@ -47,7 +45,7 @@ public class DataTranslator
      * @return list of converted items
      */
     public static Collection translate(Collection srcItems, OntModel model) {
-        Map equivMap = buildEquivalenceMap(model);
+        Map equivMap = OntologyUtil.buildEquivalenceMap(model);
 
         Set tgtItems = new LinkedHashSet();
         Iterator iter = srcItems.iterator();
@@ -69,12 +67,12 @@ public class DataTranslator
         String ns = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         Item tgtItem = new Item();
         tgtItem.setIdentifier(srcItem.getIdentifier());
-        tgtItem.setClassName((String) equivMap.get(srcItem.getClassName()));
+        tgtItem.setClassName(((Resource) equivMap.get(srcItem.getClassName())).getURI());
         StringTokenizer tokenizer = new StringTokenizer(srcItem.getImplementations(),
                                                         " ", false);
         String imps = "";
         while (tokenizer.hasMoreTokens()) {
-            imps += (String) equivMap.get(tokenizer.nextToken()) + " ";
+            imps += ((Resource) equivMap.get(tokenizer.nextToken())).getURI() + " ";
         }
         tgtItem.setImplementations(imps.trim());
 
@@ -83,7 +81,7 @@ public class DataTranslator
             Field field = (Field) fieldIter.next();
             Field newField = new Field();
             newField.setName(OntologyUtil.getFragmentFromURI(
-                (String) equivMap.get(ns + field.getName())));
+                ((Resource) equivMap.get(ns + field.getName())).getURI()));
             newField.setValue(field.getValue());
             tgtItem.addField(newField);
         }
@@ -92,7 +90,7 @@ public class DataTranslator
             Field field = (Field) refIter.next();
             Field newField = new Field();
             newField.setName(OntologyUtil.getFragmentFromURI(
-                (String) equivMap.get(ns + field.getName())));
+                ((Resource) equivMap.get(ns + field.getName())).getURI()));
             newField.setValue(field.getValue());
             tgtItem.addReference(newField);
         }
@@ -101,7 +99,7 @@ public class DataTranslator
             ReferenceList col = (ReferenceList) colIter.next();
             ReferenceList newCol = new ReferenceList();
             newCol.setName(OntologyUtil.getFragmentFromURI(
-                (String) equivMap.get(ns + col.getName())));
+                ((Resource) equivMap.get(ns + col.getName())).getURI()));
             Iterator i = col.getReferences().iterator();
             while (i.hasNext()) {
                 newCol.addValue((String) i.next());
@@ -109,36 +107,5 @@ public class DataTranslator
             tgtItem.addCollection(newCol);
         }
         return tgtItem;
-    }
-
-
-    /**
-     * Build a map of resources in source namespaces to their equivalent resources
-     * in target namespace.
-     * @param model an OWL model specifying mapping
-     * @return mappings between source and target namespaces
-     */
-    protected static Map buildEquivalenceMap(OntModel model) {
-        Map equivMap = new HashMap();
-
-        Iterator stmtIter = model.listStatements();
-        while (stmtIter.hasNext()) {
-            Statement stmt = (Statement) stmtIter.next();
-            if (stmt.getPredicate().getLocalName().equals("equivalentClass")
-                || stmt.getPredicate().getLocalName().equals("equivalentProperty")
-                || stmt.getPredicate().getLocalName().equals("sameAs")) {
-                Resource res = stmt.getResource();
-                equivMap.put(res.getURI(), stmt.getSubject().getURI());
-//                if (equivMap.containsKey(res.getURI())) {
-//                     Object obj = equivMap.get(res.getURI());
-//                     if (!(obj instanceof HashSet)) {
-//                         obj = new HashSet();
-//                         ((Set) obj).add(equivMap.get(res.getURI()));
-//                         equivMap.put(res.getURI(), obj);
-//                     }
-//                     ((Set) obj).add(stmt.getSubject().getURI());
-            }
-        }
-        return equivMap;
     }
 }
