@@ -3140,7 +3140,7 @@
         <BioDataValues_assn>
           <BioDataCube>
             <DataExternal_assn>
-              <DataExternal filenameURI="MageTestData_rawdata" dataFormat="tab delimited"/>
+              <DataExternal filenameURI="test/MageTestData_rawdata" dataFormat="tab delimited"/>
             </DataExternal_assn>
           </BioDataCube>
         </BioDataValues_assn>
@@ -3158,7 +3158,7 @@
         <BioDataValues_assn>
           <BioDataCube order="DBQ">
             <DataExternal_assn>
-              <DataExternal filenameURI="MageTestData__processed" dataFormat="tab delimited"/>
+              <DataExternal filenameURI="test/MageTestData_processed" dataFormat="tab delimited"/>
             </DataExternal_assn>
           </BioDataCube>
         </BioDataValues_assn>
