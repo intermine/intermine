@@ -2734,7 +2734,7 @@
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="os.alias" value="os.go-annotation-tgt-items-std"/>
     </ant>
 
     <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
