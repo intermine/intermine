@@ -193,6 +193,20 @@ public class SequenceFM extends AbstractChangeable implements Sequence, IFlyMine
   }
 
   // =======================================================================
+  // Methods
+  // =======================================================================
+
+  /**
+   * Usually a Sequence takes care about it's features.
+   * But if YOU want to provide the Feautures, then you have the choice.
+   * Only provided Features in FeatureHolder will be taken into account.
+   * @param pfh your FretureHolderFM you want to set for this Sequence.
+   */
+  public void setFeatureHolderFM(final FeatureHolderFM pfh) {
+    _featureHolder = pfh;
+  }
+
+  // =======================================================================
   // Implements IFlyMine interface
   // =======================================================================
 
