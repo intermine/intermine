@@ -104,7 +104,8 @@ public class XmiParser implements ModelParser
         boolean primaryKey = keys.contains(attr.getName());
         if (type.indexOf("[") > 0) {
             int index = type.indexOf("[");
-            collections.add(new CollectionDescriptor(name, primaryKey, qualify(type.substring(0, index)),
+            collections.add(new CollectionDescriptor(name, primaryKey,
+                                                     qualify(type.substring(0, index)),
                                                      null, true));
         } else if (type.startsWith("any")) {
             references.add(new ReferenceDescriptor(name, primaryKey, qualify(type), null));
@@ -249,7 +250,7 @@ public class XmiParser implements ModelParser
 
     private String stripIllegal(String s) {
         StringBuffer sb = new StringBuffer();
-        for(int i=0; i < s.length(); i++) {
+        for (int i = 0; i < s.length(); i++) {
             if ('-' != s.charAt(i)) {
                 sb.append(s.charAt(i));
             }
