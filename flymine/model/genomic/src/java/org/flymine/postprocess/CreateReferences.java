@@ -61,32 +61,55 @@ public class CreateReferences
      */
     public void insertReferences() throws Exception {
         LOG.info("insertReferences stage 1");
+        // Transcript.exons / Exon.transcripts
         insertReferences(Transcript.class, Exon.class, RankedRelation.class, "exons");
+        insertReferences(Transcript.class, Exon.class, SimpleRelation.class, "exons");
+        // Intron.MRNAs / MRNA.introns
+        insertReferences(MRNA.class, Intron.class, SimpleRelation.class, "introns");
+        insertReferences(Transcript.class, Exon.class, SimpleRelation.class, "exons");
         LOG.info("insertReferences stage 2");
-        insertReferences(Gene.class, Transcript.class, SimpleRelation.class, "transcripts");
-
-        LOG.info("insertReferences stage 3");
-        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-                         Exon.class, "chromosome");
-        LOG.info("insertReferences stage 4");
-        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-                         ChromosomeBand.class, "chromosome");
-        LOG.info("insertReferences stage 5");
+        // Gene.transcript / Transcript.gene
         insertReferenceField(Gene.class, "subjects", SimpleRelation.class, "subject",
-                         Transcript.class, "gene");
-        LOG.info("insertReferences stage 6");
+                             Transcript.class, "gene");
+        LOG.info("insertReferences stage 3");
+        // Exon.chromosome / Chromosome.exons
+        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
+                             Exon.class, "chromosome");
+        LOG.info("insertReferences stage 4");
+        // ChromosomeBand.chromosome / Chromosome.bands
+        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
+                             ChromosomeBand.class, "chromosome");
+        LOG.info("insertReferences stage 5");
+        // Exon.gene / Gene.exons
         insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
-                         Exon.class, "gene");
+                             Exon.class, "gene");
+        LOG.info("insertReferences stage 6");
+        // UTR.gene / Gene.UTRs
+        insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs",
+                             UTR.class, "gene");
+        // UTR.chromosome
+        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
+                             UTR.class, "chromosome");
         LOG.info("insertReferences stage 7");
+        // Gene.chromosome / Chromosome.genes
         insertReferenceField(Chromosome.class, "exons", Exon.class, "gene",
                              Gene.class, "chromosome");
         LOG.info("insertReferences stage 8");
+        // Transcript.chromosome / Chromosome.transcripts
         insertReferenceField(Chromosome.class, "exons", Exon.class, "transcripts",
                              Transcript.class, "chromosome");
-
         LOG.info("insertReferences stage 9");
+        // Protein.genes / Gene.proteins
         insertCollectionField(Gene.class, "transcripts", Transcript.class, "protein",
                               Protein.class, "genes", false);
+
+        // TODO CDS.chromosome - currently missing from model
+        //insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
+        //                     CDS.class, "chromosome");
+        // CDS.gene / Gene.CDSs
+        insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
+                             CDS.class, "gene");
+
 
         ObjectStore os = osw.getObjectStore();
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -95,11 +118,13 @@ public class CreateReferences
         }
 
         LOG.info("insertReferences stage 10");
+        // Protein.interactions
         insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
         LOG.info("insertReferences stage 11");
+        // Protein.interactions
         insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
 
-       if (os instanceof ObjectStoreInterMineImpl) {
+        if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
@@ -112,9 +137,10 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
         LOG.info("insertReferences stage 13");
-
+        // Gene.GOTerms
         insertReferences(Gene.class, GOTerm.class, "GOTerms");
         LOG.info("insertReferences stage 14");
+        // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -173,7 +199,6 @@ public class CreateReferences
                     try {
                         TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
                         count += newCollection.size();
-
                         osw.store(tempObject);
                     } catch (IllegalAccessException e) {
                         LOG.error("Object with ID: " + tempObject.getId()
@@ -447,7 +472,6 @@ public class CreateReferences
                     try {
                         TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
                         count += newCollection.size();
-
                         osw.store(tempObject);
                     } catch (IllegalAccessException e) {
                         LOG.error("Object with ID: " + tempObject.getId()
@@ -525,7 +549,6 @@ public class CreateReferences
                     try {
                         TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
                         count += newCollection.size();
-
                         osw.store(tempObject);
                     } catch (IllegalAccessException e) {
                         LOG.error("Object with ID: " + tempObject.getId()
