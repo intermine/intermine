@@ -259,6 +259,9 @@ null:analysisprop a owl:Class ;
 :Publication__year a owl:DatatypeProperty ;
     owl:equivalentProperty chado:pub__pyear .
 
+:Publication__authors a owl:ObjectProperty ;
+    owl:equivalentProperty chado:pub__authors .
+
 # link between publication and synonyms handled elsewhere
 null:pub__feature_synonyms a owl:ObjectProperty ;
     owl:equivalentProperty chado:pub__feature_synonyms .
@@ -284,8 +287,16 @@ null:pub__feature_synonyms a owl:ObjectProperty ;
 null:pub__feature_cvterms a owl:ObjectProperty ;
     owl:equivalentProperty chado:pub__feature_cvterms .
 
+null:pubprop a owl:Class ;
+    owl:equivalentClass chado:pubprop .
+
 :Author a owl:Class ;
     owl:equivalentClass chado:author .
+
+:Author__publications a owl:ObjectProperty ;
+    rdfs:domain :Author ;
+    rdfs:range :Publication ;
+    owl:equivalentProperty chado:author__pubs .
 
 :Database a owl:Class ;
     owl:equivalentClass chado:db .
