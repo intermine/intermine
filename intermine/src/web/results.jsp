@@ -78,6 +78,8 @@
                   </td>
                   <td>
                     <c:set var="object" value="${row[column.index]}" scope="request"/>
+                    <c:set var="rowIndex" value="${status.index}" scope="request"/>
+                    <c:set var="columnIndex" value="${column.index}" scope="request"/>
                     <tiles:get name="resultsCell.tile" />
                   </td>
                 </c:when>
