@@ -57,6 +57,7 @@ public class GFF3Converter
     private int itemid = 0;
     private Map analyses = new HashMap();
     private Map seqs = new HashMap();
+    private Map idMap = new HashMap();
 
 
     /**
@@ -138,14 +139,31 @@ public class GFF3Converter
 
         String term = record.getType();
         String className = TypeUtil.javaiseClassName(term);
-        Item feature = createItem(targetNameSpace + className, "");
+
+        Item feature;
+
+        // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
+            feature = createItem(targetNameSpace + className, "", getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
+        } else {
+            feature = createItem(targetNameSpace + className, "");
         }
+
         if (record.getName() != null) {
-            //feature.addAttribute(new Attribute("name", record.getName()));
+            feature.addAttribute(new Attribute("name", record.getName()));
         }
         feature.addReference(getOrgRef());
+
+        // if parents -> create a SimpleRelation
+        if (record.getParent() != null) {
+            Item simpleRelation = createItem(targetNameSpace + "SimpleRelation", "");
+            simpleRelation.setReference("object", getIdentifier(record.getParent()));
+            simpleRelation.setReference("subject", feature.getIdentifier());
+            result.add(simpleRelation);
+        }
+
+
 
         Item location = createItem(targetNameSpace + "Location", "");
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
@@ -201,6 +219,16 @@ public class GFF3Converter
             throw e;
         }
     }
+
+    private String getIdentifier(String id) {
+        String identifier = (String) idMap.get(id);
+        if (identifier == null) {
+            identifier = createIdentifier();
+            idMap.put(id, identifier);
+        }
+        return identifier;
+    }
+
 
     /**
      * Perform any necessary clean-up after post-conversion
@@ -264,11 +292,26 @@ public class GFF3Converter
      * @return the created item
      */
     private Item createItem(String className, String implementations) {
+        return createItem(className, implementations, createIdentifier());
+    }
+
+    /**
+     * Create an item with given className, implementation and item identifier
+     * @param className
+     * @param implementations
+     * @param identifier
+     * @return the created item
+     */
+    private Item createItem(String className, String implementations, String identifier) {
         Item item = new Item();
         item.setClassName(className);
         item.setImplementations(implementations);
-        item.setIdentifier("0_" + itemid++);
+        item.setIdentifier(identifier);
         return item;
+    }
+
+    private String createIdentifier() {
+        return "0_" + itemid++;
     }
 
 }
