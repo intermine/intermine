@@ -170,6 +170,18 @@
       <forward name="history" path="history.page"/>
     </action>
 
+    <!-- Action to view a bag -->
+    <action path="/viewBag"
+            type="org.intermine.web.ViewBagAction">
+      <forward name="details" path="/bagDetails.do"/>
+    </action>
+
+    <!-- Action to view a collection from an object -->
+    <action path="/viewCollection"
+            type="org.intermine.web.ViewCollectionAction">
+      <forward name="details" path="/collectionDetails.do"/>
+    </action>
+
     <!-- Action to create a new query from the history page -->
     <action path="/createBoolean"
             type="org.intermine.web.HistoryAction"
