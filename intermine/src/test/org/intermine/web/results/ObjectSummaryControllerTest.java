@@ -11,6 +11,7 @@ package org.intermine.web.results;
  */
 
 import java.util.List;
+import java.util.ArrayList;
 
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
