@@ -143,6 +143,7 @@ public class AceDataLoader extends DataLoader
                 }
                 AceObject aceObj = (AceObject) aceSet.retrieve(name);
                 Object obj = processAceObject(aceObj);
+                //iw.getObjectStore().prefetchObjectByExample(obj);
                 synchronized (this) {
                     try {
                         store(obj);
