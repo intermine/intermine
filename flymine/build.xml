@@ -654,12 +654,16 @@
       </fileset>
       <webinf dir="${resources}/webapps/flymine">
         <exclude name="web.xml" />
+        <exclude name="FlyMineWebApp*.properties"/>
       </webinf>
       <lib dir="${lib}">
         <patternset refid="lib.common" />
         <patternset refid="lib.antlr" />
         <patternset refid="lib.webapp.flymine" />
       </lib>
+      <classes dir="${resources}/webapps/flymine">
+        <include name="FlyMineWebApp*.properties"/>
+      </classes>
       <lib dir="${dist}">
         <include name="flymine*.jar" />
       </lib>
@@ -676,6 +680,7 @@
       </fileset>
       <webinf dir="${resources}/webapps/flymine">
         <exclude name="web.xml" />
+        <exclude name="FlyMineWebApp*.properties"/>
       </webinf>
       <lib dir="${lib}">
         <patternset refid="lib.common" />
@@ -689,6 +694,12 @@
       <classes dir="${build.test}">
         <include name="**/*.class"/>
       </classes>
+      <classes dir="${resources}/webapps/flymine">
+        <include name="FlyMineWebApp*.properties"/>
+      </classes>
+      <fileset dir="${resources}/webapps/flymine">
+        <include name="FlyMineWebApp*.properties"/>
+      </fileset>
     </war>
   </target>
 
