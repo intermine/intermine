@@ -396,4 +396,149 @@ public class DisplayableResultsTest extends TestCase
         assertEquals(columns, dr.getColumns());
     }
 
+
+    public void testUpdate1() throws Exception {
+        DisplayableResults dr1 = getExactResults();
+
+        // Set some attributes of this DisplayableResults
+        dr1.setStart(10);
+        dr1.setPageSize(25);
+
+        dr1.getColumn("c1").setVisible(true);
+        dr1.getColumn("c2").setVisible(false);
+        dr1.getColumn("d1").setVisible(true);
+        dr1.getColumn("d2").setVisible(false);
+
+        DisplayableResults dr2 = getExactResults();
+
+        // Set some attributes of this DisplayableResults
+        dr2.setStart(5);
+        dr2.setPageSize(16);
+
+        dr2.getColumn("c1").setVisible(false);
+        dr2.getColumn("c2").setVisible(false);
+        dr2.getColumn("d1").setVisible(false);
+        dr2.getColumn("d2").setVisible(false);
+
+        dr2.update(dr1);
+
+        assertEquals(10, dr2.getStart());
+        assertEquals(25, dr2.getPageSize());
+
+        assertTrue(dr2.getColumn("c1").isVisible());
+        assertFalse(dr2.getColumn("c2").isVisible());
+        assertTrue(dr2.getColumn("d1").isVisible());
+        assertFalse(dr2.getColumn("d2").isVisible());
+    }
+
+    public void testUpdate2() throws Exception {
+        DisplayableResults dr1 = getExactResults();
+
+        // Set some attributes of this DisplayableResults
+        dr1.setStart(10);
+        dr1.setPageSize(25);
+
+        dr1.getColumn("c1").setVisible(true);
+        dr1.getColumn("c2").setVisible(false);
+        dr1.getColumn("d1").setVisible(true);
+        dr1.getColumn("d2").setVisible(false);
+
+        // Now update from another that contains some columns we don't have
+        FqlQuery fq1 = new FqlQuery("select c1, d1 from Company as c1, Department as d1", "org.flymine.model.testmodel");
+        DisplayableResults dr2 = new DisplayableResults(os.execute(fq1.toQuery()));
+
+        dr2.setStart(5);
+        dr2.setPageSize(16);
+
+        dr2.getColumn("c1").setVisible(false);
+        dr2.getColumn("d1").setVisible(false);
+
+        dr2.update(dr1);
+
+        assertEquals(10, dr2.getStart());
+        assertEquals(25, dr2.getPageSize());
+
+        assertFalse(dr2.getColumn("c1").isVisible());
+        assertFalse(dr2.getColumn("d1").isVisible());
+
+    }
+
+    public void testUpdate3() throws Exception {
+        DisplayableResults dr1 = getExactResults();
+
+        // Set some attributes of this DisplayableResults
+        dr1.setStart(10);
+        dr1.setPageSize(25);
+
+        dr1.getColumn("c1").setVisible(true);
+        dr1.getColumn("c2").setVisible(false);
+        dr1.getColumn("d1").setVisible(true);
+        dr1.getColumn("d2").setVisible(false);
+
+        // Now update from another that contains some columns we don't have
+        FqlQuery fq2 = new FqlQuery("select c1, c2, c3, d1, d2, d3 from Company as c1, Company as c2, Company as c3, Department as d1, Department as d2, Department as d3", "org.flymine.model.testmodel");
+        DisplayableResults dr2 = new DisplayableResults(os.execute(fq2.toQuery()));
+
+        dr2.setStart(5);
+        dr2.setPageSize(16);
+
+        dr2.getColumn("c1").setVisible(false);
+        dr2.getColumn("c2").setVisible(false);
+        dr2.getColumn("c3").setVisible(true);
+        dr2.getColumn("d1").setVisible(false);
+        dr2.getColumn("d2").setVisible(false);
+        dr2.getColumn("d3").setVisible(false);
+
+        dr2.update(dr1);
+
+        assertEquals(10, dr2.getStart());
+        assertEquals(25, dr2.getPageSize());
+
+        assertFalse(dr2.getColumn("c1").isVisible());
+        assertFalse(dr2.getColumn("c2").isVisible());
+        assertTrue(dr2.getColumn("c3").isVisible());
+        assertFalse(dr2.getColumn("d1").isVisible());
+        assertFalse(dr2.getColumn("d2").isVisible());
+        assertFalse(dr2.getColumn("d3").isVisible());
+
+    }
+
+    public void testUpdate4() throws Exception {
+        DisplayableResults dr1 = getExactResults();
+
+        // Set some attributes of this DisplayableResults
+        dr1.setStart(10);
+        dr1.setPageSize(25);
+
+        dr1.getColumn("c1").setVisible(true);
+        dr1.getColumn("c2").setVisible(false);
+        dr1.getColumn("d1").setVisible(true);
+        dr1.getColumn("d2").setVisible(false);
+        dr1.moveColumnUp("c2");
+
+        DisplayableResults dr2 = getEstimateTooLowResults();
+
+        dr2.setStart(5);
+        dr2.setPageSize(16);
+
+        dr2.getColumn("c1").setVisible(false);
+        dr2.getColumn("d1").setVisible(false);
+
+        dr2.update(dr1);
+
+        assertEquals(10, dr2.getStart());
+        assertEquals(25, dr2.getPageSize());
+
+        assertTrue(dr2.getColumn("c1").isVisible());
+        assertTrue(dr2.getColumn("d1").isVisible());
+        assertEquals(dr2.getColumn("c2"), dr2.getColumns().get(0));
+        assertEquals(dr2.getColumn("c1"), dr2.getColumns().get(1));
+        assertEquals(dr2.getColumn("d1"), dr2.getColumns().get(2));
+        assertEquals(dr2.getColumn("d2"), dr2.getColumns().get(3));
+
+
+    }
+
+
+
 }
