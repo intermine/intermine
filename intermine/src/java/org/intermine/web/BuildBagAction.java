@@ -99,8 +99,8 @@ public class BuildBagAction extends LookupDispatchAction
                            new ActionError("bagBuild.saved", newBagName));
         saveMessages(request, actionMessages);
 
-        request.setParameter("bagName", newBagName);
-        return new ActionForward(mapping.findForward("bagDetails"));
+        request.setAttribute("bagName", newBagName);
+        return mapping.findForward("bagDetails");
     }
 
     /**

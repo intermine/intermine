@@ -112,7 +112,7 @@ public class ModifyQueryAction extends Action
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         String[] selectedQueries = ((ModifyQueryForm) form).getSelectedQueries();
         
-        response.setContentType("test/plain");
+        response.setContentType("text/plain");
         
         PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
         out.println("<query-list>");
