@@ -71,7 +71,6 @@ public class LiteRendererTest extends TestCase
             + "<field name=\"dateObjType\" value=\"Sat Aug 09 12:22:00 +0000 2003\"/>"
             + "</object>";
 
-        System.out.println(LiteRenderer.render(t));
         assertEquals(expected, LiteRenderer.render(t));
     }
 }
