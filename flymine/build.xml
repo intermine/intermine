@@ -2167,13 +2167,15 @@
   <target name="install-gbrowse-conf"
           description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory">
     <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX"
-            value="${webapp.baseurl}${webapp.path}/${webapp.viewByID.prefix}"/>
+            value="${webapp.baseurl}/${webapp.path}/${webapp.viewByID.prefix}"/>
     <filter token="FLYMINE_SITE_PREFIX"
             value="${www.location}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE"
             value="${gbrowse.database}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE_HOST"
             value="${gbrowse.database.host}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR"
+            value="${gbrowse.database.adaptor}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE_USER"
             value="${gbrowse.database.user}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE_PASSWORD"
@@ -2198,8 +2200,10 @@
       </fileset>
     </chmod>
 
-    <chmod perm="a+x">
-      <fileset dir="${build.gbrowse.images}"/>
+    <chmod perm="a+xr">
+      <fileset dir="${build.gbrowse.images}">
+        <include name="**"/>
+      </fileset>
     </chmod>
 
     <chmod perm="a+r">
@@ -2249,35 +2253,10 @@
   </target>
 
   <target name="load-gbrowse-data-mysql"
-          description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into
-                       GBrowse">
-    <exec dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
-      <arg value="--create"/>
-      <arg value="--adaptor"/>
-      <arg value="dbi::mysql"/>
-      <arg value="--dsn"/>
-      <arg value="dbi:mysql:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
-      <arg value="--user"/>
-      <arg value="${gbrowse.mysql.database.write.user}"/>
-      <arg value="--password"/>
-      <arg value="${gbrowse.mysql.database.write.password}"/>
+          description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse">
+    <exec executable="/bin/sh">
+      <arg line="-c 'bp_load_gff.pl -create --dsn dbi:mysql:dbname=${gbrowse.mysql.database}\;host=${gbrowse.mysql.database.host} --user ${gbrowse.mysql.database.write.user} --password ${gbrowse.mysql.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
     </exec>
-
-    <apply dir="${build.gbrowse.data}" executable="bp_bulk_load_gff.pl">
-      <arg value="--create"/>
-      <arg value="--database"/>
-      <arg value="${gbrowse.mysql.database}"/>
-      <arg value="--user"/>
-      <arg value="${gbrowse.mysql.database.write.user}"/>
-      <arg value="--password"/>
-      <arg value="${gbrowse.mysql.database.write.password}"/>
-      <fileset dir="${build.gbrowse.data}">
-        <patternset>
-          <include name="*.fa"/>
-          <include name="*.gff"/>
-        </patternset>
-      </fileset>
-    </apply>
   </target>
 
   <!-- MODEL COMPILATION TARGETS -->
