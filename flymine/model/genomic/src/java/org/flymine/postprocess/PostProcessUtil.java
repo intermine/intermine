@@ -22,7 +22,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 import org.intermine.model.InterMineObject;
-import org.flymine.model.genomic.*;
+import org.intermine.metadata.FieldDescriptor;
 
 /**
  * Common operations for post processing.
@@ -70,7 +70,7 @@ public class PostProcessUtil
     public static Iterator findRelations(ObjectStore os, Class objectCls, Class subjectCls,
                                          Class relationCls) throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
-
+        org.intermine.web.LogMe.log("i", "findRelations() 1");
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
@@ -98,35 +98,70 @@ public class PostProcessUtil
     }
 
     /**
-     * Query ObjectStore for Genes and their Exons.
+     * Return an iterator over the results of a query that connects two classes by a third using
+     * arbitrary fields.
      * @param os an ObjectStore to query
+     * @param sourceClass the first class in the query
+     * @param sourceClassFieldName the field in the sourceClass which should contain the
+     * connectingClass
+     * @param connectingClass the class referred to by sourceClass.sourceFieldName
+     * @param connectingClassFieldName the field in connectingClass which should contain
+     * destinationClass
+     * @param destinationClass the class referred to by
+     * connectingClass.connectingClassFieldName
      * @return an iterator over the results - (Gene, Exon) pairs
      * @throws ObjectStoreException if problem reading ObjectStore
+     * @throws IllegalAccessException if one of the field names doesn't exist in the corresponding
+     * class.
      */
-    public static Iterator findGeneExonRelations(ObjectStore os) throws ObjectStoreException {
+    public static Iterator findRelations(ObjectStore os,
+                                         Class sourceClass, String sourceClassFieldName,
+                                         Class connectingClass, String connectingClassFieldName,
+                                         Class destinationClass)
+        throws ObjectStoreException, IllegalAccessException {
+        org.intermine.web.LogMe.log("i", "findRelations() 2");
+
         Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-        QueryClass qcExon = new QueryClass(Exon.class);
-        q.addFrom(qcExon);
-        q.addToSelect(qcExon);
-        QueryClass qcTranscript = new QueryClass(Transcript.class);
-        q.addFrom(qcTranscript);
-        q.addToSelect(qcTranscript);
-        q.addToOrderBy(qcGene);
+        q.setDistinct(true);
+        QueryClass qcSource = new QueryClass(sourceClass);
+        q.addFrom(qcSource);
+        q.addToSelect(qcSource);
+        q.addToOrderBy(qcSource);
+        QueryClass qcConnecting = new QueryClass(connectingClass);
+        q.addFrom(qcConnecting);
+        QueryClass qcDest = new QueryClass(destinationClass);
+        q.addFrom(qcDest);
+        q.addToSelect(qcDest);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryObjectReference ref1 = new QueryObjectReference(qcTranscript, "gene");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcGene);
+        QueryCollectionReference ref1 =
+            new QueryCollectionReference(qcSource, sourceClassFieldName);
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcConnecting);
         cs.addConstraint(cc1);
-        QueryCollectionReference ref2 = new QueryCollectionReference(qcTranscript, "exons");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcExon);
+        QueryReference ref2;
+
+        Map descriptorMap = os.getModel().getFieldDescriptorsForClass(connectingClass);
+        FieldDescriptor fd = (FieldDescriptor) descriptorMap.get(connectingClassFieldName);
+
+        if (fd == null) {
+            throw new IllegalAccessException("cannot find field \"" + connectingClassFieldName
+                                             + "\" in class " + connectingClass.getName());
+        }
+        
+        if (fd.isReference()) {
+            ref2 = new QueryObjectReference(qcConnecting, connectingClassFieldName);
+        } else {
+            ref2 = new QueryCollectionReference(qcConnecting, connectingClassFieldName);
+        }
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcDest);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
+        org.intermine.web.LogMe.log("i", "q: " + q);
+
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(10000);
+        org.intermine.web.LogMe.log("i", "size: " + res.size());
+
         return res.iterator();
     }
 
