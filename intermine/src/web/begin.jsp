@@ -12,12 +12,12 @@
   
     <th class="title" align="left"><fmt:message key="begin.heading.build"/></th>
     <th class="help" align="right">
-      [ <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
+      [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
         <fmt:message key="begin.link.help"/>
-      </html:link> ]
-      [ <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualQuickstart.html">
+      </html:link>]
+      [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualQuickstart.html">
         <fmt:message key="begin.link.quickstart"/>
-      </html:link> ]
+      </html:link>]
     </th>
     
   </tr>
@@ -65,9 +65,9 @@
 
       <th class="title" align="left"><fmt:message key="begin.heading.browse"/></th>
       <th class="help" align="right">
-        [ <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
+        [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
           <fmt:message key="begin.link.help"/>
-        </html:link> ]
+        </html:link>]
       </th>
 
     </tr>
@@ -99,9 +99,9 @@
   <tr>
     <th align="left" class="title"><fmt:message key="begin.heading.templates"/></th>
     <th align="right" class="help">
-      [ <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
+      [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
         <fmt:message key="begin.link.help"/>
-      </html:link> ]
+      </html:link>]
     </th>
   </tr>
   <tr>
