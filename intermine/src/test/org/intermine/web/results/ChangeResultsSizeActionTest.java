@@ -149,7 +149,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testAddToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("buttons(addToExistingBag)", "");
+        addRequestParameter("addToExistingBag", "");
         getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
@@ -183,7 +183,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
 
     public void testAddSameToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
-        addRequestParameter("buttons(addToExistingBag)", "");
+        addRequestParameter("addToExistingBag", "");
         getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
