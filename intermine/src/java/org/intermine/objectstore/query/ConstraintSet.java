@@ -115,4 +115,33 @@ public class ConstraintSet implements Constraint
     public Set getConstraints() {
         return constraints;
     }
+
+
+    /**
+     * Test whether two ConstraintSets are equal, overrides Object.equals().
+     * constraints are held in LinkedHashSet, it uses the Set.equals() method
+     * which should check for equality regardless of the element ordering imposed
+     * in LinkedHashSet.
+     *
+     * @param obj the object to compare with
+     * @return true if objects are equal
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof ConstraintSet) {
+            ConstraintSet cs = (ConstraintSet) obj;
+            return (constraints.equals(cs.constraints)
+                    && (disjunctive == cs.disjunctive)
+                    && (negated == cs.negated));
+        }
+        return false;
+    }
+    /**
+     * Get the hashCode for this object overrides Object.hashCode()
+     *
+     * @return the hashCode
+     */
+    public int hashCode() {
+        return constraints.hashCode() + (negated ? 29 : 0)
+            + (disjunctive ? 31 : 0);
+    }
 }
