@@ -86,17 +86,15 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
 
         // find ReferenceDescriptor for the reverse reference
-        /****        if (reverseRefName != null && reverseRefName != "") {
-            this.reverseRef = this.getReferencedClassDescriptor()
+        if (reverseRefName != null && reverseRefName != "") {
+            this.reverseRef = this.refClassDescriptor
                 .getReferenceDescriptorByName(reverseRefName);
             if (reverseRef == null) {
                 throw new MetaDataException("Unable to find named reverse reference ("
-                                            + reverseRefName + ") in class (" +
-                                            this.cld.getClassName() + ").");
+                                            + reverseRefName + ") in class ("
+                                            + this.cld.getClassName() + ").");
             }
         }
-        ****/
-        // verify that reverseRef points to a valid field in referenced class
 
         modelSet = true;
     }
