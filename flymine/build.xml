@@ -49,6 +49,7 @@
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
+  <property name="build.gbrowse" location="${build}/gbrowse"/>
   <property name="build.webapp.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
   <property name="build.webservice.lib" location="${build.webapp}/webservice/WEB-INF/lib"/>
 
@@ -167,6 +168,7 @@
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
+    <mkdir dir="${build.gbrowse}"/>
     <mkdir dir="${build.webapp}/intermine"/>
 
     <mkdir dir="${results}"/>
@@ -1490,6 +1492,16 @@
     <antcall target="create-references"/>
     <antcall target="transfer-sequences"/>
   </target>
+
+  <!-- ========== OBJECTSTORE EXPORT TARGETS ========== -->
+  <target name="write-gff" depends="compile-genomic-java">
+    <taskdef name="write-gff" classname="org.flymine.gbrowse.WriteGFFTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+  
+    <write-gff alias="os.production" dest="${build.gbrowse}"/>
+  </target>
+
 
   <!-- ========== COMPILATION AND TESTING TARGETS ========== -->
 
