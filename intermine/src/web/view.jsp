@@ -33,6 +33,16 @@
                           onMouseOut="exitPath('${fn:replace(path,".","")}')">
             <div>
               <nobr>
+                <c:if test="${not fn:contains(path, '.')}">
+                  ${path}
+                </c:if>
+                <c:if test="${fn:contains(path, '.')}">
+                  ${fn:substringBefore(path, ".")}.${fn:substringAfter(path, ".")}
+                </c:if>
+              </nobr>
+            </div>
+            <div>
+              <nobr>
                 <c:if test="${!status.first}">
                   <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
                     <fmt:param value="${path}"/>
@@ -64,16 +74,6 @@
                   <fmt:message key="view.removeFromViewSymbol"/>
                 </html:link>
                 ]
-              </nobr>
-            </div>
-            <div>
-              <nobr>
-                <c:if test="${not fn:contains(path, '.')}">
-                  <span class="type">${path}</span>
-                </c:if>
-                <c:if test="${fn:contains(path, '.')}">
-                  <span class="type">${fn:substringBefore(path, ".")}</span>.${fn:substringAfter(path, ".")}
-                </c:if>
               </nobr>
             </div>
           </div>
