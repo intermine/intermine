@@ -20,4 +20,13 @@
   </div>
   <br/>
 </logic:messagesPresent>
+
+<c:if test="${!empty MESSAGE}">
+  <div class="messages">
+    <c:out value="${MESSAGE}"/>
+  </div>
+  <br/>
+  <c:remove var="MESSAGE" scope="session"/>
+</c:if>
+
 <!-- /errorMessages.jsp -->
