@@ -167,21 +167,16 @@ public class InheritanceDotTask extends Task
                         maybeDo(interfaces[i], done, out, true);
                     }
                 }
-                if (clazz.isInterface()) {
-                    out.println("\"" + clazz.getName() + "\"" + (clazz.getName()
-                                .startsWith(packageName + ".") ? " [style=filled,fillcolor=green]"
-                                : (clazz.getName().startsWith("org") || clazz.getName()
-                                    .startsWith("junit.") || clazz.getName().startsWith("net.")
-                                    || clazz.getName().startsWith("servletunit.")
-                                    ? " [style=filled,fillcolor=red]" : "")));
-                } else {
-                    out.println("\"" + clazz.getName() + "\" [shape=box"
-                            + (clazz.getName().startsWith(packageName + ".")
-                                ? ",style=filled,fillcolor=green" : (clazz.getName()
-                                    .startsWith("org.") || clazz.getName().startsWith("junit.")
-                                    || clazz.getName().startsWith("net.")
-                                    ? ",style=filled,fillcolor=red" : "")) + "]");
-                }
+                out.println("\"" + clazz.getName() + "\" ["
+                        + (clazz.isInterface() ? "" : "shape=box,")
+                        + (clazz.getName().startsWith(packageName + ".")
+                            ? "style=filled,fillcolor=green"
+                            : (clazz.getName().startsWith("org.")
+                                || clazz.getName().startsWith("junit.")
+                                || clazz.getName().startsWith("net.")
+                                || clazz.getName().startsWith("servletunit.")
+                                ? "style=filled,fillcolor=red" : "style=filled,fillcolor=white"))
+                        + "]");
                 if ((superClass != null) && (!omit.contains(superClass.getName()))) {
                     out.println("\"" + superClass.getName() + "\" -> \"" + clazz.getName()
                             + "\" [arrowhead=none,arrowtail=normal]");
