@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
@@ -126,7 +127,7 @@ public class FeedbackForm extends ValidatorForm
         
         name = "";
         subject = "";
-        message = "";
+        message = createDefaultFeedbackMsg(request);
         email = "";
         
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
@@ -135,5 +136,24 @@ public class FeedbackForm extends ValidatorForm
         }
     }
     
-    
+    /**
+     * Create the default feedback messages. Adds URL and current query by default.
+     * 
+     * @param request current http request
+     * @return default feedback message
+     */
+    protected String createDefaultFeedbackMsg(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String msg = "\n\n\n\n---- Current page: ----\n\n";
+        msg += request.getAttribute("javax.servlet.forward.servlet_path");
+        if (request.getQueryString() != null) {
+            msg += request.getQueryString();
+        }
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        if (query != null) {
+            msg += "\n\n---- Current query: ----\n\n";
+            msg += new PathQueryBinding().marshal(query, "", query.getModel().getName());
+        }
+        return msg;
+    }
 }
