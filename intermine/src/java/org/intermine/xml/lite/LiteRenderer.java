@@ -12,13 +12,10 @@ package org.flymine.xml.lite;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.SimpleTimeZone;
 
 import org.flymine.util.TypeUtil;
 
