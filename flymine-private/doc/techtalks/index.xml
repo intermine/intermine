@@ -10,9 +10,9 @@
         <table>
           <tbody>
             <row>
-              <entry>2nd June 2003</entry>
-              <entry>François</entry>
-              <entry>Firewalls</entry>
+              <entry>25th July</entry>
+              <entry>TBA</entry>
+              <entry>TBA</entry>
             </row>
           </tbody>
         </table>
@@ -21,6 +21,11 @@
         <title>Previous talks</title>
         <table>
           <tbody>
+            <row>
+              <entry>2nd June 2003</entry>
+              <entry>François</entry>
+              <entry><ulink url="firewalls.sxi">Firewalls</ulink></entry>
+            </row>
             <row>
               <entry>25th April 2003</entry>
               <entry>Mark</entry>
