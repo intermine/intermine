@@ -7,11 +7,11 @@
 <!-- objectDetails.jsp -->
 <table width="100%">
 <tr>
-  <td valign="top" width="34%">
+  <td valign="top" width="30%">
 <div class="heading">
 Summary for selected
 <c:forEach items="${object.clds}" var="cld">
-  <span class="type">${cld.unqualifiedName}</span>
+  ${cld.unqualifiedName}
 </c:forEach>
 </div>
 
@@ -47,13 +47,12 @@ Summary for selected
   </c:forEach>
 </table>
 </div>
-<br/>
 
-<div class="heading">Fields</div>
 
-<table>
 <c:if test="${!empty object.attributes}">
-  <div style="margin-left: 20px">
+  <div class="heading">Fields</div>
+  <div class="body">
+    <table>
     <c:forEach items="${object.attributes}" var="entry">
       <tr>
         <td>
@@ -64,8 +63,10 @@ Summary for selected
           <c:set var="maxLength" value="60"/>
           <c:choose>
             <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
-              <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
-              <html:link action="/getAttributeAsFile?object=${object.id}&field=${entry.key}">...</html:link>
+              <nobr>
+                <span class="value">${fn:substring(entry.value, 0, maxLength)}</span>
+                <html:link action="/getAttributeAsFile?object=${object.id}&field=${entry.key}">...</html:link>
+              </nobr>
             </c:when>
             <c:otherwise>
               <span class="value">${entry.value}</span>
@@ -74,21 +75,16 @@ Summary for selected
         </td>
       </tr>
     </c:forEach>
+    </table>
   </div>
-  <tr>
-    <td  height="10px">
-    </td>
-  </tr>
 </c:if>
-</table>
 
 <c:forEach items="${object.clds}" var="cld">
   <c:if test="${fn:length(DISPLAYERS[cld.name].longDisplayers) > 0}">
     <div class="heading">
-      Further information for this <span
-      class="type">${cld.unqualifiedName}</span>
+      Further information for this ${cld.unqualifiedName}
     </div>
-    <div style="margin-left: 20px">
+    <div class="body">
       <c:forEach items="${DISPLAYERS[cld.name].longDisplayers}" var="displayer">
         <c:set var="object_bak" value="${object}"/>
         <c:set var="object" value="${object.object}" scope="request"/>
@@ -99,8 +95,6 @@ Summary for selected
     </div>
   </c:if>
 </c:forEach>
-<br/>
-
 
 </td>
 
@@ -109,7 +103,6 @@ Summary for selected
 <div class="body">
 <table>
 <c:if test="${!empty object.references}">
-  <div style="margin-left: 20px">
     <c:forEach items="${object.references}" var="entry">
       <tr>
         <td width="10px">
@@ -173,7 +166,10 @@ Summary for selected
                   </td>
                   <c:forEach items="${reference.identifiers}" var="entry">
                     <td>
-                      <span class="value">${entry.value}</span><br/>
+                      <span class="value">${entry.value}</span>
+                      <c:if test="${empty entry.value}">
+                        &nbsp;<%--for IE--%>
+                      </c:if>
                     </td>
                   </c:forEach>
                   <td width="10px">
@@ -188,11 +184,9 @@ Summary for selected
         </tr>
       </c:if>
     </c:forEach>
-  </div>
 </c:if>
 
 <c:if test="${!empty object.collections}">
-  <div style="margin-left: 20px">
     <c:forEach items="${object.collections}" var="entry">
       <tr>
         <td width="10px">
@@ -265,7 +259,11 @@ Summary for selected
                       </c:forEach>
                     </td>
                     <c:forEach items="${row}" var="obj">
-                      <td><span class="value">${obj}</span></td>
+                      <td><span class="value">${obj}</span>
+                        <c:if test="${empty obj}">
+                          &nbsp;<%--for IE--%>
+                        </c:if>
+                      </td>
                     </c:forEach>
                     <td width="10px">
                       [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}">
@@ -287,11 +285,9 @@ Summary for selected
         </tr>
       </c:if>
     </c:forEach>
-  </div>
 </c:if>
 </table>
 </div>
-<br/>
 
 </td>
 </tr>
