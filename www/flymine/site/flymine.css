@@ -1,3 +1,6 @@
+h3 {
+    clear: left;
+}
 body {	font-family: arial, helvetica, sans-serif;
         font-size: 8pt;
 	color: #000000; 

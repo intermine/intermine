@@ -12,7 +12,11 @@ version="1.0">
 <html>
 <head>
 <title>FlyMine</title>
-<link rel="stylesheet" href="http://www.flymine.org/flymine.css" type="text/css" />
+<link rel="stylesheet" type="text/css">
+<xsl:attribute name="href">
+<xsl:value-of select="concat($basedir, '/flymine.css')"/>
+</xsl:attribute>
+</link>
 <meta name="keywords" content="microarray, bioinformatics, drosophila, genomics" />
 <meta name="description" content="Integrated queryable database for Drosophila and Anopheles genomics" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -245,6 +249,10 @@ version="1.0">
 
 <xsl:template match="menu/section/item">
 <font class="menu-item"><xsl:apply-templates/></font><br/>
+</xsl:template>
+
+<xsl:template match="emphasis">
+<i><xsl:apply-templates/></i>
 </xsl:template>
 
 </xsl:stylesheet>

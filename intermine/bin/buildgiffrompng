@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Building \"GIF\" picture $2" 1>&2
+
+if test -d $HOME/tmp ; then
+	TMP_DIR=$HOME/tmp
+else
+	echo "A ~/tmp directory would be preferable - using /tmp for the moment" 1>&2
+	TMP_DIR=/tmp
+fi
+
+TEMP_FILENAME=${TMP_DIR}/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+
+pngtopnm $1 >$TEMP_FILENAME.colour
+pngtopnm -alpha $1 >$TEMP_FILENAME.alpha
+
+pnmbg $TEMP_FILENAME.colour $TEMP_FILENAME.alpha | pnmtopng >$2
+
