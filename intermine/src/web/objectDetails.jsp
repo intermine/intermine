@@ -101,16 +101,21 @@ object<br/><br/>
                 <img border="0" src="images/minus.png" alt="-"/>
               </html:link>
             </c:when>
-            <c:otherwise>
+            <c:when test="${collection.size > 0}">
               <html:link action="/modifyDetails?method=verbosify&field=${entry.key}">
                 <img border="0" src="images/plus.png" alt="+"/>
               </html:link>
+            </c:when>
+            <c:otherwise>
+              <img border="0" src="images/blank.png" alt=" "/>
             </c:otherwise>
           </c:choose>
           ${collection.size} ${collection.cld.unqualifiedName} object(s)
-          [<html:link action="/collectionDetails?id=${object.id}&field=${entry.key}">
-             view all
-           </html:link>]<br/>
+          <c:if test="${collection.size > 0}">
+            [<html:link action="/collectionDetails?id=${object.id}&field=${entry.key}">
+            view all
+            </html:link>]<br/>
+          </c:if>
         </td>
       </tr>
       <c:if test="${collection.verbose}">
