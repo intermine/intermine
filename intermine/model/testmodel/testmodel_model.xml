@@ -17,7 +17,8 @@
         <reference name="personalAddress" referenced-type="org.flymine.model.testmodel.Address"/>
         <reference name="businessAddress" referenced-type="org.flymine.model.testmodel.Address"/>
         <collection name="companys" referenced-type="org.flymine.model.testmodel.Company" ordered="true" reverse-reference="contractors"/>
-        <collection name="oldComs" referenced-type="org.flymine.model.testmodel.Company" ordered="true" reverse-reference="oldContracts"/></class>
+        <collection name="oldComs" referenced-type="org.flymine.model.testmodel.Company" ordered="true" reverse-reference="oldContracts"/>
+    </class>
     <class name="org.flymine.model.testmodel.Manager" extends="org.flymine.model.testmodel.Employee org.flymine.model.testmodel.ImportantPerson" is-interface="false">
         <attribute name="title" type="java.lang.String"/>
     </class>
