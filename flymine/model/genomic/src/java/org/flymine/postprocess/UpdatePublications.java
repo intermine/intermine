@@ -56,6 +56,7 @@ import org.apache.log4j.Logger;
 public class UpdatePublications
 {
     protected static final Logger LOG = Logger.getLogger(UpdatePublications.class);
+    protected static final String ENDL = System.getProperty("line.separator");
     // see http://eutils.ncbi.nlm.nih.gov/entrez/query/static/esummary_help.html for details
     protected static final String ESUMMARY_URL =
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
@@ -81,16 +82,20 @@ public class UpdatePublications
     public void execute() throws Exception {
         Set pubMedIds = new HashSet();
         Set toStore = new HashSet();
+        writer.write(FullRenderer.getHeader() + ENDL);
         for (Iterator i = getPublications().iterator(); i.hasNext();) {
             pubMedIds.add(((Publication) i.next()).getPubMedId());
             if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
                 SAXParser.parse(new InputSource(getReader(pubMedIds)),
                                 new Handler(toStore));
-                writer.write(FullRenderer.render(toStore));
+                for (Iterator j = toStore.iterator(); j.hasNext();) {
+                    writer.write(FullRenderer.render((Item) j.next()));
+                }
                 pubMedIds.clear();
                 toStore.clear();
             }
         }
+        writer.write(FullRenderer.getFooter() + ENDL);
     }
 
     /**
