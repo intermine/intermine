@@ -44,6 +44,7 @@ public class OrthologueConverter extends FileConverter
     protected Map ids = new HashMap();
     protected Item organism1;
     protected Item organism2;
+    protected Map genes = new HashMap();
 
     /**
      * Constructor
@@ -51,31 +52,22 @@ public class OrthologueConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected OrthologueConverter(BufferedReader reader, ItemWriter writer)
+    public OrthologueConverter(BufferedReader reader, ItemWriter writer)
         throws ObjectStoreException {
         super(reader, writer);
     }
 
-    public void setOrganism1(String name) {
-        organism1 = createOrganism(name);
-    }
 
-    public void setOrganism2(String name) {
-        organism2 = createOrganism(name);
-    }
-
-    private Item createOrganism(String name) {
-        Item organism = newItem("Organism");
-        organism.addAttribute(new Attribute("name", name));
-        return organism;
-    }
 
     /**
      * @see DataConverter#process
      */
     public void process() throws Exception {
         try {
-            String line;
+            String line = reader.readLine();
+            organism1 = createOrganism(param1);
+            organism2 = createOrganism(param2);
+
             // throw an exception if organisms not set
             while ((line = reader.readLine()) != null) {
                 String[] array = line.split("\t");
@@ -89,19 +81,20 @@ public class OrthologueConverter extends FileConverter
                 items.add(ItemHelper.convert(orth1));
                 Item orth2 = createOrthologue(gene2, gene1, result, getSource(array[4]));
                 items.add(ItemHelper.convert(orth2));
-                gene1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton(orth2.getIdentifier()))));
-                gene1.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton(orth1.getIdentifier()))));
-                gene2.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton(orth1.getIdentifier()))));
-                gene2.addCollection(new ReferenceList("subjects", new ArrayList(Collections.singleton(orth2.getIdentifier()))));
-
-                items.add(ItemHelper.convert(gene1));
-                items.add(ItemHelper.convert(gene2));
+                addToCollection(gene1, "objects", orth2.getIdentifier());
+                addToCollection(gene1, "subjects", orth1.getIdentifier());
+                addToCollection(gene2, "objects", orth1.getIdentifier());
+                addToCollection(gene2, "subjects", orth2.getIdentifier());
 
                 writer.storeAll(items);
             }
 
             Set extras = new HashSet();
-            Iterator iter = sources.values().iterator();
+            Iterator iter = genes.values().iterator();
+            while (iter.hasNext()) {
+                extras.add(ItemHelper.convert((Item) iter.next()));
+            }
+            iter = sources.values().iterator();
             while (iter.hasNext()) {
                 extras.add(ItemHelper.convert((Item) iter.next()));
             }
@@ -112,7 +105,6 @@ public class OrthologueConverter extends FileConverter
             extras.add(ItemHelper.convert(organism1));
             extras.add(ItemHelper.convert(organism2));
             writer.storeAll(extras);
-
         } finally {
             writer.close();
         }
@@ -141,6 +133,15 @@ public class OrthologueConverter extends FileConverter
         return id.toString();
     }
 
+    private Item createOrganism(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Cannot create an organism with no name");
+        }
+        Item organism = newItem("Organism");
+        organism.addAttribute(new Attribute("shortName", name));
+        return organism;
+    }
+
     private Item createOrthologue(Item gene1, Item gene2, Item result, Item source) {
         Item orth = newItem("Orthologue");
         orth.addReference(new Reference("object", gene1.getIdentifier()));
@@ -151,9 +152,15 @@ public class OrthologueConverter extends FileConverter
     }
 
     private Item createGene(String name, Item organism) {
-        Item gene = newItem("Gene");
-        gene.addAttribute(new Attribute("name", name));
-        gene.addReference(new Reference("organism", organism.getIdentifier()));
+        String key = name + organism.getIdentifier();
+        LOG.error("gene=" + key);
+        Item gene = (Item) genes.get(key);
+        if (gene == null) {
+            gene = newItem("Gene");
+            gene.addAttribute(new Attribute("name", name));
+            gene.addReference(new Reference("organism", organism.getIdentifier()));
+            genes.put(key, gene);
+        }
         return gene;
     }
 
@@ -185,6 +192,16 @@ public class OrthologueConverter extends FileConverter
         result.addReference(new Reference("analysis", analysis.getIdentifier()));
         result.addReference(new Reference("source", source.getIdentifier()));
         return result;
+    }
+
+    private void addToCollection(Item item, String colName, String toAdd) {
+        ReferenceList col = item.getCollection(colName);
+        if (col != null) {
+            col.addRefId(toAdd);
+        } else {
+            col = new ReferenceList(colName, new ArrayList(Collections.singletonList(toAdd)));
+            item.addCollection(col);
+        }
     }
 
 }

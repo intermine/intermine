@@ -384,6 +384,13 @@
     </ant>
   </target>
 
+  <target name="compile-orthologue-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="orthologue"/>
+      <property name="model.src" value="${model}/orthologue"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
 
   <target name="ensembl-test" depends="prepare-build-model, convert-ensembl, jar-genomic">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
@@ -399,7 +406,7 @@
   </target>
 
   <target name="test-models-full"
-          depends="compile-genomic-model, chado-test, mage-test, ensembl-test, rnai-test">
+          depends="create-production-model, compile-genomic-model, orthologue-test, mage-test, ensembl-test, rnai-test">
     <antcall target="test-report"/>
   </target>
 
@@ -417,7 +424,7 @@
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado"/>
   </target>
 
-  <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
+  <!-- Load data from ensembl-anoph-tmp-items into production -->
   <target name="load-ensembl-anopheles" depends="prepare-build-model">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
@@ -426,7 +433,7 @@
     <load-anoph integrationWriter="integration.production" source="os.anoph-translated" sourceName="ensembl"/>
   </target>
 
-  <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
+  <!-- Load data from ensembl-dros-tgt-items into production -->
   <target name="load-ensembl-drosophila" depends="prepare-build-model">
     <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
@@ -496,6 +503,37 @@
     <load-dros integrationWriter="integration.ensembl-dros-test" source="os.ensembl-dros-translated" sourceName="ensembl"/>
   </target>
 
+  <!-- test genomic model database to hold orthologue data -->
+  <target name="build-db-orthologue-test">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.orthologue-test"/>
+    </ant>
+  </target>
+
+  <target name="create-indexes-orthologue-test" depends="build-db-orthologue-test">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.orthologue-test"/>
+    </ant>
+  </target>
+
+
+
+  <!-- Load data from orthologue-tgt-items into orthologue-test -->
+  <target name="load-orthologues-test" depends="prepare-build-model, build-db-orthologue-test, create-indexes-orthologue-test">
+    <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-orthologue integrationWriter="integration.orthologue-test" source="os.orthologue-translated" sourceName="orthologue"/>
+  </target>
+  
+
+
   <!-- Build flymine database to hold production data -->
   <target name="build-db-production" depends="create-genomic-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -562,19 +600,19 @@
     </ant>
   </target>
 
-  <!-- retrieve ensembl orthologue/paralogue data -->
-  <target name="retrieve-orthologues-ensembl" depends="build-db-orthologue-tgt-items">
-    <taskdef name="retrieve-orthologue" classname="org.intermine.dataconversion.FileConverterTask">
+  <!-- retrieve ensembl orthologue/paralogue data into items database-->
+  <target name="orthologues-ensembl" depends="compile-orthologue-java">
+    <taskdef name="retrieve-orthologue" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <concat destfile="${build.tmp}/orthologues">
-      <path>
-        <fileset dir="/shared/data/orthologues" includes="orthologues.*"/>
-      </path>
-    </concat>
+    <copy file="/shared/data/orthologues/ensembl/orthologues.AG-DM" todir="${build.tmp}"/>
 
-    <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-tgt-items"/>
+    <retrieve-orthologue file="${build.tmp}/orthologues.AG-DM" 
+       clsName="org.flymine.dataconversion.OrthologueConverter" 
+       osName="osw.orthologue-tgt-items"
+       param1="D. melanogaster"
+       param2="A. gambiae"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -583,19 +621,25 @@
     </ant>
   </target>
 
-  <!-- load orthologue/paralogue data -->
-  <target name="retrieve-orthologue" depends="build-db-orthologue-tgt-items">
-    <taskdef name="retrieve-orthologue" classname="org.intermine.dataconversion.FileConverterTask">
+  <target name="retrieve-orthologues-ensembl" depends="build-db-orthologue-tgt-items, orthologues-ensembl"/>  
+
+
+  <!-- retrieve inparanoid orthologue data into orthologue-tgt-items database -->
+  <target name="orthologues-inparanoid" depends="compile-orthologue-java">
+    <taskdef name="retrieve-orthologue" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <concat destfile="${build.tmp}/orthologues">
+    <concat destfile="${build.tmp}/inparanoid">
       <path>
-        <fileset dir="/shared/data/orthologues" includes="orthologues.*"/>
+        <fileset dir="/shared/data/orthologues/inparanoid" includes="orthologues.*"/>
       </path>
     </concat>
 
-    <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-tgt-items"/>
+    <retrieve-orthologue 
+       file="${build.tmp}/inparanoid"
+       clsName="org.flymine.dataconversion.InparanoidConverter" 
+       osName="osw.orthologue-tgt-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -603,6 +647,14 @@
       <property name="db.name" value="db.orthologue-tgt-items"/>
     </ant>
   </target>
+
+  <target name="retrieve-orthologues-inparanoid" depends="build-db-orthologue-tgt-items, orthologues-inparanoid"/>
+
+
+  <!-- retrieve orthologue data from all sources into orthologue-tgt-items
+    !! Currently does not work - causes generated identifiers to clash in tgt-items database
+  <target name="retrieve-orthologues" depends="build-db-orthologue-tgt-items, orthologues-ensembl, orthologues-inparanoid"/>
+  -->
 
   <!-- convert RNAi OWL to FlyMine model -->
   <target name="convert-rnai" depends="prepare-build-model">

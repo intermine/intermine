@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -44,7 +46,7 @@ public class InparanoidConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected InparanoidConverter(BufferedReader reader, ItemWriter writer)
+    public InparanoidConverter(BufferedReader reader, ItemWriter writer)
         throws ObjectStoreException {
         super(reader, writer);
         setupItems();
@@ -57,6 +59,7 @@ public class InparanoidConverter extends FileConverter
         try {
             String line, species = null, oldIndex = null;
             Item protein = null;
+            Set organisms = new LinkedHashSet();
 
             while ((line = reader.readLine()) != null) {
                 String[] array = line.split("\t");
@@ -68,6 +71,7 @@ public class InparanoidConverter extends FileConverter
                     continue;
                 }
 
+                organisms.add(species);
                 Item newProtein = newProtein(array[4]);
 
                 Item item = newItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
@@ -81,6 +85,10 @@ public class InparanoidConverter extends FileConverter
                     species = array[2];
                     protein = newProtein;
                 }
+            }
+            Iterator iter = organisms.iterator();
+            while (iter.hasNext()) {
+                writer.store(ItemHelper.convert(newOrganism((String) iter.next())));
             }
         } finally {
             writer.close();
@@ -123,6 +131,7 @@ public class InparanoidConverter extends FileConverter
         }
         Item item = newItem("Protein");
         item.addAttribute(new Attribute("swissProtId", swissProtId));
+        item.addAttribute(new Attribute("identifier", swissProtId));
         writer.store(ItemHelper.convert(item));
         proteins.put(swissProtId, item);
         return item;
@@ -140,6 +149,12 @@ public class InparanoidConverter extends FileConverter
         item.addReference(new Reference("analysis", analysis.getIdentifier()));
         writer.store(ItemHelper.convert(item));
         return item;
+    }
+
+    protected Item newOrganism(String abbrev) {
+        Item organism = newItem("Organism");
+        organism.addAttribute(new Attribute("abbreviation", abbrev));
+        return organism;
     }
 
     /**

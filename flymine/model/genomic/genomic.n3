@@ -318,3 +318,15 @@
 :Organism__taxonId a owl:DatatypeProperty;
     rdfs:domain :Organism;
     rdfs:range xsd:string.
+
+:Organism__genus a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Organism__species a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.
+
+:Organism__abbreviation a owl:DatatypeProperty;
+    rdfs:domain :Organism;
+    rdfs:range xsd:string.

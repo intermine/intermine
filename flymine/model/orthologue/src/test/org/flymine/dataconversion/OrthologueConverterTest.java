@@ -29,6 +29,7 @@ import org.intermine.dataconversion.MockItemWriter;
 
 public class OrthologueConverterTest extends DataConversionTestCase
 {
+    private String ENDL = System.getProperty("line.separator");
 
     public void setUp() throws Exception {
         super.setUp();
@@ -40,12 +41,12 @@ public class OrthologueConverterTest extends DataConversionTestCase
         // the input file format is 5 tab-delimited columns:
         // gene1   gene2   orthologue_type   method   source
 
-        String input = "GENE1\tGENE2\tSEED\tBest Reciprocal Hit\tEnsembl Database\n";
+        String input = "Title" + ENDL + "GENE1\tGENE2\tSEED\tBest Reciprocal Hit\tEnsembl Database" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         OrthologueConverter converter = new OrthologueConverter(new BufferedReader(new StringReader(input)), itemWriter);
-        converter.setOrganism1("ORG1");
-        converter.setOrganism2("ORG2");
+        converter.setParam1("ORG1");
+        converter.setParam2("ORG2");
         converter.process();
 
         Set expected = new HashSet(expectedItems);

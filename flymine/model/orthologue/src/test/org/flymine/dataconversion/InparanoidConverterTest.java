@@ -28,6 +28,8 @@ import org.intermine.dataconversion.MockItemWriter;
 
 public class InparanoidConverterTest extends DataConversionTestCase
 {
+    private String ENDL = System.getProperty("line.separator");
+
     public void setUp() throws Exception {
         super.setUp();
         expectedItems = getExpectedItems();
@@ -42,10 +44,10 @@ public class InparanoidConverterTest extends DataConversionTestCase
         // note that the confidence for the first member of a group appears to be meaningless (row 1).
         // the fifth is some form of swissprot id to identify the protein
         // so...this input should produce one orthologue (rows 1 & 3) and two paralogues (1 & 2, 3 & 4)
-        String input = "14\t1217\tCE\t1.000\tO01438\n"
-            + "14\t1217\tCE\t0.997\tQ95Q95\n"
-            + "14\t1217\tSC\t1.000\tTOR2_YEAST\n"
-            + "14\t1217\tSC\t0.566\tTOR1_YEAST\n";
+        String input = "14\t1217\tCE\t1.000\tO01438" + ENDL
+            + "14\t1217\tCE\t0.997\tQ95Q95" + ENDL
+            + "14\t1217\tSC\t1.000\tTOR2_YEAST" + ENDL
+            + "14\t1217\tSC\t0.566\tTOR1_YEAST" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         new InparanoidConverter(new BufferedReader(new StringReader(input)), itemWriter).process();
