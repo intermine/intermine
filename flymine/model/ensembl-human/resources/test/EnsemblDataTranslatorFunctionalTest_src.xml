@@ -172,8 +172,8 @@
     <attribute name="repeat_type" value="Low complexity regions"/>
   </item> 
  <item id="5_1" class="http://www.flymine.org/model/ensembl-human#xref">
-    <attribute name="dbprimary_acc" value="IPR000719"/>
-    <attribute name="display_label" value="Prot_kinase"/>
+    <attribute name="dbprimary_acc" value="NP_653217"/>
+    <attribute name="display_label" value="NP_653217"/>
     <attribute name="description" value="Protein kinase"/>
     <attribute name="version" value="1"/>
     <reference name="external_db" ref_id="25_1200"/>
@@ -197,7 +197,7 @@
     <attribute name="status" value="KNOWNXREF"/>
   </item>
  <item id="25_1200" class="http://www.flymine.org/model/ensembl-human#external_db">
-    <attribute name="db_name" value="Interpro"/>
+    <attribute name="db_name" value="RefSeq_dna"/>
     <attribute name="release" value="1"/>
     <attribute name="status" value="XREF"/>
   </item>
