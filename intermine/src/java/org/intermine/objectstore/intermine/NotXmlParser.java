@@ -78,7 +78,7 @@ public class NotXmlParser
                     Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName)
                         .getType();
                     TypeUtil.setFieldValue(retval, fieldName, TypeUtil.stringToObject(fieldClass,
-                                a[i + 1]));
+                                (i + 1 == a.length ? "" : a[i + 1])));
                 } else if (a[i].startsWith("r")) {
                     String fieldName = a[i].substring(1);
                     Integer id = Integer.valueOf(a[i + 1]);
