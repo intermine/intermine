@@ -19,8 +19,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import java.util.Map;
-
 /**
  * Implementation of <strong>Action</strong> that removes a Query from a session.
  *
