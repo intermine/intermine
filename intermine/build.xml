@@ -79,6 +79,8 @@
     <include name="jena*.jar" />
     <include name="icu4j*.jar"/>
     <include name="MAGE*.jar"/>
+    <include name="xerces*.jar"/>
+    <include name="xml-apis*.jar"/>
   </patternset>
 
   <!-- Ant tasks and unit testing stuff -->
