@@ -14,6 +14,7 @@ import org.flymine.objectstore.query.*;
 public class ObjectStoreDummyImpl implements ObjectStore
 {
     private List rows = new ArrayList();
+    private int resultsSize = 0;
 
     /**
      * Construct an ObjectStoreDummyImpl
@@ -29,7 +30,9 @@ public class ObjectStoreDummyImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public Results execute(Query q) throws ObjectStoreException {
-        return new Results(q, this);
+        Results res = new Results(q, this);
+        res.setSize(resultsSize);
+        return res;
     }
 
     /**
@@ -48,9 +51,12 @@ public class ObjectStoreDummyImpl implements ObjectStore
         List results = new ArrayList();
 
         for (int i = start; i <= end; i++) {
-            results.add(getRow(q));
+            if (i < rows.size()) {
+                results.add(rows.get(i));
+            } else {
+                results.add(getRow(q));
+            }
         }
-
         return results;
 
     }
@@ -65,7 +71,16 @@ public class ObjectStoreDummyImpl implements ObjectStore
     }
 
     /**
-     * Gets the next row to be returned. Will make one up if the ones set up have been exhausted.
+     * Set the number of rows to be contained in the returned Results object
+     *
+     * @param size the number of rows in the returned Results object
+     */
+    public void setResultsSize(int size) {
+        this.resultsSize = size;
+    }
+
+    /**
+     * Gets the next row to be returned.
      *
      * @param q the Query to return results for
      * @throws ObjectStoreException if a class cannot be instantiated
@@ -73,32 +88,26 @@ public class ObjectStoreDummyImpl implements ObjectStore
     private ResultsRow getRow(Query q) throws ObjectStoreException {
 
         ResultsRow row;
-        if (rows.size() > 0) {
-            // Get a row from the ones already set up
-            row = (ResultsRow) rows.get(0);
-            rows.remove(0);
-        } else {
-            row = new ResultsRow();
-            List classes = q.getSelect();
+        row = new ResultsRow();
+        List classes = q.getSelect();
 
-            Iterator i = classes.iterator();
+        Iterator i = classes.iterator();
 
-            while (i.hasNext()) {
-                QueryNode qn = (QueryNode) i.next();
-                Object obj = null;
-                if (qn instanceof QueryClass) {
-                    try {
-                        obj = ((QueryClass) qn).getType().newInstance();
-                    } catch (Exception e) {
-                        throw new ObjectStoreException("Cannot instantiate class "
-                                                       + ((QueryClass) qn).getType().getName(), e);
-                    }
-                } else {
-                    // Either a function, expression or Field
-                    obj = new Integer(1);
+        while (i.hasNext()) {
+            QueryNode qn = (QueryNode) i.next();
+            Object obj = null;
+            if (qn instanceof QueryClass) {
+                try {
+                    obj = ((QueryClass) qn).getType().newInstance();
+                } catch (Exception e) {
+                    throw new ObjectStoreException("Cannot instantiate class "
+                                                   + ((QueryClass) qn).getType().getName(), e);
                 }
-                row.add(obj);
+            } else {
+                // Either a function, expression or Field
+                obj = new Integer(1);
             }
+            row.add(obj);
         }
         return row;
     }
