@@ -34,27 +34,30 @@ public class QueryCreator
      *
      * @param q a query to add QueryClass and constraints to
      * @param clsName name of class to add to query
-     * @param fields map of fieldname/value to build constraints from
+     * @param fieldValues map of fieldname/value to build constraints from
+     * @param fieldOps map of fieldname/operation to build constraints from
      * @throws FlyMineException if an error occurs
      * @throws NullPointerException if any of the parameters are null
      */
-    public static void addToQuery(Query q, String clsName, Map fields) throws FlyMineException,
-                                                                              NullPointerException {
+    public static void addToQuery(Query q, String clsName, Map fieldValues, Map fieldOps)
+        throws FlyMineException {
         if (q == null) {
             throw new NullPointerException("Query parameter is null");
         } else if (clsName == null || clsName.equals("")) {
             throw new NullPointerException("clsName parameter is null");
-        } else if (fields == null) {
-            throw new NullPointerException("fields parameter is null");
-        }
+        } else if (fieldValues == null) {
+            throw new NullPointerException("fieldValues parameter is null");
+        } else if (fieldOps == null) {
+            throw new NullPointerException("fieldOps parameter is null");
+        } 
 
         try {
             QueryClass qc = new QueryClass(Class.forName(clsName));
             q.addFrom(qc);
-            addConstraint(q, generateConstraints(qc, fields));
+            addConstraint(q, generateConstraints(qc, fieldValues, fieldOps));
         } catch (Exception e) {
             throw new FlyMineException("Problem occurred adding class (" + clsName
-                                + ") to query", e);
+                                + ") to query: " + e);
         }
     }
 
@@ -62,20 +65,24 @@ public class QueryCreator
      * Generate ConstraintSet of SimpleConstraints for a QueryClass from a map of field/value pairs
      *
      * @param qc QueryClass to constrain
-     * @param fields map of fieldname/value
+     * @param fieldValues map of fieldname/value to build constraints from
+     * @param fieldOps map of fieldname/operation to build constraints from
      * @return a populated ConstraintSet
      * @throws Exception if it goes wrong
      */
-    protected static ConstraintSet generateConstraints(QueryClass qc, Map fields)
-        throws Exception {
+    protected static ConstraintSet generateConstraints(QueryClass qc, Map fieldValues,
+                                                       Map fieldOps) throws Exception {
         ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
-        Iterator iter = fields.entrySet().iterator();
+        Iterator iter = fieldValues.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry fieldEntry = (Map.Entry) iter.next();
-            if (!(((String) fieldEntry.getValue()).equals(""))) {
-                QueryField qf = new QueryField(qc, (String) fieldEntry.getKey());
-                QueryValue qv = createQueryValue(qf.getType(), (String) fieldEntry.getValue());
-                SimpleConstraint sc = new SimpleConstraint(qf, SimpleConstraint.EQUALS, qv);
+            String fieldValue = (String) fieldEntry.getValue();
+            if (!"".equals(fieldValue)) {
+                String fieldName = (String) fieldEntry.getKey();
+                int fieldOp = Integer.parseInt((String) fieldOps.get(fieldName));
+                QueryField qf = new QueryField(qc, fieldName);
+                QueryValue qv = createQueryValue(qf.getType(), fieldValue);
+                SimpleConstraint sc = new SimpleConstraint(qf, fieldOp, qv);
                 constraints.addConstraint(sc);
             }
         }

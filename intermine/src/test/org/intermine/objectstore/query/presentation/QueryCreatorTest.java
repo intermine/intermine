@@ -32,8 +32,12 @@ public class QueryCreatorTest extends TestCase
         fields.put("name", "Dennis");
         fields.put("fullTime", "true");
 
+        Map ops = new HashMap();
+        ops.put("name", String.valueOf(SimpleConstraint.EQUALS));
+        ops.put("fullTime", String.valueOf(SimpleConstraint.EQUALS));
+
         Query q = new Query();
-        QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", fields);
+        QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", fields, ops);
 
         ArrayList from = new ArrayList(q.getFrom());
         assertEquals(Employee.class, ((QueryClass) from.get(0)).getType());
@@ -56,20 +60,26 @@ public class QueryCreatorTest extends TestCase
         Query q = new Query();
 
         try {
-            QueryCreator.addToQuery(null, "org.flymine.model.testmodel.Employee", new HashMap());
+            QueryCreator.addToQuery(null, "org.flymine.model.testmodel.Employee", new HashMap(), new HashMap());
             fail("Expected NullPointerException, q parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, null, new HashMap());
+            QueryCreator.addToQuery(q, null, new HashMap(), new HashMap());
             fail("Expected NullPointerException, clsName parameter null");
         } catch (NullPointerException e) {
         }
 
         try {
-            QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", null);
+            QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", null, new HashMap());
             fail("Expected NullPointerException, fields parameter null");
+        } catch (NullPointerException e) {
+        }
+
+        try {
+            QueryCreator.addToQuery(q, "org.flymine.model.testmodel.Employee", new HashMap(), null);
+            fail("Expected NullPointerException, ops parameter null");
         } catch (NullPointerException e) {
         }
     }
@@ -79,9 +89,13 @@ public class QueryCreatorTest extends TestCase
         fields.put("name", "Dennis");
         fields.put("fullTime", "true");
 
+        Map ops = new HashMap();
+        ops.put("name", String.valueOf(SimpleConstraint.EQUALS));
+        ops.put("fullTime", String.valueOf(SimpleConstraint.EQUALS));
+
         QueryClass qc = new QueryClass(Employee.class);
 
-        ConstraintSet c = QueryCreator.generateConstraints(qc, fields);
+        ConstraintSet c = QueryCreator.generateConstraints(qc, fields, ops);
         ArrayList list = new ArrayList(c.getConstraints());
         SimpleConstraint res1 = (SimpleConstraint) list.get(0);
         assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());

@@ -64,7 +64,8 @@ public class QueryAction extends LookupDispatchAction
         session.removeAttribute("cld");
 
         QueryForm queryForm = (QueryForm) form;
-        QueryCreator.addToQuery(query, cld.getName(), queryForm.getFields());
+        QueryCreator.addToQuery(query, cld.getName(), queryForm.getFieldValues(),
+                                queryForm.getFieldOps());
         queryForm.reset(mapping, request);
         session.setAttribute("query", query);
 
