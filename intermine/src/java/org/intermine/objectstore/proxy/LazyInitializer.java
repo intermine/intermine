@@ -11,7 +11,7 @@ import org.flymine.objectstore.query.ResultsRow;
  * Class which intercepts all method calls to proxy
  * @author Mark Woodbridge
  */
-public class LazyInitializer implements MethodInterceptor 
+public class LazyInitializer implements MethodInterceptor
 {
     private Query query;
     private Object realSubject;
@@ -27,7 +27,7 @@ public class LazyInitializer implements MethodInterceptor
      * @return the proxy object
      */
     public static Object getDynamicProxy(Class cls, Query query, Integer id) {
-        return Enhancer.enhance(cls, new Class[] {LazyReference.class}, 
+        return Enhancer.enhance(cls, new Class[] {LazyReference.class},
                                 new LazyInitializer(query, id));
     }
 
@@ -80,7 +80,7 @@ public class LazyInitializer implements MethodInterceptor
                 throw new Exception(method.getName() + ": ObjectStore is null");
             }
             try {
-                realSubject = ((ResultsRow) os.execute(query, 0, 1).get(0)).get(0);
+                realSubject = ((ResultsRow) os.execute(query).get(0)).get(0);
             } catch (Exception e) {
                 throw new Exception(method.getName() + ": Materialization problem: " + e);
             }
