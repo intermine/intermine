@@ -22,7 +22,6 @@
   <!-- resources directory -->
   <property name="resources" location="resources"/>
 
-
   <!-- build directories -->
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
@@ -126,7 +125,48 @@
     </javac>
   </target>
 
-  <target name="compile-test" depends="prepare"
+  <!-- has model been unzipped? -->
+  <target name="unpack-model.check" depends="prepare">
+    <uptodate property="unpack-model.uptodate">
+      <srcfiles dir="${src.java}/org/flymine/model/testmodel" includes="**/*.zargo"/>
+      <mapper type="glob" from="*.zargo" to="${build.src.java}/*_.xmi" />
+    </uptodate>
+  </target>
+  
+  <target name="unpack-model" depends="unpack-model.check"
+          description="unpacks the model from .zargo file"
+          unless="unpack-model.uptodate">
+    <unzip src="${src.java}/org/flymine/model/testmodel/TestModel.zargo" dest="${build.src.java}" />
+    <touch file="${build.src.java}/TestModel_.xmi" />
+  </target>
+
+  <!-- has model been compiled? -->
+  <target name="model.check" depends="unpack-model">
+    <dependset>
+      <srcfileset dir="${src}" includes="org/flymine/model/testmodel/**/*.java" />
+      <targetfilelist dir="${build.src.java}" files=".model-created" />
+    </dependset>
+    <uptodate property="model.uptodate" targetfile="${build.src.java}/.model-created">
+      <srcfiles dir="${build.src.java}" includes="TestModel_.xmi"/>
+    </uptodate>
+  </target>
+  
+  <target name="model" depends="model.check, compile-main"
+          description="generate model classes from xmi"
+          unless="model.uptodate">
+    <java classname="org.flymine.codegen.JavaModelOutput" fork="true" dir="${build}">
+      <classpath refid="project.class.path" />
+      <arg value="TestModel" />
+      <arg value="${build.src.java}" />
+    </java>
+    <javac destdir="${build.java}" listfiles="yes">
+      <classpath refid="project.class.path"/>
+      <src path="${build.src.java}/org/flymine/model" />
+    </javac>
+    <touch file="${build.src.java}/.model-created"/>
+  </target>
+
+  <target name="compile-test" depends="model"
           description="compile the java test source" >
     <javac destdir="${build.test}" listfiles="yes">
       <classpath refid="project.class.path"/>
@@ -136,7 +176,7 @@
 
   <!-- Unit tests -->
 
-  <target name="test-main" depends="compile-main,compile-test"
+  <target name="test-main" depends="compile-test"
           description="perform JUnit tests on main source code" >
 
     <!-- Specify that the tests depend on the java files in the main directories -->
