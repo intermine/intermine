@@ -104,6 +104,17 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
+     * @see FieldDescriptor#relationType
+     */
+    public int relationType() {
+        if (getReverseReferenceDescriptor() instanceof CollectionDescriptor) {
+            return N_ONE_RELATION;
+        } else {
+            return ONE_ONE_RELATION;
+        } 
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {

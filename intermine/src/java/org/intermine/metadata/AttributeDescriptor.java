@@ -37,6 +37,13 @@ public class AttributeDescriptor extends FieldDescriptor
     public String getType() {
         return this.type;
     }
+    
+    /**
+     * @see FieldDescriptor#relationType
+     */
+    public int relationType() {
+        return NOT_RELATION;
+    }
 
     /**
      * @see Object#toString

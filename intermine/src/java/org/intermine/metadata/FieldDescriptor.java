@@ -9,6 +9,30 @@ package org.flymine.metadata;
 
 public abstract class FieldDescriptor
 {
+    /**
+     * Not a relationship between objects
+     */
+    public static final int NOT_RELATION = 0;
+
+    /**
+     * A 1:1 relationship
+     */
+    public static final int ONE_ONE_RELATION = 1;
+
+    /**
+     * A 1:N relationship.
+     */
+    public static final int ONE_N_RELATION = 2;
+
+    /**
+     * A N:1 relationship.
+     */
+    public static final int N_ONE_RELATION = 3;
+
+    /**
+     * A M:N relationship.
+     */
+    public static final int M_N_RELATION = 4;
 
     protected String name; // name of field
     protected boolean primaryKey;
@@ -72,4 +96,11 @@ public abstract class FieldDescriptor
         cldSet = true;
      }
 
+    /**
+     * Return an integer describing the type of relationship this field represents,
+     * where relationship types are 1:1, 1:N, N:1, M:N and "not a relationship".
+     *
+     * @return int to describe the relationship type
+     */
+    public abstract int relationType(); // attr (NOT_RELATION), ref (N_1, 1_1), coll (1_N, M_N)
 }

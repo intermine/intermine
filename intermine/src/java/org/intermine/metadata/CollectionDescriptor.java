@@ -73,10 +73,21 @@ public class CollectionDescriptor extends ReferenceDescriptor
     public boolean isOrdered() {
         return this.isOrdered();
     }
-
-   /**
-    * @see Object#toString
-    */
+    
+    /**
+     * @see FieldDescriptor#relationType
+     */
+    public int relationType() {
+        if (getReverseReferenceDescriptor() instanceof CollectionDescriptor) {
+            return M_N_RELATION;
+        } else {
+            return ONE_N_RELATION;
+        } 
+    }
+    
+    /**
+     * @see Object#toString
+     */
     public String toString() {
         return "<collection name=\"" + name + "\" referenced-type=\"" + refName + "\" ordered=\"" 
             + ordered + "\" reverseReference=\"" + reverseRefName + "\" primarykey=\"" 
