@@ -543,6 +543,9 @@
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="Anopheles Gambiae" />
+      <arg value="A. Gambiae" />
+      <arg value="7165" />
     </java>
 
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
@@ -571,6 +574,9 @@
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="Drosophila Melanogaster" />
+      <arg value="D. Melanogaster" />
+      <arg value="7227" />
     </java>
 
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
