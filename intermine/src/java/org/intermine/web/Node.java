@@ -42,21 +42,31 @@ public class Node
      * Constructor for a non-root node
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
-     * @param model the model used to resolve paths
      */
-    public Node(Node parent, String fieldName, Model model) {
+    public Node(Node parent, String fieldName) {
         this.fieldName = fieldName;
         prefix = parent.getPath();
         path = prefix + "." + fieldName;
         parentType = parent.getType();
-        ClassDescriptor cld = MainHelper.getClassDescriptor(parent.getType(), model);
+        
+        indentation = path.split("[.]").length - 1;
+    }
+    
+    /**
+     * Attach the model. Throws IllegalArgumentExceptions if node doesn't map onto the model.
+     * 
+     * @param model model to attach
+     * @throws IllegalArgumentException if class or field are not found in the model
+     */
+    public void setModel(Model model) throws IllegalArgumentException {
+        ClassDescriptor cld = MainHelper.getClassDescriptor(parentType, model);
         if (cld == null) {
-            throw new RuntimeException("No class '" + parent.getType() + "' found in model"
+            throw new IllegalArgumentException("No class '" + parentType + "' found in model"
                                        + " '" + model.getName() + "'");
         }
         FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
         if (fd == null) {
-            throw new RuntimeException("Class '" + cld.getName() + "' does not have field"
+            throw new IllegalArgumentException("Class '" + cld.getName() + "' does not have field"
                                         + " '" + fieldName + "'.");
         }
         type = TypeUtil.unqualifiedName(fd.isAttribute()
@@ -66,7 +76,6 @@ public class Node
         attribute = fd.isAttribute();
         reference = fd.isReference();
         collection = fd.isCollection();
-        indentation = path.split("[.]").length - 1;
     }
 
     /**

@@ -196,8 +196,8 @@ public class ProfileManager
                         savedBag.setBag(bagBinding.marshal(bag, bagName));
                         savedBag.setUserProfile(userProfile);
                         osw.store(savedBag);
-                    } catch (Exception _) {
-                        LOG.error("Failed to marshal and save bag: " + bag);
+                    } catch (Exception e) {
+                        LOG.error("Failed to marshal and save bag: " + bag, e);
                     }
                 }
                 
@@ -212,8 +212,8 @@ public class ProfileManager
                                                                  os.getModel().getName()));
                         savedQuery.setUserProfile(userProfile);
                         osw.store(savedQuery);
-                    } catch (Exception _) {
-                        LOG.error("Failed to marshal and save query: " + query);
+                    } catch (Exception e) {
+                        LOG.error("Failed to marshal and save query: " + query, e);
                     }
                 }
                 
@@ -227,8 +227,8 @@ public class ProfileManager
                         savedTemplate.setTemplateQuery(templateBinding.marshal(template));
                         savedTemplate.setUserProfile(userProfile);
                         osw.store(savedTemplate);
-                    } catch (Exception _) {
-                        LOG.error("Failed to marshal and save template: " + template);
+                    } catch (Exception e) {
+                        LOG.error("Failed to marshal and save template: " + template, e);
                     }
                 }
                  

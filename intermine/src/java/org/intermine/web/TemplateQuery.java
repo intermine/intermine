@@ -180,4 +180,20 @@ public class TemplateQuery
     public boolean isImportant() {
         return important;
     }
+    
+    /**
+     * Find out whether the template is valid against the current model.
+     * @return true if template is valid, false if not
+     */
+    public boolean isValid() {
+        return query.isValid();
+    }
+    
+    /**
+     * Get the exceptions generated while deserialising this template query.
+     * @return exceptions relating to this template query
+     */
+    public Exception[] getProblems() {
+        return query.getProblems();
+    }
 }

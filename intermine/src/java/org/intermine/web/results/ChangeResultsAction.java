@@ -158,6 +158,7 @@ public class ChangeResultsAction extends DispatchAction
      * Create a forward with parameters setting start item and page size.
      * 
      * @param results ActionForward to results action
+     * @param request the current HttpServletRequest
      * @param pt PagedTable
      * @return an ActionForward with parameters
      */

@@ -88,6 +88,7 @@ public class TemplateQueryBinding
         try {
             SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates));
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return templates;

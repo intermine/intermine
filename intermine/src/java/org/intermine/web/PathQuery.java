@@ -31,6 +31,7 @@ public class PathQuery
     protected LinkedHashMap nodes = new LinkedHashMap();
     protected List view = new ArrayList();
     protected ResultsInfo info;
+    protected ArrayList problems = new ArrayList();
    
     /**
      * Constructor
@@ -133,7 +134,12 @@ public class PathQuery
 
                 PathNode parent = (PathNode) nodes.get(prefix);
                 String fieldName = path.substring(path.lastIndexOf(".") + 1);
-                node = new PathNode(parent, fieldName, model);
+                node = new PathNode(parent, fieldName);
+                try {
+                    node.setModel(model);
+                } catch (Exception err) {
+                    problems.add(err);
+                }
             } else {
                 addNode(prefix);
                 return addNode(path);
@@ -144,6 +150,22 @@ public class PathQuery
 
         return node;
     }
+    
+    /**
+     * Get the exceptions generated while deserialising this path query query.
+     * @return exceptions relating to this path query
+     */
+    public Exception[] getProblems() {
+        return (Exception[]) problems.toArray(new Exception[0]);
+    }
+    
+    /**
+     * Find out whether the path query is valid against the current model.
+     * @return true if query is valid, false if not
+     */
+    public boolean isValid() {
+        return (problems == null || problems.size() == 0);
+    }
 
     /**
      * Clone this PathQuery
@@ -153,7 +175,7 @@ public class PathQuery
         PathQuery query = new PathQuery(model);
         for (Iterator i = nodes.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
-            query.getNodes().put(entry.getKey(), clone((PathNode) entry.getValue()));
+            query.getNodes().put(entry.getKey(), clone(query, (PathNode) entry.getValue()));
         }
         query.getView().addAll(view);
         return query;
@@ -161,16 +183,22 @@ public class PathQuery
 
     /**
      * Clone a PathNode
+     * @param query PathQuery containing cloned PathNode
      * @param node a PathNode
      * @return a copy of the PathNode
      */
-    protected PathNode clone(PathNode node) {
+    protected PathNode clone(PathQuery query, PathNode node) {
         PathNode newNode;
         PathNode parent = (PathNode) nodes.get(node.getPrefix());
         if (parent == null) {
             newNode = new PathNode(node.getType());
         } else {
-            newNode = new PathNode(parent, node.getFieldName(), model);
+            newNode = new PathNode(parent, node.getFieldName());
+            try {
+                newNode.setModel(model);
+            } catch (IllegalArgumentException err) {
+                query.problems.add(err);
+            }
             newNode.setType(node.getType());
         }
         for (Iterator i = node.getConstraints().iterator(); i.hasNext();) {

@@ -10,8 +10,6 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.metadata.Model;
-
 /**
  * Node used in displaying metadata
  * @author Mark Woodbridge
@@ -33,11 +31,10 @@ public class MetadataNode extends Node
      * Constructor for a non-root node
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
-     * @param model the model used to resolve paths
      * @param button the button displayed next to this node's name
      */
-    public MetadataNode(MetadataNode parent, String fieldName, Model model, String button) {
-        super(parent, fieldName, model);
+    public MetadataNode(MetadataNode parent, String fieldName, String button) {
+        super(parent, fieldName);
         this.button = button;
     }
 
