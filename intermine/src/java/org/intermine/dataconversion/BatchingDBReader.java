@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,9 +67,9 @@ public class BatchingDBReader extends DirectDBReader
                 List retval = (List) cache.get(sql);
                 if (retval != null) {
                     executeCount++;
-                    if (executeCount % 2657 == 0) {
+                    if (executeCount % 12347 == 0) {
                         List compare = super.execute(sql);
-                        if (!compare.equals(retval)) {
+                        if (!(new HashSet(compare)).equals(new HashSet(retval))) {
                             LOG.error("Incorrect results for sql \"" + sql + "\"");
                         }
                     }

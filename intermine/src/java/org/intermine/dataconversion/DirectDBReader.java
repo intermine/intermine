@@ -111,6 +111,7 @@ public class DirectDBReader implements DBReader
      */
     protected DBBatch getBatch(DBBatch previous) throws SQLException {
         String tempSql = sql;
+        String tempSizeQuery = null;
         String sizeQuery = null;
         Connection c = null;
         try {
@@ -122,11 +123,17 @@ public class DirectDBReader implements DBReader
                 long start = System.currentTimeMillis();
                 sizeQuery = previous.getSizeQuery();
                 int whereIndex = sql.toUpperCase().indexOf(" WHERE ");
-                String tempSizeQuery = sizeQuery + (whereIndex == -1 ? " WHERE " : " AND ")
+                tempSizeQuery = sizeQuery + (whereIndex == -1 ? " WHERE " : " AND ")
                     + idField + " > " + previous.getLastId() + " ORDER BY " + idField + " LIMIT "
                     + BATCH_SIZE;
                 Statement s = c.createStatement();
-                ResultSet r = s.executeQuery(tempSizeQuery);
+                ResultSet r = null;
+                try {
+                    r = s.executeQuery(tempSizeQuery);
+                } catch (SQLException e) {
+                    LOG.error("Problem running query \"" + tempSizeQuery + "\"");
+                    throw e;
+                }
                 int rowCount = 0;
                 int sizeSum = 0;
                 while (r.next() && (sizeSum <= MAX_SIZE)) {
@@ -149,7 +156,13 @@ public class DirectDBReader implements DBReader
             }
             long start = System.currentTimeMillis();
             Statement s = c.createStatement();
-            ResultSet r = s.executeQuery(tempSql);
+            ResultSet r = null;
+            try {
+                r = s.executeQuery(tempSql);
+            } catch (SQLException e) {
+                LOG.error("Problem running query \"" + tempSql + "\"");
+                throw e;
+            }
             long afterExecute = System.currentTimeMillis();
             List rows = new ArrayList();
             ResultSetMetaData rMeta = r.getMetaData();
