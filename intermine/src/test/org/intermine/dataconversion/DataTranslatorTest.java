@@ -47,7 +47,6 @@ public class DataTranslatorTest extends TestCase
         Item src1 = new Item();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        src1.setImplementations(srcNs + "Organisation");
         Item src2 = new Item();
         src2.setIdentifier("2");
         src2.setClassName(srcNs + "Address");
@@ -64,7 +63,6 @@ public class DataTranslatorTest extends TestCase
         Item tgt1 = new Item();
         tgt1.setIdentifier("1");
         tgt1.setClassName(tgtNs + "Company");
-        tgt1.setImplementations(tgtNs + "Organisation");
         Item tgt2 = new Item();
         tgt2.setIdentifier("2");
         tgt2.setClassName(tgtNs + "Address");
@@ -83,12 +81,10 @@ public class DataTranslatorTest extends TestCase
         Item src1 = new Item();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        src1.setImplementations(srcNs + "Organisation");
 
         Item expected = new Item();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
-        expected.setImplementations(tgtNs + "Organisation");
 
         translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
@@ -98,7 +94,6 @@ public class DataTranslatorTest extends TestCase
         Item src1 = new Item();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        src1.setImplementations(srcNs + "Organisation");
         Attribute a1 = new Attribute();
         a1.setName("name");
         a1.setValue("testname");
@@ -107,7 +102,6 @@ public class DataTranslatorTest extends TestCase
         Item expected = new Item();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
-        expected.setImplementations(tgtNs + "Organisation");
         Attribute a2 = new Attribute();
         a2.setName("name");
         a2.setValue("testname");
@@ -121,7 +115,6 @@ public class DataTranslatorTest extends TestCase
         Item src1 = new Item();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        src1.setImplementations(srcNs + "Organisation");
         Attribute a1 = new Attribute();
         a1.setName("name");
         a1.setValue("testname");
@@ -136,7 +129,6 @@ public class DataTranslatorTest extends TestCase
         Item expected = new Item();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
-        expected.setImplementations(tgtNs + "Organisation");
         Attribute ea1 = new Attribute();
         ea1.setName("name");
         ea1.setValue("testname");
@@ -151,7 +143,6 @@ public class DataTranslatorTest extends TestCase
         Item src1 = new Item();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        src1.setImplementations(srcNs + "Organisation");
         Item src2 = new Item();
         src2.setIdentifier("2");
         src2.setClassName(srcNs + "Address");
@@ -163,7 +154,6 @@ public class DataTranslatorTest extends TestCase
         Item expected = new Item();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
-        expected.setImplementations(tgtNs + "Organisation");
         Reference r2 = new Reference();
         r2.setName("address");
         r2.setRefId("2");
@@ -177,7 +167,6 @@ public class DataTranslatorTest extends TestCase
         Item src1 = new Item();
         src1.setIdentifier("1");
         src1.setClassName(srcNs + "LtdCompany");
-        src1.setImplementations(srcNs + "Organisation");
 
         ReferenceList r1 = new ReferenceList();
         r1.setName("departments");
@@ -188,7 +177,6 @@ public class DataTranslatorTest extends TestCase
         Item expected = new Item();
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
-        expected.setImplementations(tgtNs + "Organisation");
         ReferenceList r2 = new ReferenceList();
         r2.setName("departments");
         r2.addRefId("2");
