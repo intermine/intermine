@@ -40,8 +40,6 @@ import org.apache.log4j.Logger;
 
 public class TransferSequences
 {
-    private static final Logger LOG = Logger.getLogger(TransferSequences.class);
-
     protected ObjectStoreWriter osw;
 
     /**
@@ -62,10 +60,12 @@ public class TransferSequences
         throws Exception {
         osw.beginTransaction();
         ObjectStore os = osw.getObjectStore();
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Chromosome.class, Contig.class, true);
+        Results results = PostProcessUtil.findLocations(os, Chromosome.class, Contig.class, false);
+        results.setBatchSize(500);
+        
+        Iterator resIter = results.iterator();        
 
-        Integer currentChrId = null;
+        Chromosome currentChr = null;
         char[] currentChrBases = null;
 
         while (resIter.hasNext()) {
@@ -75,9 +75,9 @@ public class TransferSequences
             Contig contig = (Contig) rr.get(1);
             Location contigOnChrLocation = (Location) rr.get(2);
 
-            if (currentChrId == null || !chrId.equals(currentChrId)) {
-                if (currentChrId != null) {
-                    storeNewSequence(chr, currentChrBases);
+            if (currentChr == null || !chr.equals(currentChr)) {
+                if (currentChr != null) {
+                    storeNewSequence(currentChr, currentChrBases);
                 }
                 currentChrBases = new char[chr.getLength().intValue()];
                 // fill with '.' so we can see the parts of the Chromosome sequence that haven't
@@ -85,7 +85,7 @@ public class TransferSequences
                 for (int i = 0; i < currentChrBases.length; i++) {
                     currentChrBases[i] = '.';
                 }
-                currentChrId = chrId;
+                currentChr = chr;
             }
 
             copySeqArray(currentChrBases, contig.getSequence().getSequence(),
@@ -93,8 +93,7 @@ public class TransferSequences
                          contigOnChrLocation.getEnd().intValue(),
                          contigOnChrLocation.getStrand().intValue());
         }
-        Chromosome chr = (Chromosome) os.getObjectById(currentChrId);
-        storeNewSequence(chr, currentChrBases);
+        storeNewSequence(currentChr, currentChrBases);
         osw.commitTransaction();
     }
 
@@ -118,9 +117,10 @@ public class TransferSequences
     public void transferToLocatedSequenceFeatures()
         throws Exception {
         ObjectStore os = osw.getObjectStore();
-        Iterator resIter =
-            CalculateLocationsUtil.findLocations(os, Chromosome.class,
-                                                 LocatedSequenceFeature.class, true);
+        Results results = PostProcessUtil.findLocations(os, Chromosome.class,
+                                                        LocatedSequenceFeature.class, true);
+
+        Iterator resIter = results.iterator();        
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -129,8 +129,7 @@ public class TransferSequences
             LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
             Location locationOnChr = (Location) rr.get(2);
 
-            if (feature.getSequence() != null) {
-                // probably a contig
+            if (feature instanceof Contig) {
                 continue;
             }
 
