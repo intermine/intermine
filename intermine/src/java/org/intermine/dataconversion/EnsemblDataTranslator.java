@@ -52,6 +52,10 @@ public class EnsemblDataTranslator extends DataTranslator
     private Reference ensemblRef;
     private Item emblDb;
     private Reference emblRef;
+    private Item tremblDb;
+    private Reference tremblRef;
+    private Item swissprotDb;
+    private Reference swissprotRef;
     private Map supercontigs = new HashMap();
     private Map scLocs = new HashMap();
     private Map exonLocs = new LinkedHashMap();
@@ -80,6 +84,9 @@ public class EnsemblDataTranslator extends DataTranslator
         tgtItemWriter.store(ItemHelper.convert(getOrganism()));
         tgtItemWriter.store(ItemHelper.convert(getEnsemblDb()));
         tgtItemWriter.store(ItemHelper.convert(getEmblDb()));
+        tgtItemWriter.store(ItemHelper.convert(getTremblDb()));
+        tgtItemWriter.store(ItemHelper.convert(getSwissprotDb()));
+
         super.translate(tgtItemWriter);
         Iterator i = createSuperContigs().iterator();
         while (i.hasNext()) {
@@ -173,6 +180,8 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(getOrgRef());
                 } else if ("translation".equals(className)) {
                     tgtItem.addReference(getOrgRef());
+                    tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
+                    result.addAll(setProteinIdentifiers(srcItem, tgtItem));
                 }
 
                 if (storeTgtItem) {
@@ -257,8 +266,7 @@ public class EnsemblDataTranslator extends DataTranslator
     private Item getSuperContig(String name, String chrId, int start, int end) {
         Item supercontig = (Item) supercontigs.get(name);
         if (supercontig == null) {
-            supercontig = createItem(tgtNs + "SuperContig",
-                                     "http://www.flymine.org/model/genomic#BioEntity");
+            supercontig = createItem(tgtNs + "SuperContig", "");
             Item chrLoc = createItem(tgtNs + "Location", "");
             chrLoc.addAttribute(new Attribute("start", "" + Integer.MAX_VALUE));
             chrLoc.addAttribute(new Attribute("end", "" + Integer.MIN_VALUE));
@@ -272,7 +280,7 @@ public class EnsemblDataTranslator extends DataTranslator
             subjects.setName("subjects");
             supercontig.addCollection(subjects);
             supercontig.addCollection(new ReferenceList("objects",
-                                      Collections.singletonList(chrLoc.getIdentifier())));
+                           new ArrayList(Collections.singletonList(chrLoc.getIdentifier()))));
             supercontig.addReference(getOrgRef());
             supercontigs.put(name, supercontig);
             scLocs.put(name, chrLoc);
@@ -300,7 +308,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 // already seen exon
                 // a) throw away second copy
                 // b) locations are partial
-                // c) make sure the exon is exons map has lowest identifier
+                // c) make sure the exon in exons map has lowest identifier
 
                 Item chosenExon = null;
                 Item otherExon = null;
@@ -380,6 +388,94 @@ public class EnsemblDataTranslator extends DataTranslator
         return results;
     }
 
+    private Set setProteinIdentifiers(Item srcItem, Item tgtItem) throws ObjectStoreException {
+        Set synonyms = new HashSet();
+        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
+        String value = srcItem.getIdentifier().substring(srcItem.getIdentifier().indexOf("_") + 1);
+        Iterator objectXrefs = srcItemReader
+            .getItemsByAttributeValue(srcNs + "object_xref", "ensembl_id", value);
+        // set specific ids and add synonyms
+        //Iterator i = objectXrefs.iterator();
+        while (objectXrefs.hasNext()) {
+            Item objectXref = ItemHelper.convert(
+                                  (org.flymine.model.fulldata.Item) objectXrefs.next());
+            if (objectXref.getAttribute("ensembl_object_type").getValue().equals("Translation")) {
+                Item xref = ItemHelper.convert(srcItemReader
+                                      .getItemById(objectXref.getReference("xref").getRefId()));
+
+                String accession = null;
+                String dbname = null;
+                if (xref != null) {
+                    accession = xref.getAttribute("dbprimary_acc").getValue();
+                    Item externalDb = ItemHelper.convert(srcItemReader
+                                      .getItemById(xref.getReference("external_db").getRefId()));
+                    if (externalDb != null) {
+                        dbname =  externalDb.getAttribute("db_name").getValue();
+                    }
+                }
+                LOG.error("processing: " + accession + ", " + dbname);
+
+                if (accession != null && !accession.equals("")
+                    && dbname != null && !dbname.equals("")) {
+                    if (dbname.equals("SWISSPROT")) {
+                        Attribute a = new Attribute("swissProtId", accession);
+                        tgtItem.addAttribute(a);
+                        tgtItem.addAttribute(new Attribute("swissProtId", accession));
+                        Item synonym = createItem(tgtNs + "Synonym", "");
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        synonym.addAttribute(new Attribute("synonym", accession));
+                        synonym.addReference(getSwissprotRef());
+                        synonyms.add(synonym);
+                    } else if (dbname.equals("SPTREMBL")) {
+                        tgtItem.addAttribute(new Attribute("spTREMBLId", accession));
+                        Item synonym = createItem(tgtNs + "Synonym", "");
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        synonym.addAttribute(new Attribute("synonym", accession));
+                        synonym.addReference(getTremblRef());
+                        synonyms.add(synonym);
+                    } else if (dbname.equals("protein_id")) {
+                        tgtItem.addAttribute(new Attribute("emblId", accession));
+                        Item synonym = createItem(tgtNs + "Synonym", "");
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        synonym.addAttribute(new Attribute("synonym", accession));
+                        synonym.addReference(getEmblRef());
+                        synonyms.add(synonym);
+                    } else if (dbname.equals("prediction_SPTREMBL")) {
+                        tgtItem.addAttribute(new Attribute("emblId", accession));
+                        Item synonym = createItem(tgtNs + "Synonym", "");
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        synonym.addAttribute(new Attribute("synonym", accession));
+                        synonym.addReference(getEmblRef());
+                        synonyms.add(synonym);
+                    }
+                }
+            }
+        }
+        if (tgtItem.hasAttribute("swissProtId")) {
+            tgtItem.addAttribute(new Attribute("identifier",
+                                               tgtItem.getAttribute("swissProtId").getValue()));
+        } else if (tgtItem.hasAttribute("spTREMBLId")) {
+            tgtItem.addAttribute(new Attribute("identifier",
+                                               tgtItem.getAttribute("spTREMBLId").getValue()));
+        } else if (tgtItem.hasAttribute("emblId")) {
+            tgtItem.addAttribute(new Attribute("identifier",
+                                               tgtItem.getAttribute("emblId").getValue()));
+        } else {
+            // there was no protein identifier so use ensembl translation_stable_id
+            //String stableIdIdentifier = (String) srcItem.getCollection("translation_stable_ids")
+            //    .getRefIds().iterator().next();
+            //Item stableId = ItemHelper.convert(srcItemReader.getItemById(stableIdIdentifier));
+            //tgtItem.addAttribute(new Attribute("identifier",
+            //                                   stableId.getAttribute("stable_id").getValue()));
+
+
+            // temporarily use item identifier as no reference to stable_id
+            tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
+        }
+        return synonyms;
+    }
+
+
     private Item getEnsemblDb() {
         if (ensemblDb == null) {
             ensemblDb = createItem(tgtNs + "Database", "");
@@ -414,6 +510,43 @@ public class EnsemblDataTranslator extends DataTranslator
             emblRef = new Reference("source", getEmblDb().getIdentifier());
         }
         return emblRef;
+    }
+
+
+    private Item getSwissprotDb() {
+        if (swissprotDb == null) {
+            swissprotDb = createItem(tgtNs + "Database", "");
+            Attribute title = new Attribute("title", "Swiss-Prot");
+            Attribute url = new Attribute("url", "http://ca.expasy.org/sprot/");
+            swissprotDb.addAttribute(title);
+            swissprotDb.addAttribute(url);
+        }
+        return swissprotDb;
+    }
+
+    private Reference getSwissprotRef() {
+        if (swissprotRef == null) {
+            swissprotRef = new Reference("source", getSwissprotDb().getIdentifier());
+        }
+        return swissprotRef;
+    }
+
+    private Item getTremblDb() {
+        if (tremblDb == null) {
+            tremblDb = createItem(tgtNs + "Database", "");
+            Attribute title = new Attribute("title", "TrEMBL");
+            Attribute url = new Attribute("url", "http://ca.expasy.org/sprot/");
+            tremblDb.addAttribute(title);
+            tremblDb.addAttribute(url);
+        }
+        return tremblDb;
+    }
+
+    private Reference getTremblRef() {
+        if (tremblRef == null) {
+            tremblRef = new Reference("source", getTremblDb().getIdentifier());
+        }
+        return tremblRef;
     }
 
     private Item getOrganism() {

@@ -134,6 +134,11 @@
     <attribute name="sticky_rank" value="1"/>
     <reference name="contig" ref_id="1_11167"/>
   </item>
+  <item id="2_1" class="http://www.flymine.org/model/ensembl#exon_stable_id">
+    <attribute name="stable_id" value="ENSANGE00000019935"/>
+    <attribute name="version" value="2"/>
+    <reference name="exon" ref_id="0_1"/>
+  </item>
   <item id="9_1" class="http://www.flymine.org/model/ensembl#translation_stable_id">
     <attribute name="stable_id" value="ENSANGP00000019935"/>
     <attribute name="version" value="2"/>
@@ -279,6 +284,11 @@
     <attribute name="sticky_rank" value="1"/>
     <reference name="contig" ref_id="1_11167"/>
   </item>
+  <item id="2_2" class="http://www.flymine.org/model/ensembl#exon_stable_id">
+    <attribute name="stable_id" value="ENSANGE00000019936"/>
+    <attribute name="version" value="2"/>
+    <reference name="exon" ref_id="0_2"/>
+  </item>
   <item id="1_11167" class="http://www.flymine.org/model/ensembl#contig">
     <attribute name="embl_offset" value="9357480"/>
     <attribute name="length" value="25020"/>
@@ -324,5 +334,41 @@
     <attribute name="repeat_class" value="Low_complexity"/>
     <attribute name="repeat_consensus" value="N"/>
     <attribute name="repeat_name" value="GC_rich"/>
+  </item>
+  <item id="23_1" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_id" value="1"/>
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="xref" ref_id="6_1"/>
+  </item>
+  <item id="23_2" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_id" value="1"/>
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="xref" ref_id="6_2"/>
+  </item>
+  <item id="23_3" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_id" value="1"/>
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="xref" ref_id="6_3"/>
+  </item>
+  <item id="6_1" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="QP1234"/>
+    <reference name="external_db" ref_id="21_1"/>
+  </item>
+  <item id="6_2" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="TP1234"/>
+    <reference name="external_db" ref_id="21_2"/>
+  </item>
+  <item id="6_3" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="EAA1234"/>
+    <reference name="external_db" ref_id="21_3"/>
+  </item>
+  <item id="21_1" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="SWISSPROT"/>
+  </item>
+  <item id="21_2" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="SPTREMBL"/>
+  </item>
+  <item id="21_3" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="protein_id"/>
   </item>
 </items>

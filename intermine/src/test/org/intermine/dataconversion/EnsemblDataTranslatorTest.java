@@ -16,7 +16,8 @@ import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Collections;
@@ -37,19 +38,53 @@ import org.flymine.xml.full.FullParser;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
-
+import org.flymine.objectstore.ObjectStoreWriter;
+import org.flymine.objectstore.ObjectStoreWriterFactory;
+import org.flymine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.SingletonResults;
+import org.flymine.objectstore.translating.ObjectStoreTranslatingImpl;
+import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.dataloader.IntegrationWriterSingleSourceImpl;
+import org.flymine.dataloader.IntegrationWriter;
+import org.flymine.dataloader.DataLoader;
+import org.flymine.dataloader.ObjectStoreDataLoader;
+import org.flymine.metadata.Model;
 
 public class EnsemblDataTranslatorTest extends TestCase {
     private String srcNs = "http://www.flymine.org/model/ensembl#";
     private String tgtNs = "http://www.flymine.org/model/genomic#";
     protected Map itemMap;
+    ObjectStoreWriter osw;
 
     public void setUp() throws Exception {
-        itemMap = new HashMap();
+        itemMap = new LinkedHashMap();
+        osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.fulldatatest");
     }
 
+    public void tearDown() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        q.addToSelect(qc);
+        q.addFrom(qc);
+        Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
+                .getSequence());
+        Iterator iter = toDelete.iterator();
+        osw.beginTransaction();
+        while (iter.hasNext()) {
+            FlyMineBusinessObject obj = (FlyMineBusinessObject) iter.next();
+            System.out.println("Deleting " + obj);
+            osw.delete(obj);
+        }
+        osw.commitTransaction();
+        osw.close();
+    }
+
+
     public void testEnsemblTranslator() throws Exception {
-        HashMap itemMap = new HashMap();
+        LinkedHashMap itemMap = new LinkedHashMap();
         ItemWriter iw = new MockItemWriter(itemMap);
         Iterator i = getSrcItems().iterator();
         while (i.hasNext()) {
@@ -57,10 +92,38 @@ public class EnsemblDataTranslatorTest extends TestCase {
         }
         OntModel model = getFlyMineOwl();
         DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs, "wildebeast", "W. beast", "1001");
-        MockItemWriter tgtIw = new MockItemWriter(new HashMap());
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
+    }
+
+    public void testDataLoadEnsembl() throws Exception {
+        ObjectStoreWriter osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+            .getObjectStoreWriter("osw.fulldatatest");
+        ItemWriter iw = new ObjectStoreItemWriter(osw);
+
+        // store items
+        Iterator i = getExpectedItems().iterator();
+        while (i.hasNext()) {
+            Item item = (Item) i.next();
+            iw.store(ItemHelper.convert(item));
+        }
+        iw.close();
+
+        ItemToObjectTranslator t = new ItemToObjectTranslator(Model.getInstanceByName("genomic"), osw.getObjectStore());
+        ObjectStore os = new ObjectStoreTranslatingImpl(Model.getInstanceByName("genomic"), osw.getObjectStore(), t);
+        Query q = new Query();
+        QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setDistinct(false);
+        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            //FlyMineBusinessObject obj = t.translateFromDbObject((FlyMineBusinessObject) iter.next());
+            FlyMineBusinessObject o = (FlyMineBusinessObject) iter.next();
+        }
     }
 
 
@@ -79,5 +142,10 @@ public class EnsemblDataTranslatorTest extends TestCase {
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(reader, null, "N3");
         return ont;
+    }
+
+    private class MockIntegrationWriter {
+
+
     }
 }
