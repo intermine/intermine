@@ -114,7 +114,6 @@
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.resources}"/>
-    <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.model}" />
     <mkdir dir="${build.model}/fulldata" />
     <mkdir dir="${build.javadoc}"/>
@@ -125,15 +124,26 @@
     <mkdir dir="${results.checkstyle}"/>
     <mkdir dir="${results.antdoc}"/>
 
+    <!-- overwrite default.intermine.properties -->
+    <copy todir="${build.resources}" file="${resources}/runtime/default.intermine.properties" overwrite="true"/>
     <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties"/>
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
     </copy>
-    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
+  </target>
+
+  <target name="prepare-test" depends="prepare">
+    <mkdir dir="${build.resources.test}" />
+
+    <copy todir="${build.resources}" flatten="true" includeEmptyDirs="false">
       <fileset dir="${resources}/test/">
         <include name="**/*"/>
+        <exclude name="default.intermine.properties"/>
       </fileset>
     </copy>
+
+    <!-- overwrite default.intermine.properties with test properties -->
+    <copy todir="${build.resources}" file="${resources}/test/default.intermine.properties" overwrite="true"/>
   </target>
 
   <target name="prepare-dist">
@@ -1019,7 +1029,7 @@
     </ant>
   </target>
 
-  <target name="ensembl-test" depends="convert-ensembl, jar-genomic">
+  <target name="ensembl-test" depends="prepare-test, convert-ensembl, jar-genomic">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
       <property name="model.src" value="${model}/ensembl"/>
@@ -1051,7 +1061,7 @@
     </ant>
   </target>
 
-  <target name="rnai-test" depends="prepare-build-model, convert-rnai">
+  <target name="rnai-test" depends="prepare-build-model, prepare-test, convert-rnai">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
       <property name="model.src" value="${model}/rnai"/>
@@ -1067,7 +1077,7 @@
     </ant>
   </target>
 
-  <target name="orthologue-test" depends ="prepare-build-model">
+  <target name="orthologue-test" depends ="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
       <property name="model.src" value="${model}/orthologue"/>
@@ -1083,7 +1093,7 @@
     </ant>
   </target>
 
-  <target name="mage-test" depends="prepare-build-model, convert-mage">
+  <target name="mage-test" depends="prepare-build-model, prepare-test, convert-mage">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
       <property name="model.src" value="${model}/mage"/>
@@ -1099,7 +1109,7 @@
     </ant>
   </target>
 
-  <target name="genomic-test" depends ="prepare-build-model">
+  <target name="genomic-test" depends ="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <property name="model.src" value="${model}/genomic"/>
