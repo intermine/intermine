@@ -28,7 +28,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         if (!request.isRequestedSessionIdValid()) {
             try {
-                processActionForward(request, response, new ActionForward("/index.jsp"));
+                processActionForward(request, response, new ActionForward("/sessionTimeout.jsp"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
