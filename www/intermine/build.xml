@@ -89,6 +89,9 @@
         <include name="**/**" />
       </fileset>
     </chmod>
+    <fixcrlf srcdir="${dist.www}"
+       eol="crlf"
+       includes="**/*.css"/>
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --exclude api --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
