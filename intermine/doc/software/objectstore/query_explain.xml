@@ -61,7 +61,7 @@
   <sect1>
     <title>Proposed Implementation</title>
     <para>Diagramatic overview of implementation (see notes below)</para>
-      <inlinegraphic fileref="explain_implementation"/>
+      <inlinegraphic fileref="ojb/explain_implementation"/>
     <highlights>NOTES</highlights>
     <itemizedlist>
       <listitem><classname>ExplainResult</classname> is already used in <packagename>org.flymine.sql package</packagename>.  It will need to be adapted so it can be constructed with the <classname>PreparedStatement</classname> available in <classname>JdbcAccessFlymineImpl</classname>.</listitem>
