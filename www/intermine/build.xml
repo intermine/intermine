@@ -3,6 +3,7 @@
 
   <property file="${build.properties.local}"/>
   <property name="src.www" location="site"/>
+  <property name="common.src.www" location="../site"/>
   <property name="src.doc" location="../../intermine/doc"/>
   <property name="common.style" location="../style"/>
   <property name="build.www" location="build"/>
@@ -17,6 +18,9 @@
   <target name="prepare">
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
+        <include name="**/*"/>
+      </fileset>
+      <fileset dir="${common.src.www}">
         <include name="**/*"/>
       </fileset>
     </copy>
@@ -45,22 +49,7 @@
   <target name="style-site" depends="prepare">
     <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${intermine.main.stylesheet}" includes="**/*.xml"
-           excludes="index.xml" force="false">
-      <param name="branding" expression="intermine" />
-      <param name="basedir" expression="${www.location}" />
-      <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
-      <param name="outputext" expression="${output.extension}" />
-      <param name="file" expression="systemId()" />
-      <param name="sourceref" expression="${build.www}" />
-      <factory>
-        <attribute name="http://xml.apache.org/xalan/properties/source-location" value="true"/>
-      </factory>
-    </style>
-  </target>
-
-  <target name="style-front-page" depends="prepare">
-    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
-           style="${intermine. frontpage.stylesheet}" includes="index.xml" force="false">
+           force="false">
       <param name="branding" expression="intermine" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}${webapp.path}"/>
@@ -76,6 +65,7 @@
   <target name="validate-site-xml" depends="prepare">
     <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
+        <exclude name="index.xml"/>
         <exclude name="internal/**"/>
         <!-- necessary until we can accommodate "presentation" within docbook -->
         <exclude name="doc/presentations/index.xml"/>
@@ -84,7 +74,7 @@
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-front-page, style-site"
+          depends="validate-site-xml, style-site"
           description="Transform the website contents from XML to HTML"/>
 
   <target name="release-www" depends="transform-site"
