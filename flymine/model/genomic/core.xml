@@ -55,6 +55,7 @@
     <attribute name="year" type="java.lang.Integer"/>
     <attribute name="volume" type="java.lang.String"/>
     <attribute name="journal" type="java.lang.String"/>
+    <attribute name="firstAuthor" type="java.lang.String"/>
     <collection name="authors" referenced-type="org.flymine.model.genomic.Author" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.InfoSource" extends="org.flymine.model.genomic.Evidence" is-interface="true">
