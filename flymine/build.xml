@@ -305,7 +305,7 @@
   </target>
 
 
- 
+  
   <!-- CHADO MODEL GENERATION -->
 
   <!-- convert chado zargo to InterMine model -->
@@ -703,10 +703,10 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                merge-ensembl-model, merge-phenotype-model,
-                merge-go-model, merge-uniprot-model,
-                merge-protein_structure-model, merge-mage-model, merge-so-model">
+                                                  merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                                                  merge-ensembl-model, merge-phenotype-model,
+                                                  merge-go-model, merge-uniprot-model,
+                                                  merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -892,7 +892,7 @@
     <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph"/>
   </target>
 
- 
+  
   <!-- CHADO PIPELINE -->
 
   <!-- Build Chado src items database -->
@@ -1726,7 +1726,7 @@
   <!-- Translates and loads ensembl anopheles data -->
   <target name="build-ensembl-anopheles-production" depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
 
-   <!-- Retrieve and load orthologue data -->
+  <!-- Retrieve and load orthologue data -->
   <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
@@ -2446,13 +2446,11 @@
     </taskdef>
     <AntDoc destination="${results.antdoc}" buildfile="${ant.file}"/>
   </target>
-</project>
 
 
+  <!-- =============== HUMAN TARGETS ================= -->
 
- <!-- =============== HUMAN TARGETS ================= -->
-
- <!-- ENSEMBL HUMAN  MODEL GENERATION -->
+  <!-- ENSEMBL HUMAN  MODEL GENERATION -->
 
   <!-- convert ensembl human zargo to InterMine model -->
   <target name="convert-ensembl-human" depends="prepare-build-model">
@@ -2501,25 +2499,25 @@
     </java>
   </target>
 
- <!-- MERGED GENOMIC HUMAN MODEL  -->
+  <!-- MERGED GENOMIC HUMAN MODEL  -->
 
- <!-- create merged model from all source OWL ontologies -->
+  <!-- create merged model from all source OWL ontologies -->
   <target name="create-human-production-model" depends="remove-genomic, prepare-build-model,
-                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                merge-ensembl-human-model, merge-phenotype-model,
-                merge-go-model, merge-uniprot-model,
-                merge-protein_structure-model, merge-so-model">
+                                                        merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                                                        merge-ensembl-human-model, merge-phenotype-model,
+                                                        merge-go-model, merge-uniprot-model,
+                                                        merge-protein_structure-model, merge-so-model">
     <antcall target="create-genomic-human-model"/>
   </target>
 
- <!-- create genomic InterMine model from currently merged OWL ontologies -->
+  <!-- create genomic InterMine model from currently merged OWL ontologies -->
   <target name="create-genomic-human-model" depends="remove-genomic, prepare-build-model,
-       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-       merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
-       merge-uniprot-model, merge-protein_structure-model, merge-so-model">    
+                                                     merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                                                     merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
+                                                     merge-uniprot-model, merge-protein_structure-model, merge-so-model">    
   </target>
   
- <!-- create java objects for the genomic human model-->
+  <!-- create java objects for the genomic human model-->
   <target name="compile-genomic-human-model" depends="create-genomic-human-model">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -2535,7 +2533,7 @@
     </ant>
   </target>
 
- <!-- ENSEMBL HUMAN PIPELINE -->
+  <!-- ENSEMBL HUMAN PIPELINE -->
 
   <!-- build ensembl human src items database -->
   <target name="build-db-ensembl-human-src-items" depends="prepare-build-model">
@@ -2572,10 +2570,10 @@
     </ant>
   </target>
   
- <!-- translate ensembl human data -->
- <target name="translate-ensembl-human" depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
+  <!-- translate ensembl human data -->
+  <target name="translate-ensembl-human" depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
     <java classname="org.flymine.dataconversion.EnsemblHumanDataTranslator" fork="true"
-      maxmemory="1800m"  failonerror="true">
+          maxmemory="1800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="os.ensembl-human-src-items" />
       <arg value="osw.ensembl-human-tgt-items" />
@@ -2606,10 +2604,10 @@
     <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human" /> <!--queryClass="org.flymine.model.genomic.TRNA"/-->
   </target>
 
- <!-- ensembl human production  -->
+  <!-- ensembl human production  -->
   <target name="build-ensembl-human-production" depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
 
- <!--POST PROCESSING -->
+  <!--POST PROCESSING -->
   <target name="post-process-human">    
     <antcall target="create-references"/>
     <antcall target="analyse-db-production"/>
@@ -2618,9 +2616,9 @@
     <antcall target="transfer-sequences"/>
     <antcall target="create-indexes-production-attribute"/>
     <antcall target="analyse-db-production"/>
-   </target>
+  </target>
 
- <!--COMPILATION AND TESTING TARGETS -->
+  <!--COMPILATION AND TESTING TARGETS -->
   <target name="compile-ensembl-human-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ensembl-human"/>
@@ -2635,7 +2633,7 @@
     </ant>
   </target>
 
- <target name="compile-genomic-human-java" depends="jar-genomic-human">
+  <target name="compile-genomic-human-java" depends="jar-genomic-human">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2660,10 +2658,12 @@
   </target>
 
 
- <!-- MODEL COMPILATION TARGETS --> 
+  <!-- MODEL COMPILATION TARGETS --> 
   <target name="compile-ensembl-human-model" depends="convert-ensembl-human">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="ensembl-human"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
+</project>
+
