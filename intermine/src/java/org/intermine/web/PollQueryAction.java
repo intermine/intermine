@@ -82,7 +82,6 @@ public class PollQueryAction extends InterMineAction
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
             LOG.debug("query qid " + qid + " complete");
-            //SessionMethods.forgetQuery(session, qid);
             // Look at results, if only one result, go straight to object details page
             PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
             if (followSingleResult && pr.getSize () == 1
