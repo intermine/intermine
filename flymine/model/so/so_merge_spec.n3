@@ -24,3 +24,32 @@ null:Transcript__genes a owl:ObjectProperty;
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
         owl:onProperty :Transcript__gene ] .
+
+#define a Sequence object and reference from LocatedSequenceFeature
+
+:Sequence a owl:Class.
+
+:Sequence__sequence a owl:DatatypeProperty;
+    rdfs:domain :Sequence;
+    rdfs:range xsd:string.
+
+:LocatedSequenceFeature a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :LocatedSequenceFeature__sequence ] .
+
+:LocatedSequenceFeature__sequence a owl:ObjectProperty;
+    rdfs:domain :LocatedSequenceFeature;
+    rdfs:range :Sequence.
+
+# ChromsomeBand not in SO so not a LocatedSequenceFeature
+:ChromosomeBand a owl:Class;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :ChromosomeBand__sequence ] .
+
+:ChromosomeBand__sequence a owl:ObjectProperty;
+    rdfs:domain :ChromosomeBand;
+    rdfs:range :Sequence.
