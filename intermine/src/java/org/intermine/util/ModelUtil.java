@@ -1,6 +1,13 @@
 package org.flymine.util;
 
 import java.util.Collection;
+import java.util.StringTokenizer;
+//import java.util.Iterator;
+//import java.util.ArrayList;
+//import java.util.Set;
+import java.util.HashSet;
+//import java.util.Map;
+//import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 
 /**
@@ -58,7 +65,7 @@ public class ModelUtil
      * @return whether the Field is an Attribute
      */ 
     public static boolean isAttribute(Class c) {
-        return c.getName().startsWith("java");
+        return c.isPrimitive() || c.getName().startsWith("java");
     }
 
     /**
@@ -68,6 +75,29 @@ public class ModelUtil
      * @return whether the Field is a Reference
      */ 
     public static boolean isReference(Class c) {
-        return !isCollection(c) && !isAttribute(c);
+        return !(isCollection(c) || isAttribute(c));
+    }
+    
+    /**
+     * Returns a Collection of Strings which is a list of the primary key fields of this object
+     *
+     * @param o the Object
+     * @return the list of keys
+     */
+    public static Collection getKey(Object o) {
+        Class c = o.getClass();
+        Collection col = new HashSet();
+        try {
+            do {
+                Field f = TypeUtil.getField(c, "key");
+                f.setAccessible(true);
+                StringTokenizer st = new StringTokenizer((String) f.get(o), ", ");
+                while (st.hasMoreTokens()) {
+                    col.add(st.nextToken());
+                }
+            } while ((c = c.getSuperclass()) != null);
+        } catch (Exception e) {
+        }
+        return col;
     }
 }
