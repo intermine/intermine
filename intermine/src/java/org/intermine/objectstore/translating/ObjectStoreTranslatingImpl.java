@@ -10,14 +10,17 @@ package org.flymine.objectstore.translating;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.query.Query;
@@ -47,6 +50,46 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         translator.setObjectStore(this);
     }
     
+    /**
+     * Gets an ObjectStore for the given underlying properties.
+     *
+     * @param props the properties used to configure the objectstore
+     * @param model the metadata associated with this objectstore
+     * @return the ObjectStore
+     * @throws IllegalArgumentException if props or model are invalid
+     * @throws ObjectStoreException if there is any problem with the instance
+     */
+    public static ObjectStoreTranslatingImpl getInstance(Properties props, Model model)
+        throws ObjectStoreException {
+        String subAlias = props.getProperty("os");
+        if (subAlias == null) {
+            throw new IllegalArgumentException("No 'os' property specified for Translating"
+                    + " ObjectStore (check properties file)");
+        }
+        String translatorClass = props.getProperty("translatorClass");
+        if (translatorClass == null) {
+            throw new IllegalArgumentException("No 'translatorClass' property specified for"
+                    + " Translating ObjectStore (check properties file)");
+        }
+        ObjectStore sub;
+        try {
+            sub = ObjectStoreFactory.getObjectStore(subAlias);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to get sub-ObjectStore for Translating"
+                    + " ObjectStore (check properties file)");
+        }
+        Translator t;
+        try {
+            Class c = Class.forName(translatorClass);
+            Constructor con = c.getConstructor(new Class[] {Model.class});
+            t = (Translator) con.newInstance(new Object[] {model});
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot find specified Translator class for"
+                    + " Translating ObjectStore (check properties file)");
+        }
+        return new ObjectStoreTranslatingImpl(model, sub, t);
+    }
+
     /**
      * @see ObjectStore#execute(Query, int, int, boolean)
      */
