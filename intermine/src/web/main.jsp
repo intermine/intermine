@@ -97,17 +97,21 @@ function setBorderStyle(path, style)
                     onMouseOut="exitPath('${fn:replace(fullpath,".","")}')">
             </c:if>
             <c:if test="${node.indentation > 0}">
-              <span class="metadata">
+              <span class="attributeField">
                 <c:out value="${node.fieldName}"/>
               </span>
+            </c:if>            
+            <c:if test="${node.indentation == 0}">
+              <span class="type">
+                <c:out value="${node.type}"/>
+              </span>
             </c:if>
-            <span class="type">
-              <c:if test="${node.indentation == 0}"><c:out value="${node.type}"/></c:if>
-              <c:if test="${!empty classDescriptions[node.type]}"><sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup></c:if>
-              <c:if test="${node.collection}">
-                <fmt:message key="query.collection"/>
-              </c:if>
-            </span>
+            <c:if test="${!empty classDescriptions[node.type]}">
+              <sup><html:link action="/classDescription?class=${node.type}">?</html:link></sup>
+            </c:if>
+            <c:if test="${node.collection}">
+              <fmt:message key="query.collection"/>
+            </c:if>
             <c:choose>
               <c:when test="${node.indentation > 0}">
                 <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
@@ -162,13 +166,13 @@ function setBorderStyle(path, style)
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </c:forEach>
                   </c:if>
-                  <c:if test="${viewPaths[node.path]}">
+                  <c:if test="${viewPaths[node.path] && !empty node.fieldName}">
                     <span class="showing" id="query${fn:replace(node.path,".","")}"
                           onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
                           onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
                   </c:if>
-                  <span class="metadata"><c:out value="${node.fieldName}"/></span>
-                  <c:if test="${viewPaths[node.path]}">
+                  <span class="attributeField"><c:out value="${node.fieldName}"/></span>
+                  <c:if test="${viewPaths[node.path] && !empty node.fieldName}">
                     </span>
                   </c:if>
                   <span class="type">
@@ -182,7 +186,15 @@ function setBorderStyle(path, style)
                         </fmt:message>
                         <html:link action="/mainChange?method=changePath&prefix=${node.path}&path=${node.type}"
                                    title="${changePathTitle}">
-                          <c:out value="${node.type}"/>
+                          <c:if test="${viewPaths[node.path] && empty node.fieldName}">
+                            <span class="showing" id="query${fn:replace(node.path,".","")}"
+                                  onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
+                                  onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
+                          </c:if>
+                          <span class="type"><c:out value="${node.type}"/></span>
+                          <c:if test="${viewPaths[node.path] && empty node.fieldName}">
+                            </span>
+                          </c:if>
                         </html:link>
                         <c:if test="${node.collection}">
                           <fmt:message key="query.collection"/>
@@ -258,7 +270,7 @@ function setBorderStyle(path, style)
     <tr>
       <td valign="top">
         <fmt:message key="query.constrain"/>
-        <span class="metadata">
+        <span class="type">
           <c:choose>
             <c:when test="${empty editingNode.fieldName}">
               <c:out value="${editingNode.path}"/>
