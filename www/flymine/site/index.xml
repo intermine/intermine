@@ -27,7 +27,7 @@ prediction.</listitem>
 
 <listitem>To integrate the above database with the curated database of
 Drosophila genetics (FlyBase), the annotated view of the Drosophila
-genome (GadFly) and corresponding Anopheles data (AnoBase).</listitem>
+genome (GadFly) and corresponding Anopheles data.</listitem>
 
 <listitem>To enable the database to be queried via the Internet in
 order to facilitate the widest possible use by the broader
