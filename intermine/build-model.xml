@@ -54,7 +54,7 @@
               targetfile="${summarise.output.properties}"/>
   </target>
   
-  <target name="summarise-objectstore" depends="check-objectstore-summary, build-model-from-db" unless="objectstore-is-summarised">
+  <target name="summarise-objectstore" depends="prepare, check-objectstore-summary, build-model-from-db" unless="objectstore-is-summarised">
     <taskdef name="summarise-objectstore" classname="org.intermine.task.SummariseObjectStoreTask">
       <classpath refid="class.path"/>
     </taskdef>
