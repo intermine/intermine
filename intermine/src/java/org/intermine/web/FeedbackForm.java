@@ -11,6 +11,8 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
@@ -23,6 +25,8 @@ import org.apache.struts.validator.ValidatorForm;
  */
 public class FeedbackForm extends ValidatorForm
 {
+    private static final Logger LOG = Logger.getLogger(FeedbackForm.class);
+    
     private String name;
     private String email;
     private String subject;
@@ -89,7 +93,7 @@ public class FeedbackForm extends ValidatorForm
     }
 
     /**
-     * WHen there are no other errors, check email address is valid.
+     * When there are no other errors, check email address is valid.
      *
      * @param mapping ActionMapping of current action
      * @param request current servlet request

@@ -30,6 +30,20 @@
       <fmt:message key="${pageName}.title" var="pageTitle"/>
       <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
     </title>
+    
+    <script type="text/javascript">
+    <!--
+      function showFeedbackForm()
+      {
+        document.getElementById('feedbackFormDiv').style.display='';
+        document.getElementById('feedbackFormDivButton').style.display='none';
+        setFooter();
+        window.scrollTo(0, 99999);
+        document.getElementById("fbname").focus();
+      }
+    //-->
+    </script>
+    
   </head>
   
   <body>
@@ -50,6 +64,22 @@
       <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
         <tiles:get name="body"/>
       </im:box>
+      
+      <div id="feedbackFormDivButton">
+        <im:vspacer height="11"/>
+        <div class="body expandButton">
+           <a href="#" onclick="showFeedbackForm();return false">
+             <fmt:message key="feedbackBox.title"/>
+           </a>
+      	</div>
+      </div>
+      <div id="feedbackFormDiv" style="display:none">
+          <im:vspacer height="11"/>
+          <im:box titleKey="feedbackBox.title">
+            <tiles:get name="feedbackForm"/>
+          </im:box>
+      </div>
+      
     </div>
     
     <c:if test="${IS_SUPERUSER}">
@@ -64,3 +94,4 @@
   </body>
 </html:html>
 <!-- /layout.jsp -->
+
