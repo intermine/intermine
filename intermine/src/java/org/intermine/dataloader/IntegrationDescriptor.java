@@ -43,4 +43,14 @@ public class IntegrationDescriptor
     public Object get(Field field) {
         return map.get(field);
     }
+
+    /**
+     * Returns true if this object contains a Field as a key.
+     *
+     * @param field the Field to be looked up
+     * @return true if the field is present
+     */
+    public boolean containsKey(Field field) {
+        return map.containsKey(field);
+    }
 }
