@@ -5,7 +5,6 @@
 <!-- organism.jsp -->
 <fmt:setBundle basename="model"/>
 
-<c:out value="${object.name}"/><br/>
 <fmt:message key="organism.ncbitaxonomybrowser"/>:
 <html:link href="${WEB_PROPERTIES['ncbi.taxonomy.url.prefix']}${object.taxonId}">
   <c:out value="${object.taxonId}"/>
