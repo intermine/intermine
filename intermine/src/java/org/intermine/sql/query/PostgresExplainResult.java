@@ -64,9 +64,15 @@ public class PostgresExplainResult extends ExplainResult
         if (!query.toUpperCase().startsWith("EXPLAIN ")) {
             query = "explain " + query;
         }
-        s.execute(query);
-        retrieveExplainString(s);
-        s.close();
+        try {
+            s.execute(query);
+            retrieveExplainString(s);
+            s.close();
+        } catch (SQLException e) {
+            SQLException e2 = new SQLException("Error running query \"" + query + "\"");
+            e2.initCause(e);
+            throw e2;
+        }
     }
 
     /**
