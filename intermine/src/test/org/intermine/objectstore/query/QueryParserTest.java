@@ -196,4 +196,96 @@ public class QueryParserTest extends TestCase
         assertEquals("SELECT c_, d_, e_ FROM org.flymine.model.testmodel.Company AS c_, org.flymine.model.testmodel.Department AS d_, org.flymine.model.testmodel.CEO AS e_ WHERE (c_.CEO CONTAINS e_ AND c_.departments DOES NOT CONTAIN d_ AND (c_.name LIKE fish% OR c_.vatNumber < 5) AND e_.salary IS NOT NULL AND c_.vatNumber > e_.age AND c_.name IN (SELECT Company.name AS name FROM org.flymine.model.testmodel.Company AS Company))", q.toString());
     }
 
+    public void testInvalidConstraint() throws Exception {
+        try {
+            Query q = new Query("select Company from Company where Company in (select Company, Company.name as name from Company)", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because there are too many columns in the subquery");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Subquery must have only one item in select list.", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from Company, Department where Company.departments.flibble contains Department", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because the path expression is too long");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Path expression Company.departments.flibble extends beyond a collection or object reference", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from Company, Department where Company.name contains Department", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because Company.name is not a collection or object reference");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Object Company.name is not a collection or object reference", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from Company, Department where Company.jhsfd contains Department", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because jhsfd does not exist");
+        } catch (IllegalArgumentException e) {
+            assertEquals("No such object Company.jhsfd", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from Company, Department where Company.departments contains Department.name", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because Department.name is not a class");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Collection or object reference Company.departments cannot contain anything but a QueryClass", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from Company, Department where Company contains Department", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because the path expression is too short");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Path expression for collection cannot end on a QueryClass", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from (select Company from Company) as Company, Department where Company.Company.departments contains Department", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because one cannot access a collection in a subquery");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot access a collection or object reference inside subquery Company", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company, Department from Company, Department where fkjsfd contains Department", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because there is no such object fkjsfd");
+        } catch (IllegalArgumentException e) {
+            assertEquals("No such object fkjsfd while looking for a collection or object reference", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company is null", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because one cannot compare a class to null");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot compare a class to null", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company > Company", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because > is not a valid comparison for classes");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Operation is not valid for comparing two classes", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company > Company.name", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because one cannot compare a class to a value");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot compare a class to a value", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company.name > Company", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because one cannot compare a value to a class");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot compare a value to a class", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company.name = Company.vatNumber", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because the two types do not match");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid pair of arguments: class java.lang.String, class java.lang.Integer", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company.departments = Company.vatNumber", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because departments is a collection");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Field departments is a collection type", e.getMessage());
+        }
+        try {
+            Query q = new Query("select Company from Company where Company.CEO = Company.vatNumber", "org.flymine.model.testmodel");
+            fail("Expected: IllegalArgumentException, because CEO is an object reference");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Field CEO is an object reference", e.getMessage());
+        }
+    }
 }
