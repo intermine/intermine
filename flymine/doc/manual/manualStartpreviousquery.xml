@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Begin a query using a previous query</heading>
+      <item>
+      If you have saved queries in your query history, these can be used to start a query.
+      </item>
+      <item>
+       Selecting this option will take you to the <ulink url = "manualHistory.xml">History</ulink> page. 
+      </item>
+      <item>
+       Click on the query name to display the query in the query builder interface.  From here you can edit the query or run it again.
+        </item>
+
+     </section>
+
+</index>
+
+</article>

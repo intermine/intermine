@@ -28,7 +28,7 @@
 
    <section>
       <heading>Constraints</heading>
-      <item>To select the subset of objects you want from a particular class you apply a constraint to the appropriate field.  For example if you want objects from the Gene class which have a particlar name, you constrain the gene name field.  If you want objects from the Gene class which have a certain sequence length or range of sequence length, you constrain the seqLen field. If you are constraining a class field you will be given the option to constrain that class to any of the subclasses of that class.  E.g. The transcript class can be constrained to a number of subclasses of Transcript (e.g. primary transcript, processed transcript, tRNA etc.).</item>
+      <item>To select the subset of objects you want from a particular class you apply a constraint to the appropriate field.  For example if you want objects from the Gene class which have a particlar name, you constrain the gene name field.  If you want objects from the Gene class which have a certain sequence length or range of sequence length, you constrain the seqLen field. If you are constraining a class field you will be given the option to constrain that class to any of the subclasses of that class.  e.g. The transcript class can be constrained to a number of subclasses of Transcript (e.g. primary transcript, processed transcript, tRNA etc.).</item>
 
    </section>
 

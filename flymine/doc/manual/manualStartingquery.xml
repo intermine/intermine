@@ -14,16 +14,16 @@
       <ulink url= "manualStartingaquery.xml">Start a new query with a particular class</ulink>
       </item>
       <item>
-      <ulink url= "manualExportingdata.xml">Begin a query using a previous query</ulink> (Only available if you have queries stored in your query history)
+      <ulink url= "manualStartpreviousquery.xml">Begin a query using a previous query</ulink> (Only available if you have queries stored in your query history)
       </item>
       <item>
-      <ulink url= "manualExportingdata.xml">Search using a list of identifyers</ulink>
+      <ulink url= "manualStartidentifiers.xml">Search using a list of identifyers</ulink>
       </item>
       <item>
-      <ulink url= "manualExportingdata.xml">Use an example query</ulink>
+      <ulink url= "manualStartexample.xml">Use an example query</ulink>
       </item>
       <item>
-      <ulink url= "manualExportingdata.xml">Perform a query using IQL</ulink>
+      <ulink url= "manualStartIQL.xml">Perform a query using IQL</ulink>
       </item> (advanced usage).
 
 

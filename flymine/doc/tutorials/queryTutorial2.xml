@@ -5,7 +5,7 @@
 
 
     <sect1>
-       <title>Constraining the objects of a particular class</title>
+       <title>Tutorial2: </title>
 
        <para>This page will guide you through the query: Show the fields for the gene object 'CG10000'.  The aim of this query tutorial is to show you how to constrain the objects belonging to a particular class. It will also show you how to display all the attributes (fields) of that object in the query results (as opposed to selecting particular fields). This query involves:
 </para>
@@ -26,7 +26,7 @@
             <listitem>Select the starting point for your query. In this case, Gene.</listitem>
           
 	  <entry>
-	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	      <inlinegraphic fileref="classSelection1" format="PNG"/>
 	  </entry>
 
 
