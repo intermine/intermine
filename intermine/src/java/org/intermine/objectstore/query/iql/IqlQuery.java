@@ -215,6 +215,12 @@ public class IqlQuery
                     case QueryFunction.MAX:
                         retval = "MAX(";
                         break;
+                    case QueryFunction.LOWER:
+                        retval = "LOWER(";
+                        break;
+                    case QueryFunction.UPPER:
+                        retval = "UPPER(";
+                        break;
                     default:
                         throw (new IllegalArgumentException("Invalid QueryFunction operation: "
                                     + qf.getOperation()));

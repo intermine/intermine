@@ -569,6 +569,12 @@ public class IqlQueryParser
                 case IqlTokenTypes.LITERAL_max:
                     type = QueryFunction.MAX;
                     break;
+                case IqlTokenTypes.LITERAL_lower:
+                    type = QueryFunction.LOWER;
+                    break;
+                case IqlTokenTypes.LITERAL_upper:
+                    type = QueryFunction.UPPER;
+                    break;
                 case IqlTokenTypes.LITERAL_substr:
                     type = -2;
                     break;

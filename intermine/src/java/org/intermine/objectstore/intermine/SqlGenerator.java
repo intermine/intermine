@@ -145,6 +145,8 @@ public class SqlGenerator
      */
     public static void registerOffset(Query q, int start, DatabaseSchema schema, Database db,
                                       Object value, Map bagTableNames) {
+        LOG.debug("registerOffset() called with offset: " + start);
+
         try {
             if (value.getClass().equals(Boolean.class)) {
                 return;
@@ -1089,6 +1091,16 @@ public class SqlGenerator
                 break;
             case QueryFunction.MAX:
                 buffer.append("MAX(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.LOWER:
+                buffer.append("LOWER(");
+                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                buffer.append(")");
+                break;
+            case QueryFunction.UPPER:
+                buffer.append("UPPER(");
                 queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;

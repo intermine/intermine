@@ -100,6 +100,8 @@ safe_function: #( SAFE_FUNCTION (
                 | "min" abstract_value
                 | "sum" abstract_value
                 | "avg" abstract_value
+                | "lower" abstract_value
+                | "upper" abstract_value
                 | "strpos" abstract_value abstract_value
                 | "substr" abstract_value abstract_value (abstract_value)?
                 | "coalesce" abstract_value abstract_value ) ) ;
@@ -423,6 +425,8 @@ safe_function:
             | "min" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "sum" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "avg" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "lower" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "upper" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "strpos" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
             | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value (COMMA! abstract_value)? CLOSE_PAREN!
             | "coalesce" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!

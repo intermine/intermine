@@ -203,6 +203,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("OrderByReference", orderByReference());
         queries.put("FailDistinctOrder", failDistinctOrder());
         queries.put("NegativeNumbers", negativeNumbers());
+        queries.put("Lower", lower());
+        queries.put("Upper", upper());
 
         // test 'foo' IN bag
         queries.put("LargeBagConstraint", largeBagConstraint(false));
@@ -1265,6 +1267,34 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         QueryField f = new QueryField(qc, "name");
         QueryExpression e = new QueryExpression(f, QueryExpression.SUBSTRING, new QueryValue(new Integer(2)));
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT lower(a1_.name) AS a2_ FROM Employee AS a1_;
+     */
+    public static Query lower() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryFunction e = new QueryFunction(f, QueryFunction.LOWER);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT upper(a1_.name) AS a2_ FROM Employee AS a1_;
+     */
+    public static Query upper() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        QueryFunction e = new QueryFunction(f, QueryFunction.UPPER);
         q.addToSelect(e);
         return q;
     }

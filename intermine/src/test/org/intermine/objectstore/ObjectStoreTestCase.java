@@ -321,7 +321,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB3") } };
         results.put("LargeBagNotConstraint", NO_RESULT);
         results.put("LargeBagNotConstraintUsingTable", toList(r));
-        
+
         r = new Object[][] { { data.get("EmployeeB1") },
                              { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
@@ -329,6 +329,23 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("NegativeNumbers", toList(r));
+
+        r = new Object[][] { { "employeea1" },
+                             { "employeea2" },
+                             { "employeea3" },
+                             { "employeeb1" },
+                             { "employeeb2" },
+                             { "employeeb3" } };
+        results.put("Lower", toList(r));
+
+        r = new Object[][] { { "EMPLOYEEA1" },
+                             { "EMPLOYEEA2" },
+                             { "EMPLOYEEA3" },
+                             { "EMPLOYEEB1" },
+                             { "EMPLOYEEB2" },
+                             { "EMPLOYEEB3" } };
+        results.put("Upper", toList(r));
+
     }
 
     /**
@@ -655,7 +672,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         try {
             Results r1 = os.execute(q1);
             assertEquals(1, r1.size());
-            
+
             storeDataWriter.store(c1);
             Results r2 = os.execute(q1);
             assertEquals(1, r1.size());
