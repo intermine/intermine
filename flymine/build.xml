@@ -487,29 +487,6 @@
 
 
   <!-- GENE ONTOLOGY MODEL GENERATION -->
-  <!-- Convert GO to owl -->
-  <target name="go-to-owl" depends="prepare-build-model">
-    <mkdir dir="${build.model}/go" />
-    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${model}/go/component.ontology" />
-      <arg value="${build.model}/go/component.n3" />
-      <arg value="http://www.flymine.org/model/go#" />
-    </java>
-    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${model}/go/function.ontology" />
-      <arg value="${build.model}/go/function.n3" />
-      <arg value="http://www.flymine.org/model/go#" />
-    </java>
-    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${model}/go/process.ontology" />
-      <arg value="${build.model}/go/process.n3" />
-      <arg value="http://www.flymine.org/model/go#" />
-    </java>
-  </target>
-
 
   <!-- merge go model with current genomic model owl -->
   <target name="merge-go-model" depends="prepare-genomic-model">
@@ -523,38 +500,6 @@
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="${build.model}/go/go_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="N3" />
-      <arg value="n" />
-    </java>
-
-    <!-- merge go model with target genomic model -->
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/go/component.n3" />
-      <arg value="http://www.flymine.org/model/go#" />
-      <arg value="N3" />
-      <arg value="n" />
-    </java>
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/go/function.n3" />
-      <arg value="http://www.flymine.org/model/go#" />
-      <arg value="N3" />
-      <arg value="n" />
-    </java>
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/go/process.n3" />
-      <arg value="http://www.flymine.org/model/go#" />
       <arg value="N3" />
       <arg value="n" />
     </java>
@@ -652,7 +597,7 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
-       merge-phenotype-model, merge-so-model">
+       merge-phenotype-model, merge-go-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1122,11 +1067,45 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-psi-dag integrationWriter="integration.production" source="os.phenotype-translated" sourceName="psi"/>
+    <load-psi-dag integrationWriter="integration.production" source="os.psi-dag-translated" sourceName="psi"/>
   </target>
 
   <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag"/>
 
+
+  <!-- GO PIPELINE -->
+
+  <!-- load go dag data -->
+  <target name="retrieve-go-dag" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.go-dag-tgt-items-std"/>
+    </ant>
+    <taskdef name="retrieve-go-dag" classname="org.intermine.task.DagConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-go-dag file="${model}/go/go-combined.ontology" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" relationClass="http://www.flymine.org/model/genomic#DagRelation"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+  </target>
+
+
+  <target name="load-go-dag">
+    <taskdef name="load-go-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-go-dag integrationWriter="integration.production" source="os.go-dag-translated" sourceName="go"/>
+  </target>
+
+  <target name="build-go-production" depends="retrieve-go-dag, load-go-dag"/>
 
   <!-- LOAD STATIC DATA -->
 
@@ -1195,6 +1174,7 @@
                                            build-orthologues-production,
                                            build-rnai-production,
                                            build-phenotype-production,
+                                           build-go-production,
                                            load-static">
 
     <!-- analyse database -->

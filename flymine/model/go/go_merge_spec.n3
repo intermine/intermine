@@ -1,6 +1,5 @@
 # Base: 
 @prefix :        <http://www.flymine.org/model/genomic#> .
-@prefix e:       <http://www.flymine.org/model/ensembl#> .
 @prefix null:    <http://www.flymine.org/model/null#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -9,17 +8,4 @@
 
 
 :GOTerm a owl:Class;
-    rdfs:subClassOf :BioProperty.
-
-:GOTerm__termId a owl:DatatypeProperty;
-    rdfs:domain :GOTerm;
-    rdfs:range xsd:string.
-
-:GOTerm__definition a owl:DatatypeProperty;
-    rdfs:domain :GOTerm;
-    rdfs:range xsd:string.
-
-:GOTerm__term a owl:DatatypeProperty;
-    rdfs:domain :GOTerm;
-    rdfs:range xsd:string.
-
+    rdfs:subClassOf :DagTerm.
