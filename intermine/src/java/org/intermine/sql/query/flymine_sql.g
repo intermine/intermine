@@ -103,7 +103,9 @@ abstract_constraint: constraint | not_constraint | and_constraint_set | or_const
 
 constraint: #( CONSTRAINT abstract_value comparison_op abstract_value ) ;
 
-not_constraint: #( NOT_CONSTRAINT constraint ) ;
+not_constraint: #( NOT_CONSTRAINT #( NOT_CONSTRAINT a:abstract_constraint ) )
+            { #not_constraint = #a }
+        | #( NOT_CONSTRAINT abstract_constraint ) ;
 
 or_constraint_set: #( OR_CONSTRAINT_SET ( abstract_constraint )+ ) ;
 
