@@ -109,7 +109,7 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
         Attribute a2 = new Attribute();
-        a2.setName("Company_name");
+        a2.setName("name");
         a2.setValue("testname");
         expected.addAttribute(a2);
 
@@ -138,7 +138,7 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
         Attribute ea1 = new Attribute();
-        ea1.setName("Company_name");
+        ea1.setName("name");
         ea1.setValue("testname");
         expected.addAttribute(ea1);
 
@@ -165,7 +165,7 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
         Reference r2 = new Reference();
-        r2.setName("Company_address");
+        r2.setName("address");
         r2.setRefId("2");
         expected.addReference(r2);
 
@@ -190,7 +190,7 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
         ReferenceList r2 = new ReferenceList();
-        r2.setName("Company_departments");
+        r2.setName("departments");
         r2.addRefId("2");
         r2.addRefId("3");
         expected.addCollection(r2);
@@ -208,59 +208,62 @@ public class DataTranslatorTest extends TestCase
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL + ENDL
-            + ":Organisation a owl:Class ;" + ENDL
-            + "      owl:equivalentClass src:Organisation ." + ENDL
+
             + "src:Organisation a owl:Class ." + ENDL
-            + "src:organisationType a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain src:Organisation ;" + ENDL
-            + "      rdfs:range rdfs:Literal ." + ENDL
-            + "src:otherProp a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation a owl:Class ;" + ENDL
+            + "    owl:equivalentClass src:Organisation ." + ENDL
+            + ":Company a owl:Class ; " + ENDL
+            + "    rdfs:subClassOf src:Organisation ;" + ENDL
+            + "    rdfs:subClassOf" + ENDL
+            + "    [ a owl:Restriction ;" + ENDL
+            + "        owl:onProperty src:Organisation__organisationType ;" + ENDL
+            + "        owl:hasValue \"business\" ] ." + ENDL
+            + ":Charity a owl:Class ; " + ENDL
+            + "    rdfs:subClassOf src:Organisation ;" + ENDL
+            + "    rdfs:subClassOf" + ENDL
+            + "    [ a owl:Restriction ;" + ENDL
+            + "        owl:onProperty src:Organisation__organisationType ;" + ENDL
+            + "        owl:hasValue \"charity\" ] ;" + ENDL
+            + "        rdfs:subClassOf" + ENDL
+            + "        [ a owl:Restriction ;" + ENDL
+            + "            owl:onProperty src:Organisation__otherProp ;" + ENDL
+            + "            owl:hasValue \"value\" ] ." + ENDL
+
+            + "src:Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
             + "      rdfs:domain src:Organisation ;" + ENDL
             + "      rdfs:range rdfs:Literal ." + ENDL
             + ":Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
             + "      rdfs:domain :Organisation ;" + ENDL
             + "      rdfs:range rdfs:Literal ;" + ENDL
-            + "      owl:equivalentProperty src:organisationType ." + ENDL
-            + ":Organisation__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain :Organisation ;" + ENDL
-            + "      rdfs:range rdfs:Literal ;" + ENDL
-            + "      owl:equivalentProperty src:otherProp ." + ENDL
-            + ":Company a owl:Class ; " + ENDL
-            + "         rdfs:subClassOf src:Organisation ;" + ENDL
-            + "         rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:organisationType ;" + ENDL
-            + "              owl:hasValue \"business\" ] ." + ENDL
-            + ":Company__organisationType a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain :Company ; " + ENDL
-            + "       rdfs:range rdfs:Literal ;" + ENDL
-            + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "       owl:equivalentProperty src:organisationType ." + ENDL
-            + ":Company__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain :Company ; " + ENDL
-            + "       rdfs:range rdfs:Literal ;" + ENDL
-            + "       rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
-            + "       owl:equivalentProperty src:otherProp ." + ENDL
-            + ":Charity a owl:Class ; " + ENDL
-            + "          rdfs:subClassOf src:Organisation ;" + ENDL
-            + "          rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:organisationType ;" + ENDL
-            + "              owl:hasValue \"charity\" ] ;" + ENDL
-            + "          rdfs:subClassOf" + ENDL
-            + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:otherProp ;" + ENDL
-            + "              owl:hasValue \"value\" ] ." + ENDL
+            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
             + ":Charity__organisationType a owl:DatatypeProperty ;" + ENDL
             + "                          rdfs:domain :Charity ; " + ENDL
             + "                          rdfs:range rdfs:Literal ;" + ENDL
             + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "       owl:equivalentProperty src:organisationType ." + ENDL
+            + "       owl:equivalentProperty src:Organisation__organisationType ." + ENDL
+            + ":Company__organisationType a owl:DatatypeProperty ;" + ENDL
+            + "       rdfs:domain :Company ; " + ENDL
+            + "       rdfs:range rdfs:Literal ;" + ENDL
+            + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
+            + "       owl:equivalentProperty src:Organisation__organisationType ." + ENDL
+
+            + "src:Organisation__otherProp a owl:DatatypeProperty ;" + ENDL
+            + "    rdfs:domain src:Organisation ;" + ENDL
+            + "    rdfs:range rdfs:Literal ." + ENDL
+            + ":Organisation__otherProp a owl:DatatypeProperty ;" + ENDL
+            + "    rdfs:domain :Organisation ;" + ENDL
+            + "    rdfs:range rdfs:Literal ;" + ENDL
+            + "    owl:equivalentProperty src:Organisation__otherProp ." + ENDL
             + ":Charity__otherProp a owl:DatatypeProperty ;" + ENDL
-            + "                          rdfs:domain :Charity ; " + ENDL
-            + "                          rdfs:range rdfs:Literal ;" + ENDL
-            + "       rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
-            + "       owl:equivalentProperty src:otherProp ." + ENDL;
+            + "    rdfs:domain :Charity ; " + ENDL
+            + "    rdfs:range rdfs:Literal ;" + ENDL
+            + "    rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
+            + "    owl:equivalentProperty src:Organisation__otherProp ." + ENDL
+            + ":Company__otherProp a owl:DatatypeProperty ;" + ENDL
+            + "    rdfs:domain :Company ; " + ENDL
+            + "    rdfs:range rdfs:Literal ;" + ENDL
+            + "    rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
+            + "    owl:equivalentProperty src:Organisation__otherProp ." + ENDL;
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new StringReader(owl), null, "N3");
@@ -332,17 +335,17 @@ public class DataTranslatorTest extends TestCase
         exp1.setIdentifier("1");
         exp1.setClassName(tgtNs + "Company");
         Attribute ea1 = new Attribute();
-        ea1.setName("Company__organisationType");
+        ea1.setName("organisationType");
         ea1.setValue("business");
         exp1.addAttribute(ea1);
         Item exp2 = new Item();
         exp2.setIdentifier("2");
         exp2.setClassName(tgtNs + "Charity");
         Attribute ea2 = new Attribute();
-        ea2.setName("Charity__organisationType");
+        ea2.setName("organisationType");
         ea2.setValue("charity");
         Attribute ea2a = new Attribute();
-        ea2a.setName("Charity__otherProp");
+        ea2a.setName("otherProp");
         ea2a.setValue("value");
         exp2.addAttribute(ea2);
         exp2.addAttribute(ea2a);
@@ -350,24 +353,24 @@ public class DataTranslatorTest extends TestCase
         exp3.setIdentifier("3");
         exp3.setClassName(tgtNs + "Organisation");
         Attribute ea3 = new Attribute();
-        ea3.setName("Organisation__organisationType");
+        ea3.setName("organisationType");
         ea3.setValue("charity");
         exp3.addAttribute(ea3);
         Item exp4 = new Item();
         exp4.setIdentifier("4");
         exp4.setClassName(tgtNs + "Organisation");
         Attribute ea4 = new Attribute();
-        ea4.setName("Organisation__organisationType");
+        ea4.setName("organisationType");
         ea4.setValue("other");
         exp4.addAttribute(ea4);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3, exp4}));
 
         translator = new DataTranslator(new MockItemReader(itemMap), model, tgtNs);
 
-//         System.out.println("templateMap: " + translator.templateMap.toString());
-//         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
-//         System.out.println("equivMap: " + translator.equivMap.toString());
-//         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
+         System.out.println("templateMap: " + translator.templateMap.toString());
+         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
+         System.out.println("equivMap: " + translator.equivMap.toString());
+         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
 
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
@@ -385,95 +388,99 @@ public class DataTranslatorTest extends TestCase
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
             + ENDL
+
             + "src:Organisation a owl:Class ." + ENDL
-            + "src:organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain src:Organisation ;" + ENDL
-            + "      rdfs:range src:OrganisationType ." + ENDL
-            + "src:type a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain src:OrganisationType ;" + ENDL
-            + "      rdfs:range xsd:String ." + ENDL
-            + "src:OrganisationType a owl:Class ." + ENDL
-            + "src:companyModel a owl:ObjectProperty ;" + ENDL
-            + "              rdfs:domain src:OrganisationType ;" + ENDL
-            + "              rdfs:range src:CompanyModel ." + ENDL
+            + "src:Organisation__organisationType a owl:ObjectProperty ;" + ENDL
+            + "    rdfs:domain src:Organisation ;" + ENDL
+            + "    rdfs:range src:OrganisationType ." + ENDL
             + "src:CompanyModel a owl:Class ." + ENDL
-            + "src:model a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain src:CompanyModel ;" + ENDL
-            + "       rdfs:range xsd:String ." + ENDL
+            + "src:CompanyModel__model a owl:DatatypeProperty ;" + ENDL
+            + "    rdfs:domain src:CompanyModel ;" + ENDL
+            + "    rdfs:range xsd:String ." + ENDL
+            + "src:OrganisationType a owl:Class ." + ENDL
+            + "src:OrganisationType__companyModel a owl:ObjectProperty ;" + ENDL
+            + "    rdfs:domain src:OrganisationType ;" + ENDL
+            + "    rdfs:range src:CompanyModel ." + ENDL
+            + "src:OrganisationType__type a owl:DatatypeProperty ;" + ENDL
+            + "    rdfs:domain src:OrganisationType ;" + ENDL
+            + "    rdfs:range xsd:String ." + ENDL
+
+
             + ":Organisation a owl:Class ;" + ENDL
             + "      owl:equivalentClass src:Organisation ." + ENDL
-            + ":Organisation__organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain :Organisation ;" + ENDL
-            + "      rdfs:range :OrganisationType ;" + ENDL
-            + "      owl:equivalentProperty src:organisationType ." + ENDL
-            + ":Business__organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain :Business ;" + ENDL
-            + "      rdfs:range :OrganisationType ;" + ENDL
-            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "      owl:equivalentProperty src:organisationType ." + ENDL
-            + ":PrivateBusiness__organisationType a owl:ObjectProperty ;" + ENDL
-            + "      rdfs:domain :PrivateBusiness ;" + ENDL
-            + "      rdfs:range :OrganisationType ;" + ENDL
-            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
-            + "      owl:equivalentProperty src:organisationType ." + ENDL
             + ":OrganisationType a owl:Class ;" + ENDL
             + "      owl:equivalentClass src:OrganisationType ." + ENDL
-            + ":OrganisationType__type a owl:DatatypeProperty ;" + ENDL
-            + "      rdfs:domain :OrganisationType ;" + ENDL
-            + "      rdfs:range xsd:String ;" + ENDL
-            + "      owl:equivalentProperty src:type ." + ENDL
-            + ":OrganisationType__companyModel a owl:ObjectProperty ;" + ENDL
-            + "              rdfs:domain :OrganisationType ;" + ENDL
-            + "              rdfs:range :CompanyModel ;" + ENDL
-            + "              owl:equivalentProperty src:companyModel ." + ENDL
             + ":CompanyModel a owl:Class ;" + ENDL
             + "      owl:equivalentClass src:CompanyModel ." + ENDL
-            + ":CompanyModel__model a owl:DatatypeProperty ;" + ENDL
-            + "       rdfs:domain :CompanyModel ;" + ENDL
-            + "       rdfs:range xsd:String ;" + ENDL
-            + "      owl:equivalentProperty src:model ." + ENDL
             + ":Business a owl:Class ; " + ENDL
             + "          rdfs:subClassOf src:Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:organisationType ;" + ENDL
+            + "              owl:onProperty src:Organisation__organisationType ;" + ENDL
             + "              owl:hasValue" + ENDL
             + "                [  rdfs:subClassOf src:OrganisationType ;" + ENDL
             + "                  rdfs:subClassOf" + ENDL
             + "                    [ a owl:Restriction ;" + ENDL
-            + "                      owl:onProperty src:type ;" + ENDL
+            + "                      owl:onProperty src:OrganisationType__type ;" + ENDL
             + "                      owl:hasValue \"business\"" + ENDL
             + "                    ] " + ENDL
             + "               ] " + ENDL
             + "            ] ." + ENDL
-            //+ "      owl:equivalentClass src:Organisation ." + ENDL
             + ":PrivateBusiness a owl:Class ; " + ENDL
             + "          rdfs:subClassOf src:Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty src:organisationType ;" + ENDL
+            + "              owl:onProperty src:Organisation__organisationType ;" + ENDL
             + "              owl:hasValue" + ENDL
             + "                [  rdfs:subClassOf src:OrganisationType ;" + ENDL
             + "                   rdfs:subClassOf" + ENDL
             + "                     [ a owl:Restriction ;" + ENDL
-            + "                       owl:onProperty src:companyModel ;" + ENDL
+            + "                       owl:onProperty src:OrganisationType__companyModel ;" + ENDL
             + "                       owl:hasValue"
             + "                         [ rdfs:subClassOf src:CompanyModel ;" + ENDL
             + "                           rdfs:subClassOf" + ENDL
             + "                             [ a owl:Restriction ;" + ENDL
-            + "                               owl:onProperty src:model ;" + ENDL
+            + "                               owl:onProperty src:CompanyModel__model ;" + ENDL
             + "                               owl:hasValue \"limited\"" + ENDL
             + "                             ] " + ENDL
             + "                         ] " + ENDL
             + "                     ] ;" + ENDL
             + "                   rdfs:subClassOf" + ENDL
             + "                     [ a owl:Restriction ;" + ENDL
-            + "                       owl:onProperty src:type ;" + ENDL
+            + "                       owl:onProperty src:OrganisationType__type ;" + ENDL
             + "                       owl:hasValue \"business\"" + ENDL
             + "                     ] " + ENDL
             + "                ] " + ENDL
-            + "            ] ." + ENDL;
-            //+ "      owl:equivalentClass src:Organisation ." + ENDL;
+            + "            ] ." + ENDL
+
+            + ":Organisation__organisationType a owl:ObjectProperty ;" + ENDL
+            + "      rdfs:domain :Organisation ;" + ENDL
+            + "      rdfs:range :OrganisationType ;" + ENDL
+            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
+            + ":Business__organisationType a owl:ObjectProperty ;" + ENDL
+            + "      rdfs:domain :Business ;" + ENDL
+            + "      rdfs:range :OrganisationType ;" + ENDL
+            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
+            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
+            + ":PrivateBusiness__organisationType a owl:ObjectProperty ;" + ENDL
+            + "      rdfs:domain :PrivateBusiness ;" + ENDL
+            + "      rdfs:range :OrganisationType ;" + ENDL
+            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
+            + "      owl:equivalentProperty src:Organisation__organisationType ." + ENDL
+
+            + ":OrganisationType__type a owl:DatatypeProperty ;" + ENDL
+            + "      rdfs:domain :OrganisationType ;" + ENDL
+            + "      rdfs:range xsd:String ;" + ENDL
+            + "      owl:equivalentProperty src:OrganisationType__type ." + ENDL
+            + ":OrganisationType__companyModel a owl:ObjectProperty ;" + ENDL
+            + "              rdfs:domain :OrganisationType ;" + ENDL
+            + "              rdfs:range :CompanyModel ;" + ENDL
+            + "              owl:equivalentProperty src:OrganisationType__companyModel ." + ENDL
+
+            + ":CompanyModel__model a owl:DatatypeProperty ;" + ENDL
+            + "       rdfs:domain :CompanyModel ;" + ENDL
+            + "       rdfs:range xsd:String ;" + ENDL
+            + "      owl:equivalentProperty src:CompanyModel__model ." + ENDL;
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new StringReader(owl), null, "N3");
@@ -528,7 +535,6 @@ public class DataTranslatorTest extends TestCase
         a23.setValue("limited");
         src23.addAttribute(a23);
 
-
         Collection srcItems = new ArrayList();
         srcItems.add(ItemHelper.convert(src11));
         srcItems.add(ItemHelper.convert(src12));
@@ -547,11 +553,11 @@ public class DataTranslatorTest extends TestCase
         exp12.setClassName(tgtNs + "OrganisationType");
         exp12.setImplementations("");
         Reference er11 = new Reference();
-        er11.setName("Business__organisationType");
+        er11.setName("organisationType");
         er11.setRefId("12");
         exp11.addReference(er11);
         Attribute ea11 = new Attribute();
-        ea11.setName("OrganisationType__type");
+        ea11.setName("type");
         ea11.setValue("business");
         exp12.addAttribute(ea11);
 
@@ -568,19 +574,19 @@ public class DataTranslatorTest extends TestCase
         exp23.setClassName(tgtNs + "CompanyModel");
         exp23.setImplementations("");
         Reference er21 = new Reference();
-        er21.setName("PrivateBusiness__organisationType");
+        er21.setName("organisationType");
         er21.setRefId("22");
         exp21.addReference(er21);
         Reference er22 = new Reference();
-        er22.setName("OrganisationType__companyModel");
+        er22.setName("companyModel");
         er22.setRefId("23");
         exp22.addReference(er22);
         Attribute ea21 = new Attribute();
-        ea21.setName("CompanyModel__model");
+        ea21.setName("model");
         ea21.setValue("limited");
         exp23.addAttribute(ea21);
         Attribute ea22 = new Attribute();
-        ea22.setName("OrganisationType__type");
+        ea22.setName("type");
         ea22.setValue("business");
         exp22.addAttribute(ea22);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23}));
@@ -741,7 +747,6 @@ public class DataTranslatorTest extends TestCase
             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
-
             + ENDL
             + ":Organisation a owl:Class ;" + ENDL
             + "              owl:equivalentClass src:Organisation ." + ENDL
@@ -752,25 +757,24 @@ public class DataTranslatorTest extends TestCase
             + "              owl:maxCardinality \"1\" ;" + ENDL
             + "              owl:onProperty :Company_address ] ;" + ENDL
             + "         owl:equivalentClass src:LtdCompany ." + ENDL
-            + ":Company_name a owl:DatatypeProperty ;" + ENDL
+            + ":Company__name a owl:DatatypeProperty ;" + ENDL
             + "              rdfs:domain :Company ;" + ENDL
             + "              rdfs:range xsd:string ;" + ENDL
-            + "              owl:equivalentProperty src:name ." + ENDL
-            + "null:vatNumber a owl:DatatypeProperty ;" + ENDL
-            + "              owl:equivalentProperty src:vatNumber ." + ENDL
+            + "              owl:equivalentProperty src:LtdCompany__name ." + ENDL
+            + "null:LtdCompany__vatNumber a owl:DatatypeProperty ;" + ENDL
+            + "              owl:equivalentProperty src:LtdCompany__vatNumber ." + ENDL
             + ":Address a owl:Class ;" + ENDL
             + "         owl:equivalentClass src:Address ." + ENDL
             + ":Department a owl:Class ;" + ENDL
             + "            owl:equivalentClass src:Department ." + ENDL
-            + ":Company_address a owl:ObjectProperty ;" + ENDL
+            + ":Company__address a owl:ObjectProperty ;" + ENDL
             + "                 rdfs:domain :Company ;" + ENDL
             + "                 rdfs:range :Address ;" + ENDL
-            + "                 owl:equivalentProperty src:address ." + ENDL
-            + ":Company_departments a owl:ObjectProperty ;" + ENDL
+            + "                 owl:equivalentProperty src:LtdCompany__address ." + ENDL
+            + ":Company__departments a owl:ObjectProperty ;" + ENDL
             + "                     rdfs:domain :Company ;" + ENDL
             + "                     rdfs:range :Address ;" + ENDL
-            + "                     owl:equivalentProperty src:departments ." + ENDL;
-
+            + "                     owl:equivalentProperty src:LtdCompany__departments ." + ENDL;
 
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(new StringReader(owl), null, "N3");

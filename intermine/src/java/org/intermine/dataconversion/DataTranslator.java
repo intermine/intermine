@@ -124,15 +124,11 @@ public class DataTranslator
      * @throws FlyMineException if no target class/property name can be found
      */
     protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
-        String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
-        Item tgtItem = new Item();
-        tgtItem.setIdentifier(srcItem.getIdentifier());
 
         // see if there are any SubclassRestriction template for this class
-        Set templates = (Set) templateMap.get(srcItem.getClassName());
-        String newImps = "";
         String tgtClsName = null;
-        if (templates != null && templates.size() > 0) {
+        Set templates = (Set) templateMap.get(srcItem.getClassName());
+        if (templates != null) {
             Iterator i = templates.iterator();
             while (i.hasNext() && tgtClsName == null) {
                 SubclassRestriction sr = buildSubclassRestriction(srcItem,
@@ -148,25 +144,20 @@ public class DataTranslator
                                            + srcItem.getClassName());
             }
         }
-        tgtItem.setClassName(tgtClsName);
-        LOG.warn("translating item: " + srcItem.getIdentifier() + ", " + srcItem.getClassName() + " to " + tgtClsName);
 
-        // sort out implementations
-        newImps += getImplementationsString(tgtClsName);
-        tgtItem.setImplementations(newImps.trim());
+        Item tgtItem = new Item();
+        tgtItem.setIdentifier(srcItem.getIdentifier());
+        tgtItem.setClassName(tgtClsName);
+        tgtItem.setImplementations(getImplementationsString(tgtClsName));
 
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
             Attribute att = (Attribute) i.next();
-            LOG.warn("Attribute: " + att.getName() + ", " + att.getValue());
-            String attSrcURI = srcNs + att.getName();
+            String attSrcURI = srcItem.getClassName() + "__" + att.getName();
             String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
-            System.out.println(OntologyUtil.getNamespaceFromURI(attSrcURI) + ", "
-                               + OntologyUtil.getNamespaceFromURI(attTgtURI) + ", "
-                               + tgtNs);
             if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
                 Attribute newAtt = new Attribute();
-                newAtt.setName(OntologyUtil.getFragmentFromURI(attTgtURI));
+                newAtt.setName(attTgtURI.split("__")[1]);
                 newAtt.setValue(StringUtil.duplicateQuotes(att.getValue()));
                 tgtItem.addAttribute(newAtt);
             }
@@ -175,15 +166,11 @@ public class DataTranslator
         //references
         for (Iterator i = srcItem.getReferences().iterator(); i.hasNext();) {
             Reference ref = (Reference) i.next();
-            LOG.warn("Reference: " + ref.getName());
-            String refSrcURI = srcNs + ref.getName();
+            String refSrcURI = srcItem.getClassName() + "__" + ref.getName();
             String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
-            System.out.println(OntologyUtil.getNamespaceFromURI(refSrcURI) + ", "
-                               + OntologyUtil.getNamespaceFromURI(refTgtURI) + ", "
-                               + tgtNs);
             if (OntologyUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
                 Reference newRef = new Reference();
-                newRef.setName(OntologyUtil.getFragmentFromURI(refTgtURI));
+                newRef.setName(refTgtURI.split("__")[1]);
                 newRef.setRefId(ref.getRefId());
                 tgtItem.addReference(newRef);
             }
@@ -192,22 +179,17 @@ public class DataTranslator
         //collections
         for (Iterator i = srcItem.getCollections().iterator(); i.hasNext();) {
             ReferenceList col = (ReferenceList) i.next();
-            LOG.warn("ReferenceList: " + col.getName());
-            String colSrcURI = srcNs + col.getName();
+            String colSrcURI = srcItem.getClassName() + "__" + col.getName();
             String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
-            System.out.println(OntologyUtil.getNamespaceFromURI(colSrcURI) + ", "
-                               + OntologyUtil.getNamespaceFromURI(colTgtURI) + ", "
-                               + tgtNs);
             if (OntologyUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {
                 ReferenceList newCol = new ReferenceList();
-                newCol.setName(OntologyUtil.getFragmentFromURI(colTgtURI));
+                newCol.setName(colTgtURI.split("__")[1]);
                 newCol.setRefIds(col.getRefIds());
                 tgtItem.addCollection(newCol);
             }
         }
         return Collections.singleton(tgtItem);
     }
-
 
     /**
      * Given an item in src format and a template (a list of path expressions) create
@@ -239,7 +221,6 @@ public class DataTranslator
         }
         return sr;
     }
-
 
     /**
      * Given a StringTokenizer over a path expression recurse through references of item
@@ -357,9 +338,8 @@ public class DataTranslator
                 imps += sup.getURI() + " ";
             }
         }
-        return imps;
+        return imps.trim();
     }
-
 
     /**
      * Main method

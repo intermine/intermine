@@ -107,6 +107,40 @@ public class DefinitiveOwlTest extends XMLTestCase
         assertXMLEqual(new InputStreamReader(expected), new StringReader(model.toString()));
     }
 
+//     public void testDataTranslatorSrc1() throws Exception {
+//         Set src1Items = getSrc1Items();
+//         ItemStore src1ItemStore = new MockItemStore();
+//         storeItems(src1Items, src1ItemStore);
+
+//         Model model = generateFlyMineModel();
+//         DataTranslator translator2 = new DataTranslator(src1ItemStore, runMergeOwl(), tgtNs);
+
+// //         System.out.println("templateMap: " + translator2.templateMap.toString());
+// //         System.out.println("restrictionMap: " + translator2.restrictionMap.toString());
+// //         System.out.println("equivMap: " + translator2.equivMap.toString());
+// //         System.out.println("clsPropMap: " + translator2.clsPropMap.toString());
+
+//         MockItemStore tgtItemStore = new MockItemStore();
+//         translator2.translate(tgtItemStore);
+
+//         Set expected = getSrc1TgtItems();
+//         assertEquals(expected, tgtItemStore.getItemSet());
+
+//     }
+
+    public void testDataTranslatorSrc2() throws Exception {
+        ItemWriter srcItemWriter = new MockItemWriter(itemMap);
+        for (Iterator i = getSrc2Items().iterator(); i.hasNext();) {
+            srcItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
+        DataTranslator translator = new DataTranslator(new MockItemReader(itemMap), runMergeOwl(), tgtNs);
+        MockItemWriter tgtItemWriter = new MockItemWriter(new HashMap());
+        translator.translate(tgtItemWriter);
+        
+        assertEquals(getSrc2TgtItems(), tgtItemWriter.getItems());
+    }
+
     private OntModel runMergeOwl() throws Exception {
         String src1 = getSrc1Model();
         String src2 = getSrc2Model();
@@ -131,50 +165,6 @@ public class DefinitiveOwlTest extends XMLTestCase
         Model model = o2f.process(runMergeOwl(), tgtNs);
         return model;
     }
-
-
-//     public void testDataTranslatorSrc1() throws Exception {
-//         Set src1Items = getSrc1Items();
-//         ItemStore src1ItemStore = new MockItemStore();
-//         storeItems(src1Items, src1ItemStore);
-
-//         Model model = generateFlyMineModel();
-//         DataTranslator translator2 = new DataTranslator(src1ItemStore, runMergeOwl(), tgtNs);
-
-// //         System.out.println("templateMap: " + translator2.templateMap.toString());
-// //         System.out.println("restrictionMap: " + translator2.restrictionMap.toString());
-// //         System.out.println("equivMap: " + translator2.equivMap.toString());
-// //         System.out.println("clsPropMap: " + translator2.clsPropMap.toString());
-
-//         MockItemStore tgtItemStore = new MockItemStore();
-//         translator2.translate(tgtItemStore);
-
-//         Set expected = getSrc1TgtItems();
-//         assertEquals(expected, tgtItemStore.getItemSet());
-
-//     }
-
-    public void testDataTranslatorSrc2() throws Exception {
-        ItemWriter src2ItemWriter = new MockItemWriter(itemMap);
-        for (Iterator i = getSrc2Items().iterator(); i.hasNext();) {
-            src2ItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
-
-        DataTranslator translator2 = new DataTranslator(new MockItemReader(itemMap), runMergeOwl(), tgtNs);
-
-//         System.out.println("templateMap: " + translator2.templateMap.toString());
-//         System.out.println("restrictionMap: " + translator2.restrictionMap.toString());
-//         System.out.println("equivMap: " + translator2.equivMap.toString());
-//         System.out.println("clsPropMap: " + translator2.clsPropMap.toString());
-
-        MockItemWriter tgtItemWriter = new MockItemWriter(new HashMap());
-        translator2.translate(tgtItemWriter);
-        
-        assertEquals(getSrc2TgtItems(), tgtItemWriter.getItems());
-    }
-
-
-
 
     private String getMergeSpec() {
         StringBuffer owl = new StringBuffer();
@@ -390,7 +380,6 @@ public class DefinitiveOwlTest extends XMLTestCase
     }
 
     private Set getSrc2Items() {
-
         // Items conforming to source2 model
 
         // maps to company
@@ -399,15 +388,15 @@ public class DefinitiveOwlTest extends XMLTestCase
         src11.setClassName(src2Ns + "Org");
         src11.setImplementations("");
         Attribute a11 = new Attribute();
-        a11.setName("Org__organisationName");
+        a11.setName("organisationName");
         a11.setValue("Company11");
         src11.addAttribute(a11);
         Attribute a12 = new Attribute();
-        a12.setName("Org__profitable");
+        a12.setName("profitable");
         a12.setValue("true");
         src11.addAttribute(a12);
         Reference r11 = new Reference();
-        r11.setName("Org__organisationType");
+        r11.setName("organisationType");
         r11.setRefId("12");
         src11.addReference(r11);
 
@@ -416,11 +405,9 @@ public class DefinitiveOwlTest extends XMLTestCase
         src12.setClassName(src2Ns + "OrganisationType");
         src12.setImplementations("");
         Attribute a13 = new Attribute();
-        a13.setName("OrganisationType__type");
+        a13.setName("type");
         a13.setValue("business");
         src12.addAttribute(a13);
-
-
 
         // maps to LtdCompany
         Item src21 = new Item();
@@ -428,15 +415,15 @@ public class DefinitiveOwlTest extends XMLTestCase
         src21.setClassName(src2Ns + "Org");
         src21.setImplementations("");
         Attribute a21 = new Attribute();
-        a21.setName("Org__organisationName");
+        a21.setName("organisationName");
         a21.setValue("LtdCompany21");
         src21.addAttribute(a21);
         Attribute a22 = new Attribute();
-        a22.setName("Org__profitable");
+        a22.setName("profitable");
         a22.setValue("true");
         src21.addAttribute(a22);
         Reference r21 = new Reference();
-        r21.setName("Org__organisationType");
+        r21.setName("organisationType");
         r21.setRefId("22");
         src21.addReference(r21);
 
@@ -445,11 +432,11 @@ public class DefinitiveOwlTest extends XMLTestCase
         src22.setClassName(src2Ns + "OrganisationType");
         src22.setImplementations("");
         Attribute a23 = new Attribute();
-        a23.setName("OrganisationType__type");
+        a23.setName("type");
         a23.setValue("business");
         src22.addAttribute(a23);
         Reference r22 = new Reference();
-        r22.setName("OrganisationType__companyModel");
+        r22.setName("companyModel");
         r22.setRefId("23");
         src22.addReference(r22);
 
@@ -458,7 +445,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         src23.setClassName(src2Ns + "CompanyModel");
         src23.setImplementations("");
         Attribute a24 = new Attribute();
-        a24.setName("CompanyModel__model");
+        a24.setName("model");
         a24.setValue("limited");
         src23.addAttribute(a24);
 
@@ -468,15 +455,15 @@ public class DefinitiveOwlTest extends XMLTestCase
         src31.setClassName(src2Ns + "Org");
         src31.setImplementations("");
         Attribute a31 = new Attribute();
-        a31.setName("Org__organisationName");
+        a31.setName("organisationName");
         a31.setValue("Organisation31");
         src31.addAttribute(a31);
         Attribute a32 = new Attribute();
-        a32.setName("Org__profitable");
+        a32.setName("profitable");
         a32.setValue("false");
         src31.addAttribute(a32);
         Reference r31 = new Reference();
-        r31.setName("Org__organisationType");
+        r31.setName("organisationType");
         r31.setRefId("32");
         src31.addReference(r31);
 
@@ -485,34 +472,29 @@ public class DefinitiveOwlTest extends XMLTestCase
         src32.setClassName(src2Ns + "OrganisationType");
         src32.setImplementations("");
         Attribute a33 = new Attribute();
-        a33.setName("OrganisationType__type");
+        a33.setName("type");
         a33.setValue("government");
         src32.addAttribute(a33);
 
-        Set srcItems = new HashSet(Arrays.asList(new Object[] {src11, src12, src21, src22, src23, src31, src32}));
-        return srcItems;
-
-
-
+        return new HashSet(Arrays.asList(new Object[] {src11, src12, src21, src22, src23, src31, src32}));
     }
 
     private Set getSrc2TgtItems() {
-
         // Company
         Item exp11 = new Item();
         exp11.setIdentifier("11");
         exp11.setClassName(tgtNs + "Company");
         exp11.setImplementations(tgtNs + "Organisation");
         Attribute ea11 = new Attribute();
-        ea11.setName("Company__name");
+        ea11.setName("name");
         ea11.setValue("Company11");
         exp11.addAttribute(ea11);
         Attribute ea12 = new Attribute();
-        ea12.setName("Company__profitable");
+        ea12.setName("profitable");
         ea12.setValue("true");
         exp11.addAttribute(ea12);
         Reference er11 = new Reference();
-        er11.setName("Company__organisationType");
+        er11.setName("organisationType");
         er11.setRefId("12");
         exp11.addReference(er11);
 
@@ -521,10 +503,9 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp12.setClassName(tgtNs + "OrganisationType");
         exp12.setImplementations("");
         Attribute a13 = new Attribute();
-        a13.setName("OrganisationType__type");
+        a13.setName("type");
         a13.setValue("business");
         exp12.addAttribute(a13);
-
 
         // LtdCompany
         Item exp21 = new Item();
@@ -532,15 +513,15 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp21.setClassName(tgtNs + "LtdCompany");
         exp21.setImplementations(tgtNs + "Company " + tgtNs + "Organisation");
         Attribute a21 = new Attribute();
-        a21.setName("LtdCompany__name");
+        a21.setName("name");
         a21.setValue("LtdCompany21");
         exp21.addAttribute(a21);
         Attribute a22 = new Attribute();
-        a22.setName("LtdCompany__profitable");
+        a22.setName("profitable");
         a22.setValue("true");
         exp21.addAttribute(a22);
         Reference r21 = new Reference();
-        r21.setName("LtdCompany__organisationType");
+        r21.setName("organisationType");
         r21.setRefId("22");
         exp21.addReference(r21);
 
@@ -549,11 +530,11 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp22.setClassName(tgtNs + "OrganisationType");
         exp22.setImplementations("");
         Attribute a23 = new Attribute();
-        a23.setName("OrganisationType__type");
+        a23.setName("type");
         a23.setValue("business");
         exp22.addAttribute(a23);
         Reference r22 = new Reference();
-        r22.setName("OrganisationType__companyModel");
+        r22.setName("companyModel");
         r22.setRefId("23");
         exp22.addReference(r22);
 
@@ -562,10 +543,9 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp23.setClassName(tgtNs + "CompanyModel");
         exp23.setImplementations("");
         Attribute a24 = new Attribute();
-        a24.setName("CompanyModel__model");
+        a24.setName("model");
         a24.setValue("limited");
         exp23.addAttribute(a24);
-
 
         // Organisation
         Item exp31 = new Item();
@@ -573,15 +553,15 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp31.setClassName(tgtNs + "Organisation");
         exp31.setImplementations("");
         Attribute a31 = new Attribute();
-        a31.setName("Organisation__name");
+        a31.setName("name");
         a31.setValue("Organisation31");
         exp31.addAttribute(a31);
         Attribute a32 = new Attribute();
-        a32.setName("Organisation__profitable");
+        a32.setName("profitable");
         a32.setValue("false");
         exp31.addAttribute(a32);
         Reference r31 = new Reference();
-        r31.setName("Organisation__organisationType");
+        r31.setName("organisationType");
         r31.setRefId("32");
         exp31.addReference(r31);
 
@@ -590,11 +570,10 @@ public class DefinitiveOwlTest extends XMLTestCase
         exp32.setClassName(tgtNs + "OrganisationType");
         exp32.setImplementations("");
         Attribute a33 = new Attribute();
-        a33.setName("OrganisationType__type");
+        a33.setName("type");
         a33.setValue("government");
         exp32.addAttribute(a33);
 
-        Set tgtItems = new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23, exp31, exp32}));
-        return tgtItems;
+        return new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23, exp31, exp32}));
     }
 }

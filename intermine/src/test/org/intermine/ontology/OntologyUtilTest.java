@@ -753,39 +753,39 @@ public class OntologyUtilTest extends TestCase
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Organisation a owl:Class ." + ENDL
-            + ":organisationType a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range xsd:string ." + ENDL
-            + ":profit a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation__profit a owl:DatatypeProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range xsd:string ." + ENDL
             + ":Business a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"business\" ] ." + ENDL
             + ":Charity a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"charity\" ] ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :profit ;" + ENDL
+            + "              owl:onProperty :Organisation__profit ;" + ENDL
             + "              owl:hasValue \"none\" ] ." + ENDL
             + ":OtherOrganisation a owl:Class ;" + ENDL
             + "                   rdfs:subClassOf :Organisation ." + ENDL
             + ":Address a owl:Class ." + ENDL
-            + ":addressType a owl:DatatypeProperty ;" + ENDL
+            + ":Address__addressType a owl:DatatypeProperty ;" + ENDL
             + "             rdfs:domain :Address ;" + ENDL
             + "             rdfs:range rdfs:Literal ." + ENDL
             + ":PostalAddress a owl:Class ;" + ENDL
             + "          rdfs:subClassOf :Address ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :addressType ;" + ENDL
+            + "              owl:onProperty :Address__addressType ;" + ENDL
             + "              owl:hasValue \"postal\" ] ." + ENDL;
 
 
@@ -825,45 +825,45 @@ public class OntologyUtilTest extends TestCase
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Organisation a owl:Class ." + ENDL
-            + ":organisationType a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range xsd:string ." + ENDL
-            + ":profit a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation__profit a owl:DatatypeProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range xsd:string ." + ENDL
             + ":Partnership a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"partnership\" ] ." + ENDL
             + ":Business a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"business\" ] ." + ENDL
             + ":Charity a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"charity\" ] ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :profit ;" + ENDL
+            + "              owl:onProperty :Organisation__profit ;" + ENDL
             + "              owl:hasValue \"none\" ] ." + ENDL
             + ":OtherOrganisation a owl:Class ;" + ENDL
             + "                   rdfs:subClassOf :Organisation ." + ENDL
             + ":Address a owl:Class ." + ENDL
-            + ":addressType a owl:DatatypeProperty ;" + ENDL
+            + ":Address__addressType a owl:DatatypeProperty ;" + ENDL
             + "             rdfs:domain :Address ;" + ENDL
             + "             rdfs:range rdfs:Literal ." + ENDL
             + ":PostalAddress a owl:Class ;" + ENDL
             + "          rdfs:subClassOf :Address ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :addressType ;" + ENDL
+            + "              owl:onProperty :Address__addressType ;" + ENDL
             + "              owl:hasValue \"postal\" ] ." + ENDL;
 
 
@@ -904,27 +904,27 @@ public class OntologyUtilTest extends TestCase
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Organisation a owl:Class ." + ENDL
-            + ":organisationType a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation__organisationType a owl:DatatypeProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range xsd:string ." + ENDL
-            + ":profit a owl:DatatypeProperty ;" + ENDL
+            + ":Organisation__profit a owl:DatatypeProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range xsd:string ." + ENDL
             + ":Business a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"business\" ] ." + ENDL
             + ":Charity a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue \"charity\" ] ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :profit ;" + ENDL
+            + "              owl:onProperty :Organisation__profit ;" + ENDL
             + "              owl:hasValue \"none\" ] ." + ENDL
             + ":OtherOrganisation a owl:Class ;" + ENDL
             + "                   rdfs:subClassOf :Organisation ." + ENDL;
@@ -948,7 +948,6 @@ public class OntologyUtilTest extends TestCase
         SubclassRestriction sr3 = new SubclassRestriction();
         OntClass oth = model.getOntClass(ns + "OtherOrganisation");
         assertEquals(sr3, OntologyUtil.createSubclassRestriction(model, oth, org.getLocalName(), null, true));
-
     }
 
     public void testGetRestrictionSubclassNested() throws Exception {
@@ -960,30 +959,30 @@ public class OntologyUtilTest extends TestCase
             + "@prefix xsd:  <" + OntologyUtil.XSD_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":Organisation a owl:Class ." + ENDL
-            + ":organisationType a owl:ObjectProperty ;" + ENDL
+            + ":Organisation__organisationType a owl:ObjectProperty ;" + ENDL
             + "                  rdfs:domain :Organisation ;" + ENDL
             + "                  rdfs:range :OrganisationType ." + ENDL
             + ":OrganisationType a owl:Class ." + ENDL
-            + ":type a owl:DatatypeProperty ;" + ENDL
+            + ":OrganisationType__type a owl:DatatypeProperty ;" + ENDL
             + "      rdfs:domain :OrganisationType ;" + ENDL
             + "      rdfs:range xsd:String ." + ENDL
-            + ":companyModel a owl:ObjectProperty ;" + ENDL
+            + ":OrganisationType__companyModel a owl:ObjectProperty ;" + ENDL
             + "              rdfs:domain :OrganisationType ;" + ENDL
             + "              rdfs:range :CompanyModel ." + ENDL
             + ":CompanyModel a owl:Class ." + ENDL
-            + ":model a owl:DatatypeProperty ;" + ENDL
+            + ":CompanyModel__model a owl:DatatypeProperty ;" + ENDL
             + "       rdfs:domain :CompanyModel ;" + ENDL
             + "       rdfs:range xsd:String ." + ENDL
             + ":Business a owl:Class ; " + ENDL
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue" + ENDL
             + "                [  rdfs:subClassOf :OrganisationType ;" + ENDL
             + "                  rdfs:subClassOf" + ENDL
             + "                    [ a owl:Restriction ;" + ENDL
-            + "                      owl:onProperty :type ;" + ENDL
+            + "                      owl:onProperty :OrganisationType__type ;" + ENDL
             + "                      owl:hasValue \"business\"" + ENDL
             + "                    ] " + ENDL
             + "               ] " + ENDL
@@ -992,24 +991,24 @@ public class OntologyUtilTest extends TestCase
             + "          rdfs:subClassOf :Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
-            + "              owl:onProperty :organisationType ;" + ENDL
+            + "              owl:onProperty :Organisation__organisationType ;" + ENDL
             + "              owl:hasValue" + ENDL
             + "                [   rdfs:subClassOf :OrganisationType ;" + ENDL
             + "                   rdfs:subClassOf" + ENDL
             + "                     [ a owl:Restriction ;" + ENDL
-            + "                       owl:onProperty :companyModel ;" + ENDL
+            + "                       owl:onProperty :OrganisationType__companyModel ;" + ENDL
             + "                       owl:hasValue"
             + "                         [ rdfs:subClassOf :CompanyModel ;" + ENDL
             + "                           rdfs:subClassOf" + ENDL
             + "                             [ a owl:Restriction ;" + ENDL
-            + "                               owl:onProperty :model ;" + ENDL
+            + "                               owl:onProperty :CompanyModel__model ;" + ENDL
             + "                               owl:hasValue \"limited\"" + ENDL
             + "                             ] " + ENDL
             + "                         ] " + ENDL
             + "                     ] ;" + ENDL
             + "                   rdfs:subClassOf" + ENDL
             + "                     [ a owl:Restriction ;" + ENDL
-            + "                       owl:onProperty :type ;" + ENDL
+            + "                       owl:onProperty :OrganisationType__type ;" + ENDL
             + "                       owl:hasValue \"business\"" + ENDL
             + "                     ] " + ENDL
             + "                ] " + ENDL

@@ -363,7 +363,6 @@ public class OntologyUtil
         return restrictionMap;
     }
 
-
     /**
      * Examine ontology model to create a SubclassRestriction object describing reference/attribute
      * values that defined the given restriced subclass.  Recurses to follow nested retrictions.
@@ -392,7 +391,7 @@ public class OntologyUtil
                         propStr += "$ " + ((OntResource) p.next()).toString();
                     }
                     if (res.onProperty(prop)) {
-                        String newPath = path + "." + prop.getLocalName();
+                        String newPath = path + "." + prop.getLocalName().split("__")[1];
                         if (isDatatypeProperty(prop)) {
                             // add path/value restriction to SubclassRestriction
                             RDFNode node = ((HasValueRestriction) res.as(HasValueRestriction.class))
@@ -411,7 +410,6 @@ public class OntologyUtil
                     }
                 }
             }
-
         }
         return sr;
     }
