@@ -38,10 +38,10 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Types");
     }
 
-    public void testSubmitSuccessful() throws Exception {
+    public void testAddSuccessful() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Add to query");
         session.setAttribute("query", new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("model", new DisplayModel(model));
@@ -59,10 +59,10 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
-    public void testSubmitSuccessfulNoQuery() throws Exception {
+    public void testAddSuccessfulNoQuery() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Add to query");
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("model", new DisplayModel(model));
 
@@ -79,10 +79,10 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertEquals(1, ((Query) session.getAttribute("query")).getFrom().size());
     }
 
-    public void testSubmitNoModel() throws Exception {
+    public void testAddNoModel() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Add to query");
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("query", new Query());
 
@@ -119,10 +119,10 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 //         assertEquals("SELECT  FROM org.flymine.model.testmodel.Types AS a1_ WHERE (a1_.name = 'bob')", getSession().getAttribute("query").toString());
 //     }
 
-    public void testNoQueryClass() throws Exception {
+    public void testAddNoQueryClass() throws Exception {
         HttpSession session = getSession();
         setRequestPathInfo("/query");
-        addRequestParameter("action", "Submit");
+        addRequestParameter("action", "Add to query");
         session.setAttribute("query", new Query());
         session.setAttribute("model", new DisplayModel(model));
 
@@ -132,10 +132,10 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         assertNull(session.getAttribute("queryClass"));
     }
 
-     public void testSubmitUnparseable() {
+     public void testAddUnparseable() {
          HttpSession session = getSession();
          setRequestPathInfo("/query");
-         addRequestParameter("action", "Submit");
+         addRequestParameter("action", "Add to query");
          session.setAttribute("query", new Query());
          session.setAttribute("model", new DisplayModel(model));
          session.setAttribute("queryClass", new QueryClass(Employee.class));
