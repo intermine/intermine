@@ -1,5 +1,7 @@
 package org.flymine.objectstore.ojb;
 
+import java.lang.reflect.Field;
+
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.TransactionInProgressException;
@@ -14,6 +16,7 @@ import org.flymine.objectstore.query.QueryHelper;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.ModelUtil;
+
 
 /**
  * Implementation of ObjectStoreWriter that uses OJB as its underlying store
@@ -145,6 +148,18 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
             return ret;
         }
         return null;
+    }
+
+
+    /**
+     * Return an integer describing the type of relationship the given field represents,
+     * where relationship types are 1:1, 1:N, N:1, M:N and "not a relationship".
+     *
+     * @param field object describing the field in querstion
+     * @return int to describe the relationship type
+     */
+    public int describeRelation(Field field) {
+        return ((PersistenceBrokerFlyMineImpl) pb).describeRelation(field);
     }
 
 }
