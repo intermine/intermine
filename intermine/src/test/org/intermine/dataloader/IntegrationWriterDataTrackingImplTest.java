@@ -93,10 +93,6 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             throw new NullPointerException("iw must be set before trying to store data");
         }
         long start = new Date().getTime();
-        java.sql.Connection con = ((ObjectStoreWriterInterMineImpl) writer).getConnection();
-        java.sql.Statement s = con.createStatement();
-        s.execute("vacuum analyze");
-        ((ObjectStoreWriterInterMineImpl) writer).releaseConnection(con);
 
         try {
             iw.beginTransaction();
@@ -119,42 +115,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             throw new Exception(e);
         }
 
-
-        con = ((ObjectStoreWriterInterMineImpl) writer).getConnection();
-        s = con.createStatement();
-        s.execute("vacuum analyze");
-        ((ObjectStoreWriterInterMineImpl) writer).releaseConnection(con);
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
-/*
-    public static void removeDataFromTracker() throws Exception {
-        System.out.println("Removing data from tracker");
-        long start = new Date().getTime();
-        ObjectStoreWriter dataTracker = iw.getDataTracker();
-        if (dataTracker == null) {
-            throw new NullPointerException("dataTracker must be set before trying to remove data");
-        }
-        try {
-            dataTracker.beginTransaction();
-            Query q = new Query();
-            QueryClass qc = new QueryClass(InterMineObject.class);
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, dataTracker.getObjectStore(),
-                    dataTracker.getObjectStore().getSequence());
-            Iterator iter = dataToRemove.iterator();
-            while (iter.hasNext()) {
-                InterMineObject toDelete = (InterMineObject) iter.next();
-                dataTracker.delete(toDelete);
-            }
-            dataTracker.commitTransaction();
-        } catch (Exception e) {
-            dataTracker.abortTransaction();
-            throw e;
-        }
-        System.out.println("Took " + (new Date().getTime() - start) + " ms to remove data from tracker");
-    }
-*/
+
     public static void removeDataFromStore() throws Exception {
         System.out.println("Removing data from store");
         long start = new Date().getTime();
@@ -646,6 +609,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
         
         iw.idMap.clear();
+        iw.commitTransaction();
+        iw.beginTransaction();
         iw.store(con, source2, skelSource2); // method we are testing
 
         // Get objects (and test that there is only one copy of everything).
