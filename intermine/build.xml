@@ -220,6 +220,7 @@
   
   <path id="debug.src.path">
     <pathelement path="${src.java}"/>
+    <pathelement path="${src.webapp}"/>
   </path>
 
   <!-- Initialisation targets -->
