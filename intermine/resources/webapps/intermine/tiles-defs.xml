@@ -65,7 +65,7 @@
 </definition>
 
 <definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
-    <put name="saveQuery" value="saveQuery.jsp"/>
+    <put name="saveQuery" value="saveQuery.tile"/>
 </definition>
 
 <definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do">
@@ -75,6 +75,9 @@
 </definition>
 
 <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do">
+</definition>
+
+<definition name="saveQuery.tile" path="/saveQuery.jsp" controllerUrl="/initSaveQuery.do">
 </definition>
 
 </tiles-definitions>
