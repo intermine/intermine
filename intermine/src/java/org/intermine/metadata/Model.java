@@ -8,8 +8,7 @@ import java.util.HashSet;
 import java.util.Collection;
 import java.util.Set;
 
-import org.xml.sax.InputSource;
-
+import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 /**
@@ -41,15 +40,14 @@ public class Model
                                                + filename + ")");
         }
         try {
-            FlyMineModelParser parser = new FlyMineModelParser();
-            parser.parse(new InputSource(is));
-            model = new Model(parser.getModelName(), parser.getClasses());
+            ModelParser parser = new FlyMineModelParser();
+            model = parser.process(is);
         } catch (Exception e) {
             throw new MetaDataException("Error parsing metadata: " + e);
         }
         return model;
     }
-    
+
     /**
      * Construct a Model with a name and set of ClassDescriptors.  The model will be
      * set to this in each of the ClassDescriptors. NB This method should only be called
