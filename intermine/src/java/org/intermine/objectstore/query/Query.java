@@ -26,6 +26,10 @@ import org.flymine.objectstore.ojb.PersistenceBrokerFlyMine;
 import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
+import org.gnu.readline.Readline;
+import org.gnu.readline.ReadlineLibrary;
+import org.gnu.readline.ReadlineCompleter;
+import java.io.File;
 
 /**
  * This class provides an implementation-independent abstract representation of a query
@@ -462,10 +466,101 @@ public class Query implements FromElement
      * @throws Exception anytime
      */
     public static void main(String args[]) throws Exception {
+        PrintStream out = System.out;
+        if (args.length > 1) {
+            out.println("Usage: java org.flymine.objectstore.query.Query - to enter shell-mode");
+            out.println("       java org.flymine.objectstore.query.Query \"<FQL Query>\" - to run");
+            out.println("                      a one-off query");
+        } else {
+            try {
+                //Properties props = new Properties();
+                //props.load(new FileInputStream("/home/mnw21/flymine.properties"));
+                //System.setProperties(props);
+
+                ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+                PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
+                DescriptorRepository dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
+                if (args.length == 1) {
+                    runQuery(args[0], dr, os);
+                } else {
+                    doShell(dr, os);
+                }
+            } catch (Exception e) {
+                out.println("Exception caught: " + e);
+                e.printStackTrace(out);
+            }
+        }
+    }
+
+    private static void doShell(DescriptorRepository dr, ObjectStore os) throws Exception {
+        PrintStream out = System.out;
+        try {
+            Readline.load(ReadlineLibrary.GnuReadline);
+        } catch (UnsatisfiedLinkError ignore_me) {
+            out.println("couldn't load readline lib. Using simple stdin.");
+        }
+        Readline.initReadline("FQLShell");
+        try {
+            Readline.readHistoryFile(System.getProperty("user.home") + File.separator
+                    + ".fqlshell_history");
+        } catch (RuntimeException e) {
+            // Doesn't matter.
+        }
+        Readline.setCompleter(new ReadlineCompleter() {
+            public String completer(String text, int state) {
+                return null;
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                    Readline.writeHistoryFile(System.getProperty("user.home") + File.separator
+                        + ".fqlshell_history");
+                } catch (Exception e) {
+                    // Don't mind
+                }
+                PrintStream out = System.out;
+                out.println("\n");
+                Readline.cleanup();
+            }
+        });
+
+        out.println("\nFlymine Query shell. Type in an FQL query, or \"quit;\" to exit.");
+        out.println("End your query with \";\" then a newline. Other newlines are ignored");
+        out.flush();
+        String currentQuery = "";
+        String lastQuery = Readline.getHistoryLine(Readline.getHistorySize() - 1);
+        //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        do {
+            //currentQuery += in.readLine();
+            String line = Readline.readline(currentQuery.equals("") ? "> " : "", false);
+            currentQuery += (line == null ? "" : line);
+            if (!(currentQuery.equals("") || currentQuery.equals("quit;"))) {
+                if (currentQuery.endsWith(";")) {
+                    if (!currentQuery.equals(lastQuery)) {
+                        Readline.addToHistory(currentQuery);
+                        lastQuery = currentQuery;
+                    }
+                    currentQuery = currentQuery.substring(0, currentQuery.length() - 1);
+                    try {
+                        runQuery(currentQuery, dr, os);
+                    } catch (Exception e) {
+                        e.printStackTrace(out);
+                    }
+                    currentQuery = "";
+                } else {
+                    currentQuery += "\n";
+                }
+            }
+        } while (!"quit;".equals(currentQuery));
+    }
+
+    private static void runQuery(String fql, DescriptorRepository dr, ObjectStore os)
+            throws Exception {
         java.util.Date startTime = new java.util.Date();
         PrintStream out = System.out;
 
-        InputStream is = new ByteArrayInputStream(args[0].getBytes());
+        InputStream is = new ByteArrayInputStream(fql.getBytes());
         FqlLexer lexer = new FqlLexer(is);
         FqlParser parser = new FqlParser(lexer);
         parser.start_rule();
@@ -473,8 +568,8 @@ public class Query implements FromElement
 
         antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
 
-        out.println("\n==> Dump of AST <==");
-        visitor.visit(ast);
+        //out.println("\n==> Dump of AST <==");
+        //visitor.visit(ast);
 
         //ASTFrame frame = new ASTFrame("AST JTree Example", ast);
         //frame.setVisible(true);
@@ -484,25 +579,38 @@ public class Query implements FromElement
         q.processFqlStatementAST(ast);
 
         out.println("\nQuery: " + q.toString());
-        out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
-                    - startTime.getTime()) + " milliseconds.");
+        //out.println("\nTime taken so far: " + ((new java.util.Date()).getTime()
+        //            - startTime.getTime()) + " milliseconds.");
 
-        try {
-            //Properties props = new Properties();
-            //props.load(new FileInputStream("/home/mnw21/flymine.properties"));
-            //System.setProperties(props);
-
-            ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-            PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
-            DescriptorRepository dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
-            FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr);
-            out.println("\nSQL query: " + s1.getStatement());
-        } catch (Exception e) {
-            out.println("Exception caught: " + e);
-            e.printStackTrace(out);
+        FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr);
+        out.println("\nSQL query: " + s1.getStatement());
+        
+        Results res = os.execute(q);
+        out.print("Column headings: ");
+        outputList(res.getColumnAliases());
+        out.print("Column types: ");
+        outputList(res.getColumnTypes());
+        Iterator rowIter = res.iterator();
+        while (rowIter.hasNext()) {
+            outputList((List) (rowIter.next()));
         }
     }
 
+    private static void outputList(List l) {
+        PrintStream out = System.out;
+        boolean needComma = false;
+        Iterator iter = l.iterator();
+        while (iter.hasNext()) {
+            Object o = iter.next();
+            if (needComma) {
+                out.print(", ");
+            }
+            needComma = true;
+            out.print(o.toString());
+        }
+        out.println("");
+    }
+    
     /**
      * Construct a new query by parsing a String.
      *
