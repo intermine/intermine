@@ -58,7 +58,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
- public void testTranslate() throws Exception {
+    public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
         FileWriter writerSrc = new FileWriter(new File("src_items.xml"));
         writerSrc.write(FullRenderer.render(srcItems));
@@ -81,6 +81,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     public void testCreateAuthors() {
+
         Item srcItem = createItem(ns + "BibliographicReference", "0_0", "");
         srcItem.addAttribute(new Attribute("authors", " William Whitfield; FlyChip Facility"));
 
@@ -156,8 +157,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     //test translate from PhysicalArrayDesign to MicroArraySlideDesign
     //which includes 3 methods, createFeatureMap, padDescriptions, and changeRefToAttr
     public void testTranslateMASD() throws Exception {
-        // set up items
-        // PhysicalArrayDesign 1_1
         Item srcItem1=createItem(ns + "PhysicalArrayDesign", "1_1", "");
         srcItem1.addCollection(new ReferenceList("descriptions", new ArrayList(Arrays.asList(new Object[] {"1_2", "2_2"} ))));
         srcItem1.addReference(new Reference("surfaceType","1_11"));
@@ -241,7 +240,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item srcItem= createItem(ns+"DerivedBioAssay", "57_709", "");
         srcItem.addCollection(new ReferenceList("derivedBioAssayData", new ArrayList(Arrays.asList(new Object[]{"58_710"}))));
 
-        Item srcItem1= createItem(ns+"MeasuredBioAssayData", "58_710", "");
+        Item srcItem1= createItem(ns+"DerivedBioAssayData", "58_710", "");
         srcItem1.addReference(new Reference("bioDataValues", "58_739"));
 
         Item srcItem2= createItem(ns+"BioDataTuples", "58_739", "");
@@ -273,8 +272,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem2.addAttribute(new Attribute("isBackground", "false"));
         srcItem2.addReference(new Reference("scale", "1_611"));
 
+        Item srcItem3= createItem(ns+"OntologyEntry", "1_611", "");
+        srcItem3.addAttribute(new Attribute("value", "linear_scale"));
 
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2}));
+
+        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3}));
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
@@ -282,12 +284,97 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expectedItem = createItem(tgtNs+"MicroArrayExperimentalResult", "58_762", "");
         expectedItem.addAttribute(new Attribute("normalised","true"));
         expectedItem.addAttribute(new Attribute("type","Signal st dev Cy3"));
-        expectedItem.addAttribute(new Attribute("scale","1_611"));
+        expectedItem.addAttribute(new Attribute("scale","linear_scale"));
         expectedItem.addAttribute(new Attribute("isBackground","false"));
 
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
 
         assertEquals(expected, translator.translateItem(srcItem));
+    }
+
+    public void testBioEntity() throws Exception {
+        Item srcItem= createItem(ns+"BioSequence", "0_11", "");
+        srcItem.addReference(new Reference("type","1_13"));
+        srcItem.addCollection(new ReferenceList("sequenceDatabases",
+                   new ArrayList(Arrays.asList(new Object[]{"2_14", "2_15", "2_16", "2_17"}))));
+
+        Item srcItem1= createItem(ns+"OntologyEntry", "1_13", "");
+        srcItem1.addAttribute(new Attribute("value", "cDNA_clone"));
+
+        Item srcItem2= createItem(ns+"DatabaseEntry", "2_14", "");
+        srcItem2.addAttribute(new Attribute("accession", "FBgn0010173"));
+        srcItem2.addReference(new Reference("database", "3_7"));
+
+        Item srcItem3= createItem(ns+"DatabaseEntry", "2_15", "");
+        srcItem3.addAttribute(new Attribute("accession", "AY069331"));
+        srcItem3.addReference(new Reference("database", "3_9"));
+
+        Item srcItem4= createItem(ns+"DatabaseEntry", "2_16", "");
+        srcItem4.addAttribute(new Attribute("accession", "AA201663"));
+        srcItem4.addReference(new Reference("database", "3_9"));
+
+        Item srcItem5= createItem(ns+"DatabaseEntry", "2_17", "");
+        srcItem5.addAttribute(new Attribute("accession", "AW941561"));
+        srcItem5.addReference(new Reference("database", "3_9"));
+
+        Item srcItem6= createItem(ns+"Database", "3_7", "");
+        srcItem6.addAttribute(new Attribute("name", "flybase"));
+
+        Item srcItem7= createItem(ns+"Database", "3_9", "");
+        srcItem7.addAttribute(new Attribute("name", "embl"));
+
+        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3, srcItem4, srcItem5, srcItem6, srcItem7 }));
+        Map srcMap = writeItems(src);
+
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
+
+        Item expectedItem = createItem(tgtNs+"CDNAClone", "0_11", "");
+        expectedItem.addAttribute(new Attribute("identifier","AY069331"));
+        expectedItem.addCollection(new ReferenceList("synonyms", new ArrayList(Arrays.asList(new Object[]{"2_15", "2_16", "2_17"}))));
+
+        Item expectedItem1 = createItem(tgtNs+"Gene", "-1_1", "");
+        expectedItem1.addAttribute(new Attribute("organismDbId", "FBgn0010173"));
+        expectedItem1.addCollection(new ReferenceList("synonyms", new ArrayList(Arrays.asList(new Object[]{"3_7"}))));
+
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
+        assertEquals(expected, translator.translateItem(srcItem));
+
+    }
+
+
+    public void testBioEntity2MAER() throws Exception {
+
+        Item srcItem= createItem(ns+"Reporter", "12_45", "");
+        srcItem.addCollection(new ReferenceList("featureReporterMaps",
+                   new ArrayList(Arrays.asList(new Object[]{"7_41"}))));
+        srcItem.addCollection(new ReferenceList("immobilizedCharacteristics",
+                   new ArrayList(Arrays.asList(new Object[]{"0_3"}))));
+
+        Item srcItem1= createItem(ns+"FeatureReporterMap", "7_41", "");
+        srcItem1.addCollection(new ReferenceList("featureInformationSources",
+                   new ArrayList(Arrays.asList(new Object[]{"8_42"}))));
+
+        Item srcItem2= createItem(ns+"FeatureInformation", "8_42", "");
+        srcItem2.addReference(new Reference("feature", "9_43"));
+
+        Item srcItem3= createItem(ns+"BioSequence", "0_3", "");
+        srcItem2.addReference(new Reference("type", "1_5"));
+
+        Item srcItem4 =createItem(ns+"OntologyEntry", "1_5", "");
+        srcItem4.addAttribute(new Attribute("value", "cDNA_clone"));
+
+        Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem, srcItem1, srcItem2, srcItem3, srcItem4}));
+        Map itemMap = writeItems(srcItems);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
+                                                              getOwlModel(), tgtNs);
+
+        Item tgtItem = createItem(tgtNs+"cDNAClone", "0_3", "");
+
+        Map expected = new HashMap();
+        expected.put("0_3", "9_43 ");
+        translator.setBioEntity2FeatureMap(srcItem,tgtItem);
+        assertEquals(expected, translator.bioEntity2Feature);
+
     }
 
     protected Collection getSrcItems() throws Exception {
@@ -307,16 +394,24 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     protected Collection getExpectedItems() throws Exception {
-        //return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/MageDataTranslatorFunctionalTest_tgt.xml"));
-        return null;
-    }
+        Collection srcItems = getSrcItems();
+        Map itemMap = writeItems(srcItems);
+        DataTranslator translator = new MageDataTranslator(new MockItemReader(itemMap),
+                                                           getOwlModel(), tgtNs);
 
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        return tgtIw.getItems();
+
+    }
 
     protected OntModel getOwlModel() {
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
 
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(reader, null, "N3");
+
         return ont;
     }
 
