@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- begin.jsp -->
 
@@ -45,15 +46,15 @@
     
       <fmt:message key="begin.list.all.classes"/>
       <html:link action="/classChooser">
-        <img class="arrow" src="images/right-arrow.png" alt="->"/>
+        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
       </html:link><br/>
       <fmt:message key="begin.browse.model"/>
       <html:link action="/tree">
-        <img class="arrow" src="images/right-arrow.png" alt="->"/>
+        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
       </html:link><br/>
       <fmt:message key="begin.upload.identifiers"/>
       <html:link action="/bagBuild">
-        <img class="arrow" src="images/right-arrow.png" alt="->"/>
+        <img border="0" class="arrow" src="images/right-arrow.png" alt="->"/>
       </html:link><br/>
     </td>
   </tr>
@@ -62,7 +63,7 @@
 <%-- /Build a query --%>
 
 <c:if test="${!empty WEB_PROPERTIES['begin.browse.template']}">
-  <p/>
+  <p>
 
   <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
 
@@ -83,9 +84,8 @@
           <fmt:message key="begin.input.browse"/>
           <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
           <!-- tell action to skip query builder -->
-          <html:hidden property="skipBuilder" value="1"/>
           <html:text property="attributeValues(1)"/>
-          <html:submit><fmt:message key="begin.input.submit"/></html:submit>
+          <html:submit property="skipBuilder"><fmt:message key="begin.input.submit"/></html:submit>
           <br/>
           <span class="smallnote">${WEB_PROPERTIES["begin.browse.prompt"]}</span>
         </html:form>
@@ -97,42 +97,26 @@
 </c:if>
 
 
-<p/>
+<p>
 
-<%-- Templates --%>
+<tiles:insert attribute="globaltemplates">
+  <tiles:put name="templates" beanName="GLOBAL_TEMPLATE_QUERIES" beanScope="application"/>
+  <tiles:put name="headingKey" value="begin.heading.templates"/>
+  <tiles:put name="templateType" value="global"/>
+  <tiles:put name="showDelete" value="0"/>
+</tiles:insert>
 
-<table class="box" cellspacing="0" cellpadding="6" border="0" width="100%" align="center">
-  <tr>
-    <th align="left" class="title"><fmt:message key="begin.heading.templates"/></th>
-    <th align="right" class="help">
-      [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html">
-        <fmt:message key="begin.link.help"/>
-      </html:link>]
-    </th>
-  </tr>
-  <tr>
-    <td colspan="2" valign="top">
-      
-      <c:forEach items="${TEMPLATE_QUERIES}" var="templateQuery" end="10">
-        <c:out value="${templateQuery.value.cleanDescription}"/>
-        <html:link action="/template?name=${templateQuery.key}">
-          <img class="arrow" src="images/right-arrow.png" alt="->"/>
-        </html:link>
-        <br/>
-      </c:forEach>
-      <br/>
-      <span class="smallnote">
-        <fmt:message key="begin.or"/> <html:link action="/templates"><fmt:message key="begin.templates.view.all"/></html:link>
-      </span>
-      
-    </td>
-  </tr>
-</table>
+<p>
 
-<%-- /Templates --%>
+<c:set var="userTemplates" value="${PROFILE.savedTemplates}"/>
+<tiles:insert attribute="usertemplates">
+  <tiles:put name="templates" beanName="userTemplates"/>
+  <tiles:put name="headingKey" value="begin.heading.mytemplates"/>
+  <tiles:put name="templateType" value="user"/>
+  <tiles:put name="showDelete" value="1"/>
+</tiles:insert>
 
-<p/>
-
+<p>
 
 
 <!-- /begin.jsp -->
