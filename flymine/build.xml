@@ -1648,7 +1648,8 @@
     </ant>
   </target>
 
-  <target name="create-indexes-production" depends="prepare-build-model, compile-genomic-model">
+  <target name="create-indexes-production" 
+          depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1658,7 +1659,7 @@
   </target>
 
   <target name="create-indexes-production-attribute" 
-          depends="prepare-build-model, compile-genomic-model">
+          depends="prepare-build-model, compile-genomic-model-from-db">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2142,7 +2143,7 @@
 
     <read-fasta className="Chromosome" organismAbbreviation="DM" alias="osw.production">
       <fileset dir="${flybase.chado.fasta}">
-        <include name="dmel-4-chromosome-*.fasta"/>
+        <include name="dmel-all-chromosome-*.fasta"/>
       </fileset>
     </read-fasta>
   </target>
