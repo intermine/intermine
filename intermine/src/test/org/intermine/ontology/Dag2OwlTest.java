@@ -40,7 +40,7 @@ public class Dag2OwlTest extends TestCase{
         DagTerm a = new DagTerm("SO:42", "");
         DagTerm b = new DagTerm("SO:56", "");
         Dag2Owl owler = new  Dag2Owl(namespace);
-        assertEquals(namespace + "#SO_42$SO_56", owler.generatePropertyName(a, b));
+        assertEquals(namespace + "#SO_42_SO_56", owler.generatePropertyName(a, b));
     }
 
     public void testProcessSimple() {

@@ -157,7 +157,8 @@ public class FlyMineTorqueModelOutput extends ModelOutput
             .append("\" type=\"")
             .append(generateJdbcType(type))
             .append("\"")
-            .append((isPrimaryKey || ("id".equals(name))) ? " required=\"true\" primaryKey=\"true\"" : "")
+            .append((isPrimaryKey
+                     || ("id".equals(name))) ? " required=\"true\" primaryKey=\"true\"" : "")
             .append("/>" + ENDL);
         return sb.toString();
     }

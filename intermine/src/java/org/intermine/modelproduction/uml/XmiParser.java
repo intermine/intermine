@@ -90,7 +90,7 @@ public class XmiParser implements ModelParser
      */
     public Model process(Reader reader) throws Exception {
         recurse(new XMIReader().parse(new InputSource(reader)));
-        return new Model(modelName, classes);
+        return new Model(modelName, "http://www.flymine.org/model/" + modelName, classes);
     }
 
     /**

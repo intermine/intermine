@@ -135,7 +135,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         SqlGenerator.queryEvaluableToString(buffer, e4, null);
         assertEquals("(5 + 7)(5 - 7)(5 * 7)(5 / 7)", buffer.toString());
     }
-    
+
     public void testSelectQuerySubstringExpression() throws Exception {
         QueryValue v1 = new QueryValue("Hello");
         QueryValue v2 = new QueryValue(new Integer(3));
@@ -181,7 +181,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         q.addFrom(c1);
         q.addToSelect(c1);
         try {
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new Model("nothing", new HashSet()));
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new Model("nothing", "http://www.flymine.org/model/testmodel",
+                                                                     new HashSet()));
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }

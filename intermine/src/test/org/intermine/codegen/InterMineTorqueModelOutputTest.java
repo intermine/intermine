@@ -35,13 +35,14 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     private Model model;
     private File file;
     private FlyMineTorqueModelOutput mo;
+    private String uri = "http://www.flymine.org/model/testmodel";
 
     public FlyMineTorqueModelOutputTest(String name) {
         super(name);
     }
 
     public void setUp() throws Exception {
-        model = new Model("model", new HashSet());
+        model = new Model("model", uri, new HashSet());
         file = new File("temp.xml");
         mo = new FlyMineTorqueModelOutput(model, file);
     }
@@ -49,7 +50,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     public void testProcess() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         File path = new File("./");
         FlyMineTorqueModelOutput mo = new FlyMineTorqueModelOutput(model, path);
@@ -98,7 +99,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
     public void testGenerateModel() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>" + ENDL
             + "<!DOCTYPE database SYSTEM \""
@@ -123,7 +124,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
 
     public void testGenerateClassDescriptorClass() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "<table name=\"Class1\">" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
@@ -135,7 +136,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
 
    public void testGenerateClassDescriptorIsInterface() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "<table name=\"Interface1\">" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
@@ -158,7 +159,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
 
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, refs, cols);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "<table name=\"Class1\">" + ENDL
             + INDENT + INDENT + "<column name=\"OBJECT\" type=\"LONGVARCHAR\"/>" + ENDL
@@ -197,7 +198,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
 
         ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", false, new HashSet(), new HashSet(), new HashSet());
 
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
 
         String expected = INDENT + "<table name=\"Class2\">" + ENDL

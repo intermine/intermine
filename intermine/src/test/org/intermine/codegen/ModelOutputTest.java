@@ -29,7 +29,7 @@ public class ModelOutputTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        Model model = new Model("model", new HashSet());
+        Model model = new Model("model", "http://www.flymine.org/model/testmodel", new HashSet());
         file =  File.createTempFile("dummy", "tmp");
         mo = new TestModelOutput(model, file);
     }

@@ -28,6 +28,7 @@ import org.flymine.metadata.CollectionDescriptor;
 public class DatabaseUtilTest extends TestCase
 {
     private Connection con;
+    private String uri = "http://www.flymine.org/model/testmodel";
 
     public DatabaseUtilTest(String arg1) {
         super(arg1);
@@ -88,7 +89,7 @@ public class DatabaseUtilTest extends TestCase
     public void testGetTableNameOne() throws Exception {
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
 
-        Model model1 = new Model("test1", new HashSet(Arrays.asList(new Object[] {cld})));
+        Model model1 = new Model("test1", uri, new HashSet(Arrays.asList(new Object[] {cld})));
 
         assertEquals("Class1", DatabaseUtil.getTableName(cld));
     }
@@ -109,7 +110,7 @@ public class DatabaseUtilTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), refs, new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("test", clds);
+        Model model = new Model("test", uri, clds);
 
         try {
             DatabaseUtil.getIndirectionTableName(col1);
@@ -126,7 +127,7 @@ public class DatabaseUtilTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("test", clds);
+        Model model = new Model("test", uri, clds);
 
         assertEquals("Class1Col1", DatabaseUtil.getIndirectionTableName(col1));
         assertEquals("Col1", DatabaseUtil.getInwardIndirectionColumnName(col1));
@@ -143,7 +144,7 @@ public class DatabaseUtilTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), cols);
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("test", clds);
+        Model model = new Model("test", uri, clds);
 
         assertEquals("Col1Col2", DatabaseUtil.getIndirectionTableName(col1));
         assertEquals("Col1", DatabaseUtil.getInwardIndirectionColumnName(col1));
@@ -158,7 +159,7 @@ public class DatabaseUtilTest extends TestCase
         assertEquals("complete", DatabaseUtil.generateSqlCompatibleName("full"));
         assertEquals("offst", DatabaseUtil.generateSqlCompatibleName("offset"));
         assertEquals("some_string", DatabaseUtil.generateSqlCompatibleName("some_string"));
-        
+
         try {
             DatabaseUtil.generateSqlCompatibleName(null);
             fail("Expected NullPointerException");

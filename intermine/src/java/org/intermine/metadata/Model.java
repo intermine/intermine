@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
@@ -36,6 +38,7 @@ public class Model
     private static Map models = new HashMap();
 
     private final String name;
+    private final URI nameSpace;
     private final Map cldMap = new LinkedHashMap();
     private final Map subMap = new LinkedHashMap();
 
@@ -69,23 +72,34 @@ public class Model
      * Construct a Model with a name and set of ClassDescriptors.  The model will be
      * set to this in each of the ClassDescriptors. NB This method should only be called
      * by members of the modelproduction package, eventually it may be replaced with
-     * a static addModel method linked to getInstanceByName
+     * a static addModel method linked to getInstanceByName.
      * @param name name of model
+     * @param nameSpace the nameSpace uri for this model
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
+     * @throws URISyntaxException if nameSpace string is invalid
      */
-    public Model(String name, Set clds) throws MetaDataException {
+    public Model(String name, String nameSpace, Set clds) throws MetaDataException,
+                                                                 URISyntaxException  {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
         if (name.equals("")) {
             throw new IllegalArgumentException("Model name cannot be empty");
         }
+        if (nameSpace == null) {
+            throw new NullPointerException("Model nameSpace cannot be null");
+        }
+        if (nameSpace.equals("")) {
+            throw new IllegalArgumentException("Model nameSpace cannot be empty");
+        }
         if (clds == null) {
             throw new NullPointerException("Model ClassDescriptors list cannot be null");
         }
 
-        this.name = name;  // TODO: check for valid package name??
+        this.name = name;
+
+        this.nameSpace = new URI(nameSpace);
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
 
         ClassDescriptor flymineBusinessObject = new ClassDescriptor(
@@ -93,7 +107,7 @@ public class Model
                 Collections.singleton(new AttributeDescriptor("id", false, "java.lang.Integer")),
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
         orderedClds.add(flymineBusinessObject);
-        
+
         Iterator cldIter = orderedClds.iterator();
         // 1. Put all ClassDescriptors in model.
         while (cldIter.hasNext()) {
@@ -182,6 +196,14 @@ public class Model
     }
 
     /**
+     * Get the nameSpace URI of this model
+     * @return nameSpace URI of the model
+     */
+    public URI getNameSpace() {
+        return this.nameSpace;
+    }
+
+    /**
      * @see Object#equals
      */
     public boolean equals(Object obj) {
@@ -206,7 +228,7 @@ public class Model
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + name + "\">");
+        sb.append("<model name=\"" + name + "\" namespace=\"" + nameSpace + "\">");
         for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             if (!"org.flymine.model.FlyMineBusinessObject".equals(cld.getName())) {

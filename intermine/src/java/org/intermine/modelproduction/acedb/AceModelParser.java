@@ -74,7 +74,8 @@ public class AceModelParser implements ModelParser
             ModelNode c = (ModelNode) classIter.next();
             classDescriptors.add(nodeClassToDescriptor(c));
         }
-        return new Model(modelName, classDescriptors);
+        return new Model(modelName, "http://www.flymine.org/model/" + modelName,
+                         classDescriptors);
     }
 
     /**

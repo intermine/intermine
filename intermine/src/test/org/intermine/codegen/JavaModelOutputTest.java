@@ -27,21 +27,21 @@ public class JavaModelOutputTest extends TestCase
     private Model model;
     private File file;
     private JavaModelOutput mo;
-
+    private String uri = "http://www.flymine.org/model/testmodel";
 
     public JavaModelOutputTest(String name) {
         super(name);
     }
 
     public void setUp() throws Exception {
-        model = new Model("model", new HashSet());
+        model = new Model("model", uri, new HashSet());
         file = new File("temp.xml");
         mo = new JavaModelOutput(model, file);
     }
 
     public void testProcess() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         File path = new File("./");
         JavaModelOutput mo = new JavaModelOutput(model, path);
@@ -83,13 +83,13 @@ public class JavaModelOutputTest extends TestCase
 
     public void testGenerateClassDescriptorIsClass() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1 implements org.flymine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
-            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL 
+            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL + "}";
 
         assertEquals(expected, mo.generate(cld1));
@@ -97,7 +97,7 @@ public class JavaModelOutputTest extends TestCase
 
     public void testGenerateClassDescriptorIsInterface() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public interface Interface1 extends org.flymine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
@@ -109,7 +109,7 @@ public class JavaModelOutputTest extends TestCase
     public void testGenerateClassDescriptorHasSuperclass() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class2 extends package.name.Class1" + ENDL + "{" + ENDL
@@ -121,13 +121,13 @@ public class JavaModelOutputTest extends TestCase
     public void testGenerateClassDescriptorHasSubclasses() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1 implements org.flymine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
-            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL 
+            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + "}";
 
@@ -138,13 +138,13 @@ public class JavaModelOutputTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Interface2", null, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class1", "package.name.Interface1 package.name.Interface2", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1 implements package.name.Interface1, package.name.Interface2" + ENDL + "{" + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
-            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL 
+            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL + "}";
 
         assertEquals(expected, mo.generate(cld3));
@@ -159,7 +159,7 @@ public class JavaModelOutputTest extends TestCase
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, refs, cols);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class1 implements org.flymine.model.FlyMineBusinessObject" + ENDL + "{" + ENDL
@@ -177,7 +177,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
-            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL 
+            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + "}";
 
@@ -188,7 +188,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.lang.String");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "// Attr: Class1.atd1" + ENDL
             + INDENT + "protected java.lang.String atd1;" + ENDL
@@ -203,7 +203,7 @@ public class JavaModelOutputTest extends TestCase
         Set refs = new HashSet(Collections.singleton(rfd1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Ref: Class1.rfd1" + ENDL
             + INDENT + "protected Class2 rfd1;" + ENDL
@@ -218,7 +218,7 @@ public class JavaModelOutputTest extends TestCase
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Col: Class1.cod1" + ENDL
             + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
@@ -233,7 +233,7 @@ public class JavaModelOutputTest extends TestCase
         Set cols = new HashSet(Collections.singleton(cod1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Col: Class1.cod1" + ENDL
             + INDENT + "protected java.util.List cod1 = new java.util.ArrayList();" + ENDL
@@ -247,7 +247,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.lang.String");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "public java.lang.String getAtd1() { return atd1; }" + ENDL
             + INDENT + "public void setAtd1(java.lang.String atd1) { this.atd1 = atd1; }" + ENDL;
@@ -260,7 +260,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.lang.String");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "public boolean equals(Object o) {" + ENDL
             + INDENT + INDENT + "if (!(o instanceof Class1)) return false;" + ENDL
@@ -275,7 +275,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.lang.String");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "public boolean equalsPK(Object o) {" + ENDL
             + INDENT + INDENT + "if (!(o instanceof Class1)) return false;" + ENDL
@@ -290,7 +290,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "int");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "public boolean equalsPK(Object o) {" + ENDL
             + INDENT + INDENT + "if (!(o instanceof Class1)) return false;" + ENDL
@@ -305,7 +305,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "java.lang.String");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT  + "public int hashCode() {" + ENDL
             + INDENT + INDENT + "if (id != null) return id.hashCode();" + ENDL
@@ -320,7 +320,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd2 = new AttributeDescriptor("atd2", true, "int");
         Set atts = new LinkedHashSet(Arrays.asList(new Object[] { atd1, atd2}));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT  + "public int hashCode() {" + ENDL
             + INDENT + INDENT + "if (id != null) return id.hashCode();" + ENDL
@@ -334,7 +334,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "boolean");
         Set atts = new HashSet(Collections.singleton(atd1));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT  + "public int hashCode() {" + ENDL
             + INDENT + INDENT + "if (id != null) return id.hashCode();" + ENDL
@@ -350,7 +350,7 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd2 = new AttributeDescriptor("atd2", true, "int");
         Set atts = new LinkedHashSet(Arrays.asList(new Object[] {atd1, atd2}));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
-        Model model = new Model("model", new LinkedHashSet(Collections.singleton(cld1)));
+        Model model = new Model("model", uri, new LinkedHashSet(Collections.singleton(cld1)));
 
         String expected = INDENT + "public String toString() { return \"Class1 [\"+id+\"] \"+atd1+\", \"+atd2; }" + ENDL;
 
@@ -370,7 +370,7 @@ public class JavaModelOutputTest extends TestCase
         Set cols = new HashSet(Arrays.asList(new Object[] {cod1, cod2}));
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, cols);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         assertEquals("Class2", mo.getType(rfd1));
         assertEquals("java.util.List", mo.getType(cod1));
@@ -385,7 +385,7 @@ public class JavaModelOutputTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, atds1, new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
         String expected = "package package.name;" + ENDL + ENDL
             + "public class Class3 implements package.name.Class1, package.name.Class2" + ENDL + "{" + ENDL
@@ -395,7 +395,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setAtd1(int atd1) { this.atd1 = atd1; }" + ENDL + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
-            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL 
+            + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + "}";
 

@@ -34,6 +34,7 @@ public class AceModelParserFunctionalTest extends TestCase
     private ModelParser parser;
     private Reader reader;
     private Model model;
+    private String uri = "http://www.flymine.org/model/testmodel";
 
     public AceModelParserFunctionalTest(String arg) {
         super(arg);
@@ -68,6 +69,6 @@ public class AceModelParserFunctionalTest extends TestCase
         Set clds = new LinkedHashSet();
         ((AceModelParser) parser).addBuiltinClasses(clds);
         clds.add(new ClassDescriptor(PKG + "AceTestObject", null, false, atts, refs, cols));
-        return new Model(MODEL, clds);
+        return new Model(MODEL, uri, clds);
     }
 }

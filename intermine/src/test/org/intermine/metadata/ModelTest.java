@@ -22,6 +22,7 @@ import java.util.Set;
 public class ModelTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
+    private String uri = "http://www.flymine.org/model/testmodel";
 
     public ModelTest(String arg) {
         super(arg);
@@ -47,20 +48,31 @@ public class ModelTest extends TestCase
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
 
         try {
-            Model model = new Model(null, clds);
+            Model model = new Model(null, uri, clds);
             fail("Expected NullPointerException, name was null");
         } catch(NullPointerException e) {
         }
 
         try {
-            Model model = new Model("", clds);
+            Model model = new Model("", uri, clds);
             fail("Expected IllegalArgumentException, name was empty string");
         } catch(IllegalArgumentException e) {
         }
 
         try {
-            Model model = new Model("model", null);
+            Model model = new Model("model", uri, null);
             fail("Expected NullPointerException, name was null");
+        } catch(NullPointerException e) {
+        }
+        try {
+            Model model = new Model("testmodel", "", clds);
+            fail("Expected IllegalArgumentException, nameSpace was empty string");
+        } catch(IllegalArgumentException e) {
+        }
+
+        try {
+            Model model = new Model("testmodel", null, clds);
+            fail("Expected NullPointerException, nameSpace was null");
         } catch(NullPointerException e) {
         }
     }
@@ -69,7 +81,7 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", uri, clds);
 
         assertEquals(cld1, model.getClassDescriptorByName("Class1"));
         assertEquals(cld2, model.getClassDescriptorByName("Class2"));
@@ -79,16 +91,16 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", uri, clds);
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));
     }
-      
+
     public void testEquals() throws Exception {
-        Model m1 = new Model("flibble", EMPTY_SET);
-        Model m2 = new Model("flibble", EMPTY_SET);
-        Model m3 = new Model("flobble", EMPTY_SET);
-        Model m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
+        Model m1 = new Model("flibble", uri, EMPTY_SET);
+        Model m2 = new Model("flibble", uri, EMPTY_SET);
+        Model m3 = new Model("flobble", uri, EMPTY_SET);
+        Model m4 = new Model("flibble", uri, Collections.singleton(new ClassDescriptor("class1", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
 
         assertEquals(m1, m2);
         assertEquals(m1.hashCode(), m2.hashCode());
@@ -101,9 +113,9 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", uri, clds);
 
-        String expected = "<model name=\"model\">"
+        String expected = "<model name=\"model\" namespace=\"http://www.flymine.org/model/testmodel\">"
             + "<class name=\"Class1\" is-interface=\"false\"></class>"
             + "<class name=\"Class2\" is-interface=\"false\"></class>"
             + "</model>";
