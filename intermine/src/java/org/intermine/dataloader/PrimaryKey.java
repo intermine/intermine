@@ -11,6 +11,7 @@ package org.intermine.dataloader;
  */
 
 import java.util.Set;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
@@ -63,5 +64,22 @@ public class PrimaryKey
      */
     public int hashCode() {
         return fieldNames.hashCode();
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<fields=\"");
+        for (Iterator iter = getFieldNames().iterator(); iter.hasNext();) {
+            sb.append(iter.next());
+            if (iter.hasNext()) {
+                sb.append(",");
+            }
+        }
+        sb.append("\">");
+
+        return sb.toString();
     }
 }
