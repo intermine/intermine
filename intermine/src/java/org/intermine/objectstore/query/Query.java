@@ -1063,8 +1063,8 @@ public class Query implements FromElement
             } else if (!isSet) {
                 Constraint temp2 = retval;
                 retval = new ConstraintSet(andOr);
-                ((ConstraintSet) retval).addConstraint(temp);
                 ((ConstraintSet) retval).addConstraint(temp2);
+                ((ConstraintSet) retval).addConstraint(temp);
                 isSet = true;
             } else {
                 ((ConstraintSet) retval).addConstraint(temp);
