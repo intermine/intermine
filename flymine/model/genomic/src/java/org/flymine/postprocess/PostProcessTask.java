@@ -62,6 +62,7 @@ public class PostProcessTask extends Task
                 CreateReferences cr = new CreateReferences(osw);
                 cr.insertReferences();
             }
+            osw.close();
         } catch (Exception e) {
             e.printStackTrace(System.out);
             throw new BuildException(e);
