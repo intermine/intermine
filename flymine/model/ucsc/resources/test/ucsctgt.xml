@@ -67,9 +67,9 @@
 <reference ref_id="1_2"/>
 </collection>
 <collection name="factors">
-<reference ref_id="1_6"/>
-<reference ref_id="1_9"/>
-<reference ref_id="1_12"/>
+<reference ref_id="1_5"/>
+<reference ref_id="1_8"/>
+<reference ref_id="1_11"/>
 </collection>
 </item>
 <item id="0_10" class="http://www.flymine.org/model/genomic#Synonym">
@@ -110,55 +110,58 @@
 <reference name="source" ref_id="1_4"/>
 <reference name="subject" ref_id="0_9"/>
 </item>
-<item id="1_6" class="http://www.flymine.org/model/genomic#Protein">
+<item id="1_5" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="primaryAccession" value="P14859"/>
 <reference name="organism" ref_id="0_0"/>
 <collection name="evidence">
-<reference ref_id="1_7"/>
+<reference ref_id="1_6"/>
 </collection>
 </item>
-<item id="1_5" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="transfacAccession"/>
-<attribute name="value" value="P14859"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="1_6"/>
-</item>
-<item id="1_9" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="primaryAccession" value="P31503"/>
-<reference name="organism" ref_id="1_10"/>
-<collection name="evidence">
-<reference ref_id="1_7"/>
-</collection>
-</item>
-<item id="1_8" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="transfacAccession"/>
-<attribute name="value" value="P31503"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="1_9"/>
-</item>
-<item id="1_12" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="primaryAccession" value="P25425"/>
-<reference name="organism" ref_id="1_13"/>
-<collection name="evidence">
-<reference ref_id="1_7"/>
-</collection>
-</item>
-<item id="1_11" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="transfacAccession"/>
-<attribute name="value" value="P25425"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="1_12"/>
-</item>
-<item id="1_7" class="http://www.flymine.org/model/genomic#InfoSource">
+<item id="1_6" class="http://www.flymine.org/model/genomic#InfoSource">
 <attribute name="title" value="UniProt"/>
 </item>
+
+<item id="1_7" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="transfacAccession"/>
+<attribute name="value" value="P14859"/>
+<reference name="source" ref_id="1_6"/>
+<reference name="subject" ref_id="1_5"/>
+</item>
+
+<item id="1_8" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="primaryAccession" value="P31503"/>
+<reference name="organism" ref_id="1_9"/>
+<collection name="evidence">
+<reference ref_id="1_6"/>
+</collection>
+</item>
+<item id="1_10" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="transfacAccession"/>
+<attribute name="value" value="P31503"/>
+<reference name="source" ref_id="1_6"/>
+<reference name="subject" ref_id="1_8"/>
+</item>
+<item id="1_11" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="primaryAccession" value="P25425"/>
+<reference name="organism" ref_id="1_12"/>
+<collection name="evidence">
+<reference ref_id="1_6"/>
+</collection>
+</item>
+<item id="1_13" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="transfacAccession"/>
+<attribute name="value" value="P25425"/>
+<reference name="source" ref_id="1_6"/>
+<reference name="subject" ref_id="1_11"/>
+</item>
+
 <item id="1_4" class="http://www.flymine.org/model/genomic#InfoSource">
 <attribute name="title" value="transfac"/>
 </item>
-<item id="1_10" class="http://www.flymine.org/model/genomic#Organism">
+<item id="1_9" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="abbreviation" value="RN"/>
 </item>
-<item id="1_13" class="http://www.flymine.org/model/genomic#Organism">
+<item id="1_12" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="abbreviation" value="MM"/>
 </item>
 
@@ -173,7 +176,7 @@
 <reference ref_id="1_14"/>
 </collection>
 <collection name="factors">
-<reference ref_id="1_17"/>
+<reference ref_id="1_16"/>
 </collection>
 </item>
 <item id="0_15" class="http://www.flymine.org/model/genomic#Synonym">
@@ -214,18 +217,18 @@
 <reference name="source" ref_id="1_4"/>
 <reference name="subject" ref_id="0_14"/>
 </item>
-<item id="1_17" class="http://www.flymine.org/model/genomic#Protein">
+<item id="1_16" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="primaryAccession" value="P20265"/>
 <reference name="organism" ref_id="0_0"/>
 <collection name="evidence">
-<reference ref_id="1_7"/>
+<reference ref_id="1_6"/>
 </collection>
 </item>
-<item id="1_16" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="1_17" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="transfacAccession"/>
 <attribute name="value" value="P20265"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="1_17"/>
+<reference name="source" ref_id="1_6"/>
+<reference name="subject" ref_id="1_16"/>
 </item>
 
 <item id="0_19" class="http://www.flymine.org/model/genomic#Promoter">
@@ -339,6 +342,111 @@
 <collection name="evidence">
 <reference ref_id="0_1"/>
 </collection>
+</item>
+
+
+<item id="0_36" class="http://www.flymine.org/model/genomic#Region">
+<attribute name="identifier" value="ENr231"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_37" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="148471133"/>
+<attribute name="start" value="147971133"/>
+<attribute name="strand" value="0"/>
+<reference name="object" ref_id="0_2"/>
+<reference name="subject" ref_id="0_36"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_38" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="ENr231"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_36"/>
+</item>
+
+<item id="0_39" class="http://www.flymine.org/model/genomic#Region">
+<attribute name="identifier" value="ENr112"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_40" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="52070355"/>
+<attribute name="start" value="51570355"/>
+<attribute name="strand" value="0"/>
+<reference name="object" ref_id="0_28"/>
+<reference name="subject" ref_id="0_39"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_41" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="ENr112"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_39"/>
+</item>
+
+<item id="0_42" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="4"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
+<item id="0_43" class="http://www.flymine.org/model/genomic#Region">
+<attribute name="identifier" value="HMO_Idd3"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_44" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="124517534"/>
+<attribute name="start" value="123020922"/>
+<attribute name="strand" value="0"/>
+<reference name="object" ref_id="0_42"/>
+<reference name="subject" ref_id="0_43"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_45" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="HMO_Idd3"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_43"/>
+</item>
+
+<item id="0_46" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="17"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
+<item id="0_47" class="http://www.flymine.org/model/genomic#Region">
+<attribute name="identifier" value="HMO_Idd4"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_48" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="31817527"/>
+<attribute name="start" value="29520483"/>
+<attribute name="strand" value="0"/>
+<reference name="object" ref_id="0_46"/>
+<reference name="subject" ref_id="0_47"/>
+<collection name="evidence">
+<reference ref_id="0_1"/>
+</collection>
+</item>
+<item id="0_49" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="HMO_Idd4"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="0_47"/>
 </item>
 
 </items>
