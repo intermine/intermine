@@ -26,6 +26,7 @@
       window.location.replace("<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}"/>");
     }
     setTimeout("timedredirect()", ${POLL_REFRESH_SECONDS}*1000 );
+    window.status = '';
   //-->
   </script>
 </body>
