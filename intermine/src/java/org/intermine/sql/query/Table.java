@@ -33,7 +33,16 @@ public class Table extends AbstractTable
     public Table(String name) {
         this(name, null);
     }
-    
+
+    /**
+     * Returns the name of the table
+     *
+     * @return the Table name
+     */
+    public String getName() {
+        return name;
+    }
+
     /**
      * Returns a String representation of this Table object, suitable for forming part of an SQL
      * query.
@@ -53,8 +62,8 @@ public class Table extends AbstractTable
     public boolean equals(Object obj) {
         if (obj instanceof Table) {
             Table objTable = (Table) obj;
-            return name.equals(objTable.name) 
-                   && (((alias == null) && (objTable.alias == null)) 
+            return name.equals(objTable.name)
+                   && (((alias == null) && (objTable.alias == null))
                        || ((alias != null) && (alias.equals(objTable.alias))));
         }
         return false;
