@@ -13,11 +13,13 @@ package org.intermine.web;
 import java.util.List;
 import java.util.Date;
 
+import javax.servlet.ServletContext;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -26,6 +28,8 @@ import org.apache.struts.action.ActionError;
 
 import org.apache.poi.hssf.usermodel.*;
 
+import org.intermine.web.config.WebConfig;
+import org.intermine.web.config.Exporter;
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.Column;
 import org.intermine.util.TextFileUtil;
@@ -37,8 +41,55 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Kim Rutherford
  */
 
-public class ExportAction extends DispatchAction
+public class ExportAction extends Action
 {
+    /** 
+     * Method called to export a PagedTable object.  Uses the type request parameter to choose the
+     * export method.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
+        String type = request.getParameter("type");
+
+        if (type.equals("excel")) {
+            return excel(mapping, form, request, response);
+        } else {
+            if (type.equals("csv")) {
+                return csv(mapping, form, request, response);
+            } else {
+                if (type.equals("tab")) {
+                    return tab(mapping, form, request, response);
+                }
+            }
+        }
+
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+
+        WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+
+        Exporter exporter = (Exporter) wc.getExporters().get(type);
+
+        if (exporter == null) {
+            return mapping.findForward("error");
+        } else {
+            TableExporter tableExporter =
+                (TableExporter) Class.forName(exporter.getClassName()).newInstance();
+
+            return tableExporter.export(mapping, form, request, response);
+        }
+    }
+
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      *
@@ -122,6 +173,7 @@ public class ExportAction extends DispatchAction
 
             wb.write(response.getOutputStream());
         } catch (ObjectStoreException e) {
+            org.intermine.web.LogMe.log("i", e);
             ActionMessages actionMessages = new ActionMessages();
             actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
                                new ActionError("errors.query.objectstoreerror"));
