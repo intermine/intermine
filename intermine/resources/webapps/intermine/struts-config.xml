@@ -100,6 +100,14 @@
       <forward name="results" path="results.page"/>
     </action>
 
+    <!-- Action to chnge the displayed results in some way -->
+    <action    path="/changeResults"
+               type="org.flymine.web.results.ChangeResultsAction"
+               parameter="method">
+      <forward name="runquery" path="/runQuery.do"/>
+      <forward name="results" path="results.page"/>
+    </action>
+
     <action    path="/documentation"
             forward="documentation.page">
     </action>
