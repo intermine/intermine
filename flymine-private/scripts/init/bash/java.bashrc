@@ -19,18 +19,6 @@ prepend PATH $JDK/bin
 prepend MANPATH $JDK/man
 
 
-addjarstopath CLASSPATH $JDBC_HOME
-addjarstopath CLASSPATH /software/noarch/lib/java/
-addjarstopath CLASSPATH /software/noarch/biojava/
-addjarstopath CLASSPATH /software/noarch/jaxb/lib/
-addjarstopath CLASSPATH /software/noarch/mage/
-addjarstopath CLASSPATH /software/noarch/ojb/
-addjarstopath CLASSPATH /software/noarch/junit/
-addjarstopath CLASSPATH /software/noarch/castor/
-#addjarstopath CLASSPATH /usr/share/java/
-
-append CLASSPATH .
-
 # Jikes needs the main java runtime libraries in the CLASSPATH
 append JIKESPATH $JDK/jre/lib/rt.jar
 addjarstopath JIKESPATH $JDK/jre/lib/ext
