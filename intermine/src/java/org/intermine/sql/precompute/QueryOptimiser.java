@@ -179,7 +179,8 @@ public class QueryOptimiser
             }
             BestQuery bestQuery;
             if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE) {
-                bestQuery = new BestQueryExplainerVerbose(explainConnection, context.getTimeLimit());
+                bestQuery = new BestQueryExplainerVerbose(explainConnection,
+                        context.getTimeLimit());
             } else if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE_LIST) {
                 bestQuery = new BestQueryLogger(true);
             } else if (context.getMode() == QueryOptimiserContext.MODE_VERBOSE_SUMMARY) {
