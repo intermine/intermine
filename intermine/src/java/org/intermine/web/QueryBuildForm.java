@@ -56,7 +56,7 @@ public class QueryBuildForm extends ActionForm
     // map from "name" of last button pressed to text of that button
     protected Map buttons = new HashMap();
     // the names of the selected constraints
-    protected String[] selectedConstraints;
+    protected String[] selectedConstraints = new String[0];
 
     /**
      * Set the new class name
@@ -263,7 +263,7 @@ public class QueryBuildForm extends ActionForm
         parsedFieldValues = new HashMap();
         parsedFieldOps = new HashMap();
         newFieldName = null;
-        selectedConstraints = null;
+        selectedConstraints = new String[0];
         buttons = new HashMap();
     }
 
