@@ -36,36 +36,27 @@
     rdfs:domain :BioEntity ;
     rdfs:range :AnalysisResult .
 
+:BioEntity__organism a owl:ObjectProperty ;
+    rdfs:domain :BioEntity ;
+    rdfs:range :Organism .
+
 # ------------ BioProperty represents any property of a BioEntity ------------
 
-# any property applied to a BioEntity attributable to an InfoSource and/or
-# an AnalysisResult
+# any property applied to a BioEntity with associated evidence(s)
 
 :BioProperty a owl:Class ;
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :BioProperty__subject ] ;    
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :BioProperty__source ] ;  
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :BioProperty__analysis ] .
+        owl:onProperty :BioProperty__subject ] .
 
 :BioProperty__subject a owl:ObjectProperty ;
     rdfs:domain :BioProperty ;
     rdfs:range :BioEntity .
 
-:BioProperty__source a owl:ObjectProperty ;
+:BioProperty__evidence a owl:ObjectProperty ;
     rdfs:domain :BioProperty ;
-    rdfs:range :InfoSource .
-
-:BioProperty__analysis a owl:ObjectProperty ;
-    rdfs:domain :BioProperty ;
-    rdfs:range :AnalysisResult .
+    rdfs:range :Evidence .
 
 
 # ------------ Relationships between BioEntity classes -----------
@@ -91,6 +82,10 @@
     rdfs:domain :Relation ;
     rdfs:range :BioEntity .
 
+:Relation__evidence a owl:ObjectProperty;
+    rdfs:domain :Relation ;
+    rdfs:range :Evidence .
+
 # RankedRelation describes an integer order (rank) for objects in subject
 
 :RankedRelation a owl:Class ;
@@ -99,29 +94,6 @@
 :RankedRelation__rank a owl:DatatypeProperty ;
     rdfs:domain :RankedRelation ;
     rdfs:range xsd:integer .
-
-
-# LinkRelation describes any stated link between two BioEntities with analytical
-# evidence (AnalysisResult) and a literature/database source (InfoSource)
-
-:LinkRelation a owl:Class ;
-    rdfs:subClassOf :Relation ; 
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :LinkRelation__source ] ;           
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :LinkRelation__analysis ] .
-
-:LinkRelation__source a owl:ObjectProperty ;
-    rdfs:domain :LinkRelation ;
-    rdfs:range :InfoSource .
-
-:LinkRelation__analysis a owl:ObjectProperty ;
-    rdfs:domain :LinkRelation ;
-    rdfs:range :AnalysisResult .
 
 
 # Location is a relation with start and end positions on another BioEntity
@@ -145,40 +117,12 @@
     rdfs:domain :Location ;
     rdfs:range xsd:boolean .
 
-# ------------- CVTerms applied to BioEntity according to Evidence -----------#
-
-# TODO should CV be another subclass of InfoSource?
-:CV a owl:Class .
-
-:CV__name a owl:DatatypeProperty ;
-    rdfs:domain :CV ;
-    rdfs:range xsd:string .
-
-# A CVTerm can point to many BioEntity objects and has a single CV
-# can have zero or more pieces of Evidence supporting it 
-:CVTerm a owl:Class ; 
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :CVTerm__cv ] .
-
-:CVTerm__cv a owl:ObjectProperty ;
-    rdfs:domain :CVTerm ;
-    rdfs:range :CV .
-
-:CVTerm__term a owl:DatatypeProperty ;
-    rdfs:domain :CVTerm ;
-    rdfs:range xsd:string .
-
-:CVTerm__subject a owl:ObjectProperty ;
-    rdfs:domain :CVTerm ;
-    rdfs:range :BioEntity .
-
-:CVTerm__evidence a owl:ObjectProperty ;
-    rdfs:domain :CVTerm ;
-    rdfs:range :Evidence .
+# ------------- Evidence for properties etc. -----------#
 
 :Evidence a owl:Class .
+
+:Evidence__relation a owl:ObjectProperty ;
+    owl:inverseOf :Relation__evidence .
 
 
 # ------------ Synonyms link a BioEntity with name/id from an InfoSource ----------- #
@@ -214,6 +158,10 @@
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
         owl:onProperty :AnalysisResult__analysis ] .
+
+:AnalysisResult__confidence a owl:DatatypeProperty ;
+    rdfs:domain :AnalysisResult ;
+    rdfs:range xsd:float .
 
 :AnalysisResult__analysis a owl:ObjectProperty ;
     rdfs:domain :AnalysisResult ;
@@ -279,6 +227,10 @@
     rdfs:domain :Publication;
     rdfs:range xsd:string.
 
+:Publication__pubMedId a owl:DatatypeProperty;
+    rdfs:domain :Publication;
+    rdfs:range xsd:string.
+
 :Author a owl:Class.
 
 :Author__name a owl:DatatypeProperty;
@@ -292,5 +244,3 @@
 
 # Organism will map to a phylogeny when that data is available
 :Organism a owl:Class .
-
-
