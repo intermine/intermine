@@ -11,7 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Collections;
 
 /**
@@ -22,8 +22,8 @@ public class Profile
 {
     protected ProfileManager manager;
     protected String username;
-    protected Map savedQueries = new HashMap();
-    protected Map savedBags = new HashMap();
+    protected Map savedQueries = new LinkedHashMap();
+    protected Map savedBags = new LinkedHashMap();
 
     /**
      * Construct a Profile
