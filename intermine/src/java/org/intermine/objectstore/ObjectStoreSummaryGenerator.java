@@ -11,7 +11,6 @@ package org.intermine.objectstore;
  */
 
 import java.util.Set;
-import java.util.List;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -74,7 +73,7 @@ public class ObjectStoreSummaryGenerator
         }
     }
 
-    public static final String FIELD_DELIM = "$_^";
+    static final String FIELD_DELIM = "$_^";
 
     /**
      * Returns null if there are more than maxValues filed values.
@@ -92,7 +91,7 @@ public class ObjectStoreSummaryGenerator
             return null;
         }
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i<results.size(); i++) {
+        for (int i = 0; i < results.size(); i++) {
             if (i != 0) {
                 sb.append(FIELD_DELIM);
             }
@@ -127,7 +126,7 @@ public class ObjectStoreSummaryGenerator
 
                 String[] parts = fields.split("[\t ]");
 
-                for (int i = 0; i<parts.length; i++) {
+                for (int i = 0; i < parts.length; i++) {
                     String fieldName = parts[i];
                     String fieldSummary = getFieldSummary(os, className, fieldName, maxValues);
                     if (fieldSummary != null) {
