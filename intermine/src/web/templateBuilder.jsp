@@ -27,7 +27,6 @@
     <p style="text-align:center">
       <fmt:message key="templateBuilder.category"/>
       <html:select property="category">
-        <html:option value="" key="templateBuilder.nocategory"/>
         <html:options name="CATEGORIES"/>
       </html:select>
     </p><br/>
