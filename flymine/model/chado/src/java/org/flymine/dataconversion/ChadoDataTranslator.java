@@ -75,10 +75,12 @@ public class ChadoDataTranslator extends DataTranslator
                                          srcItem.getAttribute("givennames").getValue()
                                          + " " + srcItem.getAttribute("surname").getValue()));
                 } else if ("feature_synonym".equals(className)) {
-                    promoteField(tgtItem, srcItem, "synonym", "synonym", "name");
+                    promoteField(tgtItem, srcItem, "value", "synonym", "name");
+                    tgtItem.addAttribute(new Attribute("type", "accession"));
                 } else if ("feature_dbxref".equals(className)) {
-                    promoteField(tgtItem, srcItem, "synonym", "dbxref", "accession");
+                    promoteField(tgtItem, srcItem, "value", "dbxref", "accession");
                     promoteField(tgtItem, srcItem, "source", "dbxref", "db");
+                    tgtItem.addAttribute(new Attribute("type", "accession"));
                 }
 
                 if (storeTgtItem) {

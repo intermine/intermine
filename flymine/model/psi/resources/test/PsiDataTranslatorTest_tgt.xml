@@ -15,7 +15,8 @@
     <attribute name="pubMedId" value="14605208"/>
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="Q9VI89"/>
+    <attribute name="value" value="Q9VI89"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_1"/>
     <reference name="subject" ref_id="0_32"/>
   </item>
@@ -40,7 +41,8 @@
     <attribute name="taxonId" value="4932"/>
   </item>
   <item id="-1_4" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="P14734"/>
+    <attribute name="value" value="P14734"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_1"/>
     <reference name="subject" ref_id="0_26"/>
   </item>

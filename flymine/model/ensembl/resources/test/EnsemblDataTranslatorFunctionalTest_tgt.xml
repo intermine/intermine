@@ -91,17 +91,20 @@
     </collection>
   </item>
   <item id="2_2" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="ENSANGE00000019936"/>
+    <attribute name="value" value="ENSANGE00000019936"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="0_2"/>
   </item>
   <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="FBgn0001"/>
+    <attribute name="value" value="FBgn0001"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_7"/>
     <reference name="subject" ref_id="5_1"/>
   </item>
   <item id="-1_22" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="TP1234"/>
+    <attribute name="value" value="TP1234"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_4"/>
     <reference name="subject" ref_id="4_1"/>
   </item>
@@ -187,7 +190,8 @@
     </collection>
   </item>
   <item id="9_1" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="ENSANGP00000019935"/>
+    <attribute name="value" value="ENSANGP00000019935"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="4_1"/>
   </item>
@@ -204,7 +208,8 @@
     </collection>
   </item>
   <item id="-1_14" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="AAAB01008846"/>
+    <attribute name="value" value="AAAB01008846"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="13_8847"/>
   </item>
@@ -260,12 +265,14 @@
     </collection>
   </item>
   <item id="-1_15" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="AAAB01008846"/>
+    <attribute name="value" value="AAAB01008846"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="13_8848"/>
   </item>
   <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="EAA1234"/>
+    <attribute name="value" value="EAA1234"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="4_1"/>
   </item>
@@ -317,7 +324,8 @@
     <reference name="subject" ref_id="14_2077"/>
   </item>
   <item id="-1_13" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="AAAB01008846"/>
+    <attribute name="value" value="AAAB01008846"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="13_8846"/>
   </item>
@@ -334,7 +342,8 @@
     <attribute name="url" value="http://ca.expasy.org/sprot/"/>
   </item>
   <item id="7_1" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="ENSANGT00000019935"/>
+    <attribute name="value" value="ENSANGT00000019935"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="3_1"/>
   </item>
@@ -398,7 +407,8 @@
     <reference name="organism" ref_id="-1_1"/>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="ENSANGE00000019935"/>
+    <attribute name="value" value="ENSANGE00000019935"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="0_1"/>
   </item>
@@ -424,17 +434,20 @@
     </collection>
   </item>
   <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="fb_symbol"/>
+    <attribute name="value" value="fb_symbol"/>
+    <attribute name="type" value="name"/>
     <reference name="source" ref_id="-1_7"/>
     <reference name="subject" ref_id="5_1"/>
   </item>
   <item id="-1_21" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="QP1234"/>
+    <attribute name="value" value="QP1234"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_5"/>
     <reference name="subject" ref_id="4_1"/>
   </item>
   <item id="22_1" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="synonym" value="ENSANGG00000017446"/>
+    <attribute name="value" value="ENSANGG00000017446"/>
+    <attribute name="type" value="accession"/>
     <reference name="source" ref_id="-1_2"/>
     <reference name="subject" ref_id="5_1"/>
   </item>

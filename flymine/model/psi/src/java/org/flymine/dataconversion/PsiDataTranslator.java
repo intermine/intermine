@@ -131,7 +131,8 @@ public class PsiDataTranslator extends DataTranslator
                         //tgtItem.addAttribute(new Attribute("identifer", value));
                         Item synonym = createItem(tgtNs + "Synonym", "");
                         addReferencedItem(synonym, getSwissProt(), "source", false, "", false);
-                        synonym.addAttribute(new Attribute("synonym", value));
+                        synonym.addAttribute(new Attribute("value", value));
+                        synonym.addAttribute(new Attribute("type", "accession"));
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
                     }
