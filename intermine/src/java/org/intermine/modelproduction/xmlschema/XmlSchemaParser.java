@@ -60,11 +60,12 @@ package org.intermine.modelproduction.xmlschema;
  */
 
 import java.io.Reader;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.xml.sax.InputSource;
@@ -116,6 +117,8 @@ public class XmlSchemaParser implements ModelParser
     protected Stack paths;
     protected XmlMetaData xmlInfo;
 
+    protected Set namedTypesAlreadyDone = new HashSet();
+
     /**
      * Constructor that takes the modelName and pkgName
      *
@@ -161,6 +164,8 @@ public class XmlSchemaParser implements ModelParser
 
         process(schema);
 
+        LOG.info("ModelName = " + modelName + ", nameSpace = " + nameSpace + ", classes = "
+                + classes);
         Model m = new Model(modelName, nameSpace, classes);
         return m;
     }
@@ -246,15 +251,20 @@ public class XmlSchemaParser implements ModelParser
                         clsName = StringUtil.capitalise(eDecl.getName());
                     }
                     //clsName = xmlInfo.getClsNameFromXPath(path);
-                    LOG.debug("processElementDecl pushing clsStack: " + clsName);
+                    LOG.debug("processElementDecl pushing " + clsName + " onto clsStack "
+                            + clsStack);
                     clsStack.push(clsName);
                 }
                 // 1 & 2 add path to stack, process complex type, pop paths stack
-                LOG.debug("pushing paths: " + path);
+                LOG.debug("pushing " + path + " onto paths " + paths);
                 paths.push(path);
                 processComplexType((ComplexType) xmlType);
                 path = (String) paths.pop();
-                LOG.debug("popped paths: " + path);
+                LOG.debug("popped path: " + path);
+                if (clsName != null) {
+                    clsName = (String) clsStack.pop();
+                    LOG.debug("Popped clsName " + clsName + " from clsStack " + clsStack);
+                }
 
                 clsName = xmlInfo.getClsNameFromXPath(path);
                 LOG.debug("clsName = " + clsName);
@@ -290,7 +300,8 @@ public class XmlSchemaParser implements ModelParser
                 return;
             }
         }
-        processContentModel(group);
+        LOG.debug("processGroup() calling processContentModel(\"" + group.getName() + "\")");
+        processContentModel(group, false);
     }
 
 
@@ -302,9 +313,11 @@ public class XmlSchemaParser implements ModelParser
      */
     protected void processComplexType(ComplexType complexType) {
         if (complexType == null) {
+            LOG.debug("Entering and leaving processComplexType(null)");
             return;
         }
 
+        LOG.debug("Entering processComplexType(" + complexType.getName() + ")");
         // Two possibilities processing complex types
         // 1. named complex type - create class name from complex type name -> clsStack
         //                       - recurse in to content elements
@@ -317,7 +330,13 @@ public class XmlSchemaParser implements ModelParser
         // 1. named complex type - put class name on clsStack
         if (complexType.getName() != null) {
             String clsName = StringUtil.capitalise(complexType.getName());
-            LOG.debug("processComplexType pushing clsStack: " + clsName);
+            LOG.debug("processComplexType pushing " + clsName + " onto clsStack " + clsStack);
+            if (namedTypesAlreadyDone.contains(clsName)) {
+                LOG.debug("Leaving processComplexType(" + complexType.getName() + ") - clsName "
+                        + clsName + " has aleady been processed.");
+                return;
+            }
+            namedTypesAlreadyDone.add(clsName);
             clsStack.push(clsName);
         }
 
@@ -335,11 +354,17 @@ public class XmlSchemaParser implements ModelParser
         processAttributes(complexType);
 
         // recurse into sub elements
-        processContentModel(complexType);
+        processContentModel(complexType, false);
 
         // now create ClassDescriptor
-        String clsName = (String) clsStack.pop();
-        LOG.debug("popped clsStack: " + clsName);
+        String clsName;
+        if (complexType.getName() != null) {
+            clsName = (String) clsStack.pop();
+            LOG.debug("popped clsStack: " + clsName);
+        } else {
+            clsName = (String) clsStack.peek();
+            LOG.debug("peeked clsStack: " + clsName);
+        }
 
         // look for immediate super class
         String baseType = null;
@@ -359,6 +384,7 @@ public class XmlSchemaParser implements ModelParser
             classes.add(cld);
             processed.add(clsName);
         }
+        LOG.debug("Leaving processComplexType(" + complexType.getName() + ") normally");
     }
 
 
@@ -369,8 +395,10 @@ public class XmlSchemaParser implements ModelParser
      */
     protected void processAttributes(ComplexType complexType) {
         if (complexType == null) {
+            LOG.debug("Entering and leaving processAttributes(null)");
             return;
         }
+        LOG.debug("Entering processAttributes(" + complexType.getName() + ")");
 
         Enumeration declEnum = complexType.getAttributeDecls();
         while (declEnum.hasMoreElements()) {
@@ -378,11 +406,20 @@ public class XmlSchemaParser implements ModelParser
             String clsName = (String) clsStack.peek();
             LOG.debug("creating atd (" + attribute.getName() + ","
                       + attribute.getSimpleType().getName() + ")" + " for class: " + clsName);
+            String attributeTypeName = attribute.getSimpleType().getName();
+            if (attributeTypeName == null) {
+                LOG.error("Null simple type name " + attribute.getName());
+                attributeTypeName = "string";
+            }
+            if (attributeTypeName.equals("timeStampType")) {
+                attributeTypeName = "string";
+            }
             AttributeDescriptor atd = new AttributeDescriptor(generateJavaName(attribute.getName()),
-                                        XmlUtil.xmlToJavaType(attribute.getSimpleType().getName()));
+                                        XmlUtil.xmlToJavaType(attributeTypeName));
             Set atds = getFieldSetForClass(attributes, clsName);
             atds.add(atd);
         }
+        LOG.debug("Leaving processAttributes(" + complexType.getName() + ") normally");
     }
 
 
@@ -391,20 +428,43 @@ public class XmlSchemaParser implements ModelParser
      * and collection descriptors as appropriate.  Recurse as necessary for
      * nested groups.
      * @param cmGroup a group to process
+     * @param isCollection if a containing group/choice/sequence declares multiple cardinality
      */
-    protected void processContentModel(ContentModelGroup cmGroup) {
+    protected void processContentModel(ContentModelGroup cmGroup, boolean isCollection) {
         if (cmGroup == null) {
+            LOG.debug("processContentModel(null, " + isCollection + ") called");
             return;
         }
+        boolean origIsCollection = isCollection;
+        String cmGroupDescription = cmGroup.toString();
+        if (cmGroup instanceof Group) {
+            Group cmG = (Group) cmGroup;
+            cmGroupDescription = cmG.getOrder().toString() + ": " + cmG.getName()
+                + ", maxOccurs = " + cmG.getMaxOccurs();
+            if ((cmG.getMaxOccurs() < 0) || (cmG.getMaxOccurs() > 1)) {
+                isCollection = true;
+            }
+        } else if (cmGroup instanceof ComplexType) {
+            cmGroupDescription = ((ComplexType) cmGroup).getName();
+        }
+        LOG.debug("Entering processContentModel(" + cmGroupDescription + ", "
+                + origIsCollection + ")");
 
+        if (clsStack.isEmpty()) {
+            LOG.warn("processContentModel called with empty clsStack");
+            LOG.debug("Leaving processContentModel(" + cmGroupDescription + ", "
+                    + origIsCollection + ")");
+            return;
+        }
         String clsName = (String) clsStack.peek();
 
         Enumeration cmGroupEnum = cmGroup.enumerate();
         while (cmGroupEnum.hasMoreElements()) {
-            Structure struct = (Structure) cmGroupEnum.nextElement();
-            switch (struct.getStructureType()) {
+            Structure struc = (Structure) cmGroupEnum.nextElement();
+            switch (struc.getStructureType()) {
             case Structure.ELEMENT:
-                ElementDecl eDecl = (ElementDecl) struct;
+                ElementDecl eDecl = (ElementDecl) struc;
+                LOG.debug("Found ElementDecl with maxOccurs " + eDecl.getMaxOccurs());
                 if (eDecl.isReference()) {
                     continue;
                 }
@@ -414,33 +474,36 @@ public class XmlSchemaParser implements ModelParser
                 if (xmlType.isComplexType()) {
                     refType = processElementDecl(eDecl);
                 }
-                if (xmlType.isComplexType() && Particle.UNBOUNDED == eDecl.getMaxOccurs()) {
-                    // collection
-                    if (xmlType.getName() == null) {
-                        fieldName = StringUtil.decapitalise(
-                                 StringUtil.pluralise(generateJavaName(eDecl.getName())));
+                boolean declIsCollection = isCollection || (eDecl.getMaxOccurs() < 0)
+                    || (eDecl.getMaxOccurs() > 1);
+                if (xmlType.isComplexType()) {
+                    if (declIsCollection) {
+                        // collection
+                        if (xmlType.getName() == null) {
+                            fieldName = StringUtil.decapitalise(
+                                     StringUtil.pluralise(generateJavaName(eDecl.getName())));
+                        } else {
+                            fieldName = StringUtil.pluralise(generateJavaName(eDecl.getName()));
+                        }
+                        LOG.debug("creating collection (" + fieldName + "," + refType
+                                + ") for class: " + clsName);
+                        CollectionDescriptor cod
+                            = new CollectionDescriptor(fieldName, this.pkgName + "." + refType,
+                                                       null, true);
+                        HashSet cods = getFieldSetForClass(collections, clsName);
+                        cods.add(cod);
                     } else {
-                        fieldName = StringUtil.pluralise(generateJavaName(eDecl.getName()));
+                        // reference
+                        fieldName = eDecl.getName();
+                        LOG.debug("creating reference (" + fieldName + "," + refType
+                                + ") for class: " + clsName);
+                        ReferenceDescriptor rfd = new ReferenceDescriptor(
+                                                          fieldName,
+                                                          this.pkgName + "." + refType, null);
+                        HashSet rfds = getFieldSetForClass(references, clsName);
+                        rfds.add(rfd);
                     }
-                    LOG.debug("creating cod (" + fieldName + "," + refType + ")"
-                              + " for class: " + clsName);
-                    CollectionDescriptor cod
-                        = new CollectionDescriptor(fieldName, this.pkgName + "." + refType,
-                                                   null, true);
-                    HashSet cods = getFieldSetForClass(collections, clsName);
-                    cods.add(cod);
-                } else if (xmlType.isComplexType()) {
-                    // reference
-                    fieldName = eDecl.getName();
-                    LOG.debug("creating rfd (" + fieldName + "," + refType + ")"
-                              + " for class: " + clsName);
-                    ReferenceDescriptor rfd = new ReferenceDescriptor(
-                                                      fieldName,
-                                                      this.pkgName + "." + refType, null);
-                    HashSet rfds = getFieldSetForClass(references, clsName);
-                    rfds.add(rfd);
                 } else if (xmlType.isSimpleType()) {
-                    // is a SimpleType -> attribute
                     SimpleType simpleType = (SimpleType) xmlType;
                     String type = null;
                     if (simpleType.hasFacet(Facet.ENUMERATION)) {
@@ -448,28 +511,52 @@ public class XmlSchemaParser implements ModelParser
                     } else {
                         type = simpleType.getName();
                     }
-                    LOG.debug("creating atd (" + eDecl.getName() + "," + type + ")"
-                              + " for class: " + clsName);
-                    AttributeDescriptor atd = new AttributeDescriptor(
-                                    generateJavaName(eDecl.getName()),
-                                    XmlUtil.xmlToJavaType(type));
-                    Set atds = getFieldSetForClass(attributes, (String) clsStack.peek());
-                    atds.add(atd);
+                    fieldName = generateJavaName(eDecl.getName());
+                    if (declIsCollection) {
+                        // SimpleType collection - need to make up a class to put in the collection.
+                        LOG.debug("Creating collection (" + eDecl.getName() + ", " + type
+                                + ") for class: " + clsName);
+                        String subClassName = uniqueClassName(StringUtil.capitalise(fieldName),
+                                clsName);
+                        CollectionDescriptor cod = new CollectionDescriptor(
+                                StringUtil.pluralise(fieldName), this.pkgName
+                                + "." + subClassName, null, true);
+                        AttributeDescriptor atd = new AttributeDescriptor(fieldName,
+                                XmlUtil.xmlToJavaType(type));
+                        ClassDescriptor cld = new ClassDescriptor(this.pkgName + "." + subClassName,
+                                null, false, Collections.singleton(atd), Collections.EMPTY_SET,
+                                Collections.EMPTY_SET);
+                        classes.add(cld);
+                        processed.add(subClassName);
+                        Set cods = getFieldSetForClass(collections, clsName);
+                        cods.add(cod);
+                    } else {
+                        // is a SimpleType -> attribute
+                        LOG.debug("creating atd (" + eDecl.getName() + ", " + type
+                                + ") for class: " + clsName);
+                        AttributeDescriptor atd = new AttributeDescriptor(
+                                        generateJavaName(eDecl.getName()),
+                                        XmlUtil.xmlToJavaType(type));
+                        Set atds = getFieldSetForClass(attributes, clsName);
+                        atds.add(atd);
+                    }
                 }
 
                 break;
             case Structure.GROUP:
-                processContentModel((Group) struct);
+                processContentModel((Group) struc, isCollection);
                 //handle nested groups
                 if (!((cmGroup instanceof ComplexType)
                        || (cmGroup instanceof ModelGroup))) {
-                        processGroup((Group) struct);
+                        processGroup((Group) struc);
                     }
                 break;
             default:
                 break;
             }
         }
+        LOG.debug("Leaving processContentModel(" + cmGroupDescription + ", " + origIsCollection
+                + ") normally");
     }
 
     /**
