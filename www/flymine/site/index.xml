@@ -7,13 +7,13 @@
   <emphasis>Anopheles</emphasis> and making this available to the worldwide
   research community via web and bioinformatics interfaces.</para>
 
-  <para>A beta release of the database is <ulink url="/begin.do">now
+  <para>An initial release of the database is <ulink url="/begin.do">now
   accessible</ulink>, accompanied by full <ulink
   url="doc/index.xml">documentation</ulink>. For more information about
   FlyMine please consult the more detailed <ulink
   url="introduction.xml">introduction</ulink>.</para>
 
-  <para><ulink url="/begin.do">Start a query</ulink> with the FlyMine beta.
+  <para><ulink url="/begin.do">Start a query</ulink> with using FlyMine.
   See <ulink url="doc/manual/manualQuickstart.xml">quick start guide</ulink>
   for more details.</para>
 
