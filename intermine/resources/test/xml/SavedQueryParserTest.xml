@@ -1,8 +1,8 @@
 <query-list>
   <query name="allCompanies" model="testmodel" view="Company">
   </query>
-  <query name="employee" model="testmodel">
-    <node path="Employee">
+  <query name="managers" model="testmodel">
+    <node path="Employee" type="Manager">
     </node>
   </query>
   <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">

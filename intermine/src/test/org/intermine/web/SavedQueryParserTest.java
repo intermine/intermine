@@ -46,10 +46,11 @@ public class SavedQueryParserTest extends TestCase
         allCompanies.setView(view);
         expected.put("allCompanies", allCompanies);
 
-        //employeesNamesAndAges
-        PathQuery employee = new PathQuery(Model.getInstanceByName("testmodel"));
-        PathNode emp = employee.addNode("Employee");
-        expected.put("employee", employee);
+        //managers
+        PathQuery managers = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathNode employee = managers.addNode("Employee");
+        employee.setType("Manager");
+        expected.put("managers", managers);
 
         //employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(Model.getInstanceByName("testmodel"));
