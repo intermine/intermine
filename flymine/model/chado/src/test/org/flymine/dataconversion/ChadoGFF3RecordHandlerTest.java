@@ -100,6 +100,55 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     }
 
 
+    public void testHandleGeneNoDbxref() throws Exception {
+        String gff = "4\t.\tgene\t230506\t233418\t.\t+\t.\tID=CG1234;Dbxref=FlyBase:FBan0001587;dbxref_2nd=FlyBase:FBgn0024811";
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+
+        Iterator iter = GFF3Parser.parse(srcReader);
+        GFF3Record record = (GFF3Record) iter.next();
+
+        Item feature = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        feature.setAttribute("identifier", "CG1234");
+
+        handler.setFeature(feature);
+        handler.process(record);
+
+        Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
+        expectedGene.setAttribute("organismDbId", "FBgn0024811");
+        expectedGene.setAttribute("identifier", "CG1234");
+        expectedGene.setAttribute("name", "CG1234");
+
+        assertEquals(3, handler.getItems().size());
+
+        Item actualGene = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                actualGene = item;
+                expectedGene.setIdentifier(actualGene.getIdentifier());
+            }
+        }
+        assertEquals(expectedGene, actualGene);
+    }
+
+    public void testHandleGeneNoFbgn() throws Exception {
+        String gff = "4\t.\tgene\t230506\t233418\t.\t+\t.\tID=CG1234;Dbxref=FlyBase:FBan0001587";
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+
+        Iterator iter = GFF3Parser.parse(srcReader);
+        GFF3Record record = (GFF3Record) iter.next();
+
+        Item feature = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        feature.setAttribute("identifier", "CG1234");
+
+        handler.setFeature(feature);
+        handler.process(record);
+
+        assertEquals(0, handler.getItems().size());
+    }
+
+
     public void testHandleTRNA() throws Exception {
         String gff = "2L\t.\ttRNA\t1938089\t1938159\t.\t-\t.\tID=CR31667;Dbxref=FlyBase:FBan0031667,FlyBase:FBgn0051667;synonym=CR31667;synonym_2nd=CG31667";
 
