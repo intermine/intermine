@@ -112,7 +112,8 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
                                   + "Synonym");
                         synonym.setAttribute("type", "transfacAccession");
                         synonym.setAttribute("value", idAcc);
-                        synonym.setReference("subject", ((Item) proteinMap.get(idAcc)).getIdentifier());
+                        synonym.setReference("subject",
+                                   ((Item) proteinMap.get(idAcc)).getIdentifier());
                         synonym.addReference(getUniprotRef());
                         addItem(synonym);
                     }
