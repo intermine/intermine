@@ -112,9 +112,11 @@ public class SaveQueryAction extends Action
         session.setAttribute(Constants.QUERY, SaveQueryHelper.clone(qNodes, model));
         session.setAttribute(Constants.VIEW, new ArrayList(view));
 
-        ActionMessages messages = new ActionMessages();
-        ActionMessage message = new ActionMessage("saveQuery.message", queryName);
-        messages.add("saveQuery", message);
+        ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
+        if (messages == null) {
+            messages = new ActionMessages();
+        }
+        messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
         request.setAttribute(Globals.MESSAGE_KEY, messages);
     }
 }

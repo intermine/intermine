@@ -17,8 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
 
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.Globals;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -55,9 +56,9 @@ public abstract class ViewHelper
      * TableHelper.makeTable().
      *
      * @param request The HTTP request we are currently processing
-     * @return the errors that occured during processing or null if there are no errors
+     * @return the results of running the query
      */
-    public static ActionMessages runQuery(HttpServletRequest request) {
+    public static PagedResults runQuery(HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -72,13 +73,14 @@ public abstract class ViewHelper
             ResultsInfo resultsInfo = pr.getResults().getInfo();
             SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
         } catch (ObjectStoreException e) {
-            ActionMessages actionMessages = new ActionMessages();
-            ActionError error = new ActionError("errors.query.objectstoreerror");
-            return actionMessages;
+            ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+            if (errors == null) {
+                errors = new ActionErrors();
+                request.setAttribute(Globals.ERROR_KEY, errors);
+            }
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.query.objectstoreerror"));
         }
-        session.setAttribute(Constants.RESULTS_TABLE, pr);
-        
-        return null;
+        return pr;
     }
 
     /**

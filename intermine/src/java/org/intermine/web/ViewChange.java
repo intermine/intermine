@@ -116,8 +116,9 @@ public class ViewChange extends DispatchAction
                                   HttpServletRequest request,
                                   HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
 
-        saveMessages(request, ViewHelper.runQuery(request));
+        session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
 
         return mapping.findForward("results");
     }
@@ -138,8 +139,9 @@ public class ViewChange extends DispatchAction
                                 HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
 
-        saveMessages(request, ViewHelper.runQuery(request));
+        session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
 
         return mapping.findForward("export");
     }
