@@ -59,11 +59,22 @@ public class CollectionDetailsController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Integer id = new Integer((String) request.getParameter("id"));
         String field = request.getParameter("field");
+        String pageSize = request.getParameter("pageSize");
 
         Object o = os.getObjectById(id);
 
         Collection c = (Collection) TypeUtil.getFieldValue(o, field);
-        session.setAttribute(Constants.RESULTS_TABLE, new PagedCollection(field, c));
+        PagedCollection pc = new PagedCollection(field, c);
+        if (pageSize != null) {
+            try {
+                int pageSizeInt = Integer.parseInt(pageSize);
+                ((ChangeResultsForm) form).setPageSize(pageSize);
+                pc.setPageSize(pageSizeInt);
+            } catch (NumberFormatException e) {
+                // ignore badly formatted numbers
+            }
+        }
+        session.setAttribute(Constants.RESULTS_TABLE, pc);
 
         return null;
     }
