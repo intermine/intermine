@@ -54,7 +54,7 @@ public class DBConverter extends DataConverter
     protected Map idsProvidedMap = new HashMap();
     protected Map idIsUniqueMap = new HashMap();
 
-    protected int count = 0;
+    protected long count = 0;
     protected long start, time, times[];
 
     /**
@@ -215,7 +215,7 @@ public class DBConverter extends DataConverter
                 count++;
                 if (count % 10000 == 0) {
                     long now = System.currentTimeMillis();
-                    if (times[(count / 10000) % 20] == -1) {
+                    if (times[(int) ((count / 10000) % 20)] == -1) {
                         LOG.info("Processed " + count + " rows - running at "
                                 + (600000000L / (now - time)) + " (avg "
                                 + ((60000L * count) / (now - start))
@@ -224,12 +224,12 @@ public class DBConverter extends DataConverter
                     } else {
                         LOG.info("Processed " + count + " rows - running at "
                                 + (600000000L / (now - time)) + " (200000 avg "
-                                + (12000000000L / (now - times[(count / 10000) % 20]))
+                                + (12000000000L / (now - times[(int) ((count / 10000) % 20)]))
                                 + ") (avg " + ((60000L * count) / (now - start))
                                 + ") rows per minute -- now on " + clsName);
                     }
                     time = now;
-                    times[(count / 10000) % 20] = now;
+                    times[(int) ((count / 10000) % 20)] = now;
                 }
             }
         } finally {

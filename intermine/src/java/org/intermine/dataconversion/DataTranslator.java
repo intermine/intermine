@@ -68,6 +68,12 @@ public class DataTranslator
     protected int newItemId = 1;
 
     /**
+     * Empty constructor.
+     */
+    public DataTranslator() {
+    }
+
+    /**
      * Construct with a srcItemStore to read from an ontology model.
      * Use model to set up src/tgt maps required during translation.
      * @param srcItemReader the ItemReader from which to retrieve the source Items
@@ -94,14 +100,14 @@ public class DataTranslator
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
 
-        int opCount = 0;
+        long opCount = 0;
         long time = System.currentTimeMillis();
         long start = time;
         long times[] = new long[20];
         for (int i = 0; i < 20; i++) {
             times[i] = -1;
         }
-        for (Iterator i = srcItemReader.itemIterator(); i.hasNext();) {
+        for (Iterator i = getItemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
             Collection translated = translateItem(srcItem);
             if (translated != null) {
@@ -111,7 +117,7 @@ public class DataTranslator
                     opCount++;
                     if (opCount % 1000 == 0) {
                         long now = System.currentTimeMillis();
-                        if (times[(opCount / 1000) % 20] == -1) {
+                        if (times[(int) ((opCount / 1000) % 20)] == -1) {
                             LOG.info("Translated " + opCount + " objects - running at "
                                     + (60000000 / (now - time)) + " (avg "
                                     + ((60000L * opCount) / (now - start))
@@ -120,17 +126,27 @@ public class DataTranslator
                         } else {
                             LOG.info("Translated " + opCount + " objects - running at "
                                     + (60000000 / (now - time)) + " (20000 avg "
-                                    + (1200000000 / (now - times[(opCount / 1000) % 20]))
+                                    + (1200000000 / (now - times[(int) ((opCount / 1000) % 20)]))
                                     + ") (avg " + ((60000L * opCount) / (now - start))
                                     + ") objects per minute -- now on "
                                     + srcItem.getClassName());
                         }
                         time = now;
-                        times[(opCount / 1000) % 20] = now;
+                        times[(int) ((opCount / 1000) % 20)] = now;
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Returns the Iterator over Items that the DataTranslator will translate.
+     *
+     * @return an Iterator
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public Iterator getItemIterator() throws ObjectStoreException {
+        return srcItemReader.itemIterator();
     }
 
     /**
