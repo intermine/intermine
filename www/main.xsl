@@ -24,6 +24,7 @@
 
   <xsl:include href="menu.xsl"/>
   <xsl:include href="rss.xsl"/>
+  <xsl:include href="sources.xsl"/>
   <xsl:include href="start.xsl"/>
   <xsl:include href="docbook.xsl"/>
   <xsl:include href="ulink.xsl"/>
