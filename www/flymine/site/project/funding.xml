@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+<sect1>
+<title>FlyMine funding</title>
+
+<para>
+The FlyMine project has been generously supported by the Wellcome
+Trust (Grant no. 067205) for 5 years, subject to a review in year 3,
+awarded to M. Ashburner, G. Micklem, S. Russell, K. Lilley and
+K. Mizuguchi.
+</para>
+
+<para>
+Dr. G Micklem is supported by the BBSRC and the Isaac Newton Trust.
+</para>
+
+<table>
+    <tbody>
+        <row>
+	  <entry>
+	    <ulink url="http://www.wellcome.ac.uk">
+	      <inlinegraphic fileref="/images/wellcome_large.gif" format="GIF"/>
+	    </ulink>
+	  </entry>
+	  <entry>
+	    <ulink url="http://www.bbsrc.ac.uk">
+	      <inlinegraphic fileref="/images/bbsrc.gif" format="GIF"/>
+	    </ulink>
+	  </entry>
+	  <entry>
+	    <ulink url="http://www.trin.cam.ac.uk">
+	      <inlinegraphic fileref="/images/trinity.gif" format="GIF"/>
+	    </ulink>
+	  </entry>
+	</row>
+    </tbody>
+</table>
+
+</sect1>
+</article>
