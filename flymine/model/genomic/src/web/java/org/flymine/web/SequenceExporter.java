@@ -101,7 +101,9 @@ public class SequenceExporter implements TableExporter
         try {
             List rowList = pt.getAllRows();
 
-            for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
+            for (int rowIndex = 0;
+                 rowIndex < rowList.size() && rowIndex <= pt.getMaxRetrievableIndex();
+                 rowIndex++) {
                 List row;
                 try {
                     row = (List) rowList.get(rowIndex);
