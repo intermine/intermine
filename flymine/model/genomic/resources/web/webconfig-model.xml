@@ -13,9 +13,6 @@
     </longdisplayers>
   </class>
   <class className="org.flymine.model.genomic.Organism">
-    <shortdisplayers>
-      <displayer src="/model/organism.jsp"/>
-    </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/organism.jsp"/>
     </longdisplayers>
