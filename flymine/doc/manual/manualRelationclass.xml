@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Relation</heading>
+      <item>Any two <ulink url= "manualBioEntityclass.xml">BioEntities</ulink> that have some form of relationship to each other are linked by the Relation class. </item>
+      <item>Relations include orthologue and paralogue relations between two bioEntities, location relationships (eg an exon has a location on a gene.  A gene has a location on a chromosome etc) and protein-protein interactions.</item>
+      <item>Every relation object has a subject and an object.  For example, if two genes are orthologues, one of the genes will be the subject of the relation and the other the object.  Because relations are symmetrical (ie gene A is an orthologue of Gene B and Gene B is an orthologue of gene A, a particular relationship is mapped both ways in the database (ie Gene A and Gene B will be linked by 2 relations, one in which Gene A is the subject and Gene B the object and one in which Gene A is the object and Gene B the subject.  If you ask for the subject ortholgue of Gene A you will get Gene B (and Gene A in this case is the object). However you could also ask for the subject orthologue of Gene B and get gene A (in this case gene B is the object). i.e for any particular relation object a particular BioEntity will be the subject and the other the object.  However, there can be 2 relation objects relating the same two BioEntities. </item>
+     <item>Every BioEntity has a collection of all the object relations it has and a collection of all the subject relations it has.  The object relations collection contains all the relation objects in which the BioEntity is the subject.  The subject relations collection contains all the relation objects in which the BioEntity is object. For example gene A has a collection of subjects relations and a collection of object relations. Each relation links one BioEntity with another BioEntity. </item>
+     <item>To see an example query in which two BioEntities are linked via the Relation class see xxxxxxx</item>     
+   
+</section>
+
+
+
+	  <entry>
+	      <inlinegraphic fileref="relationClass1.gif" format="GIF"/>
+	  </entry>
+ 
+
+
+
+
+
+</index>
+
+</article>
+
