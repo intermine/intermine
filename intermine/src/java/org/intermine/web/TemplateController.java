@@ -19,71 +19,121 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 
 import org.intermine.objectstore.query.SimpleConstraint;
 
 /**
- * Controller for the template page
+ * Controller for the template tile. This tile can be used for real template
+ * input or to preview a TemplateQuery that is in construction. The preview
+ * case involves the page controller or action putting the TemplateQuery in
+ * the request attribute "previewTemplate". The jsp can also render differently
+ * based on the presence of the "previewTemplate" attribute.<p>
+ *
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
-public class TemplateController extends Action
+public class TemplateController extends TilesAction
 {
     /**
+     * Finds the correct template to display in one of three ways:
+     * <ol>
+     *    <li>First, looks for a "name" request parameter and uses that for a the lookup.
+     *    <li>If "name" parameter doesn't exist, looks for TemplateQuery in request attribute
+     *        "previewTemplate".
+     *    <li>If no preview template exists (usually provided by template controller or
+     *        action) then look for template name in "queryName" session attribute.
+     * </ol>
+     * In all cases where a template name is provided (in other words, the template query
+     * was not provided in the "previewTemplate" request attribute), the template is then
+     * looked up based on the value of the "type" request parameter.
+     * <ol>
+     *    <li>no type parameter means the template is loaded from built-in templates
+     *    <li>if type == user then it's one of the users saved templates
+     *    <li>shared? public?
+     * </ol>
+     *
      * @see TilesAction#execute
      */
-    public ActionForward execute(ActionMapping mapping,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Map templateQueries = (Map) servletContext.getAttribute(Constants.TEMPLATE_QUERIES);
         TemplateForm tf = (TemplateForm) form;
-        
-        boolean populate = true;
+        TemplateQuery template = null;
         String queryName = request.getParameter("name");
-        if (queryName == null) {
-            //have been directed to this page as a result of validation failure
-            queryName = (String) session.getAttribute("queryName");
-            populate = false;
+        String type = request.getParameter("type");
+        boolean populate = true;
+        
+        if (type == null) {
+            type = TemplateHelper.GLOBAL_TEMPLATE;
         }
-
-        TemplateQuery template = (TemplateQuery) templateQueries.get(queryName);
-
+        
+        // Look for session attribute "previewTemplate" which is set while building a template
+        template = (TemplateQuery) request.getAttribute("previewTemplate");
+        if (queryName == null && template != null) {
+            queryName = template.getName();
+        } else {
+            if (queryName == null) {
+                //have been directed to this page as a result of validation failure
+                queryName = (String) session.getAttribute("queryName");
+                populate = false;
+            }
+            template = TemplateHelper.findTemplate(request, queryName, type);
+        }
+        
+        if (template == null) {
+            return null;
+        }
+        
         Map ops = new HashMap();
         Map names = new HashMap();
-
+        Map constraints = new HashMap();
+        Map labels = new HashMap();
+        
+        int j = 0;
+        
         //for each node with an editable constraint, store the valid ops for those constraints
         //and the human-readable "name" for each node (Department.company.name -> "Company namae")
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-
-            ops.put(node, MainHelper.mapOps(SimpleConstraint.validOps(MainHelper.
-                                                                      getClass(node.getType()))));
-
-            PathNode parent = (PathNode) template.getQuery().getNodes().
-                get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
-            names.put(node, parent.getType() + " "
-                      + node.getPath().substring(node.getPath().lastIndexOf(".") + 1));
             
-            if (populate) {
-                Constraint c = (Constraint) node.getConstraints().get(0);
-                int j = template.getNodes().indexOf(node);
-                
-                tf.setAttributeValues ("" + (j + 1), "" + c.getDisplayValue(node));
-                tf.setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
-            }
-        }
+            for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
+                Constraint c = (Constraint) ci.next();
+            
+                ops.put(c, MainHelper.mapOps(SimpleConstraint.validOps(MainHelper.
+                                                                  getClass(node.getType()))));
 
+                PathNode parent = (PathNode) template.getQuery().getNodes().
+                    get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
+                names.put(c, parent.getType() + " "
+                          + node.getPath().substring(node.getPath().lastIndexOf(".") + 1));
+
+                if (populate) {
+                    tf.setAttributeValues ("" + (j + 1), "" + c.getDisplayValue(node));
+                    tf.setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
+                }
+                
+                j++;
+            }
+            
+            constraints.put(node, template.getConstraints(node));
+        }
+        
         session.setAttribute("queryName", queryName);
+        session.setAttribute("templateType", type);
         request.setAttribute("templateQuery", template);
         request.setAttribute("ops", ops);
         request.setAttribute("names", names);
+        request.setAttribute("constraints", constraints);
 
         return null;
     }
