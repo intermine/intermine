@@ -71,7 +71,9 @@ public class PostProcessTask extends Task
                 cr.insertReferences();
             } else if ("transfer-sequences".equals(type)) {
                 TransferSequences ts = new TransferSequences(osw);
-                ts.transferSequences();
+                ts.transferToChromosome();
+                ts.transferToLocatedSequenceFeatures();
+                ts.transferToTranscripts();
             } else {
                 throw new BuildException("unknown type: " + type);
             }
