@@ -29,7 +29,7 @@
           </c:forEach>
         </div>
       </td>
-      <td valign="top" align="right" nowrap="nowrap" width="1%">
+      <td valign="top" align="right" nowrap="nowrap" width="1%" class="buildmenu">
         <div class="body">
           <html:link action="/bagBuild">
             <fmt:message key="begin.upload.identifiers"/>

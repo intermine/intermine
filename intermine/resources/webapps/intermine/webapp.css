@@ -53,6 +53,13 @@ form {
   margin-bottom: 10px;
 }
 
+.box .buildmenu .body {
+  padding: 4px;
+  margin: 3px;
+  border: 1px solid #999;
+  height: 10;
+}
+
 table.templateForm td {
   padding: 5px;
 }
