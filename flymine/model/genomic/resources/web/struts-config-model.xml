@@ -1,2 +1,1 @@
-<action path="/getAtm"
-        type="org.flymine.web.GetAtmAction"/>
+<!-- this comment is here to prevent ant from setting model.struts.config to null -->
