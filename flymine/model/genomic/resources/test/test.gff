@@ -1,0 +1,5 @@
+##gff-version 3 
+##ucsc firstEF predictions 
+1	firstEF	promoter	2096705	2097274	1000	+	.	sourceDatabase=UCSC;ID=promoter(90+)
+1	firstEF	promoter	2096850	2097419	1000	-	.	sourceDatabase=UCSC;ID=promoter(2179-)
+1	firstEF	exon	2097064	2097289	919	-	.	sourceDatabase=UCSC;ID=exon(2179-)#2
