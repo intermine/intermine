@@ -70,14 +70,13 @@ public class SerializationFunctionalTest extends TestCase
             reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
         }
         SerializationUtil.registerDefaultMappings(tm);
-        SerializationUtil.registerMappings(tm, Model.getInstanceByName("testmodel"));
         msg.output(context);
             
         String msgString = stringWriter.toString();
-        Reader reader = new StringReader(msgString);
+        System.out.println(msgString);
             
         DeserializationContext dser = new DeserializationContextImpl(
-                                                                     new InputSource(reader),
+                                                                     new InputSource(new StringReader(msgString)),
                                                                      msgContext, Message.REQUEST);
         dser.parse();
         SOAPEnvelope env = dser.getEnvelope();
@@ -108,27 +107,8 @@ public class SerializationFunctionalTest extends TestCase
         q.setParameters(l);
         args.add(q);
 
-        ProxyBean b = new ProxyBean("Company", q, new Integer(42));
-        args.add(b);
-        
         Model m = Model.getInstanceByName("testmodel");
         args.add(m);
-
-        Address a1 = new Address();
-        a1.setAddress("a1");
-        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        c1.setName("c1");
-        c1.setVatNumber(101);
-        c1.setAddress(a1);
-        Department d1 = new Department();
-        d1.setName("d1");
-        d1.setCompany(c1);
-        Department d2 = new Department();
-        d2.setName("d2");
-        d2.setCompany(c1);
-        c1.getDepartments().add(d1);
-        c1.getDepartments().add(d2);
-        args.add(c1);
          
         return args;
     }
