@@ -55,7 +55,10 @@ public class PostgresExplainResult extends ExplainResult
             query = "explain " + query;
         }
         s.execute(query);
-        Exception warning = database.getWarnings();
+        SQLWarning warning = database.getWarnings();
+        if (warning.getNextWarning() != null) {
+            throw new SQLException("Database returned more than one warning while EXPLAINing");
+        }
         database.clearWarnings();
         String text = warning.toString();
         try {
@@ -84,9 +87,12 @@ public class PostgresExplainResult extends ExplainResult
 
         stmt.execute();
 
-        Exception warning = database.getWarnings();
+        SQLWarning warning = database.getWarnings();
         if (warning == null) {
             throw (new SQLException("Failed to get a valid warning string from database"));
+        }
+        if (warning.getNextWarning() != null) {
+            throw new SQLException("Database returned more than one warning while EXPLAINing");
         }
         database.clearWarnings();
         String text = warning.toString();
