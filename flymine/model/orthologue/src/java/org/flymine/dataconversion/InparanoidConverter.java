@@ -188,17 +188,5 @@ public class InparanoidConverter extends FileConverter
             writer.store(ItemHelper.convert((Item) i.next()));
         }
     }
-
-    private void addToCollection(Item item, String colName, String refid) {
-        ReferenceList col = null;
-        if (item.hasCollection(colName)) {
-            col = item.getCollection(colName);
-        } else {
-            col = new ReferenceList();
-            col.setName(colName);
-        }
-        col.addRefId(refid);
-        item.addCollection(col);
-    }
 }
 
