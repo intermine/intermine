@@ -488,7 +488,6 @@
         <pathelement path="${build.java}"/>
       </classpath>
     </depend>
-    <antcall target="summarise-testmodel-objectstore"/>
     <copy todir="${build.resources.test}" file="${summarise.output.properties}"/>
   </target>
 
