@@ -727,7 +727,7 @@
       package="org.flymine.jsp"
       verbose="9"
       webinc="${build.tmp}/generated-web.xml">
-      <include name="*.jsp"/>
+      <include name="**/*.jsp"/>
       <!-- have to exclude index.jsp because listed as a welcome-file in web.xml -->
       <exclude name="index.jsp"/>
       <classpath refid="base.class.path"/>
