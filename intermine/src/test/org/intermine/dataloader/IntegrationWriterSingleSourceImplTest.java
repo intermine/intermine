@@ -23,6 +23,10 @@ import org.flymine.util.TypeUtil;
 
 public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 {
+    protected static ObjectStore os;
+    protected static IntegrationWriterSingleSourceImpl iw;
+    protected static ArrayList toDelete;
+
     public IntegrationWriterSingleSourceImplTest(String arg) {
         super(arg);
     }
@@ -30,9 +34,6 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public static Test suite() {
         return OneTimeTestCase.buildSuite(IntegrationWriterSingleSourceImplTest.class);
     }
-
-    protected static IntegrationWriterSingleSourceImpl iw;
-    protected static ArrayList toDelete;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -51,8 +52,8 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
-
         iw = new IntegrationWriterSingleSourceImpl("test", writer);
+        os = iw.getObjectStore();
     }
 
     // Not doing the Query tests here
