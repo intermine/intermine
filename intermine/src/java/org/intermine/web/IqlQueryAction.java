@@ -86,9 +86,9 @@ public class FqlQueryAction extends LookupDispatchAction
      *  an exception
      */
     public ActionForward view(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+                              ActionForm form,
+                              HttpServletRequest request,
+                              HttpServletResponse response)
         throws Exception {
 
         // Extract attributes we will need
@@ -97,9 +97,14 @@ public class FqlQueryAction extends LookupDispatchAction
 
         FqlQueryForm queryform = (FqlQueryForm) form;
 
-        Query q = new FqlQuery(queryform.getQuerystring(), "org.flymine.model.testmodel")
-            .toQuery();
-        session.setAttribute(Constants.QUERY, q);
+        String queryString = queryform.getQuerystring();
+
+        if (queryString == null || queryString.length() == 0) {
+            session.setAttribute(Constants.QUERY, null);
+        } else {
+            Query q = new FqlQuery(queryString, "org.flymine.model.testmodel").toQuery();
+            session.setAttribute(Constants.QUERY, q);
+        }
 
         return (mapping.findForward("buildquery"));
 
