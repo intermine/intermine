@@ -68,6 +68,7 @@
   <patternset id="lib.common">
     <include name="jasper*.jar"/>
     <include name="ant*.jar"/>
+    <include name="castor*.jar" />
     <include name="cglib*.jar" />
     <include name="commons-collections*.jar" />
     <include name="commons-dbcp*.jar" />
@@ -76,18 +77,18 @@
     <include name="commons-pool*.jar" />
     <include name="commons-digester*.jar" />
     <include name="commons-beanutils*.jar" />
+    <include name="icu4j*.jar"/>
+    <include name="jena*.jar" />
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
+    <include name="mysql*.jar" />
+    <include name="p6spy.jar"/>
     <include name="postgresql*.jar" />
     <include name="pg*.jar" />
-    <include name="mysql*.jar" />
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
-    <include name="jena*.jar" />
-    <include name="icu4j*.jar"/>
     <include name="xerces*.jar"/>
     <include name="xml-apis*.jar"/>
-    <include name="p6spy.jar"/>
   </patternset>
 
   <!-- Ant tasks and unit testing stuff -->
@@ -194,6 +195,7 @@
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
     <pathelement location="${build.model}/xmitest"/>
+    <pathelement location="${build.model}/xmlschematest"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -425,6 +427,27 @@
     <copy todir="${build.model}/xmitest" file="${model}/xmitest/xmitest.xml"/>
   </target>
 
+
+  <!-- copy original .xsd file to model directory for XmlSchemaParserFunctionalTest -->
+  <target name="copy-model-xmlschematest">
+    <copy todir="${build.model}/xmitest" file="${model}/xmlschematest/xmlschematest.xsd"/>
+    <copy todir="${build.model}/xmitest" file="${model}/xmlschematest/xmlschematest.xml"/>
+  </target>
+
+  <!-- Test XML Schema -->
+  <target name="test-xmlschema" depends="compile-main" >
+
+
+    <ant antfile="build-model.xml" target="build-model-from-xmlschema" inheritRefs="true">
+      <property name="model.name" value="xmlschematest"/>
+      <property name="model.src" value="${model}/xmlschematest"/>
+      <property name="build.model.dir" value="${build.model}/xmlschematest"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+
+
   <!-- Unit test targets -->
 
   <!-- compile the tests -->
@@ -447,7 +470,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest"
+  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">

@@ -112,6 +112,21 @@
        destDir="${build.model.dir}" />   
   </target>
 
+  <!-- Generate XML Schema model -->
+  <target name="generate-xmlschema-model" depends="prepare"
+          description="Generate InterMine model from an XML Schema">
+    <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+
+    <model-generation
+       type="xmlschema"
+       nameSpace="${namespace}"
+       modelName="${model.name}"
+       source="${model.src}/${model.name}.xsd"
+       destDir="${build.model.dir}" />   
+  </target>
+
 
   <target name="generate-owl-model"
           description="Generate InterMine model from an OWL file">
@@ -253,6 +268,16 @@
   <target name="generate-model-from-xmi"
           depends="copy-xmi, generate-xmi-model, copy-keydefs, generate-torque"
           description="Generate a InterMine xml model from a xmi file">
+  </target>
+  
+  <target name="build-model-from-xmlschema"
+          depends="generate-xmlschema-model, compile-model-java, copy-keydefs, generate-torque"
+          description="Build a usable model from an xmlschema">
+  </target>
+
+  <target name="generate-model-from-xmlschema"
+          depends="generate-xmlschema-model, copy-keydefs, generate-torque"
+          description="Generate a InterMine xml model from an xml schema">
   </target>
   
   <target name="generate-model-from-owl" 
