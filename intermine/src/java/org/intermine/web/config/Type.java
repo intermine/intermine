@@ -20,8 +20,27 @@ import java.util.List;
  */
 public class Type
 {
+    private String name;
     private List shortDisplayers = new ArrayList();
     private List longDisplayers = new ArrayList();
+
+    /**
+     * Set the fully-qualified class name for this Type
+     *
+     * @param name the name of the Type
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Get the name
+     *
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
+    }
 
     /**
      * Add a short displayer for this Type
@@ -82,7 +101,6 @@ public class Type
     public int hashCode() {
         return shortDisplayers.hashCode() + 3 * longDisplayers.hashCode();
     }
-
 
 }
 
