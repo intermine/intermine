@@ -140,10 +140,12 @@ public class SqlGenerator
      * @param schema the DatabaseSchema in which to look up metadata
      * @param db the Database that the ObjectStore uses
      * @param value a value, such that adding a WHERE component first_order_field &gt; value with
-     * OFFSET 0 is equivalent to the original query with OFFSET offset
+     *        OFFSET 0 is equivalent to the original query with OFFSET offset
+     * @param bagTableNames a Map from BagConstraints to table names, where the table contains the
+     *        contents of the bag that are relevant for the BagConstraint
      */
     public static void registerOffset(Query q, int start, DatabaseSchema schema, Database db,
-            Object value) {
+                                      Object value, Map bagTableNames) {
         try {
             if (value.getClass().equals(Boolean.class)) {
                 return;
@@ -163,9 +165,11 @@ public class SqlGenerator
                         if (firstOrderBy instanceof QueryClass) {
                             firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                         }
-                        String sql = generate(q, schema, db, new SimpleConstraint((QueryEvaluable)
-                                    firstOrderBy, ConstraintOp.GREATER_THAN, new QueryValue(value)),
-                                QUERY_NORMAL);
+                        SimpleConstraint simpleConstraint =
+                            new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                                 ConstraintOp.GREATER_THAN, new QueryValue(value));
+                        String sql = generate(q, schema, db, simpleConstraint, QUERY_NORMAL,
+                                              bagTableNames);
                         cacheEntry.setLast(start, sql);
                     }
                     SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
@@ -190,10 +194,10 @@ public class SqlGenerator
                 if (firstOrderBy instanceof QueryClass) {
                     firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                 }
-                String sql;
-                sql = generate(q, schema, db, new SimpleConstraint((QueryEvaluable)
-                            firstOrderBy, ConstraintOp.GREATER_THAN, new QueryValue(value)),
-                        QUERY_NORMAL);
+                SimpleConstraint simpleConstraint =
+                    new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                         ConstraintOp.GREATER_THAN, new QueryValue(value));
+                String sql = generate(q, schema, db, simpleConstraint, QUERY_NORMAL, bagTableNames);
                 if (cacheEntry == null) {
                     cacheEntry = new CacheEntry(start, sql);
                     schemaCache.put(q, cacheEntry);
@@ -216,10 +220,13 @@ public class SqlGenerator
      * @param limit the maximum number of rows for the query to return
      * @param schema the DatabaseSchema in which to look up metadata
      * @param db the Database that the ObjectStore uses
+     * @param bagTableNames a Map from BagConstraints to table names, where the table contains the
+     *        contents of the bag that are relevant for the BagConstraint
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    public static String generate(Query q, int start, int limit, DatabaseSchema schema, Database db)
+    public static String generate(Query q, int start, int limit, DatabaseSchema schema, Database db,
+                                  Map bagTableNames)
             throws ObjectStoreException {
         synchronized (q) {
             Map schemaCache = getCacheForSchema(schema);
@@ -246,7 +253,7 @@ public class SqlGenerator
                     }
                 }
             }
-            String sql = generate(q, schema, db, null, QUERY_NORMAL);
+            String sql = generate(q, schema, db, null, QUERY_NORMAL, bagTableNames);
             /*if (cached == null) {
                 cached = new TreeMap();
                 schemaCache.put(q, cached);
@@ -283,14 +290,18 @@ public class SqlGenerator
      * @param db the Database that the ObjectStore uses
      * @param offsetCon an additional constraint for improving the speed of large offsets
      * @param kind Query type
+     * @param bagTableNames a Map from BagConstraints to table names, where the table contains the
+     *        contents of the bag that are relevant for the BagConstraint
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
     protected static String generate(Query q, DatabaseSchema schema, Database db,
-            SimpleConstraint offsetCon, int kind) throws ObjectStoreException {
+                                     SimpleConstraint offsetCon, int kind,
+                                     Map bagTableNames) throws ObjectStoreException {
         State state = new State();
         state.setDb(db);
-        buildFromComponent(state, q, schema);
+        state.setBagTableNames(bagTableNames);
+        buildFromComponent(state, q, schema, bagTableNames);
         buildWhereClause(state, q, q.getConstraint(), schema);
         buildWhereClause(state, q, offsetCon, schema);
         String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, schema) : "");
@@ -416,9 +427,11 @@ public class SqlGenerator
      * @param state the current Sql Query state
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
+     * @param bagTableNames a Map from BagConstraint to temporary table name
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void buildFromComponent(State state, Query q, DatabaseSchema schema)
+    protected static void buildFromComponent(State state, Query q, DatabaseSchema schema,
+                                             Map bagTableNames)
             throws ObjectStoreException {
         Set fromElements = q.getFrom();
         Iterator fromIter = fromElements.iterator();
@@ -486,7 +499,8 @@ public class SqlGenerator
                 }
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema,
-                                state.getDb(), null, QUERY_SUBQUERY_FROM) + ") AS "
+                                               state.getDb(), null, QUERY_SUBQUERY_FROM,
+                                               bagTableNames) + ") AS "
                         + DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
                             .get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap(DatabaseUtil
@@ -525,7 +539,9 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void constraintToString(State state, Constraint c, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+                                             DatabaseSchema schema)
+        throws ObjectStoreException {
+
         if (c instanceof ConstraintSet) {
             constraintSetToString(state, (ConstraintSet) c, q, schema);
         } else if (c instanceof SimpleConstraint) {
@@ -553,7 +569,9 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void constraintSetToString(State state, ConstraintSet c, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+                                                DatabaseSchema schema)
+        throws ObjectStoreException {
+
         ConstraintOp op = c.getOp();
         boolean negate = (op == ConstraintOp.NAND) || (op == ConstraintOp.NOR);
         boolean disjunctive = (op == ConstraintOp.OR) || (op == ConstraintOp.NOR);
@@ -615,8 +633,9 @@ public class SqlGenerator
             queryClassToString(state.getWhereBuffer(), cls, q, schema, QUERY_SUBQUERY_CONSTRAINT,
                     state);
         }
-        state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, schema,
-                        state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT) + ")");
+        state.addToWhere(" " + c.getOp().toString() + " ("
+                         + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
+                                    state.getBagTableNames()) + ")");
     }
 
     /**
@@ -710,6 +729,13 @@ public class SqlGenerator
         }
     }
 
+    
+    /**
+     * The maximum size a bag in a BagConstraint can be before we consider using a temporary table
+     * instead.
+     */
+    public static final int MAX_BAG_INLINE_SIZE = 100;
+    
     /**
      * Converts a BagConstraint object into a String suitable for putting on an SQL query.
      *
@@ -720,7 +746,9 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void bagConstraintToString(State state, BagConstraint c, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+                                                DatabaseSchema schema)
+        throws ObjectStoreException {
+
         Class type = c.getQueryNode().getType();
         String leftHandSide;
         if (c.getQueryNode() instanceof QueryEvaluable) {
@@ -745,21 +773,40 @@ public class SqlGenerator
         if (filteredBag.isEmpty()) {
             state.addToWhere(c.getOp() == ConstraintOp.IN ? "false" : "true");
         } else {
-            int needComma = 0;
-            Iterator orIter = filteredBag.iterator();
-            while (orIter.hasNext()) {
-                if (needComma == 0) {
-                    state.addToWhere(c.getOp() == ConstraintOp.IN ? "(" + leftHandSide
-                            : "( NOT (" + leftHandSide);
-                } else if (needComma % 9000 == 0) {
-                    state.addToWhere(") OR " + leftHandSide);
-                } else {
-                    state.addToWhere(", ");
+            if (filteredBag.size () < MAX_BAG_INLINE_SIZE
+                || state.getBagTableNames().get(c) == null) {
+                int needComma = 0;
+                Iterator orIter = filteredBag.iterator();
+                while (orIter.hasNext()) {
+                    if (needComma == 0) {
+                        state.addToWhere(c.getOp() == ConstraintOp.IN ? "(" + leftHandSide
+                                         : "( NOT (" + leftHandSide);
+                    } else if (needComma % 9000 == 0) {
+                        state.addToWhere(") OR " + leftHandSide);
+                    } else {
+                        state.addToWhere(", ");
+                    }
+                    needComma++;
+                    state.addToWhere((String) orIter.next());
                 }
-                needComma++;
-                state.addToWhere((String) orIter.next());
+                state.addToWhere(c.getOp() == ConstraintOp.IN ? "))" : ")))");
+            } else {
+                state.addToWhere(leftHandSide);
+
+                if (c.getOp() == ConstraintOp.IN) {
+                    state.addToWhere("SELECT value FROM ");
+                } else {
+                    state.addToWhere("NOT (SELECT value FROM ");
+                }
+
+                state.addToWhere((String) state.getBagTableNames().get(c));
+
+                if (c.getOp() == ConstraintOp.IN) {
+                    state.addToWhere(")");
+                } else {
+                    state.addToWhere("))");
+                }
             }
-            state.addToWhere(c.getOp() == ConstraintOp.IN ? "))" : ")))");
         }
     }
 
@@ -1151,6 +1198,10 @@ public class SqlGenerator
         private Map fromToFieldToAlias = new HashMap();
         private Database db;
 
+        // a Map from BagConstraints to table names, where the table contains the contents of the
+        // bag that are relevant for the BagConstraint
+        private Map bagTableNames = new HashMap();
+        
         public State() {
         }
 
@@ -1207,6 +1258,16 @@ public class SqlGenerator
             fromToFieldToAlias.put(from, map);
         }
 
+        public void setBagTableNames(Map bagTableNames) {
+            if (bagTableNames != null) {
+                this.bagTableNames = bagTableNames;
+            }
+        }
+
+        public Map getBagTableNames() {
+            return bagTableNames;
+        }
+        
         public void setDb(Database db) {
             this.db = db;
         }
