@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -25,7 +24,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import org.flymine.FlyMineException;
 import org.flymine.xml.full.Attribute;
 import org.flymine.xml.full.Item;
-import org.flymine.xml.full.Reference;
 import org.flymine.ontology.OntologyUtil;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStore;
