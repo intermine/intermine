@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <!-- geneLong.jsp -->
 <fmt:setBundle basename="model"/>
@@ -12,9 +13,11 @@
   <c:out value="${object.name}"/>
 </c:if>
 <br/>
+
 <c:if test="${!empty object.seqlen}">
   <fmt:message key="gene.sequencelength"/>: <c:out value="${object.seqlen}"/><br/>
 </c:if>
+
 <c:if test="${!empty object.transcripts}">
   <fmt:message key="gene.transcipts"/>:
   <c:forEach items="${object.transcripts}" var="thisTranscript">
@@ -23,18 +26,24 @@
     </html:link>
   </c:forEach>
 </c:if>
+
 <c:if test="${!empty object.synonyms}">
-  <fmt:message key="gene.synonyms"/>:
+  <br/>
+  <fmt:message key="gene.synonyms"/>:<br/>
+  <ul>
   <c:forEach items="${object.synonyms}" var="thisSynonym">
     <c:set var="sourceTitle" value="${thisSynonym.source.title}"/>
     <c:set var="linkProperty" value="${sourceTitle}.${object.organism.genus}.${object.organism.species}.url.prefix"/>
-    <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
-               title="${sourceTitle}: ${thisSynonym.synonym}"
-               target="view_window">
-      <html:img src="model/ensembl_logo_small.png"/>
-      <c:out value="${thisSynonym.synonym}"/>
-    </html:link>
+    <li>
+      <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.synonym}"
+                 title="${sourceTitle}: ${thisSynonym.synonym}"
+                 target="view_window">
+        <html:img src="model/ensembl_logo_small.png"/>
+        <c:out value="${thisSynonym.synonym}"/>
+      </html:link>
+    </li>
   </c:forEach>
+  </ul>
 </c:if>
 <!--
 - add these:
