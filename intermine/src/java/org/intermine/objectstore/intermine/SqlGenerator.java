@@ -125,6 +125,9 @@ public class SqlGenerator
     public static void registerOffset(Query q, int start, DatabaseSchema schema, Database db,
             Object value) {
         try {
+            if (value.getClass().equals(Boolean.class)) {
+                return;
+            }
             synchronized (q) {
                 Map schemaCache = getCacheForSchema(schema);
                 CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
