@@ -193,12 +193,8 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         assertEquals(expectedQueries.length, task.queries.size());
 
         for (int i = 0; i < expectedQueries.length; i++) {
-            org.intermine.web.LogMe.log("pret", "expected: " + expectedQueries[i]);
-            org.intermine.web.LogMe.log("pret", "actual: " + task.queries.get(i));
-            org.intermine.web.LogMe.log("pret", "done 1");
             assertEquals(expectedQueries[i], "" + task.queries.get(i));
         }
-        org.intermine.web.LogMe.log("pret", "done");
     }
 
     public void testQueries() {
