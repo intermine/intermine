@@ -19,6 +19,7 @@ import junit.framework.Test;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriterTestCase;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -167,5 +168,50 @@ public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCas
             //((ObjectStoreWriterInterMineImpl) writer).releaseConnection(c);
         }
     }*/
+
+    private boolean finished = false;
+    private Throwable failureException = null;
+
+    public void testRapidShutdown() throws Exception {
+        Thread t = new Thread(new ShutdownThread());
+        t.start();
+        synchronized (this) {
+            try {
+                wait(5000);
+            } catch (InterruptedException e) {
+            }
+            assertTrue(finished);
+            if (failureException != null) {
+                throw new Exception(failureException);
+            }
+        }
+    }
+
+    public synchronized void signalFinished(Throwable e) {
+        finished = true;
+        failureException = e;
+        notifyAll();
+    }
+
+    private class ShutdownThread implements Runnable {
+        public void run() {
+            try {
+                Connection c = null;
+                ObjectStoreWriterInterMineImpl w = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+                c = w.getConnection();
+                try {
+                    w.close();
+                    fail("Expected an ObjectStoreException");
+                } catch (ObjectStoreException e) {
+                    assertEquals("Closed ObjectStoreWriter while it is being used. Note this writer will be automatically closed when the current operation finishes", e.getMessage());
+                }
+                w.releaseConnection(c);
+                signalFinished(null);
+            } catch (Throwable e) {
+                System.out.println("Error in ShutdownThread: " + e);
+                signalFinished(e);
+            }
+        }
+    }
 }
 

@@ -321,7 +321,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * @see IntegrationWriterAbstractImpl#close
      */
-    public void close() {
+    public void close() throws ObjectStoreException {
         osw.close();
         dataTracker.close();
     }

@@ -54,8 +54,10 @@ public class ProfileManager
 
     /**
      * Close this ProfileManager
+     *
+     * @throws ObjectStoreException in exceptional circumstances
      */
-    public void close() {
+    public void close() throws ObjectStoreException {
         osw.close();
     }
     

@@ -95,6 +95,8 @@ public interface ObjectStoreWriter extends ObjectStore
 
     /**
      * Closes the connection associated with this ObjectStoreWriter
+     *
+     * @throws ObjectStoreException if something goes wrong
      */
-    public void close();
+    public void close() throws ObjectStoreException;
 }

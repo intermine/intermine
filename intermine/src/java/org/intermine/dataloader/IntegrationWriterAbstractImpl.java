@@ -502,7 +502,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * @see org.intermine.objectstore.ObjectStoreWriter#close
      */
-    public void close() {
+    public void close() throws ObjectStoreException {
         osw.close();
     }
 

@@ -526,6 +526,10 @@ public class InitialiserPlugin implements PlugIn
      * Destroy method called at Servlet destroy
      */
     public void destroy() {
-        profileManager.close();
+        try {
+            profileManager.close();
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
