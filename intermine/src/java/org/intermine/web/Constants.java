@@ -69,4 +69,9 @@ public interface Constants
      * The attribute name to use when storing the results of a query in the ServletContext.
      */
     public static final String RESULTS_TABLE = "RESULTS_TABLE";
+
+    /**
+     * The name of the attribute that is used to indicate advanced mode.
+     */
+    public static final String ADVANCED_MODE = "ADVANCED_MODE";
 }
