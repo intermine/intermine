@@ -261,6 +261,12 @@ public class CreateIndexesTask extends Task
             LOG.info("creating index: " + indexName);
             dropIndex(indexName);
             createIndex(indexName, tableName, fieldName + ", id");
+
+            if (!att.isPrimitive()) {
+                dropIndex(indexName + "__nulls");
+                createIndex(indexName + "__nulls", tableName, "("
+                            + att.getName() + " IS NULL)");
+            }
         }
     }
 
