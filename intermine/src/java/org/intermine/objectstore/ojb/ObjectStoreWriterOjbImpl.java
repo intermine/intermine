@@ -131,6 +131,7 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
         }
         if (res.size() == 1) {
             Object ret = ((ResultsRow) res.get(0)).get(0);
+            return ret;
         }
         return null;
     }
