@@ -47,14 +47,14 @@ public class UserTemplateAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String queryName = request.getParameter("name");
+        String templateName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
-        TemplateQuery template = (TemplateQuery) profile.getSavedTemplates().get(queryName);
+        TemplateQuery template = (TemplateQuery) profile.getSavedTemplates().get(templateName);
         if (template != null) {
-            String msg = getResources(request).getMessage("templateList.deleted",
-                                                                            template.getName());
+            String msg = getResources(request).getMessage("templateList.deleted", templateName);
             session.setAttribute(Constants.MESSAGE, msg);
+            profile.deleteTemplate(templateName);
             // If superuser then rebuild shared templates
             if (profile.getUsername() != null
                 && profile.getUsername().equals
