@@ -11,14 +11,17 @@ package org.intermine.objectstore;
  */
 
 import java.util.Set;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Properties;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ResultsRow;
 
 /**
  * Generate a Properties object that can be passed to the ObjectStoreSummary constructor.
@@ -28,6 +31,8 @@ import org.intermine.metadata.Model;
 
 public class ObjectStoreSummaryGenerator
 {
+    static final String FIELDS_SUFFIX = ".fields";
+
     /**
      * Get the number of instances of a particular class in the ObjectStore.
      * @param os the ObjectStore to query
@@ -51,7 +56,7 @@ public class ObjectStoreSummaryGenerator
      * Count all the objects of each class and put the results in the given Properties objects.
      * The properties will look like: org.flymine.model.Gene.count = 12345
      */
-    private static void getAllClassCounts (ObjectStore os, Properties properties)
+    private static void getAllClassCounts(ObjectStore os, Properties properties)
         throws ObjectStoreException {
         Model model = os.getModel();
         Set classDescriptors = model.getClassDescriptors();
@@ -69,6 +74,72 @@ public class ObjectStoreSummaryGenerator
         }
     }
 
+    public static final String FIELD_DELIM = "$_^";
+
+    /**
+     * Returns null if there are more than maxValues filed values.
+     */
+    private static String getFieldSummary(ObjectStore os, String className, String fieldName,
+                                          int maxValues)
+        throws ObjectStoreException, ClassNotFoundException { 
+        Query q = new Query();
+        q.setDistinct(true);
+        QueryClass qc = new QueryClass(Class.forName(className));
+        q.addToSelect(new QueryField(qc, fieldName));
+        q.addFrom(qc);
+        Results results = os.execute(q);
+        if (results.size () > maxValues) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i<results.size(); i++) {
+            if (i != 0) {
+                sb.append(FIELD_DELIM);
+            }
+
+            sb.append(((ResultsRow) results.get(i)).get(0));
+        }
+
+        return sb.toString();
+    }
+
+    private static void getFieldSummaries(ObjectStore os, Properties configurationProperties,
+                                          Properties outputProperties)
+        throws ObjectStoreException, ClassNotFoundException {
+        Iterator configurationIterator = configurationProperties.keySet().iterator();
+
+        while (configurationIterator.hasNext()) {
+            String key = (String) configurationIterator.next();
+            if (key.endsWith(FIELDS_SUFFIX)) {
+                String className = key.substring(0, key.length() - FIELDS_SUFFIX.length());
+                String fields = (String) configurationProperties.get(key);
+
+                Integer maxValuesInteger =
+                    Integer.valueOf((String) configurationProperties.get("max.field.values"));
+
+                int maxValues;
+
+                if (maxValuesInteger == null) {
+                    maxValues = Integer.MAX_VALUE;
+                } else {
+                    maxValues = maxValuesInteger.intValue();
+                }
+
+                String[] parts = fields.split("[\t ]");
+
+                for (int i = 0; i<parts.length; i++) {
+                    String fieldName = parts[i];
+                    String fieldSummary = getFieldSummary(os, className, fieldName, maxValues);
+                    if (fieldSummary != null) {
+                        outputProperties.put(className + "." + fieldName
+                                             + ObjectStoreSummary.FIELDS_SUFFIX,
+                                             fieldSummary);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * For the given configuration Properties object return Properties object that summarises the
      * given ObjectStore.  The configurationProperties have this form:
@@ -77,14 +148,17 @@ public class ObjectStoreSummaryGenerator
      * @param configurationProperties A Properties object describing the objects and fields to
      * summarise
      * @throws ObjectStoreException if there is a problem with the ObjectStore
+     * @throws ClassNotFoundException if the class name in the configuration file doesn't refer to a
+     * known class
      * @return a Properties object summarising the given ObjectStore
      */
     public static Properties getAsProperties(ObjectStore os, Properties configurationProperties)
-        throws ObjectStoreException {
-        Properties properties = new Properties();
+        throws ObjectStoreException, ClassNotFoundException {
+        Properties outputProperties = new Properties();
 
-        getAllClassCounts(os, properties);
+        getAllClassCounts(os, outputProperties);
+        getFieldSummaries(os, configurationProperties, outputProperties);
 
-        return properties;
+        return outputProperties;
     }
 }
