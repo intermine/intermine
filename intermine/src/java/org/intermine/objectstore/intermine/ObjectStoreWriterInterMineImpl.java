@@ -73,7 +73,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Map tableToCollections;
 
     protected static final int SEQUENCE_MULTIPLE = 1000000;
-    protected static final int MAX_BATCH_CHARS = 10000000;
 
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
