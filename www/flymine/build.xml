@@ -96,16 +96,28 @@
 
 
 <target name="release-production-webapp">
-  <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
-  <ant dir="../../intermine" target="jar" inheritRefs="true"/>
-  <ant dir="../../intermine" target="build-webapp" inheritRefs="true"/>
+  <ant dir="../../intermine-www" target="distclean" inheritRefs="true"/>
+  <ant dir="../../intermine-www" target="jar" inheritRefs="true"/>
+  <ant dir="../../intermine-www" target="build-webapp" inheritRefs="true"/>
 
-  <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
-  <ant dir="../../flymine" target="compile-genomic-model" inheritRefs="true"/>
-  <ant dir="../../flymine" target="jar-genomic" inheritRefs="true"/>
-  <ant dir="../../flymine" target="build-production-webapp" inheritRefs="true"/>
-  <ant dir="../../flymine" target="remove-webapp" inheritRefs="true"/>
-  <ant dir="../../flymine" target="release-webapp" inheritRefs="true"/>
+  <ant dir="../../flymine-www" target="distclean" inheritRefs="true">
+    <property name="intermine.dist.path" location="../intermine-www/dist"/>
+  </ant>
+  <ant dir="../../flymine-www" target="compile-genomic-model" inheritRefs="true"/>
+    <property name="intermine.dist.path" location="../intermine-www/dist"/>
+  </ant>
+  <ant dir="../../flymine-www" target="jar-genomic" inheritRefs="true">
+    <property name="intermine.dist.path" location="../intermine-www/dist"/>
+  </ant>
+  <ant dir="../../flymine-www" target="build-production-webapp" inheritRefs="true">
+    <property name="intermine.dist.path" location="../intermine-www/dist"/>
+  </ant>
+  <ant dir="../../flymine-www" target="remove-webapp" inheritRefs="true">
+    <property name="intermine.dist.path" location="../intermine-www/dist"/>
+  </ant>
+  <ant dir="../../flymine-www" target="release-webapp" inheritRefs="true">
+    <property name="intermine.dist.path" location="../intermine-www/dist"/>
+  </ant>
 </target>
 
 
