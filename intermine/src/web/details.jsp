@@ -1,26 +1,35 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%--/**
-     * Render details of an object
-     */
---%>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <tiles:importAttribute scope="request"/>
 
+<!-- details.jsp -->
 <c:choose>
-  <c:when test="${cld != null}">
-  <%-- Go through all the items in the WebConfig for this object --%>
-    <c:if test="${empty webconfig.types[cld.name].longDisplayers}">
-      <tiles:insert name="/allFields.jsp" />
-    </c:if>
-    <c:forEach items="${webconfig.types[cld.name].longDisplayers}" var="displayer">
-      <tiles:insert beanName="displayer" beanProperty="src"/>
+  <c:when test="${object != null}">
+    <c:forEach var="cld" items="${leafClds}">
+      <c:out value="${cld.unqualifiedName}"/>
+      <br/>
+      <br/>
+      <c:choose>
+        <c:when test="${!empty webconfig.types[cld.name].longDisplayers}">
+          <c:forEach items="${webconfig.types[cld.name].longDisplayers}" var="displayer">
+            <c:set var="cld" value="${cld}" scope="request"/>
+            <tiles:insert beanName="displayer" beanProperty="src"/>
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+          <c:set var="cld" value="${cld}" scope="request"/>
+          <tiles:insert name="/allFields.jsp"/>
+        </c:otherwise>
+      </c:choose>
+      <br/>
     </c:forEach>
   </c:when>
   <c:otherwise>
-    <font class="resultsCellValue">
-      <c:out value="${object}"/>
-    </font>
+    null
   </c:otherwise>
 </c:choose>
-
+<br/>
+<html:link action="/results">Return to results</html:link>
+<!-- /details.jsp -->

@@ -10,18 +10,11 @@ package org.flymine.web.results;
  *
  */
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.flymine.objectstore.ObjectStore;
-import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.Results;
 import org.flymine.metadata.Model;
 
 import org.flymine.model.FlyMineBusinessObject;
@@ -42,17 +35,11 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
         actionPerform();
 
         Model model = Model.getInstanceByName("testmodel");
-        assertNotNull(context.getAttribute("clds"));
-        assertTrue(((Set) context.getAttribute("clds")).contains(model.getClassDescriptorByName(Department.class.getName())));
-        assertTrue(((Set) context.getAttribute("clds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
-        assertTrue(((Set) context.getAttribute("clds")).contains(model.getClassDescriptorByName(FlyMineBusinessObject.class.getName())));
-
         assertNotNull(context.getAttribute("leafClds"));
         assertTrue(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
         assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
         assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(FlyMineBusinessObject.class.getName())));
     }
-
 
     public void testNonBusinessObject() throws Exception {
         ComponentContext context = new ComponentContext();
@@ -61,7 +48,6 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
 
         getRequest().setAttribute("object", "test string");
         actionPerform();
-        assertEquals(0, ((Set) context.getAttribute("clds")).size());
+        assertEquals(0, ((Set) context.getAttribute("leafClds")).size());
     }
-
 }

@@ -10,19 +10,19 @@ package org.flymine.web.results;
  *
  */
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
-import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsRow;
 
 import org.flymine.model.testmodel.Department;
+
+import servletunit.struts.MockStrutsTestCase;
 
 public class ObjectDetailsControllerTest extends MockStrutsTestCase
 {
@@ -30,24 +30,40 @@ public class ObjectDetailsControllerTest extends MockStrutsTestCase
         super(arg1);
     }
 
-    public void testBusinessObject() throws Exception {
+    public void testObject() throws Exception {
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initObjectDetails");
 
-        getRequest().setAttribute("object", new Department());
+        ObjectStore os = ObjectStoreFactory.getObjectStore();
+        Results r = os.execute(new FqlQuery("select Department from Department", "org.flymine.model.testmodel").toQuery());
+        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
+        System.out.println(d);
+
+        addRequestParameter("id", d.getId().toString());
+
         actionPerform();
-        assertNotNull(context.getAttribute("cld"));
+
+        assertNotNull(context.getAttribute("leafClds"));
+        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.flymine.model.testmodel.Department")));
     }
 
-    public void testNonBusinessObject() throws Exception {
+    public void testField() throws Exception {
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initObjectDetails");
 
-        getRequest().setAttribute("object", "test string");
-        actionPerform();
-        assertNull(context.getAttribute("cld"));
-    }
+        ObjectStore os = ObjectStoreFactory.getObjectStore();
+        Results r = os.execute(new FqlQuery("select Department from Department", "org.flymine.model.testmodel").toQuery());
+        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
+        System.out.println(d);
 
+        addRequestParameter("id", d.getId().toString());
+        addRequestParameter("field", "company");
+
+        actionPerform();
+
+        assertNotNull(context.getAttribute("leafClds"));
+        assertTrue(((Set) context.getAttribute("leafClds")).contains(os.getModel().getClassDescriptorByName("org.flymine.model.testmodel.Company")));
+    }
 }

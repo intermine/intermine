@@ -7,10 +7,10 @@
 <!-- resultsCell.jsp -->
 <c:choose>
   <%-- check whether we have a business object or a plain java object --%>
-  <c:when test="${!empty clds}">
+  <c:when test="${!empty leafClds}">
     <table>
       <tr>
-        <html:link action="/changeResults?method=details&rowIndex=${rowIndex}&columnIndex=${columnIndex}">
+        <html:link action="/details?id=${object.id}">
           <font class="resultsCellTitle">
             <c:forEach var="cld" items="${leafClds}">
               <c:out value="${cld.unqualifiedName}"/>

@@ -10,7 +10,10 @@ package org.flymine.web.results;
  *
  */
 
-import javax.servlet.http.HttpSession;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,9 +24,11 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreFactory;
-
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.util.DynamicUtil;
+import org.flymine.util.TypeUtil;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -33,7 +38,6 @@ import org.flymine.objectstore.ObjectStoreFactory;
  */
 public class ObjectDetailsController extends TilesAction
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -50,19 +54,35 @@ public class ObjectDetailsController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
- public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-    HttpSession session = request.getSession();
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
+        Integer id = new Integer((String) request.getParameter("id"));
 
-    Object obj = request.getAttribute("object");
+        ObjectStore os = ObjectStoreFactory.getObjectStore();
 
-    Model model = ObjectStoreFactory.getObjectStore().getModel();
+        FlyMineBusinessObject o = os.getObjectById(id);
+        
+        String field = request.getParameter("field");
+        if (field != null) {
+            o = (FlyMineBusinessObject) TypeUtil.getFieldValue(o, field);
+        }
+        if (o == null) {
+            return null;
+        }
+        
+        request.setAttribute("object", o);
 
-    ClassDescriptor cld = model.getClassDescriptorByName(obj.getClass().getName());
-
-    if (cld != null) {
-        context.putAttribute("cld", cld);
+        Model model = os.getModel();
+        Set leafClds = new HashSet();
+        for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
+            leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
+        }
+        context.putAttribute("leafClds", leafClds);
+        
+        return null;
     }
-    return null;
-  }
 }

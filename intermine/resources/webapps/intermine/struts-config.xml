@@ -155,6 +155,12 @@
       <forward name="buildquery" path="query.page"/>
     </action>
 
+    <action path="/details"
+            forward="details.page"/>
+
+    <action path="/results"
+            forward="results.page"/>
+
     <!-- Controllers -->
 
     <action path="/initQueryBuild"

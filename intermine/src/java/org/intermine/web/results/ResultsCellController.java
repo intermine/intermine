@@ -24,6 +24,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.flymine.metadata.Model;
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.util.DynamicUtil;
 
@@ -35,7 +36,6 @@ import org.flymine.util.DynamicUtil;
  */
 public class ResultsCellController extends TilesAction
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -52,21 +52,25 @@ public class ResultsCellController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
-        Object obj = request.getAttribute("object");
-
-        Model model = ObjectStoreFactory.getObjectStore().getModel();
-
-        context.putAttribute("clds", model.getClassDescriptorsForClass(obj.getClass()));
+                                 HttpServletResponse response)
+        throws Exception {
+        Object o = request.getAttribute("object");
 
         Set leafClds = new HashSet();
-        for (Iterator i = DynamicUtil.decomposeClass(obj.getClass()).iterator(); i.hasNext(); ) {
-            leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
+
+        if (o instanceof FlyMineBusinessObject) {
+            Model model = ObjectStoreFactory.getObjectStore().getModel();
+            for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {
+                leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
+            }
         }
+
         context.putAttribute("leafClds", leafClds);
-        
+            
         return null;
     }
 }
