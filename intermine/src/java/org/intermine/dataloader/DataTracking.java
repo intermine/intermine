@@ -57,7 +57,7 @@ public class DataTracking
         QueryClass qc1 = new QueryClass(Source.class);
         QueryClass qc2 = new QueryClass(Field.class);
         QueryReference qr = new QueryObjectReference(qc2, "source");
-        ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc2);
+        ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc1);
         QueryField qf1 = new QueryField(qc2, "name");
         SimpleConstraint sc1 = new SimpleConstraint(qf1,
                                                     ConstraintOp.EQUALS,
