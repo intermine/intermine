@@ -66,7 +66,7 @@ public class StringUtil
     }
 
     /**
-     * Returns a list of tokens delimited by whitespace in String s (useful when handling XML)
+     * Returns a list of tokens delimited by whitespace in String str (useful when handling XML)
      *
      * @param str the String to tokenize
      * @return the String tokens
@@ -83,6 +83,54 @@ public class StringUtil
             l.add(st.nextToken());
         }
         return l;
+    }
+
+    /**
+     * Returns a list of tokens delimited by delim in String str.
+     * eg. split("abc@#def@#", "@#") returns a 3 element array containing "abc", "def" and ""
+     *
+     * @param str the String to tokenize
+     * @param delim the delimiter String
+     * @return the String tokens
+     * @throws NullPointerException if str or delim is null
+     */
+    public static String[] split(String str, String delim) {
+        if (str == null || delim == null) {
+            throw new NullPointerException("Cannot pass null arguments to tokenize");
+        }
+
+        if (delim.length() == 0) {
+            throw new IllegalArgumentException("Delimiter can not be zero length");
+        }
+
+        List l = new ArrayList();
+        
+        // add list sentinel to avoid the special case for the first token
+        l.add(new Integer(-delim.length()));
+              
+        int nextStartIndex = 0;
+
+        while (true) {
+            int delimIndex = str.indexOf(delim, nextStartIndex);
+            if (delimIndex == -1) {
+                break;
+            }
+            l.add(new Integer(delimIndex));
+            nextStartIndex = delimIndex + delim.length();
+        }
+
+        // add list sentinel to avoid the special case for the last token
+        l.add(new Integer(str.length()));
+
+        String [] returnArray = new String[l.size() - 1];
+
+        for (int i = 0; i < returnArray.length; i++) {
+            int thisDelimStart = ((Integer) l.get(i)).intValue();
+            int nextDelimStart = ((Integer) l.get(i + 1)).intValue();
+            returnArray[i] = str.substring(thisDelimStart + delim.length(), nextDelimStart);
+        }
+
+        return returnArray;
     }
 
     /**
