@@ -18,7 +18,7 @@
       </field>
       <field
         property="email"
-        depends="required,email">
+        depends="required">
         <arg key="feedback.email"/>
       </field>
       <field
