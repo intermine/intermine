@@ -3,13 +3,13 @@
 
 <!-- header.jsp -->
 <div id="header">
-  <div id="headerTitle">
+  <h1>
     <html:link href="${WEB_PROPERTIES['project.titleURL']}">
       <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
     </html:link>
-  </div>
-  <div id="headerSubtitle">
+  </h1>
+  <p>
     <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
-  </div>
+  </p>
 </div>
 <!-- /header.jsp -->
