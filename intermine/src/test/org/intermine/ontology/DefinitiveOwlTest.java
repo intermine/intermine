@@ -487,7 +487,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         Item exp11 = new Item();
         exp11.setIdentifier("11");
         exp11.setClassName(tgtNs + "Company");
-        exp11.setImplementations(tgtNs + "Organisation");
+        exp11.setImplementations("");
         Attribute ea11 = new Attribute();
         ea11.setName("name");
         ea11.setValue("Company11");
@@ -514,7 +514,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         Item exp21 = new Item();
         exp21.setIdentifier("21");
         exp21.setClassName(tgtNs + "LtdCompany");
-        exp21.setImplementations(tgtNs + "Company " + tgtNs + "Organisation");
+        exp21.setImplementations("");
         Attribute a21 = new Attribute();
         a21.setName("name");
         a21.setValue("LtdCompany21");
