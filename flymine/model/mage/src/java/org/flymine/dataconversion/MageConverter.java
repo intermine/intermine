@@ -12,11 +12,15 @@ package org.flymine.dataconversion;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.io.Writer;
 import java.io.Reader;
 
@@ -28,7 +32,11 @@ import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.xml.full.FullRenderer;
+
+import org.apache.log4j.Logger;
 
 /**
  * Convert MAGE-ML to InterMine Full Data Xml via MAGE-OM objects.
@@ -38,6 +46,8 @@ import org.intermine.dataconversion.FileConverter;
  */
 public class MageConverter extends FileConverter
 {
+    private static final Logger LOG = Logger.getLogger(MageConverter.class);
+
     protected static final String MAGE_NS = "http://www.biomage.org#";
 
     protected HashMap seenMap;
@@ -49,14 +59,14 @@ public class MageConverter extends FileConverter
     public MageConverter(ItemWriter writer) {
         super(writer);
     }
-        
+
     /**
      * @see FileConverter#process
      */
     public void process(Reader reader) throws Exception {
         seenMap = new LinkedHashMap();
         id = 0;
-        File f = File.createTempFile("mageconvert", ".xml");
+        File f = new File("build/tmp/mageconvert.xml");
         try {
             Writer fileWriter = new FileWriter(f);
             int c;
@@ -74,7 +84,7 @@ public class MageConverter extends FileConverter
     }
 
     /**
-     * Create an item and associated fieldsm references anc collections
+     * Create an item and associated fields, references and collections
      * given a MAGE object.
      * @param obj a MAGE object to create items for
      * @return the created item
@@ -96,7 +106,7 @@ public class MageConverter extends FileConverter
             item.setIdentifier(alias(className) + "_" + (id++));
             seenMap.put(obj, item);
         }
-        
+
         for (Iterator i = TypeUtil.getFieldInfos(cls).values().iterator(); i.hasNext();) {
             TypeUtil.FieldInfo info = (TypeUtil.FieldInfo) i.next();
             Method m = info.getGetter();
@@ -121,8 +131,14 @@ public class MageConverter extends FileConverter
                             Attribute attr = new Attribute();
                             attr.setName(info.getName());
                             Method getName = value.getClass().getMethod("getName", null);
-                            attr.setValue((String) getName.invoke(value, null));
-                            item.addAttributes(attr);
+                            String attValue = (String) getName.invoke(value, null);
+                            if (attValue != null) {
+                                attr.setValue(escapeQuotes(attValue));
+                                item.addAttributes(attr);
+                            } else {
+                                LOG.warn("Null value for attribute " + info.getName() + " in Item "
+                                         + item.getClassName() + " (" + item.getIdentifier() + ")");
+                            }
                         } else {
                             //reference
                             Reference ref = new Reference();
@@ -134,7 +150,7 @@ public class MageConverter extends FileConverter
                         // attribute
                         Attribute attr = new Attribute();
                         attr.setName(info.getName());
-                        attr.setValue(value.toString());
+                        attr.setValue(escapeQuotes(value.toString()));
                         item.addAttributes(attr);
                         // TODO handle dates?
                     }
@@ -142,5 +158,13 @@ public class MageConverter extends FileConverter
             }
         }
         return item;
+    }
+
+    protected  String escapeQuotes(String s) {
+        if (s.indexOf('\"') == -1) {
+            return s;
+        } else {
+            return s.replaceAll("\"", "\\\\\"");
+        }
     }
 }
