@@ -10,6 +10,7 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.Set;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +24,8 @@ import org.apache.struts.tiles.ComponentContext;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.objectstore.ObjectStoreFactory;
-
-
+import org.flymine.dataloader.DataLoaderHelper;
+  
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
  * a results cell.
@@ -59,10 +60,10 @@ public class ResultsCellController extends TilesAction
     // Put a map of all fields on to the request
     Model model = ObjectStoreFactory.getObjectStore().getModel();
 
-    ClassDescriptor cld = model.getClassDescriptorByName(obj.getClass().getName());
+    Set clds = model.getClassDescriptorsForClass(obj.getClass());
 
-    if (cld != null) {
-        context.putAttribute("cld", cld);
+    if (clds.size() > 0) {
+        context.putAttribute("clds", clds);
     }
     return null;
   }

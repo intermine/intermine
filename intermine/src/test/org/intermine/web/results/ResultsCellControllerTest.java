@@ -37,7 +37,7 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
 
         getRequest().setAttribute("object", new Department());
         actionPerform();
-        assertNotNull(context.getAttribute("cld"));
+        assertNotNull(context.getAttribute("clds"));
     }
 
     public void testNonBusinessObject() throws Exception {
@@ -47,7 +47,7 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
 
         getRequest().setAttribute("object", "test string");
         actionPerform();
-        assertNull(context.getAttribute("cld"));
+        assertNull(context.getAttribute("clds"));
     }
 
 }
