@@ -130,7 +130,7 @@
     
     <action path="/feedback"
             forward="feedback.page"/>
-
+    
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
@@ -149,6 +149,11 @@
       <forward name="query" path="query.page"/>
     </action>
     
+    <action path="/confirm"
+            type="org.intermine.web.ConfirmAction">
+      <forward name="confirm" path="confirm.page"/>
+    </action>
+
     <action path="/userTemplateAction"
             type="org.intermine.web.UserTemplateAction"
             parameter="method">
