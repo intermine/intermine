@@ -32,7 +32,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
     }
 
     private Results results;
-    private PagedResults dr;
+    private PagedResults pr;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -47,8 +47,8 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         os.addRow(row);
         IqlQuery fq = new IqlQuery("select c, d from Company as c, Department as d order by c", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
-        dr = new PagedResults(results);
-        dr.setPageSize(10);
+        pr = new PagedResults(results);
+        pr.setPageSize(10);
     }
 
     public void testNext() throws Exception {
@@ -56,14 +56,14 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "next");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.setStart(0);
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+        pr.setStart(0);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(10, dr.getStart());
+        assertEquals(10, pr.getStart());
     }
 
     public void testPrevious() throws Exception {
@@ -71,14 +71,14 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "previous");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.setStart(10);
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+        pr.setStart(10);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(0, dr.getStart());
+        assertEquals(0, pr.getStart());
     }
 
     public void testFirst() throws Exception {
@@ -86,14 +86,14 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "first");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.setStart(10);
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+        pr.setStart(10);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(0, dr.getStart());
+        assertEquals(0, pr.getStart());
     }
 
     public void testLast() throws Exception {
@@ -101,87 +101,79 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         addRequestParameter("method", "last");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.setStart(0);
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+        pr.setStart(0);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(10, dr.getStart());
+        assertEquals(10, pr.getStart());
     }
 
     public void testHide() throws Exception {
         setRequestPathInfo("/changeResults");
         addRequestParameter("method", "hideColumn");
-        addRequestParameter("columnAlias", "c");
+        addRequestParameter("index", "0");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.getColumnByName("c").setVisible(true);
-        assertTrue(dr.getColumnByName("c").isVisible());
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+
+        ((Column) pr.getColumns().get(0)).setVisible(true);
+        assertTrue(((Column) pr.getColumns().get(0)).isVisible());
 
         actionPerform();
-
-        assertFalse(dr.getColumnByName("c").isVisible());
-        verifyForward("results");
         verifyNoActionErrors();
+        verifyForward("results");
+
+        assertFalse(((Column) pr.getColumns().get(0)).isVisible());
     }
 
     public void testShow() throws Exception {
         setRequestPathInfo("/changeResults");
         addRequestParameter("method", "showColumn");
-        addRequestParameter("columnAlias", "c");
+        addRequestParameter("index", "0");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.getColumnByName("c").setVisible(false);
-        assertFalse(dr.getColumnByName("c").isVisible());
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
+
+        ((Column) pr.getColumns().get(0)).setVisible(false);
+        assertFalse(((Column) pr.getColumns().get(0)).isVisible());
 
         actionPerform();
-
-        assertTrue(dr.getColumnByName("c").isVisible());
-        verifyForward("results");
         verifyNoActionErrors();
+        verifyForward("results");
+
+        assertTrue(((Column) pr.getColumns().get(0)).isVisible());
     }
 
-    /**
-     * No need to test every single thing about moving columns up or
-     * down - that is done in PagedResultsTest. Here we just do
-     * a quick check to see if a couple of operations work, and that
-     * we are forwarded to the correct page
-     */
-    public void testMoveColumnUp() throws Exception {
+    public void testMoveColumnLeft() throws Exception {
         setRequestPathInfo("/changeResults");
-        addRequestParameter("method", "moveColumnUp");
-        addRequestParameter("columnAlias", "d");
+        addRequestParameter("method", "moveColumnLeft");
+        addRequestParameter("index", "1");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-
-        assertEquals(dr.getColumnByName("c"), dr.getColumns().get(0));
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
         actionPerform();
 
-        assertEquals(dr.getColumnByName("d"), dr.getColumns().get(0));
-        verifyForward("results");
         verifyNoActionErrors();
+        verifyForward("results");
+        assertEquals("d", ((Column) pr.getColumns().get(0)).getName());
     }
 
-    public void testMoveColumnDown() throws Exception {
+    public void testMoveColumnRight() throws Exception {
         setRequestPathInfo("/changeResults");
-        addRequestParameter("method", "moveColumnDown");
-        addRequestParameter("columnAlias", "c");
+        addRequestParameter("method", "moveColumnRight");
+        addRequestParameter("index", "0");
 
         getSession().setAttribute("results", results);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-
-        assertEquals(dr.getColumnByName("c"), dr.getColumns().get(0));
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
         actionPerform();
 
-        assertEquals(dr.getColumnByName("d"), dr.getColumns().get(0));
-        verifyForward("results");
         verifyNoActionErrors();
+        verifyForward("results");
+        assertEquals("c", ((Column) pr.getColumns().get(1)).getName());
     }
 }

@@ -224,7 +224,7 @@ public class PagedResultsTest extends TestCase
 
     }
 
-    public void testMoveColumnUp1() throws Exception {
+    public void testMoveColumnLeft1() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -240,11 +240,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnUp("c1");
+        dr.moveColumnLeft(0);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnUp2() throws Exception {
+    public void testMoveColumnLeft2() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -260,11 +260,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnUp("c2");
+        dr.moveColumnLeft(1);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnUp3() throws Exception {
+    public void testMoveColumnLeft3() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -280,11 +280,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnUp("d1");
+        dr.moveColumnLeft(2);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnUp4() throws Exception {
+    public void testMoveColumnLeft4() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -300,11 +300,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d1");
         columns.add(col);
 
-        dr.moveColumnUp("d2");
+        dr.moveColumnLeft(3);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnUp5() throws Exception {
+    public void testMoveColumnLeft5() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -320,11 +320,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnUp("d3");
+        dr.moveColumnLeft(4);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnDown1() throws Exception {
+    public void testMoveColumnRight1() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -340,11 +340,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnDown("c1");
+        dr.moveColumnRight(0);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnDown2() throws Exception {
+    public void testMoveColumnRight2() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -360,11 +360,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnDown("c2");
+        dr.moveColumnRight(1);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnDown3() throws Exception {
+    public void testMoveColumnRight3() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -380,11 +380,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d1");
         columns.add(col);
 
-        dr.moveColumnDown("d1");
+        dr.moveColumnRight(2);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnDown4() throws Exception {
+    public void testMoveColumnRight4() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -400,11 +400,11 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnDown("d2");
+        dr.moveColumnRight(3);
         assertEquals(columns, dr.getColumns());
     }
 
-    public void testMoveColumnDown5() throws Exception {
+    public void testMoveColumnRight5() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column();
@@ -420,7 +420,7 @@ public class PagedResultsTest extends TestCase
         col.setName("d2");
         columns.add(col);
 
-        dr.moveColumnDown("d3");
+        dr.moveColumnRight(4);
         assertEquals(columns, dr.getColumns());
     }
 }

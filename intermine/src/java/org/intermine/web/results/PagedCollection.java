@@ -58,11 +58,9 @@ public class PagedCollection implements PagedTable
         }
 
         column.setName(name);
-        column.setIndex(0);
 
         List newColumns = new LinkedList();
         newColumns.add(column);
-
 
         columns = Collections.unmodifiableList(newColumns);
     }
@@ -77,35 +75,17 @@ public class PagedCollection implements PagedTable
     }
 
     /**
-     * Get the list of column configurations
-     *
-     * @param name the name of the column to get
-     * @return the column for the given name
+     * @see PagedTable#moveColumnLeft
      */
-    public Column getColumnByName(String name) {
-        if (name.equals(this.name)) {
-            return column;
-        } else {
-            throw new IllegalArgumentException("No column with this name: " + name);
-        }
+    public void moveColumnLeft(int index) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Move a column up in the display order
-     *
-     * @param name the name of the column to move
+     * @see PagedTable#moveColumnRight
      */
-    public void moveColumnUp(String name) {
-        throw new IllegalArgumentException("Can't move this column: " + name);        
-    }
-
-    /**
-     * Move a column down in the display order
-     *
-     * @param name the name of the column to move
-     */
-    public void moveColumnDown(String name) {
-        throw new IllegalArgumentException("Can't move this column: " + name);        
+    public void moveColumnRight(int index) {
+        throw new UnsupportedOperationException();
     }
 
     /**

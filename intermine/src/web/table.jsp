@@ -19,25 +19,25 @@
 
           <%-- right/left --%>
           <c:if test="${not status.first}">
-            [<html:link action="/changeResults?method=moveColumnUp&columnAlias=${column.name}">
-              <fmt:message key="results.moveUp"/>
+            [<html:link action="/changeResults?method=moveColumnLeft&index=${status.index}">
+              <fmt:message key="results.moveLeft"/>
             </html:link>]
           </c:if>
           <c:if test="${not status.last}">
-            [<html:link action="/changeResults?method=moveColumnDown&columnAlias=${column.name}">
-              <fmt:message key="results.moveDown"/>
+            [<html:link action="/changeResults?method=moveColumnRight&index=${status.index}">
+              <fmt:message key="results.moveRight"/>
             </html:link>]
           </c:if>
 
           <%-- show/hide --%>
           <c:choose>
             <c:when test="${column.visible}">
-              [<html:link action="/changeResults?method=hideColumn&columnAlias=${column.name}">
+              [<html:link action="/changeResults?method=hideColumn&index=${status.index}">
                 <fmt:message key="results.hideColumn"/>
               </html:link>]
             </c:when>
             <c:otherwise>
-              [<html:link action="/changeResults?method=showColumn&columnAlias=${column.name}">
+              [<html:link action="/changeResults?method=showColumn&index=${status.index}">
                 <fmt:message key="results.showColumn"/>
               </html:link>]
             </c:otherwise>

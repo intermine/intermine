@@ -19,20 +19,6 @@ public class Column
 {
     protected boolean visible = true;
     protected String name = "";
-    protected int index;
-
-    /**
-     * Update the user-selectable attributes of this column from another
-     *
-     * @param other the column to update from
-     */
-    public void update(Column other) {
-        if (!(this.equals(other))) {
-            throw new IllegalArgumentException("Cannot update a column from one"
-                                               + " with a different columnName");
-        }
-        setVisible(other.isVisible());
-    }
 
     /**
      * Is the column visible
@@ -71,25 +57,6 @@ public class Column
     }
 
     /**
-     * Get the index of the column. This is the index that we use in a
-     * call to the get() method of a ResultsRow.
-     *
-     * @return the index of the column
-     */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
-     * Set the index of the column
-     *
-     * @param index the index for the column
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    /**
      * @see Object#equals
      *
      * @param other the object to compare with
@@ -116,6 +83,6 @@ public class Column
      */
     public String toString() {
         return "[Column " + super.toString() + " "
-            + name + " at " + index + (visible ? "visible" : "not visible") + "]";
+            + name + " " + (visible ? "visible" : "not visible") + "]";
     }
 }

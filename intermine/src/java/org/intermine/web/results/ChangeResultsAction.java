@@ -46,7 +46,6 @@ public class ChangeResultsAction extends DispatchAction
                               HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         int prevStart = pt.getStart();
@@ -72,7 +71,6 @@ public class ChangeResultsAction extends DispatchAction
                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         int prevStart = pt.getStart();
@@ -103,8 +101,8 @@ public class ChangeResultsAction extends DispatchAction
                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+
         pt.setStart(0);
 
         return mapping.findForward("results");
@@ -125,7 +123,6 @@ public class ChangeResultsAction extends DispatchAction
                               HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         int pageSize = pt.getPageSize();
@@ -162,15 +159,10 @@ public class ChangeResultsAction extends DispatchAction
                               HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
-
-        String columnAlias = request.getParameter("columnAlias");
-        if (columnAlias == null) {
-            throw new IllegalArgumentException("A columnAlias parameter must be present");
-        }
-
-        pt.getColumnByName(columnAlias).setVisible(false);
+        
+        int index = Integer.parseInt(request.getParameter("index"));
+        ((Column) pt.getColumns().get(index)).setVisible(false);
 
         return mapping.findForward("results");
     }
@@ -191,15 +183,10 @@ public class ChangeResultsAction extends DispatchAction
                               HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        String columnAlias = request.getParameter("columnAlias");
-        if (columnAlias == null) {
-            throw new IllegalArgumentException("A columnAlias parameter must be present");
-        }
-
-        pt.getColumnByName(columnAlias).setVisible(true);
+        int index = Integer.parseInt(request.getParameter("index"));
+        ((Column) pt.getColumns().get(index)).setVisible(true);
 
         return mapping.findForward("results");
     }
@@ -217,19 +204,15 @@ public class ChangeResultsAction extends DispatchAction
      *
      * @exception ServletException if a servlet error occurs
      */
-    public ActionForward moveColumnUp(ActionMapping mapping, ActionForm form,
+    public ActionForward moveColumnLeft(ActionMapping mapping, ActionForm form,
                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        String columnAlias = request.getParameter("columnAlias");
-        if (columnAlias == null) {
-            throw new IllegalArgumentException("A columnAlias parameter must be present");
-        }
+        int index = Integer.parseInt(request.getParameter("index"));
+        pt.moveColumnLeft(index);
 
-        pt.moveColumnUp(columnAlias);
         return mapping.findForward("results");
     }
 
@@ -246,19 +229,15 @@ public class ChangeResultsAction extends DispatchAction
      *
      * @exception ServletException if a servlet error occurs
      */
-    public ActionForward moveColumnDown(ActionMapping mapping, ActionForm form,
+    public ActionForward moveColumnRight(ActionMapping mapping, ActionForm form,
                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
-
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        String columnAlias = request.getParameter("columnAlias");
-        if (columnAlias == null) {
-            throw new IllegalArgumentException("A columnAlias parameter must be present");
-        }
+        int index = Integer.parseInt(request.getParameter("index"));
+        pt.moveColumnRight(index);
 
-        pt.moveColumnDown(columnAlias);
         return mapping.findForward("results");
     }
 }

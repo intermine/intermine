@@ -30,26 +30,18 @@ public interface PagedTable
     public List getColumns();
 
     /**
-     * Get the list of column configurations
+     * Move a column left
      *
-     * @param name the name of the column to get
-     * @return the column for the given name
+     * @param index the index of the column to move
      */
-    public Column getColumnByName(String name);
-
+    public void moveColumnLeft(int index);
+    
     /**
-     * Move a column up in the display order
+     * Move a column right
      *
-     * @param name the name of the column to move
+     * @param index the index of the column to move
      */
-    public void moveColumnUp(String name);
-
-    /**
-     * Move a column down in the display order
-     *
-     * @param name the name of the column to move
-     */
-    public void moveColumnDown(String name);
+    public void moveColumnRight(int index);
 
     /**
      * Get the start row of this table

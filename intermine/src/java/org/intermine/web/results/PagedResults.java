@@ -11,10 +11,9 @@ package org.intermine.web.results;
  */
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
@@ -29,15 +28,12 @@ import org.intermine.objectstore.query.QueryHelper;
  */
 public class PagedResults implements PagedTable
 {
-    // Map to quickly look up columns from names
-    private Map nameToColumn = new HashMap();
+    private Results results;
 
     // The columns and their order
     private List columns = new LinkedList();
     private int start = 0;
     private int pageSize = 10;
-
-    private Results results;
 
     /**
      * Create a new PagedResults object from the given Results object.
@@ -57,12 +53,9 @@ public class PagedResults implements PagedTable
     public PagedResults(Results results, List columnNames) {
         this.results = results;
 
-        for (int i = 0; i < columnNames.size(); i++) {
-            String name = (String) columnNames.get(i);
+        for (Iterator i = columnNames.iterator(); i.hasNext();) {
             Column column = new Column();
-            column.setName(name);
-            column.setIndex(i++);
-            nameToColumn.put(name, column);
+            column.setName((String) i.next());
             columns.add(column);
         }
     }
@@ -77,40 +70,24 @@ public class PagedResults implements PagedTable
     }
 
     /**
-     * Get the list of column configurations
+     * Move a column left
      *
-     * @param name the name of the column to get
-     * @return the column for the given name
+     * @param index the index of the column to move
      */
-    public Column getColumnByName(String name) {
-        return (Column) nameToColumn.get(name);
-    }
-
-    /**
-     * Move a column up in the display order
-     *
-     * @param name the name of the column to move
-     */
-    public void moveColumnUp(String name) {
-        Column column = getColumnByName(name);
-        int index = columns.indexOf(column);
-        if (index > 0) {
-            columns.remove(index);
-            columns.add(index - 1, column);
+    public void moveColumnLeft(int index) {
+        if (index > 0 && index <= columns.size() - 1) {
+            columns.add(index - 1, columns.remove(index));
         }
     }
-
+    
     /**
-     * Move a column down in the display order
+     * Move a column right
      *
-     * @param name the name of the column to move
+     * @param index the index of the column to move
      */
-    public void moveColumnDown(String name) {
-        Column column = getColumnByName(name);
-        int index = columns.indexOf(column);
-        if ((index != -1) && (index < (columns.size() - 1))) {
-            columns.remove(index);
-            columns.add(index + 1, column);
+    public void moveColumnRight(int index) {
+        if (index >= 0 && index < columns.size() - 1) {
+            columns.add(index + 1, columns.remove(index));
         }
     }
 
