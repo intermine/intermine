@@ -9,11 +9,9 @@ form {
   background-color: #fff;
   border-bottom: solid black 1px;
   padding-top: 3px;
-  padding-bottom:3px;
+  padding-bottom: 3px;
 }
-.main-layout {
-  margin-top: 10px;
-}
+
 .links .menu-item {
   padding-right: 5px;
   padding-left: 5px;
@@ -31,11 +29,20 @@ form {
   color: green;
 }
 
-table.query, table.results {
+table.query {
+  border: none;
+}
+table.query th, table.query td {
+  border-bottom: 1px solid black;
+}
+table.query td.modelbrowse {
+  border-right: 1px solid black;
+}
+table.results {
   border-left: solid 1px black;
   border-top: solid 1px black;
 }
-table.query th, table.query td, table.results th, table.results td {
+table.results th, table.results td {
   padding: 4px;
   border-right: solid 1px black;
   border-bottom: solid 1px black;
@@ -46,10 +53,16 @@ table.results td td {
 table.results {
   font-size: small;
 }
-div.view {
-  border: solid 1px;
-  padding: 4px;
+table.noborder, table.noborder td, table.noborder th {
+    border: none;
 }
+
+div.view {
+  border-bottom: solid 1px;
+  padding: 4px;
+  padding-bottom:14px;
+}
+
 th {
   background: #caf;
 }
@@ -66,10 +79,48 @@ tr.even {
   color: green;
 }
 
+/* classes relating to the begin page */
+
+table.box {
+    border: 1px solid black;
+}
+
+table.box th {
+    background: #eee;
+    border-bottom: 1px solid black;
+    color: #210075;
+    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+}
+
+table.box td {
+    padding: 9px;
+}
+
+table.box th.help {
+    padding: 6px;
+    font-size: 10px;
+    font-weight: normal;
+    text-align: right;
+}
+
+table.box th.title {
+    padding: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.smallnote {
+    font-size: 12px;
+}
+
+
+
 /* override flymine2.css */
 #content
 {
-  padding: 5px;
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-top: 14px;
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 14px;
 }
