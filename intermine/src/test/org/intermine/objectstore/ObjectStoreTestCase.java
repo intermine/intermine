@@ -68,6 +68,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
         r = new Object[][] { { "CompanyB" } };
         results.put("WhereSimpleNotEquals", toList(r));
+        results.put("WhereSimpleNegEquals", toList(r));
 
         r = new Object[][] { { "CompanyA" },
                              { "CompanyB" } };

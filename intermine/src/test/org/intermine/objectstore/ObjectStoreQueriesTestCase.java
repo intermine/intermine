@@ -135,6 +135,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SubQuery", subQuery());
         queries.put("WhereSimpleEquals", whereSimpleEquals());
         queries.put("WhereSimpleNotEquals", whereSimpleNotEquals());
+        queries.put("WhereSimpleNegEquals", whereSimpleNegEquals());
         queries.put("WhereSimpleLike", whereSimpleLike());
         queries.put("WhereEqualsString", whereEqualString());
         queries.put("WhereAndSet", whereAndSet());
@@ -235,6 +236,25 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryField f1 = new QueryField(c1, "vatNumber");
         QueryField f2 = new QueryField(c1, "name");
         SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.NOT_EQUALS, v1);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(f2);
+        q1.setConstraint(sc1);
+        return q1;
+    }
+
+    /*
+      select name
+      from Company
+      where vatNumber! = 1234
+    */
+    public static Query whereSimpleNegEquals() throws Exception {
+        QueryClass c1 = new QueryClass(Company.class);
+        QueryValue v1 = new QueryValue(new Integer(1234));
+        QueryField f1 = new QueryField(c1, "vatNumber");
+        QueryField f2 = new QueryField(c1, "name");
+        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        sc1.setNegated(true);
         Query q1 = new Query();
         q1.addFrom(c1);
         q1.addToSelect(f2);

@@ -144,7 +144,7 @@ public class SimpleConstraint extends Constraint
      * @return integer value of operation type
      */
     public ConstraintOp getRealType() {
-        return negate(type);
+        return (negated ? negate(type) : type);
     }
 
     /**
@@ -171,7 +171,7 @@ public class SimpleConstraint extends Constraint
      * @return String representation
      */
     public String getOpString() {
-        return type.toString();
+        return getRealType().toString();
     }
 
     /**
