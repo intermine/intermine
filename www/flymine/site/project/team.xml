@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- -*- DocBook -*- -->
 
 <article>
@@ -42,7 +42,7 @@ The FlyMine team are located in the Genetics Department at Cambridge University.
 	    <entry></entry>
 	</row>
 	<row>
-	    <entry>Francois Guillier</entry>
+	    <entry>François Guillier</entry>
 	    <entry>System Administrator</entry>
 	    <entry><email>francois[at]flymine.org</email></entry>
 	</row>
