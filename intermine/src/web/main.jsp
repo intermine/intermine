@@ -109,7 +109,7 @@ function setBorderStyle(path, style)
               </c:if>
             </span>
             <c:choose>
-              <c:when test="{node.indentation > 0">
+              <c:when test="${node.indentation > 0}">
                 <fmt:message key="query.showNodeTitle" var="selectNodeTitle">
                   <fmt:param value="${node.fieldName}"/>
                 </fmt:message>
@@ -123,10 +123,12 @@ function setBorderStyle(path, style)
             <c:if test="${viewPaths[fullpath]}">
               </span>
             </c:if>
-            <html:link action="/mainChange?method=addToView&path=${node.path}"
-                       title="${selectNodeTitle}">
-              <fmt:message key="query.showNode"/>
-            </html:link>
+            <c:if test="${viewPaths[fullpath] == null}">
+              <html:link action="/mainChange?method=addToView&path=${node.path}"
+                         title="${selectNodeTitle}">
+                <fmt:message key="query.showNode"/>
+              </html:link>
+            </c:if>
             <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
               <fmt:param value="${node.fieldName}"/>
             </fmt:message>
@@ -137,12 +139,9 @@ function setBorderStyle(path, style)
           </nobr>
         </div>
       </c:forEach>
-
-
     </td>
     <td valign="top">
       <fmt:message key="query.currentquery"/><br/>
-
       <c:choose>
         <c:when test="${empty QUERY.nodes}">
           <fmt:message key="query.empty"/>
@@ -243,11 +242,12 @@ function setBorderStyle(path, style)
           </c:forEach>
         </c:otherwise>
       </c:choose>
-
-
     </td>
   </tr>
 
+  
+  
+  
 
   <c:if test="${editingNode != null}">
     <tr>
