@@ -106,10 +106,11 @@ public class OJBModelOutput extends ModelOutput
         references = new StringBuffer();
         collections = new StringBuffer();
 
+        MClassifier parent = null;
         String tableName = null;
         Iterator parents = cls.getGeneralizations().iterator();
         if (parents.hasNext()) {
-            MClassifier parent = (MClassifier) ((MGeneralization) parents.next()).getParent();
+            parent = (MClassifier) ((MGeneralization) parents.next()).getParent();
             tableName = parent.getName();
         } else {
             tableName = cls.getName();
@@ -117,12 +118,11 @@ public class OJBModelOutput extends ModelOutput
             
         StringBuffer sb = new StringBuffer ();
         sb.append(INDENT + "<class-descriptor class=\"")
-            .append(getPackagePath(cls))
-            .append(".")
-            .append(generateName(cls.getName()))
+            .append(generateQualified(cls) + "\"")
+            //.append(parent == null ? "" : " extends=\"" + generateQualified(parent) + "\"")
             .append((cls.isAbstract() || cls instanceof MInterface) 
-                    ? "" : "\" table=\"" + tableName)
-            .append("\">\n");
+                    ? "" : " table=\"" + tableName + "\"")
+            .append(">\n");
 
         Collection ems = new ArrayList(); // extent members i.e. subclasses or implementations
         if (cls instanceof MInterface) {
@@ -132,7 +132,7 @@ public class OJBModelOutput extends ModelOutput
                 MDependency dep = (MDependency) depIterator.next();
                 if ((dep instanceof MAbstraction)) {
                     MClassifier mc = (MClassifier) dep.getClients().toArray()[0];
-                    ems.add(getPackagePath(mc) + "." + mc.getName());
+                    ems.add(generateQualified(mc));
                 }
             }
         } else {
@@ -140,7 +140,7 @@ public class OJBModelOutput extends ModelOutput
             Iterator specIterator = specs.iterator();
             while (specIterator.hasNext()) {
                 MClassifier mc = (MClassifier) (((MGeneralization) specIterator.next()).getChild());
-                ems.add(getPackagePath(mc) + "." + mc.getName());
+                ems.add(generateQualified(mc));
             }
         }
 
@@ -250,10 +250,7 @@ public class OJBModelOutput extends ModelOutput
                 
                 references.append(INDENT + INDENT + "<reference-descriptor name=\"")
                     .append(generateNoncapitalName(name2))
-                    .append("\" class-ref=\"")
-                    .append(getPackagePath(ae2.getType()))
-                    .append(".")
-                    .append(generateClassifierRef(ae2.getType()) + "\"")
+                    .append("\" class-ref=\"" + generateQualified(ae2.getType()) + "\"")
                     .append(" auto-delete=\"true\"")
                     .append(">\n" + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"")
                     .append(generateNoncapitalName(name2) + "Id")
@@ -264,10 +261,7 @@ public class OJBModelOutput extends ModelOutput
             // If more than one of the other class AND one or zero of this one
             collections.append(INDENT + INDENT + "<collection-descriptor name=\"")
                 .append(generateNoncapitalName(name2))
-                .append("s\" element-class-ref=\"")
-                .append(getPackagePath(ae2.getType()))
-                .append(".")
-                .append(generateClassifierRef(ae2.getType()) + "\"")
+                .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
                 .append(" auto-delete=\"true\"")
                 .append(">\n" + INDENT + INDENT + INDENT + "<inverse-foreignkey field-ref=\"")
                 .append(generateNoncapitalName(name1) + "Id")
@@ -284,10 +278,7 @@ public class OJBModelOutput extends ModelOutput
 
             collections.append(INDENT + INDENT + "<collection-descriptor name=\"")
                 .append(generateNoncapitalName(name2))
-                .append("s\" element-class-ref=\"")
-                .append(getPackagePath(ae2.getType()))
-                .append(".")
-                .append(generateClassifierRef(ae2.getType()) + "\"")
+                .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
                 .append(" auto-delete=\"true\"")
                 .append(" indirection-table=\"")
                 .append(joiningTableName)

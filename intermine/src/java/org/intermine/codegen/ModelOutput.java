@@ -330,6 +330,10 @@ public abstract class ModelOutput
         }
         return result;
     }
+    
+    protected String generateQualified(MClassifier cls) {
+        return getPackagePath(cls) + "." + cls.getName();
+    }
 
     protected String generateGeneralization(Collection generalizations) {
         if (generalizations == null) {

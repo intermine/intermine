@@ -316,8 +316,8 @@ public class JavaModelOutput extends ModelOutput
                 sb.append(INDENT + "protected int id;\n");
             }
             if (!baseClass.equals("") || cls.getSpecializations().size() > 0) {
-                sb.append(INDENT + "protected String ojbConcreteClass = \"" + getPackagePath(cls) 
-                          + "." + cls.getName() + "\";\n");
+                sb.append(INDENT + "protected String ojbConcreteClass = \"" 
+                          + generateQualified(cls) + "\";\n");
             }
         }
 
