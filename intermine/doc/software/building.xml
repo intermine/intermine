@@ -3,8 +3,8 @@
 <article>
 
 <artheader>
-<date>2003-04-17</date>
-<title>Downloading and building InterMine</title>
+<date>2004-06-30</date>
+<title>Building InterMine</title>
 </artheader>
 
 <para>In order to improve the chance of continued funding for the
@@ -14,7 +14,7 @@ to <email>info[at]intermine.org</email>.</para>
 
 <para>InterMine is open-source software, available for download and
 use under the terms of the <ulink url="http://www.gnu.org/licenses/lgpl.html">
-GNU LGPL licence</ulink></para>.
+GNU LGPL licence</ulink>.</para>
 
 <sect1>
 <title>Obtaining the source code</title>
@@ -58,7 +58,7 @@ url="http://ant.apache.org">Ant</ulink>. This should be downloaded and
 installed on your machine.</para>
 
 <para>Depending on your requirements there are a choice of targets
-that you can build.</para>
+that you can build, issue the commands <command> ant help</command> to display user targets and <command>ant -projecthelp</command> for full target list. </para>
 
 <sect2>
 <title>Building an InterMine client</title>
@@ -87,24 +87,26 @@ you don't already have.</listitem>
 <filename>intermine.properties</filename> in your classpath (earlier
 than <filename>intermine.jar</filename>). An example
 <filename>intermine.properties</filename> can be found in the jar
-file.</listitem>
+file or click <ulink url="sampleIntermineProperties.xml">here</ulink>.</listitem>
 
 </itemizedlist>
 
 </sect2>
 
 <sect2>
+
 <title>Building an InterMine web site</title>
+
 
 <para>An InterMine website is the front end to an InterMine ObjectStore.</para>
 
 <itemizedlist>
 
-<listitem>Ensure you have an running Tomcat installation, including
+<listitem>Ensure you have an running <ulink url="http://jakarta.apache.org/tomcat/">Tomcat</ulink> installation, including
 the manager application.</listitem>
 
 <listitem>Configure the webserver properties in the
-<filename>build.properties</filename> file.</listitem>
+<ulink url="sampleBuildProperties.xml"><filename>build.properties</filename></ulink> file.</listitem>
 
 <listitem>Configure the underlying ObjectStore properties in the
 <filename>intermine.properties</filename> file.</listitem>
@@ -113,7 +115,7 @@ the manager application.</listitem>
 <listitem>Issue the command <command>ant release-webapp</command>.</listitem>
 
 </itemizedlist>
-
+    
 </sect2>
 
 
@@ -142,3 +144,4 @@ the manager application.</listitem>
 </sect1>
 
 </article>
+
