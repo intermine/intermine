@@ -1428,8 +1428,11 @@
                                            build-phenotype-production,
                                            build-go-production,
                                            build-ensembl-drosophila-production,
-                                           build-ensembl-anopheles-production">
+                                           build-ensembl-anopheles-production,
+                                           analyse-db-production,
+                                           grant-db-production"/>
 
+  <target name="analyse-db-production" depends="prepare">
     <!-- analyse database -->
     <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
        <classpath refid="models.class.path"/>
@@ -1437,7 +1440,10 @@
 
     <analyse-db database="db.production" full="true"/>
 
-    <!-- grant 'flymine' user select permission on db -->
+  </target>
+
+  <target name="grant-db-production" depends="prepare">
+    <!-- grant 'public' user select permission on production db -->
     <taskdef name="grant" classname="org.intermine.task.GrantTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1445,16 +1451,6 @@
     <grant database="db.production" user="PUBLIC" perm="SELECT"/>
 
   </target>
-
-
-  <target name="grant-temp" depends="prepare">
-    <taskdef name="grant" classname="org.intermine.task.GrantTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <grant database="db.production" user="PUBLIC" perm="SELECT"/>
-  </target>
-
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
 
