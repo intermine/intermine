@@ -113,8 +113,9 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             dos.writeInt(8);
             dos.writeLong(((Long) o).longValue());
         } else if (o instanceof String) {
-            dos.writeInt(((String) o).length());
-            dos.writeBytes((String) o);
+            byte bytes[] = ((String) o).getBytes("UTF-8");
+            dos.writeInt(bytes.length);
+            dos.write(bytes);
         } else if (o instanceof BigDecimal) {
             BigInteger unscaledValue = ((BigDecimal) o).unscaledValue();
             int signum = ((BigDecimal) o).signum();

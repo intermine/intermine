@@ -399,5 +399,54 @@ public abstract class BatchWriterTestCase extends TestCase
         }
     }
 
+    public void testUTF() throws Exception {
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection con = db.getConnection();
+        con.setAutoCommit(false);
+        try {
+            Statement s = con.createStatement();
+            try {
+                s.execute("DROP TABLE table1");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            s.addBatch("CREATE TABLE table1(key text)");
+            s.executeBatch();
+            con.commit();
+            s = null;
+            BatchWriter writer = getWriter();
+            Batch batch = new Batch(writer);
+            batch.addRow(con, "table1", null, new String[] {"key"}, new Object[] {"Flibble\u00A0fds\u786f"});
+            batch.flush(con);
+            con.commit();
+            s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT key FROM table1");
+            assertTrue(r.next());
+            assertEquals("Flibble\u00A0fds\u786f", r.getString(1));
+            assertFalse(r.next());
+        } catch (SQLException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            while (e != null) {
+                e.printStackTrace(pw);
+                e = e.getNextException();
+            }
+            pw.flush();
+            throw new Exception(sw.toString());
+        } finally {
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table1");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
     public abstract BatchWriter getWriter();
 }

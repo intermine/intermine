@@ -244,7 +244,9 @@ public class ItemToObjectTranslator extends Translator
                 if (info == null) {
                     String message = "Attribute not found in model: "
                                                 + DynamicUtil.decomposeClass(obj.getClass())
-                                                + "." + attr.getName();
+                                                + "." + attr.getName() + " - Attribute id = "
+                                                + attr.getId() + ", attributes = "
+                                                + item.getAttributes();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
