@@ -119,9 +119,7 @@ public class Model
 
             if (cld.isInterface()) {
                 Set implementors = (Set) implementorsMap.get(cld);
-                if (implementors.size() > 0) {
-                    cld.setImplementorDescriptors(implementors);
-                }
+                cld.setImplementorDescriptors(implementors);
             }
         }
     }
