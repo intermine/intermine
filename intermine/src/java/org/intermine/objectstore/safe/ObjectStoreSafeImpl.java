@@ -11,12 +11,10 @@ package org.flymine.objectstore.safe;
  */
 
 import java.util.List;
-import java.util.Set;
 
-import org.flymine.metadata.Model;
-import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStorePassthruImpl;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCloner;
 import org.flymine.objectstore.query.Results;
@@ -28,17 +26,15 @@ import org.flymine.objectstore.query.ResultsInfo;
  *
  * @author Matthew Wakeling
  */
-public class ObjectStoreSafeImpl implements ObjectStore
+public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
 {
-    private ObjectStore os;
-    
     /**
      * Creates an instance, from another ObjectStore instance.
      *
      * @param os an ObjectStore object to use
      */
     public ObjectStoreSafeImpl(ObjectStore os) {
-        this.os = os;
+        super(os);
     }
 
     /**
@@ -57,48 +53,6 @@ public class ObjectStoreSafeImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectById
-     */
-    public FlyMineBusinessObject getObjectById(Integer id) throws ObjectStoreException {
-        return os.getObjectById(id);
-    }
-
-    /**
-     * @see ObjectStore#prefetchObjectById
-     */
-    public void prefetchObjectById(Integer id) {
-        os.prefetchObjectById(id);
-    }
-
-    /**
-     * @see ObjectStore#invalidateObjectById
-     */
-    public void invalidateObjectById(Integer id) {
-        os.invalidateObjectById(id);
-    }
-
-    /**
-     * @see ObjectStore#cacheObjectById
-     */
-    public Object cacheObjectById(Integer id, FlyMineBusinessObject obj2) {
-        return os.cacheObjectById(id, obj2);
-    }
-
-    /**
-     * @see ObjectStore#flushObjectById
-     */
-    public void flushObjectById() {
-        os.flushObjectById();
-    }
-
-    /**
-     * @see ObjectStore#pilferObjectById
-     */
-    public FlyMineBusinessObject pilferObjectById(Integer id) {
-        return os.pilferObjectById(id);
-    }
-
-    /**
      * @see ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
@@ -110,34 +64,5 @@ public class ObjectStoreSafeImpl implements ObjectStore
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return os.count(QueryCloner.cloneQuery(q), sequence);
-    }
-
-    /**
-     * @see ObjectStore#getModel
-     */
-    public Model getModel() {
-        return os.getModel();
-    }
-
-    /**
-     * @see ObjectStore#getObjectByExample
-     */
-    public FlyMineBusinessObject getObjectByExample(FlyMineBusinessObject o, Set fieldNames)
-            throws ObjectStoreException {
-        return os.getObjectByExample(o, fieldNames);
-    }
-
-    /**
-     * @see ObjectStore#isMultiConnection
-     */
-    public boolean isMultiConnection() {
-        return os.isMultiConnection();
-    }
-
-    /**
-     * @see ObjectStore#getSequence
-     */
-    public int getSequence() {
-        return os.getSequence();
     }
 }
