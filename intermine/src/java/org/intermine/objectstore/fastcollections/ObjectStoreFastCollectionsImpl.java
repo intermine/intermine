@@ -136,17 +136,23 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                             new ArrayList());
                                 }
                             }
-                            Query subQ = new Query();
-                            QueryClass qc1 = new QueryClass(clazz);
-                            QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
-                                    .getType());
-                            subQ.addFrom(qc1);
-                            subQ.addFrom(qc2);
-                            subQ.addToSelect(qc1);
-                            subQ.addToSelect(qc2);
-                            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                             if ((q.getConstraint() == null) && q.getOrderBy().isEmpty()
                                     && q.getGroupBy().isEmpty()) {
+                                Query subQ = new Query();
+                                subQ.setDistinct(false);
+                                QueryClass qc1 = new QueryClass(clazz);
+                                QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
+                                        .getType());
+                                subQ.addFrom(qc1);
+                                subQ.addFrom(qc2);
+                                subQ.addToSelect(qc1);
+                                subQ.addToSelect(qc2);
+                                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                                subQ.setConstraint(cs);
+                                QueryCollectionReference qcr = new QueryCollectionReference(qc1,
+                                        fieldName);
+                                cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
+                                            qc2));
                                 QueryField idField = new QueryField(qc1, "id");
                                 cs.addConstraint(new SimpleConstraint(idField,
                                             ConstraintOp.GREATER_THAN_EQUALS,
@@ -154,31 +160,46 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 cs.addConstraint(new SimpleConstraint(idField,
                                             ConstraintOp.LESS_THAN_EQUALS,
                                             new QueryValue(new Integer(highestId))));
+                                Results l = new Results(subQ, os, os.getSequence());
+                                if (!optimise) {
+                                    l.setNoOptimise();
+                                }
+                                if (!explain) {
+                                    l.setNoExplain();
+                                }
+                                l.setBatchSize(limit * 2);
+                                insertResults(bagMap, l, fieldName);
                             } else {
-                                cs.addConstraint(new BagConstraint(qc1, ConstraintOp.IN, bag));
-                            }
-                            QueryCollectionReference qcr = new QueryCollectionReference(qc1,
-                                    fieldName);
-                            cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
-                                        qc2));
-                            subQ.setConstraint(cs);
-                            Results l = new Results(subQ, os, os.getSequence());
-                            if (!optimise) {
-                                l.setNoOptimise();
-                            }
-                            if (!explain) {
-                                l.setNoExplain();
-                            }
-                            l.setBatchSize(limit * 2);
-                            Iterator lIter = l.iterator();
-                            while (lIter.hasNext()) {
-                                ResultsRow row = (ResultsRow) lIter.next();
-                                FlyMineBusinessObject fromObj = (FlyMineBusinessObject)
-                                    bagMap.get(row.get(0));
-                                FlyMineBusinessObject toObj = (FlyMineBusinessObject) row.get(1);
-                                Collection fromCollection = (Collection) TypeUtil.getFieldValue(
-                                        fromObj, fieldName);
-                                fromCollection.add(toObj);
+                                List bagList = new ArrayList(bag);
+                                for (int i = 0; i < bagList.size(); i += 1000) {
+                                    Query subQ = new Query();
+                                    subQ.setDistinct(false);
+                                    QueryClass qc1 = new QueryClass(clazz);
+                                    QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
+                                            .getType());
+                                    subQ.addFrom(qc1);
+                                    subQ.addFrom(qc2);
+                                    subQ.addToSelect(qc1);
+                                    subQ.addToSelect(qc2);
+                                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                                    subQ.setConstraint(cs);
+                                    QueryCollectionReference qcr = new QueryCollectionReference(qc1,
+                                            fieldName);
+                                    cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
+                                                qc2));
+                                    cs.addConstraint(new BagConstraint(qc1, ConstraintOp.IN,
+                                                bagList.subList(i, (i + 1000 < bagList.size()
+                                                        ? i + 1000 : bagList.size()))));
+                                    Results l = new Results(subQ, os, os.getSequence());
+                                    if (!optimise) {
+                                        l.setNoOptimise();
+                                    }
+                                    if (!explain) {
+                                        l.setNoExplain();
+                                    }
+                                    l.setBatchSize(limit * 2);
+                                    insertResults(bagMap, l, fieldName);
+                                }
                             }
                         }
                     }
@@ -187,6 +208,19 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
             return retval;
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
+        }
+    }
+
+    private void insertResults(Map bagMap, List l, String fieldName) throws IllegalAccessException {
+        Iterator lIter = l.iterator();
+        while (lIter.hasNext()) {
+            ResultsRow row = (ResultsRow) lIter.next();
+            FlyMineBusinessObject fromObj = (FlyMineBusinessObject)
+                bagMap.get(row.get(0));
+            FlyMineBusinessObject toObj = (FlyMineBusinessObject) row.get(1);
+            Collection fromCollection = (Collection) TypeUtil.getFieldValue(
+                    fromObj, fieldName);
+            fromCollection.add(toObj);
         }
     }
 }
