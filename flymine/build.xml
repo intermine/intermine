@@ -1262,7 +1262,7 @@
   <!--load GFF3 data-->
   <target name="convert-gff3" depends="prepare-build-model, compile-genomic-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
+      <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
