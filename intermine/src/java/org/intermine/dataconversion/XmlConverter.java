@@ -69,6 +69,13 @@ public class XmlConverter extends DataConverter
         super(writer);
         this.model = model;
         this.xmlInfo = new XmlMetaData(xsdReader);
+
+        start = System.currentTimeMillis();
+        time = start;
+        times = new long[20];
+        for (int i = 0; i < 20; i++) {
+            times[i] = -1;
+        }
     }
 
     /**
@@ -77,13 +84,6 @@ public class XmlConverter extends DataConverter
     * @throws Exception if an error occurs during processing
     */
     public void process(Reader xmlReader) throws Exception {
-        start = System.currentTimeMillis();
-        time = start;
-        times = new long[20];
-        for (int i = 0; i < 20; i++) {
-            times[i] = -1;
-        }
-
         SAXParser.parse(new InputSource(xmlReader), new XmlHandler());
     }
 
