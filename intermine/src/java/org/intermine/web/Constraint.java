@@ -18,15 +18,15 @@ import org.intermine.objectstore.query.ConstraintOp;
  */
 public class Constraint
 {
-    ConstraintOp op;
-    Object value;
+    protected ConstraintOp op;
+    protected Object value;
 
     /**
      * Constructor
      * @param op the constraintOp for this constraint
      * @param value the value for this constraint
      */
-    Constraint(ConstraintOp op, Object value) {
+    public Constraint(ConstraintOp op, Object value) {
         this.op = op;
         this.value = value;
     }
