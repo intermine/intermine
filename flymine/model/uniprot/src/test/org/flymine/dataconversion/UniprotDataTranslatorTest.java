@@ -73,14 +73,14 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        // convert file
+        // print differences
         String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
         String actualNotExpected = "in actual, not expected: " + compareItemSets(tgtIw.getItems(), new HashSet(getExpectedItems()));
 
-        //if (expectedNotActual.length() > 25) {
-        //    System.out.println(expectedNotActual);
-        //    System.out.println(actualNotExpected);
-        //}
+        if (expectedNotActual.length() > 25) {
+            System.out.println(expectedNotActual);
+            System.out.println(actualNotExpected);
+        }
 
         // uncomment to write out a new target items file
         //FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
