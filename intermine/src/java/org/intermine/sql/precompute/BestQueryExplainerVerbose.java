@@ -42,13 +42,13 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
             System.out .println("Did not explain " + unexplained + " queries");
             unexplained = 0;
         }
-        long start = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         ExplainResult retval = ExplainResult.getInstance(q, con);
         System.out .println("Optimiser: Explained query with " + q.getFrom().size()
-                + " FROM entries took " + (System.currentTimeMillis() - start) + " ms, "
+                + " FROM entries took " + (System.currentTimeMillis() - startTime) + " ms, "
                 + retval.toString());
         //System.out .println("Optimiser: Explained query " + q + ", took "
-        //        + (System.currentTimeMillis() - start) + " ms, " + retval.toString());
+        //        + (System.currentTimeMillis() - startTime) + " ms, " + retval.toString());
         return retval;
     }
 
@@ -60,10 +60,10 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
             System.out .println("Did not explain " + unexplained + " queries");
             unexplained = 0;
         }
-        long start = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         ExplainResult retval = ExplainResult.getInstance(q, con);
         System.out .println("Optimiser: Explained query " + q + ", took "
-                + (System.currentTimeMillis() - start) + " ms, " + retval.toString());
+                + (System.currentTimeMillis() - startTime) + " ms, " + retval.toString());
         return retval;
     }
 
