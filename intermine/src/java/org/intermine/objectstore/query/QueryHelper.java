@@ -59,7 +59,7 @@ public abstract class QueryHelper
             // if QueryClass already on query, remove existing constraints and
             // generate again
             if (q.getFrom().contains(qc)) {
-                removeConstraints(q, qc);
+                removeConstraints(q, qc, false);
             } else {
                 q.addFrom(qc);
                 q.addToSelect(qc);
@@ -71,6 +71,28 @@ public abstract class QueryHelper
                                        + qc.getType().getName() + ") to query: " + e);
         }
     }
+
+    /**
+     * Remove a class from a query.  Currently only deletes constraints that
+     * are directly associated with QueryClass, should use isRelatedTo(qc) to find
+     * all possible constraints.  If qc not in query no Exception is thrown.
+     *
+     * @param q the query to remove QueryClass from
+     * @param qc the QueryClass to remove
+     * @throws Exception if anything goes wrong
+     */
+    public static void removeFromQuery(Query q, QueryClass qc) throws Exception {
+        if (q == null) {
+            throw new NullPointerException("Query q parameter is null");
+        } else if (qc == null) {
+            throw new NullPointerException("QueryClass qc parameter is null");
+        }
+
+        q.deleteFromSelect(qc);
+        q.deleteFrom(qc);
+        removeConstraints(q, qc, true);
+    }
+
 
     /**
      * Generate ConstraintSet of SimpleConstraints for a QueryClass from a map of field/value pairs
@@ -148,13 +170,16 @@ public abstract class QueryHelper
     }
 
     /**
-     * Remove all constraints related to a given QueryClass.
+     * Remove all constraints associated with or related to a given QueryClass.
      *
      * @param q the query to remove constraints from
      * @param qc remove all constraints relating to this QueryClass
+     * @param related if true remove all related constraints, otherwise only
+     * those associated with qc.
      * @throws Exception if failed to remove constraints
      */
-    protected static void removeConstraints(Query q, QueryClass qc) throws Exception {
+    protected static void removeConstraints(Query q, QueryClass qc, boolean related)
+        throws Exception {
         Constraint c = q.getConstraint();
         if (c == null) {
             return;
@@ -168,7 +193,8 @@ public abstract class QueryHelper
             cs = (ConstraintSet) c;
         }
 
-        Iterator iter = ConstraintHelper.createList(q, (FromElement) qc).iterator();
+        List constraints = ConstraintHelper.createList(q);
+        Iterator iter = ConstraintHelper.filter(constraints, qc, related).iterator();
         while (iter.hasNext()) {
             cs.removeConstraint((Constraint) iter.next());
         }

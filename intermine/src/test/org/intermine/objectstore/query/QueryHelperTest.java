@@ -138,6 +138,85 @@ public class QueryHelperTest extends TestCase
         }
     }
 
+
+    public void testRemoveFromQuery() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addToSelect(qc1);
+        q.addFrom(qc1);
+        q.addToSelect(qc2);
+        q.addFrom(qc2);
+
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("company1"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("department1"));
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        q.setConstraint(c);
+
+        assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        assertEquals(2, q.getSelect().size());
+        assertEquals(2, q.getFrom().size());
+        QueryHelper.removeFromQuery(q, qc1);
+        assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        assertEquals(1, q.getSelect().size());
+        assertEquals(1, q.getFrom().size());
+        QueryHelper.removeFromQuery(q, qc2);
+        assertEquals(0, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        assertEquals(0, q.getSelect().size());
+        assertEquals(0, q.getFrom().size());
+    }
+
+
+    public void testRemoveFromQueryNotExists() throws Exception {
+                Query q = new Query();
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addToSelect(qc1);
+        q.addFrom(qc1);
+        q.addToSelect(qc2);
+        q.addFrom(qc2);
+
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("company1"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("department1"));
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        q.setConstraint(c);
+
+        QueryClass qc3 = new QueryClass(Employee.class);
+
+        try {
+            QueryHelper.removeFromQuery(q, qc2);
+        } catch (Exception e) {
+            fail("Expected no Exception to be thrown but was: " + e.getClass());
+        }
+
+    }
+
+    public void testRemoveFromQueryNullArguments() throws Exception {
+        try {
+            QueryHelper.removeFromQuery(null, new QueryClass(Employee.class));
+            fail("Expected NullPointerException, q parameter null");
+        } catch (NullPointerException e) {
+        }
+
+        try {
+            QueryHelper.removeFromQuery(new Query(), null);
+            fail("Expected NullPointerException, qc parameter null");
+        } catch (NullPointerException e) {
+        }
+    }
+
     public void testGenerateConstraintsAttribute() throws Exception {
         Map fields = new HashMap();
         fields.put("name", "Dennis");
@@ -286,7 +365,7 @@ public class QueryHelperTest extends TestCase
     }
 
 
-    public void testRemoveConstraintsSimple() throws Exception {
+    public void testRemoveConstraintsAssociated() throws Exception {
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Department.class);
@@ -299,15 +378,55 @@ public class QueryHelperTest extends TestCase
         SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
                                                     SimpleConstraint.EQUALS,
                                                     new QueryValue("department1"));
+        SimpleConstraint sc3 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryField(qc2, "name"));
+        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        c.addConstraint(sc3);
+        q.setConstraint(c);
+
+        // cross-reference (sc3) should not get removed
+        assertEquals(3, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        QueryHelper.removeConstraints(q, qc1, false);
+        assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        QueryHelper.removeConstraints(q, qc2, false);
+        assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+    }
+
+    public void testRemoveConstraintsRelated() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Company.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+
+        SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryField(qc2, "name"));
+        SimpleConstraint sc2 = new SimpleConstraint(new QueryField(qc2, "name"),
+                                                    SimpleConstraint.EQUALS,
+                                                    new QueryValue("department1"));
         ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
         c.addConstraint(sc1);
         c.addConstraint(sc2);
         q.setConstraint(c);
 
+        // remove qc1, leaves sc2
         assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
-        QueryHelper.removeConstraints(q, qc1);
+        QueryHelper.removeConstraints(q, qc1, true);
         assertEquals(1, ((ConstraintSet) q.getConstraint()).getConstraints().size());
-        QueryHelper.removeConstraints(q, qc2);
+
+        // removing qc2 gets rid of all constraints
+        c = new ConstraintSet(ConstraintSet.AND);
+        c.addConstraint(sc1);
+        c.addConstraint(sc2);
+        q.setConstraint(c);
+        q.addToSelect(qc1);
+        q.addFrom(qc1);
+        assertEquals(2, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+        QueryHelper.removeConstraints(q, qc2, true);
         assertEquals(0, ((ConstraintSet) q.getConstraint()).getConstraints().size());
     }
 
