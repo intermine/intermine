@@ -19,6 +19,8 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 
+import org.flymine.metadata.Model;
+import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.web.config.WebConfig;
 
 
@@ -49,6 +51,11 @@ public class InitialiserPlugin implements PlugIn
         ServletContext context = servlet.getServletContext();
 
         try {
+
+        Model model = org.flymine.objectstore.ObjectStoreFactory.getObjectStore().getModel();
+        context.setAttribute(Constants.MODEL, new DisplayModel(model));
+
+
             InputStream is = context.getResourceAsStream("/WEB-INF/webconfig-model.xml");
             WebConfig wc = WebConfig.parse(is);
             context.setAttribute("webconfig", wc);

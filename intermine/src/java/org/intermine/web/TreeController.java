@@ -58,7 +58,8 @@ public class TreeController extends TilesAction
         if (rootClass == null) {
             rootClass = "org.flymine.model.FlyMineBusinessObject";
         }
-        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+        Model model = ((DisplayModel) session.getServletContext()
+                       .getAttribute(Constants.MODEL)).getModel();
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
         request.setAttribute("nodes", makeNodes(root, openClasses, 0));

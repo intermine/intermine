@@ -186,7 +186,8 @@ public class QueryBuildAction extends LookupDispatchAction
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         Map savedBags = (Map) session.getAttribute("savedBags");
-        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+        Model model = ((DisplayModel) session.getServletContext()
+                       .getAttribute(Constants.MODEL)).getModel();
 
         if (queryClasses.size() == 0) {
             throw new Exception("There are no classes present in the query");

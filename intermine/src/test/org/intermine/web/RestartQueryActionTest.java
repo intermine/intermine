@@ -59,6 +59,5 @@ public class RestartQueryActionTest extends MockStrutsTestCase {
         verifyForward("buildquery");
         assertNull(session.getAttribute("queryClasses"));
         assertNull(session.getAttribute("editingAlias"));
-        assertNotNull(session.getAttribute("model"));
     }
 }

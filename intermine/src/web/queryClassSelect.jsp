@@ -9,7 +9,7 @@
   <br/>
 
   <html:select property="className" size="10">
-    <html:options name="model" property="classNames" labelName="model" labelProperty="unqualifiedClassNames"/>
+    <html:options name="MODEL" property="classNames" labelName="MODEL" labelProperty="unqualifiedClassNames"/>
   </html:select>
 
   <br/>

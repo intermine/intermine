@@ -184,7 +184,8 @@ public class QueryBuildForm extends ActionForm
         
         DisplayQueryClass displayQueryClass = (DisplayQueryClass) queryClasses.get(editingAlias);
         ActionErrors errors = new ActionErrors();
-        Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+        Model model = ((DisplayModel) session.getServletContext()
+                       .getAttribute(Constants.MODEL)).getModel();
 
         ClassDescriptor cd = model.getClassDescriptorByName(displayQueryClass.getType());
         Class selectClass = cd.getType();
