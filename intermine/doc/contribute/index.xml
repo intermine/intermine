@@ -1,0 +1,11 @@
+<index>
+  <section>
+
+    <heading>Contributing code to InterMine</heading>
+    <item><ulink url="contributing.xml">Introduction</ulink></item>
+    <item><ulink url="coding-standards.xml">Coding standards</ulink></item>
+    <item><ulink url="cvs-developer.xml">Writable CVS access for developers</ulink></item>
+    <item><ulink url="http://www.flymine.org/autobuild/">Automated build daemon results</ulink></item>
+  </section>
+
+</index>
