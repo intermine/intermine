@@ -1,4 +1,4 @@
-package org.flymine.testing;
+package org.flymine.testing.sql;
 
 import junit.framework.*;
 
