@@ -494,7 +494,7 @@ null:BioSource__propertySets a owl:ObjectProperty;
    rdfs:domain :Gene;
    rdfs:range xsd:string.
 
-:Gene__results a owl:ObjectProperty;
+:Gene__microArrayResults a owl:ObjectProperty;
     owl:inverseOf :MicroArrayExperimentalResult__genes.
 
 :Vector a owl:Class;
