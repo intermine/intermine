@@ -165,20 +165,16 @@
 
   </target>
 
-  <target name="release-webapp" depends=""
+  <target name="release-webapp"
           description="releases the InterMine web application to the server">
-    
-
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="class.path"/>
     </taskdef>
-
-    <tomcat-deploy 
-      url="${webapp.baseurl}/manager"
-      username="${webapp.manager}" 
-      password="${webapp.password}"
-      path="${webapp.path}" 
-      war="file://${war}"/> 
+    <tomcat-deploy url="${webapp.baseurl}/manager"
+                   username="${webapp.manager}" 
+                   password="${webapp.password}"
+                   path="${webapp.path}" 
+                   war="file://${war}"/>
   </target>
 
   <target name="remove-webapp"
@@ -187,10 +183,44 @@
              classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <tomcat-undeploy
-      url="${webapp.baseurl}/manager"
-      username="${webapp.manager}" 
-      password="${webapp.password}"
-      path="${webapp.path}"/>
+    <tomcat-undeploy url="${webapp.baseurl}/manager"
+                     username="${webapp.manager}" 
+                     password="${webapp.password}"
+                     path="${webapp.path}"/>
+  </target>
+
+  <target name="release-webservice"
+          description="release the webservice to the server">
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <tomcat-deploy url="${webservice.baseurl}/manager" 
+                   username="${webservice.manager}"
+                   password="${webservice.password}"
+                   path="${webservice.path}"
+                   war="file://${dist.webapp}/webservice.war"/>
+    <unzip src="${dist.webapp}/webservice.war" dest="${build.tmp}">
+      <patternset>
+        <include name="WEB-INF/deploy-ObjectStore.wsdd"/>
+      </patternset>
+    </unzip>
+    <!-- This should probably be a waitfor task -->
+    <java classname="org.apache.axis.client.AdminClient" fork="true">
+      <classpath refid="class.path"/>
+      <arg value="-l ${webservice.baseurl}/${webservice.path}/servlet/AxisServlet"/>
+      <arg value="${build.tmp}/WEB-INF/deploy-ObjectStore.wsdd"/>
+    </java>
+  </target>
+
+  <target name="remove-webservice"
+          description="remove the webservice from the server">
+    <taskdef name="tomcat-undeploy" 
+             classname="org.apache.catalina.ant.UndeployTask">
+      <classpath refid="class.path"/>
+    </taskdef>
+    <tomcat-undeploy url="${webservice.baseurl}/manager"
+                     username="${webservice.manager}"
+                     password="${webservice.password}"
+                     path="${webservice.path}"/>
   </target>
 </project>  

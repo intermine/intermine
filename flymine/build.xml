@@ -51,6 +51,7 @@
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
   <property name="build.webapp.lib" location="${build.webapp}/intermine/WEB-INF/lib"/>
+  <property name="build.webservice.lib" location="${build.webapp}/webservice/WEB-INF/lib"/>
 
   <!-- results directories -->
   <property name="results"  location="results"/>
@@ -113,6 +114,13 @@
     </fileset>
     <fileset dir="${dist}">
       <include name="intermine*.jar" />
+    </fileset>
+  </path>
+
+  <path id="webservice.class.path">
+    <path refid="base.class.path"/>
+    <fileset dir="${build.webservice.lib}">
+      <include name="*.jar"/>
     </fileset>
   </path>
 
@@ -1797,7 +1805,7 @@
     </ant>
   </target>
 
-  <target name="jar-production-webservice-client" depends="compile-genomic-model">
+  <target name="build-production-webservice-client" depends="compile-genomic-model">
     <jar destfile="${dist}/flymine-webservice-client.jar">
       <zipfileset src="${webservice-client.jar.path}"/>
       <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
@@ -1813,6 +1821,14 @@
       <classes file="${resources}/webapp/default.intermine.properties"/>
       <classes file="${build.tmp}/WEB-INF/intermine.properties"/>
     </war>
+  </target>
+
+  <target name="release-webservice"
+          description="release the webservice to the server">
+    <ant antfile="build-webapp.xml" target="release-webservice" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/webservice.war"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>    
   </target>
 
   <!-- MODEL COMPILATION TARGETS -->
