@@ -19,7 +19,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import java.util.HashMap;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryCloner;
+
 import java.util.Map;
 
 /**
@@ -54,19 +56,39 @@ public class SaveQueryAction extends Action
 
         HttpSession session = request.getSession();
 
-        Map savedQueries = (Map) session.getAttribute("savedQueries");
-        if (savedQueries == null) {
-            savedQueries = new HashMap();
-            session.setAttribute("savedQueries", savedQueries);
+        Map savedQueries = (Map) session.getAttribute(SaveQueryController.SAVEDQUERIES_NAME);
+        Map savedQueriesInverse =
+            (Map) session.getAttribute(SaveQueryController.SAVEDQUERIESINVERSE_NAME);
+
+        Query query = (Query) session.getAttribute("query");
+
+        if (query == null) {
+            return mapping.findForward("buildquery");
         }
+
+        Query clonedQuery = QueryCloner.cloneQuery(query);
 
         SaveQueryForm sqForm = (SaveQueryForm) form;
         String queryName = sqForm.getQueryName();
         sqForm.setQueryName("");
-        savedQueries.put(queryName, session.getAttribute("query"));
-        
-        return (mapping.findForward("buildquery"));
 
+        // handle the case where queryName already exists - remove it from
+        // both maps
+        if (savedQueries.get(queryName) != null) {
+            Query savedQuery = (Query) savedQueries.get(queryName);
+            savedQueriesInverse.remove(savedQuery);
+            savedQueries.remove(queryName);
+        }
+
+        savedQueries.put(queryName, clonedQuery);
+        savedQueriesInverse.put(clonedQuery, queryName);
+
+        session.removeAttribute("query");
+        session.removeAttribute("queryClass");
+        session.removeAttribute("ops");
+        session.removeAttribute("constraints");
+
+        return mapping.findForward("buildquery");
     }
 }
 
