@@ -36,6 +36,16 @@
 	</sect1>
 
 	<sect1>
+		<title>Data tracking database to use the PostgreSQL COPY command</title>
+		<para>This is implemented.
+			The DataTracker creates a significant quantity of database write traffic, all of which is INSERT statements.
+			These can be sped up by using a PostgreSQL extension to the JDBC interface to use the COPY command, which is a method for inserting many rows quickly.
+			This depends on the PostgreSQL JDBC driver built with COPY support (not currently published precompiled, although a patch is available), and on the PostgreSQL server being at least verion 7.4.
+			If the server is not PostgreSQL, or if the server version is too low, then the DataTracker will automatically fall back to the old slow method.
+		</para>
+	</sect1>
+
+	<sect1>
 		<title>Local implementation of data tracking</title>
 		<para><highlights>This is NOT implemented</highlights>.
 			PostgreSQL stores data tracking data in a single table, with an index.
@@ -146,9 +156,9 @@
 
 	<sect1>
 		<title>getObjectById() may be unnecessary in many situations</title>
-		<para><highlights>This is NOT implemented</highlights>.
+		<para>This is implemented.
 			getEquivalentObjects() method returns the result of getObjectById() if the id is in the ID Map.
-			This may be unnecessary.
+			This is unnecessary.
 			We could let it return a placeholder, which can be traded in for a real object if it is really needed.
 		</para>
 	</sect1>
