@@ -39,7 +39,7 @@ public class PostgresExplainResult extends ExplainResult
 
         Statement s = database.createStatement();
         String queryString = query.getSQLString();
-        s.execute("explain" + queryString);
+        s.execute("explain " + queryString);
         Exception warning = database.getWarnings();
         database.clearWarnings();
         String text = warning.toString();
