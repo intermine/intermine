@@ -211,6 +211,7 @@ public class GFF3Converter
         if (record.getScore() != null) {
             Item computationalResult = createItem("ComputationalResult");
             if (String.valueOf(record.getScore()) != null) {
+                computationalResult.addAttribute(new Attribute("type", "score"));
                 computationalResult.addAttribute(new Attribute("score",
                                                                String.valueOf(record.getScore())));
             }
