@@ -23,6 +23,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
@@ -57,6 +58,7 @@ public class GFF3Converter
     private Map seqs = new HashMap();
     private Map idMap = new HashMap();
     private GFF3RecordHandler handler;
+    private ItemFactory itemFactory;
 
     /**
      * Constructor
@@ -76,6 +78,7 @@ public class GFF3Converter
         this.orgAbbrev = orgAbbrev;
         this.tgtModel = tgtModel;
         this.handler = handler;
+        this.itemFactory = new ItemFactory(tgtModel, "0_");
 
         this.organism = getOrganism();
         this.infoSource = createItem("InfoSource");
@@ -306,10 +309,7 @@ public class GFF3Converter
      * @return the created item
      */
     private Item createItem(String className, String identifier) {
-        Item item = new Item();
-        item.setClassName(tgtModel.getNameSpace() + className);
-        item.setIdentifier(identifier);
-        return item;
+        return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
     }
 
     private String createIdentifier() {
