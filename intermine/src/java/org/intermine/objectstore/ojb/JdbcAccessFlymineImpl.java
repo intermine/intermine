@@ -182,6 +182,9 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
 
             String sql = "EXPLAIN " + gen.getPreparedSelectStatement(query, dr, start, limit);
 
+            sql = QueryOptimiser.optimise(sql,
+                    ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
+
             ConnectionManagerIF conMan = broker.serviceConnectionManager();
             Connection conn = conMan.getConnection();
             stmt = conn.prepareStatement(sql);
