@@ -64,6 +64,8 @@
 
   <!-- Libraries that everything needs -->
   <patternset id="lib.common">
+    <include name="jasper*.jar"/>
+    <include name="ant*.jar"/>
     <include name="castor*xml*.jar" />
     <include name="cglib*.jar" />
     <include name="commons-collections*.jar" />
@@ -477,8 +479,8 @@
           <depend targetdir="${results.junit}">
             <mapper type="package" from="*.class" to="TEST-*.xml" />
           </depend>
-          <exclude name="org/flymine/web/**/*" />
-          <exclude name="org/flymine/objectstore/webservice/*" />
+          <exclude name="org/flymine/web/**" />
+          <exclude name="org/flymine/objectstore/webservice/**" />
         </fileset>
       </batchtest>
     </junit>
@@ -525,7 +527,7 @@
     </delete>
   </target>
 
-  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,test-webapp,test-tutorial,checkstyle"
+  <target name="fulltest" depends="prepare,junit-clean,clean-code,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
           description="do a full test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
     <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
@@ -687,100 +689,54 @@
   <!-- Webapp targets -->
 
   <target name="build-webapp" depends="prepare,prepare-dist,jar"
-          description="Build the FlyMine web application">
+    description="Build the FlyMine web application">
     <war destfile="${dist.webapp}/flymine.war" webxml="${resources}/webapps/flymine/web.xml">
+      <lib dir="${lib}">
+        <patternset refid="lib.common"/>
+        <patternset refid="lib.antlr"/>
+        <patternset refid="lib.webapp.flymine"/>
+      </lib>
+      <lib dir="${dist}" includes="flymine*.jar"/>
+      <classes dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
+      <webinf dir="${resources}/webapps/flymine" excludes="web.xml FlyMineWebApp*.properties"/>
       <fileset dir="${src.webapp}"/>
       <fileset dir="${src.www}" includes="flymine.css"/>
-      <webinf dir="${resources}/webapps/flymine">
-        <exclude name="web.xml" />
-        <exclude name="FlyMineWebApp*.properties"/>
-      </webinf>
-      <lib dir="${lib}">
-        <patternset refid="lib.common" />
-        <patternset refid="lib.antlr" />
-        <patternset refid="lib.webapp.flymine" />
-      </lib>
-      <classes dir="${resources}/webapps/flymine">
-        <include name="FlyMineWebApp*.properties"/>
-      </classes>
-      <lib dir="${dist}">
-        <include name="flymine*.jar" />
-      </lib>
     </war>
   </target>
 
-  <target name="build-testable-webapp" depends="prepare,prepare-dist,compile-test,jar,jar-testmodel"
-          description="Build a FlyMine webapp including the test classes and libraries">
-    <!-- Add test classes and libraries to war file -->
-    <war destfile="${dist.webapp}/flymine.war"
-         webxml="${resources}/webapps/flymine/web.xml">
-      <fileset dir="${src.webapp}"/>
-      <fileset dir="${src.www}" includes="flymine.css"/>
-      <webinf dir="${resources}/webapps/flymine">
-        <exclude name="web.xml" />
-        <exclude name="FlyMineWebApp*.properties"/>
-      </webinf>
+  <target name="build-testable-webapp" depends="build-webapp,jar-testmodel"
+    description="Build a FlyMine webapp including the test classes and libraries">
+    <war destfile="${dist.webapp}/flymine.war" update="true">
+      <lib dir="${dist}" includes="flymine-testmodel.jar"/>
       <lib dir="${lib}">
-        <patternset refid="lib.common" />
-        <patternset refid="lib.antlr" />
-        <patternset refid="lib.webapp.flymine" />
-        <patternset refid="lib.webapptest" />
+        <patternset refid="lib.webapptest"/>
       </lib>
-      <lib dir="${dist}">
-        <include name="flymine*.jar" />
-      </lib>
-      <classes dir="${build.test}">
-        <include name="**/*.class"/>
-      </classes>
-      <classes dir="${resources}/webapps/flymine">
-        <include name="FlyMineWebApp*.properties"/>
-      </classes>
-      <fileset dir="${resources}/webapps/flymine">
-        <include name="FlyMineWebApp*.properties"/>
-      </fileset>
+      <fileset dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
     </war>
   </target>
 
-
-  <!-- The FlyMine webservice -->
-
+  <!-- Webservice targets -->
+ 
   <target name="build-webservice" depends="prepare,prepare-dist,jar"
-          description="Build the FlyMine webservice application">
-
+    description="Build the FlyMine webservice">
     <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
-      <webinf dir="${resources}/webapps/webservice">
-        <exclude name="web.xml" />
-      </webinf>
       <lib dir="${lib}">
-        <patternset refid="lib.common" />
-        <patternset refid="lib.antlr" />
-        <patternset refid="lib.webapp.webservice" />
+        <patternset refid="lib.common"/>
+        <patternset refid="lib.antlr"/>
+        <patternset refid="lib.webapp.webservice"/>
       </lib>
-      <lib dir="${dist}">
-        <include name="flymine*.jar" />
-      </lib>
+      <lib dir="${dist}" includes="flymine*.jar"/>
+      <webinf dir="${resources}/webapps/webservice" excludes="web.xml"/>
     </war>
   </target>
 
-  <target name="build-testable-webservice" depends="prepare,prepare-dist,compile-test,jar,jar-testmodel"
-          description="Build the FlyMine webservice including the test classes and libraries">
-    <!-- Add test classes and libraries to war file -->
-    <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
-      <webinf dir="${resources}/webapps/webservice">
-        <exclude name="web.xml" />
-      </webinf>
+  <target name="build-testable-webservice" depends="build-webservice,jar-testmodel"
+    description="Build the FlyMine webservice including the test classes and libraries">
+    <war destfile="${dist.webapp}/webservice.war" update="true">
+      <lib dir="${dist}" includes="flymine-testmodel.jar" />
       <lib dir="${lib}">
-        <patternset refid="lib.common" />
-        <patternset refid="lib.antlr" />
-        <patternset refid="lib.webapp.webservice" />
         <patternset refid="lib.webapptest" />
       </lib>
-      <lib dir="${dist}">
-        <include name="flymine*.jar" />
-      </lib>
-      <classes dir="${build.test}">
-        <include name="**/*.class"/>
-      </classes>
     </war>
   </target>
 
@@ -898,6 +854,7 @@
 
   <!-- Releasing targets -->
 
+  <!-- website -->
   <target name="release-www" depends="dist-javadoc, dist-www"
     description="releases the static website to the webserver">
     <exec executable="rsync">
@@ -905,71 +862,74 @@
     </exec>
   </target>
 
+  <!-- webapp -->
   <target name="release-webapp" depends="build-webapp"
-    description="releases the FlyMine web application to the webserver">
-    <chmod perm="a+r" type="file">
-      <fileset dir="${dist.webapp}">
-        <include name="flymine.war" />
-      </fileset>
-    </chmod>
-    <exec executable="rsync">
-      <arg line="-e ssh -Cavz --delete ${dist.webapp}/flymine.war ${webapp.serverlocation}" />
-    </exec>
-    <taskdef name="tomcat-install"
-        classname="org.apache.catalina.ant.InstallTask">
+    description="releases the FlyMine web application to the server">
+ 
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <tomcat-install url="${webapp.managerurl}" username="${webapp.manager}" 
-                  password="${webapp.password}" path="${webapp.path}" 
-                  war="${webapp.warfileurl}"/> 
+    <tomcat-deploy 
+      url="${webapp.baseurl}/manager"
+      username="${webapp.manager}" 
+      password="${webapp.password}"
+      path="${webapp.path}" 
+      war="file://${dist.webapp}/flymine.war"/> 
   </target>
 
   <target name="remove-webapp"
-          description="remove (undeploy) the FlyMine web application from the server">
-    <taskdef name="tomcat-remove" 
-        classname="org.apache.catalina.ant.RemoveTask">
+    description="remove the web application from the server">
+    <taskdef name="tomcat-undeploy" 
+      classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    <tomcat-remove url="${webapp.managerurl}" username="${webapp.manager}" 
-            password="${webapp.password}" path="${webapp.path}"/>
+    <tomcat-undeploy
+      url="${webapp.baseurl}/manager"
+      username="${webapp.manager}" 
+      password="${webapp.password}"
+      path="${webapp.path}"/>
   </target>
   
+  <!-- webservice -->
   <target name="release-webservice" depends="build-webservice"
     description="releases the webservice application to the webserver">
-    <chmod perm="a+r" type="file">
-      <fileset dir="${dist.webapp}">
-        <include name="webservice.war" />
-      </fileset>
-    </chmod>
-    <exec executable="rsync">
-      <arg line="-e ssh -Cavz --delete ${dist.webapp}/webservice.war ${webservice.serverlocation}/" />
-    </exec>
-    <taskdef name="tomcat-install"
-        classname="org.apache.catalina.ant.InstallTask">
+    
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-
-    <tomcat-install url="${webservice.baseurl}/manager" username="${webservice.manager}" 
-                  password="${webservice.password}" path="${webservice.path}" 
-                  war="${webservice.warfileurl}"/> 
+    
+    <tomcat-deploy
+      url="${webservice.baseurl}/manager" 
+      username="${webservice.manager}"
+      password="${webservice.password}" 
+      path="${webservice.path}"
+      war="file://${dist.webapp}/webservice.war"/> 
+    
+    <ant antfile="build-model.xml" target="generate-wsdd">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+    
     <!-- This should probably be a waitfor task -->
     <java classname="org.apache.axis.client.AdminClient" fork="true">
       <classpath refid="webservice.class.path" />
       <arg value="-l ${webservice.baseurl}/${webservice.path}/servlet/AxisServlet" />
-      <arg value="${resources}/webapps/webservice/deploy-ObjectStore.wsdd" />
+      <arg value="${build.tmp}/deploy-ObjectStore.wsdd" />
     </java>
-
   </target>
-
+  
   <target name="remove-webservice"
-          description="remove (undeploy) the webservice application from the server">
-    <taskdef name="tomcat-remove" 
-        classname="org.apache.catalina.ant.RemoveTask">
+    description="remove the webservice application from the server">
+    <taskdef name="tomcat-undeploy" 
+      classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    <tomcat-remove url="${webservice.baseurl}/manager" username="${webservice.manager}" 
-            password="${webservice.password}" path="${webservice.path}"/>
+    <tomcat-undeploy
+      url="${webservice.baseurl}/manager"
+      username="${webservice.manager}"
+      password="${webservice.password}"
+      path="${webservice.path}"/>
   </target>
   
   <!-- Cleaning-up targets -->
