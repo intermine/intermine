@@ -26,9 +26,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -46,12 +49,16 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     String orgAbbrev = "DM";
     String infoSourceTitle = "FlyBase";
     GFF3Converter converter;
+    String tgtNs;
+    ItemFactory itemFactory;
 
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
         handler = new ChadoGFF3RecordHandler(tgtModel);
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, tgtModel,
                                       handler);
+        tgtNs = tgtModel.getNameSpace().toString();
+        itemFactory = handler.getItemFactory();
     }
 
     public void testParseFlyBaseId() throws Exception {
@@ -70,11 +77,57 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         String gff = "4\t.\tgene\t230506\t233418\t.\t+\t.\tID=CG1587;Name=Crk;Dbxref=FlyBase:FBan0001587,FlyBase:FBgn0024811;synonym=Crk;synonym_2nd=CRK,D-CRK";
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
-        converter.parse(srcReader);
-        FileWriter writerSrc = new FileWriter(new File("chado_items.xml"));
-        writerSrc.write(FullRenderer.render(writer.getItems()));
-        writerSrc.close();
+        Iterator iter = GFF3Parser.parse(srcReader);
+        GFF3Record record = (GFF3Record) iter.next();
 
+        Item feature = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        feature.setAttribute("identifier", "CG1234");
+
+        handler.setFeature(feature);
+        handler.process(record);
+
+        Item expectedGene = itemFactory.makeItem(feature.getIdentifier(), tgtNs + "Gene", "");
+        expectedGene.setAttribute("organismDbId", "FBgn0024811");
+        expectedGene.setAttribute("identifier", "CG1234");
+        expectedGene.setAttribute("name", "CG1234");
+
+        assertEquals(1, handler.getItems().size());
+
+        Item actualGene = (Item) handler.getItems().iterator().next();
+
+        assertEquals(expectedGene, actualGene);
+    }
+
+
+    public void testHandleTRNA() throws Exception {
+        String gff = "2L\t.\ttRNA\t1938089\t1938159\t.\t-\t.\tID=CR31667;Dbxref=FlyBase:FBan0031667,FlyBase:FBgn0051667;synonym=CR31667;synonym_2nd=CG31667";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        Iterator iter = GFF3Parser.parse(srcReader);
+        GFF3Record record = (GFF3Record) iter.next();
+
+        Item feature = itemFactory.makeItem(null, tgtNs + "TRNA", "");
+        feature.setAttribute("identifier", "CR31667");
+
+        handler.setFeature(feature);
+        handler.process(record);
+
+        Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        expectedGene.setAttribute("identifier", "CG31667");
+        expectedGene.setAttribute("organismDbId", "FBgn0051667");
+
+        assertEquals(2, handler.getItems().size());
+
+        Item actualGene = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Gene")) {
+                actualGene = item;
+                expectedGene.setIdentifier(actualGene.getIdentifier());
+            }
+        }
+        assertEquals(expectedGene, actualGene);
     }
 
 
