@@ -226,8 +226,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     throw new ObjectStoreException("Unable to get database for InterMine"
                             + " ObjectStore", e);
                 }
+                Model osModel;
+                try {
+                    osModel = getModelFromDatabase(database);
+                } catch (Exception e) {
+                    try {
+                        osModel = getModelFromClasspath(osAlias, props);
+                    } catch (MetaDataException mde) {
+                        throw new ObjectStoreException("Cannot load model", mde);
+                    }
+                }
                 if (truncatedClassesString != null) {
-                    Model osModel = getModelFromDatabase(database);
                     List truncatedClasses = new ArrayList();
                     String classes[] = truncatedClassesString.split(",");
                     for (int i = 0; i < classes.length; i++) {
@@ -242,18 +251,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses);
                     os = new ObjectStoreInterMineImpl(database, databaseSchema);
                 } else {
-                    try {
-                        os = new ObjectStoreInterMineImpl(database, getModelFromDatabase(database));
-                    } catch (Exception e) {
-                        Model osModel;
-
-                        try {
-                            osModel = getModelFromClasspath(osAlias, props);
-                        } catch (MetaDataException metaDataException) {
-                            throw new ObjectStoreException("Cannot load model", metaDataException);
-                        }
-                        os = new ObjectStoreInterMineImpl(database, osModel);
-                    }
+                    os = new ObjectStoreInterMineImpl(database, osModel);
                 }
                 if (missingTablesString != null) {
                     String tables[] = missingTablesString.split(",");
