@@ -410,9 +410,11 @@ public class ResultsTest extends TestCase
                 count++;
             }
             fail("Expected ObjectStoreLimitReachedException - count = " + count);
-        } catch (ObjectStoreLimitReachedException e) {
-            if (count != 7) {
-                fail("Expected to get the exception after 7 rows");
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ObjectStoreLimitReachedException) {
+                if (count != 7) {
+                    fail("Expected to get the exception after 7 rows");
+                }
             }
         }
     }

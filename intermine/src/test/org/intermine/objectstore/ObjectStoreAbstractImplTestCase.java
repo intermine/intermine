@@ -63,7 +63,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         try{
             osai.execute((Query) queries.get("SelectSimpleObject"), 10, 100, true, true, osai.getSequence());
             fail("Expected: ObjectStoreException");
-        } catch (IndexOutOfBoundsException e) {
+        } catch (ObjectStoreLimitReachedException e) {
         } finally {
             osai.maxLimit = before;
         }
@@ -76,7 +76,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         try {
             osai.execute((Query) queries.get("SelectSimpleObject"), 100, 50, true, true, osai.getSequence());
             fail("Expected: ObjectStoreException");
-        } catch (IndexOutOfBoundsException e) {
+        } catch (ObjectStoreLimitReachedException e) {
         } finally {
             osai.maxOffset = before;
         }
