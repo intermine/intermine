@@ -25,14 +25,13 @@ CVS.</para>
 <sect2>
 <title>Downloading the source code</title>
 
-<para>The source code or a jar file containing precompiled classes can
-be downloaded as either an official release, or a nightly
-build. The source code is available in tar.gz or ZIP
+<para>The source code can be downloaded as either an official release,
+or a nightly build. The source code is available in tar.gz or ZIP
 format.</para>
 
 <para><ulink
 url="http://download.flymine.org/releases/">Official releases</ulink> -
-this is where the official FlyMine release will appear. Official releases are planned to occur 
+this is where the official FlyMine release appear. Official releases are planned to occur 
 every couple of months, on average.</para>
 
 <para><ulink
@@ -58,8 +57,15 @@ portions undocumented, or not conforming to the documentation.</para>
 url="http://ant.apache.org">Ant</ulink>. This should be downloaded and
 installed on your machine.</para>
 
+<para>Depending on your requirements there are a choice of targets
+that you can build.</para>
+
 <sect2>
 <title>Building a FlyMine client</title>
+
+<para>A FlyMine client is simply a program that accesses the FlyMine
+data, the data being on a local machine, or accessed via a FlyMine
+webservice.</para>
 
 <itemizedlist>
 
@@ -74,22 +80,24 @@ a directory on your classpath</listitem>
 directory that you don't already have to a directory on your
 classpath</listitem>
 
-<listitem>Write a program using the FlyMine Query API. Many things are
-configurable by having a file <filename>flymine.properties</filename>
-in your classpath (earlier than <filename>flymine.jar</filename>). An
-example <filename>flymine.properties</filename> can be found in the
-jar file.</listitem>
+<listitem>Write a program using the FlyMine Query API. Many things
+(such as locations of the data) are configurable by having a file
+<filename>flymine.properties</filename> in your classpath (earlier
+than <filename>flymine.jar</filename>). An example
+<filename>flymine.properties</filename> can be found in the jar
+file.</listitem>
 
 </itemizedlist>
 
 </sect2>
 
 <sect2>
-<title>Building a FlyMine server</title>
+<title>Building a FlyMine database</title>
 
-<para>FlyMine defines a number of datasources which are used during
-building of the integrated database. These need to be installed
-locally in order to be used.</para>
+<para>A FlyMine database contains data in a certain format that has
+been integrated from various other data sources. These data sources
+must be installed locally and their locations configures in
+<filename>flymine.properties</filename>.</para>
 
 <itemizedlist>
 
@@ -102,7 +110,51 @@ self-explanatory.</listitem>
 the integrated database. This may take a very long time to complete,
 depending on the number of datasources configured.</listitem>
 
-<listitem>More here when this is done.......</listitem>
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>Building a FlyMine web site</title>
+
+<para>A FlyMine website is the front end to a FlyMine ObjectStore.</para>
+
+<itemizedlist>
+
+<listitem>Ensure you have an running Tomcat installation, including
+the manager application.</listitem>
+
+<listitem>Configure the webserver properties in the
+<filename>build.properties</filename> file.</listitem>
+
+<listitem>Configure the underlying ObjectStore properties in the
+<filename>flymine.properties</filename> file.</listitem>
+
+<listitem>Issue the command <command>ant release-webapp</command>.</listitem>
+
+</itemizedlist>
+
+</sect2>
+
+
+<sect2>
+<title>Building a FlyMine web service</title>
+
+<para>A FlyMine webservice provides SOAP access to an underlying ObjectStore.</para>
+
+<itemizedlist>
+
+<listitem>Ensure you have an running Tomcat installation, including
+the manager application.</listitem>
+
+<listitem>Configure the webserver properties in the
+<filename>build.properties</filename> file.</listitem>
+
+<listitem>Configure the underlying ObjectStore properties in the
+<filename>flymine.properties</filename> file.</listitem>
+
+<listitem>Issue the command <command>ant release-webservice</command>.</listitem>
+
 </itemizedlist>
 
 </sect2>
