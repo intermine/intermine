@@ -32,7 +32,7 @@ public class WebConfigTest extends TestCase
         Displayer disp3 = new Displayer();
         disp3.setSrc("/model/page2.jsp");
         Type type1 = new Type();
-        type1.setName("Class1");
+        type1.setClassName("Class1");
         type1.addShortDisplayer(disp1);
         type1.addShortDisplayer(disp2);
         type1.addLongDisplayer(disp3);
@@ -44,7 +44,7 @@ public class WebConfigTest extends TestCase
         Displayer disp6 = new Displayer();
         disp6.setSrc("tile2.tile");
         Type type2 = new Type();
-        type2.setName("Class2");
+        type2.setClassName("Class2");
         type2.addShortDisplayer(disp4);
         type2.addLongDisplayer(disp5);
         type2.addLongDisplayer(disp6);

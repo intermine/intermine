@@ -50,6 +50,7 @@ public class WebConfig
 
         digester.addObjectCreate("webconfig/class", Type.class);
         digester.addSetProperties("webconfig/class", "name", "name");
+        digester.addSetProperties("webconfig/class", "fieldName", "fieldName");
 
         digester.addObjectCreate("webconfig/class/shortdisplayers/displayer", Displayer.class);
         digester.addSetProperties("webconfig/class/shortdisplayers/displayer", "src", "src");
@@ -79,7 +80,7 @@ public class WebConfig
      * @param type the Type to add
      */
     public void addType(Type type) {
-        types.put(type.getName(), type);
+        types.put(type.getClassName(), type);
     }
 
     /**
