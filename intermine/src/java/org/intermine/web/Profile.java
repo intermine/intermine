@@ -10,6 +10,9 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Collections;
@@ -25,7 +28,8 @@ public class Profile
     protected Map savedQueries = new LinkedHashMap();
     protected Map savedBags = new LinkedHashMap();
     protected Map savedTemplates = new LinkedHashMap();
-
+    protected Map categoryTemplates;
+    
     /**
      * Construct a Profile
      * @param manager the manager for this profile
@@ -44,6 +48,7 @@ public class Profile
         this.savedQueries.putAll(savedQueries);
         this.savedBags.putAll(savedBags);
         this.savedTemplates.putAll(savedTemplates);
+        buildTemplateCategories();
     }
     
     /**
@@ -72,6 +77,7 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
+        buildTemplateCategories();
     }
     
     /**
@@ -83,6 +89,7 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
+        buildTemplateCategories();
     }
 
     /**
@@ -145,5 +152,31 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
+    }
+    
+    /**
+     * Create a map from category name to a list of templates contained
+     * within that category.
+     */
+    private void buildTemplateCategories() {
+        categoryTemplates = new LinkedHashMap();
+        Iterator iter = savedTemplates.values().iterator();
+        while (iter.hasNext()) {
+            TemplateQuery template = (TemplateQuery) iter.next();
+            List list = (List) categoryTemplates.get(template.getCategory());
+            if (list == null) {
+                list = new ArrayList();
+                categoryTemplates.put(template.getCategory(), list);
+            }
+            list.add(template);
+        }
+    }
+    
+    /**
+     * Get a Map from category name to list of templates.
+     * @return Map from category name to List of templates
+     */
+    public Map getCategoryTemplates() {
+        return categoryTemplates;
     }
 }
