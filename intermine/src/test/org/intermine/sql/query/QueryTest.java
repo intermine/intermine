@@ -5,7 +5,7 @@ import junit.framework.*;
 public class QueryTest extends TestCase
 {
     private Query q1, q2, q3;
-    
+
     public QueryTest(String arg1) {
         super(arg1);
     }
@@ -61,19 +61,161 @@ public class QueryTest extends TestCase
         assertEquals(q1.hashCode(), q1.hashCode());
         assertEquals(q1.hashCode(), q2.hashCode());
         assertTrue("Expected q1 hashcode not to equal q3 hashcode", q1.hashCode() != q3.hashCode());
-    }   
-
-    public void testAntlr() throws Exception {
-        Query q = new Query("select flibble.flobble from flibble");
-        //throw (new Exception(q.getSQLString()));
-        //assertEquals("SELECT FROM flibble".length(), q.getSQLString().trim().length());
-        assertTrue("Expected \"" + q.getSQLString() + "\" to equal \"SELECT flibble.flobble FROM flibble\"", q.getSQLString().equals("SELECT flibble.flobble FROM flibble"));
-        q = new Query("select flibble.flobble from flibble, wotsit");
-        assertEquals("SELECT flibble.flobble FROM wotsit, flibble", q.getSQLString());
-        q = new Query("select flibble.flobble from (select flobble.flib from flobble) as flibble");
-        assertEquals("SELECT flibble.flobble FROM (SELECT flobble.flib FROM flobble) AS flibble", q.getSQLString());
     }
 
-    //public static String toHexDump(String in) {
-    //    for (int i = 0; i<
+    public void testConstructNullString() throws Exception {
+        try {
+            Query q1 = new Query((String) null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
+
+    public void testConstructEmptyString() throws Exception {
+        try {
+            Query q1 = new Query("");
+            fail("Expected: IllegalArgumentException");
+        }
+        catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testConstructIllegalString() throws Exception {
+        try {
+            Query q1 = new Query("A load of rubbish");
+            fail("Expected: IllegalArgumentException");
+        }
+        catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testSelectNoAlias() throws Exception {
+        Query q1 = new Query("select table1.field1 from table1");
+        Query q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        assertEquals(q2, q1);
+    }
+
+    public void testSelectTableAlias() throws Exception {
+        Query q1 = new Query("select t1.field1 from table1 as t1");
+        Query q1_alt = new Query("select t1.field1 from table1 t1");
+        Query q2 = new Query();
+        Table t1 = new Table("table1", "t1");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        assertEquals(q2, q1);
+        assertEquals(q2, q1_alt);
+    }
+
+    public void testSelectFieldAlias() throws Exception {
+        Query q1 = new Query("select table1.field1 as alias1 from table1");
+        Query q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, "alias1");
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        assertEquals(q2, q1);
+    }
+
+    public void testSelectTwoTables() throws Exception {
+        Query q1 = new Query("select table1.field1 from table1, table2");
+        Query q2 = new Query();
+        Table t1 = new Table("table1");
+        Table t2 = new Table("table2");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addFrom(t2);
+        assertEquals(q2, q1);
+    }
+
+    public void testSelectTwoSameTables() throws Exception {
+        Query q1 = new Query("select t1.field1 from table1 t1, table1 t2");
+        Query q2 = new Query();
+        Table t1 = new Table("table1", "t1");
+        Table t2 = new Table("table1", "t2");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addFrom(t2);
+        assertEquals(q2, q1);
+    }
+
+    public void testSelectTwoDifferentTables() throws Exception {
+        Query q1 = new Query("select t1.field1 from table1 t1, table2 t2");
+        Query q2 = new Query();
+        Table t1 = new Table("table1", "t1");
+        Table t2 = new Table("table2", "t2");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addFrom(t2);
+        assertEquals(q2, q1);
+    }
+
+    public void testSelectFromSubQuery() throws Exception {
+        Query q1 = new Query("select t1.field1 from (select table2.field2 from table2) as t1");
+        Query q2 = new Query();
+        SubQuery sq1 = new SubQuery(new Query("select table2.field2 from table2"), "t1");
+        Field f1 = new Field("field1", sq1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(sq1);
+        //throw new Exception(q1.getSQLString() + "     " + q2.getSQLString());
+        assertEquals(q2, q1);
+    }
+
+    public void testOneEqualWhere() throws Exception {
+        Query q1 = new Query("select table1.field1 from table1 where table1.field1 = 1");
+        Query q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        Constant c = new Constant("1");
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addWhere(new Constraint(f1, Constraint.EQ, c));
+        assertEquals(q2, q1);
+    }
+
+    public void testTwoEqualWhere() throws Exception {
+        Query q1 = new Query("select table1.field1 from table1 where table1.field1 = 1 and table1.field2 = 2");
+        Query q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        Field f2 = new Field("field2", t1);
+        Constant c1 = new Constant("1");
+        Constant c2 = new Constant("2");
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addWhere(new Constraint(f1, Constraint.EQ, c1));
+        q2.addWhere(new Constraint(f2, Constraint.EQ, c2));
+        assertEquals(q2, q1);
+    }
+
+    public void testFieldLessThanField() throws Exception {
+        Query q1 = new Query("select table1.field1 from table1 where table1.field1 < table1.field2");
+        Query q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        Field f2 = new Field("field2", t1);
+        SelectValue sv1 = new SelectValue(f1, null);
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addWhere(new Constraint(f1, Constraint.LT, f2));
+        assertEquals(q2, q1);
+    }
+
 }
