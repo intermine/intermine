@@ -419,7 +419,7 @@
   <target name="build-db-chado-test" depends="compile-main">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="chado"/>
-      <reference torefid="class.path" refid="test.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-test"/>
     </ant>
   </target>
