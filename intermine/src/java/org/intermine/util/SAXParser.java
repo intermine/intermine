@@ -36,9 +36,9 @@ public class SAXParser
             factory.newSAXParser().parse(is, handler);
         } catch (ParserConfigurationException e) {
             throw new Exception("The underlying parser does not support "
-                                + " the requested features");
+                                + " the requested features", e);
         } catch (SAXException e) {
-            throw new Exception("Error parsing XML document: " + e);
+            throw new Exception("Error parsing XML document", e);
         }
     }
 }
