@@ -96,12 +96,13 @@ public class FlyBaseUniProtRefsTask extends Task
     public void execute()
         throws BuildException {
 
-        // a Map from CDS identifier (in FlyMine) to Protein
-        Map linkMap = new HashMap();
-
         try {
-            BufferedReader br = new BufferedReader(new FileReader (linkFile));
+            getObjectStoreWriter().beginTransaction();
 
+            // a Map from CDS identifier (in FlyMine) to Protein
+            Map linkMap = new HashMap();
+
+            BufferedReader br = new BufferedReader(new FileReader (linkFile));
             String line = null;
 
             while ((line = br.readLine()) != null) {
@@ -125,104 +126,92 @@ public class FlyBaseUniProtRefsTask extends Task
 
                 linkMap.put(cdsIdentifier, uniprotAccNumber);
             }
-        } catch (IOException e) {
-            throw new BuildException("error while reading: " + linkFile, e);
-        }
 
-        // map from acc # to Protein
-        Map uniprotAccMap = new HashMap();
+            // map from acc # to Protein
+            Map uniprotAccMap = new HashMap();
 
-        // map from translation identifier to Translation
-        Map cdsIdMap = new HashMap();
+            // map from translation identifier to Translation
+            Map cdsIdMap = new HashMap();
 
-        Query uniprotQuery = new Query();
+            Query uniprotQuery = new Query();
 
-        QueryClass proteinQc = new QueryClass(Protein.class);
-        uniprotQuery.addFrom(proteinQc);
-        uniprotQuery.addToSelect(proteinQc);
+            QueryClass proteinQc = new QueryClass(Protein.class);
+            uniprotQuery.addFrom(proteinQc);
+            uniprotQuery.addToSelect(proteinQc);
 
-        BagConstraint proteinBc = new BagConstraint(new QueryField(proteinQc, "primaryAccession"),
-                                                    ConstraintOp.IN,
-                                                    new HashSet(linkMap.values()));
+            BagConstraint proteinBc =
+                new BagConstraint(new QueryField(proteinQc, "primaryAccession"),
+                                  ConstraintOp.IN,
+                                  new HashSet(linkMap.values()));
 
-        uniprotQuery.setConstraint(proteinBc);
+            uniprotQuery.setConstraint(proteinBc);
 
-        try {
             Results uniprotResults = getObjectStore().execute(uniprotQuery);
-
             Iterator uniprotIter = uniprotResults.iterator();
-
             while (uniprotIter.hasNext()) {
                 ResultsRow row = (ResultsRow) uniprotIter.next();
-
                 System.err.println ("results: " + row);
-
                 Protein protein = (Protein) row.get(0);
-
                 uniprotAccMap.put(protein.getPrimaryAccession(), protein);
             }
-        } catch (ObjectStoreException e) {
-            throw new BuildException("exception while querying from ObjectStore", e);
-        }
 
+            Query cdsQuery = new Query();
 
-        Query cdsQuery = new Query();
+            QueryClass cdsQc = new QueryClass(CDS.class);
+            cdsQuery.addFrom(cdsQc);
+            cdsQuery.addToSelect(cdsQc);
 
-        QueryClass cdsQc = new QueryClass(CDS.class);
-        cdsQuery.addFrom(cdsQc);
-        cdsQuery.addToSelect(cdsQc);
+            BagConstraint cdsBc = new BagConstraint(new QueryField(cdsQc, "identifier"),
+                                                    ConstraintOp.IN,
+                                                    linkMap.keySet());
 
-        BagConstraint cdsBc = new BagConstraint(new QueryField(cdsQc, "identifier"),
-                                                ConstraintOp.IN,
-                                                linkMap.keySet());
+            cdsQuery.setConstraint(cdsBc);
 
-        cdsQuery.setConstraint(cdsBc);
+            System.err.println ("starting stores");
 
-        System.err.println ("starting stores");
-
-        try {
             Results cdsResults = getObjectStore().execute(cdsQuery);
-
             Iterator cdsIter = cdsResults.iterator();
 
             while (cdsIter.hasNext()) {
                 ResultsRow row = (ResultsRow) cdsIter.next();
-
                 System.err.println ("results: " + row);
-
                 CDS cds = (CDS) row.get(0);
-
                 String cdsId = cds.getIdentifier();
 
                 if (linkMap.get(cdsId) == null) {
-                    throw new RuntimeException("internal error - identifier missing from linkMap");
+                    throw new RuntimeException("internal error: identifier missing from map");
                 }
 
                 String uniprotAcc = (String) linkMap.get(cdsId);
-
                 Protein protein = (Protein) uniprotAccMap.get(uniprotAcc);
 
                 if (protein == null) {
-                    throw new BuildException("uniprot accession number not found: " + uniprotAcc);
+                    throw new BuildException("uniprot accession number not found: "
+                                             + uniprotAcc);
                 }
 
                 CDS clonedCds = (CDS) PostProcessUtil.cloneInterMineObject(cds);
-
                 System.err.println ("setting " + protein.getIdentifier() + " in " + cds);
-
                 clonedCds.setProtein(protein);
-
-
-
-//                getObjectStoreWriter().store(clonedCds);
-
-
+                getObjectStoreWriter().store(clonedCds);
             }
-        } catch (ObjectStoreException e) {
-            throw new BuildException("exception while querying from ObjectStore", e);
+
+            getObjectStoreWriter().commitTransaction();
+
+
         } catch (IllegalAccessException e) {
             throw new BuildException("exception while clone an object", e);
+        } catch (ObjectStoreException e) {
+            throw new BuildException("exception while querying from ObjectStore", e);
+        } catch (IOException e) {
+            throw new BuildException("error while reading: " + linkFile, e);
+        } finally {
+            osw = null;
+            try {
+                getObjectStoreWriter().close();
+            } catch (ObjectStoreException e) {
+                LOG.error("failed to close() ObjectStoreWriter", e);
+            }
         }
-
     }
 }
