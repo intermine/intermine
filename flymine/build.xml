@@ -2021,6 +2021,32 @@
     </read-fasta>
   </target>
 
+  <target name="read-flybase-gene-fasta" 
+          depends="compile-genomic-java, compile-flymine-java">
+    <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <read-fasta className="Gene" organismAbbreviation="DM" alias="osw.production">
+      <fileset dir="${flybase.chado.fasta}">
+        <include name="dmel-all-gene-*.fasta"/>
+      </fileset>
+    </read-fasta>
+  </target>
+
+  <target name="read-flybase-cds-fasta" 
+          depends="compile-genomic-java, compile-flymine-java">
+    <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <read-fasta className="CDS" organismAbbreviation="DM" alias="osw.production">
+      <fileset dir="${flybase.chado.fasta}">
+        <include name="dmel-all-CDS-*.fasta"/>
+      </fileset>
+    </read-fasta>
+  </target>
+
   <!-- Java checkstyle targets -->
   <target name="checkstyle" depends="prepare"
           description="checks the coding style of all the java files in the project">
