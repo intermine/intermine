@@ -29,9 +29,9 @@
           </c:when>
           <c:otherwise>
             <html:link href="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"
-                       title="${sourceTitle}: ${thisSynonym.synonym}"
+                       title="${sourceTitle}: ${thisSynonym.value}"
                        target="view_window">
-              <c:out value="${thisSynonym.synonym}"/>
+              <c:out value="${thisSynonym.value}"/>
             </html:link>
           </c:otherwise>
         </c:choose>
