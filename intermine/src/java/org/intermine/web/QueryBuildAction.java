@@ -159,6 +159,11 @@ public class QueryBuildAction extends LookupDispatchAction
         if (queryClasses.size() == 0) {
             throw new Exception("There are no classes present in the query");
         }
+        
+        //if we're editing something then update it before running query
+        if (session.getAttribute("editingAlias") != null) {
+            updateClass(mapping, form, request, response);
+        }
 
         session.setAttribute("query", createQuery(queryClasses, model, savedBags));
 
