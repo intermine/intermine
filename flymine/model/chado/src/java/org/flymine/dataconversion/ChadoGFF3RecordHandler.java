@@ -54,11 +54,12 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         references.put("Exon", "transcripts");
         references.put("InsertionSite", "genes");
         references.put("Intron", "transcripts");
+        // release 4.0 gff3 is inconsistent with parents of RNAs
         //references.put("MRNA", "gene");
-        references.put("NcRNA", "gene");
+        //references.put("NcRNA", "gene");
         //references.put("SnRNA", "gene");
-        references.put("SnoRNA", "gene");
-        references.put("TRNA", "gene");
+        //references.put("SnoRNA", "gene");
+        //references.put("TRNA", "gene");
         references.put("PointMutation", "gene");
         references.put("PolyASite", "processedTranscripts");
         // Region is inherited by loads of things, causes conflicts
