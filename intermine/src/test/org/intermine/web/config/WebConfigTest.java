@@ -20,7 +20,7 @@ public class WebConfigTest extends TestCase
     }
 
     public void testParse() throws Exception{
-        WebConfig wc1 = WebConfig.parse("org/flymine/web/config/WebConfigTest.xml");
+        WebConfig wc1 = WebConfig.parse("test/WebConfigTest.xml");
 
         Displayer disp1 = new Displayer();
         disp1.setSrc("page1.jsp");
