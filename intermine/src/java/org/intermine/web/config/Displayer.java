@@ -60,5 +60,15 @@ public class Displayer
         return src.hashCode();
     }
 
+    /**
+     * Return an XML String of this Type object
+     *
+     * @return a String version of this WebConfig object
+     */
+    public String toString() {
+        return "<displayer src=\"" + src + "\"/>";
+    }
+
+
 }
 

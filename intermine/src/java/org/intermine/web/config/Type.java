@@ -11,6 +11,7 @@ package org.flymine.web.config;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -101,6 +102,32 @@ public class Type
     public int hashCode() {
         return shortDisplayers.hashCode() + 3 * longDisplayers.hashCode();
     }
+
+    /**
+     * Return an XML String of this Type object
+     *
+     * @return a String version of this WebConfig object
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<class name=\"" + name + "\">");
+        sb.append("<shortdisplayers>");
+        Iterator iter = shortDisplayers.iterator();
+        while (iter.hasNext()) {
+            sb.append(iter.next().toString());
+        }
+        sb.append("</shortdisplayers>");
+        sb.append("<longdisplayers>");
+        iter = longDisplayers.iterator();
+        while (iter.hasNext()) {
+            sb.append(iter.next().toString());
+        }
+        sb.append("</longdisplayers>");
+        sb.append("</class>");
+
+        return sb.toString();
+    }
+
 
 }
 

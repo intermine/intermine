@@ -13,6 +13,7 @@ package org.flymine.web.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.digester.*;
@@ -103,6 +104,22 @@ public class WebConfig
      */
     public int hashCode() {
         return types.hashCode();
+    }
+
+    /**
+     * Return an XML String of this WebConfig object
+     *
+     * @return a String version of this WebConfig object
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<webconfig>");
+        Iterator iter = types.values().iterator();
+        while (iter.hasNext()) {
+            sb.append(iter.next().toString());
+        }
+        sb.append("</webconfig>");
+        return sb.toString();
     }
 
 }
