@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list-bean>
+    <item name="d1" _xml-id="1" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="c1" vatNumber="101" department="1" xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <address address="a1"/>
+    </item>
+    <item address="a1" xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="d2" _xml-id="2" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="d3" _xml-id="3" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="c2" vatNumber="202" department="3" xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <address address="a2"/>
+    </item>
+    <item address="a2" xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+</list-bean>
