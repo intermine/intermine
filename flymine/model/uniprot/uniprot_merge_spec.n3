@@ -54,9 +54,6 @@
 #:Protein__comments a owl:ObjectProperty;
 #    owl:equivalentProperty uniprot:EntryType__comments.
 
-:BioEntity__comments a owl:ObjectProperty;
-    owl:inverseOf :Comment__subject.
-
 #    owl:equivalentClass uniprot:CommentType;
 
 # Need to null out all the other comment fields - TODO: maybe do this properly later
