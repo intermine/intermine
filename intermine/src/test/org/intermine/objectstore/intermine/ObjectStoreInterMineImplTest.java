@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 
 import junit.framework.Test;
 
@@ -31,9 +32,11 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreQueriesTestCase;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryCollectionReference;
@@ -67,12 +70,12 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         SingletonResults r = new SingletonResults(q, os, os.getSequence());
         r.setBatchSize(2);
         InterMineObject o = (InterMineObject) r.get(5);
-        SqlGenerator.registerOffset(q2, 6, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId());
+        SqlGenerator.registerOffset(q2, 6, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
         SingletonResults r2 = new SingletonResults(q2, os, os.getSequence());
         r2.setBatchSize(2);
 
         Query q3 = QueryCloner.cloneQuery(q);
-        SqlGenerator.registerOffset(q3, 5, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId());
+        SqlGenerator.registerOffset(q3, 5, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
         SingletonResults r3 = new SingletonResults(q3, os, os.getSequence());
         r3.setBatchSize(2);
 
@@ -315,6 +318,64 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         } finally {
             ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
         }
+    }
+
+     public void testCreateTempBagTables() throws Exception {
+        Query q = ObjectStoreQueriesTestCase.bagConstraint();
+
+        Map bagTableNames = new HashMap();
+
+        ((ObjectStoreInterMineImpl) os).createTempBagTables(q, bagTableNames, 1);
+
+        assertEquals(1, bagTableNames.size());
+
+        String tableName = (String) bagTableNames.values().iterator().next();
+
+        Connection con = null;
+
+        Set expected = new HashSet();
+
+        Iterator bagIter = ((BagConstraint) q.getConstraint()).getBag().iterator();
+
+        while (bagIter.hasNext()) {
+            Object thisObject = bagIter.next();
+
+            if (thisObject instanceof String) {
+                expected.add(thisObject);
+            }
+        }
+
+        try {
+            con = ((ObjectStoreInterMineImpl) os).getConnection();
+            con.setAutoCommit(false);
+
+            Statement s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT value FROM " + tableName);
+            r.first();
+
+            Set results = new HashSet();
+
+            results.add(r.getString(1));
+            r.next();
+            results.add(r.getString(1));
+            r.next();
+            results.add(r.getString(1));
+
+            try {
+                r.next();
+            } catch (SQLException e) {
+                // expected
+            }
+            
+            assertEquals(expected, results);
+        } finally {
+            if (con != null) {
+                con.commit();
+                ((ObjectStoreInterMineImpl) os).releaseConnection(con);
+            }
+        }
+
+
     }
 
     private static class DelayedCancel implements Runnable
