@@ -113,7 +113,14 @@
             </td>
             <td>
           <font class="queryViewConstraintRight">
-            <c:out value="${queryClass.fieldValues[constraintName]}"/>
+            <c:set var="fieldValue" value="${queryClass.fieldValues[constraintName]}"/>
+            <c:if test="${fieldValue.class.name == 'java.lang.String'}">
+              <c:out value="'"/>
+            </c:if>
+            <c:out value="${fieldValue}"/>
+            <c:if test="${fieldValue.class.name == 'java.lang.String'}">
+              <c:out value="'"/>
+            </c:if>
           </font>
             </td>
           </tr>
