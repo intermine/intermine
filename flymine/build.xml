@@ -1600,6 +1600,7 @@
   </target>
 
   <target name="mage-test" depends="prepare-build-model, prepare-test, convert-mage">
+    <mkdir dir="${build.tmp}/mage"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
