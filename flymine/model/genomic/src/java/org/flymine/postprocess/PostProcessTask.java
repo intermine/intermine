@@ -58,9 +58,12 @@ public class PostProcessTask extends Task
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(alias);
             if ("mappings".equals(type)) {
                 CalculateLocations cl = new CalculateLocations(osw);
+                cl.fixPartials();
                 cl.createLocations();
                 CreateReferences cr = new CreateReferences(osw);
                 cr.insertReferences();
+//                TransferSequences ts = new TransferSequences(osw);
+//                ts.transferSequences();
             }
             osw.close();
         } catch (Exception e) {
