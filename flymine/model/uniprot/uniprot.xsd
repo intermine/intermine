@@ -333,9 +333,6 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="citation" type="citationType"/>
-                <xs:annotation>
-                    <xs:documentation>Groups the scope (RP lines) and source data (RC lines) lists.</xs:documentation>
-                </xs:annotation>
                 <xs:sequence>
                     <xs:element name="scope" type="xs:string" maxOccurs="unbounded">
                         <xs:annotation>
@@ -360,9 +357,6 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>If a CC line type does not have a defined structure, the text of this comment is stored in the element.</xs:documentation>
-                </xs:annotation>
             </xs:element>
             <xs:sequence>
                 <xs:element name="absorption" minOccurs="0" maxOccurs="1">
