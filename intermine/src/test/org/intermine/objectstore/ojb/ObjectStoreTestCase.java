@@ -2,6 +2,7 @@ package org.flymine.objectstore.ojb;
 
 import junit.framework.TestCase;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -101,6 +102,7 @@ public abstract class QueryTestCase extends TestCase
      * @throws Exception if an error occurs
      */
     public void setUpData() throws Exception {
+        long start = new Date().getTime();
         data();
         ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
         try {
@@ -116,6 +118,13 @@ public abstract class QueryTestCase extends TestCase
         }
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
+
+        java.sql.Connection con = db.getConnection();
+        java.sql.Statement s = con.createStatement();
+        con.setAutoCommit(true);
+        s.execute("vacuum analyze");
+        con.close();
+        System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
     
     public void tearDownData() throws Exception {
