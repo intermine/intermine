@@ -23,6 +23,7 @@ public class ProfileTest extends TestCase
 {
     PathQuery query;
     InterMineBag bag;
+    TemplateQuery template;
     
     public ProfileTest(String arg) {
         super(arg);
@@ -31,10 +32,12 @@ public class ProfileTest extends TestCase
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         bag = new InterMineBag();
+        template = new TemplateQuery("template", "tdesc", "tcat",
+                                new PathQuery(Model.getInstanceByName("testmodel")));
     }
 
     public void testModifySavedMaps() throws Exception {
-        Profile profile = new Profile(null, "bob", new HashMap(), new HashMap());
+        Profile profile = new Profile(null, "bob", new HashMap(), new HashMap(), new HashMap());
 
         try {
             profile.getSavedQueries().put("query0", null);
@@ -50,14 +53,16 @@ public class ProfileTest extends TestCase
     }
 
     public void testSaveNoManager() throws Exception {
-        Profile profile = new Profile(null, "bob", new HashMap(), new HashMap());
+        Profile profile = new Profile(null, "bob", new HashMap(), new HashMap(), new HashMap());
         profile.saveQuery("query1", query);
         profile.saveBag("bag1", bag);
-
+        profile.saveTemplate("template", template);
         assertEquals(1, profile.getSavedQueries().size());
         assertEquals(profile.getSavedQueries().get("query1"), query);
         assertEquals(1, profile.getSavedBags().size());
         assertEquals(profile.getSavedBags().get("bag1"), bag);
+        assertEquals(1, profile.getSavedTemplates().size());
+        assertEquals(profile.getSavedTemplates().get("template"), template);
     }
 
     public void testDeleteNoManager() throws Exception {
@@ -65,18 +70,23 @@ public class ProfileTest extends TestCase
         queries.put("query1", query);
         Map bags = new HashMap();
         bags.put("bag1", bag);
-
-        Profile profile = new Profile(null, "bob", queries, bags);
+        Map tmpls = new HashMap();
+        tmpls.put("tmpl1", template);
+        
+        Profile profile = new Profile(null, "bob", queries, bags, tmpls);
         profile.deleteQuery("query1");
         profile.deleteBag("bag1");
+        profile.deleteTemplate("tmpl1");
 
         assertEquals(0, profile.getSavedQueries().size());
         assertEquals(0, profile.getSavedBags().size());
+        assertEquals(0, profile.getSavedTemplates().size());
     }
 
     public void testSaveWithManager() throws Exception {
         ProfileManager profileManager = new DummyProfileManager(null);
-        Profile profile = new Profile(profileManager, "bob", new HashMap(), new HashMap());
+        Profile profile = new Profile(profileManager, "bob",
+                                      new HashMap(), new HashMap(), new HashMap());
 
         try {
             profile.saveQuery("query1", query);
@@ -89,18 +99,27 @@ public class ProfileTest extends TestCase
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
+        
+        try {
+            profile.saveTemplate("tmpl1", template);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+        }
 
         assertEquals(1, profile.getSavedQueries().size());
         assertEquals(profile.getSavedQueries().get("query1"), query);
         assertEquals(1, profile.getSavedBags().size());
         assertEquals(profile.getSavedBags().get("bag1"), bag);
-
+        assertEquals(1, profile.getSavedTemplates().size());
+        assertEquals(profile.getSavedTemplates().get("tmpl1"), template);
+        
         profileManager.close();
     }
     
     public void testDeleteWithManager() throws Exception {
         ProfileManager profileManager = new DummyProfileManager(null);
-        Profile profile = new Profile(profileManager, "bob", new HashMap(), new HashMap());
+        Profile profile = new Profile(profileManager, "bob",
+                                      new HashMap(), new HashMap(), new HashMap());
 
         try {
             profile.deleteQuery("query1");
@@ -113,9 +132,16 @@ public class ProfileTest extends TestCase
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
+        
+        try {
+            profile.deleteTemplate("tmpl1");
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+        }
 
         assertEquals(0, profile.getSavedQueries().size());
         assertEquals(0, profile.getSavedBags().size());
+        assertEquals(0, profile.getSavedTemplates().size());
 
         profileManager.close();
     }
