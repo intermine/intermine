@@ -60,7 +60,7 @@
   <property name="dist"  location="dist"/>
   <property name="dist.www"  location="${dist}/www"/>
   <property name="dist.webapp"  location="${dist}/webapp"/>
-  <property name="dist.javadoc"  location="${dist.www}/api"/>
+  <property name="dist.javadoc"  location="${dist}/api"/>
 
   <!-- set up library filesets -->
 
