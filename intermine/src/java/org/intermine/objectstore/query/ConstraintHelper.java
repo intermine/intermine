@@ -64,6 +64,24 @@ public class ConstraintHelper
     }
 
     /**
+     * Traverse the given Constraint tree (ie. recursively look for nested constraints if the
+     * argument is a ConstraintSet) and call ConstraintTraverseAction for each Constraint.
+     * @param c the Constraint to traverse - could be a ConstraintSet (possibly with nested
+     * ConstraintSets)
+     * @param ca ConstraintTraverseAction.apply() is called for each Constraint found
+     */
+    public static void traverseConstraints(Constraint c, ConstraintTraverseAction ca) {
+        ca.apply(c);
+        if (c instanceof ConstraintSet) {
+            Iterator iter = ((ConstraintSet) c).getConstraints().iterator();
+            while (iter.hasNext()) {
+                Constraint childConstraint = (Constraint) iter.next();
+                walkConstraints(childConstraint, ca);
+            }
+        }
+    }
+
+    /**
      * Return a List of Constraint objects that relate to the given FromElement.
      *
      * @param query a Query object to to list contraints for
