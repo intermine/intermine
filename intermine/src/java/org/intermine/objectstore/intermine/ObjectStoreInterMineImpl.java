@@ -10,8 +10,12 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,6 +42,7 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.query.ExplainResult;
+import org.intermine.util.ShutdownHook;
 
 import org.apache.log4j.Logger;
 
@@ -58,6 +63,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     protected Set writers = new HashSet();
     protected Set missingTables = new HashSet();
     protected Set noObjectTables = new HashSet();
+    protected Writer log = null;
 
     /**
      * Constructs an ObjectStoreInterMineImpl.
@@ -140,6 +146,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName()
             + (missingTablesString == null ? "" : ", missingTables = " + missingTablesString)
             + (noObjectTablesString == null ? "" : ", noObjectTables = " + noObjectTablesString);
+        String logfile = props.getProperty("logfile");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
@@ -165,10 +172,39 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                         os.noObjectTables.add(tables[i]);
                     }
                 }
+                if (logfile != null) {
+                    try {
+                        FileWriter fw = new FileWriter(logfile, true);
+                        BufferedWriter logWriter = new BufferedWriter(fw);
+                        ShutdownHook.registerObject(logWriter);
+                        os.setLog(logWriter);
+                    } catch (IOException e) {
+                        LOG.error("Error setting up execute log in file " + logfile + ": " + e);
+                    }
+                }
                 instances.put(objectStoreDescription, os);
             }
             return os;
         }
+    }
+
+    /**
+     * Returns the log used by this objectstore.
+     *
+     * @return the log
+     */
+    public synchronized Writer getLog() {
+        return log;
+    }
+
+    /**
+     * Allows the log to be set in this objectstore.
+     *
+     * @param log the log
+     */
+    public synchronized void setLog(Writer log) {
+        LOG.info("Setting log to " + log);
+        this.log = log;
     }
 
     /**
@@ -207,6 +243,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
 
         String sql = SqlGenerator.generate(q, start, limit, model, db);
         try {
+            long estimatedTime = 0;
             if (optimise && everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
@@ -220,6 +257,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 //            + (now - time) + "): EXPLAIN " + sql);
                 //}
 
+                estimatedTime = explainResult.getTime();
                 if (explainResult.getTime() > maxTime) {
                     throw (new ObjectStoreQueryDurationException("Estimated time to run query("
                                 + explainResult.getTime() + ") greater than permitted maximum ("
@@ -242,6 +280,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     LOG.info(getModel().getName() + ": Executed SQL (time = "
                             + (now - time) + " > " + permittedTime + ", rows = " + objResults.size()
                             + "): " + (sql.length() > 1000 ? sql.substring(0, 1000) : sql));
+                }
+            }
+            if (estimatedTime > 0) {
+                Writer executeLog = getLog();
+                if (executeLog != null) {
+                    try {
+                        executeLog.write("EXECUTE\t" + estimatedTime + "\t" + (now - time) + "\t"
+                                + permittedTime + "\t" + q + "\t" + sql + "\n");
+                    } catch (IOException e) {
+                        LOG.error("Error writing to execute log " + e);
+                    }
                 }
             }
             QueryNode firstOrderBy = null;

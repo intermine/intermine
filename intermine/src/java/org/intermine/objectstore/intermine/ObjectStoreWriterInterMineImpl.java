@@ -12,6 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,6 +41,7 @@ import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
+import org.intermine.util.ShutdownHook;
 import org.intermine.util.TypeUtil;
 //import org.intermine.xml.lite.LiteParser;
 //import org.intermine.xml.lite.LiteRenderer;
@@ -91,7 +93,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                            + ")", e);
         }
         this.os.writers.add(this);
-        Runtime.getRuntime().addShutdownHook(new StatsShutdownHook(this));
+        ShutdownHook.registerObject(new WeakReference(this));
         Exception e = new Exception();
         e.fillInStackTrace();
         StringWriter message = new StringWriter();
