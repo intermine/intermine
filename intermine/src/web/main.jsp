@@ -136,6 +136,7 @@
                   </c:forEach>
                 </html:select>
                 <html:select property="constraintValue">
+                  <html:option value=""/>
                   <c:forEach items="${SAVED_BAGS}" var="bag">
                     <html:option value="${bag.key}">
                       <c:out value="${bag.key}"/>
