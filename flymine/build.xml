@@ -585,7 +585,7 @@
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into production -->
-  <target name="load-ensembl-drosophila" depends="prepare-build-model">
+  <target name="load-ensembl-drosophila" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-dros" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -651,7 +651,7 @@
   </target>
 
   <!-- Load data from ensembl anopheles tgt items into production -->
-  <target name="load-ensembl-anopheles" depends="prepare-build-model">
+  <target name="load-ensembl-anopheles" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-anoph" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -755,7 +755,7 @@
   </target>
 
   <!-- Load data from chado tgt items into production -->
-  <target name="load-chado" depends="prepare-build-model">
+  <target name="load-chado" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -800,7 +800,7 @@
   </target>
 
   <!-- Load data from ensembl orthologues into production -->
-  <target name="load-orthologues-ensembl">
+  <target name="load-orthologues-ensembl" depends="copy-genomic-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -841,7 +841,7 @@
   </target>
 
   <!-- Load data from inparanoid orthologues into production -->
-  <target name="load-orthologues-inparanoid">
+  <target name="load-orthologues-inparanoid" depends="copy-genomic-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -881,7 +881,7 @@
     </ant>
   </target>
 
-  <target name="load-rnai">
+  <target name="load-rnai" depends="copy-genomic-config">
     <taskdef name="load-rnai" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -921,7 +921,7 @@
   </target>
 
 
-  <target name="load-phenotype">
+  <target name="load-phenotype"  depends="copy-genomic-config">
     <taskdef name="load-phenotype" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -956,7 +956,7 @@
     </ant>
   </target>
 
-  <target name="load-psi-dag">
+  <target name="load-psi-dag"  depends="copy-genomic-config">
     <taskdef name="load-psi-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1045,14 +1045,14 @@
     </ant>
   </target>
 
-  <target name="load-psi-hybrigenics">
+  <target name="load-psi-hybrigenics"  depends="copy-genomic-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
     <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi-hybrigenics" ignoreDuplicates="true"/>
   </target>
 
-  <target name="load-psi-intact">
+  <target name="load-psi-intact" depends="copy-genomic-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1087,7 +1087,7 @@
     </ant>
   </target>
 
-  <target name="load-taxonomy">
+  <target name="load-taxonomy"  depends="copy-genomic-config">
     <taskdef name="load-taxonomy" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1175,7 +1175,7 @@
     </ant>
   </target>
 
-  <target name="load-mage" depends = "prepare-build-model">
+  <target name="load-mage" depends = "prepare-build-model, copy-genomic-config">
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1240,7 +1240,7 @@
     </ant>
   </target>
 
-  <target name="load-protein_structure">
+  <target name="load-protein_structure"  depends="copy-genomic-config">
     <taskdef name="load-protein_structure" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1278,7 +1278,7 @@
     </ant>
   </target>
 
-  <target name="load-go-dag">
+  <target name="load-go-dag"  depends="copy-genomic-config">
     <taskdef name="load-go-dag" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1317,7 +1317,7 @@
     </ant>
   </target>
 
-  <target name="load-go-annotation">
+  <target name="load-go-annotation"  depends="copy-genomic-config">
     <taskdef name="load-go-annotation" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1368,7 +1368,7 @@
     </ant>
   </target>
 
-  <target name="load-flyreg">
+  <target name="load-flyreg"  depends="copy-genomic-config">
     <taskdef name="load-flyreg" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1423,10 +1423,11 @@
     </ant>
   </target>
 
+  
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
-  <target name="load-static" depends="prepare-build-model">
+  <target name="load-static" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
@@ -1513,7 +1514,7 @@
     </ant>
   </target>
 
-  <target name="load-uniprot">
+  <target name="load-uniprot"  depends="copy-genomic-config">
     <taskdef name="load-uniprot" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1698,8 +1699,7 @@
     </taskdef>
     <mappings operation="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
 
-    <taskdef
-      name="load-xml-data"
+    <taskdef name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -2511,7 +2511,7 @@
   </target>
 
   <!-- Load data from ensembl-human-tgt-items into production -->
-  <target name="load-ensembl-human" depends="prepare-build-model">
+  <target name="load-ensembl-human" depends="prepare-build-model, copy-genomic-config">
     <taskdef name="load-human" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
