@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -340,8 +341,132 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
     }
 
-    /**
+    /*
+     * Now, we need some query cancellation mechanism. So, here is how it will work:
+     * 1. A thread calls registerRequest(Object requestId), which creates an entry in a lookup
+     *     that matches that request ID with that thread. Now, all activity performed by that
+     *     thread is associated with that request ID. Only one thread can have a particular request
+     *     ID at a time, and only one request ID can have a particular thread at a time.
+     * 2. That thread performs some activity. The Statement that the thread uses is entered into
+     *     a lookup against the request ID.
+     * 3. Another thread calls the cancelRequest(Object requestId) method, which looks up the
+     *     Statement and calls Statement.cancel(), and records the request ID in a Set.
+     * 4. The requesting thread receives an SQLException, and re-throws it as an
+     *     ObjectStoreException.
+     * 5. If another request comes in on the same request ID, the presence of the ID in the Set
+     *     causes an exception to be thrown before the database is even consulted.
      *
+     * Some of these things will require synchronised actions. Notably:
+     *
+     * 1. The action of registering a Statement with a request ID, which should throw an exception
+     *     immediately if that request has been cancelled.
+     * 2. The action of registering a request ID to cancel, which should call Statement.cancel() on
+     *     any Statement already registered for that request ID.
+     * 3. The action of deregistering a Statement for your request ID, which will remove all
+     *     records.
+     *
+     * We don't want to do this registration etc. every single time anything happens - only if we
+     * are supplied with a request id. Therefore requests without IDs cannot be cancelled.
+     */
+
+    private ThreadLocal requestId = new ThreadLocal();
+
+    /**
+     * This method registers a Thread with a request ID.
+     *
+     * @param id the request ID
+     * @throws ObjectStoreException if this Thread is already registered
+     */
+    public void registerRequestId(Object id) throws ObjectStoreException {
+        if (requestId.get() != null) {
+            throw new ObjectStoreException("This Thread is already registered with a request ID");
+        }
+        requestId.set(id);
+    }
+
+    /**
+     * This method deregisters a Thread from a request ID.
+     *
+     * @param id the request ID
+     * @throws ObjectStoreException if the Thread is not registered with this ID
+     */
+    public void deregisterRequestId(Object id) throws ObjectStoreException {
+        if (!id.equals(requestId.get())) {
+            throw new ObjectStoreException("This Thread is not registered with ID " + id);
+        }
+        requestId.set(null);
+    }
+    
+    private WeakHashMap cancelRegistry = new WeakHashMap();
+    private static final String BLACKLISTED = "Blacklisted";
+
+    /**
+     * This method registers a Statement with the current Thread's request ID, or throws an
+     * exception if that request is black-listed, or does nothing if no request ID is present
+     * for this Thread.
+     *
+     * @param s a Statement
+     * @throws ObjectStoreException if the request is black-listed
+     */
+    protected void registerStatement(Statement s) throws ObjectStoreException {
+        Object id = requestId.get();
+        if (id != null) {
+            synchronized (cancelRegistry) {
+                Object statement = cancelRegistry.get(id);
+                if (statement == BLACKLISTED) {
+                    throw new ObjectStoreException("Request id " + id + " is cancelled");
+                } else if (statement != null) {
+                    throw new ObjectStoreException("Request id " + id + " is currently being"
+                            + " serviced in another thread. Don't share request IDs over multiple"
+                            + " threads!");
+                }
+                cancelRegistry.put(id, s);
+            }
+        }
+    }
+
+    /**
+     * This method cancels any Statement running in a given request ID, and blacklists that ID.
+     *
+     * @param id the request ID
+     * @throws ObjectStoreException if the cancel fails
+     */
+    public void cancelRequest(Object id) throws ObjectStoreException {
+        synchronized (cancelRegistry) {
+            try {
+                Object statement = cancelRegistry.get(id);
+                if (statement instanceof Statement) {
+                    ((Statement) statement).cancel();
+                }
+            } catch (SQLException e) {
+                throw new ObjectStoreException("Statement cancel failed", e);
+            } finally {
+                cancelRegistry.put(id, BLACKLISTED);
+            }
+        }
+    }
+
+    /**
+     * This method deregisters a Statement for the request ID of the current thread.
+     *
+     * @param s a Statement
+     * @throws ObjectStoreException if this Thread does not have this Statement registered
+     */
+    protected void deregisterStatement(Statement s) throws ObjectStoreException {
+        Object id = requestId.get();
+        if (id != null) {
+            synchronized (cancelRegistry) {
+                Object statement = cancelRegistry.get(id);
+                if ((statement != BLACKLISTED) && (statement != s)) {
+                    throw new ObjectStoreException("The current thread does not have this statement"
+                            + " registered");
+                } else if (statement == s) {
+                    cancelRegistry.remove(id);
+                }
+            }
+        }
+    }
+
     /**
      * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
@@ -437,7 +562,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
 
             long preExecute = System.currentTimeMillis();
-            ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            Statement s = c.createStatement();
+            registerStatement(s);
+            ResultSet sqlResults;
+            try {
+                sqlResults = s.executeQuery(sql);
+            } finally {
+                deregisterStatement(s);
+            }
             long postExecute = System.currentTimeMillis();
             List objResults = ResultsConverter.convert(sqlResults, q, this);
             long postConvert = System.currentTimeMillis();
@@ -579,7 +711,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             //long time = (new Date()).getTime();
-            ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            ResultSet sqlResults;
+            Statement s = c.createStatement();
+            registerStatement(s);
+            try {
+                sqlResults = c.createStatement().executeQuery(sql);
+            } finally {
+                deregisterStatement(s);
+            }
             //long now = (new Date()).getTime();
             //if (now - time > 10) {
             //    LOG.debug(getModel().getName() + ": Executed SQL (time = "
@@ -647,7 +786,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
             //long time = (new Date()).getTime();
-            ResultSet sqlResults = c.createStatement().executeQuery(sql);
+            ResultSet sqlResults;
+            Statement s = c.createStatement();
+            registerStatement(s);
+            try {
+                sqlResults = c.createStatement().executeQuery(sql);
+            } finally {
+                deregisterStatement(s);
+            }
             //long now = (new Date()).getTime();
             //if (now - time > 10) {
             //    System//.out.println(getModel().getName() + ": Executed SQL (time = "
