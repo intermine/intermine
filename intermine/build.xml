@@ -129,13 +129,22 @@
 
   <!-- Libraries that the InterMine query webapp uses -->
   <patternset id="lib.webapp.intermine">
-    <include name="aspect*.jar" />
-    <include name="commons*.jar" />
-    <include name="jakarta-oro*.jar" />
-    <include name="jstl*.jar" />
-    <include name="servlet*.jar" />
-    <include name="standard*.jar" />
-    <include name="struts*.jar" />
+    <include name="log4j*.jar"/>
+    <include name="postgresql*.jar"/>
+    <include name="antlr*.jar"/>
+    <include name="cglib*.jar"/>
+    <include name="jstl*.jar"/>
+    <include name="servlet*.jar"/>
+    <include name="standard*.jar"/>
+    <include name="struts*.jar"/>
+    <include name="mail*.jar"/>
+    <include name="activation*.jar"/>
+    <include name="poi*.jar"/>
+    <include name="commons-beanutils*"/>
+    <include name="commons-digester*"/>
+    <include name="commons-validator*"/>
+    <!-- splitting OntologyUtil will avoid needing jena -->
+    <include name="jena*"/>
   </patternset>
 
   <!-- Libraries that the webservice uses -->
@@ -146,7 +155,6 @@
     <include name="jaxrpc*.jar" />
     <include name="wsdl*.jar" />
   </patternset>
-
 
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
