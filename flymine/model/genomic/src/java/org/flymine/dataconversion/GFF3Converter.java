@@ -86,6 +86,7 @@ public class GFF3Converter
         handler.setItemFactory(itemFactory);
         handler.setIdentifierMap(identifierMap);
         handler.setInfoSource(infoSource);
+        handler.setOrganism(organism);
 
     }
 

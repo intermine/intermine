@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ReferenceList;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -181,6 +183,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
         expectedGene.setAttribute("identifier", "CG31667");
         expectedGene.setAttribute("organismDbId", "FBgn0051667");
+        expectedGene.setReference("organism", handler.getOrganism().getIdentifier());
 
         assertEquals(6, handler.getItems().size());
 
@@ -214,4 +217,51 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
     }
 
 
+    public void testHandleCDS() throws Exception {
+        String gff = "2L\t.\ttCDS\t1938089\t1938159\t.\t-\t.\tID=CG11023-PA;Dbxref=FlyBase:FBpp0088316,GB_protein:AAO41164.1,FlyBase:FBgn0031208";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        Iterator iter = GFF3Parser.parse(srcReader);
+        GFF3Record record = (GFF3Record) iter.next();
+
+        Item feature = itemFactory.makeItem(null, tgtNs + "CDS", "");
+        feature.setAttribute("identifier", "CG11023-PA");
+
+        handler.setFeature(feature);
+        handler.process(record);
+
+        Item expectedTrans = itemFactory.makeItem(null, tgtNs + "Translation", "");
+        expectedTrans.setAttribute("identifier", "CG11023-PA");
+        expectedTrans.setAttribute("organismDbId", "FBpp0088316");
+        expectedTrans.setReference("organism", handler.getOrganism().getIdentifier());
+
+        assertEquals(3, handler.getItems().size());
+
+        Item actualTrans = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "Translation")) {
+                actualTrans = item;
+                expectedTrans.setIdentifier(actualTrans.getIdentifier());
+            }
+        }
+        assertEquals(expectedTrans, actualTrans);
+
+        Item expectedCDS = itemFactory.makeItem(null, tgtNs + "CDS", "");
+        expectedCDS.setAttribute("identifier", "CG11023-PA_CDS");
+        expectedCDS.addCollection(new ReferenceList("polypeptides",
+                                                    new ArrayList(Collections.singleton(actualTrans.getIdentifier()))));
+
+        Item actualCDS = null;
+        iter = handler.getItems().iterator();
+        while (iter.hasNext()) {
+            Item item = (Item) iter.next();
+            if (item.getClassName().equals(tgtNs + "CDS")) {
+                actualCDS = item;
+                expectedCDS.setIdentifier(actualCDS.getIdentifier());
+            }
+        }
+        assertEquals(expectedCDS, actualCDS);
+    }
 }

@@ -2,7 +2,6 @@
 <classes>
   <class name="org.flymine.model.genomic.CDS" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <attribute name="organismDbId" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="CDSs"/>
     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
   </class>
@@ -62,5 +61,6 @@
   <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.Gene" is-interface="true">
   </class>
   <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
   </class>
 </classes>
