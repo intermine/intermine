@@ -228,7 +228,7 @@
 	                                Pos_neg_data ?Pos_neg_data
 				// above three are for mapping on its own behalf
 	                                In_2_point ?2_point_data
-                                        In_multi_point ?Multi_pt_data
+                                        In_multi_point ?Multi_pt_data XREF Locus_2
 	                                In_pos_neg_data ?Pos_neg_data
 				// these are for when the locus is mapped
 			Covers Text // from MRC allele list
@@ -258,7 +258,7 @@
                         Paternal
 	Remark	?Text #Evidence
         Reference ?Paper XREF Allele               // Mary
-        Rescued_by_Transgene ?Transgene
+        Rescued_by_Transgene ?Transgene XREF Rescue_2
 	Method UNIQUE ?Method // necessary now that Allele is SMap [030106 krb]
 
 
@@ -581,10 +581,10 @@
 			     	Rearrangement_1 UNIQUE ?Rearrangement XREF Pos_neg_data
 				Allele_1 UNIQUE ?Allele XREF Pos_neg_data
 				Clone_1 UNIQUE ?Clone XREF Pos_neg_data
-		Item_2	UNIQUE	Locus_2	UNIQUE ?Locus XREF Pos_neg_data UNIQUE ?Allele XREF In_pos_neg_data
-			     	Rearrangement_2 UNIQUE ?Rearrangement XREF Pos_neg_data
-				Allele_2 UNIQUE ?Allele XREF Pos_neg_data
-				Clone_2 UNIQUE ?Clone XREF Pos_neg_data
+		Item_2	UNIQUE	Locus_2	UNIQUE ?Locus UNIQUE ?Allele
+			     	Rearrangement_2 UNIQUE ?Rearrangement
+				Allele_2 UNIQUE ?Allele
+				Clone_2 UNIQUE ?Clone
 		Calculation UNIQUE Positive
 				   Negative
 		Remark ?Text #Evidence
@@ -596,14 +596,14 @@
 		Experiment  Mapper ?Author
 			    Laboratory ?Laboratory
 			    Date  UNIQUE DateType
-		Selected A UNIQUE Locus_A UNIQUE ?Locus UNIQUE ?Allele XREF In_multi_point
+		Selected A UNIQUE Locus_A UNIQUE ?Locus UNIQUE ?Allele
 				  Allele_A UNIQUE ?Allele
 				  Rearrangement_A UNIQUE ?Rearrangement
                                   Transgene_A UNIQUE ?Transgene XREF Multi_point
-			 B UNIQUE Locus_B UNIQUE ?Locus UNIQUE ?Allele XREF In_multi_point
+			 B UNIQUE Locus_B UNIQUE ?Locus UNIQUE ?Allele
 				  Allele_B UNIQUE ?Allele
 				  Rearrangement_B UNIQUE ?Rearrangement
-                                  Transgene_B UNIQUE ?Transgene XREF Multi_point 
+                                  Transgene_B UNIQUE ?Transgene 
 		Locus ?Locus UNIQUE ?Allele XREF In_multi_point	    // just to pair up alleles
 		Results A_non_B #Multi_counts
 			B_non_A	#Multi_counts
@@ -782,8 +782,8 @@
 		     Overlap_right UNIQUE ?Sequence XREF Overlap_left UNIQUE Int          // potentially use Overlap_right integer for auto-linking
 		     Overlap_left UNIQUE ?Sequence XREF Overlap_right
 		     Gap_right UNIQUE Int Text            // 000909 dl added to track gap sizes
-		     Clone_left_end ?Clone XREF Clone_left_end UNIQUE Int
-		     Clone_right_end ?Clone XREF Clone_right_end UNIQUE Int
+		     Clone_left_end ?Clone UNIQUE Int
+		     Clone_right_end ?Clone UNIQUE Int
 		     Flipped
 	  DB_info	Database ?Database ?Text ?Accession_number XREF Sequence UNIQUE Int 
 				  // ID  Accession_number & sequence version [dl 2000-07-27]
@@ -822,8 +822,8 @@
           	        Locus_genomic_seq ?Locus XREF Genomic_sequence   // Split genomic and other Locus XREFs
 			Locus_other_seq ?Locus XREF Other_sequence       // dl 001128
 		        //Related_DNA ?Sequence XREF Related_DNA
-			Paired_read ?Sequence XREF Paired_read          // dl 020110
-			Orthologue ?Sequence XREF Orthologue ?Species #Evidence  // dl 030304
+			Paired_read ?Sequence          // dl 020110
+			Orthologue ?Sequence ?Species #Evidence  // dl 030304
 			Remark ?Text #Evidence
 			Confidential_remark ?Text
 			Brief_identification UNIQUE ?Text #Evidence     // dl 030219
@@ -837,7 +837,7 @@
 			Provisional_description ?Text #Evidence			 // added for Erich [020322 krb]
 			Detailed_description ?Text #Evidence			 // added for Erich [020322 krb]
 			Concise_description ?Text #Evidence			 // added for Erich [020523 krb]
-			Interacts_with_sequence ?Sequence XREF Interacts_with_sequence #Evidence // for future interaction data [020704 krb]
+			Interacts_with_sequence ?Sequence #Evidence // for future interaction data [020704 krb]
 			Interacts_with_protein ?Protein XREF Interacts_with_sequence #Evidence // for future interaction data [020704 krb]
 		// tag2 system: names of all objects following next tag are shown in the 
 		//   general annotation display column as "tag:objname"
@@ -882,7 +882,7 @@
 	  Strain ?Strain XREF Sequence                                      // new for KO data [krb 021219]
 	  Assembly_tags	Text Int Int Text                                   // type, start, stop, comment
 	  Analysis_details Analysis_history ?Method UNIQUE DateType
-	  Homol	DNA_homol ?Sequence XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+	  Homol	DNA_homol ?Sequence ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		Pep_homol ?Protein XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		Motif_homol ?Motif XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		Homol_homol ?Homol_data XREF DNA_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
@@ -1008,7 +1008,7 @@
                         // CDS ?CDS XREF Transcript 
 			// Not ready for these two yet
 			Allele ?Allele XREF Transcript // added to fit two alleles of RNA genes [021127 krb]
-			Orthologue ?Transcript XREF Orthologue ?Species #Evidence  // [030310 krb]
+			Orthologue ?Transcript ?Species #Evidence  // [030310 krb]
                         Matching_cDNA ?Sequence XREF Matching_transcript
                         Remark ?Text #Evidence
                         Confidential_remark ?Text
@@ -1092,7 +1092,7 @@
 			Reference ?Paper XREF Protein
 			Expr_pattern ?Expr_pattern XREF Protein
 			Interacts_with_sequence ?Sequence XREF Interacts_with_protein #Evidence // for future interaction data [020704 krb]
-			Interacts_with_protein ?Protein XREF Interacts_with_protein #Evidence // for future interaction data [020704 krb]
+			Interacts_with_protein ?Protein #Evidence // for future interaction data [020704 krb]
 		// tag2 system.  For now I have not populated this column.  For C. elegans
 		// wormpep we want to get the information from the ?Corresponding_DNA 
 		// object.  Because those objects have long term continuity, while wormpep
@@ -1101,7 +1101,7 @@
 	  Swiss_feature	Text Int Int Text // feature name, start, stop, note
 	  Analysis_details Analysis_history ?Method DateType
 	  Homol	DNA_homol ?Sequence XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
-		Pep_homol ?Protein XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
+		Pep_homol ?Protein ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
 		Motif_homol ?Motif XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int  #Homol_info
                 Align_homol ?Alignment XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
                 Homol_homol ?Homol_data XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
@@ -1130,7 +1130,7 @@
 			 Peptide
 	Homol	DNA_homol ?Sequence XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		Pep_homol ?Protein XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
-		Motif_homol ?Motif XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
+		Motif_homol ?Motif ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 		Homol_homol ?Homol_data XREF Motif_homol ?Method Float Int UNIQUE Int Int UNIQUE Int #Homol_info
 	GO_term ?GO_term XREF Motif ?GO_code #Evidence
 
