@@ -2,8 +2,40 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <tiles:importAttribute/>
+
+<script type="text/javascript">
+<!--
+
+function enterPath(path)
+{
+  setBorderStyle(path, "#f8f8f8");
+}
+
+function exitPath(path)
+{
+  setBorderStyle(path, "#eee");
+}
+
+function setBorderStyle(path, style)
+{
+  var a = document.getElementById("browser"+path);
+  var b = document.getElementById("query"+path);
+  var c = document.getElementById("showing"+path);
+  
+  if (a != null)
+    a.style.background = style;
+  if (b != null)
+    b.style.background = style;
+  if (c != null)
+    c.style.background = style;
+}
+
+//-->
+</script>
+
 
 <!-- main.jsp -->
 <table class="query" width="100%" cellspacing="0">
@@ -25,7 +57,7 @@
         <br/><br/>
       </c:if>
       <c:forEach var="node" items="${nodes}">
-        <div>
+        <div id="browser">
           <nobr>
             <c:if test="${node.indentation > 0}">
               <c:forEach begin="1" end="${node.indentation}">
@@ -47,6 +79,11 @@
                 <img src="images/blank.png" alt=" "/>
               </c:otherwise>
             </c:choose>
+            <c:if test="${viewPaths[node.path]}">
+              <span class="showing" id="browser${fn:replace(node.path,".","")}"
+                    onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
+                    onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
+            </c:if>
             <c:if test="${node.indentation > 0}">
               <span class="metadata">
                 <c:out value="${node.fieldName}"/>
@@ -71,6 +108,9 @@
                 </fmt:message>
               </c:otherwise>
             </c:choose>
+            <c:if test="${viewPaths[node.path]}">
+              </span>
+            </c:if>
             <html:link action="/mainChange?method=addToView&path=${node.path}"
                        title="${selectNodeTitle}">
               <fmt:message key="query.showNode"/>
@@ -106,6 +146,11 @@
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </c:forEach>
                   </c:if>
+                  <c:if test="${viewPaths[node.path]}">
+                    <span class="showing" id="query${fn:replace(node.path,".","")}"
+                          onMouseOver="enterPath('${fn:replace(node.path,".","")}')"
+                          onMouseOut="exitPath('${fn:replace(node.path,".","")}')">
+                  </c:if>
                   <span class="metadata"><c:out value="${node.fieldName}"/></span>
                   <span class="type">
                     <c:choose>
@@ -127,7 +172,7 @@
                     </c:choose>
                   </span>
                   <c:choose>
-                    <c:when test="{node.indentation > 0"> 
+                    <c:when test="${node.indentation > 0}"> 
                       <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
                         <fmt:param value="${node.fieldName}"/>
                       </fmt:message>
@@ -138,17 +183,25 @@
                       </fmt:message>
                     </c:otherwise>
                   </c:choose>
+                  <c:if test="${viewPaths[node.path]}">
+                    </span>
+                  </c:if>
                   <html:link action="/mainChange?method=addConstraint&path=${node.path}"
                              title="${addConstraintToTitle}">
                     <fmt:message key="query.addConstraint"/>
                   </html:link>
-                  <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
-                    <fmt:param value="${node.fieldName}"/>
-                  </fmt:message>
-                  <html:link action="/mainChange?method=removeNode&path=${node.path}"
-                             title="${removeNodeTitle}">
-                    <img border="0" src="images/cross.png" alt="x"/>
-                  </html:link>
+                  <c:if test="${!lockedPaths[node.path]}">
+                    <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
+                      <fmt:param value="${node.fieldName}"/>
+                    </fmt:message>
+                    <html:link action="/mainChange?method=removeNode&path=${node.path}"
+                               title="${removeNodeTitle}">
+                      <img border="0" src="images/cross.png" alt="x"/>
+                    </html:link>
+                  </c:if>
+                  <c:if test="${lockedPaths[node.path]}">
+                    <img border="0" src="images/discross.png" alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
+                  </c:if>
                 </div>
                 <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
                   <div>
@@ -162,7 +215,7 @@
                           <fmt:formatDate dateStyle="SHORT" value="${constraint.value}"/>
                         </c:when>
                         <c:otherwise>
-                          <c:out value=" ${constraint.displayValue}"/>
+                          <c:out value=" ${constraintDisplayValues[constraint]}"/>
                         </c:otherwise>
                       </c:choose>
                     </span>
@@ -283,7 +336,7 @@
                     <span id="operandEditSpan">
                       <html:text property="attributeValue"/><br/>
                     </span>
-                    <c:if test="${not empty attributeOptions}">
+                    <c:if test="${!empty attributeOptions}">
                       <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
                       <c:forEach items="${attributeOptions}" var="option">
                         <option value="${option}">
@@ -303,17 +356,41 @@
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0 && !empty subclasses}">
-                <fmt:message key="query.subclassConstraint"/>
-                <html:select property="subclassValue">
-                  <c:forEach items="${subclasses}" var="subclass">
-                    <html:option value="${subclass}">
-                      <c:out value="${subclass}"/>
-                    </html:option>
-                  </c:forEach>
-                </html:select>
-                <html:submit property="subclass">
-                  <fmt:message key="query.submitConstraint"/>
-                </html:submit>
+                <p>
+                  <fmt:message key="query.subclassConstraint"/>
+                  <html:select property="subclassValue">
+                    <c:forEach items="${subclasses}" var="subclass">
+                      <html:option value="${subclass}">
+                        <c:out value="${subclass}"/>
+                      </html:option>
+                    </c:forEach>
+                  </html:select>
+                  <html:submit property="subclass">
+                    <fmt:message key="query.submitConstraint"/>
+                  </html:submit>
+                </p>
+              </c:if>
+              <c:if test="${!empty loopQueryPaths && !empty loopQueryOps}">
+                <p style="text-align: left;">
+                  <fmt:message key="query.loopQueryConstraint"/>
+                  <html:select property="loopQueryOp">
+                    <c:forEach items="${loopQueryOps}" var="loopOp">
+                      <html:option value="${loopOp.key}">
+                        <c:out value="${loopOp.value}"/>
+                      </html:option>
+                    </c:forEach>
+                  </html:select>
+                  <html:select property="loopQueryValue">
+                    <c:forEach items="${loopQueryPaths}" var="loopPath">
+                      <html:option value="${loopPath}">
+                        <c:out value="${loopQueryPathsDisplay[loopPath]}"/>
+                      </html:option>
+                    </c:forEach>
+                  </html:select>
+                  <html:submit property="loop">
+                    <fmt:message key="query.submitConstraint"/>
+                  </html:submit>
+                </p>
               </c:if>
             </c:otherwise>
           </c:choose>
