@@ -81,7 +81,9 @@ public class PathQueryBinding
                 PathNode node = (PathNode) j.next();
                 writer.writeStartElement("node");
                 writer.writeAttribute("path", node.getPath());
-                writer.writeAttribute("type", node.getType());
+                if (node.getType() != null) {
+                    writer.writeAttribute("type", node.getType());
+                }
                 for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {
                     Constraint c = (Constraint) k.next();
                     writer.writeStartElement("constraint");
@@ -167,7 +169,10 @@ public class PathQueryBinding
                 int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
                 ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
                 Object constraintValue;
-                if (node.isReference() || BagConstraint.VALID_OPS.contains(constraintOp)) {
+                // If we know that the query is not valid, don't resolve the type of
+                // the node as it may not resolve correctly
+                if (node.isReference() || BagConstraint.VALID_OPS.contains(constraintOp)
+                        || !query.isValid()) {
                     constraintValue = attrs.getValue("value");
                 } else {
                     constraintValue = TypeUtil.stringToObject(MainHelper.getClass(node.getType()),

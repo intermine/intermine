@@ -10,10 +10,8 @@ package org.intermine.web;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
-
-import org.intermine.metadata.Model;
+import java.util.List;
 
 /**
  * Node used in displaying query
@@ -37,10 +35,9 @@ public class PathNode extends Node
      * Constucting a PathNode is not usually necessary - use PathQuery#addNode
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
-     * @param model the model used to resolve paths
      */
-    public PathNode(Node parent, String fieldName, Model model) {
-        super(parent, fieldName, model);
+    public PathNode(Node parent, String fieldName) {
+        super(parent, fieldName);
     }
 
     /**

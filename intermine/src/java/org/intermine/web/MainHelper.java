@@ -135,7 +135,8 @@ public class MainHelper
             }
 
             MetadataNode parent = (MetadataNode) nodes.get(currentPath);
-            MetadataNode node = new MetadataNode(parent, fieldName, cld.getModel(), button);
+            MetadataNode node = new MetadataNode(parent, fieldName, button);
+            node.setModel(cld.getModel());
 
             nodes.put(node.getPath(), node);
             if (fieldName.equals(head)) {
