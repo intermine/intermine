@@ -167,7 +167,7 @@ public class Results extends AbstractList
 
         for (int i = startBatch; i <= endBatch; i++) {
             List rows = getRowsFromBatch(i, start, end);
-            promoteProxies(rows);
+            promoteProxies(rows, os);
             ret.addAll(rows);
         }
         return ret;
@@ -390,9 +390,10 @@ public class Results extends AbstractList
      * SingletonResults so that they have an ObjectStore reference and are able to run themselves.
      * Instances of LazyReference have an ObjectStore set.
      * @param rows a list of rows (Lists) to search through
+     * @param os the ObjectStore to do the promotion with
      * @throws FlyMineException if errors occur accessing object fields
      */
-    protected void promoteProxies(List rows) throws FlyMineException {
+    public static void promoteProxies(List rows, ObjectStore os) throws FlyMineException {
         try {
             Iterator listIter = rows.iterator();
             while (listIter.hasNext()) {

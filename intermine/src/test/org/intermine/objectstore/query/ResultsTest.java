@@ -271,8 +271,7 @@ public class ResultsTest extends TestCase
 
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results r = os.execute(q);
-        r.promoteProxies(list);
+        Results.promoteProxies(list, os);
         Department resDept = (Department) ((List)list.get(0)).get(0);
 
         // Employees should now have become a Results object
@@ -295,8 +294,7 @@ public class ResultsTest extends TestCase
 
         Query q = new Query();
         q.addFrom(new QueryClass(Example.class));
-        Results r = os.execute(q);
-        r.promoteProxies(list);
+        Results.promoteProxies(list, os);
         Example resEx = (Example) ((List)list.get(0)).get(0);
 
         // Employees should now have become a Results object
@@ -318,8 +316,7 @@ public class ResultsTest extends TestCase
         list.add(rr);
 
         Query q = new Query();
-        Results r = os.execute(q);
-        r.promoteProxies(list);
+        Results.promoteProxies(list, os);
         Department resDept = (Department) ((List)list.get(0)).get(0);
 
         // Company should now be materialized
