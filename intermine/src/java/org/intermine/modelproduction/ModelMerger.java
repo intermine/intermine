@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -23,6 +24,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.util.StringUtil;
 
 /**
  * Merge model additions into a source model to produce a new larger model.
@@ -66,7 +68,7 @@ public class ModelMerger
             // record this old class (
             if (oldClass != null) {
                 // Merge two classes
-                newClass = mergeClass(oldClass, mergeClass);
+                newClass = mergeClass(oldClass, mergeClass, original, classes);
             } else {
                 // It is a new class
                 newClass = cloneClassDescriptor(mergeClass);
@@ -83,10 +85,9 @@ public class ModelMerger
             }
         }
         try {
+            // Remove duplicatate indirect inheritance
             Model newModel = new Model(original.getName(), original.getNameSpace().toString(),
                                         new HashSet(newClasses.values()));
-            // Remove duplicatate indirect inheritance
-            checkInheritance(newModel);
             return newModel;
         
         } catch (URISyntaxException err) {
@@ -97,40 +98,28 @@ public class ModelMerger
     }
     
     /**
-     * <pre>
-     * Original:
-     * A -> C
-     *
-     * Addition:
-     * A -> B -> C
-     *
-     * Result:
-     * A -> (C,B)  <--- we want to remove this C
-     * B -> C
-     * </pre>
-     *
-     * @param model the resultant model to check
-     * @return fixed model (if no change occured, returns same model)
-     * @throws ModelMergerException if an error occurs during model merging
-     */
-    protected static Model checkInheritance(Model model) throws ModelMergerException {
-        
-        return model;
-    }
-    
-    /**
      * Merge the attributes, collections and references from ClassDescriptor <code>merge</code>
      * into the ClassDescriptor <code>original</code>. The two are different in that inheritance
      * settings on the merge class can override the inheritance present in the original class.
      * This method will throw a ModelMergerException if the two class descriptors return different
-     * values from <code>isInterface</code>.
+     * values from <code>isInterface</code>.<p>
+     * 
+     * If the original class extends a superclass, and the <code>merge</code> also specifies
+     * a superclass then the merge superclass will override the old superclass.<p>
+     * 
+     * This method requires <code>originalModel</code> and <code>mergeClasses</code> so it can
+     * determine whether the superclass names in <code>merge</code> represente classes or
+     * interfaces.
      *
      * @param original the original ClassDescriptor
      * @param merge the ClassDescriptor to merge into the original
+     * @param originalModel the original Model we're merging into
+     * @param mergeClasses the set of ClassDescriptors being merged
      * @return ClassDescriptor merge "merged" into ClassDescriptor original
      * @throws ModelMergerException if an error occurs during model merging
      */
-    public static ClassDescriptor mergeClass(ClassDescriptor original, ClassDescriptor merge)
+    public static ClassDescriptor mergeClass(ClassDescriptor original, ClassDescriptor merge,
+                                             Model originalModel, Set mergeClasses)
             throws ModelMergerException {
         if (merge.isInterface() != original.isInterface()) {
             throw new ModelMergerException(original.getName() + ".isInterface/"
@@ -140,7 +129,37 @@ public class ModelMerger
         Set attrs = mergeAttributes(original, merge);
         Set cols = mergeCollections(original, merge);
         Set refs = mergeReferences(original, merge);
-        return new ClassDescriptor(original.getName(), merge.getSupers(),
+        
+        Set supers = new TreeSet();
+        boolean replacingSuperclass = false;
+        // Figure out if we're replacing the superclass
+        if (original.getSuperclassDescriptor() != null) {
+            Set superNames = merge.getSuperclassNames();
+            for (Iterator iter = superNames.iterator(); iter.hasNext(); ) {
+                String clsName = (String) iter.next();
+                ClassDescriptor cld = originalModel.getClassDescriptorByName(clsName);
+                if (cld != null && !cld.isInterface()) {
+                    replacingSuperclass = true;
+                    break;
+                }
+                cld = descriptorByName(mergeClasses, clsName);
+                if (cld != null && !cld.isInterface()) {
+                    replacingSuperclass = true;
+                    break;
+                }
+            }
+        }
+        supers.addAll(original.getSuperclassNames());
+        supers.addAll(merge.getSuperclassNames());
+        if (replacingSuperclass) {
+            supers.remove(original.getSuperclassDescriptor().getName());
+        }
+        // supers can't be an empty string
+        String supersStr = StringUtil.join(supers, " ");
+        if (supersStr != null && supersStr.equals("")) {
+            supersStr = null;
+        }
+        return new ClassDescriptor(original.getName(), supersStr,
                 merge.isInterface(), attrs, refs, cols);
     }
     
@@ -310,14 +329,33 @@ public class ModelMerger
     /**
      * Construct a ClassDescriptor that takes on all the properties of <code>cld</code>
      * without attaching to a particular Model.
-     *
+     * 
      * @param cld the ClassDescriptor to clone
      * @return cloned ClassDescriptor
      */
     protected static ClassDescriptor cloneClassDescriptor(ClassDescriptor cld) {
-        return new ClassDescriptor(cld.getName(), cld.getSupers(), cld.isInterface(),
+        // supers can't be an empty string
+        String supers = StringUtil.join(cld.getSuperclassNames(), " ");
+        if (supers != null && supers.equals("")) {
+            supers = null;
+        }
+        return new ClassDescriptor(cld.getName(), supers, cld.isInterface(),
                 cloneAttributeDescriptors(cld.getAttributeDescriptors()),
                 cloneReferenceDescriptors(cld.getReferenceDescriptors()),
                 cloneCollectionDescriptors(cld.getCollectionDescriptors()));
+    }
+    
+    /**
+     * Find ClassDescriptor in set with given name.
+     */
+    private static ClassDescriptor descriptorByName(Set clds, String name) {
+        Iterator iter = clds.iterator();
+        while (iter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) iter.next();
+            if (cld.getName().equals(name)) {
+                return cld;
+            }
+        }
+        return null;
     }
 }
