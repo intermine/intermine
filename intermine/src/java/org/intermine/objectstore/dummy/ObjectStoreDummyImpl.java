@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.flymine.objectstore.*;
 import org.flymine.objectstore.query.*;
+import org.flymine.sql.query.ExplainResult;
 
 /**
  * Generate dummy Results from a query. Used for testing purposes.
@@ -121,6 +122,31 @@ public class ObjectStoreDummyImpl implements ObjectStore
             row.add(obj);
         }
         return row;
+    }
+
+
+    /**
+     * Returns an empty ExplainResult object
+     *
+     * @param q the query to estimate rows for
+     * @return parsed results of EXPLAIN
+     * @throws ObjectStoreException if an error occurs explining the query
+     */
+    public ExplainResult estimate(Query q) throws ObjectStoreException {
+        return new ExplainResult();
+    }
+
+    /**
+     * returns an empty ExplainResult object
+     *
+     * @param q the query to explain
+     * @param start first row required, numbered from zero
+     * @param end the number of the last row required, numbered from zero
+     * @return parsed results of EXPLAIN
+     * @throws ObjectStoreException if an error occurs explining the query
+     */
+    public ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException {
+        return new ExplainResult();
     }
 
 }
