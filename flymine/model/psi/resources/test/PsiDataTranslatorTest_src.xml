@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entrySet xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" level="1" version="1" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+  <entry>
+    <source releaseDate="2004-03-30">
+      <names>
+        <shortLabel>IntAct</shortLabel>
+        <fullName>IntAct download</fullName>
+      </names>
+    </source>
+    <experimentList>
+      <experimentDescription id="EBI-196429">
+        <names>
+          <shortLabel>giot-2003-ex1</shortLabel>
+          <fullName>A protein interaction map of Drosophila melanogaster.</fullName>
+        </names>
+        <bibref>
+          <xref>
+            <primaryRef db="pubmed" id="14605208" secondary="" version=""/>
+          </xref>
+        </bibref>
+        <hostOrganism ncbiTaxId="4932">
+          <names>
+            <shortLabel>s cerevisiae</shortLabel>
+            <fullName>Saccharomyces cerevisiae</fullName>
+          </names>
+        </hostOrganism>
+        <interactionDetection>
+          <names>
+            <shortLabel>classical two hybrid</shortLabel>
+            <fullName>classical two hybrid</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" id="MI:0018" secondary="" version=""/>
+          </xref>
+        </interactionDetection>
+        <participantDetection>
+          <names>
+            <shortLabel>nucleotide sequence </shortLabel>
+            <fullName>nucleotide sequence identification</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" id="MI:0078" secondary="" version=""/>
+          </xref>
+        </participantDetection>
+        <attributeList>
+          <attribute name="comment">Preys used for Y2H screens: 1)cDNA libraries made from embryo and adult fly (Clontech) and 2)using predicted ORF from BDGP (Berkeley Drosophila Genome Project) release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly to obtain 10306 validated preys.</attribute>
+          <attribute name="comment">11159 validated baits were obtained using predicted ORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly.</attribute>
+          <attribute name="confidence-mapping">The authors assign a numerical confidence value between 0 and 1 to each interaction. Interactions with a confidence of 0.5 or higher are considered as high confidence interactions. All others are considered as low confidence interactions. For simplified extraction of subsets, the "high" and "low" classification has been added in IntAct.</attribute>
+        </attributeList>
+      </experimentDescription>
+    </experimentList>
+    <interactorList>
+      <proteinInteractor id="EBI-124027">
+        <names>
+          <shortLabel>fkh_drome</shortLabel>
+          <fullName>Fork head protein</fullName>
+        </names>
+        <xref>
+          <primaryRef db="uniprot" id="P14734" secondary="fkh_drome" version=""/>
+        </xref>
+        <organism ncbiTaxId="7227">
+          <names>
+            <shortLabel>drome</shortLabel>
+            <fullName>Drosophila melanogaster</fullName>
+          </names>
+        </organism>
+      </proteinInteractor>
+      <proteinInteractor id="EBI-87512">
+        <names>
+          <shortLabel>q9vi89</shortLabel>
+          <fullName>CG10032 protein</fullName>
+        </names>
+        <xref>
+          <primaryRef db="uniprot" id="Q9VI89" secondary="q9vi89" version=""/>
+        </xref>
+        <organism ncbiTaxId="7227">
+          <names>
+            <shortLabel>drome</shortLabel>
+            <fullName>Drosophila melanogaster</fullName>
+          </names>
+        </organism>
+      </proteinInteractor>
+    </interactorList>
+    <interactionList>
+      <interaction>
+        <names>
+          <shortLabel>fkh-cg10032-1</shortLabel>
+          <fullName>Interaction detected by Y2H.</fullName>
+        </names>
+        <experimentList>
+          <experimentRef ref="EBI-196429"/>
+        </experimentList>
+        <participantList>
+          <proteinParticipant>
+            <proteinInteractorRef ref="EBI-124027"/>
+            <role>bait</role>
+          </proteinParticipant>
+          <proteinParticipant>
+            <proteinInteractorRef ref="EBI-87512"/>
+            <role>prey</role>
+          </proteinParticipant>
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>classical two hybrid</shortLabel>
+            <fullName>classical two hybrid</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" id="MI:0018" secondary="" version=""/>
+          </xref>
+        </interactionType>
+        <xref>
+          <primaryRef db="intact" id="EBI-196436" secondary="fkh-cg10032-1"/>
+        </xref>
+        <attributeList>
+          <attribute name="author-confidence"> 0.06</attribute>
+          <attribute name="author-confidence">low</attribute>
+        </attributeList>
+      </interaction>
+    </interactionList>
+  </entry>
+</entrySet>

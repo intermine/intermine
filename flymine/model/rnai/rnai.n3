@@ -116,7 +116,7 @@
 
 :Organism__taxonId a owl:DatatypeProperty;
     rdfs:domain :Organism;
-    rdfs:range xsd:string.
+    rdfs:range xsd:integer.
 
 #Publication
 

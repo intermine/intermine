@@ -1,0 +1,74 @@
+<items>
+<item id="0_6" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
+<reference name="hostOrganism" ref_id="0_11"/>
+<reference name="interactionDetection" ref_id="0_13"/>
+<reference name="participantDetection" ref_id="0_17"/>
+<reference name="publication" ref_id="-1_6"/>
+</item>
+<item id="0_30" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="0_13" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+</item>
+<item id="-1_6" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="14605208"/>
+</item>
+<item id="-1_3" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="synonym" value="Q9VI89"/>
+<reference name="source" ref_id="-1_1"/>
+<reference name="subject" ref_id="0_32"/>
+</item>
+<item id="0_32" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="swissProtId" value="Q9VI89"/>
+<reference name="organism" ref_id="0_36"/>
+<collection name="synonyms">
+<reference ref_id="-1_3"/>
+</collection>
+</item>
+<item id="0_36" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="0_26" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="swissProtId" value="P14734"/>
+<reference name="organism" ref_id="0_30"/>
+<collection name="synonyms">
+<reference ref_id="-1_4"/>
+</collection>
+</item>
+<item id="0_11" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="4932"/>
+</item>
+<item id="-1_4" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="synonym" value="P14734"/>
+<reference name="source" ref_id="-1_1"/>
+<reference name="subject" ref_id="0_26"/>
+</item>
+<item id="0_39" class="http://www.flymine.org/model/genomic#ExperimentalResult">
+<attribute name="confidence" value="0.06"/>
+<reference name="analysis" ref_id="0_6"/>
+<reference name="source" ref_id="-1_2"/>
+<collection name="relations">
+<reference ref_id="-1_5"/>
+</collection>
+</item>
+<item id="0_17" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+</item>
+<item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
+<attribute name="title" value="Swiss-Prot"/>
+</item>
+<item id="0_45" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+</item>
+<item id="-1_2" class="http://www.flymine.org/model/genomic#Database">
+<attribute name="title" value="IntAct"/>
+</item>
+<item id="-1_5" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+<reference name="bait" ref_id="0_26"/>
+<reference name="object" ref_id="0_32"/>
+<reference name="prey" ref_id="0_32"/>
+<reference name="subject" ref_id="0_26"/>
+<collection name="evidence">
+<reference ref_id="-1_2"/>
+<reference ref_id="0_39"/>
+</collection>
+</item>
+</items>

@@ -133,6 +133,7 @@
     <pathelement location="${build.model}/orthologue"/>
     <pathelement location="${build.model}/phenotype"/>
     <pathelement location="${build.model}/fulldata"/>
+    <pathelement location="${build.model}/psi"/>
   </path>
 
   <path id="project.class.path">
@@ -581,6 +582,81 @@
 
   </target>
 
+
+  <!-- PSI MODEL GENERATION -->
+
+  <!-- convert PSI-MI ontology to OWL -->
+  <target name="psi-dag-to-owl" depends="prepare-build-model">
+    <mkdir dir="${build.model}/psi" />
+    <copy file="${model}/psi/psi-mi.dag" todir="${build.model}/psi/"/>
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/psi/psi-mi.dag" />
+      <arg value="${build.model}/psi/psi-mi.n3" />
+      <arg value="http://www.flymine.org/model/psi-mi#" />
+    </java>
+  </target>
+
+  <!-- convert PSI-DEV XML-Schema to OWL -->
+  <target name="psi-to-owl" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-model-from-xmlschema" inheritRefs="true">
+      <property name="model.name" value="psi"/>
+      <property name="pkg" value="org.flymine.model.psi"/>
+      <property name="model.src" value="${model}/psi"/>
+      <property name="build.model.dir" value="${build.model}/psi"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>    
+
+     <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/psi/psi_model.xml" />
+      <arg value="${build.model}/psi/psi.n3" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+  <!-- merge psi model with current genomic model owl -->
+  <target name="merge-psi-model" depends="prepare-genomic-model, psi-to-owl, psi-dag-to-owl">
+    <copy file="${model}/psi/psi_merge_spec.n3" todir="${build.model}/psi/"/>
+
+    <!-- combine the psi merge_spec with current genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/psi/psi_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+
+    <!-- merge psi model with target genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/psi/psi.n3" />
+      <arg value="http://www.flymine.org/model/psi#" />
+      <arg value="N3" />
+      <arg value="y" />
+    </java>
+
+    <!-- merge psi dag with target model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+      maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/psi/psi-mi.n3" />
+      <arg value="http://www.flymine.org/model/psi-mi#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+  </target>
+ 
+
   <!-- PHENOTYPE MODEL GENERATION -->
   <target name="merge-phenotype-model" depends="prepare-genomic-model">
     <copy file="${model}/phenotype/phenotype_merge_spec.n3" todir="${build.model}/phenotype"/>
@@ -598,8 +674,8 @@
 
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
-       merge-orthologue-model, merge-ensembl-model, merge-chado-model, merge-so-model,
-       merge-phenotype-model, merge-rnai-model">
+       merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
+       merge-phenotype-model, merge-so-model, merge-chado-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1237,6 +1313,23 @@
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
       <property name="model.src" value="${model}/mage"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="compile-psi-java">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="psi"/>
+      <property name="model.src" value="${model}/psi"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="psi-test" depends="prepare-build-model, psi-to-owl">
+    <copy file="${model}/psi/psi.xsd" toDir="${build.model}/psi"/>
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="psi"/>
+      <property name="model.src" value="${model}/psi"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
