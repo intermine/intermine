@@ -316,11 +316,7 @@
   <!-- generate schema from repository descriptor and use to create testmodel database tables -->
   <target name="build-db-testmodel" depends="generate-repository-testmodel"
           if="testmodel-repository.outofdate">
-    <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
-      <classpath refid="base.class.path" />
-      <arg value="${build.model}/testmodel/repository_testmodel.xml" />
-      <arg value="${build.model}/testmodel/testmodel-schema.xml" />
-    </java>
+    <model-output-testmodel type="torque" model="testmodel" destdir="${build.model}/testmodel"/>
     <copy todir="${build.model}/testmodel">
       <fileset dir="${src.schema}">
         <include name="**/*-schema.xml"/>
@@ -473,11 +469,7 @@
 
   <!-- generate schema from repository descriptor and use to create acedb database tables -->
   <target name="build-db-acedb" depends="generate-repository-acedb">
-    <java classname="org.flymine.codegen.SchemaOutput" fork="true" dir="${build}">
-      <classpath refid="base.class.path" />
-      <arg value="${build.model}/acedb/repository_acedb.xml" />
-      <arg value="${build.model}/acedb/acedb-schema.xml" />
-    </java>
+    <model-output-testmodel type="torque" model="acedb" destdir="${build.model}/acedb"/>
     <copy todir="${build.model}/acedb">
       <fileset dir="${src.schema}">
         <include name="**/*-schema.xml"/>
