@@ -10,11 +10,6 @@ package org.flymine.web;
  *
  */
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
