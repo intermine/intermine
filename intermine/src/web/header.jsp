@@ -1,12 +1,15 @@
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- header.jsp -->
-<font class="headerTitle">
-  <fmt:message key="intermine.maintitle"/>
-</font>
-<br/>
-<font class="headerSubtitle">
-  <fmt:message key="intermine.subtitle"/>
-</font>
-<br/>
+<div>
+  <div class="headerTitle">
+    <html:link href="${WEB_PROPERTIES['project.titleURL']}">
+      <c:out value="${WEB_PROPERTIES['project.title']}"/>
+    </html:link>
+  </div>
+  <div class="headerSubtitle">
+    <c:out value="${WEB_PROPERTIES['project.subTitle']}"/>
+  </div>
+</div>
 <!-- /header.jsp -->
