@@ -3,6 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<%-- Formats and decorates browser output for a model class type --%>
+<%-- wraps helplink to properly format the type context help --%>
 
-<c:if test="${!empty classDescriptions[type]}"><sup><im:help text="${type}: ${classDescriptions[type]}">?</im:help></sup></c:if>
+<c:if test="${!empty classDescriptions[type]}"><im:helplink text="${type}: ${classDescriptions[type]}"/></c:if>
