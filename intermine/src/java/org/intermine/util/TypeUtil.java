@@ -29,7 +29,7 @@ public class TypeUtil
 
     private static Map classToFieldToGetter = new HashMap();
     private static Map classToFieldToSetter = new HashMap();
-    
+
     /**
      * Returns the package name from a fully qualified class name
      *
@@ -37,7 +37,11 @@ public class TypeUtil
      * @return the package name
      */
     public static String packageName(String className) {
-        return className.substring(0, className.lastIndexOf("."));
+        if (className.lastIndexOf(".") >= 0) {
+            return className.substring(0, className.lastIndexOf("."));
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -47,7 +51,11 @@ public class TypeUtil
      * @return the unqualified name
      */
     public static String unqualifiedName(String className) {
-        return className.substring(className.lastIndexOf(".") + 1);
+        if (className.lastIndexOf(".") >= 0) {
+            return className.substring(className.lastIndexOf(".") + 1);
+        } else {
+            return className;
+        }
     }
 
     /**
@@ -57,9 +65,9 @@ public class TypeUtil
      * @param fieldName the name of the relevant Field
      * @return the value of the Field
      * @throws IllegalAccessException if the field is inaccessible
-     */ 
+     */
     public static Object getFieldValue(Object o, String fieldName)
-        throws IllegalAccessException {            
+        throws IllegalAccessException {
         Field f  = getField(o.getClass(), fieldName);
         f.setAccessible(true);
         return f.get(o);
@@ -72,8 +80,8 @@ public class TypeUtil
      * @param fieldName the name of the relevant Field
      * @param fieldValue the value of the Field
      * @throws IllegalAccessException if the field is inaccessible
-     */ 
-    public static void setFieldValue(Object o, String fieldName, Object fieldValue) 
+     */
+    public static void setFieldValue(Object o, String fieldName, Object fieldValue)
         throws IllegalAccessException {
         Field f  = getField(o.getClass(), fieldName);
         f.setAccessible(true);
@@ -86,7 +94,7 @@ public class TypeUtil
      * @param c the Class
      * @param fieldName the name of the relevant field
      * @return the Field, or null if the field is not found
-     */ 
+     */
     public static Field getField(Class c, String fieldName) {
         Field f = null;
         boolean found = false;
@@ -97,7 +105,7 @@ public class TypeUtil
             } catch (NoSuchFieldException e) {
                 c = c.getSuperclass();
             }
-        } while(c != null && !found);    
+        } while(c != null && !found);
         return f;
     }
 
@@ -116,7 +124,7 @@ public class TypeUtil
         } while ((c = c.getSuperclass()) != null);
         return fields;
     }
-    
+
     /**
      * Gets the getter methods for the bean properties of a class
      *
@@ -170,7 +178,7 @@ public class TypeUtil
             return retval;
         }
     }
-                
+
     /**
      * Gets a map from field to setter for a class.
      *
