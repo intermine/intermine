@@ -119,7 +119,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 Class collectionClass = cod.getCollectionClass();
 
 
-                ojbQuery = getForeignKeyQuery(obj, cld, cod);
+                ojbQuery = getFKQuery1toN(obj, cld, cod);
                 if (collectionClass == null) {
                     // TODO could be an array?
                     // allow OJB to use what it chooses (currently ManageableVector)
