@@ -70,12 +70,25 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public abstract ExplainResult estimate(Query q, int start, int end) throws ObjectStoreException;
 
     /**
-     * Gets the maximum number of rows that the ObjectStore will return in the results of a query
+     * Checks the start and limit to see whether they are inside the
+     * hard limits for this ObjectStore
      *
-     * @return the maximum number of rows allowed in a query object from this ObjectStore
+     * @param offset the start row
+     * @param limit the number of rows
+     * @throws ObjectStoreLimitReachedException if the start is greater than the
+     * maximum start allowed or the limit greater than the maximum
+     * limit allowed
      */
-    public int getMaxRowsInResult() {
-        return maxOffset + maxLimit;
+    protected void checkOffsetLimit(int offset, int limit) throws ObjectStoreLimitReachedException {
+        if (offset > maxOffset) {
+            throw (new ObjectStoreLimitReachedException("offset parameter (" + offset
+                                            + ") is greater than permitted maximum ("
+                                            + maxOffset + ")"));
+        }
+        if (limit > maxLimit) {
+            throw (new ObjectStoreLimitReachedException("number of rows required (" + limit
+                                            + ") is greater than permitted maximum ("
+                                            + maxLimit + ")"));
+        }
     }
-
 }
