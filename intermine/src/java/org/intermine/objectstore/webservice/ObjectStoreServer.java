@@ -112,7 +112,15 @@ public class ObjectStoreServer
         // end of the results set. Here we will catch it and then call range again
         // with size() (which is now known to the results set).
 
-        return lookupResults(queryId).subList(start, start + limit);
+        Results results = lookupResults(queryId);
+        List rows = null;
+        try {
+            rows = results.subList(start, start + limit);
+        } catch (IndexOutOfBoundsException e) {
+            //assume start + limit > size and try again (may still fail)
+            rows = results.subList(start, results.size());
+        }
+        return rows;
     }
 
     /**
