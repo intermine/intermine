@@ -195,8 +195,8 @@ public class CalculateLocations
             subjectLengthSoFar += thisObjectLength;
         }
 
-        //org.intermine.web.LogMe.log("i", "startLocation: " + startLocation);
-        //org.intermine.web.LogMe.log("i", "endLocation: " + endLocation);
+        org.intermine.web.LogMe.log("i", "startLocation: " + startLocation);
+        org.intermine.web.LogMe.log("i", "endLocation: " + endLocation);
 
         if (endLocation == null) {
             LOG.error("endLocation is null - startLocation: " + startLocation
@@ -292,12 +292,9 @@ public class CalculateLocations
             i++;
             ResultsRow rr = (ResultsRow) resIter.next();
             Location locBioOnContig = (Location) rr.get(2);
-            //org.intermine.web.LogMe.log("i", "0: " + rr.get(0).getClass().getName() + " " +
-            //((InterMineObject) rr.get(0)).getId());
-            //org.intermine.web.LogMe.log("i", "1: " + rr.get(1).getClass().getName() + " " +
-            //((InterMineObject) rr.get(1)).getId());
-            //org.intermine.web.LogMe.log("i", "2: " + rr.get(2).getClass().getName() + " " +
-            //((InterMineObject) rr.get(2)).getId());
+            org.intermine.web.LogMe.log("i", "0: " + rr.get(0).getClass().getName() + " " + ((InterMineObject) rr.get(0)).getId());
+            org.intermine.web.LogMe.log("i", "1: " + rr.get(1).getClass().getName() + " " + ((InterMineObject) rr.get(1)).getId());
+            org.intermine.web.LogMe.log("i", "2: " + rr.get(2).getClass().getName() + " " + ((InterMineObject) rr.get(2)).getId());
             Contig contig = (Contig) rr.get(0);
             BioEntity bio = (BioEntity) rr.get(1);
             SimpleLoc bioOnContig = new SimpleLoc(contig.getId().intValue(),
@@ -311,12 +308,12 @@ public class CalculateLocations
             Location bioOnChrLoc =
                 createChromosomeLocation(contigOnChr, bioOnContig, chr, bio);
 
-            //org.intermine.web.LogMe.log("i", "locBioOnContig: " + locBioOnContig);
+            org.intermine.web.LogMe.log("i", "locBioOnContig: " + locBioOnContig);
 
 
 
             if (locBioOnContig instanceof PartialLocation) {
-                //org.intermine.web.LogMe.log("i", "found PartialLocation: " + locBioOnContig);
+                org.intermine.web.LogMe.log("i", "found PartialLocation: " + locBioOnContig);
 
                 addToMapOfLists(partialsOnChromosomes, bio, bioOnChrLoc);
             } else {
@@ -330,28 +327,27 @@ public class CalculateLocations
             // create location of feature on Supercontig
             Set scs = (Set) chrToSc.get(chr.getId());
             if (scs != null) {
-                //org.intermine.web.LogMe.log("i", scs.size() + " scs");
+                org.intermine.web.LogMe.log("i", scs.size() + " scs");
 
 
                 Iterator iter = scs.iterator();
                 while (iter.hasNext()) {
                     SimpleLoc scOnChr = (SimpleLoc) iter.next();
-                    //org.intermine.web.LogMe.log("i", scOnChr + " = " + bioOnChr + " ?");
+                    org.intermine.web.LogMe.log("i", scOnChr + " = " + bioOnChr + " ?");
                     if (overlap(scOnChr, bioOnChr)) {
                         Supercontig sc = (Supercontig) idScs.get(new Integer(scOnChr.getChildId()));
 
-                        //org.intermine.web.LogMe.log("i", "making new Location:");
+                        org.intermine.web.LogMe.log("i", "making new Location:");
                         Location bioOnScLoc = createLocation(sc, scOnChr, bio, bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "scOnChr: " + scOnChr);
-                        //org.intermine.web.LogMe.log("i", "bioOnChr: " + bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "new: " + bioOnScLoc);
+                        org.intermine.web.LogMe.log("i", "scOnChr: " + scOnChr);
+                        org.intermine.web.LogMe.log("i", "bioOnChr: " + bioOnChr);
+                        org.intermine.web.LogMe.log("i", "new: " + bioOnScLoc);
 
                         if (bioOnScLoc instanceof PartialLocation) {
-                            //org.intermine.web.LogMe.log("i", "found PartialLocation "
-                            //+ "on Supercontig: " + bioOnScLoc);
+                            org.intermine.web.LogMe.log("i", "found PartialLocation " + "on Supercontig: " + bioOnScLoc);
                             addToMapOfLists(partialsOnSupercontigs, bio, bioOnScLoc);
                         } else {
-                            //org.intermine.web.LogMe.log("i", "storing");
+                            org.intermine.web.LogMe.log("i", "storing");
                             osw.store(bioOnScLoc);
                         }
                         j++;
@@ -362,27 +358,26 @@ public class CalculateLocations
             // create location of feature on ChromosomeBand
             Set bands = (Set) chrToBand.get(chr.getId());
             if (bands != null) {
-                //org.intermine.web.LogMe.log("i", bands.size() + " bands");
+                org.intermine.web.LogMe.log("i", bands.size() + " bands");
 
                 Iterator iter = bands.iterator();
                 while (iter.hasNext()) {
                     SimpleLoc bandOnChr = (SimpleLoc) iter.next();
-                    //org.intermine.web.LogMe.log("i", bandOnChr + " = " + bioOnChr + " ?");
+                    org.intermine.web.LogMe.log("i", bandOnChr + " = " + bioOnChr + " ?");
                     if (overlap(bandOnChr, bioOnChr)) {
                         ChromosomeBand band = (ChromosomeBand)
                             idBands.get(new Integer(bandOnChr.getChildId()));
-                        //org.intermine.web.LogMe.log("i", "making new Location:");
+                        org.intermine.web.LogMe.log("i", "making new Location:");
                         Location bioOnBandLoc = createLocation(band, bandOnChr, bio, bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "bandOnChr: " + bandOnChr);
-                        //org.intermine.web.LogMe.log("i", "bioOnChr: " + bioOnChr);
-                        //org.intermine.web.LogMe.log("i", "new: " + bioOnBandLoc);
+                        org.intermine.web.LogMe.log("i", "bandOnChr: " + bandOnChr);
+                        org.intermine.web.LogMe.log("i", "bioOnChr: " + bioOnChr);
+                        org.intermine.web.LogMe.log("i", "new: " + bioOnBandLoc);
 
                         if (bioOnBandLoc instanceof PartialLocation) {
-                            //org.intermine.web.LogMe.log("i", "found PartialLocation "
-                            //+ "on ChromosomeBand: " + bioOnBandLoc);
+                            org.intermine.web.LogMe.log("i", "found PartialLocation " + "on ChromosomeBand: " + bioOnBandLoc);
                             addToMapOfLists(partialsOnChromosomeBands, bio, bioOnBandLoc);
                         } else {
-                            //org.intermine.web.LogMe.log("i", "storing");
+                            org.intermine.web.LogMe.log("i", "storing");
                             osw.store(bioOnBandLoc);
                         }
                         k++;
@@ -397,14 +392,14 @@ public class CalculateLocations
                          + ((60000L * i) / (now - start)) + " per minute)");
             }
         }
-        //org.intermine.web.LogMe.log("i", "partialsOnChromosome: " + partialsOnChromosomes);
+        org.intermine.web.LogMe.log("i", "partialsOnChromosome: " + partialsOnChromosomes);
 
         // process partials Locations
-        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomes):");
+        org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomes):");
         processPartials(partialsOnChromosomes);
-        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnSupercontigs):");
+        org.intermine.web.LogMe.log("i", "processPartials(partialsOnSupercontigs):");
         processPartials(partialsOnSupercontigs);
-        //org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomeBands):");
+        org.intermine.web.LogMe.log("i", "processPartials(partialsOnChromosomeBands):");
         processPartials(partialsOnChromosomeBands);
 
         osw.commitTransaction();
@@ -431,7 +426,7 @@ public class CalculateLocations
      * Process the Partial Locations in mapOfPartials and merge PartialLocations
      */
     private void processPartials(Map mapOfPartials) throws ObjectStoreException {
-        //org.intermine.web.LogMe.log("i", "processPartials - mapOfPartials: " + mapOfPartials);
+        org.intermine.web.LogMe.log("i", "processPartials - mapOfPartials: " + mapOfPartials);
 
         Iterator mapOfPartialsIter = mapOfPartials.keySet().iterator();
         while (mapOfPartialsIter.hasNext()) {
@@ -445,16 +440,16 @@ public class CalculateLocations
             BioEntity newLocationObject = null;
 
             BioEntity bioEntity = (BioEntity) mapOfPartialsIter.next();
-            //org.intermine.web.LogMe.log("i", "processPartials bioEntity: " + bioEntity);
+            org.intermine.web.LogMe.log("i", "processPartials bioEntity: " + bioEntity);
             List partialLocList = (List) mapOfPartials.get(bioEntity);
-            //org.intermine.web.LogMe.log("i", "processPartials list: " + partialLocList.size());
+            org.intermine.web.LogMe.log("i", "processPartials list: " + partialLocList.size());
 
             Iterator partialLocListIter = partialLocList.iterator();
             while (partialLocListIter.hasNext()) {
                 Object nextObject = partialLocListIter.next();
-                //org.intermine.web.LogMe.log("i", "nextObject: " + nextObject);
+                org.intermine.web.LogMe.log("i", "nextObject: " + nextObject);
                 PartialLocation pl = (PartialLocation) nextObject;
-                //org.intermine.web.LogMe.log("i", "pl: " + pl);
+                org.intermine.web.LogMe.log("i", "pl: " + pl);
 
                 // createChromosomeLocation() doesn't set subjectStart or subjectEnd yet
                 //                 if (pl.getSubjectStart().intValue() < minBioStart) {
@@ -471,7 +466,7 @@ public class CalculateLocations
 
                 if (pl.getStart().intValue() < minChrStart) {
                     minChrStart = pl.getStart().intValue();
-                    //org.intermine.web.LogMe.log("i", "setting minChrStart to " + minChrStart);
+                    org.intermine.web.LogMe.log("i", "setting minChrStart to " + minChrStart);
 
                     // use the start phase of the first Location in the new Location
                     newStartPhase = pl.getPhase();
@@ -479,7 +474,7 @@ public class CalculateLocations
 
                 if (pl.getEnd().intValue() > maxChrEnd) {
                     maxChrEnd = pl.getEnd().intValue();
-                    //org.intermine.web.LogMe.log("i", "setting maxChrEnd to " + maxChrEnd);
+                    org.intermine.web.LogMe.log("i", "setting maxChrEnd to " + maxChrEnd);
 
                     // use the end phase of the last Location in the new Location
                     newEndPhase = pl.getEndPhase();
@@ -524,7 +519,7 @@ public class CalculateLocations
             newLocation.setObject(newLocationObject);
 
             osw.store(newLocation);
-            //org.intermine.web.LogMe.log("i", "created: " + newLocation);
+            org.intermine.web.LogMe.log("i", "created: " + newLocation);
         }
     }
 
@@ -691,11 +686,11 @@ public class CalculateLocations
            }
         } else {
             if (childOnChr.startIsPartial()) {
-                //org.intermine.web.LogMe.log("i", "          XXXXXXXXXXXXXXXXXXXXX");
+                org.intermine.web.LogMe.log("i", "          XXXXXXXXXXXXXXXXXXXXX");
                 startIsPartial = true;
             }
             if (childOnChr.endIsPartial()) {
-                //org.intermine.web.LogMe.log("i", "          YYYYYYYYYYYYYYYYYYYYY");
+                org.intermine.web.LogMe.log("i", "          YYYYYYYYYYYYYYYYYYYYY");
                 endIsPartial = true;
             }
         }
@@ -983,8 +978,8 @@ public class CalculateLocations
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(20000);
 
-        //org.intermine.web.LogMe.log("i", "q: " + q);
-        //org.intermine.web.LogMe.log("i", "res.size(): " + res.size());
+        org.intermine.web.LogMe.log("i", "q: " + q);
+        org.intermine.web.LogMe.log("i", "res.size(): " + res.size());
 
         return res.iterator();
     }
