@@ -142,13 +142,6 @@ public class SessionMethods
                         }
                     }
                 }
-                
-                // debug pause
-                try {
-                    Thread.sleep(10000);
-                } catch (Exception _) {
-                    
-                }
             }
         };
         Thread thread = null;
