@@ -30,6 +30,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.Query;
+import org.flymine.util.CacheMap;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.TypeUtil;
 import org.flymine.xml.lite.LiteRenderer;
@@ -55,6 +56,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     protected Statement batch = null;
     protected int batchChars = 0;
     protected String createSituation;
+    protected CacheMap recentSequences = new CacheMap();
 
     protected static final int SEQUENCE_MULTIPLE = 100;
     protected static final int MAX_BATCH_CHARS = 20000000;
@@ -201,7 +203,10 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             if (o.getId() == null) {
                 o.setId(getSerial());
                 doDeletes = false;
+            } else {
+                doDeletes = !recentSequences.containsKey(o.getId());
             }
+            recentSequences.remove(o.getId());
 
             // Make sure all objects pointed to have IDs
             Map fieldInfos = TypeUtil.getFieldInfos(o.getClass());
@@ -348,7 +353,9 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 long nextSequence = r.getLong(1);
                 sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
             }
-            return new Integer(sequenceBase + (sequenceOffset++));
+            Integer retval = new Integer(sequenceBase + (sequenceOffset++));
+            recentSequences.put(retval, retval);
+            return retval;
         } finally {
             releaseConnection(c);
         }
