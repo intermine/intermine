@@ -89,6 +89,7 @@ public class MageConverter extends FileConverter
             f.delete();
         }
         writer.storeAll(seenMap.values());
+        writer.storeAll(dataItems);
     }
 
     /**
