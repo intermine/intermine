@@ -43,7 +43,7 @@ public class SqlGeneratorFlymineImplTest extends TestCase
         q.addToSelect(qc1);
         q.addFrom(qc1);
         FlymineSqlSelectStatement s1 = new FlymineSqlSelectStatement(q, dr);
-        assertEquals(s1.getStatement(), gen.getPreparedSelectStatement(q, dr, 0, 0));
+        assertEquals(s1.getStatement(), gen.getPreparedSelectStatement(q, dr, 0, Integer.MAX_VALUE));
     }
 
 
