@@ -23,6 +23,10 @@
     <form-bean      name="fqlQueryForm"
                     type="org.flymine.web.FqlQueryForm"/>
 
+    <!-- QueryClassSelect form bean -->
+    <form-bean      name="queryClassSelectForm"
+                    type="org.flymine.web.QueryClassSelectForm"/>
+
   </form-beans>
 
 
@@ -55,6 +59,17 @@
               input="query"
               parameter="action">
       <forward name="results"              path="results.page"/>
+      <forward name="error"                path="error.page"/>
+      <forward name="buildquery"           path="query.page"/>
+    </action>
+
+    <!-- Input a query -->
+    <action    path="/queryClassSelect"
+               type="org.flymine.web.QueryClassSelectAction"
+               name="queryClassSelectForm"
+              scope="request"
+              input="query"
+              parameter="action">
       <forward name="error"                path="error.page"/>
       <forward name="buildquery"           path="query.page"/>
     </action>

@@ -31,7 +31,7 @@
 <definition name="tribody.template" path="/tribody.jsp">
 </definition>
 <definition name="query.tile" extends="tribody.template" controllerUrl="/initQuery.do">
-    <put name="left" value="/model.jsp"/>
+    <put name="left" value="/queryClassSelect.jsp"/>
     <put name="top" value="/query.jsp" />
     <put name="bottom" value="/queryView.jsp"/>
 </definition>
