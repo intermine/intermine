@@ -171,7 +171,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
             query.addFrom(qcCol).addFrom(qcThis);
 
             // constrain that qcThis describes the materialized object
-            ClassConstraint cc1 = new ClassConstraint(qcThis, ClassConstraint.EQUALS, thisObj);
+            ClassConstraint cc1 = new ClassConstraint(qcThis, ConstraintOp.EQUALS, thisObj);
             constraints.addConstraint(cc1);
 
             // constrain that this.collection <of items> contains item
@@ -225,7 +225,7 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
                 query.addFrom(qcRef).addFrom(qcThis);
 
                 // constrain that qcThis describes the materialized object
-                ClassConstraint cc1 = new ClassConstraint(qcThis, ClassConstraint.EQUALS, obj);
+                ClassConstraint cc1 = new ClassConstraint(qcThis, ConstraintOp.EQUALS, obj);
                 constraints.addConstraint(cc1);
 
                 // constrain that this.reference <to item> is item

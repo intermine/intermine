@@ -144,7 +144,7 @@ public class QueryCreatorTest extends QueryTestCase
         QueryField qf2 = new QueryField(qcEmployee, "age");
         cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
 
-        cs3.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a));
+        cs3.addConstraint(new ClassConstraint(qcAddress, ConstraintOp.EQUALS, a));
 
         cs2.addConstraint(cs3);
         cs1.addConstraint(cs2);
@@ -194,13 +194,13 @@ public class QueryCreatorTest extends QueryTestCase
         // First Employee
         cs3.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 1")));
         cs3.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(20))));
-        cs3.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a1));
+        cs3.addConstraint(new ClassConstraint(qcAddress, ConstraintOp.EQUALS, a1));
         cs2.addConstraint(cs3);
 
         // Second Employee
         cs4.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Employee 2")));
         cs4.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue(new Integer(30))));
-        cs4.addConstraint(new ClassConstraint(qcAddress, ClassConstraint.EQUALS, a2));
+        cs4.addConstraint(new ClassConstraint(qcAddress, ConstraintOp.EQUALS, a2));
         cs2.addConstraint(cs4);
 
         cs1.addConstraint(cs2);

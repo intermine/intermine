@@ -821,10 +821,10 @@ public class FqlQueryParser
                         try {
                             if (op == SimpleConstraint.EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
-                                                           ClassConstraint.EQUALS, iterator.next());
+                                                           ConstraintOp.EQUALS, iterator.next());
                             } else if (op == SimpleConstraint.NOT_EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
-                                                           ClassConstraint.NOT_EQUALS,
+                                                           ConstraintOp.NOT_EQUALS,
                                                            iterator.next());
                             } else {
                                 throw new IllegalArgumentException("Operation is not valid for "
@@ -844,10 +844,10 @@ public class FqlQueryParser
                         if (right instanceof QueryClass) {
                             if (op == SimpleConstraint.EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
-                                        ClassConstraint.EQUALS, (QueryClass) right);
+                                        ConstraintOp.EQUALS, (QueryClass) right);
                             } else if (op == SimpleConstraint.NOT_EQUALS) {
                                 return new ClassConstraint((QueryClass) left,
-                                        ClassConstraint.NOT_EQUALS, (QueryClass) right);
+                                        ConstraintOp.NOT_EQUALS, (QueryClass) right);
                             } else {
                                 throw new IllegalArgumentException("Operation is not valid for "
                                         + "comparing two classes");

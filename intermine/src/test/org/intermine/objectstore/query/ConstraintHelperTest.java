@@ -89,9 +89,9 @@ public class ConstraintHelperTest extends TestCase
         cs1. addConstraint(simpleConstraint6);
         simpleConstraint7 = new SimpleConstraint(qf1, SimpleConstraint.IS_NULL);
         cs1. addConstraint(simpleConstraint7);
-        classConstraint1 = new ClassConstraint(qc2, ClassConstraint.NOT_EQUALS, qc3);
+        classConstraint1 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, qc3);
         cs1.addConstraint(classConstraint1);
-        classConstraint2 = new ClassConstraint(qc2, ClassConstraint.NOT_EQUALS, new Department());
+        classConstraint2 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, new Department());
         cs1.addConstraint(classConstraint2);
         containsConstraint1 = new ContainsConstraint(qcr1, ContainsConstraint.CONTAINS, qc2);
         cs1.addConstraint(containsConstraint1);

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.xml.sax.InputSource;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.ContainsConstraint;
@@ -138,7 +139,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     public static Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         Object obj = data.get("CompanyA");
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
+        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, obj);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addToSelect(qc1);
@@ -164,7 +165,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addFrom(qc1);
         q1.addFrom(qc2);
         q1.addToSelect(qc1);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj1);
+        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, obj1);
         cs1.addConstraint(cc1);
         QueryReference qr1 = new QueryCollectionReference(qc1, "departments");
         ContainsConstraint con1 = new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qc2);
@@ -173,7 +174,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Query subquery = new Query();
         QueryClass qc3 = new QueryClass(Department.class);
         Object obj2 = data.get("DepartmentA1");
-        ClassConstraint cc2 = new ClassConstraint(qc3, ClassConstraint.EQUALS, obj2);
+        ClassConstraint cc2 = new ClassConstraint(qc3, ConstraintOp.EQUALS, obj2);
         subquery.addFrom(qc3);
         subquery.addToSelect(qc3);
         subquery.setConstraint(cc2);

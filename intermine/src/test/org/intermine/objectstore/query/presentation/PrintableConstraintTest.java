@@ -13,6 +13,7 @@ package org.flymine.objectstore.query.presentation;
 import junit.framework.TestCase;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.ContainsConstraint;
@@ -67,9 +68,9 @@ public class PrintableConstraintTest extends TestCase
         cs1.addConstraint(simpleConstraint1);
         SimpleConstraint simpleConstraint2 = new SimpleConstraint(qf2, SimpleConstraint.EQUALS, qf3);
         cs1.addConstraint(simpleConstraint2);
-        ClassConstraint classConstraint1 = new ClassConstraint(qc2, ClassConstraint.NOT_EQUALS, qc3);
+        ClassConstraint classConstraint1 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, qc3);
         cs1.addConstraint(classConstraint1);
-        ClassConstraint classConstraint2 = new ClassConstraint(qc2, ClassConstraint.NOT_EQUALS, new Department());
+        ClassConstraint classConstraint2 = new ClassConstraint(qc2, ConstraintOp.NOT_EQUALS, new Department());
         cs1.addConstraint(classConstraint2);
         ContainsConstraint containsConstraint1 = new ContainsConstraint(qcr1, ContainsConstraint.CONTAINS, qc2);
         cs1.addConstraint(containsConstraint1);

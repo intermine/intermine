@@ -161,7 +161,7 @@ public class CollatedResultTest extends TestCase
         q3.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
         cs1.addConstraint(con1);
-        cs1.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, dept));
+        cs1.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, dept));
         q3.setConstraint(cs1);
 
         assertEquals(q3, q2);
@@ -264,7 +264,7 @@ public class CollatedResultTest extends TestCase
         q3.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
         cs1.addConstraint(con1);
-        cs1.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, dept));
+        cs1.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, dept));
         cs1.addConstraint(new SimpleConstraint(qfield1, SimpleConstraint.EQUALS, new QueryValue(new Integer(23))));
         q3.setConstraint(cs1);
 
@@ -320,7 +320,7 @@ public class CollatedResultTest extends TestCase
         q4.addFrom(qc2);
         ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
         cs1.addConstraint(con1);
-        cs1.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, dept));
+        cs1.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, dept));
         q4.setConstraint(cs1);
 
         /* select department, employee
@@ -337,7 +337,7 @@ public class CollatedResultTest extends TestCase
         q5.addFrom(qc2);
         ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
         cs2.addConstraint(con1);
-        cs2.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, dept));
+        cs2.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, dept));
         q5.setConstraint(cs2);
 
         assertEquals(q4, q2);
@@ -408,8 +408,8 @@ public class CollatedResultTest extends TestCase
         q3.addFrom(qc3);
         ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
         cs2.addConstraint(cs1);
-        cs2.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, company));
-        cs2.addConstraint(new ClassConstraint(qc2, ClassConstraint.EQUALS, dept));
+        cs2.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, company));
+        cs2.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, dept));
         q3.setConstraint(cs2);
 
         assertEquals(q3, q2);
@@ -509,7 +509,7 @@ public class CollatedResultTest extends TestCase
         q3.addFrom(qc2);
         ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
         cs2.addConstraint(cs1);
-        cs2.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, dept));
+        cs2.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, dept));
         q3.setConstraint(cs2);
 
         assertEquals(q3, q2);
@@ -566,8 +566,8 @@ public class CollatedResultTest extends TestCase
         q4.addFrom(qc2);
         ConstraintSet cs2 = new ConstraintSet(ConstraintSet.AND);
         cs2.addConstraint(cs1);
-        cs2.addConstraint(new ClassConstraint(qc1, ClassConstraint.EQUALS, dept));
-        cs2.addConstraint(new ClassConstraint(qc2, ClassConstraint.EQUALS, employee));
+        cs2.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, dept));
+        cs2.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, employee));
         q4.setConstraint(cs2);
 
         assertEquals(q4, q2);

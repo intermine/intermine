@@ -148,7 +148,7 @@ public class CollatedResult extends Results
                     // add a ClassConstraint, ie. this QueryClass = example
                     Object value = row.get(index);
                     constraintSet.addConstraint(new ClassConstraint((QueryClass) node,
-                                                                    ClassConstraint.EQUALS,
+                                                                    ConstraintOp.EQUALS,
                                                                     value));
                 } else {
                     // Add a new SimpleConstraint
@@ -182,7 +182,7 @@ public class CollatedResult extends Results
                     // add a ClassConstraint, ie. this QueryClass = example
                     Object value = row.get(index);
                     constraintSet.addConstraint(new ClassConstraint((QueryClass) node,
-                                                                    ClassConstraint.EQUALS,
+                                                                    ConstraintOp.EQUALS,
                                                                     value));
                 } else {
                     QueryValue value = new QueryValue(row.get(index));

@@ -467,7 +467,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     public static Query whereClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, qc2);
+        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, qc2);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addFrom(qc2);
@@ -485,7 +485,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     public static Query whereNotClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.NOT_EQUALS, qc2);
+        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.NOT_EQUALS, qc2);
         Query q1 = new Query();
         q1.addFrom(qc1);
         q1.addFrom(qc2);
@@ -503,7 +503,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     public static Query whereNegClassClass() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         QueryClass qc2 = new QueryClass(Company.class);
-        ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, qc2);
+        ClassConstraint cc1 = new ClassConstraint(qc1, ConstraintOp.EQUALS, qc2);
         cc1.setNegated(true);
         Query q1 = new Query();
         q1.addFrom(qc1);
@@ -845,7 +845,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q2.addFrom(q1);
         q2.addFrom(c2);
         q2.addToSelect(c2);
-        q2.setConstraint(new ClassConstraint(c1, ClassConstraint.EQUALS, c2));
+        q2.setConstraint(new ClassConstraint(c1, ConstraintOp.EQUALS, c2));
         return q2;
     }
     */

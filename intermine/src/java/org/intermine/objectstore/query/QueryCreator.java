@@ -153,7 +153,7 @@ public class QueryCreator
 
                         // Add the constraint for this object
                         Constraint c = new ClassConstraint(otherQueryClass,
-                                                           ClassConstraint.EQUALS, otherObject);
+                                                           ConstraintOp.EQUALS, otherObject);
                         csThisObject.addConstraint(c);
                     }
                 } catch (NoSuchFieldException e) {
