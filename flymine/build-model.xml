@@ -155,6 +155,10 @@
           description="Build a usable model from a .zargo file">
   </target>
 
+  <target name="generate-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model"
+          description="Generate a FlyMine xml model from a .zargo file">
+  </target>
+
   <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, generate-torque"
           description="Build a usable model from a .zargo file">
   </target>

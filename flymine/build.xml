@@ -188,7 +188,7 @@
     <pathelement location="${build.model}/acedbtest"/>
     <pathelement location="${build.model}/xmitest"/>
     <pathelement location="${build.model}/mage"/>
-    
+    <pathelement location="${build.model}/chado"/>
   </path>
 
   <path id="acedbtest.class.path">
@@ -476,6 +476,22 @@
           description="build the production FlyMine system with acedb model" >
   </target>
 
+  <!-- convert chado zargo to FlyMine model -->
+  <target name="convert-chado" depends="compile-main">
+    <ant antfile="build-model.xml" target="generate-model-from-zargo">
+      <property name="model.src" value="${model}/chado"/>
+      <property name="model.name" value="chado"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <!-- test out creating java objects from chado model -->
+  <target name="compile-chado" depends="convert-chado">
+    <ant antfile="build-model.xml" target="compile-java">
+      <property name="model.name" value="chado"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
   <target name="convert-mage" depends="compile-main">
