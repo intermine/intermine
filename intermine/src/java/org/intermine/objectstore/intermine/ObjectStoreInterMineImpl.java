@@ -97,7 +97,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      protected ObjectStoreInterMineImpl(Database db, Model model) {
          super(model);
          this.db = db;
-         org.intermine.web.LogMe.log("i5", "ObjectStoreInterMineImpl constructor 2");
          schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
          ShutdownHook.registerObject(new WeakReference(this));
      }
@@ -112,7 +111,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected ObjectStoreInterMineImpl(Database db, DatabaseSchema schema) {
         super(schema.getModel());
-        org.intermine.web.LogMe.log("i5", "ObjectStoreInterMineImpl constructor 2");
         this.db = db;
         this.schema = schema;
         ShutdownHook.registerObject(new WeakReference(this));
@@ -134,9 +132,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             ResultSet rs = statement.getResultSet();
             if (rs.next()) {
                 String modelXML = null;
-                org.intermine.web.LogMe.log("i5", "database: " + db.getURL());
                 modelXML = rs.getString(1);
-                org.intermine.web.LogMe.log("i5", "got XML: " + modelXML);
                 
                 ModelParser parser = new InterMineModelParser();
                 StringReader reader = new StringReader(modelXML);

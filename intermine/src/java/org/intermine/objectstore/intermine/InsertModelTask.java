@@ -79,8 +79,6 @@ public class InsertModelTask extends Task
                 statement.execute("INSERT INTO intermine_metadata (key, value) "
                                   + "VALUES('model', '" + model + "')");
                 connection.commit();
-                org.intermine.web.LogMe.log("sql", "statement: " + statement.getMaxRows());
-                org.intermine.web.LogMe.log("sql", "statement: " + statement.getUpdateCount());
             } finally {
                 if (connection != null) {
                     connection.close();
