@@ -11,7 +11,7 @@ package org.intermine.dataloader;
  */
 
 /**
- * Loads information from a data source into the Flymine database.
+ * Loads information from a data source into the InterMine database.
  * This class defines a member variable referencing an IntegrationWriter, which all DataLoaders
  * require.
  *

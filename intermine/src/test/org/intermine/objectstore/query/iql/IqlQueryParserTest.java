@@ -20,7 +20,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.testing.OneTimeTestCase;
 
 /**
- * Test for testing the parser on the flymine query object.
+ * Test for testing the parser on the InterMine query object.
  *
  * @author Matthew Wakeling
  * @author Andrew Varley

@@ -29,18 +29,18 @@ public class PropertiesUtil
 
     static {
         // Read Properties from the following files, if present on the classpath:
-        // default.flymine.properties: Common runtime Properties
-        // flymine.properties: User runtime properties
+        // default.intermine.properties: Common runtime Properties
+        // intermine.properties: User runtime properties
         try {
             InputStream is = PropertiesUtil.class.getClassLoader()
-                .getResourceAsStream("default.flymine.properties");
+                .getResourceAsStream("default.intermine.properties");
 
             if (is != null) {
                 globalProperties.load(is);
             }
 
             is = PropertiesUtil.class.getClassLoader()
-                .getResourceAsStream("flymine.properties");
+                .getResourceAsStream("intermine.properties");
 
             if (is != null) {
                 globalProperties.load(is);

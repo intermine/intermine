@@ -6,7 +6,7 @@
 
 <tiles-definitions>
   <definition name="layout.template" path="/layout.jsp">
-    <put name="title" value="FlyMine" />
+    <put name="title" value="InterMine" />
     <put name="header" value="/header.jsp"/>
     <put name="menu" value="/menu.jsp"/>
     <put name="footer" value="/footer.jsp"/>

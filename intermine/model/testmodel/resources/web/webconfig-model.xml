@@ -1,5 +1,5 @@
 <webconfig>
-  <class name="org.flymine.model.testmodel.Company">
+  <class name="org.intermine.model.testmodel.Company">
     <shortdisplayers>
       <displayer src="/allFields.jsp"/>
       <displayer src="/model/companiesHouse.jsp"/>

@@ -30,7 +30,7 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.apache.log4j.Logger;
 
 /**
- * Parses the AceDB model file given, and produces a Flymine model.
+ * Parses the AceDB model file given, and produces a InterMine model.
  *
  * @author Matthew Wakeling
  */

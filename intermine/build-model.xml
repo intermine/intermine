@@ -1,5 +1,5 @@
-<project name="FlyMine model" default="all" basedir=".">
-  <description>FlyMine model build file</description>
+<project name="InterMine model" default="all" basedir=".">
+  <description>InterMine model build file</description>
 
   <!--
   The following properties are used in this file:
@@ -49,7 +49,7 @@
   </target>
 
 
-  <!-- copy flymine xml model file to build model directory -->
+  <!-- copy intermine xml model file to build model directory -->
   <target name="copy-xml-model" depends="prepare">
     <copy todir="${build.model}/${model.name}" file="${model.src}/${model.name}_model.xml"/>
   </target>
@@ -66,7 +66,7 @@
 
   <!-- Model generation targets -->
   <target name="generate-xmi-model"
-          description="Generate FlyMine model from an XMI file">
+          description="Generate InterMine model from an XMI file">
     <taskdef name="model-generation" classname="org.intermine.modelproduction.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
@@ -83,22 +83,22 @@
 
 
   <target name="generate-owl-model"
-          description="Generate FlyMine model from an OWL file">
+          description="Generate InterMine model from an OWL file">
 
-    <java classname="org.intermine.ontology.Owl2FlyMine" fork="true">
+    <java classname="org.intermine.ontology.Owl2InterMine" fork="true">
       <classpath refid="class.path" />
       <arg value="${build.model}/${model.name}/${model.name}.n3" />
       <arg value="N3" />
       <arg value="${build.model}/${model.name}/${model.name}_model.xml" />
       <arg value="genomic" />
       <arg value="org.intermine.model.${model.name}" />
-      <arg value="http://www.flymine.org/model/${model.name}#" />
+      <arg value="http://www.intermine.org/model/${model.name}#" />
     </java>
 
   </target>
 
   <target name="generate-acedb-model" depends="prepare"
-          description="Generate a FlyMine model file from an AceDB model file">
+          description="Generate a InterMine model file from an AceDB model file">
     <taskdef
       name="model-generation"
       classname="org.intermine.modelproduction.ModelGenerationTask">
@@ -116,7 +116,7 @@
   <!-- Code generation targets -->
 
   <target name="generate-java" depends="prepare"
-          description="Generate Java files from a FlyMine model file">
+          description="Generate Java files from a InterMine model file">
     <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
@@ -125,12 +125,12 @@
   </target>
 
   <target name="generate-torque"
-          description="Generate Torque schema description from a FlyMine model file">
+          description="Generate Torque schema description from a InterMine model file">
     <taskdef name="model-output" classname="org.intermine.codegen.ModelOutputTask">
       <classpath refid="class.path" />
     </taskdef>
 
-    <model-output type="flyminetorque" model="${model.name}" destdir="${build.model}/${model.name}"/>
+    <model-output type="interminetorque" model="${model.name}" destdir="${build.model}/${model.name}"/>
   </target>
 
   <!-- compile java source -->
@@ -160,7 +160,7 @@
 
   <!-- Targets that could be called from another build script -->
   <target name="build-model-from-xml" depends="copy-xml-model, compile-java, copy-keydefs"
-          description="Build a usable model from a FlyMine model XML file">
+          description="Build a usable model from a InterMine model XML file">
   </target>
 
   <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java, copy-keydefs"
@@ -168,7 +168,7 @@
   </target>
 
   <target name="generate-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, copy-keydefs"
-          description="Generate a FlyMine xml model from a .zargo file">
+          description="Generate a InterMine xml model from a .zargo file">
   </target>
 
   <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, copy-keydefs"
@@ -176,11 +176,11 @@
   </target>
 
   <target name="generate-model-from-xmi" depends="copy-xmi, generate-xmi-model, copy-keydefs"
-          description="Generate a FlyMine xml model from a xmi file">
+          description="Generate a InterMine xml model from a xmi file">
   </target>
   
   <target name="generate-model-from-owl" depends="generate-owl-model, copy-keydefs"
-          description="Generate a FlyMine xml model from an OWL file">
+          description="Generate a InterMine xml model from an OWL file">
   </target>
   
   <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, copy-keydefs"

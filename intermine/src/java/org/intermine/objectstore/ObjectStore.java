@@ -132,7 +132,7 @@ public interface ObjectStore
     /**
      * Counts the number of rows the query will produce
      *
-     * @param q Flymine Query on which to count rows
+     * @param q InterMine Query on which to count rows
      * @param sequence a number representing the state of the database corresponding to when the
      * action that resulted in this execute was started. This number must match the ObjectStore's
      * internal sequence number or a DataChangedException is thrown. The sequence number is

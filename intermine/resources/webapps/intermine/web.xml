@@ -9,7 +9,7 @@
   <!-- Support for fmt:message tags -->
   <context-param>
     <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    <param-value>FlyMineWebApp</param-value>
+    <param-value>InterMineWebApp</param-value>
   </context-param>
 
   <!-- Action Servlet Configuration -->

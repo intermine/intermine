@@ -13,7 +13,7 @@
             </a>
           </td>
           <td>
-            <fmt:message key="flymine.funding"/>
+            <fmt:message key="intermine.funding"/>
           </td>
         </tr>
       </table>

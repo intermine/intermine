@@ -1,5 +1,5 @@
-<project name="flymine" default="help" basedir=".">
-  <description>FlyMine build file</description>
+<project name="intermine" default="help" basedir=".">
+  <description>InterMine build file</description>
 
   <!-- Property setup targets -->
   <!-- buildtime and runtime settings -->
@@ -133,7 +133,7 @@
     <include name="cactus*.jar"/>
   </patternset>
 
-  <!-- Libraries that the FlyMine query webapp uses -->
+  <!-- Libraries that the InterMine query webapp uses -->
   <patternset id="lib.webapp.intermine">
     <include name="aspect*.jar" />
     <include name="commons*.jar" />
@@ -250,7 +250,7 @@
     <mkdir dir="${tutorial}/resources"/>
     <mkdir dir="${tutorial}/src/java/org/intermine/tutorial"/>
 
-    <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
+    <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties"/>
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
     </copy>
@@ -274,7 +274,7 @@
   <!-- Help -->
   <target name="help" description="Displays user targets">
     <echo message=""/>
-    <echo message="FlyMine build file - available targets are:"/>
+    <echo message="InterMine build file - available targets are:"/>
     <echo message=""/>
     <echo message="compile-main           --> compiles the source code"/>
     <echo message="build-testmodel        --> generate testmodel class and mapping files"/>
@@ -282,7 +282,7 @@
     <echo message="insert-data-testmodel  --> store testmodel test data"/>
     <echo message="test-main              --> runs the unit tests"/>
     <echo message="clean                  --> cleans up the directory"/>
-    <echo message="jar                    --> builds the FlyMine jar"/>
+    <echo message="jar                    --> builds the InterMine jar"/>
     <echo message=""/>
     <echo message="See 'ant -projecthelp' for full target list"/>
   </target>
@@ -508,7 +508,7 @@
   <target name="inctest" depends="prepare,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
           description="do an incremental test and fail if there are any errors">
     <fail message="Some unit tests have failed" if="junit.failure"/>
-    <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
+    <fail message="Some files violate InterMine coding standards" if="checkstyle.failure"/>
   </target>
 
   <target name="fulltest" depends="prepare,junit-clean,clean-code,inctest"
@@ -558,11 +558,11 @@
 
   <target name="javadoc" depends="prepare"
           description="generate the javadoc">
-    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="Intermine API" additionalparam="-breakiterator">
+    <javadoc destdir="${build.javadoc}" author="true" version="true" use="true" windowtitle="InterMine API" additionalparam="-breakiterator">
       <classpath refid="project.class.path"/>
       <fileset dir="${src.java}" defaultexcludes="yes" />
-      <doctitle><![CDATA[<h1>Intermine</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} Intermine. All Rights Reserved.</i>]]></bottom>
+      <doctitle><![CDATA[<h1>InterMine</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} InterMine. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
 
@@ -708,7 +708,7 @@
   </target>
 
   <target name="build-webapp" depends="prepare-webapp"
-    description="Build the FlyMine web application">
+    description="Build the InterMine web application">
 
     <copy todir="${build.tmp}" file="${resources}/webapps/intermine/web.xml"/>
 
@@ -759,7 +759,7 @@
   </target>
 
   <target name="build-testable-webapp" depends="prepare-webapp, jar-testmodel"
-    description="Build a FlyMine webapp including the test classes and libraries">
+    description="Build a InterMine webapp including the test classes and libraries">
     <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -772,13 +772,13 @@
       <lib dir="${lib}">
         <patternset refid="lib.webapptest"/>
       </lib>
-      <fileset dir="${resources}/webapps/intermine" includes="FlyMineWebApp*.properties"/>
+      <fileset dir="${resources}/webapps/intermine" includes="InterMineWebApp*.properties"/>
     </war>
   </target>
 
   <!-- Webservice targets -->
   <target name="build-webservice" depends="prepare,prepare-dist,jar"
-    description="Build the FlyMine webservice">
+    description="Build the InterMine webservice">
     <mkdir dir="${build.webapp}/webservice"/>
     <mkdir dir="${build.webapp}/webservice/META-INF"/>
     <mkdir dir="${build.webapp}/webservice/WEB-INF"/>
@@ -810,7 +810,7 @@
   </target>
 
   <target name="build-testable-webservice" depends="build-webservice,jar-testmodel"
-    description="Build the FlyMine webservice including the test classes and libraries">
+    description="Build the InterMine webservice including the test classes and libraries">
     <war destfile="${dist.webapp}/webservice.war" update="true">
       <lib dir="${lib}">
         <patternset refid="lib.webapptest" />
@@ -850,19 +850,19 @@
     <echo message="Creating jar file version ${version}" />
     <manifest file="${build.tmp}/MANIFEST.MF">
       <attribute name="Built-By" value="${user.name}"/>
-      <attribute name="Specification-Title" value="FlyMine"/>
+      <attribute name="Specification-Title" value="InterMine"/>
       <attribute name="Specification-Version" value="${version}"/>
-      <attribute name="Specification-Vendor" value="FlyMine"/>
-      <attribute name="Implementation-Title" value="FlyMine"/>
+      <attribute name="Specification-Vendor" value="InterMine"/>
+      <attribute name="Implementation-Title" value="InterMine"/>
       <attribute name="Implementation-Version" value="${version}"/> 
-      <attribute name="Implementation-Vendor" value="FlyMine"/>
+      <attribute name="Implementation-Vendor" value="InterMine"/>
     </manifest>
 
     <jar destfile="${dist}/intermine.jar" manifest="${build.tmp}/MANIFEST.MF">
       <fileset dir="${build.java}"/>
       <fileset dir="${build.model}/fulldata"/>
       <fileset dir="${build.model}/datatracking"/>
-      <fileset file="${build.resources}/flymine.properties"/>
+      <fileset file="${build.resources}/intermine.properties"/>
       <fileset file="${build.resources}/log4j.properties"/>
     </jar>
 
@@ -883,7 +883,7 @@
     <copy todir="${tutorial}">
       <fileset dir="${resources}/tutorial">
         <include name="build.xml"/>
-        <include name="flymine.properties"/>
+        <include name="intermine.properties"/>
       </fileset>
       <fileset dir="." includes="build-model.xml"/>
     </copy>
@@ -938,7 +938,7 @@
 
   <!-- webapp -->
   <target name="release-webapp" depends=""
-    description="releases the FlyMine web application to the server">
+    description="releases the InterMine web application to the server">
  
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
       <classpath refid="project.class.path"/>

@@ -109,11 +109,11 @@ public class Model
         this.nameSpace = new URI(OntologyUtil.correctNamespace(nameSpace));
         LinkedHashSet orderedClds = new LinkedHashSet(clds);
 
-        ClassDescriptor flymineBusinessObject = new ClassDescriptor(
+        ClassDescriptor intermineObject = new ClassDescriptor(
                 "org.intermine.model.InterMineObject", null, true,
                 Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
-        orderedClds.add(flymineBusinessObject);
+        orderedClds.add(intermineObject);
 
         Iterator cldIter = orderedClds.iterator();
         // 1. Put all ClassDescriptors in model.

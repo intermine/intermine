@@ -48,7 +48,7 @@ public class SimpleQuery
     public String exampleQuery() throws Exception {
 
         // Get an ObjectStore from the ObjectStoreFactory
-        // The alias "os.tutorial" should be set up in the flymine.properties
+        // The alias "os.tutorial" should be set up in the intermine.properties
         // file
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.tutorial");
 

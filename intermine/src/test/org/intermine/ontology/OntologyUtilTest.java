@@ -621,7 +621,7 @@ public class OntologyUtilTest extends TestCase
 //             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
 //             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
 //             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-//             + "@prefix null:  <http://www.flymine.org.model/null#> ." + ENDL
+//             + "@prefix null:  <http://www.intermine.org.model/null#> ." + ENDL
 //             + ENDL
 //             + ":Company a owl:Class ;" + ENDL
 //             + "         rdfs:subClassOf" + ENDL

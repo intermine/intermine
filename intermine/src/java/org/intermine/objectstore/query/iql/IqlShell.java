@@ -51,10 +51,6 @@ public class IqlShell
             out.println("                      a one-off query");
         } else {
             try {
-                //Properties props = new Properties();
-                //props.load(new FileInputStream("/home/mnw21/flymine.properties"));
-                //System.setProperties(props);
-
                 ObjectStore os = ObjectStoreFactory.getObjectStore(args[0]);
                 if (args.length == 2) {
                     runQuery(args[1], os);

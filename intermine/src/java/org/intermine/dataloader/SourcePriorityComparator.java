@@ -17,7 +17,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.datatracking.Source;
 
 /**
- * Comparator, that compares two FlymineBusinessObjects, with reference to a particular
+ * Comparator, that compares two InterMineObjects, with reference to a particular
  * FieldDescriptor for priority.
  *
  * @author Matthew Wakeling

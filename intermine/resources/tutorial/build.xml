@@ -1,5 +1,5 @@
- <project name="FlyMine tutorial" default="help" basedir=".">
-  <description>Build file for FlyMine tutorial application</description>
+ <project name="InterMine tutorial" default="help" basedir=".">
+  <description>Build file for InterMine tutorial application</description>
   
   <!-- directory locations -->
   <property name="model" location="model"/>
@@ -15,7 +15,7 @@
   <property name="dist" location="dist"/>
 
   <!-- runtime settings -->
-  <property name="runtime.properties" value="flymine.properties" />
+  <property name="runtime.properties" value="intermine.properties" />
 
   <!-- classpaths -->
   <path id="project.class.path">
@@ -41,7 +41,7 @@
     <mkdir dir="${build.model}/tutorial"/>
     <mkdir dir="${build.resources}"/>
 
-    <copy file="${runtime.properties}" tofile="${build.resources}/flymine.properties"/>
+    <copy file="${runtime.properties}" tofile="${build.resources}/intermine.properties"/>
      <copy todir="${build.resources}">
       <fileset dir="${resources}"/>
     </copy>
@@ -50,7 +50,7 @@
   <!-- help -->
   <target name="help" description="Displays user targets">
     <echo message=""/>
-    <echo message="FlyMine tutorial build file - available targets are:"/>
+    <echo message="InterMine tutorial build file - available targets are:"/>
     <echo message=""/>
     <echo message="run      --> runs the tutorial"/>
     <echo message="clean    --> cleans up the directory"/>
@@ -95,7 +95,7 @@
   <target name="insert-data" depends="build-db">
     <taskdef
       name="insert-xml-data"
-      classname="org.flymine.dataloader.InsertXmlDataTask">
+      classname="org.intermine.dataloader.InsertXmlDataTask">
       <classpath refid="project.class.path"/>
     </taskdef>
 
@@ -122,7 +122,7 @@
 
   <!-- execute the tutorial -->
   <target name="run" depends="clean, compile, insert-data">
-    <java classname="org.flymine.tutorial.SimpleQuery" dir="${build}" fork="true">
+    <java classname="org.intermine.tutorial.SimpleQuery" dir="${build}" fork="true">
       <classpath refid="tutorial.class.path"/>
     </java>
   </target>
@@ -132,7 +132,7 @@
           description="clean up generated files">
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
-    <delete file="flymine.log"/>
+    <delete file="intermine.log"/>
     <delete file="velocity.log"/>
   </target>
 </project>

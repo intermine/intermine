@@ -2,11 +2,11 @@
 
 <!-- header.jsp -->
 <font class="title">
-  <fmt:message key="flymine.maintitle"/>
+  <fmt:message key="intermine.maintitle"/>
 </font>
 <br/>
 <font class="subtitle">
-  <fmt:message key="flymine.subtitle"/>
+  <fmt:message key="intermine.subtitle"/>
 </font>
 <br/>
 <hr/>

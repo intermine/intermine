@@ -208,7 +208,7 @@
 
   <!-- ========== Message Resources Definitions =========================== -->
 
-  <message-resources parameter="FlyMineWebApp"/>
+  <message-resources parameter="InterMineWebApp"/>
 
   <!-- model-specific resources -->
   <message-resources parameter="model" key="model"/>

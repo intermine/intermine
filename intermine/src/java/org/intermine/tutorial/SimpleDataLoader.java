@@ -53,7 +53,7 @@ public class SimpleDataLoader
 
         // Get an ObjectStoreWriter to use for storing the object. The
         // alias "osw.tutorial" refers to one set up in the
-        // flymine.properties file
+        // intermine.properties file
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.tutorial");
 
         // Set up a Company object to store - this is a dynamic class

@@ -25,7 +25,7 @@ import org.intermine.util.DynamicUtil;
 import org.apache.log4j.Logger;
 
 /**
- * Loads information from an ObjectStore into the Flymine database.
+ * Loads information from an ObjectStore into the InterMine database.
  *
  * @author Matthew Wakeling
  */

@@ -235,7 +235,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     /**
      * return the resultsSize parameter that simulates number of rows returned from query
      *
-     * @param q Flymine Query on which to run COUNT(*)
+     * @param q InterMine Query on which to run COUNT(*)
      * @param sequence an integer that is ignored
      * @return the number of rows to be produced by query
      * @throws ObjectStoreException if an error occurs counting the query

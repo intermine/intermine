@@ -35,7 +35,7 @@ public class Daml2Owl extends URL2Model
 {
     protected static final String DAML_NS_PATTERN = "http://www.daml.org/2001/03/daml[+]oil#";
     protected static final String ENDL = System.getProperty("line.separator");
-    protected String baseURI = "http://www.flymine.org/daml#";
+    protected String baseURI = "http://www.intermine.org/daml#";
 
 
     /**
