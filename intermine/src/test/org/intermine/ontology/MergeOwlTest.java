@@ -22,7 +22,7 @@ import java.io.*;
 
 public class MergeOwlTest extends TestCase
 {
-    public static final String ENDL = "\n";
+    public static final String ENDL = System.getProperty("line.separator");
     private final String tgtNamespace = "http://www.flymine.org/target#";
     private final String src1Namespace = "http://www.flymine.org/source1#";
     private final String src2Namespace = "http://www.flymine.org/source2#";
@@ -73,16 +73,25 @@ public class MergeOwlTest extends TestCase
 
         merger.mergeByEquivalence(src1, src1Namespace);
 
-
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
-        assertNull(merger.tgtModel.getOntClass(src1Namespace + "LtdCompany"));
+        assertNotNull(merger.tgtModel.getOntClass(src1Namespace + "LtdCompany"));
         assertNull(merger.tgtModel.getOntClass(tgtNamespace + "LtdCompany"));
 
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__name"));
-        assertNull(merger.tgtModel.getOntProperty(src1Namespace + "compName"));
-        assertNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__compName"));
+        OntProperty name = merger.tgtModel.getOntProperty(tgtNamespace + "Company__name");
+        assertTrue(name.isDatatypeProperty());
+        assertNotNull(merger.tgtModel.getOntProperty(src1Namespace + "companyName"));
+        assertNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__companyName"));
 
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__vatNumber"));
+        OntProperty vat = merger.tgtModel.getOntProperty(tgtNamespace + "Company__vatNumber");
+        assertTrue(vat.canAs(DatatypeProperty.class));
+
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__address"));
+        OntProperty address = merger.tgtModel.getOntProperty(tgtNamespace + "Company__address");
+        assertTrue(address.canAs(ObjectProperty.class));
+
+
     }
 
 
@@ -191,9 +200,10 @@ public class MergeOwlTest extends TestCase
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":TestClass rdf:type owl:Class ." + ENDL
-            + ":testProperty a rdf:Property ;" + ENDL
-            + "              rdfs:domain :TestClass ." + ENDL
-            + ":testIndividual a owl:Individual ." + ENDL;
+            + ":testProperty a owl:DatatypeProperty ;" + ENDL
+            + "      rdfs:domain :TestClass ;" + ENDL
+            + "      rdfs:range rdfs:Literal ." + ENDL
+            + ":TestIndividual a owl:Individual ." + ENDL;
 
         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
         OntModel src1 = ModelFactory.createOntologyModel();
@@ -285,10 +295,8 @@ public class MergeOwlTest extends TestCase
             + "            [ a owl:Restriction ;" + ENDL
             + "              owl:onProperty src:organisationType ;" + ENDL
             + "              owl:hasValue \"charity\" ] ." + ENDL
-            //+ ":name a owl:DatatypeProperty ;" + ENDL
-            //+ "        owl:equivalentProperty src:organisationName ." + ENDL
-            + "null:Organisation a owl:Class ;" + ENDL
-            + "        owl:equivalentClass src:Organisation ." + ENDL;
+            + ":Organisation__name a owl:DatatypeProperty ;" + ENDL
+            + "        owl:equivalentProperty src:organisationName ." + ENDL;
 
         MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
         OntModel src = ModelFactory.createOntologyModel();
@@ -299,10 +307,10 @@ public class MergeOwlTest extends TestCase
 
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Charity"));
-        assertNull(merger.tgtModel.getOntClass(tgtNamespace + "Organisation"));
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Organisation"));
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Entity"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__organisationName"));
-        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Charity__organisationName"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__name"));
+        assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Charity__name"));
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__address"));
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Charity__address"));
         assertNotNull(merger.tgtModel.getOntProperty(tgtNamespace + "Company__organisationType"));
@@ -321,8 +329,8 @@ public class MergeOwlTest extends TestCase
         assertFalse(chaCls.hasSubClass(comCls));
 
         // name, address and organisationType should have Company and Charity as domains
-        OntProperty comNameProp = merger.tgtModel.getOntProperty(tgtNamespace + "Company__organisationName");
-        OntProperty chaNameProp = merger.tgtModel.getOntProperty(tgtNamespace + "Charity__organisationName");
+        OntProperty comNameProp = merger.tgtModel.getOntProperty(tgtNamespace + "Company__name");
+        OntProperty chaNameProp = merger.tgtModel.getOntProperty(tgtNamespace + "Charity__name");
         OntProperty comAddrProp = merger.tgtModel.getOntProperty(tgtNamespace + "Company__address");
         OntProperty chaAddrProp = merger.tgtModel.getOntProperty(tgtNamespace + "Charity__address");
         OntProperty comOrgTypeProp = merger.tgtModel.getOntProperty(tgtNamespace + "Company__organisationType");
@@ -464,7 +472,7 @@ public class MergeOwlTest extends TestCase
             + "           owl:equivalentClass src1:LtdCompany ;" + ENDL
             + "           owl:equivalentClass src2:Corporation ." + ENDL
             + ENDL
-            + ":Company__name a rdf:Property ;" + ENDL
+            + ":Company__name a owl:DatatypeProperty ;" + ENDL
             + "        owl:equivalentProperty src1:companyName ;" + ENDL
             + "        owl:equivalentProperty src2:corpName ." + ENDL;
     }
@@ -478,12 +486,15 @@ public class MergeOwlTest extends TestCase
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + ENDL
             + ":LtdCompany a owl:Class ." + ENDL
-            + ":companyName a rdf:Property ;" + ENDL
+            + ":companyName a owl:DatatypeProperty ;" + ENDL
             + "             rdfs:domain :LtdCompany ;" + ENDL
             + "             rdfs:range rdfs:Literal ." + ENDL
-            + ":vatNumber a rdf:Property ;" + ENDL
+            + ":vatNumber a owl:DatatypeProperty ;" + ENDL
             + "           rdfs:domain :LtdCompany ;" + ENDL
             + "           rdfs:range rdfs:Literal ." + ENDL
+            + ":address a owl:ObjectProperty ;" + ENDL
+            + "      rdfs:domain :LtdCompany ;" + ENDL
+            + "      rdfs:range :Address ." + ENDL
             + ":Address a owl:Class ." + ENDL;
     }
 

@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -116,6 +114,12 @@ public class MergeOwl
         Iterator stmtIter = srcModel.listStatements();
         while (stmtIter.hasNext()) {
             Statement stmt = (Statement) stmtIter.next();
+            Resource subject = stmt.getSubject();
+
+            // copy src namespace statements into target model
+            if ((!subject.isAnon() && subject.getNameSpace().equals(srcNs))) {
+                statements.add(stmt);
+            }
 
             // Jena makes classes subClasses of themselves -> prevent this
             if (stmt.getPredicate().getURI().equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")
@@ -124,47 +128,36 @@ public class MergeOwl
                 continue;
             }
 
-           // add subject of statement to set
-            HashSet subjects = new HashSet(Collections.singleton(stmt.getSubject()));
-            // also add restricted subclasses
-            if (subMap.containsKey(stmt.getSubject())) {
-                subjects.addAll((Set) subMap.get(stmt.getSubject()));
-            }
-            // for each subject
-            Iterator subjIter = subjects.iterator();
-            while (subjIter.hasNext()) {
-                Resource subject = (Resource) subjIter.next();
-                RDFNode tmpObj = stmt.getObject();  // RDFNode can be Resource or literal
-                // add object of statement to set
-                HashSet objects = new HashSet(Collections.singleton(tmpObj));
-                // also add restricted subclasses
-                if (tmpObj instanceof Resource && subMap.containsKey(tmpObj)
-                    && !stmt.getPredicate().getURI()
-                        .equals(OntologyUtil.RDFS_NAMESPACE + "subClassOf")) {
-                    objects.addAll((Set) subMap.get(tmpObj));
+            if (subMap.containsKey(subject) && stmt.getPredicate().getURI()
+                .equals(OntologyUtil.RDF_NAMESPACE + "type")) {
+                Iterator subIter = ((Set) subMap.get(subject)).iterator();
+                while (subIter.hasNext()) {
+                    Resource sub = getTargetResource((Resource) subIter.next(), srcNs);
+                    statements.add(tgtModel.createStatement(sub, stmt.getPredicate(),
+                           tgtModel.createProperty(OntologyUtil.OWL_NAMESPACE + "Class")));
+                    statements.add(tgtModel.createStatement(sub,
+                           tgtModel.createProperty(OntologyUtil.RDFS_NAMESPACE
+                                               + "subClassOf"), getTargetResource(subject, srcNs)));
                 }
-                // lookup new subject and object, create statement
-                Resource newSubject = getTargetResource(subject, srcNs);
-                if (subject.isAnon() || subject.getNameSpace().equals(srcNs)
-                    || subject.getNameSpace().equals(tgtNs)) {
-                    Iterator objIter = objects.iterator();
-                    while (objIter.hasNext()) {
-                        RDFNode object = (RDFNode) objIter.next();
-                        RDFNode newObject = object;
+            }
+            // lookup new subject and object, create statement
+            Resource newSubject = getTargetResource(subject, srcNs);
+            if (subject.isAnon() || subject.getNameSpace().equals(srcNs)
+                || subject.getNameSpace().equals(tgtNs)) {
 
-                        if (object instanceof Resource) {
-                            newObject = getTargetResource((Resource) object, srcNs);
-                        }
-                        statements.add(tgtModel.createStatement(newSubject, stmt.getPredicate(),
-                                                                newObject));
+                RDFNode object = (RDFNode) stmt.getObject();
+                RDFNode newObject = object;
 
-                        // if declaration of a resource (rdf:type) then add an equivalence statement
-                        if (stmt.getPredicate().getURI().equals(OntologyUtil.RDF_NAMESPACE + "type")
-                            && !equiv.containsKey(subject.getURI())) {
-                            addEquivalenceStatement(newSubject, (Resource) newObject,
-                                                    subject, statements);
-                        }
-                    }
+                if (object instanceof Resource) {
+                    newObject = getTargetResource((Resource) object, srcNs);
+                }
+                statements.add(tgtModel.createStatement(newSubject, stmt.getPredicate(),
+                                                        newObject));
+                // if declaration of a resource (rdf:type) then add an equivalence statement
+                if (stmt.getPredicate().getURI().equals(OntologyUtil.RDF_NAMESPACE + "type")
+                    && !equiv.containsKey(subject.getURI())) {
+                    addEquivalenceStatement(newSubject, (Resource) newObject,
+                                            subject, statements);
                 }
             }
         }

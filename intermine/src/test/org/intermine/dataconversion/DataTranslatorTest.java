@@ -79,7 +79,7 @@ public class DataTranslatorTest extends TestCase
         Set expected = new HashSet(Arrays.asList(new Object[] {tgt1, tgt2, tgt3}));
 
         MockItemStore tgtIs = new MockItemStore();
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
         translator.translate(tgtIs);
         assertEquals(expected, tgtIs.getItemSet());
     }
@@ -95,7 +95,7 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1));
     }
 
@@ -119,7 +119,7 @@ public class DataTranslatorTest extends TestCase
         a2.setValue("testname");
         expected.addAttribute(a2);
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1));
     }
 
@@ -145,7 +145,7 @@ public class DataTranslatorTest extends TestCase
         r2.setRefId("2");
         expected.addReference(r2);
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1));
     }
 
@@ -171,7 +171,7 @@ public class DataTranslatorTest extends TestCase
         r2.addRefId("3");
         expected.addCollection(r2);
 
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1));
     }
 
@@ -206,12 +206,17 @@ public class DataTranslatorTest extends TestCase
             + "         rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
             + "              owl:onProperty src:organisationType ;" + ENDL
-            + "              owl:hasValue \"business\" ] ;" + ENDL
-            + "         owl:equivalentClass src:Organisation ." + ENDL
+            + "              owl:hasValue \"business\" ] ." + ENDL
             + ":Company__organisationType a owl:DatatypeProperty ;" + ENDL
             + "       rdfs:domain :Company ; " + ENDL
             + "       rdfs:range rdfs:Literal ;" + ENDL
+            + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
             + "       owl:equivalentProperty src:organisationType ." + ENDL
+            + ":Company__otherProp a owl:DatatypeProperty ;" + ENDL
+            + "       rdfs:domain :Company ; " + ENDL
+            + "       rdfs:range rdfs:Literal ;" + ENDL
+            + "       rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
+            + "       owl:equivalentProperty src:otherProp ." + ENDL
             + ":Charity a owl:Class ; " + ENDL
             + "          rdfs:subClassOf src:Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
@@ -221,15 +226,16 @@ public class DataTranslatorTest extends TestCase
             + "          rdfs:subClassOf" + ENDL
             + "            [ a owl:Restriction ;" + ENDL
             + "              owl:onProperty src:otherProp ;" + ENDL
-            + "              owl:hasValue \"value\" ] ;" + ENDL
-            + "         owl:equivalentClass src:Organisation ." + ENDL
+            + "              owl:hasValue \"value\" ] ." + ENDL
             + ":Charity__organisationType a owl:DatatypeProperty ;" + ENDL
             + "                          rdfs:domain :Charity ; " + ENDL
             + "                          rdfs:range rdfs:Literal ;" + ENDL
+            + "       rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
             + "       owl:equivalentProperty src:organisationType ." + ENDL
             + ":Charity__otherProp a owl:DatatypeProperty ;" + ENDL
             + "                          rdfs:domain :Charity ; " + ENDL
             + "                          rdfs:range rdfs:Literal ;" + ENDL
+            + "       rdfs:subPropertyOf :Organisation__otherProp ;" + ENDL
             + "       owl:equivalentProperty src:otherProp ." + ENDL;
 
         OntModel model = ModelFactory.createOntologyModel();
@@ -329,9 +335,12 @@ public class DataTranslatorTest extends TestCase
         exp4.addAttribute(ea4);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3, exp4}));
 
-        translator = new DataTranslator(srcIs, model);
+        translator = new DataTranslator(srcIs, model, tgtNs);
 
-
+//         System.out.println("templateMap: " + translator.templateMap.toString());
+//         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
+//         System.out.println("equivMap: " + translator.equivMap.toString());
+//         System.out.println("clsPropMap: " + translator.clsPropMap.toString());
 
         MockItemStore tgtIs = new MockItemStore();
         translator.translate(tgtIs);
@@ -373,10 +382,12 @@ public class DataTranslatorTest extends TestCase
             + ":Business__organisationType a owl:ObjectProperty ;" + ENDL
             + "      rdfs:domain :Business ;" + ENDL
             + "      rdfs:range :OrganisationType ;" + ENDL
+            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
             + "      owl:equivalentProperty src:organisationType ." + ENDL
             + ":PrivateBusiness__organisationType a owl:ObjectProperty ;" + ENDL
             + "      rdfs:domain :PrivateBusiness ;" + ENDL
             + "      rdfs:range :OrganisationType ;" + ENDL
+            + "      rdfs:subPropertyOf :Organisation__organisationType ;" + ENDL
             + "      owl:equivalentProperty src:organisationType ." + ENDL
             + ":OrganisationType a owl:Class ;" + ENDL
             + "      owl:equivalentClass src:OrganisationType ." + ENDL
@@ -407,8 +418,8 @@ public class DataTranslatorTest extends TestCase
             + "                      owl:hasValue \"business\"" + ENDL
             + "                    ] " + ENDL
             + "               ] " + ENDL
-            + "            ] ;" + ENDL
-            + "      owl:equivalentClass src:Organisation ." + ENDL
+            + "            ] ." + ENDL
+            //+ "      owl:equivalentClass src:Organisation ." + ENDL
             + ":PrivateBusiness a owl:Class ; " + ENDL
             + "          rdfs:subClassOf src:Organisation ;" + ENDL
             + "          rdfs:subClassOf" + ENDL
@@ -434,8 +445,8 @@ public class DataTranslatorTest extends TestCase
             + "                       owl:hasValue \"business\"" + ENDL
             + "                     ] " + ENDL
             + "                ] " + ENDL
-            + "            ] ;" + ENDL
-            + "      owl:equivalentClass src:Organisation ." + ENDL;
+            + "            ] ." + ENDL;
+            //+ "      owl:equivalentClass src:Organisation ." + ENDL;
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new StringReader(owl), null, "N3");
@@ -542,7 +553,7 @@ public class DataTranslatorTest extends TestCase
         exp22.addAttribute(ea22);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23}));
 
-        translator = new DataTranslator(srcIs, model);
+        translator = new DataTranslator(srcIs, model, tgtNs);
 
 //         System.out.println("templateMap: " + translator.templateMap.toString());
 //         System.out.println("restrictionMap: " + translator.restrictionMap.toString());
@@ -562,7 +573,7 @@ public class DataTranslatorTest extends TestCase
         String path = "Organisation.organisationType";
         StringTokenizer t = new StringTokenizer(path, ".");
         t.nextToken();
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
         assertEquals("business", translator.buildRestriction(t, (Item) srcItems.get("src1")));
 
         path = "Organisation.organisationType.type";
@@ -587,7 +598,7 @@ public class DataTranslatorTest extends TestCase
         storeItems(srcItems.values());
 
         // model we use here is irrelevant
-        translator = new DataTranslator(srcIs, getFlyMineOwl());
+        translator = new DataTranslator(srcIs, getFlyMineOwl(), tgtNs);
 
         SubclassRestriction template1 = new SubclassRestriction();
         template1.addRestriction("Organisation.organisationType", null);

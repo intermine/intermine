@@ -12,18 +12,21 @@ package org.flymine.ontology;
 
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.Restriction;
 import com.hp.hpl.jena.ontology.HasValueRestriction;
+import com.hp.hpl.jena.ontology.MaxCardinalityRestriction;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -306,7 +309,7 @@ public class OntologyUtil
             Map.Entry e = (Map.Entry) i.next();
             OntClass cls = (OntClass) e.getKey();
             Iterator j = ((Set) e.getValue()).iterator();
-            Set srs = new HashSet();
+            Set srs = new TreeSet(new SubclassRestrictionComparator());
             while (j.hasNext()) {
                 OntClass sub = (OntClass) j.next();
                 // no values in SubclassRestrictions so any that operate on same paths
@@ -352,7 +355,9 @@ public class OntologyUtil
                 OntClass sub = (OntClass) j.next();
                 SubclassRestriction sr = createSubclassRestriction(model, sub,
                                                       cls.getLocalName(), null, true);
-                restrictionMap.put(sr, sub.getURI());
+                if (sr.hasRestrictions()) {
+                    restrictionMap.put(sr, sub.getURI());
+                }
             }
         }
         return restrictionMap;
@@ -411,83 +416,106 @@ public class OntologyUtil
         return sr;
     }
 
-
-
     /**
      * Prepare format of OWL properties for generation of a FlyMine model:
      * a) change names of properties to be <domain>__<property>.
-     * b) where properties have more than one domain create a new property for each
-     *    class they relate to.
+     * b) where properties are inherited from a superclass add property
+     *    specifically to subclass.  This will be ignored by model generation
+     *    but is required for merging to be sufficiently flexible.
      * @param model the model to alter proerties in
      * @param ns the namespace within model that we are interested in
      */
     public static void reorganiseProperties(OntModel model, String ns) {
 
-        // 1. iterate over properties in model
-        // 2. iterate over domains of each proprty
-        //    a) clone the property for each business model class in the domain
-        //    b) setting name to be correct format property name
-        //    c) delete origninal property
-
-
-        // Jena ExtendedIterators break if an element is altered -> transfer props to set
-        Set properties = new HashSet();
+        // get set of all properties, excluding those defined as owl:inverseOf
+        Set props = new HashSet();
         Iterator propIter = model.listOntProperties();
         while (propIter.hasNext()) {
-            properties.add(propIter.next());
+            OntProperty prop = (OntProperty) propIter.next();
+            if (prop.getNameSpace().equals(ns) && prop.getInverseOf() == null) {
+                props.add(prop);
+            }
         }
-        propIter = properties.iterator();
+
+        propIter = props.iterator();
         while (propIter.hasNext()) {
             OntProperty prop = (OntProperty) propIter.next();
-            if (prop.getNameSpace().equals(ns) && hasMultipleDomains(prop)) {
-                Set domains = new HashSet();
-                 Iterator domainIter = prop.listDomain();
-                 while (domainIter.hasNext()) {
-                     domains.add((OntResource) domainIter.next());
-                 }
-                 domainIter = domains.iterator();
-                 while (domainIter.hasNext()) {
-                     OntResource domain = (OntResource) domainIter.next();
-                     renameProperty(prop, domain, model, domain.getNameSpace());
-                 }
-                 prop.remove();
-            } else if (prop.getNameSpace().equals(ns)) {
-                String name = generatePropertyName(prop, prop.getDomain());
-                if (!prop.getLocalName().equals(name)) {
-                    renameProperty(prop, prop.getDomain(), model, ns);
-                    prop.remove();
-                }
+            OntProperty newProp = renameProperty(prop, prop.getDomain(), model, ns);
+
+            if (!newProp.getURI().equals(prop.getURI())) {
+                prop.remove();
             }
         }
     }
 
-
     /**
      * Change the name of a property to be <domainName>__<propertyName> and
      * update any references to the property (e.g. Restrictions) with respect
-     * to change.
+     * to change.  Apply property (recurse) to any direct subclasses of domain.
      * @param prop the property to change name of
      * @param domain the domain of the property
      * @param model parent OntModel
      * @param ns namespace to create property name in
+     * @return the renamed property
      */
-    protected static void renameProperty(OntProperty prop, OntResource domain,
+    protected static OntProperty renameProperty(OntProperty prop, OntResource domain,
                                          OntModel model, String ns) {
-        OntProperty newProp = model.createOntProperty(ns + generatePropertyName(prop, domain));
-        newProp.setDomain(domain);
-        newProp.setRange(prop.getRange());
-        transferEquivalenceStatements(prop, newProp, model);
-        Iterator r = model.listRestrictions();
-        while (r.hasNext()) {
-            Restriction res = (Restriction) r.next();
-            if (res.onProperty(prop)) {
-                res.setOnProperty(newProp);
-            }
+        OntProperty newProp;
+        if (isObjectProperty(prop)) {
+            newProp = model.createObjectProperty(ns + generatePropertyName(prop, domain));
+        } else {
+            newProp = model.createDatatypeProperty(ns + generatePropertyName(prop, domain));
         }
+
+
+        newProp.setDomain(domain);
+        if (prop.getInverseOf() != null) {
+            newProp.setRange(prop.getInverseOf().getDomain());
+        } else {
+            newProp.setRange(prop.getRange());
+        }
+        transferEquivalenceStatements(prop, newProp, model);
         Iterator labelIter = prop.listLabels(null);
         while (labelIter.hasNext()) {
             newProp.addLabel(((Literal) labelIter.next()).getString(), null);
         }
+
+        // deal with restrictions on property
+        Set restrictions = new HashSet();
+        Iterator r = model.listRestrictions();
+        while (r.hasNext()) {
+            Restriction res = (Restriction) r.next();
+            if (res.onProperty(prop)) {
+                restrictions.add(res);
+            }
+        }
+        ((ExtendedIterator) r).close();
+
+        r = restrictions.iterator();
+        while (r.hasNext()) {
+            Restriction res = (Restriction) r.next();
+
+            // if just changing name of property just set onProperty
+            if (domain.equals(prop.getDomain())) {
+                res.setOnProperty(newProp);
+            } else if (res.isMaxCardinalityRestriction()) {
+                Restriction newRes = model.createMaxCardinalityRestriction(null, newProp,
+                  ((MaxCardinalityRestriction) res.as(MaxCardinalityRestriction.class))
+                                                                           .getMaxCardinality());
+                ((OntClass) domain.as(OntClass.class)).addSuperClass(newRes);
+            }
+        }
+
+        // apply property to direct subclasses
+        if (domain.canAs(OntClass.class)) {
+            Iterator subIter = ((OntClass) domain.as(OntClass.class)).listSubClasses(true);
+            while (subIter.hasNext()) {
+                newProp.addSubProperty(renameProperty(newProp, (OntResource) subIter.next(),
+                                                      model, ns));
+            }
+        }
+
+        return newProp;
     }
 
     /**

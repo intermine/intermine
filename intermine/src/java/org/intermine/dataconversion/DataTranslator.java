@@ -14,10 +14,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.HashMap;
-import java.util.Comparator;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntClass;
@@ -32,7 +30,6 @@ import org.flymine.xml.full.Reference;
 import org.flymine.xml.full.ReferenceList;
 import org.flymine.ontology.OntologyUtil;
 import org.flymine.ontology.SubclassRestriction;
-import org.flymine.util.StringUtil;
 import org.flymine.objectstore.ObjectStoreException;
 
 /**
@@ -45,20 +42,23 @@ import org.flymine.objectstore.ObjectStoreException;
 public class DataTranslator
 {
 
-    protected ItemStore srcItemStore;
-    protected OntModel model;
+    private ItemStore srcItemStore;
+    private OntModel model;
     protected Map equivMap;       // lookup equivalent resources - excludes restricted subclass info
     protected Map templateMap;    // map of src class URI/SubclassRestriction templates possible
     protected Map restrictionMap; // map of SubclassRestrictions to target restricted subclass URI
     protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
+    private String ns;
 
     /**
      * Construct with a srcItemStore to read from an ontology model.
      * Use model to set up src/tgt maps required during translation.
      * @param srcItemStore and ItemStore to run getItems() on
      * @param model the merged ontology model
+     * @param ns the target namespace in model
      */
-    public DataTranslator(ItemStore srcItemStore, OntModel model) {
+    public DataTranslator(ItemStore srcItemStore, OntModel model, String ns) {
+        this.ns = ns;
         this.srcItemStore = srcItemStore;
         this.model = model;
         this.templateMap = OntologyUtil.getRestrictionSubclassTemplateMap(model);
@@ -102,18 +102,14 @@ public class DataTranslator
         tgtItem.setIdentifier(srcItem.getIdentifier());
 
         // see if there are any SubclassRestriction template for this class
-        Set templates = new TreeSet(new SubclassRestrictionComparator());
-        Set tmp = (Set) templateMap.get(srcItem.getClassName());
-        if (tmp != null) {
-            templates.addAll(tmp);
-        }
-
+        Set templates = (Set) templateMap.get(srcItem.getClassName());
+        String newImps = "";
         String tgtClsName = null;
         if (templates != null && templates.size() > 0) {
             Iterator i = templates.iterator();
             while (i.hasNext() && tgtClsName == null) {
                 SubclassRestriction sr = buildSubclassRestriction(srcItem,
-                                                         (SubclassRestriction) i.next());
+                                                                  (SubclassRestriction) i.next());
                 tgtClsName = (String) restrictionMap.get(sr);
             }
         }
@@ -127,16 +123,8 @@ public class DataTranslator
         }
         tgtItem.setClassName(tgtClsName);
 
-        // is tgt item subclass of anything else?
-
-        //implementations
-        String imps = srcItem.getImplementations();
-        String newImps = "";
-        if (imps != null) {
-            for (Iterator i = StringUtil.tokenize(imps).iterator(); i.hasNext();) {
-                newImps += (String) equivMap.get((String) i.next()) + " ";
-            }
-        }
+        // sort out implementations
+        newImps += getImplementationsString(tgtClsName);
         tgtItem.setImplementations(newImps.trim());
 
         //attributes
@@ -230,7 +218,7 @@ public class DataTranslator
 
     /**
      * Get URI of a target property given parent class and source property URI.
-     * First examines restricted subclasses then uses equivalence map if no value found.
+     * First examines class/property then uses equivalence map if no value found.
      * @param clsURI URI of property domain in source model
      * @param srcPropURI URI of property in source model
      * @return corresponding URI for property in target model
@@ -242,7 +230,6 @@ public class DataTranslator
             tgtPropURI = (String) propMap.get(srcPropURI);
         }
         if (tgtPropURI == null) {
-            // change to storing strings for performance
             tgtPropURI = (String) equivMap.get(srcPropURI);
         }
         return tgtPropURI;
@@ -250,27 +237,31 @@ public class DataTranslator
 
 
     /**
-     * Build a map from restricted subclass URI (target namespace) to a map of src
-     * property URI to tgt property URI.  Contructed using prebuilt restrictionMap
-     * and equivalence statements in model.
+     * Classes in target OWL model specifically inherit superclass properties (inherited
+     * properties are subPropertyOf parent property).  Build a map of class/
+     * src_property_uri/tgt_property_uri.
      */
     protected void buildPropertiesMap() {
         clsPropMap = new HashMap();
 
-        // restrictionMap.values() is set of all restricted subclasses in target namespace
-        Iterator clsIter = restrictionMap.values().iterator();
+        Iterator clsIter = model.listClasses();
         while (clsIter.hasNext()) {
-            OntClass cls = model.getOntClass((String) clsIter.next());
-            Iterator propIter = model.listOntProperties();
-            Map propMap = new HashMap();
-            while (propIter.hasNext()) {
-                OntProperty prop = (OntProperty) propIter.next();
-                if (prop.hasDomain(cls)) {
-                    propMap.put(prop.getEquivalentProperty().getURI(), prop.getURI());
+            OntClass cls = (OntClass) clsIter.next();
+            if (!cls.isAnon() && cls.getNameSpace().equals(ns)) {
+                Map propMap = new HashMap();
+                Iterator propIter = cls.listDeclaredProperties(false);
+                while (propIter.hasNext()) {
+                    OntProperty prop = (OntProperty) propIter.next();
+                    if (prop.getNameSpace().equals(ns) && prop.getSuperProperty() != null) {
+                        Iterator equivIter = prop.listEquivalentProperties();
+                        while (equivIter.hasNext()) {
+                            propMap.put(((OntProperty) equivIter.next()).getURI(), prop.getURI());
+                        }
+                    }
                 }
-            }
-            if (!propMap.isEmpty()) {
-                clsPropMap.put(cls.getURI(), propMap);
+                if (!propMap.isEmpty()) {
+                    clsPropMap.put(cls.getURI(), propMap);
+                }
             }
         }
     }
@@ -307,34 +298,16 @@ public class DataTranslator
         }
     }
 
-
-    /**
-     * Compare two SubclassRestrictions by number of restrictions, more
-     * restrictions comes first.  Used to ensure most detailed restrictions
-     * are examied first, others may be a subset of this.
-     */
-    protected class SubclassRestrictionComparator implements Comparator
-    {
-        /**
-         * Compare two SubclassRestrictions by number of restrictions, more
-         * restrictions comes first.
-         * @param a an object to compare
-         * @param b an object to compare
-         * @return integer result of comparason
-         */
-        public int compare(Object a, Object b) {
-            if (a instanceof SubclassRestriction && b instanceof SubclassRestriction) {
-                return compare ((SubclassRestriction) a, (SubclassRestriction) b);
-            } else {
-                throw new IllegalArgumentException("Cannot compare: " + a.getClass().getName()
-                                                   + " and " + b.getClass().getName());
+    private String getImplementationsString(String clsURI) {
+        String imps = "";
+        OntClass cls = model.getOntClass(clsURI);
+        Iterator superIter = cls.listSuperClasses(false);
+        while (superIter.hasNext()) {
+            OntClass sup = (OntClass) superIter.next();
+            if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
+                imps += sup.getURI() + " ";
             }
         }
-
-        // reverse natural order
-        private int compare(SubclassRestriction a, SubclassRestriction b) {
-            return -(new Integer(a.getRestrictions().size())
-                      .compareTo(new Integer(b.getRestrictions().size())));
-        }
+        return imps;
     }
 }

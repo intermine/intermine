@@ -615,7 +615,7 @@ public class OntologyUtilTest extends TestCase
     }
 
 
-    public void testReorganisePropertiesMultipleDomains() throws Exception {
+    public void testReorganisePropertiesSubclasses() throws Exception {
         String owl = "@prefix : <" + ns + "> ." + ENDL
             + ENDL
             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
@@ -623,43 +623,52 @@ public class OntologyUtilTest extends TestCase
             + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
             + "@prefix null:  <http://www.flymine.org.model/null#> ." + ENDL
             + ENDL
-            + ":Company a owl:Class ." + ENDL
-            + ":Address a owl:Class ." + ENDL
-            + ":Department a owl:Class ." + ENDL
-            + "null:Person a owl:Class ." + ENDL
+            + ":Company a owl:Class ;" + ENDL
+            + "         rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:maxCardinality \"1\" ;" + ENDL
+            + "              owl:onProperty :address ] ." + ENDL
             + ":address a owl:ObjectProperty ;" + ENDL
-            + "           rdfs:domain :Company , :Department, null:Person ;" + ENDL
-            + "           rdfs:range :Address ." + ENDL;
+            + "           rdfs:domain :Company ;" + ENDL
+            + "           rdfs:range :Address ." + ENDL
+            + ":name a owl:DatatypeProperty ;" + ENDL
+            + "      rdfs:domain :Company ;" + ENDL
+            + "      rdfs:range rdfs:Literal ." + ENDL
+            + ":LtdCompany a owl:Class ;" + ENDL
+            + "      rdfs:subClassOf :Company ." + ENDL
+            + ":BigLtdCompany a owl:Class ;" + ENDL
+            + "      rdfs:subClassOf :LtdCompany ." + ENDL
+            + ":Address a owl:Class ." + ENDL;
 
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new StringReader(owl), null, "N3");
 
         OntologyUtil.reorganiseProperties(model, ns);
+        //        model.write(new FileWriter(File.createTempFile("props", "")), "N3");
 
         assertNotNull(model.getOntClass(ns + "Company"));
+        assertNotNull(model.getOntClass(ns + "LtdCompany"));
+        assertNotNull(model.getOntClass(ns + "BigLtdCompany"));
         assertNull(model.getOntProperty(ns + "address"));
+        assertNull(model.getOntProperty(ns + "name"));
         assertNotNull(model.getOntProperty(ns + "Company__address"));
-        assertNotNull(model.getOntProperty(ns + "Department__address"));
-        assertNull(model.getOntProperty(ns + "Person__address"));
+        assertNotNull(model.getOntProperty(ns + "LtdCompany__address"));
+        assertNotNull(model.getOntProperty(ns + "BigLtdCompany__address"));
+        assertNotNull(model.getOntProperty(ns + "Company__name"));
+        assertNotNull(model.getOntProperty(ns + "LtdCompany__name"));
+        assertNotNull(model.getOntProperty(ns + "BigLtdCompany__name"));
 
         OntClass com = model.getOntClass(ns + "Company");
         OntProperty comAdd = model.getOntProperty(ns + "Company__address");
-        Iterator i = comAdd.listDomain();
-        assertTrue(com.equals((Resource) i.next()));
-        assertFalse(i.hasNext());
-        OntClass add = model.getOntClass(ns + "Address");
-        i = comAdd.listRange();
-        assertTrue(add.equals((Resource) i.next()));
-        assertFalse(i.hasNext());
+        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, comAdd, com));
 
-        OntClass dep = model.getOntClass(ns + "Department");
-        OntProperty depAdd = model.getOntProperty(ns + "Department__address");
-        i = depAdd.listDomain();
-        assertTrue(dep.equals((Resource) i.next()));
-        assertFalse(i.hasNext());
-        i = depAdd.listRange();
-        assertTrue(add.equals((Resource) i.next()));
-        assertFalse(i.hasNext());
+        OntClass ltd = model.getOntClass(ns + "LtdCompany");
+        OntProperty ltdAdd = model.getOntProperty(ns + "LtdCompany__address");
+        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, ltdAdd, ltd));
+
+        OntClass big = model.getOntClass(ns + "BigLtdCompany");
+        OntProperty bigAdd = model.getOntProperty(ns + "BigLtdCompany__address");
+        assertTrue(OntologyUtil.hasMaxCardinalityOne(model, bigAdd, big));
     }
 
 
