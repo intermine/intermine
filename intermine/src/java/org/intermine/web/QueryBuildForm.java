@@ -184,54 +184,38 @@ public class QueryBuildForm extends ActionForm
         
         DisplayQueryClass displayQueryClass = (DisplayQueryClass) queryClasses.get(editingAlias);
         ActionErrors errors = new ActionErrors();
-        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         Model model = ((DisplayModel) session.getAttribute("model")).getModel();
 
-        for (Iterator i = fieldValues.keySet().iterator(); i.hasNext();) {
+        ClassDescriptor cd = model.getClassDescriptorByName(displayQueryClass.getType());
+        Class selectClass = cd.getType();
+
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+
+        for (Iterator i = displayQueryClass.getConstraintNames().iterator(); i.hasNext();) {
             String fieldName = (String) i.next();
 
             Object fieldValue = getFieldValue(fieldName);
+            Object fieldOp = getFieldOp(fieldName);
 
-            Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
+            if (fieldValue == null || fieldOp == null) {
+                continue;
+            }
+            
+            Integer opCode = Integer.valueOf((String) fieldOp);
             ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
             parsedFieldOps.put(fieldName, op);
-            String realFieldName = getRealFieldName(fieldName);
+            String realFieldName = QueryBuildHelper.getFieldName(fieldName);
 
-            ClassDescriptor cd = model.getClassDescriptorByName(displayQueryClass.getType());
-            Class selectClass = cd.getType();
             Map fieldDescriptors = model.getFieldDescriptorsForClass(selectClass);
             FieldDescriptor fd = (FieldDescriptor) fieldDescriptors.get(realFieldName);
 
             if (fd.isAttribute()) {
-                Class fieldClass = TypeUtil.instantiate(((AttributeDescriptor) fd).getType());
+                ActionError actionError =
+                    validateAttribute((AttributeDescriptor) fd, op, fieldName, fieldValue,
+                                      locale);
 
-                try {
-                    if (BagConstraint.VALID_OPS.contains(op)) {
-                        // the value has to be the name of a saved bag or a saved query.  leave it
-                        // as a String for now
-                        parsedFieldValues.put(fieldName, fieldValue);
-                    } else {
-                        String stringFieldValue = (String) fieldValue;
-
-                        if (fieldClass.equals(Date.class)) {
-                            DateFormat dateFormat =
-                                DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
-                                                               locale);
-                            parsedFieldValues.put(fieldName, dateFormat.parse(stringFieldValue));
-                        } else {
-                            parsedFieldValues.put(fieldName,
-                                                  TypeUtil.stringToObject(fieldClass,
-                                                                          stringFieldValue));
-                        }
-                    }
-                } catch (ParseException e) {
-                    DateFormat df =
-                        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
-                    Date dateExample = new GregorianCalendar().getTime();
-                    
-                    errors.add(fieldName, new ActionError("error.date", fieldValue, dateExample));
-                } catch (NumberFormatException e) {
-                    errors.add(fieldName, new ActionError("error." + fieldClass, fieldValue));
+                if (actionError != null) {
+                    errors.add(fieldName, actionError);
                 }
             }
         }
@@ -240,13 +224,54 @@ public class QueryBuildForm extends ActionForm
     }
 
     /**
-     * Return the field name (in an object) for a given field name in the form.
+     * Check that one field is valid and update parsedFieldOps and parsedFieldValues.
      *
-     * @param fieldName the field name from a form.
-     * @return the field name as it appears in the class.
+     * @param attributeDescriptor the descriptor used to get type information for parsing the
+     *        fieldValue
+     * @param op the ConstraintOp on this field
+     * @param fieldName the name of the field from the form
+     * @param fieldName the value from the form
+     * @param locale the current session Locale
+     * @return an ActionError describing a parse problem, or null if there are no problems
      */
-    public static String getRealFieldName(String fieldName) {
-        return fieldName.substring(0, fieldName.lastIndexOf("_"));
+    private ActionError validateAttribute(AttributeDescriptor attributeDescriptor,
+                                          ConstraintOp op, String fieldName, Object fieldValue,
+                                          Locale locale) {
+        Class fieldClass = TypeUtil.instantiate(attributeDescriptor.getType());
+
+        parsedFieldOps.put(fieldName, op);
+
+        try {
+            if (BagConstraint.VALID_OPS.contains(op)) {
+                // the value has to be the name of a saved bag or a saved query.  leave it
+                // as a String for now
+                parsedFieldValues.put(fieldName, fieldValue);
+            } else {
+                String stringFieldValue = (String) fieldValue;
+                        
+                if (stringFieldValue != null) {
+                    if (fieldClass.equals(Date.class)) {
+                        DateFormat dateFormat =
+                            DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
+                                                           locale);
+                        parsedFieldValues.put(fieldName, dateFormat.parse(stringFieldValue));
+                    } else {
+                        parsedFieldValues.put(fieldName, TypeUtil.stringToObject(fieldClass,
+                                                                                 stringFieldValue));
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            Date dateExample = new GregorianCalendar().getTime();
+
+            return new ActionError("error.date", fieldValue, dateExample);
+        } catch (NumberFormatException e) {
+            String shortClassName =
+                fieldClass.getName().substring(fieldClass.getName().lastIndexOf(".") + 1);
+            return new ActionError("errors." + shortClassName.toLowerCase(), fieldValue);
+        }
+
+        return null;
     }
 
     private Map parsedFieldValues = new HashMap();
