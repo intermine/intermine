@@ -59,9 +59,10 @@
           <fmt:message key="view.showresults"/>
         </html:link>
       </div>
-      <div>
-        <tiles:get name="saveQuery"/>
-      </div>
+    </div>
+    <br/>
+    <div>
+      <tiles:get name="saveQuery"/>
     </div>
   </c:otherwise>
 </c:choose>
