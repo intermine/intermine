@@ -240,6 +240,7 @@ public class SimpleConstraint extends Constraint
      * operators for which it makes sense only to provide the enumerated values
      * and not allow the user to enter an arbitrary string.
      *
+     * @param arg the argument type
      * @return  constraint operators that will only accept an enumerated value
      */
     public static List fixedEnumOps(Class arg) {
