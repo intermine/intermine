@@ -65,7 +65,7 @@
       </fileset>
     </chmod>
     <exec executable="rsync">
-      <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
+      <arg line="-e ssh -Cavz --exclude api --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
 </target>
 
