@@ -19,6 +19,7 @@ import org.acedb.staticobj.StaticAceObject;
 import java.lang.reflect.Field;
 
 import org.flymine.FlyMineException;
+import org.flymine.metadata.Model;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ModelUtil;
 
@@ -32,12 +33,12 @@ public class AceDataLoader extends AbstractDataLoader
      * Static method to unmarshall business objects from a given xml file and call
      * store on each.
      *
-     * @param model name of data model being used
+     * @param model data model being used
      * @param iw writer to handle storing data
      * @param source access to AceDb
      * @throws FlyMineException if anything goes wrong with xml or storing
      */
-    public static void processAce(String model, IntegrationWriter iw,
+    public static void processAce(Model model, IntegrationWriter iw,
                            AceURL source) throws FlyMineException {
         try {
             Ace.registerDriver(new org.acedb.socket.SocketDriver());
@@ -71,14 +72,13 @@ public class AceDataLoader extends AbstractDataLoader
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected static Object processAceObject(AceObject aceObject, String model)
+    protected static Object processAceObject(AceObject aceObject, Model model)
         throws AceException, FlyMineException {
         Object currentObject = null;
         try {
             String clazzName = ((AceObject) aceObject).getClassName();
             if (model != null) {
-                clazzName = "org.flymine.model." + model + "."
-                    + clazzName;
+                clazzName = model.getModelName() + "." + clazzName;
             }
             currentObject = Class.forName(clazzName).newInstance();
             setField(currentObject, "identifier", aceObject.getName());
@@ -105,7 +105,7 @@ public class AceDataLoader extends AbstractDataLoader
      * @throws AceException if an error occurs with the Ace data
      * @throws FlyMineException if object cannot be instantiated
      */
-    protected static void processAceNode(AceNode aceNode, Object currentObject, String model)
+    protected static void processAceNode(AceNode aceNode, Object currentObject, Model model)
         throws AceException, FlyMineException {
         String nodeType;
         Object nodeValue;
