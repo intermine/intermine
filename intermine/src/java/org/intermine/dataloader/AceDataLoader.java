@@ -10,10 +10,10 @@
 
 package org.flymine.dataloader;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -28,10 +28,7 @@ import org.acedb.StringValue;
 import org.acedb.IntValue;
 import org.acedb.FloatValue;
 import org.acedb.Reference;
-
 import org.acedb.staticobj.StaticAceObject;
-
-import java.lang.reflect.Field;
 
 import org.flymine.FlyMineException;
 import org.flymine.util.TypeUtil;
@@ -41,9 +38,7 @@ import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.modelproduction.acedb.AceModelParser;
 
-//import org.flymine.model.acedb.DateType;
-//import org.flymine.model.acedb.Int;
-//import org.flymine.model.acedb.Text;
+import org.apache.log4j.Logger;
 
 /**
  * DataLoader for AceDB data
@@ -51,42 +46,25 @@ import org.flymine.modelproduction.acedb.AceModelParser;
  */
 public class AceDataLoader extends DataLoader
 {
-    protected static final org.apache.log4j.Logger LOG;
+    protected static final Logger LOG = Logger.getLogger(AceDataLoader.class);
 
-    protected String packageName;
-    // The model is stored here so that we can easily fake one for testing purposes
+    protected static final String DATETYPE = "DateType";
+    protected static final String FLOAT = "Float";
+    protected static final String INT = "Int";
+    protected static final String TEXT = "Text";
+
     protected Model model;
 
-    private static final Class DATETYPE;
-    private static final Class FLOAT;
-    private static final Class INT;
-    private static final Class TEXT;
-
-    static {
-        LOG = org.apache.log4j.Logger.getLogger(AceDataLoader.class);
-        Class tDatetype, tFloat, tInt, tText;
-        tDatetype = null;
-        tFloat = null;
-        tInt = null;
-        tText = null;
-        try {
-            tDatetype = Class.forName("org.flymine.model.acedb.DateType");
-            tFloat = Class.forName("org.flymine.model.acedb.Float");
-            tInt = Class.forName("org.flymine.model.acedb.Int");
-            tText = Class.forName("org.flymine.model.acedb.Text");
-        } catch (Exception e) {
-            LOG.error(e.getMessage() + " while looking for acedb primitive objects");
-        }
-        DATETYPE = tDatetype;
-        FLOAT = tFloat;
-        INT = tInt;
-        TEXT = tText;
-    }
+    protected String pkgName; //as ace namespace is flat, assume all classes in same package
+    protected String dateType, floatType, intType, textType;
 
     /**
-     * No-arg constructor for testing purposes
+     * Constructor for testing purposes
+     * @param model a Model independent of an IntegrationWriter
      */
-    protected AceDataLoader() {
+    protected AceDataLoader(Model model) {
+        this.model = model;
+        initialise();
     }
 
     /**
@@ -95,7 +73,19 @@ public class AceDataLoader extends DataLoader
     public AceDataLoader(IntegrationWriter iw) {
         super(iw);
         model = iw.getObjectStore().getModel();
+        initialise();
     }
+
+    /**
+     * Initialise the built-in types
+     */
+    protected void initialise() {
+        pkgName = TypeUtil.packageName(((String) model.getClassNames().iterator().next())) + ".";
+        dateType = pkgName + DATETYPE;
+        floatType = pkgName + FLOAT;
+        intType = pkgName + INT;
+        textType = pkgName + TEXT;
+    }        
 
     /**
      * Static method to unmarshall business objects from a given Ace server and call
@@ -111,29 +101,18 @@ public class AceDataLoader extends DataLoader
             // Go through each class in the model and get a dump of the objects of
             // that class
 
-            Collection clazzNames = model.getClassNames();
-            Iterator clazzIter = clazzNames.iterator();
+            Collection clsNames = model.getClassNames();
+            Iterator clazzIter = clsNames.iterator();
             while (clazzIter.hasNext()) {
-                String clazzName = (String) clazzIter.next();
+                String clsName = (String) clazzIter.next();
                 if (true) {
-                   /* !("org.flymine.model.acedb.Clone".equals(clazzName)
-                            || "org.flymine.model.acedb.Contig".equals(clazzName)
-                            || "org.flymine.model.acedb.Oligo".equals(clazzName)
-                            || "org.flymine.model.acedb.DNA".equals(clazzName)
-                            || "org.flymine.model.acedb.Keyword".equals(clazzName)
-                            || "org.flymine.model.acedb.LongText".equals(clazzName)
-                            || "org.flymine.model.acedb.Peptide".equals(clazzName)
-                            || "org.flymine.model.acedb.Comment".equals(clazzName))) {*/
-                    packageName = TypeUtil.packageName(clazzName);
-
                     String aceClazzName = AceModelParser
-                        .unformatAceName(TypeUtil.unqualifiedName(clazzName));
-                    AceURL objURL = source.relativeURL(TypeUtil.unqualifiedName(aceClazzName));
+                        .unformatAceName(TypeUtil.unqualifiedName(clsName));
+                    AceURL objURL = source.relativeURL(aceClazzName);
                     AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
                     if (fetchedAceObjects != null) {
                         LOG.debug("Fetched " + fetchedAceObjects.size() + " "
                                   + aceClazzName + " objects");
-                        //Collection objects = processAceObjects(fetchedAceObjects);
                         Iterator aceObjIter = fetchedAceObjects.iterator();
                         while (aceObjIter.hasNext()) {
                             AceObject aceObj = null;
@@ -154,7 +133,7 @@ public class AceDataLoader extends DataLoader
                         LOG.debug("No " + aceClazzName + " objects found");
                     }
                 } else {
-                    LOG.error("Not bothering with class " + clazzName);
+                    LOG.error("Not bothering with class " + clsName);
                 }
             }
 
@@ -162,35 +141,6 @@ public class AceDataLoader extends DataLoader
             throw new FlyMineException(e);
         }
     }
-
-    /**
-     * Process a set of Ace objects
-     *
-     * @param set the set of Ace objects to process
-     * @return a set of Java objects
-     *
-     * @throws AceException if an error occurs with the Ace data
-     * @throws FlyMineException if an object cannot be instantiated
-     */
-    /*
-    protected Set processAceObjects(AceSet set)
-        throws AceException, FlyMineException {
-        if (set == null) {
-            throw new NullPointerException("set must not be null");
-        }
-
-        HashSet ret = new HashSet();
-        Iterator aceObjIter = set.iterator();
-        while (aceObjIter.hasNext()) {
-            // Convert to Java object
-            AceObject aceObj = (AceObject) aceObjIter.next();
-            LOG.debug("Processing object: " + aceObj.getName());
-            Object obj = processAceObject(aceObj);
-            ret.add(obj);
-        }
-        return ret;
-    }
-*/
 
     /**
      * Process an AceObject. This will create a new instance of the
@@ -211,38 +161,35 @@ public class AceDataLoader extends DataLoader
         }
         Object currentObject = null;
         try {
-            String clazzName = AceModelParser.formatAceName(((AceObject) aceObject)
+            String clsName = AceModelParser.formatAceName(((AceObject) aceObject)
                                                             .getClassName());
             Object identifier = aceObject.getName();
             if ("".equals(identifier)) {
                 identifier = null;
             }
-            if ("boolean".equals(clazzName)) {
-                clazzName = "java.lang.Boolean";
+            if ("boolean".equals(clsName)) {
+                clsName = "java.lang.Boolean";
                 currentObject = Boolean.valueOf((String) identifier);
             } else {
-                if ("Date".equals(clazzName)) {
-                    clazzName = packageName + ".DateType";
+                if ("Date".equals(clsName)) {
+                    clsName = "DateType";
                     if (identifier instanceof String) {
                         identifier = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"))
                             .parse((String) identifier);
                     }
                     LOG.error("Handled new Date object -> DateType");
-                } else if ("String".equals(clazzName)) {
-                    clazzName = packageName + ".Text";
+                } else if ("String".equals(clsName)) {
+                    clsName = "Text";
                     LOG.error("Handled new String object -> Text");
-                } else {
-                    clazzName = packageName + "." + clazzName;
                 }
-                currentObject = Class.forName(clazzName).newInstance();
+                clsName = pkgName + clsName;
+                try {
+                    currentObject = Class.forName(clsName).newInstance();
+                } catch (Exception e) {
+                    LOG.error(e.toString());
+                }
                 setField(currentObject, "identifier", identifier);
             }
-        } catch (ClassNotFoundException e) {
-            throw new FlyMineException(e);
-        } catch (InstantiationException e) {
-            throw new FlyMineException(e);
-        } catch (IllegalAccessException e) {
-            throw new FlyMineException(e);
         } catch (ParseException e) {
             throw new FlyMineException(e);
         }
@@ -263,7 +210,6 @@ public class AceDataLoader extends DataLoader
      */
     protected void processAceNode(AceNode aceNode, Object currentObject)
         throws AceException, FlyMineException {
-        String nodeType;
         Object nodeValue;
         String nodeName;
         if (aceNode instanceof Reference) {
@@ -273,8 +219,6 @@ public class AceDataLoader extends DataLoader
             nodeValue = aceNode.getName();
             // nodeClass is the class of the referred to object, and is part of the target AceURL
             String nodeClass = ((Reference) aceNode).getTarget().getPath();
-            //          LOG.info("ACE: " + nodeClass);
-
             nodeClass = nodeClass.substring(0, nodeClass.indexOf("/", 1));
             // Set up a dummy AceObject to encapsulate this info and convert to proper Object
             AceObject referredToAceObject = new StaticAceObject((String) nodeValue,
@@ -284,9 +228,8 @@ public class AceDataLoader extends DataLoader
         } else if (aceNode instanceof DateValue) {
             try {
                 nodeName = getName(aceNode);
-                nodeValue = DATETYPE.getConstructor(new Class[] {}).newInstance(new Object[] {});
-                DATETYPE.getMethod("setIdentifier", new Class[] {Date.class})
-                    .invoke(nodeValue, new Object[] {((DateValue) aceNode).toDate()});
+                nodeValue = instantiate(dateType);
+                TypeUtil.setFieldValue(nodeValue, "identifier", ((DateValue) aceNode).toDate());
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
                 throw new FlyMineException(e);
@@ -294,9 +237,9 @@ public class AceDataLoader extends DataLoader
         } else if (aceNode instanceof FloatValue) {
             try {
                 nodeName = getName(aceNode);
-                nodeValue = FLOAT.getConstructor(new Class[] {}).newInstance(new Object[] {});
-                FLOAT.getMethod("setIdentifier", new Class[] {Float.class})
-                    .invoke(nodeValue, new Object[] {new Float(((FloatValue) aceNode).toFloat())});
+                nodeValue = instantiate(floatType);
+                TypeUtil.setFieldValue(nodeValue, "identifier",
+                                       new Float(((FloatValue) aceNode).toFloat()));
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
                 throw new FlyMineException(e);
@@ -304,9 +247,9 @@ public class AceDataLoader extends DataLoader
         } else if (aceNode instanceof IntValue) {
             try {
                 nodeName = getName(aceNode);
-                nodeValue = INT.getConstructor(new Class[] {}).newInstance(new Object[] {});
-                INT.getMethod("setIdentifier", new Class[] {Integer.class})
-                    .invoke(nodeValue, new Object[] {new Integer(((IntValue) aceNode).toInt())});
+                nodeValue = instantiate(intType);
+                TypeUtil.setFieldValue(nodeValue, "identifier",
+                                       new Integer(((IntValue) aceNode) .toInt()));
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
                 throw new FlyMineException(e);
@@ -314,9 +257,8 @@ public class AceDataLoader extends DataLoader
         } else if (aceNode instanceof StringValue) {
             try {
                 nodeName = getName(aceNode);
-                nodeValue = TEXT.getConstructor(new Class[] {}).newInstance(new Object[] {});
-                TEXT.getMethod("setIdentifier", new Class[] {String.class})
-                    .invoke(nodeValue, new Object[] {((StringValue) aceNode).toString()});
+                nodeValue = instantiate(textType);
+                TypeUtil.setFieldValue(nodeValue, "identifier", ((StringValue) aceNode).toString());
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
                 throw new FlyMineException(e);
@@ -325,7 +267,7 @@ public class AceDataLoader extends DataLoader
             nodeName = aceNode.getName();
             // Give it a chance to set a Boolean flag
             Field nodeField = TypeUtil.getField(currentObject.getClass(), nodeName);
-            if ((nodeField != null) && (nodeField.getType() == Boolean.class)) {
+            if ((nodeField != null) && (nodeField.getType().equals(Boolean.TYPE))) { // primitive!
                 setField(currentObject, nodeName, Boolean.TRUE);
             } else if ((nodeField != null) && !hasChildValues(aceNode)) {
                 // Is it a hash? If it is, currentObject will have a field of this name
@@ -366,7 +308,6 @@ public class AceDataLoader extends DataLoader
         } else {
             throw new FlyMineException("Node type " + aceNode.getClass() + " not dealt with");
         }
-
     }
 
     /**
@@ -379,30 +320,17 @@ public class AceDataLoader extends DataLoader
      */
     protected void setField(Object target, String fieldName, Object fieldValue)
         throws FlyMineException {
-        LOG.debug("Setting field: " + fieldName + "=" + fieldValue
-                + (fieldValue == null ? "" : " (a " + fieldValue.getClass().getName() + ")"));
         try {
             Field field = TypeUtil.getField(target.getClass(), fieldName);
             if (field != null) {
-                Class fieldType = field.getType();
-                if (Collection.class.isAssignableFrom(fieldType)) {
+                if (Collection.class.isAssignableFrom(field.getType())) {
                     LOG.debug("Adding to Collection");
                     ((Collection) TypeUtil.getFieldValue(target, fieldName)).add(fieldValue);
                 } else {
                     LOG.debug("Setting value");
                     try {
-                        if (DATETYPE.isInstance(fieldValue)) {
-                            fieldValue = DATETYPE.getMethod("getIdentifier", new Class[] {})
-                                .invoke(fieldValue, new Object[] {});
-                        } else if (FLOAT.isInstance(fieldValue)) {
-                            fieldValue = FLOAT.getMethod("getIdentifier", new Class[] {})
-                                .invoke(fieldValue, new Object[] {});
-                        } else if (TEXT.isInstance(fieldValue)) {
-                            fieldValue = TEXT.getMethod("getIdentifier", new Class[] {})
-                                .invoke(fieldValue, new Object[] {});
-                        } else if (INT.isInstance(fieldValue)) {
-                            fieldValue = INT.getMethod("getIdentifier", new Class[] {})
-                                .invoke(fieldValue, new Object[] {});
+                        if (fieldValue != null && isBuiltIn(fieldValue.getClass())) {
+                            fieldValue = TypeUtil.getFieldValue(fieldValue, "identifier");
                         }
                     } catch (Exception e) {
                         throw new FlyMineException(e);
@@ -425,27 +353,25 @@ public class AceDataLoader extends DataLoader
     /**
      * Get the name of the parent of an AceNode, with suffix if a multi-valued tag
      *
-     * @param aceNode the node
+     * @param node the node
      * @return the name of the parent of the node, or the parent's name if this node is a data node
      * @throws AceException if error occurs with the Ace data
      */
-    protected String getName(AceSet aceNode) throws AceException {
-        String name = aceNode.getParent().getName();
-        AceSet node = aceNode;
+    protected String getName(AceSet node) throws AceException {
+        String name = node.getParent().getName();
         int count = 1;
-
         while (((node = node.getParent()) != null)
-               && ((node instanceof StringValue)
-                   || (node instanceof IntValue)
-                   || (node instanceof FloatValue)
-                   || (node instanceof Reference))) {
+               && (node instanceof DateValue
+                   || node instanceof FloatValue
+                   || node instanceof IntValue
+                   || node instanceof StringValue
+                   || node instanceof Reference)) {
             count++;
         }
         if (count > 1) {
             name = node.getName() + "_" + count;
         }
         return name;
-
     }
 
     /**
@@ -459,17 +385,37 @@ public class AceDataLoader extends DataLoader
         Iterator childIter = node.iterator();
         while (childIter.hasNext()) {
             AceNode childNode = (AceNode) childIter.next();
-            if ((childNode instanceof StringValue)
-                || (childNode instanceof IntValue)
-                || (childNode instanceof FloatValue)
-                || (childNode instanceof Reference)
-                || (childNode instanceof DateValue)) {
+            if (childNode instanceof DateValue
+                || childNode instanceof FloatValue
+                || childNode instanceof IntValue
+                || childNode instanceof StringValue
+                || childNode instanceof Reference) {
                 return true;
             }
         }
         return false;
     }
 
+    private Object instantiate(String clsName) {
+        Object obj = null;
+        try {
+            obj = Class.forName(clsName).newInstance();
+        } catch (Exception e) {
+            LOG.error("Cannot instantiate '" + clsName + "':" + e);
+        }
+        return obj;
+    }
+
+    private boolean isBuiltIn(Class c) {
+        String clsName = c.getName();
+        if (dateType.equals(clsName)
+            || floatType.equals(clsName)
+            || intType.equals(clsName)
+            || textType.equals(clsName)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Used for testing access to an AceDB server
@@ -477,6 +423,7 @@ public class AceDataLoader extends DataLoader
      * @param args command line arguments
      * @throws Exception if an error occurs
      */
+    /*
     public static void main(String [] args) throws Exception {
         if (args.length != 5) {
             throw new RuntimeException("AceDataLoader hostname port username password classname");
@@ -486,33 +433,20 @@ public class AceDataLoader extends DataLoader
         String port = args[1];
         String user = args[2];
         String passwd = args[3];
-        String clazzName = args[4];
+        String clsName = args[4];
 
-        // URL _dbURL = new URL("acedb://" + host + ":" + port);
-        // AceURL dbURL = new AceURL(_dbURL, user, passwd, null);
         AceURL dbURL = new AceURL("acedb://" + user + ':' + passwd + '@' + host + ':' + port);
 
         Ace.registerDriver(new org.acedb.socket.SocketDriver());
-        AceURL objURL = dbURL.relativeURL(clazzName);
+        AceURL objURL = dbURL.relativeURL(clsName);
         AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
 
-        //        Collection col = processAceObjects(fetchedAceObjects, null);
-
-
         Iterator iter = fetchedAceObjects.iterator();
-
-        java.io.PrintStream out = System.out;
-        
         while (iter.hasNext()) {
             AceNode node = (AceNode) iter.next();
+            System.
             out.println(node);
         }
-
-        //Model model = org.flymine.modelproduction.acedb.AceModelParser.readerToModel(
-        //        new java.io.BufferedReader(new java.io.FileReader("models.wrm")));
-//
-        //Set objs = processAceObjects(fetchedAceObjects, model);
-//
-        //out.println(objs);
     }
+    */
 }

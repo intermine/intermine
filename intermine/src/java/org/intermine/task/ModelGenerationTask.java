@@ -29,7 +29,6 @@ import org.flymine.metadata.Model;
  *
  * @author Richard Smith
  */
-
 public class ModelGenerationTask extends Task
 {
     protected String modelName;
@@ -69,7 +68,6 @@ public class ModelGenerationTask extends Task
         this.source = source;
     }
 
-
     /**
      * @see Task#execute
      * @throws BuildException
@@ -93,16 +91,16 @@ public class ModelGenerationTask extends Task
         }
 
         ModelParser parser = null;
-        Model model = null;
 
         if (type.equals("xmi")) {
             parser = new XmiParser();
         } else if (type.equals("acedb")) {
-            parser = new AceModelParser();
+            parser = new AceModelParser(modelName);
         } else {
             throw new BuildException("Unrecognised value for type: " + type);
         }
 
+        Model model = null;
 
         try {
             FileInputStream fis = new FileInputStream(source);
@@ -123,8 +121,5 @@ public class ModelGenerationTask extends Task
         } catch (Exception e) {
             throw new BuildException(e);
         }
-
     }
-
-
 }

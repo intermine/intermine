@@ -29,6 +29,8 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.MetaDataException;
 
+import org.apache.log4j.Logger;
+
 /**
  * Parses the AceDB model file given, and produces a Flymine model.
  *
@@ -36,7 +38,26 @@ import org.flymine.metadata.MetaDataException;
  */
 public class AceModelParser implements ModelParser
 {
-    private static final String PACKAGE = "org.flymine.model.acedb.";
+    protected static final Logger LOG = Logger.getLogger(AceModelParser.class);
+
+    protected String modelName, pkgName;
+
+    /**
+     * No-arg constructor for testing purposes
+     */
+    protected AceModelParser() {
+    }
+
+    /**
+     * Constructor that takes the modelName - required because not available from wrm file
+     * but necessary to name ClassDescriptors correctly
+     * 
+     * @param modelName the name of the model to produce 
+     */
+    public AceModelParser(String modelName) {
+        this.modelName = modelName;
+        pkgName = "org.flymine.model." + modelName + ".";
+    }
 
     /**
      * Read source model information in Ace model format and
@@ -69,7 +90,8 @@ public class AceModelParser implements ModelParser
             ModelNode c = (ModelNode) classIter.next();
             classDescriptors.add(nodeClassToDescriptor(c));
         }
-        return new Model("acedb", classDescriptors);
+        LOG.info(classDescriptors);
+        return new Model(modelName, classDescriptors);
     }
 
     /**
@@ -82,41 +104,41 @@ public class AceModelParser implements ModelParser
         Set refs = Collections.EMPTY_SET;
         Set cols = Collections.EMPTY_SET;
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        l.add(new ClassDescriptor(PACKAGE + "Colour", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Colour", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("sequence", false, "java.lang.String"));
-        l.add(new ClassDescriptor(PACKAGE + "DNA", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "DNA", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.util.Date"));
-        l.add(new ClassDescriptor(PACKAGE + "DateType", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "DateType", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.Float"));
-        l.add(new ClassDescriptor(PACKAGE + "Float", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Float", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.Integer"));
-        l.add(new ClassDescriptor(PACKAGE + "Int", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Int", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         refs = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         //refs.add(new ReferenceDescriptor("Quoted_in", false, "org.flymine.model.acedb.Paper",
         //            null));
-        l.add(new ClassDescriptor(PACKAGE + "Keyword", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Keyword", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         refs = Collections.EMPTY_SET;
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("text", false, "java.lang.String"));
-        l.add(new ClassDescriptor(PACKAGE + "LongText", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "LongText", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
         atts.add(new AttributeDescriptor("peptide", false, "java.lang.String"));
-        l.add(new ClassDescriptor(PACKAGE + "Peptide", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Peptide", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        l.add(new ClassDescriptor(PACKAGE + "Text", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Text", null, null, false, atts, refs, cols));
         atts = new LinkedHashSet();
         atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
-        l.add(new ClassDescriptor(PACKAGE + "Comment", null, null, false, atts, refs, cols));
+        l.add(new ClassDescriptor(pkgName + "Comment", null, null, false, atts, refs, cols));
     }
 
     /**
@@ -250,7 +272,7 @@ public class AceModelParser implements ModelParser
             Set cols = new LinkedHashSet();
             atts.add(new AttributeDescriptor("identifier", true, "java.lang.String"));
             nodeToSets(node.getChild(), "value", true, atts, refs, cols);
-            return new ClassDescriptor(PACKAGE + formatAceName(node.getName().substring(1)),
+            return new ClassDescriptor(pkgName + formatAceName(node.getName().substring(1)),
                                        null, null, false, atts, refs, cols);
         } else {
             throw new IllegalArgumentException("Not a class");
@@ -333,7 +355,7 @@ public class AceModelParser implements ModelParser
             type = type.substring(1);
         }
         if (collection) {
-            cols.add(new CollectionDescriptor(fieldName, false, PACKAGE + formatAceName(type),
+            cols.add(new CollectionDescriptor(fieldName, false, pkgName + formatAceName(type),
                                               formatAceName(xref), false));
         } else if ("Text".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, false, "java.lang.String"));
@@ -344,7 +366,7 @@ public class AceModelParser implements ModelParser
         } else if ("DateType".equals(type)) {
             atts.add(new AttributeDescriptor(fieldName, false, "java.util.Date"));
         } else {
-            refs.add(new ReferenceDescriptor(fieldName, false, PACKAGE + formatAceName(type),
+            refs.add(new ReferenceDescriptor(fieldName, false, pkgName + formatAceName(type),
                                              formatAceName(xref)));
         }
         if (nextNode != null) {
