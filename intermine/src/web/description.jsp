@@ -18,7 +18,7 @@
     </th>
     <th class="help" align="right">
       <c:if test="${!empty help}">
-        [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/webapp/${pageName}.html"><c:out value="${help}"/></html:link>]
+        [<html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/webapp/${pageName}.html"><c:out value="${help}"/></html:link>]
       </c:if>
     </th>
     </tr>
