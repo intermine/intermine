@@ -8,8 +8,7 @@
 	</artheader>
 
 	<para>The InterMine Query Optimiser can be used by itself in a number of ways, depending on your needs.
-		All options require the <filename>intermine.jar</filename> file to be in your classpath.
-		See the <ulink url="../building">download/building instructions</ulink> for details of how to obtain this file.</para>
+		All options require the <filename>intermine.jar</filename> file to be in your classpath.</para>
 
 	<sect1>
 		<title>Background</title>
