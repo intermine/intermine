@@ -67,22 +67,8 @@
     <include name="checkstyle*.jar"/>
   </patternset>
 
-  <!-- Jasper libraries -->
-  <patternset id="lib.jasper">
-    <include name="jasper*.jar"/>
-    <include name="ant*.jar"/>
-    <include name="cactus*.jar"/>
-  </patternset>
-
   <!-- Libraries that the FlyMine query webapp uses -->
   <patternset id="lib.webapp.flymine">
-    <include name="aspect*.jar" />
-    <include name="commons*.jar" />
-    <include name="jakarta-oro*.jar" />
-    <include name="jstl*.jar" />
-    <include name="servlet*.jar" />
-    <include name="standard*.jar" />
-    <include name="struts*.jar" />
   </patternset>
 
   <!-- set the classpath for the build - basically everything in lib -->
@@ -90,7 +76,6 @@
     <pathelement path="${build.resources}"/>
     <fileset dir="${lib}">
       <patternset refid="lib.build"/>
-      <patternset refid="lib.jasper"/>
     </fileset>
     <fileset dir="${intermine.dist.path}">
       <include name="intermine*.jar" />
@@ -485,7 +470,6 @@
       <property name="model.src" value="${model}/genomic"/>
     </ant>
   </target>
-
 
   <target name="jar-genomic" depends="prepare-dist, create-genomic-model"
           description="create a jar of the genomic model">
