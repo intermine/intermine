@@ -69,7 +69,6 @@ public class PostProcessTask extends Task
                  cl.fixPartials();
                  LOG.info("Starting CalculateLocations.createLocations()");
                  cl.createLocations();
-                 LOG.info("Starting CalculateLocations.createSpanningLocations()");
             } else if ("create-references".equals(type)) {
                 CreateReferences cr = new CreateReferences(osw);
                 LOG.info("Starting CreateReferences.insertReferences()");
@@ -86,6 +85,7 @@ public class PostProcessTask extends Task
                 LOG.info("Finished transfer-sequences");
             } else if ("make-spanning-locations".equals(type)) {
                 CalculateLocations cl = new CalculateLocations(osw);
+                LOG.info("Starting CalculateLocations.createSpanningLocations()");
                 cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
                 LOG.info("Finished calculate-locations");
