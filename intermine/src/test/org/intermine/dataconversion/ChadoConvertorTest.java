@@ -18,6 +18,9 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Collection;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
 import com.mockobjects.sql.MockMultiRowResultSet;
@@ -26,6 +29,7 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
+import org.flymine.util.TypeUtil;
 import org.flymine.xml.full.Field;
 import org.flymine.xml.full.Item;
 import org.flymine.xml.full.ReferenceList;
@@ -35,12 +39,15 @@ public class ChadoConvertorTest extends TestCase {
     private Model model;
     private ChadoConvertor convertor;
     private Database db;
+    private MockSingleRowResultSet blank;
     
     public void setUp() throws Exception {
         map = new HashMap();
         model = Model.getInstanceByName("testmodel");
         convertor = new MockChadoConvertor();
         db = DatabaseFactory.getDatabase("db.unittest");
+        blank = new MockSingleRowResultSet();
+        blank.next();
     }
 
     public void testAttribute() throws Exception {
@@ -52,9 +59,6 @@ public class ChadoConvertorTest extends TestCase {
                                    new Object[] {new Integer(12), "DepartmentA1", null, null});
 
         map.put("SELECT * FROM Department", mrs);
-
-        MockSingleRowResultSet blank = new MockSingleRowResultSet();
-        blank.next();
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
@@ -80,9 +84,6 @@ public class ChadoConvertorTest extends TestCase {
 
         map.put("SELECT * FROM Department", mrs);
 
-        MockSingleRowResultSet blank = new MockSingleRowResultSet();
-        blank.next();
-
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
         map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
 
@@ -106,9 +107,6 @@ public class ChadoConvertorTest extends TestCase {
                                    new Object[] {new Integer(12), null, null, null});
 
         map.put("SELECT * FROM Department", msrs);
-
-        MockSingleRowResultSet blank = new MockSingleRowResultSet();
-        blank.next();
 
         map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
 
@@ -140,9 +138,6 @@ public class ChadoConvertorTest extends TestCase {
 
         map.put("SELECT * FROM Company", msrs);
 
-        MockSingleRowResultSet blank = new MockSingleRowResultSet();
-        blank.next();
-
         map.put("SELECT Department_id FROM Department WHERE company_id = 12", blank);
         //map.put("SELECT Contractor_id FROM oldComs_oldContracts WHERE Company_id = 12", blank);
 
@@ -173,9 +168,6 @@ public class ChadoConvertorTest extends TestCase {
                                     new Object[] {new Integer(12), new Integer(14), null});
 
         map.put("SELECT * FROM Contractor", msrs);
-
-        MockSingleRowResultSet blank = new MockSingleRowResultSet();
-        blank.next();
         
         map.put("SELECT Company_id FROM Contractor_Company WHERE Contractor_id = 12", blank);
 
@@ -188,6 +180,84 @@ public class ChadoConvertorTest extends TestCase {
         item.addReference(field);
 
         assertEquals(Collections.singletonList(item), convertor.processClassDescriptor(cld));
+    }
+    
+    public void testMultipleInstances() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+
+        MockMultiRowResultSet mrs = new MockMultiRowResultSet();
+        mrs.setupColumnNames(new String[] {"Department_id", "name", "company_id", "manager_id"});
+        mrs.setupRows(new Object[][] {
+            {new Integer(12), "DepartmentA1", null, null},
+            {new Integer(13), "DepartmentA2", null, null}});
+
+        map.put("SELECT * FROM Department", mrs);
+
+        map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 13", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 13", blank);
+
+        Item item = new Item();
+        item.setClassName(model.getNameSpace() + "Department");
+        item.setIdentifier("12");
+        Field field = new Field();
+        field.setName("name");
+        field.setValue("DepartmentA1");
+        item.addField(field);
+
+        Item item2 = new Item();
+        item2.setClassName(model.getNameSpace() + "Department");
+        item2.setIdentifier("13");
+        Field field2 = new Field();
+        field2.setName("name");
+        field2.setValue("DepartmentA2");
+        item2.addField(field2);
+
+        Collection c = Arrays.asList(new Object[] {item, item2});
+        assertEquals(c, convertor.processClassDescriptor(cld));
+    }
+
+    public void testMultipleClasses() throws Exception {
+        for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
+            String clsName = (String) iter.next();
+            map.put("SELECT * FROM " + TypeUtil.unqualifiedName(clsName), blank);
+        }
+
+        MockSingleRowResultSet mrs = new MockSingleRowResultSet();
+        mrs.addExpectedNamedValues(
+                                   new String[] {"Department_id", "name", "company_id", "manager_id"},
+                                   new Object[] {new Integer(12), "DepartmentA1", null, null});
+
+        map.put("SELECT * FROM Department", mrs);
+
+        map.put("SELECT Employee_id FROM Employee WHERE departmentThatRejectedMe_id = 12", blank);
+        map.put("SELECT Employee_id FROM Employee WHERE department_id = 12", blank);
+
+        Item item = new Item();
+        item.setClassName(model.getNameSpace() + "Department");
+        item.setIdentifier("12");
+        Field field = new Field();
+        field.setName("name");
+        field.setValue("DepartmentA1");
+        item.addField(field);
+
+        MockSingleRowResultSet mrs2 = new MockSingleRowResultSet();
+        mrs2.addExpectedNamedValues(
+                                   new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
+                                   new Object[] {new Integer(13), null, null, null});
+
+        map.put("SELECT * FROM Company", mrs2);
+
+        map.put("SELECT Department_id FROM Department WHERE company_id = 13", blank);
+        map.put("SELECT Contractor_id FROM Company_Contractor WHERE Company_id = 13", blank);
+
+        Item item2 = new Item();
+        item2.setClassName(model.getNameSpace() + "Company");
+        item2.setIdentifier("13");
+
+        Collection c = Arrays.asList(new Object[] {item, item2});
+        assertEquals(c, convertor.process(model, db));
     }
 
     class MockChadoConvertor extends ChadoConvertor {
