@@ -14,6 +14,8 @@ import org.acedb.IntValue;
 import org.acedb.FloatValue;
 import org.acedb.Reference;
 
+import java.lang.reflect.Field;
+
 import org.flymine.FlyMineException;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.ModelUtil;
