@@ -1,6 +1,5 @@
 package org.flymine.util;
 
-import java.util.Set;
 import java.util.AbstractSet;
 import java.util.List;
 import java.util.ArrayList;
@@ -16,8 +15,8 @@ import java.util.Iterator;
  *
  * @author Andrew Varley
  */
-public class ConsistentSet extends AbstractSet {
-
+public class ConsistentSet extends AbstractSet
+{
     private List list;
 
     /**
