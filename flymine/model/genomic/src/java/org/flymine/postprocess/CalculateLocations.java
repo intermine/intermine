@@ -22,6 +22,7 @@ import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -92,6 +93,8 @@ public class CalculateLocations
     private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
         Results results = PostProcessUtil.findLocations(os, objectCls, subjectCls, true);
 
+        osw.beginTransaction();
+
         Iterator resIter = results.iterator();        
 
         Set batch = new HashSet();
@@ -116,6 +119,8 @@ public class CalculateLocations
         if (previousSubjectId != -1 && batch.size() > 0) {
             fixPartialBatch(batch);
         }
+
+        osw.commitTransaction();
     }
 
     /**
@@ -267,7 +272,7 @@ public class CalculateLocations
 
         // 4. For all BioEntities located on Contigs compute other offsets on all parents
         Results results =
-            PostProcessUtil.findLocations(os, Contig.class, BioEntity.class, true);
+            PostProcessUtil.findLocations(os, Contig.class, BioEntity.class, false);
 
         Iterator resIter = results.iterator();        
 
@@ -625,9 +630,10 @@ public class CalculateLocations
 
         q.setConstraint(cs);
 
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
 
-        res.setBatchSize(10000);
+        res.setBatchSize(500);
         return res.iterator();
     }
 
