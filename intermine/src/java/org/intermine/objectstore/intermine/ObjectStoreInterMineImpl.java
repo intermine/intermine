@@ -10,7 +10,6 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -38,7 +37,6 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.query.ExplainResult;
-import org.intermine.xml.lite.LiteParser;
 
 import org.apache.log4j.Logger;
 
@@ -427,7 +425,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     throw new ObjectStoreException("More than one object in the database has this"
                             + " primary key");
                 }
-                InterMineObject retval = LiteParser.parse(currentColumn, this);
+                InterMineObject retval = NotXmlParser.parse(currentColumn, this);
                 //if (currentColumn.length() < CACHE_LARGEST_OBJECT) {
                     cacheObjectById(retval.getId(), retval);
                 //} else {
@@ -440,9 +438,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             }
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);
-        } catch (IOException e) {
-            throw new ObjectStoreException("Impossible IO error reading from ByteArrayInputStream"
-                    + " while converting results: " + currentColumn, e);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);

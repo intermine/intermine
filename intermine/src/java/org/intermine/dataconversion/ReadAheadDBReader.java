@@ -69,7 +69,7 @@ public class ReadAheadDBReader extends BatchingDBReader
             }
             long end = System.currentTimeMillis();
             if (end - start > 10) {
-                LOG.debug("Had to wait for worker thread for " + (end - start) + " ms");
+                LOG.info("Had to wait for worker thread for " + (end - start) + " ms");
             }
             referenceBatch = nextBatch;
             if (nextProblem != null) {

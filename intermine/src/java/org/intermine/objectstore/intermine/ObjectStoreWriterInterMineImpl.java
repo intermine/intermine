@@ -42,7 +42,7 @@ import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 //import org.intermine.xml.lite.LiteParser;
-import org.intermine.xml.lite.LiteRenderer;
+//import org.intermine.xml.lite.LiteRenderer;
 
 import org.apache.log4j.Logger;
 
@@ -309,7 +309,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     }
                 }
             }
-            String xml = LiteRenderer.render(o, model);
+            String xml = NotXmlRenderer.render(o);
             //String xml = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 

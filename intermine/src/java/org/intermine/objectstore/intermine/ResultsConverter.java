@@ -10,7 +10,6 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.xml.lite.LiteParser;
 
 import org.apache.log4j.Logger;
 
@@ -72,7 +70,7 @@ public class ResultsConverter
                         if (obj == null) {
                             String objectField = sqlResults.getString(alias);
                             currentColumn = objectField;
-                            obj = LiteParser.parse(objectField, os);
+                            obj = NotXmlParser.parse(objectField, os);
                             //if (objectField.length() < ObjectStoreInterMineImpl
                             //        .CACHE_LARGEST_OBJECT) {
                                 os.cacheObjectById(obj.getId(), obj);
@@ -96,9 +94,6 @@ public class ResultsConverter
             return retval;
         } catch (SQLException e) {
             throw new ObjectStoreException("Error converting results: " + currentColumn, e);
-        } catch (IOException e) {
-            throw new ObjectStoreException("Impossible IO error reading from ByteArrayInputStream"
-                    + " while converting results: " + currentColumn, e);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);
