@@ -594,10 +594,8 @@ public class DatabaseUtil
         String upper = n.toUpperCase();
         org.intermine.web.LogMe.log("dbutil", "got: " + n);
         if (upper.startsWith("INTERMINE_") || reservedWords.contains(upper)) {
-            org.intermine.web.LogMe.log("dbutil", "returning: " + "intermine_" + n);
             return "intermine_" + n;
         } else {
-            org.intermine.web.LogMe.log("dbutil", "returning: " + n);
             return n;
         }
     }
