@@ -95,13 +95,13 @@
   </target>
 
   <target name="validate-site-xml" depends="prepare">
-<!--    <xmlvalidate>
+    <xmlvalidate>
       <fileset dir="${build.www}" includes="**/*.xml">
-        <exclude name="internal/**"/>-->
+        <exclude name="internal/**"/>
         <!-- necessary until we can accommodate "presentation" within docbook -->
-<!--        <exclude name="doc/presentations/index.xml"/>
+        <exclude name="doc/presentations/index.xml"/>
       </fileset>
-    </xmlvalidate>-->
+   </xmlvalidate>
   </target>
 
   <target name="transform-site"
