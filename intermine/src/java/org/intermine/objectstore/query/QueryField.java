@@ -25,6 +25,7 @@ public class QueryField implements QueryEvaluable
 {
     private FromElement qc;
     private String fieldName;
+    private String secondFieldName;
     private Class type;
     
     /**
@@ -58,6 +59,7 @@ public class QueryField implements QueryEvaluable
         }
         this.qc = qc;
         this.fieldName = fieldName;
+        this.secondFieldName = null;
         this.type = TypeUtil.toContainerType(field.getType());
     }
     
@@ -92,8 +94,9 @@ public class QueryField implements QueryEvaluable
                 || field.getType().isPrimitive())) {
             throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
         }
-        this.fieldName = ((String) q.getAliases().get(qc)) + fieldName;
         this.qc = q;
+        this.fieldName = (String) q.getAliases().get(qc);
+        this.secondFieldName = fieldName;
         this.type = TypeUtil.toContainerType(field.getType());
     }
 
@@ -110,8 +113,9 @@ public class QueryField implements QueryEvaluable
         if (q == null) {
             throw new NullPointerException("Subquery parameter is null");
         }
-        this.fieldName = (String) q.getAliases().get(v);
         this.qc = q;
+        this.fieldName = (String) q.getAliases().get(v);
+        this.secondFieldName = null;
         this.type = v.getType();
     }
 
@@ -138,6 +142,15 @@ public class QueryField implements QueryEvaluable
      */
     public String getFieldName() {
         return fieldName;
+    }
+
+    /**
+     * Returns the name of the second field.
+     *
+     * @return second field name
+     */
+    public String getSecondFieldName() {
+        return secondFieldName;
     }
 
     /**

@@ -338,8 +338,9 @@ public class Query implements FromElement
         if (qn instanceof QueryClass) {
             return nodeAlias;
         } else if (qn instanceof QueryField) {
-            return aliases.get(((QueryField) qn).getFromElement()) + "."
-                + ((QueryField) qn).getFieldName();
+            QueryField qf = (QueryField) qn;
+            return aliases.get(qf.getFromElement()) + "." + qf.getFieldName()
+                + (qf.getSecondFieldName() == null ? "" : "." + qf.getSecondFieldName());
         } else if (qn instanceof QueryValue) {
             return ((QueryValue) qn).getValue().toString();
         } else if (qn instanceof QueryExpression) {

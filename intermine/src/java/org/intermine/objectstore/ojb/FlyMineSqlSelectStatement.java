@@ -219,7 +219,8 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             FromElement nodeClass = nodeF.getFromElement();
             String classAlias = (String) query.getAliases().get(nodeClass);
 
-            return classAlias + "." + nodeF.getFieldName();
+            return classAlias + "." + nodeF.getFieldName() + (nodeF.getSecondFieldName() == null
+                    ? "" : nodeF.getSecondFieldName());
         } else if (node instanceof QueryExpression) {
             QueryExpression nodeE = (QueryExpression) node;
             if (nodeE.getOperation() == QueryExpression.SUBSTRING) {

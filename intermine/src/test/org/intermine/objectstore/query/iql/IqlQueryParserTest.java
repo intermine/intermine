@@ -89,7 +89,7 @@ public class FqlQueryParserTest extends ObjectStoreQueriesTestCase
 
     public void testValidPathExpressions() throws Exception {
         Query q = FqlQueryParser.parse(new FqlQuery("select subquery.c_.name as a, subquery.b as b from (select c_, c_.name as b from Company as c_) as subquery", "org.flymine.model.testmodel"));
-        assertEquals("SELECT subquery.c_name AS a, subquery.b AS b FROM (SELECT c_, c_.name AS b FROM org.flymine.model.testmodel.Company AS c_) AS subquery", q.toString());
+        assertEquals("SELECT subquery.c_.name AS a, subquery.b AS b FROM (SELECT c_, c_.name AS b FROM org.flymine.model.testmodel.Company AS c_) AS subquery", q.toString());
     }
 
     public void testInvalidPathExpressions() throws Exception {
