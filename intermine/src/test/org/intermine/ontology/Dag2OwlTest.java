@@ -27,6 +27,8 @@ public class Dag2OwlTest extends TestCase{
         List rootTerms = new ArrayList();
         rootTerms.add(a);
         rootTerms.add(d);
-        Dag2Owl.process(rootTerms).write(System.out);
+        Dag2Owl owler = new Dag2Owl("http://www.flymine.org/namespace");
+        owler.process(rootTerms);
+        owler.getOntModel().write(System.out);
     }
 }

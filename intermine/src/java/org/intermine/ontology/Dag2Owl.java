@@ -31,34 +31,46 @@ import java.io.File;
  */
 public class Dag2Owl
 {
+    protected String namespace;
+    protected OntModel ontModel;
+    
+    public Dag2Owl(String namespace) {
+        if (namespace.indexOf("#") != -1) {
+            throw new IllegalArgumentException("namespace shouldn't contain '#'");
+        }
+        this.namespace = namespace;
+        ontModel = ModelFactory.createOntologyModel();
+    }
+    
     /**
-     * Namespace to use for generated classes in OWL document
+     * Return the model
+     * @return the model
      */
-    protected static final String NS = "http://www.flymine.org/namespace#";
+    public OntModel getOntModel() {
+        return ontModel;
+    }
 
     /**
      * Perform the conversion by iterating over the root terms
      * @param rootTerms a collection of rootTerms
      * @return the corresponding OntModel
      */
-    public static OntModel process(Collection rootTerms) {
-        OntModel ontModel = ModelFactory.createOntologyModel();
+    public void process(Collection rootTerms) {
         for (Iterator i = rootTerms.iterator(); i.hasNext(); ) {
-            processTerm((DagTerm) i.next(), ontModel);
+            process((DagTerm) i.next());
         }
-        return ontModel;
     }
 
     /**
-     * Actually convert a DagTerm into a OntClass
+     * Convert a (root) DagTerm to a OntClass, recursing through children
      * @param term a DagTerm
      * @param ontModel the OWL model in which the class will be created
      * @return the corresponding OntClass
      */
-    public static OntClass processTerm(DagTerm term, OntModel ontModel) {
-        OntClass cls = ontModel.getOntClass(NS + term.getId());
+    public OntClass process(DagTerm term) {
+        OntClass cls = ontModel.getOntClass(generateClassName(term));
         if (cls == null) {
-            cls = ontModel.createClass(NS + term.getId());
+            cls = ontModel.createClass(generateClassName(term));
             cls.setLabel(term.getName(), null);
             // set synonyms
             if (term.getSynonyms().size() > 0) {
@@ -67,19 +79,30 @@ public class Dag2Owl
             // create partof property
             for (Iterator i = term.getComponents().iterator(); i.hasNext(); ) {
                 DagTerm component = (DagTerm) i.next();
-                ObjectProperty prop = ontModel.createObjectProperty(NS
-                                                                    + component.getId()
-                                                                    + "_"
-                                                                    + term.getId());
-                prop.setDomain(processTerm(component, ontModel));
+                ObjectProperty prop = ontModel.createObjectProperty(generatePropertyName(
+                                                                                         component,
+                                                                                         term));
+                prop.setDomain(process(component));
                 prop.setRange(cls);
             }
             // set subclasses
             for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
-                cls.addSubClass(processTerm((DagTerm) i.next(), ontModel));
+                cls.addSubClass(process((DagTerm) i.next()));
             }
         }
         return cls;
+    }
+
+    public String generateClassName(DagTerm term) {
+        return namespace + "#" + filter(term.getId());
+    }
+
+    public String generatePropertyName(DagTerm domain, DagTerm range) {
+        return namespace + "#" + filter(domain.getId() + "$" + range.getId());
+    }
+
+    public String filter(String s) {
+        return s.replaceAll(":", "_");
     }
 
     /**
@@ -111,9 +134,10 @@ public class Dag2Owl
                  out.write(validator.getOutput());
             }
 
-            Dag2Owl owler = new Dag2Owl();
+            Dag2Owl owler = new Dag2Owl("http://www.flymine.org/namespace");
             BufferedWriter out = new BufferedWriter(new FileWriter(owlFile));
-            owler.process(rootTerms).write(out);
+            owler.process(rootTerms);
+            owler.getOntModel().write(out);
         } catch (Exception e) {
             e.printStackTrace();
         }
