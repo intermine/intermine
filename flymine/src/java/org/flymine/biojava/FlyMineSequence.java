@@ -39,7 +39,7 @@ public class FlyMineSequence extends SimpleSequence
      * @param feature the LocatedSequenceFeature
      */
     FlyMineSequence (SymbolList symbols, LocatedSequenceFeature feature) {
-        super(symbols, null, null, null);
+        super(symbols, null, feature.getName(), null);
         this.feature = feature;
     }
 
@@ -49,7 +49,7 @@ public class FlyMineSequence extends SimpleSequence
      * @param protein the Protein
      */
     FlyMineSequence (SymbolList symbols, Protein protein) {
-        super(symbols, null, null, null);
+        super(symbols, null, protein.getIdentifier(), null);
         this.protein = protein;
     }
 }
