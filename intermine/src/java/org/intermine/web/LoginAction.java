@@ -15,12 +15,17 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Action to handle button presses on the main tile
@@ -49,6 +54,13 @@ public class LoginAction extends InterMineAction
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         LoginForm lf = (LoginForm) form;
         
+        // Merge current history into loaded profile
+        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map merge = Collections.EMPTY_MAP;
+        if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
+            merge = new HashMap(currentProfile.getSavedQueries());
+        }
+        
         Profile profile;
         if (pm.hasProfile(lf.getUsername())) {
             profile = pm.getProfile(lf.getUsername(), lf.getPassword());
@@ -63,9 +75,26 @@ public class LoginAction extends InterMineAction
         if (profile.getUsername().equals(superuser)) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
-
+        
+        // Merge in anonymous query history
+        for (Iterator iter = merge.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            PathQuery query = (PathQuery) ((PathQuery) entry.getValue()).clone();
+            String name = makeUniqueQueryName((String) entry.getKey(),
+                                                profile.getSavedQueries().keySet());
+            profile.saveQuery(name, query);
+        }
+        
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
-
         return mapping.findForward("history");
+    }
+    
+    private String makeUniqueQueryName(String name, Set names) {
+        String original = name;
+        int i = 1;
+        while (names.contains(name)) {
+            name = original + "_" + i;
+        }
+        return name;
     }
 }
