@@ -10,25 +10,23 @@ package org.intermine.web;
  *
  */
 
-import java.util.List;
-import java.util.ArrayList;
-
 import org.intermine.metadata.Model;
 
 /**
- * Node used in displaying query
+ * Node used in displaying metadata
  * @author Mark Woodbridge
  */
-public class RightNode extends Node
+public class MetadataNode extends Node
 {
-    List constraints = new ArrayList();
-    
+    String button;
+
     /**
      * Constructor for a root node
      * @param type the root type of this tree
      */
-    public RightNode(String type) {
+    public MetadataNode(String type) {
         super(type);
+        button = " ";
     }
 
     /**
@@ -36,33 +34,19 @@ public class RightNode extends Node
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
      * @param model the model used to resolve paths
+     * @param button the button displayed next to this node's name
      */
-    public RightNode(Node parent, String fieldName, Model model) {
+    public MetadataNode(MetadataNode parent, String fieldName, Model model, String button) {
         super(parent, fieldName, model);
+        this.button = button;
     }
 
     /**
-     * Gets the value of constraints
+     * Gets the value of button
      *
-     * @return the value of constraints
+     * @return the value of button
      */
-    public List getConstraints()  {
-        return constraints;
-    }
-
-    /**
-     * Sets the value of constraints
-     *
-     * @param constraints value to assign to constraints
-     */
-    public void setConstraints(List constraints) {
-        this.constraints = constraints;
-    }
-
-    /**
-     * @see Object#toString
-     */
-    public String toString() {
-        return super.toString() + " " + constraints;
+    public String getButton()  {
+        return button;
     }
 }

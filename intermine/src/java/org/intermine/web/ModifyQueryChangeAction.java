@@ -10,8 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +19,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a saved query
@@ -48,17 +44,10 @@ public class ModifyQueryChangeAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
 
-        Map savedQueries = profile.getSavedQueries();
-        if (savedQueries.containsKey(queryName)) {
-            PathQuery query = (PathQuery) savedQueries.get(queryName);
-            session.setAttribute(Constants.QUERY, query.clone());
-        }
-        session.removeAttribute("path");
-        session.removeAttribute("prefix");
+        LoadQueryAction.loadQuery((PathQuery) profile.getSavedQueries().get(queryName), session);
 
         return mapping.findForward("query");
     }

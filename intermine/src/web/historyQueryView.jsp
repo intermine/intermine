@@ -32,8 +32,8 @@
             </html:link>
           </td>
           <td align="right">
-            <c:if test="${savedQuery.value.resultsInfo != null}">
-              <c:out value="${savedQuery.value.resultsInfo.rows}"/>
+            <c:if test="${savedQuery.value.info != null}">
+              <c:out value="${savedQuery.value.info.rows}"/>
             </c:if>
           </td>
         </tr>

@@ -10,23 +10,25 @@ package org.intermine.web;
  *
  */
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.intermine.metadata.Model;
 
 /**
- * Node used in displaying metadata
+ * Node used in displaying query
  * @author Mark Woodbridge
  */
-public class LeftNode extends Node
+public class PathNode extends Node
 {
-    String button;
-
+    List constraints = new ArrayList();
+    
     /**
      * Constructor for a root node
      * @param type the root type of this tree
      */
-    public LeftNode(String type) {
+    public PathNode(String type) {
         super(type);
-        button = " ";
     }
 
     /**
@@ -34,19 +36,33 @@ public class LeftNode extends Node
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
      * @param model the model used to resolve paths
-     * @param button the button displayed next to this node's name
      */
-    public LeftNode(LeftNode parent, String fieldName, Model model, String button) {
+    public PathNode(Node parent, String fieldName, Model model) {
         super(parent, fieldName, model);
-        this.button = button;
     }
 
     /**
-     * Gets the value of button
+     * Gets the value of constraints
      *
-     * @return the value of button
+     * @return the value of constraints
      */
-    public String getButton()  {
-        return button;
+    public List getConstraints()  {
+        return constraints;
+    }
+
+    /**
+     * Sets the value of constraints
+     *
+     * @param constraints value to assign to constraints
+     */
+    public void setConstraints(List constraints) {
+        this.constraints = constraints;
+    }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return super.toString() + " " + constraints;
     }
 }

@@ -237,7 +237,7 @@ public class ProfileManager
         sb.append("<query name='" + queryName + "' model='" + model.getName()
                   + "' view='" + StringUtil.join(view, " ") + "'>");
         for (Iterator j = qNodes.values().iterator(); j.hasNext();) {
-            RightNode node = (RightNode) j.next();
+            PathNode node = (PathNode) j.next();
             if (node.getConstraints().size() > 0) {
                 sb.append("<node path='" + node.getPath() + "' type='" + node.getType() + "'>");
                 for (Iterator k = node.getConstraints().iterator(); k.hasNext();) {

@@ -98,7 +98,7 @@ public class MainChange extends DispatchAction
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
-        ((RightNode) query.getNodes().get(path)).getConstraints().remove(index);
+        ((PathNode) query.getNodes().get(path)).getConstraints().remove(index);
 
         return mapping.findForward("query");
     }

@@ -50,10 +50,19 @@ public class LoadQueryAction extends DispatchAction
         Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
         String queryName = request.getParameter("name");
 
-        PathQuery query = (PathQuery) exampleQueries.get(queryName);
+        loadQuery((PathQuery) exampleQueries.get(queryName), session);
+
+        return mapping.findForward("query");
+    }
+    
+    /**
+     * Load a query into the session, cloning to avoid modifying the original
+     * @param query the query
+     * @param session the session
+     */
+    public static void loadQuery(PathQuery query, HttpSession session) {
         session.setAttribute(Constants.QUERY, query.clone());
         session.removeAttribute("path");
         session.removeAttribute("prefix");
-        return mapping.findForward("query");
     }
 }

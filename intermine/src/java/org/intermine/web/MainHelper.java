@@ -60,7 +60,7 @@ public class MainHelper
             subPath = path.substring(path.indexOf(".") + 1);
         }
         Map nodes = new TreeMap();
-        nodes.put(className, new LeftNode(className));
+        nodes.put(className, new MetadataNode(className));
         makeNodes(getClassDescriptor(className, model), subPath, className, nodes);
         return nodes.values();
     }
@@ -99,8 +99,8 @@ public class MainHelper
                 button = " ";
             }
 
-            LeftNode parent = (LeftNode) nodes.get(currentPath);
-            LeftNode node = new LeftNode(parent, fieldName, cld.getModel(), button);
+            MetadataNode parent = (MetadataNode) nodes.get(currentPath);
+            MetadataNode node = new MetadataNode(parent, fieldName, cld.getModel(), button);
             nodes.put(node.getPath(), node);
             if (fieldName.equals(head)) {
                 ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
@@ -138,7 +138,7 @@ public class MainHelper
 
         //build the FROM and WHERE clauses
         for (Iterator i = query2.getNodes().values().iterator(); i.hasNext();) {
-            RightNode node = (RightNode) i.next();
+            PathNode node = (PathNode) i.next();
             String path = node.getPath();
             
             if (path.indexOf(".") == -1) {

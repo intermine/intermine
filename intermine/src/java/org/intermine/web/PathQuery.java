@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ResultsInfo;
 
 /**
  * Class to represent a path-based query
@@ -27,6 +28,7 @@ public class PathQuery
     protected Model model;
     protected Map nodes = new LinkedHashMap();
     protected List view = new ArrayList();
+    protected ResultsInfo info;
    
     /**
      * Constructor
@@ -77,20 +79,36 @@ public class PathQuery
     }
 
     /**
+     * Get info regarding this query
+     * @return the info
+     */
+    public ResultsInfo getInfo() {
+        return info;
+    }
+
+    /**
+     * Set info about this query
+     * @param info the info
+     */
+    public void setInfo(ResultsInfo info) {
+        this.info = info;
+    }
+
+    /**
      * Add a node to the query using a path, adding parent nodes if necessary
      * @param path the path for the new Node
-     * @return the RightNode that was added to the qNodes Map
+     * @return the PathNode that was added to the qNodes Map
      */
-    public RightNode addNode(String path) {
-        RightNode node;
+    public PathNode addNode(String path) {
+        PathNode node;
         if (path.lastIndexOf(".") == -1) {
-            node = new RightNode(path);
+            node = new PathNode(path);
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
             if (nodes.containsKey(prefix)) {
-                RightNode parent = (RightNode) nodes.get(prefix);
+                PathNode parent = (PathNode) nodes.get(prefix);
                 String fieldName = path.substring(path.lastIndexOf(".") + 1);
-                node = new RightNode(parent, fieldName, model);
+                node = new PathNode(parent, fieldName, model);
             } else {
                 addNode(prefix);
                 return addNode(path);
@@ -108,24 +126,24 @@ public class PathQuery
         PathQuery query = new PathQuery(model);
         for (Iterator i = nodes.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
-            query.getNodes().put(entry.getKey(), clone((RightNode) entry.getValue()));
+            query.getNodes().put(entry.getKey(), clone((PathNode) entry.getValue()));
         }
         query.getView().addAll(view);
         return query;
     }
 
     /**
-     * Clone a RightNode
-     * @param node a RightNode
-     * @return a copy of the RightNode
+     * Clone a PathNode
+     * @param node a PathNode
+     * @return a copy of the PathNode
      */
-    public RightNode clone(RightNode node) {
-        RightNode newNode;
-        RightNode parent = (RightNode) nodes.get(node.getPrefix());
+    public PathNode clone(PathNode node) {
+        PathNode newNode;
+        PathNode parent = (PathNode) nodes.get(node.getPrefix());
         if (parent == null) {
-            newNode = new RightNode(node.getType());
+            newNode = new PathNode(node.getType());
         } else {
-            newNode = new RightNode(parent, node.getFieldName(), model);
+            newNode = new PathNode(parent, node.getFieldName(), model);
             newNode.setType(node.getType());
         }
         for (Iterator i = node.getConstraints().iterator(); i.hasNext();) {

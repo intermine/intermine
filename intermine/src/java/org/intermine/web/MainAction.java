@@ -46,7 +46,7 @@ public class MainAction extends Action
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         MainForm mf = (MainForm) form;
 
-        RightNode node = (RightNode) query.getNodes().get(mf.getPath());
+        PathNode node = (PathNode) query.getNodes().get(mf.getPath());
 
         if (request.getParameter("attribute") != null) {
             ConstraintOp constraintOp = ConstraintOp.

@@ -179,7 +179,7 @@ public class MainForm extends ActionForm
         ActionErrors errors = new ActionErrors();
 
         if (request.getParameter("attribute") != null) {
-            RightNode node = (RightNode) query.getNodes().get(path);
+            PathNode node = (PathNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
             if (Date.class.equals(fieldClass)) {
                 DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,

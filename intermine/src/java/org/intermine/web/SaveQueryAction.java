@@ -27,7 +27,6 @@ import org.apache.struts.Globals;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ResultsInfo;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -66,14 +65,16 @@ public class SaveQueryAction extends Action
         String queryName = ((SaveQueryForm) form).getQueryName();
 
         try {
-            ResultsInfo info = os.estimate(MainHelper.makeQuery(query, profile.getSavedBags()));
-            saveQuery(request, queryName, query, info);
+            if (query.getInfo() == null) {
+                query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
+            }
         } catch (ObjectStoreException e) {
             ActionErrors actionErrors = new ActionErrors();
             actionErrors.add(ActionErrors.GLOBAL_ERROR,
                                new ActionError("errors.query.objectstoreerror"));
             saveErrors(request, actionErrors);
         }
+        saveQuery(request, queryName, query);
 
         return mapping.findForward("query");
     }
@@ -83,12 +84,10 @@ public class SaveQueryAction extends Action
      * @param request The HTTP request we are processing
      * @param queryName the name to save the query under
      * @param query the PathQuery
-     * @param resultsInfo the resultsInfo for the query
      */
     public static void saveQuery(HttpServletRequest request,
                                  String queryName,
-                                 PathQuery query,
-                                 ResultsInfo resultsInfo) {
+                                 PathQuery query) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 

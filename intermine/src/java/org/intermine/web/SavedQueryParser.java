@@ -58,7 +58,7 @@ public class SavedQueryParser
     {
         String queryName;
         PathQuery query;
-        RightNode node;
+        PathNode node;
 
         /**
          * @see DefaultHandler#startElement
