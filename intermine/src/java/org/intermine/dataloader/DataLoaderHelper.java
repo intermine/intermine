@@ -48,6 +48,8 @@ import org.flymine.util.IntToIntMap;
 import org.flymine.util.PropertiesUtil;
 import org.flymine.util.TypeUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * Class providing utility methods to help with primary key and data source priority configuration
  *
@@ -60,7 +62,9 @@ public class DataLoaderHelper
     protected static Map modelKeys = new HashMap();
     protected static Map sourceKeys = new HashMap();
     protected static Map modelDescriptors = new HashMap();
- 
+
+    protected static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
+
     /**
      * Compare the priorities of two sources over a field
      * @param fd FieldDescriptor for the field
@@ -177,7 +181,7 @@ public class DataLoaderHelper
         }
         return keySet;
     }
-    
+
     /**
      * Return the Properties that enumerate the keys for this Source
      *
@@ -194,8 +198,8 @@ public class DataLoaderHelper
             }
         }
         return keys;
-    } 
- 
+    }
+
     /**
      * Return the Properties that specify the key fields for the classes in this Model
      *
@@ -340,6 +344,9 @@ public class DataLoaderHelper
                 return q;
             }
         } catch (Exception e) {
+            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
+                      + "[" + obj.getId() + "]");
+            LOG.error(e);
             throw new MetaDataException(e);
         }
     }
