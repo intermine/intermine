@@ -28,14 +28,14 @@ public class Dag2OwlTest extends TestCase{
         assertEquals(namespace + "LargeGene", owler.generateClassName(a));
     }
 
-    public void testPropertyName() throws Exception {
+    public void testGeneratePropertyName() throws Exception {
         DagTerm a = new DagTerm("SO:42", "large gene");
-        DagTerm b = new DagTerm("SO:56", "size");
+        DagTerm b = new DagTerm("SO:56", "Transcript");
         Dag2Owl owler = new  Dag2Owl(namespace);
-        assertEquals(namespace + "LargeGene_Size", owler.generatePropertyName(a, b));
+        assertEquals(namespace + "LargeGene__transcripts", owler.generatePropertyName(a, b));
     }
 
-    public void testFilter() throws Exception { 
+    public void testFilter() throws Exception {
         assertEquals("", Dag2Owl.filter(""));
         assertEquals("OneTwo", Dag2Owl.filter("one two"));
         assertEquals("OneTwo", Dag2Owl.filter("one_two"));
@@ -77,9 +77,13 @@ public class Dag2OwlTest extends TestCase{
         DagTerm b = new DagTerm("", "B");
         a.getComponents().add(b);
         owler.process(a);
-        OntProperty prop = (OntProperty) owler.getOntModel().getOntClass(namespace + "B").listDeclaredProperties().next();
 
-        assertEquals(clsB, prop.getDomain());
-        assertEquals(clsA, prop.getRange());
+        assertNotNull(owler.getOntModel().getOntProperty(namespace + "A__bs"));
+        assertNotNull(owler.getOntModel().getOntProperty(namespace + "B__as"));
+        OntProperty abs = owler.getOntModel().getOntProperty(namespace + "A__bs");
+        OntProperty bas = owler.getOntModel().getOntProperty(namespace + "B__as");
+        assertTrue(abs.hasDomain(clsA));
+        assertTrue(abs.hasRange(clsB));
+        assertTrue(bas.isInverseOf(abs));
     }
 }

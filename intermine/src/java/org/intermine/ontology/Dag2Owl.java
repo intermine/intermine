@@ -78,11 +78,13 @@ public class Dag2Owl
             // create partof property
             for (Iterator i = term.getComponents().iterator(); i.hasNext(); ) {
                 DagTerm component = (DagTerm) i.next();
-                ObjectProperty prop = ontModel.createObjectProperty(generatePropertyName(
-                                                                                         component,
-                                                                                         term));
-                prop.setDomain(process(component));
-                prop.setRange(cls);
+                ObjectProperty prop = ontModel.createObjectProperty(
+                                                generatePropertyName(term, component));
+                prop.setDomain(cls);
+                prop.setRange(process(component));
+                ObjectProperty revRef = ontModel.createObjectProperty(
+                                                generatePropertyName(component, term));
+                revRef.addInverseOf(prop);
             }
             // set subclasses
             for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
@@ -108,7 +110,9 @@ public class Dag2Owl
      * @return the generated property name
      */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
-        return namespace + filter(domain.getName()) + "_" + filter(range.getName());
+        String str = filter(range.getName()) + "s";  // pluralise
+        String propName = str.substring(0, 1).toLowerCase() + str.substring(1);
+        return OntologyUtil.generatePropertyName(namespace, filter(domain.getName()), propName);
     }
 
     /**
