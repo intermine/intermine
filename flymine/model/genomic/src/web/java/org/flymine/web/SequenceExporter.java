@@ -41,7 +41,6 @@ import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
 
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
@@ -237,8 +236,7 @@ public class SequenceExporter implements TableExporter
      * @return true if we handle the type
      */
     protected boolean validType(Class type) {
-        return
-            LocatedSequenceFeature.class.isAssignableFrom(type) ||
-            Protein.class.isAssignableFrom(type);
+        return (LocatedSequenceFeature.class.isAssignableFrom(type)
+                || Protein.class.isAssignableFrom(type));
     }
 }
