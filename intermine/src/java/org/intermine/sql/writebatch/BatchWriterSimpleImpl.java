@@ -42,7 +42,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
     /**
      * @see BatchWriter#write
      */
-    public List write(Connection con, Map tables) throws SQLException {
+    public List write(Connection con, Map tables, Set filter) throws SQLException {
         retval = new ArrayList();
         this.con = con;
         simpleBatch = con.createStatement();
@@ -51,15 +51,17 @@ public class BatchWriterSimpleImpl implements BatchWriter
         while (tableIter.hasNext()) {
             Map.Entry tableEntry = (Map.Entry) tableIter.next();
             String name = (String) tableEntry.getKey();
-            Table table = (Table) tableEntry.getValue();
-            if (table instanceof TableBatch) {
-                doDeletes(name, (TableBatch) table);
-                doInserts(name, (TableBatch) table);
-            } else {
-                doIndirectionDeletes(name, (IndirectionTableBatch) table);
-                doIndirectionInserts(name, (IndirectionTableBatch) table);
+            if ((filter == null) || filter.contains(name)) {
+                Table table = (Table) tableEntry.getValue();
+                if (table instanceof TableBatch) {
+                    doDeletes(name, (TableBatch) table);
+                    doInserts(name, (TableBatch) table);
+                } else {
+                    doIndirectionDeletes(name, (IndirectionTableBatch) table);
+                    doIndirectionInserts(name, (IndirectionTableBatch) table);
+                }
+                table.clear();
             }
-            table.clear();
         }
         if (simpleBatchSize > 0) {
             retval.add(new FlushJobStatementBatchImpl(simpleBatch));

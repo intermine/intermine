@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -646,7 +647,90 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
-    
+ 
+    public void testPartialFlush() throws Exception {
+        Database db = DatabaseFactory.getDatabase("db.unittest");
+        Connection con = db.getConnection();
+        con.setAutoCommit(false);
+        try {
+            Statement s = con.createStatement();
+            try {
+                s.execute("DROP TABLE table1");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            try {
+                s.execute("DROP TABLE table2");
+            } catch (SQLException e) {
+                con.rollback();
+            }
+            s.addBatch("CREATE TABLE table1(col1 int, col2 int)");
+            s.addBatch("INSERT INTO table1 VALUES (1, 201)");
+            s.addBatch("CREATE TABLE table2(col1 int, col2 int)");
+            s.addBatch("INSERT INTO table2 VALUES (1, 201)");
+            s.executeBatch();
+            con.commit();
+            s = null;
+            BatchWriter writer = getWriter();
+            Batch batch = new Batch(writer);
+            String colNames[] = new String[] {"col1", "col2"};
+            batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(2), new Integer(202)});
+            batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(3), new Integer(203)});
+            batch.addRow(con, "table1", null, colNames, new Object[] {new Integer(4), new Integer(204)});
+            batch.addRow(con, "table2", null, colNames, new Object[] {new Integer(2), new Integer(202)});
+            batch.addRow(con, "table2", null, colNames, new Object[] {new Integer(3), new Integer(203)});
+            batch.addRow(con, "table2", null, colNames, new Object[] {new Integer(4), new Integer(204)});
+            batch.flush(con, Collections.singleton("table1"));
+            con.commit();
+            s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT col1, col2 FROM table2");
+            Map got = new TreeMap();
+            while (r.next()) {
+                got.put(r.getObject(1), r.getObject(2));
+            }
+            Map expected = new TreeMap();
+            expected.put(new Integer(1), new Integer(201));
+            assertEquals(expected, got);
+            r = s.executeQuery("SELECT col1, col2 FROM table1");
+            got = new TreeMap();
+            while (r.next()) {
+                got.put(r.getObject(1), r.getObject(2));
+            }
+            expected.put(new Integer(2), new Integer(202));
+            expected.put(new Integer(3), new Integer(203));
+            expected.put(new Integer(4), new Integer(204));
+            assertEquals(expected, got);
+            batch.close(con);
+            r = s.executeQuery("SELECT col1, col2 FROM table2");
+            got = new TreeMap();
+            while (r.next()) {
+                got.put(r.getObject(1), r.getObject(2));
+            }
+            assertEquals(expected, got);
+        } catch (SQLException e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            while (e != null) {
+                e.printStackTrace(pw);
+                e = e.getNextException();
+            }
+            pw.flush();
+            throw new Exception(sw.toString());
+        } finally {
+            try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table1");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+   
     private Set getGot(Connection con) throws SQLException {
         Statement s = con.createStatement();
         ResultSet r = s.executeQuery("SELECT a, b FROM table1");

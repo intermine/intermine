@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An interface representing an object that can flush a TableBatch to an SQL server Connection.
@@ -28,8 +29,9 @@ public interface BatchWriter
      *
      * @param con the SQL connection
      * @param tables a Map from table name to Table
+     * @param filter a Set of table names to write, or null to write all tables
      * @return a List of jobs to run to actually do the flushing
      * @throws SQLException if there is an underlying DB problem
      */
-    public List write(Connection con, Map tables) throws SQLException;
+    public List write(Connection con, Map tables, Set filter) throws SQLException;
 }

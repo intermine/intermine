@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -91,7 +92,7 @@ public class Batch
         }
         batchSize += table.addRow(idValue, colNames, values);
         if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con);
+            backgroundFlush(con, null);
         }
     }
 
@@ -118,7 +119,7 @@ public class Batch
         }
         batchSize += table.addRow(left, right);
         if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con);
+            backgroundFlush(con, null);
         }
     }
 
@@ -151,7 +152,7 @@ public class Batch
         }
         batchSize += table.deleteRow(idField, idValue);
         if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con);
+            backgroundFlush(con, null);
         }
     }
 
@@ -178,7 +179,7 @@ public class Batch
         }
         batchSize += table.deleteRow(left, right);
         if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con);
+            backgroundFlush(con, null);
         }
     }
 
@@ -190,8 +191,30 @@ public class Batch
      * @throws SQLException if an error occurs while flushing
      */
     public void flush(Connection con) throws SQLException {
-        backgroundFlush(con);
-        putFlushJobs(Collections.EMPTY_LIST); // to throw exceptions
+        flush(con, null);
+    }
+
+    /**
+     * Flushes the batch out to the database server. This method guarantees that the Connection
+     * is no longer in use by the batch even if it does not return normally.
+     *
+     * @param con a Connection for writing to the database
+     * @param filter a Set of table names to write, or null to write all of them
+     * @throws SQLException if an error occurs while flushing
+     */
+    public void flush(Connection con, Set filter) throws SQLException {
+        backgroundFlush(con, filter);
+        synchronized(this) {
+            while (flushJobs != null) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                }
+            }
+            if (problem != null) {
+                throw problem;
+            }
+        }
     }
 
     /**
@@ -201,14 +224,15 @@ public class Batch
      * completed by this flush will be thrown out of this method.
      *
      * @param con a Connection for writing to the database
+     * @param filter a Set of the table names to write, or null to write all of them
      * @throws SQLException if an error occurs while flushing
      */
-    public void backgroundFlush(Connection con) throws SQLException {
+    public void backgroundFlush(Connection con, Set filter) throws SQLException {
         if (closed) {
             throw new SQLException("Batch is closed");
         }
         long start = System.currentTimeMillis();
-        List jobs = batchWriter.write(con, tables);
+        List jobs = batchWriter.write(con, tables, filter);
         long middle = System.currentTimeMillis();
         putFlushJobs(jobs);
         int oldBatchSize = batchSize;
@@ -236,7 +260,7 @@ public class Batch
             throw new SQLException("Batch is already closed");
         }
         try {
-            backgroundFlush(con);
+            backgroundFlush(con, null);
         } catch (SQLException e) {
         }
         closed = true;
