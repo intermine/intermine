@@ -32,6 +32,10 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
+  <session-config>
+    <session-timeout>1440</session-timeout>      <!-- 1440 = 24 * 60 = 1 day -->
+  </session-config>
+  
   <!-- The Welcome File List -->
   <welcome-file-list>
     <welcome-file>begin.do</welcome-file>
