@@ -59,7 +59,7 @@ public class FullParserTest extends TestCase
         item2.setIdentifier("2");
         Attribute field2 = new Attribute();
         field2.setName("address");
-        field2.setValue("Address1");
+        field2.setValue("\"Company's\" street");
         item2.addAttribute(field2);
 
         Item item3 = new Item();
@@ -102,7 +102,7 @@ public class FullParserTest extends TestCase
         assertEquals("Company1", c1.getName());
         assertNull(c1.getId());
         Address a1 = c1.getAddress();
-        assertEquals("Address1", a1.getAddress());
+        assertEquals("\"Company's\" street", a1.getAddress());
         assertNull(a1.getId());
         List departments = new ArrayList(c1.getDepartments());
         Collections.sort(departments, new DepartmentComparator());
