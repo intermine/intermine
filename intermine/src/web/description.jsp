@@ -9,5 +9,6 @@
   <div class="description">
     <fmt:message key="${pageDescription}.long"/>
   </div>
+  <br/>
 </c:if>
 <!-- /description.jsp -->
