@@ -103,6 +103,9 @@ public class ObjectStoreDataLoader extends DataLoader
                 iw.beginTransaction();
             }
         }
+        LOG.error("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
+                    / ((new Date()).getTime() - startTime)) + " object per minute");
         iw.commitTransaction();
+        iw.close();
     }
 }
