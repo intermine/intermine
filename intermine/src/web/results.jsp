@@ -6,13 +6,14 @@
 
 <tiles:importAttribute/>
 
+<html:form action="/changeResultsSize">
 
 <%-- The following should probably be turned into a tag at some stage --%>
 <table border="1px" width="90%">
   <%-- The headers --%>
   <tr>
     <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-      <th align="center" class="resultsHeader">
+      <th colspan=2 align="center" class="resultsHeader">
         <c:out value="${column.alias}"/>
 
         <%-- order by --%>
@@ -52,27 +53,52 @@
   <%-- The data --%>
 
   <%-- Row --%>
-  <c:forEach var="row" items="${resultsTable.results}" varStatus="status" begin="${resultsTable.start}" end="${resultsTable.end}">
+  <c:if test="${resultsTable.size > 0}">
+    <c:forEach var="row" items="${resultsTable.results}" varStatus="status" begin="${resultsTable.start}" end="${resultsTable.end}">
 
-    <c:set var="rowClass">
-      <c:choose>
-        <c:when test="${status.count % 2 == 1}">resultsOddRow</c:when>
-        <c:otherwise>resultsEvenRow</c:otherwise>
-      </c:choose>
-    </c:set>
+      <c:set var="rowClass">
+        <c:choose>
+          <c:when test="${status.count % 2 == 1}">resultsOddRow</c:when>
+          <c:otherwise>resultsEvenRow</c:otherwise>
+        </c:choose>
+      </c:set>
 
-    <tr class="<c:out value="${rowClass}"/>">
+      <tr class="<c:out value="${rowClass}"/>">
 
-      <c:forEach var="column" items="${resultsTable.columns}">
-        <td>
-          <c:if test="${column.visible}">
-            <c:out value="${row[column.index]}"/>
-          </c:if>
-        </td>
-      </c:forEach>
-    </tr>
-  </c:forEach>
+        <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
+          <c:choose>  
+            <c:when test="${column.visible}">
+              <%-- the checkbox to select this object --%>
+              <td align="center">
+                <html:multibox property="selectedObjects">
+                  <c:out value="${status.index}"/>
+                </html:multibox>
+                <c:out value="${column.index}"/>,<c:out value="${status.index}"/>
+              </td>
+              <td>
+                <c:out value="${row[column.index]}"/>
+              </td>
+            </c:when>
+            <c:otherwise>
+              <td colspan=2></td>
+            </c:otherwise>
+          </c:choose>
+        </c:forEach>
+      </tr>
+    </c:forEach>
+  </c:if>
 
+  <%-- The footers --%>
+  <tr class="resultsFooter">
+    <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
+      <td align="center">
+        <html:submit property="action">
+          <bean:message key="button.save"/>
+        </html:submit>
+      </td>
+      <td></td>
+    </c:forEach>
+  </tr>
 </table>
 
 <%-- "Displaying xxx to xxx of xxx rows" messages --%>
@@ -91,6 +117,7 @@
   </c:otherwise>
 
 </c:choose>
+<br/>
 
 <%-- Paging controls --%>
 <c:if test="${resultsTable.start > 0}">
@@ -113,9 +140,8 @@
     <bean:message key="results.last"/>
   </html:link>
 </c:if>
-
+<br/>
 <%-- Page size controls --%>
-<html:form action="/changeResultsSize">
 
   <bean:message key="results.changepagesize"/>
   <html:select property="pageSize">
