@@ -164,6 +164,10 @@ public class QueryCloner
                         (QueryEvaluable) cloneThing(origC.getQueryEvaluable(), fromElementMap),
                         origC.isNegated());
             }
+        } else if (orig instanceof BagConstraint) {
+            BagConstraint origC = (BagConstraint) orig;
+            return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(), fromElementMap),
+                    origC.getBag(), origC.isNegated());
         }
         throw new IllegalArgumentException("Unknown object type: " + orig);
     }

@@ -222,6 +222,12 @@ public class QueryTestCase extends OneTimeTestCase
             }
             checkQueryNodes(msg + ": nodes of subquery constraint are not equal", node1, node2, q1, q2);
             assertEquals(msg + ": queries of subquery constraint are not equal", cc1.getQuery(), cc2.getQuery());
+        } else if (c1 instanceof BagConstraint) {
+            BagConstraint cc1 = (BagConstraint) c1;
+            BagConstraint cc2 = (BagConstraint) c2;
+            checkQueryNodes(msg + ": BagConstraint nodes are not equal", cc1.getQueryNode(), cc2.getQueryNode(), q1, q2);
+            assertEquals(msg + ": Bags are not equal", cc1.getBag(), cc2.getBag());
+            assertEquals(msg + ": Negation is not equal", cc1.isNegated(), cc2.isNegated());
         } else {
             fail(msg + ": non-supported object in Query");
         }

@@ -282,6 +282,10 @@ public class FqlQuery
             }
             return ((((ConstraintSet) cc).getDisjunctive() ? cc.isNegated() : !cc.isNegated())
                     ? "true" : "false");
+        } else if (cc instanceof BagConstraint) {
+            BagConstraint c = (BagConstraint) cc;
+            parameters.add(c.getBag());
+            return nodeToString(q, c.getQueryNode()) + (c.isNegated() ? " NOT IN ?" : " IN ?");
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }

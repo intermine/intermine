@@ -79,7 +79,15 @@ public class FqlShell
         try {
             Readline.load(ReadlineLibrary.GnuReadline);
         } catch (UnsatisfiedLinkError ignore_me) {
-            out.println("couldn't load readline lib. Using simple stdin.");
+            try {
+                Readline.load(ReadlineLibrary.Editline);
+            } catch (UnsatisfiedLinkError ignore_me2) {
+                try {
+                    Readline.load(ReadlineLibrary.Getline);
+                } catch (UnsatisfiedLinkError ignore_me3) {
+                    out.println("couldn't load readline lib. Using simple stdin.");
+                }
+            }
         }
         Readline.initReadline("FQLShell");
         try {

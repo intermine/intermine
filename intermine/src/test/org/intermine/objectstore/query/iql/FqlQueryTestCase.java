@@ -14,6 +14,8 @@ import junit.framework.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.objectstore.SetupDataTestCase;
@@ -85,6 +87,14 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         results.put("SelectClassObjectSubquery", fq);
         results.put("EmptyAndConstraintSet", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE true", null));
         results.put("EmptyOrConstraintSet", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Company AS a1_ WHERE false", null));
+        Set bag1 = new HashSet();
+        bag1.add("hello");
+        bag1.add("goodbye");
+        bag1.add("CompanyA");
+        bag1.add(new Integer(5));
+        fq = new FqlQuery("SELECT DISTINCT Company FROM org.flymine.model.testmodel.Company AS Company WHERE Company.name IN ?", null);
+        fq.setParameters(Collections.singletonList(bag1));
+        results.put("BagConstraint", fq);
     }
 
 }

@@ -17,7 +17,7 @@ import org.xml.sax.Attributes;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Serializer for classes that implement List
@@ -31,6 +31,6 @@ public class ListSerializer extends VectorSerializer
      */
     public void serialize(QName name, Attributes attributes, Object value,
                           SerializationContext context) throws IOException {
-        super.serialize(name, attributes, new Vector((List) value), context);
+        super.serialize(name, attributes, new Vector((Collection) value), context);
     }
 }

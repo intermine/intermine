@@ -75,9 +75,36 @@ public class ObjectStoreServer
             throw new NullPointerException("query should not be null");
         }
 
-        Query q = query.toQuery();
-        synchronized (registeredResults) {
-            registeredResults.put(new Integer(++nextQueryId), os.execute(q));
+        try {
+            Query q = query.toQuery();
+            synchronized (registeredResults) {
+                registeredResults.put(new Integer(++nextQueryId), os.execute(q));
+            }
+        } catch (ObjectStoreException e) {
+            StringWriter message = new StringWriter();
+            PrintWriter pMessage = new PrintWriter(message);
+            e.printStackTrace(pMessage);
+            ObjectStoreException toThrow = new ObjectStoreException(message.toString());
+            throw toThrow;
+        } catch (RuntimeException e) {
+            try {
+                StringWriter message = new StringWriter();
+                PrintWriter pMessage = new PrintWriter(message);
+                e.printStackTrace(pMessage);
+                Class c = e.getClass();
+                Constructor cons = c.getConstructor(new Class[] {String.class});
+                RuntimeException toThrow = (RuntimeException) cons.newInstance(
+                        new Object[] {message.toString()});
+                throw toThrow;
+            } catch (NoSuchMethodException e2) {
+                throw e;
+            } catch (InstantiationException e2) {
+                throw e;
+            } catch (IllegalAccessException e2) {
+                throw e;
+            } catch (InvocationTargetException e2) {
+                throw e;
+            }
         }
         return nextQueryId;
     }

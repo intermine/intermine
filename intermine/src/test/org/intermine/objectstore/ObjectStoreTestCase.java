@@ -203,6 +203,7 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
         results.put("EmptyNorConstraintSet", toList(r));
 
+        results.put("BagConstraint", Collections.singletonList(Collections.singletonList(data.get("CompanyA"))));
     }
 
     /**

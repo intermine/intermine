@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -49,6 +50,7 @@ public class FqlQueryParser
         String modelPackage = fq.getPackageName();
         String fql = fq.getQueryString();
         Iterator iterator = fq.getParameters().iterator();
+        AST ast = null;
 
         try {
             InputStream is = new ByteArrayInputStream(fql.getBytes());
@@ -57,11 +59,7 @@ public class FqlQueryParser
             FqlParser parser = new FqlParser(lexer);
             parser.start_rule();
 
-            AST ast = parser.getAST();
-
-            //antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
-            //System.\\out.println("\n==> Dump of AST <==");
-            //visitor.visit(ast);
+            ast = parser.getAST();
 
             if (ast == null) {
                 throw new IllegalArgumentException("Invalid FQL string " + fql);
@@ -71,13 +69,21 @@ public class FqlQueryParser
 
             return q;
         } catch (antlr.RecognitionException e) {
+            antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+            visitor.visit(ast);
             IllegalArgumentException e2 = new IllegalArgumentException("Exception");
             e2.initCause(e);
             throw e2;
         } catch (antlr.TokenStreamException e) {
+            antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+            visitor.visit(ast);
             IllegalArgumentException e2 = new IllegalArgumentException("Exception");
             e2.initCause(e);
             throw e2;
+        } catch (IllegalArgumentException e) {
+            antlr.DumpASTVisitor visitor = new antlr.DumpASTVisitor();
+            visitor.visit(ast);
+            throw e;
         }
     }
 
@@ -753,6 +759,22 @@ public class FqlQueryParser
                     throw new IllegalArgumentException("No such object " + firstString + " while "
                             + "looking for a collection or object reference");
                 }
+            case FqlTokenTypes.BAG_CONSTRAINT:
+                subAST = ast.getFirstChild();
+                if (subAST.getType() != FqlTokenTypes.FIELD) {
+                    throw new IllegalArgumentException("Expected a QueryEvaluable or QueryClass "
+                            + "as the first argument of a BagConstraint");
+                }
+                if (subAST.getNextSibling() != null) {
+                    throw new IllegalArgumentException("Expected only one argument in "
+                            + "BagConstraint AST");
+                }
+                QueryNode leftd = processNewQueryNode(subAST, q);
+                Object nextParam = iterator.next();
+                if (!(nextParam instanceof Collection)) {
+                    throw new ClassCastException("Parameter " + nextParam + " not a Collection");
+                }
+                return new BagConstraint(leftd, (Collection) nextParam);
             case FqlTokenTypes.NOT_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 Constraint retval = processConstraint(subAST, q, modelPackage, iterator);

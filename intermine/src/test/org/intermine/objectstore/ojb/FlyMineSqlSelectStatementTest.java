@@ -93,6 +93,7 @@ public class FlyMineSqlSelectStatementTest extends SetupDataTestCase
         results.put("EmptyOrConstraintSet", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE false ORDER BY a1_.ID");
         results.put("EmptyNandConstraintSet", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE false ORDER BY a1_.ID");
         results.put("EmptyNorConstraintSet", "SELECT DISTINCT a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE true ORDER BY a1_.ID");
+        results.put("BagConstraint", "SELECT DISTINCT Company.ID AS \"CompanyID\", Company.addressId AS \"CompanyaddressId\", Company.cEOId AS \"CompanycEOId\", Company.name AS \"Companyname\", Company.vatNumber AS \"CompanyvatNumber\" FROM Company AS Company WHERE (Company.name = 'CompanyA' OR Company.name = 'goodbye' OR Company.name = 'hello') ORDER BY Company.ID");
     }
 
     public void executeTest(String type) throws Exception {

@@ -14,8 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.flymine.util.Util;
-
 /**
  * Constraint a QueryClass or QueryEvaluable to be within a bag.
  *
@@ -23,86 +21,45 @@ import org.flymine.util.Util;
  */
 public class BagConstraint extends Constraint
 {
-    protected QueryEvaluable qe;
-    protected QueryClass qc;
+    protected QueryNode qn;
     protected Set bag;
 
     /**
-     * Construct a BagConstraint with a QueryEvaluable.
+     * Construct a BagConstraint.
      *
-     * @param qe the QueryEvaluable to compare to the bag
+     * @param qn the QueryNode to compare to the bag
      * @param bag a Collection that represents the bag
      */
-    public BagConstraint(QueryEvaluable qe, Collection bag) {
-        this(qe, bag, false);
+    public BagConstraint(QueryNode qn, Collection bag) {
+        this(qn, bag, false);
     }
 
     /**
-     * Construct a BagConstraint with a QueryEvaluable.
+     * Construct a BagConstraint.
      *
-     * @param qe the QueryEvaluable to compare to the bag
+     * @param qn the QueryNode to compare to the bag
      * @param bag a Collection that represents the bag
      * @param negated reverse the constraint logic if true
      */
-    public BagConstraint(QueryEvaluable qe, Collection bag, boolean negated) {
-        if (qe == null) {
+    public BagConstraint(QueryNode qn, Collection bag, boolean negated) {
+        if (qn == null) {
             throw new NullPointerException("qe cannot be null");
         }
         if (bag == null) {
             throw new NullPointerException("bag cannot be null");
         }
-        this.qe = qe;
-        this.qc = null;
+        this.qn = qn;
         this.bag = new HashSet(bag);
         this.negated = negated;
     }
 
     /**
-     * Construct a BagConstraint with a QueryClass.
+     * Get the QueryNode.
      *
-     * @param qc the QueryClass to compare to the bag
-     * @param bag a Collection that represents the bag
+     * @return QueryNode
      */
-    public BagConstraint(QueryClass qc, Collection bag) {
-        this(qc, bag, false);
-    }
-
-    /**
-     * Construct a BagConstraint with a QueryClass.
-     *
-     * @param qc the QueryClass to compare to the bag
-     * @param bag a Collection that represents the bag
-     * @param negated reverse the constraint logic if true
-     */
-    public BagConstraint(QueryClass qc, Collection bag, boolean negated) {
-        if (qc == null) {
-            throw new NullPointerException("qc cannot be null");
-        }
-        if (bag == null) {
-            throw new NullPointerException("bag cannot be null");
-        }
-        this.qe = null;
-        this.qc = qc;
-        this.bag = new HashSet(bag);
-        this.negated = negated;
-    }
-
-    /**
-     * Get the QueryEvaluable.
-     *
-     * @return QueryEvaluable
-     */
-    public QueryEvaluable getQueryEvaluable() {
-        return qe;
-    }
-
-    /**
-     * Get the QueryClass.
-     *
-     * @return QueryClass
-     */
-    public QueryClass getQueryClass() {
-        return qc;
+    public QueryNode getQueryNode() {
+        return qn;
     }
 
     /**
@@ -122,8 +79,7 @@ public class BagConstraint extends Constraint
             BagConstraint bc = (BagConstraint) obj;
             return bag.equals(bc.bag)
                 && negated == bc.negated
-                && Util.equals(qe, bc.qe)
-                && Util.equals(qc, bc.qc);
+                && qn.equals(bc.qn);
         }
         return false;
     }
@@ -132,6 +88,6 @@ public class BagConstraint extends Constraint
      * @see Object#hashCode
      */
     public int hashCode() {
-        return bag.hashCode() + (negated ? 3 : 0) + 5 * Util.hashCode(qe) + 7 * Util.hashCode(qc);
+        return bag.hashCode() + (negated ? 3 : 0) + 5 * qn.hashCode();
     }
 }

@@ -12,10 +12,11 @@ package org.flymine.objectstore;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import junit.framework.AssertionFailedError;
 
@@ -167,6 +168,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("EmptyOrConstraintSet", emptyOrConstraintSet());
         queries.put("EmptyNandConstraintSet", emptyNandConstraintSet());
         queries.put("EmptyNorConstraintSet", emptyNorConstraintSet());
+        queries.put("BagConstraint", bagConstraint());
     }
 
     /*
@@ -888,5 +890,25 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc);
         q.setConstraint(new ConstraintSet(ConstraintSet.OR, true));
         return q;
+    }
+
+    /*
+      select Company
+      from Company
+      where Company.name in ("hello", "goodbye")
+    */
+    public static Query bagConstraint() throws Exception {
+        QueryClass c1 = new QueryClass(Company.class);
+        Query q1 = new Query();
+        q1.alias(c1, "Company");
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        HashSet set = new HashSet();
+        set.add("hello");
+        set.add("goodbye");
+        set.add("CompanyA");
+        set.add(new Integer(5));
+        q1.setConstraint(new BagConstraint(new QueryField(c1, "name"), set));
+        return q1;
     }
 }

@@ -10,6 +10,8 @@ package org.flymine.objectstore.ojb;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
 
@@ -39,6 +42,7 @@ import org.flymine.objectstore.query.SimpleConstraint;
 import org.flymine.objectstore.query.SubqueryConstraint;
 import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.ContainsConstraint;
+import org.flymine.objectstore.query.BagConstraint;
 import org.flymine.objectstore.query.QueryReference;
 import org.flymine.objectstore.query.QueryObjectReference;
 import org.flymine.objectstore.query.QueryCollectionReference;
@@ -480,6 +484,8 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             return classConstraintToString((ClassConstraint) c);
         } else if (c instanceof ContainsConstraint) {
             return containsConstraintToString((ContainsConstraint) c);
+        } else if (c instanceof BagConstraint) {
+            return bagConstraintToString((BagConstraint) c);
         }
         throw (new IllegalArgumentException("Unknown constraint type: " + c));
     }
@@ -741,6 +747,47 @@ public class FlyMineSqlSelectStatement implements SqlStatement
             }
         }
         return retval + (cc.isNotContains() ? "))" : ")");
+    }
+
+    /**
+     * Converts a BagConstraint object into a String suitable for putting in an SQL query.
+     *
+     * @param c the BagConstraint object
+     * @return the converted String
+     */
+    protected String bagConstraintToString(BagConstraint c) {
+        // First, filter the objects off into a sorted set:
+        Class type = c.getQueryNode().getType();
+        boolean value = (c.getQueryNode() instanceof QueryEvaluable);
+        String evaluable = null;
+        if (value) {
+            evaluable = queryEvaluableToString((QueryEvaluable) c.getQueryNode());
+        }
+        Set bag = c.getBag();
+        SortedSet filteredBag = new TreeSet();
+        Iterator bagIter = bag.iterator();
+        while (bagIter.hasNext()) {
+            Object bagItem = bagIter.next();
+            if (type.isInstance(bagItem)) {
+                if (value) {
+                    filteredBag.add(evaluable + " = " + objectToString(bagItem));
+                }
+                //TODO
+            }
+        }
+        boolean needComma = false;
+        StringWriter retval = new StringWriter();
+        PrintWriter retvalPW = new PrintWriter(retval);
+        Iterator orIter = filteredBag.iterator();
+        while (orIter.hasNext()) {
+            retvalPW.print(needComma ? " OR " : "(");
+            needComma = true;
+            retvalPW.print(orIter.next());
+        }
+        retvalPW.print(")");
+        retvalPW.flush();
+        retval.flush();
+        return retval.toString();
     }
 
     /**

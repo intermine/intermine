@@ -98,6 +98,10 @@ public class SerializationUtil
                     getQName(java.util.ArrayList.class),
                     new ListSerializerFactory(),
                     new ListDeserializerFactory());
+        tm.register(java.util.HashSet.class,
+                    getQName(java.util.ArrayList.class),
+                    new ListSerializerFactory(),
+                    new ListDeserializerFactory());
     }
 
     /**

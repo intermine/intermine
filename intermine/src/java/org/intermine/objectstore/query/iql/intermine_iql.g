@@ -38,6 +38,7 @@ tokens {
     SUBQUERY_CONSTRAINT;
     CONTAINS_CONSTRAINT;
     NOTLIKE;
+    BAG_CONSTRAINT;
 }
 
 
@@ -172,6 +173,7 @@ field_name:
 abstract_constraint: (constraint_set)=> constraint_set | safe_abstract_constraint ;
 
 safe_abstract_constraint: (paren_constraint)=> paren_constraint
+            | (bag_constraint)=> bag_constraint
             | (subquery_constraint)=> subquery_constraint
             | (contains_constraint)=> contains_constraint
             | "true"
@@ -213,6 +215,12 @@ subquery_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! f
                 #subquery_constraint); }
         | abstract_value "not"! "in"! OPEN_PAREN! fql_statement CLOSE_PAREN!
         { #subquery_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_CONSTRAINT, "SUBQUERY_CONSTRAINT"], #subquery_constraint)); }
+    ;
+
+bag_constraint: (abstract_value "in" )=> abstract_value "in"! QUESTION_MARK!
+        { #bag_constraint = #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint); }
+        | abstract_value "not"! "in"! QUESTION_MARK!
+        { #bag_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint)); }
     ;
 
 contains_constraint: (thing "contains" )=> thing "contains"! thing
