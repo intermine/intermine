@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class MappingUtilTest extends TestCase
 {
-    private MappingUtilTestObject a1, b1, c2, d2, e1, f1, g2, h2, c3, d4, f2, g3, h4, e4, f3, h1, g1, b2;
+    private MappingUtilTestObject a1, b1, c1, c2, d2, e1, f1, g2, h2, c3, d4, f2, g3, h4, e4, f3, h1, g1, b2;
     
     public MappingUtilTest(String arg1) {
         super(arg1);
@@ -19,6 +19,7 @@ public class MappingUtilTest extends TestCase
         a1 = new MappingUtilTestObject(1, "a");
         b1 = new MappingUtilTestObject(1, "b");
         b2 = new MappingUtilTestObject(2, "b");
+        c1 = new MappingUtilTestObject(1, "c");
         c2 = new MappingUtilTestObject(2, "c");
         c3 = new MappingUtilTestObject(3, "c");
         d2 = new MappingUtilTestObject(2, "d");
@@ -47,35 +48,113 @@ public class MappingUtilTest extends TestCase
         secondSet.add(f1);
         secondSet.add(g2);
         secondSet.add(h2);
+        Comparator comparator = new MappingUtilTestComparator();
+        Set combinations = MappingUtil.findCombinations(firstSet, secondSet, comparator);
 
         Set resultSet = new HashSet();
-        Map result = new HashMap();
-        result.put(a1, e1);
-        result.put(b1, f1);
-        result.put(c2, g2);
-        result.put(d2, h2);
-        resultSet.add(result);
-        result = new HashMap();
-        result.put(a1, f1);
-        result.put(b1, e1);
-        result.put(c2, g2);
-        result.put(d2, h2);
-        resultSet.add(result);
-        result = new HashMap();
-        result.put(a1, e1);
-        result.put(b1, f1);
-        result.put(c2, h2);
-        result.put(d2, g2);
-        resultSet.add(result);
-        result = new HashMap();
-        result.put(a1, f1);
-        result.put(b1, e1);
-        result.put(c2, h2);
-        result.put(d2, g2);
-        resultSet.add(result);
+        Map result1 = new HashMap();
+        result1.put(a1, e1);
+        result1.put(b1, f1);
+        result1.put(c2, g2);
+        result1.put(d2, h2);
+        resultSet.add(result1);
+        Map result2 = new HashMap();
+        result2.put(a1, f1);
+        result2.put(b1, e1);
+        result2.put(c2, g2);
+        result2.put(d2, h2);
+        resultSet.add(result2);
+        Map result3 = new HashMap();
+        result3.put(a1, e1);
+        result3.put(b1, f1);
+        result3.put(c2, h2);
+        result3.put(d2, g2);
+        resultSet.add(result3);
+        Map result4 = new HashMap();
+        result4.put(a1, f1);
+        result4.put(b1, e1);
+        result4.put(c2, h2);
+        result4.put(d2, g2);
+        resultSet.add(result4);
 
+        assertEquals(resultSet, combinations);
+
+        Set multiCombinations = MappingUtil.findMultipleCombinations(combinations);
+
+        Set combination1 = new HashSet();
+        combination1.add(result1);
+        Set combination2 = new HashSet();
+        combination2.add(result2);
+        Set combination3 = new HashSet();
+        combination3.add(result3);
+        Set combination4 = new HashSet();
+        combination4.add(result4);
+        Set multiResult = new HashSet();
+        multiResult.add(combination1);
+        multiResult.add(combination2);
+        multiResult.add(combination3);
+        multiResult.add(combination4);
+
+        assertEquals(multiResult, multiCombinations);
+    }
+
+    public void testALooseMapping() throws Exception {
+        Set firstSet = new HashSet();
+        Set secondSet = new HashSet();
+        firstSet.add(a1);
+        firstSet.add(c2);
+        secondSet.add(e1);
+        secondSet.add(f1);
+        secondSet.add(g2);
+        secondSet.add(h2);
         Comparator comparator = new MappingUtilTestComparator();
-        assertEquals(resultSet, MappingUtil.findCombinations(firstSet, secondSet, comparator));
+        Set combinations = MappingUtil.findCombinations(firstSet, secondSet, comparator);
+
+        Set resultSet = new HashSet();
+        Map result1 = new HashMap();
+        result1.put(a1, e1);
+        result1.put(c2, g2);
+        resultSet.add(result1);
+        Map result2 = new HashMap();
+        result2.put(a1, f1);
+        result2.put(c2, g2);
+        resultSet.add(result2);
+        Map result3 = new HashMap();
+        result3.put(a1, e1);
+        result3.put(c2, h2);
+        resultSet.add(result3);
+        Map result4 = new HashMap();
+        result4.put(a1, f1);
+        result4.put(c2, h2);
+        resultSet.add(result4);
+
+        assertEquals(resultSet, combinations);
+
+        Set multiCombinations = MappingUtil.findMultipleCombinations(combinations);
+
+        Set combination1 = new HashSet();
+        combination1.add(result1);
+        Set combination2 = new HashSet();
+        combination2.add(result2);
+        Set combination3 = new HashSet();
+        combination3.add(result3);
+        Set combination4 = new HashSet();
+        combination4.add(result4);
+        Set combination5 = new HashSet();
+        combination5.add(result1);
+        combination5.add(result4);
+        Set combination6 = new HashSet();
+        combination6.add(result2);
+        combination6.add(result3);
+        Set multiResult = new HashSet();
+        multiResult.add(combination1);
+        multiResult.add(combination2);
+        multiResult.add(combination3);
+        multiResult.add(combination4);
+        multiResult.add(combination5);
+        multiResult.add(combination6);
+
+        assertEquals(multiResult, multiCombinations);
     }
 
     public void testAnotherSimpleMapping() throws Exception {
@@ -180,6 +259,35 @@ public class MappingUtilTest extends TestCase
         assertEquals(resultSet2, MappingUtil.findCombinations(secondSet, firstSet, comparator));
     }
 
+    public void testMultiple1() throws Exception {
+        Set firstSet = new HashSet();
+        Set secondSet = new HashSet();
+        firstSet.add(a1);
+        secondSet.add(b1);
+        secondSet.add(c1);
+
+        Comparator comparator = new MappingUtilTestComparator();
+        Set combinations = MappingUtil.findCombinations(firstSet, secondSet, comparator);
+        Set multiCombinations = MappingUtil.findMultipleCombinations(combinations);
+
+        Map firstMapping = new HashMap();
+        firstMapping.put(a1, b1);
+        Map secondMapping = new HashMap();
+        secondMapping.put(a1, c1);
+        Set firstCombination = new HashSet();
+        firstCombination.add(firstMapping);
+        Set secondCombination = new HashSet();
+        secondCombination.add(secondMapping);
+        Set thirdCombination = new HashSet();
+        thirdCombination.add(firstMapping);
+        thirdCombination.add(secondMapping);
+        Set result = new HashSet();
+        result.add(firstCombination);
+        result.add(secondCombination);
+        result.add(thirdCombination);
+        
+        assertEquals(result, multiCombinations);
+    }
 
 
     class MappingUtilTestObject {

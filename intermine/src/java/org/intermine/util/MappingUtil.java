@@ -41,7 +41,7 @@ public class MappingUtil
      * @param firstSet the set of items to map from
      * @param secondSet the set of items to map to
      * @param comparator a comparator for the items in the two sets that returns 0 for the required
-     * equivalence operation.
+     * equivalence operation
      * @return a Set of Maps from items in the firstSet onto items in the secondSet
      */
     public static Set findCombinations(Set firstSet, Set secondSet, Comparator comparator) {
@@ -136,6 +136,78 @@ public class MappingUtil
                 return "FINISHED";
         }
         return "";
+    }
+
+    /**
+     * Produces a Set of possible combinations of multiple mappings (as produced by
+     * findCombinations), where all mappings in a multiple mapping combination map onto distinct
+     * objects.
+     *
+     * For example, if combinations contains {{a1-&gt;b1}, {a1-&gt;c1}}, then the result will be a
+     * Set that contains three Sets:
+     * <ol><li>{{a1-&gt;b1}}</li>
+     *     <li>{{a1-&gt;c1}}</li>
+     *     <li>{{a1-&gt;b1}, {a1-&gt;c1}}</li></ol>
+     * 
+     * @param combinations a Set of Maps, each of which is a mapping from one set of items onto
+     * another set of items
+     * @return a Set of Sets of Maps, where each Set of Maps is a set of mappings that have all
+     * items being mapped onto disjoint
+     */
+    public static Set findMultipleCombinations(Set combinations) {
+        Set retval = new HashSet(); // the result we will return.
+        Set newCombinations = new HashSet(combinations); // clone, so we don't alter.
+                                                         // Actually, we don't need to do this as
+                                                         // long as there isn't multi-threaded
+                                                         // access, since we restore the Set in the
+                                                         // end.
+        Set combinationsSoFar = new HashSet(); // An empty set.
+        recurseFindMultipleCombinations(retval, newCombinations, combinationsSoFar);
+        return retval;
+    }
+
+    private static void recurseFindMultipleCombinations(Set retval, Set combinations,
+            Set combinationsSoFar) {
+        if (!combinations.isEmpty()) {
+            Map currentCombination = (Map) combinations.iterator().next();
+            combinations.remove(currentCombination);
+
+            // Now, we must check to see if any of the values in currentCombination clashes with
+            // any value in combinationsSoFar.
+            // First, put all values from currentCombination into a Set:
+            Iterator valueIter = currentCombination.entrySet().iterator();
+            Set currentValues = new HashSet();
+            while (valueIter.hasNext()) {
+                Map.Entry valueEntry = (Map.Entry) valueIter.next();
+                Object value = valueEntry.getValue();
+                currentValues.add(value);
+            }
+
+            boolean clashes = false;
+            Iterator mapIter = combinationsSoFar.iterator();
+            while ((!clashes) && mapIter.hasNext()) {
+                Map map = (Map) mapIter.next();
+                Iterator mapValueIter = map.entrySet().iterator();
+                while ((!clashes) && mapValueIter.hasNext()) {
+                    Map.Entry mapValueEntry = (Map.Entry) mapValueIter.next();
+                    Object mapValue = mapValueEntry.getValue();
+                    clashes = currentValues.contains(mapValue);
+                }
+            }
+            if (!clashes) {
+                // In that case, we can add the currentCombination into combinationsSoFar, record
+                // the combination as possible, and recurse.
+                combinationsSoFar.add(currentCombination);
+                retval.add(new HashSet(combinationsSoFar));
+                recurseFindMultipleCombinations(retval, combinations, combinationsSoFar);
+                // And then set combinationsSoFar back to how it was before.
+                combinationsSoFar.remove(currentCombination);
+            }
+            // Recurse to try the next in combinations
+            recurseFindMultipleCombinations(retval, combinations, combinationsSoFar);
+            // And then set combinations back to how it was before
+            combinations.add(currentCombination);
+        }
     }
 }
 
