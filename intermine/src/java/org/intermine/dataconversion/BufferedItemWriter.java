@@ -12,9 +12,12 @@ package org.flymine.dataconversion;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
+import org.flymine.model.fulldata.Attribute;
 import org.flymine.model.fulldata.Item;
+import org.flymine.model.fulldata.ReferenceList;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.ObjectPipe;
 
@@ -36,11 +39,13 @@ public class BufferedItemWriter implements ItemWriter
     private ObjectPipe pipe = new ObjectPipe(PIPE_LENGTH);
     private ItemWriter iw;
     private int batchCounter = 0;
+    private int batchCharCounter = 0;
     private List batch = new ArrayList();
     private ObjectStoreException problem = null;
     private boolean finished = false;
     private static final int BATCH_SIZE = 1000;
-    private static final int PIPE_LENGTH = 5;
+    private static final int BATCH_CHAR_SIZE = 10000000;
+    private static final int PIPE_LENGTH = 3;
     
     /**
      * Constructs the ItemWriter with another ItemWriter.
@@ -58,12 +63,24 @@ public class BufferedItemWriter implements ItemWriter
      * @see ItemWriter#store
      */
     public void store(Item item) throws ObjectStoreException {
+        int itemSize = 100;
+        Iterator iter = item.getAttributes().iterator();
+        while (iter.hasNext()) {
+            itemSize += ((Attribute) iter.next()).getValue().length() + 50;
+        }
+        iter = item.getCollections().iterator();
+        while (iter.hasNext()) {
+            itemSize += ((ReferenceList) iter.next()).getRefIds().length() + 50;
+        }
+        itemSize += item.getReferences().size() * 50;
         batch.add(item);
         batchCounter++;
-        if (batchCounter >= BATCH_SIZE) {
+        batchCharCounter += itemSize;
+        if ((batchCounter >= BATCH_SIZE) || (batchCharCounter >= BATCH_CHAR_SIZE)) {
             pipe.put(batch);
             batch = new ArrayList();
             batchCounter = 0;
+            batchCharCounter = 0;
             checkException();
         }
     }
@@ -76,6 +93,7 @@ public class BufferedItemWriter implements ItemWriter
             pipe.put(batch);
             batch = new ArrayList();
             batchCounter = 0;
+            batchCharCounter = 0;
         }
         pipe.put(batch);
         checkException();
@@ -89,6 +107,7 @@ public class BufferedItemWriter implements ItemWriter
         if (batchCounter > 0) {
             pipe.put(batch);
             batchCounter = 0;
+            batchCharCounter = 0;
         }
         pipe.finish();
         synchronized (this) {
