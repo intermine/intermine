@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
-import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.fql.FqlQuery;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 
@@ -36,9 +36,9 @@ public class SimpleQuery
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.tutorial");
 
-        Query q = new Query("select c from Company as c", "org.flymine.model.tutorial");
+        FqlQuery q = new FqlQuery("select c from Company as c", "org.flymine.model.tutorial");
 
-        Results r = os.execute(q);
+        Results r = os.execute(q.toQuery());
         Iterator rrIter = r.iterator();
         while (rrIter.hasNext()) {
             ResultsRow rr = (ResultsRow) rrIter.next();
