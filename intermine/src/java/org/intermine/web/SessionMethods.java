@@ -254,4 +254,42 @@ public class SessionMethods
         }
         set.add(message);
     }
+    
+    /**
+     * Log use of a template query.
+     *
+     * @param session The session of the user running the template query
+     * @param templateType The type of template 'global' or 'user'
+     * @param templateName The name of the template
+     */
+    public static void logTemplateQueryUse(HttpSession session, String templateType,
+            String templateName) {
+        Logger log = Logger.getLogger(TemplateAction.class);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String username = profile.getUsername();
+        
+        if (username == null) {
+            username = "anonymous";
+        }
+        
+        log.info(username + "\t" + templateType + "\t" + templateName);
+    }
+    
+    /**
+     * Log load of an example query. If user is not logged in then lo
+     *
+     * @param session The session of the user loading the example query
+     * @param exampleName The name of the example query loaded
+     */
+    public static void logExampleQueryUse(HttpSession session, String exampleName) {
+        Logger log = Logger.getLogger(LoadQueryAction.class);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String username = profile.getUsername();
+        
+        if (username == null) {
+            username = "anonymous";
+        }
+        
+        log.info(username + "\t" + exampleName);
+    }
 }
