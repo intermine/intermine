@@ -20,26 +20,31 @@ import org.flymine.objectstore.query.ResultsRow;
 
 import org.flymine.model.tutorial.Company;
 
-import org.flymine.objectstore.query.QueryClass;
-
-public class SimpleQuery {
+/**
+ * Simple demonstration of query and results handling
+ *
+ * @author Mark Woodbridge
+ */
+public class SimpleQuery
+{
+    /**
+     * main method
+     * @param args command line parameters
+     * @throws Exception if an error occurs
+     */
     public static void main(String[] args) throws Exception {
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.tutorial");
 
         Query q = new Query("select c from Company as c", "org.flymine.model.tutorial");
 
-//         Query q = new Query();
-//         QueryClass qc = new QueryClass(Company.class);
-//         q.addFrom(qc);
-//         q.addToSelect(qc);
-
         Results r = os.execute(q);
         Iterator rrIter = r.iterator();
         while (rrIter.hasNext()) {
             ResultsRow rr = (ResultsRow) rrIter.next();
             Company c = (Company) rr.get(0);
-            System.out.println(c.getName() + " has " + c.getDepartments().size() + " departments");
+            System
+                .out.println(c.getName() + " has " + c.getDepartments().size() + " departments");
         }
     }
 }
