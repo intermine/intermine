@@ -20,7 +20,7 @@
     <put name="body" value="query.tile"/>
 </definition>
 <definition name="results.page" extends="layout.template">
-    <put name="body" value="/results.jsp"/>
+    <put name="body" value="resultsView.tile"/>
 </definition>
 <definition name="error.page" extends="layout.template">
     <put name="body" value="/error.jsp"/>
@@ -40,6 +40,9 @@
     <put name="left" value="/queryClassSelect.jsp"/>
     <put name="top" value="queryBuild.tile" />
     <put name="bottom" value="queryView.tile"/>
+</definition>
+
+<definition name="resultsView.tile" path="/results.jsp" controllerUrl="/initResultsView.do">
 </definition>
 
 </tiles-definitions>
