@@ -80,6 +80,10 @@ public class MageDataTranslator extends DataTranslator
     protected Set bioEntitySet = new HashSet();
     protected Set geneSet = new HashSet();
 
+
+    protected Map identifier2BioEntity = new HashMap();
+    protected Map organismDbId2Gene = new HashMap();
+
     protected Map treatment2BioSourceMap = new HashMap();
     protected Set bioSource = new HashSet();
 
@@ -159,7 +163,7 @@ public class MageDataTranslator extends DataTranslator
                      setReporterLocationCoords(srcItem, tgtItem);
                      storeTgtItem = false;
                 } else if (className.equals("PhysicalArrayDesign")) {
-                    createFeatureMap(srcItem, tgtItem);
+                    createFeatureMap(srcItem);
                     translateMicroArraySlideDesign(srcItem, tgtItem);
                 } else if (className.equals("Experiment")) {
                     // collection bioassays includes MeasuredBioAssay, PhysicalBioAssay
@@ -199,15 +203,17 @@ public class MageDataTranslator extends DataTranslator
      */
     protected Set createAuthors(Item srcItem) {
         Set result = new HashSet();
-        Attribute authorsAttr = srcItem.getAttribute("authors");
-        if (authorsAttr != null) {
-            String authorStr = authorsAttr.getValue();
-            StringTokenizer st = new StringTokenizer(authorStr, ";");
-            while (st.hasMoreTokens()) {
-                String name = st.nextToken().trim();
-                Item author = createItem(tgtNs + "Author", "");
-                author.addAttribute(new Attribute("name", name));
-                result.add(author);
+        if (srcItem.hasAttribute("authors")) {
+            Attribute authorsAttr = srcItem.getAttribute("authors");
+            if (authorsAttr != null) {
+                String authorStr = authorsAttr.getValue();
+                StringTokenizer st = new StringTokenizer(authorStr, ";");
+                while (st.hasMoreTokens()) {
+                    String name = st.nextToken().trim();
+                    Item author = createItem(tgtNs + "Author", "");
+                    author.addAttribute(new Attribute("name", name));
+                    result.add(author);
+                }
             }
         }
         return result;
@@ -220,32 +226,26 @@ public class MageDataTranslator extends DataTranslator
      */
     protected void setReporterLocationCoords(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
-        ReferenceList featureInfos = srcItem.getCollection("featureInformationSources");
-        if (featureInfos == null) {
-            LOG.error("FeatureReporterMap (" + srcItem.getIdentifier()
-                        + ") does not have featureInformationSource");
-            // throw new IllegalArgumentException("FeatureReporterMap ("
-            //            + srcItem.getIdentifier()
-            //            + " does not have featureInformationSource");
+        if (srcItem.hasCollection("featureInformationSources")) {
+            ReferenceList featureInfos = srcItem.getCollection("featureInformationSources");
 
-
-            }
-        if (!isSingleElementCollection(featureInfos)) {
-            LOG.error("FeatureReporterMap (" + srcItem.getIdentifier()
+            if (!isSingleElementCollection(featureInfos)) {
+                LOG.error("FeatureReporterMap (" + srcItem.getIdentifier()
                         + ") does not have single element collection"
-                     + featureInfos.getRefIds().toString());
-            // throw new IllegalArgumentException("FeatureReporterMap ("
-            //            + srcItem.getIdentifier()
-            //             + " has more than one featureInformationSource");
-        }
-        //FeatureInformationSources->FeatureInformation->Feature->FeatureLocation
-        //can't do prefetch from FeatureReporterMap to featureInformationSources
-        Item featureInfo = ItemHelper.convert(srcItemReader
+                        + featureInfos.getRefIds().toString());
+               // throw new IllegalArgumentException("FeatureReporterMap ("
+               //            + srcItem.getIdentifier()
+              //             + " has more than one featureInformationSource");
+            }
+
+            //FeatureInformationSources->FeatureInformation->Feature->FeatureLocation
+            //can't do prefetch from FeatureReporterMap to featureInformationSources
+            Item featureInfo = ItemHelper.convert(srcItemReader
                         .getItemById((String) featureInfos.getRefIds().get(0)));
-        if (featureInfo != null && featureInfo.hasReference("feature")) {
-            Item feature = ItemHelper.convert(srcItemReader
+
+            if (featureInfo.hasReference("feature")) {
+                Item feature = ItemHelper.convert(srcItemReader
                           .getItemById(featureInfo.getReference("feature").getRefId()));
-            if (feature != null) {
                 if (feature.hasReference("featureLocation")) {
                     Item featureLoc = ItemHelper.convert(srcItemReader
                           .getItemById(feature.getReference("featureLocation").getRefId()));
@@ -273,29 +273,37 @@ public class MageDataTranslator extends DataTranslator
                 reporterLocs.add(tgtItem);
                 rlToFeature.put(tgtItem.getIdentifier(), feature.getIdentifier());
             }
+        } else {
+
+            LOG.error("FeatureReporterMap (" + srcItem.getIdentifier()
+                        + ") does not have featureInformationSource");
+            // throw new IllegalArgumentException("FeatureReporterMap ("
+            //            + srcItem.getIdentifier()
+            //            + " does not have featureInformationSource");
+
         }
     }
 
     /**
      * @param srcItem = mage:PhysicalArrayDesign
-     * @param tgtItem = flymine:MicroArraySlideDesign
      * @throws ObjectStoreException if problem occured during translating
      */
-    protected void createFeatureMap(Item srcItem, Item tgtItem)
+    protected void createFeatureMap(Item srcItem)
         throws ObjectStoreException {
-        ReferenceList featureGroups = srcItem.getCollection("featureGroups");
-        if (featureGroups == null || !isSingleElementCollection(featureGroups)) {
-            throw new IllegalArgumentException("PhysicalArrayDesign (" + srcItem.getIdentifier()
+        if (srcItem.hasCollection("featureGroups")) {
+            ReferenceList featureGroups = srcItem.getCollection("featureGroups");
+            if (featureGroups == null || !isSingleElementCollection(featureGroups)) {
+                throw new IllegalArgumentException("PhysicalArrayDesign (" + srcItem.getIdentifier()
                         + ") does not have exactly one featureGroup");
-        }
-        //ItemPrefetchDescriptor desc1
-        Item featureGroup = ItemHelper.convert(srcItemReader
+            }
+            //ItemPrefetchDescriptor desc1
+            Item featureGroup = ItemHelper.convert(srcItemReader
                   .getItemById((String) featureGroups.getRefIds().get(0)));
-        Iterator featureIter = featureGroup.getCollection("features").getRefIds().iterator();
-        while (featureIter.hasNext()) {
-            featureToDesign.put((String) featureIter.next(), tgtItem.getIdentifier());
+            Iterator featureIter = featureGroup.getCollection("features").getRefIds().iterator();
+            while (featureIter.hasNext()) {
+                featureToDesign.put((String) featureIter.next(), srcItem.getIdentifier());
+            }
         }
-
     }
 
     /**
@@ -333,30 +341,37 @@ public class MageDataTranslator extends DataTranslator
         throws ObjectStoreException {
 
         StringBuffer sb = new StringBuffer();
+        boolean controlFlg = false;
         ReferenceList failTypes = new ReferenceList();
-        failTypes = srcItem.getCollection("failTypes");
-        if (failTypes != null) {
-            for (Iterator l = srcItem.getCollection("failTypes").getRefIds().iterator();
+        if (srcItem.hasCollection("failTypes")) {
+            failTypes = srcItem.getCollection("failTypes");
+            if (failTypes != null) {
+                for (Iterator l = srcItem.getCollection("failTypes").getRefIds().iterator();
                      l.hasNext();) {
-                Item ontoItem = ItemHelper.convert(srcItemReader.getItemById((String) l.next()));
-                sb.append(ontoItem.getAttribute("value").getValue() + " ");
+                    Item ontoItem = ItemHelper.convert(srcItemReader.getItemById(
+                                                       (String) l.next()));
+                    sb.append(ontoItem.getAttribute("value").getValue() + " ");
+                }
+                tgtItem.addAttribute(new Attribute("failType", sb.toString()));
             }
-            tgtItem.addAttribute(new Attribute("failType", sb.toString()));
+
         }
 
-        Reference controlType = new Reference();
-        controlType = srcItem.getReference("controlType");
-        boolean controlFlg = false;
-        if (controlType != null) {
-            Item controlItem = ItemHelper.convert(srcItemReader.getItemById(
+        if (srcItem.hasReference("controlType")) {
+            Reference controlType = srcItem.getReference("controlType");
+            if (controlType != null) {
+                Item controlItem = ItemHelper.convert(srcItemReader.getItemById(
                                      (String) srcItem.getReference("controlType").getRefId()));
-            if (controlItem.getAttribute("value").getValue().equals("control_buffer")) {
-                controlFlg = true;
+                if (controlItem.getAttribute("value").getValue().equals("control_buffer")) {
+                    controlFlg = true;
+                }
             }
         }
+
 
         ReferenceList featureReporterMaps = srcItem.getCollection("featureReporterMaps");
         ReferenceList immobilizedChar = srcItem.getCollection("immobilizedCharacteristics");
+
         sb = new StringBuffer();
         String identifier = null;
 
@@ -388,38 +403,46 @@ public class MageDataTranslator extends DataTranslator
             //identifier = reporter: controlType;name;descriptions for genomic_dna
 
             identifier = (String) immobilizedChar.getRefIds().get(0);
-
-            if (tgtItem.getClassName().equals(tgtNs + "NuclearDNA")) {
-                sb = new StringBuffer();
-                if (srcItem.hasReference("controlType")) {
-                    Item controlItem = ItemHelper.convert(srcItemReader.getItemById(
-                                      (String) srcItem.getReference("controlType").getRefId()));
-                    if (controlItem.hasAttribute("value")) {
-                        sb.append(controlItem.getAttribute("value").getValue() + ";");
-                    }
-                }
-                if (srcItem.hasAttribute("name")) {
-                    sb.append(srcItem.getAttribute("name").getValue() + ";");
-                }
-                if (srcItem.hasCollection("descriptions")) {
-                    for (Iterator k = srcItem.getCollection("descriptions").getRefIds().iterator();
-                             k.hasNext();) {
-                        Item description = ItemHelper.convert(srcItemReader.getItemById(
-                                                (String) k.next()));
-                        if (description.hasAttribute("text")) {
-                            sb.append(description.getAttribute("text").getValue() + ";");
+            String identifierAttribute = null;
+            Item bioSequence = ItemHelper.convert(srcItemReader.getItemById(identifier));
+            if (bioSequence.hasReference("type")) {
+                Item oeItem = ItemHelper.convert(srcItemReader.getItemById(
+                                    (String) bioSequence.getReference("type").getRefId()));
+                if (oeItem.getAttribute("value").getValue().equals("genomic_DNA")) {
+                    sb = new StringBuffer();
+                    if (srcItem.hasReference("controlType")) {
+                        Item controlItem = ItemHelper.convert(srcItemReader.getItemById((String)
+                                           srcItem.getReference("controlType").getRefId()));
+                        if (controlItem.hasAttribute("value")) {
+                            sb.append(controlItem.getAttribute("value").getValue() + ";");
                         }
                     }
-                }
+                    if (srcItem.hasAttribute("name")) {
+                        sb.append(srcItem.getAttribute("name").getValue() + ";");
+                    }
+                    if (srcItem.hasCollection("descriptions")) {
+                        for (Iterator k = srcItem.getCollection(
+                                          "descriptions").getRefIds().iterator(); k.hasNext();) {
+                            Item description = ItemHelper.convert(srcItemReader.getItemById(
+                                                (String) k.next()));
+                            if (description.hasAttribute("text")) {
+                                sb.append(description.getAttribute("text").getValue() + ";");
+                            }
+                        }
+                    }
 
-                if (sb.length() > 1) {
-                    bioEntity2IdentifierMap.put(identifier, sb.substring(0, sb.length() - 1));
-                }
-            } else {
-                sb = new StringBuffer();
-                if (srcItem.hasAttribute("name")) {
-                    sb.append(srcItem.getAttribute("name").getValue());
-                    bioEntity2IdentifierMap.put(identifier, sb.toString());
+                    if (sb.length() > 1) {
+                        identifierAttribute = sb.substring(0, sb.length() - 1);
+                        bioEntity2IdentifierMap.put(identifier, identifierAttribute);
+                    }
+                } else {
+                    sb = new StringBuffer();
+                    if (srcItem.hasAttribute("name")) {
+                        sb.append(srcItem.getAttribute("name").getValue());
+                        identifierAttribute = sb.toString();
+                        bioEntity2IdentifierMap.put(identifier, identifierAttribute);
+
+                    }
                 }
             }
             //create bioEntity2FeatureMap
@@ -427,10 +450,11 @@ public class MageDataTranslator extends DataTranslator
             if (featureReporterMaps != null) {
                 for (Iterator i = featureReporterMaps.getRefIds().iterator(); i.hasNext(); ) {
                     //FeatureReporterMap //desc2
-                    Item frm = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
+                    String s = (String) i.next();
+                    Item frm = ItemHelper.convert(srcItemReader.getItemById(s));
                     if (frm.hasCollection("featureInformationSources")) {
                         Iterator j = frm.getCollection("featureInformationSources").
-                                 getRefIds().iterator();
+                                   getRefIds().iterator();
                         //can't prefetch from FeatureReporterMap get featureInformationSources
                         while (j.hasNext()) {
                             Item fis = ItemHelper.convert(srcItemReader.getItemById(
@@ -441,12 +465,15 @@ public class MageDataTranslator extends DataTranslator
                         }
                     }
                 }
-                //identifier =  (String) immobilizedChar.getRefIds().get(0);
-                tgtItem.addReference(new Reference("material", identifier));
+
                 if (sb.length() > 1) {
                     bioEntity2Feature.put(identifier, sb.substring(0, sb.length() - 1));
                 }
                 LOG.debug("bioEntity2Feature" + bioEntity2Feature.toString());
+
+                //identifier =  (String) immobilizedChar.getRefIds().get(0);
+                tgtItem.addReference(new Reference("material", identifier));
+
             }
         }
 
@@ -461,28 +488,41 @@ public class MageDataTranslator extends DataTranslator
     protected void translateMicroArraySlideDesign(Item srcItem, Item tgtItem)
         throws ObjectStoreException {
         // move descriptions reference list
-        promoteCollection(srcItem, "descriptions", "annotations", tgtItem, "descriptions");
-        // change substrateType reference to attribute
-
-        Item surfaceType = ItemHelper.convert(srcItemReader
-                                .getItemById(srcItem.getReference("surfaceType").getRefId()));
-        if (surfaceType != null && surfaceType.hasAttribute("value")) {
-            tgtItem.addAttribute(new Attribute("surfaceType",
-                                               surfaceType.getAttribute("value").getValue()));
-
+        if (srcItem.hasCollection("descriptions")) {
+            ReferenceList des =  srcItem.getCollection("descriptions");
+            if (des != null) {
+                for (Iterator i = des.getRefIds().iterator(); i.hasNext(); ) {
+                    Item anno = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
+                    if (anno != null) {
+                        promoteCollection(srcItem, "descriptions", "annotations",
+                                          tgtItem, "descriptions");
+                    }
+                }
+            }
         }
 
-         if (srcItem.hasAttribute("version")) {
+        // change substrateType reference to attribute
+        if (srcItem.hasReference("surfaceType")) {
+            Item surfaceType = ItemHelper.convert(srcItemReader
+                                .getItemById(srcItem.getReference("surfaceType").getRefId()));
+            if (surfaceType.hasAttribute("value")) {
+                tgtItem.addAttribute(new Attribute("surfaceType",
+                                               surfaceType.getAttribute("value").getValue()));
+
+            }
+        }
+
+        if (srcItem.hasAttribute("version")) {
             tgtItem.addAttribute(new Attribute("version",
                                                srcItem.getAttribute("version").getValue()));
 
          }
-         if (srcItem.hasAttribute("name")) {
+
+        if (srcItem.hasAttribute("name")) {
             tgtItem.addAttribute(new Attribute("name",
                                                srcItem.getAttribute("name").getValue()));
 
          }
-
 
     }
 
@@ -1035,35 +1075,45 @@ public class MageDataTranslator extends DataTranslator
      */
     protected Set processReporterLocs() {
         Set results = new HashSet();
-        Iterator i = reporterLocs.iterator();
-        while (i.hasNext()) {
-            Item rl = (Item) i.next();
-            String designId = (String) featureToDesign.get(rlToFeature.get(rl.getIdentifier()));
-            Reference designRef = new Reference();
-            designRef.setName("design");
-            designRef.setRefId(designId);
-            rl.addReference(designRef);
-            results.add(rl);
+        if (reporterLocs != null && featureToDesign != null && rlToFeature != null) {
+            for (Iterator i = reporterLocs.iterator(); i.hasNext();) {
+                Item rl = (Item) i.next();
+                String designId = (String) featureToDesign.get(rlToFeature.get(rl.getIdentifier()));
+                Reference designRef = new Reference();
+                if (designId != null) {
+                    designRef.setName("design");
+                    designRef.setRefId(designId);
+                    rl.addReference(designRef);
+                    results.add(rl);
+                }
+            }
         }
+
         return results;
     }
 
+
     /**
-     * BioAssayDatum  mage:FeatureId -> flymine:MAEResultId (MicroArrayExperimentalResult)
+     * BioAssayDatum  mage:FeatureId -> flymine:MAEResultId (MicroArrayExperimentalResults)
      * Reporter flymine: BioEntityId -> mage:FeatureId
      * BioSequece  BioEntityId -> BioEntity Item
      *                         -> extra Gene Item
-     * @return add microExperimentalResult collection to BioEntity item
+     * @return add microExperimentalResults collection to BioEntity item
      * and add identifier attribute to BioEntity
      */
     protected Set processBioEntity2MAEResult() {
         Set results = new HashSet();
+        Set entitySet = new HashSet();
         feature2Maer = new HashMap();
         feature2Maer = createFeature2MaerMap(maer2Feature, maerSet);
         String s = null;
-        String id = null;
+        String itemId = null;
+        String identifierAttribute = null;
+        Set identifierSet = new HashSet();
+
         for (Iterator i = bioEntitySet.iterator(); i.hasNext();) {
             Item bioEntity = (Item) i.next();
+
             // add collection microArrayExperimentalResult
             List maerIds = new ArrayList();
             s = (String) bioEntity2Feature.get((String) bioEntity.getIdentifier());
@@ -1083,17 +1133,75 @@ public class MageDataTranslator extends DataTranslator
 
                 ReferenceList maerRl = new ReferenceList("microArrayExperimentalResults", maerIds);
                 bioEntity.addCollection(maerRl);
+                entitySet.add(bioEntity);
             }
-
-            //add attribute identifier for bioEntity
-            id = (String) bioEntity2IdentifierMap.get((String) bioEntity.getIdentifier());
-            if (id != null) {
-                bioEntity.addAttribute(new Attribute("identifier", id));
-            }
-
-            results.add(bioEntity);
         }
 
+        for (Iterator i = entitySet.iterator(); i.hasNext();) {
+            Item bioEntity = (Item) i.next();
+
+            //add attribute identifier for bioEntity
+            identifierAttribute = (String) bioEntity2IdentifierMap.get(
+                                              (String) bioEntity.getIdentifier());
+            if (identifier2BioEntity.containsKey(identifierAttribute)) {
+                Item anotherEntity = (Item) identifier2BioEntity.get(identifierAttribute);
+                List synonymList = new ArrayList();
+                if (anotherEntity.hasCollection("synonyms")) {
+                    ReferenceList synonymList1 = anotherEntity.getCollection("synonyms");
+                    for (Iterator k = synonymList1.getRefIds().iterator(); k.hasNext();) {
+                        String refId = (String) k.next();
+                        synonymList.add(refId);
+                    }
+                }
+                if (bioEntity.hasCollection("synonyms")) {
+                    ReferenceList synonymList2 = bioEntity.getCollection("synonyms");
+                    for  (Iterator k = synonymList2.getRefIds().iterator(); k.hasNext();) {
+                        String refId = (String) k.next();
+                        if (!synonymList.contains(refId)) {
+                            synonymList.add(refId);
+                        }
+                    }
+                }
+                bioEntity.addCollection(new ReferenceList("synonyms", synonymList));
+
+                List maerList = new ArrayList();
+                if (anotherEntity.hasCollection("microArrayExperimentalResults")) {
+
+                    ReferenceList maerList1 = anotherEntity.getCollection(
+                                                "microArrayExperimentalResults");
+                    for (Iterator j = maerList1.getRefIds().iterator(); j.hasNext();) {
+                        String refId = (String) j.next();
+                        maerList.add(refId);
+                    }
+                }
+
+                if (bioEntity.hasCollection("microArrayExperimentalResults")) {
+                    ReferenceList maerList2 = bioEntity.getCollection(
+                                                 "microArrayExperimentalResults");
+                    for (Iterator j = maerList2.getRefIds().iterator(); j.hasNext();) {
+                        String refId = (String) j.next();
+                        if (!maerList.contains(refId)) {
+                            maerList.add(refId);
+                        }
+                    }
+                }
+                bioEntity.addCollection(new ReferenceList("microArrayExperimentalResults",
+                                          maerList));
+
+                identifier2BioEntity.put(identifierAttribute, bioEntity);
+
+            } else {
+                bioEntity.addAttribute(new Attribute("identifier", identifierAttribute));
+                identifier2BioEntity.put(identifierAttribute, bioEntity);
+                identifierSet.add(identifierAttribute);
+            }
+
+        }
+
+        for (Iterator i = identifierSet.iterator(); i.hasNext();) {
+            Item bioEntity = (Item) identifier2BioEntity.get((String) i.next());
+            results.add(bioEntity);
+        }
         return results;
     }
 
@@ -1107,10 +1215,19 @@ public class MageDataTranslator extends DataTranslator
 
     protected Set processGene2MAEResult() {
         Set results = new HashSet();
+        Set destGene = new HashSet();
+        Set organismDbSet = new HashSet();
+
         feature2Maer = new HashMap();
+        Map organismDbId2Gene = new HashMap();
+        Map organismDbId2GeneDes = new HashMap();
+
         feature2Maer = createFeature2MaerMap(maer2Feature, maerSet);
+        String organismDbId = null;
+
         for (Iterator i = geneSet.iterator(); i.hasNext();) {
             Item gene = (Item) i.next();
+            organismDbId = gene.getAttribute("organismDbId").getValue();
             List maerIds = new ArrayList();
             String geneId = (String) gene.getIdentifier();
             String bioEntityId = (String) gene2BioEntity.get(geneId);
@@ -1131,10 +1248,49 @@ public class MageDataTranslator extends DataTranslator
 
                 ReferenceList maerRl = new ReferenceList("microArrayExperimentalResults", maerIds);
                 gene.addCollection(maerRl);
-                results.add(gene);
+                organismDbId2Gene.put(organismDbId, gene);
+                destGene.add(gene);
             }
         }
+
+        for (Iterator i = destGene.iterator(); i.hasNext();) {
+            Item gene = (Item) i.next();
+            if (organismDbId2GeneDes.containsKey(organismDbId)) {
+                Item anotherGene = (Item)  organismDbId2Gene.get(organismDbId);
+                List maerList = new ArrayList();
+                if (anotherGene.hasCollection("microArrayExperimentalResults")) {
+                    ReferenceList maerList1 = anotherGene.getCollection(
+                             "microArrayExperimentalResults");
+                    for (Iterator j = maerList1.getRefIds().iterator(); j.hasNext();) {
+                        String refId = (String) j.next();
+                        maerList.add(refId);
+                    }
+                }
+
+                if (gene.hasCollection("microArrayExperimentalResults")) {
+                    ReferenceList maerList2 = gene.getCollection("microArrayExperimentalResults");
+                    for (Iterator j = maerList2.getRefIds().iterator(); j.hasNext();) {
+                        String refId = (String) j.next();
+                        if (!maerList.contains(refId)) {
+                            maerList.add(refId);
+                        }
+                    }
+                }
+                gene.addCollection(new ReferenceList("microArrayExperimentalResults", maerList));
+                organismDbId2GeneDes.put(organismDbId, gene);
+            } else {
+                organismDbId2GeneDes.put(organismDbId, gene);
+                organismDbSet.add(organismDbId);
+            }
+
+        }
+
+        for (Iterator i = organismDbSet.iterator(); i.hasNext();) {
+            Item gene = (Item) organismDbId2GeneDes.get((String) i.next());
+            results.add(gene);
+        }
         return results;
+
     }
 
 
