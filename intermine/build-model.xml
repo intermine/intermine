@@ -135,7 +135,7 @@
           todir="${build.model.dir}"
           overwrite="false"/>
 
-    <java classname="org.intermine.ontology.Owl2InterMine" fork="true">
+    <java classname="org.intermine.ontology.Owl2InterMine" fork="true" maxmemory="800m">
       <classpath refid="class.path" />
       <arg value="${build.model.dir}/${model.name}.n3" />
       <arg value="N3" />
