@@ -177,6 +177,11 @@ version="1.0">
         <xsl:value-of select="@align"/>
     </xsl:attribute>
 </xsl:if>
+<xsl:if test="string-length(@width)!=0">
+    <xsl:attribute name="width">
+        <xsl:value-of select="@width"/>
+    </xsl:attribute>
+</xsl:if>
 <xsl:attribute name="border">0</xsl:attribute>
 <xsl:attribute name="hspace">7</xsl:attribute>
 <xsl:attribute name="vspace">5</xsl:attribute>
