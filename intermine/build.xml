@@ -651,8 +651,6 @@
       <fileset dir="${resources}/webapps/webservice">
         <exclude name="web.xml"/>
         <exclude name="context.xml"/>
-        <exclude name="deploy-ObjectStore.wsdd"/>
-        <exclude name="undeploy-ObjectStore.wsdd"/>
       </fileset>
     </copy>
 
@@ -660,10 +658,10 @@
              classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask">
       <classpath refid="project.class.path" />
     </taskdef>
-    <generate-wsdd destfile="${build.tmp}/deploy-ObjectStore.wsdd.fragment"/>
-    <loadfile srcFile="${build.tmp}/deploy-ObjectStore.wsdd.fragment" property="generated.wsdd"/>
+    <generate-wsdd destfile="${build.tmp}/server-config.wsdd.fragment"/>
+    <loadfile srcFile="${build.tmp}/server-config.wsdd.fragment" property="generated.wsdd"/>
     <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
-    <copy todir="${build.webapp}/webservice/WEB-INF" filtering="true" overwrite="true" file="${resources}/webapps/webservice/deploy-ObjectStore.wsdd"/>
+    <copy todir="${build.webapp}/webservice/WEB-INF" filtering="true" overwrite="true" file="${resources}/webapps/webservice/server-config.wsdd"/>
 
     <copy todir="${build.webapp}/webservice/WEB-INF/lib">
       <fileset dir="${lib}">
