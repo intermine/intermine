@@ -207,8 +207,8 @@ public class ClassDescriptor
     }
 
     /**
-     * Gets all AttributeDescriptors for this class - i.e. fields that are not references or
-     * collections.
+     * Gets all AttributeDescriptors for this class and it's super classes - i.e. fields that are
+     * not references or collections.
      * @return set of attributes for this Class
      */
     public Set getAllAttributeDescriptors() {
