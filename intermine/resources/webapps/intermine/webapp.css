@@ -48,21 +48,47 @@ table.results th, table.results td {
   border-bottom: solid 1px black;
 }
 table.results td td {
-  border:none;
+  border: none;
 }
 table.results {
   font-size: small;
 }
 table.noborder, table.noborder td, table.noborder th {
-    border: none;
+  border: none;
 }
-
+.showing {
+  background: #eee;
+  border: 1px solid #bbb;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-right: px;
+  padding-left: 3px;
+  margin-left: -4px;
+  margin-right: 3px;
+  line-height: 25px;
+}
+/* move away from plus/minus image on left */
+#browser .showing {
+  margin-left: 0px;
+}
+/* surrounds view paths */
 div.view {
   border-bottom: solid 1px;
   padding: 4px;
-  padding-bottom:14px;
+  padding-bottom: 14px;
 }
-
+/* one path added to the view area */
+div.viewpath {
+  background: #eee;
+  border: 1px solid black;
+  padding: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  float: left;
+  text-align: center;
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+}
 th {
   background: #caf;
 }
