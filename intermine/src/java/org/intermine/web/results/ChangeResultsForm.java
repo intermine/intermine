@@ -10,9 +10,6 @@ package org.flymine.web.results;
  *
  */
 
-import java.util.List;
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
@@ -48,14 +45,30 @@ public class ChangeResultsForm extends ActionForm
     }
 
 
+    /**
+     * Sets the selected objects
+     *
+     * @param selectedObjects the selected objects
+     */
     public void setSelectedObjects(String[] selectedObjects) {
         this.selectedObjects = selectedObjects;
     }
 
+    /**
+     * Gets the selected objects
+     *
+     * @return the selected objects
+     */
     public String[] getSelectedObjects() {
         return selectedObjects;
     }
 
+    /**
+     * Reset the form to the initial state
+     *
+     * @param mapping the mapping
+     * @param request the request
+     */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         selectedObjects = new String[] {};
     }
