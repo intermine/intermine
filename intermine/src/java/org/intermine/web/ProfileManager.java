@@ -185,34 +185,49 @@ public class ProfileManager
                 }
 
                 for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    String bagName = (String) entry.getKey();
-                    InterMineBag bag = (InterMineBag) entry.getValue();
-                    SavedBag savedBag = new SavedBag();
-                    savedBag.setBag(bagBinding.marshal(bag, bagName));
-                    savedBag.setUserProfile(userProfile);
-                    osw.store(savedBag);
+                    InterMineBag bag = null;
+                    try {
+                        Map.Entry entry = (Map.Entry) i.next();
+                        String bagName = (String) entry.getKey();
+                        bag = (InterMineBag) entry.getValue();
+                        SavedBag savedBag = new SavedBag();
+                        savedBag.setBag(bagBinding.marshal(bag, bagName));
+                        savedBag.setUserProfile(userProfile);
+                        osw.store(savedBag);
+                    } catch (Exception _) {
+                        LOG.error("Failed to marshal and save bag: " + bag);
+                    }
                 }
                 
                 for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    String queryName = (String) entry.getKey();
-                    PathQuery query = (PathQuery) entry.getValue();
-                    SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(queryBinding.marshal(query, queryName,
-                                                             os.getModel().getName()));
-                    savedQuery.setUserProfile(userProfile);
-                    osw.store(savedQuery);
+                    PathQuery query = null;
+                    try {
+                        Map.Entry entry = (Map.Entry) i.next();
+                        String queryName = (String) entry.getKey();
+                        query = (PathQuery) entry.getValue();
+                        SavedQuery savedQuery = new SavedQuery();
+                        savedQuery.setQuery(queryBinding.marshal(query, queryName,
+                                                                 os.getModel().getName()));
+                        savedQuery.setUserProfile(userProfile);
+                        osw.store(savedQuery);
+                    } catch (Exception _) {
+                        LOG.error("Failed to marshal and save query: " + query);
+                    }
                 }
                 
                 for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    String templateName = (String) entry.getKey();
-                    TemplateQuery template = (TemplateQuery) entry.getValue();
-                    SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
-                    savedTemplate.setTemplateQuery(templateBinding.marshal(template));
-                    savedTemplate.setUserProfile(userProfile);
-                    osw.store(savedTemplate);
+                    TemplateQuery template = null;
+                    try {
+                        Map.Entry entry = (Map.Entry) i.next();
+                        String templateName = (String) entry.getKey();
+                        template = (TemplateQuery) entry.getValue();
+                        SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
+                        savedTemplate.setTemplateQuery(templateBinding.marshal(template));
+                        savedTemplate.setUserProfile(userProfile);
+                        osw.store(savedTemplate);
+                    } catch (Exception _) {
+                        LOG.error("Failed to marshal and save template: " + template);
+                    }
                 }
                  
                 osw.store(userProfile);
