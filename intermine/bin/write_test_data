@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # The following environment variables need to be set
-# FLYMINE: location of local flymine installation
+# INTERMINE: location of local InterMine installation
 
-cd $FLYMINE
+cd $INTERMINE
 
 CP=$CLASSPATH
 
-for i in $FLYMINE/lib/*.jar ; do
+for i in $INTERMINE/lib/*.jar ; do
     CP=$CP:$i
 done
 
 CP=$CP:build/test:build/java:build/model/testmodel:build/model/fulldata
 
-java -cp $CP org.flymine.objectstore.SetupDataTestCase $*
+java -cp $CP org.intermine.objectstore.SetupDataTestCase $*
 

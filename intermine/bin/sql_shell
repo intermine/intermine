@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # The following environment variables need to be set
-# FLYMINE: location of local flymine installation
+# INTERMINE: location of local InterMine installation
 
-cd $FLYMINE
+cd $INTERMINE
 
 CP=$CLASSPATH
 
-for i in $FLYMINE/lib/*.jar ; do
+for i in $INTERMINE/lib/*.jar ; do
     CP=$CP:$i
 done
 
-for i in $FLYMINE/dist/*.jar ; do
+for i in $INTERMINE/dist/*.jar ; do
     CP=$CP:$i
 done
 
@@ -25,7 +25,7 @@ fi
 
 echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-echo "Calling java -cp $CP org.flymine.sql.query.Query \"$1\""
+echo "Calling java -cp $CP org.intermine.sql.query.Query \"$1\""
 
-java -cp $CP org.flymine.sql.query.Query "$1"
+java -cp $CP org.intermine.sql.query.Query "$1"
 

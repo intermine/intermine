@@ -1,23 +1,21 @@
 #!/bin/bash
 
 # The following environment variables need to be set
-# FLYMINE: location of local flymine installation
+# INTERMINE: location of local InterMine installation
 
-cd $FLYMINE
+cd $INTERMINE
 
 CP=$CLASSPATH
 
-for i in $FLYMINE/lib/*.jar ; do
+for i in $INTERMINE/lib/*.jar ; do
     CP=$CP:$i
 done
 
-for i in $FLYMINE/dist/*.jar ; do
+for i in $INTERMINE/dist/*.jar ; do
     CP=$CP:$i
 done
 
 CP=$CP:.
-
-CP=$CP:$FLYMINE/build/model/chado
 
 if test -z "$LD_LIBRARY_PATH" ; then
     export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
@@ -28,5 +26,5 @@ fi
 echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-java -cp $CP $ANT_OPTS org.flymine.objectstore.query.fql.FqlShell $*
+java -cp $CP $ANT_OPTS org.intermine.objectstore.query.fql.FqlShell $*
 
