@@ -717,6 +717,7 @@
     <load-chado integrationWriter="integration.chado-test" source="os.chado-translated" sourceName="chado"/>
   </target>
 
+
   <!-- Build temporary flymine database to hold ensembl anopheles data -->
   <target name="build-db-anoph-test">
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
@@ -738,10 +739,10 @@
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
   <target name="load-ensembl-drosophila" depends="compile-main, build-db-dros-test">
 
-    <ant antfile="build-model.xml" target="copy-keydefs" inheritRefs="true">
+    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
-      <reference torefid="class.path" refid="project.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.dros-test"/>
     </ant>
 
     <taskdef name="load-dros" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
@@ -898,10 +899,16 @@
       <arg value="org.flymine.model.genomic" />
       <arg value="http://www.flymine.org/model/genomic#" />
     </java>
+
+    <ant antfile="build-model.xml" target="copy-keydefs" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <property name="model.src" value="${model}/genomic"/>
+      <reference torefid="class.path" refid="project.class.path"/>
+    </ant>
   </target>
 
   <!-- create merged model from all source OWL ontologies -->
-  <target name="create-production-model" depends="remove-genomic, merge-orthologue-model, merge-rnai-model, 
+  <target name="create-production-model" depends="remove-genomic, merge-rnai-model, 
        merge-ensembl-model, merge-chado-model, merge-so-model" >
     <antcall target="create-genomic-model"/>
   </target>
@@ -1108,7 +1115,7 @@
           <exclude name="org/flymine/web/**" />
           <exclude name="org/flymine/objectstore/webservice/**" />
           <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
-          <exclude name="org/flymine/dataconversion/EnsemblDataTranslatorTest.class" />
+          <exclude name="org/flymine/dataconversion/*TranslatorTest.class" />
           <exclude name="org/flymine/dataconversion/ItemToObject*" />
         </fileset>
       </batchtest>
