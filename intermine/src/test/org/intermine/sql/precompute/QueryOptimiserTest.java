@@ -781,7 +781,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 OR ta.id IS NULL ORDER BY ta.id, tb.id, tc.name");
-        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 255000000000000000000050000000000000000000 ORDER BY P42.orderby_field, P42.name");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.a > 25 OR P42.a IS NULL ORDER BY P42.a, P42.b, P42.name");
         eSet = new ConsistentSet();
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
@@ -790,7 +790,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 OR ta.id IS NULL ORDER BY tc.id, ta.id, tb.id");
-        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 255000000000000000000050000000000000000000 ORDER BY P42.c, P42.orderby_field");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.a > 25 OR P42.a IS NULL ORDER BY P42.c, P42.a, P42.b");
         eSet = new ConsistentSet();
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
@@ -798,8 +798,8 @@ public class QueryOptimiserTest extends TestCase
         QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
         assertEquals(eSet, bestQuery.getQueries());
 
-        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 OR ta.id IS NULL ORDER BY ta.id, tc.id, tb.id");
-        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.orderby_field > 255000000000000000000050000000000000000000 ORDER BY P42.orderby_field, P42.c, P42.b");
+        q = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE tc.id > 25 OR tc.id IS NULL ORDER BY tc.id, ta.id, tb.id");
+        eq = new Query("SELECT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 WHERE P42.c > 25 OR P42.c IS NULL ORDER BY P42.c, P42.a, P42.b");
         eSet = new ConsistentSet();
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
