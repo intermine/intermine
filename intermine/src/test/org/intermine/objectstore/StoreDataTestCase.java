@@ -28,7 +28,7 @@ import java.io.File;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
@@ -63,7 +63,7 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         SetupDataTestCase.oneTimeSetUp();
         try {
             if (storeDataWriter == null) {
-                storeDataWriter = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+                storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
                     .getObjectStoreWriter("osw.unittest");
             }
             storeData();
@@ -110,11 +110,11 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
 
         //Database db = DatabaseFactory.getDatabase("db.unittest");
         //java.sql.Connection con = db.getConnection();
-        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) storeDataWriter).getConnection();
+        java.sql.Connection con = ((ObjectStoreWriterInterMineImpl) storeDataWriter).getConnection();
         java.sql.Statement s = con.createStatement();
         //con.setAutoCommit(true);
         s.execute("vacuum analyze");
-        ((ObjectStoreWriterFlyMineImpl) storeDataWriter).releaseConnection(con);
+        ((ObjectStoreWriterInterMineImpl) storeDataWriter).releaseConnection(con);
         //con.close();
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }

@@ -15,21 +15,21 @@ package org.intermine.objectstore.webservice.ser;
  * InterMineObjects when they are serialized
  * @author Mark Woodbridge
  */
-public class FlyMineBusinessString
+public class InterMineString
 {
     protected String string;
 
     /**
      * No-arg constructor
      */
-    public FlyMineBusinessString() {
+    public InterMineString() {
     }
 
     /**
-     * Construct a FlyMineBusinessString using a string
+     * Construct a InterMineString using a string
      * @param string a LiteRendered XML string
      */
-    public FlyMineBusinessString(String string) {
+    public InterMineString(String string) {
         setString(string);
     }
 

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
 import org.intermine.xml.full.FullParser;
 
 public class BufferedItemWriterTest extends ItemWriterTestCase {
@@ -27,10 +27,10 @@ public class BufferedItemWriterTest extends ItemWriterTestCase {
     }
 
     public void setUp() throws Exception {
-        osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
+        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         itemWriter = new ObjectStoreItemWriter(osw);
         itemWriter = new BufferedItemWriter(itemWriter);
-        osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
+        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
         super.setUp();
     }
 }

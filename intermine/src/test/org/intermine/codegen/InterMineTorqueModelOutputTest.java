@@ -27,23 +27,23 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 
-public class FlyMineTorqueModelOutputTest extends TestCase
+public class InterMineTorqueModelOutputTest extends TestCase
 {
     private String INDENT = ModelOutput.INDENT;
     private String ENDL = ModelOutput.ENDL;
     private Model model;
     private File file;
-    private FlyMineTorqueModelOutput mo;
+    private InterMineTorqueModelOutput mo;
     private String uri = "http://www.intermine.org/model/testmodel";
 
-    public FlyMineTorqueModelOutputTest(String name) {
+    public InterMineTorqueModelOutputTest(String name) {
         super(name);
     }
 
     public void setUp() throws Exception {
         model = new Model("model", uri, new HashSet());
         file = new File("temp.xml");
-        mo = new FlyMineTorqueModelOutput(model, file);
+        mo = new InterMineTorqueModelOutput(model, file);
     }
 
     public void testProcess() throws Exception {
@@ -52,7 +52,7 @@ public class FlyMineTorqueModelOutputTest extends TestCase
         Model model = new Model("model", uri, new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         File path = new File("./");
-        FlyMineTorqueModelOutput mo = new FlyMineTorqueModelOutput(model, path);
+        InterMineTorqueModelOutput mo = new InterMineTorqueModelOutput(model, path);
         mo.process();
 
         File file = new File("./model-schema.xml");

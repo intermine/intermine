@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 import java.io.StringReader;
 
 import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
  * Deserialize a Model from XML to an Object
@@ -33,7 +33,7 @@ public class ModelDeserializer extends DeserializerImpl
                                    DeserializationContext context) throws SAXException {
         try {
             String model = context.getCurElement().toString();
-            ModelParser parser = new FlyMineModelParser();
+            ModelParser parser = new InterMineModelParser();
             setValue(parser.process(new StringReader(model)));
         } catch (Exception exp) {
             throw new SAXException(exp);

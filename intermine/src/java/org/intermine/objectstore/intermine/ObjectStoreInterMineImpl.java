@@ -49,9 +49,9 @@ import org.apache.log4j.Logger;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
+public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreFlyMineImpl.class);
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
     protected static Map instances = new HashMap();
     protected Database db;
@@ -59,14 +59,14 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
     protected Set writers = new HashSet();
 
     /**
-     * Constructs an ObjectStoreFlyMineImpl.
+     * Constructs an ObjectStoreInterMineImpl.
      *
      * @param db the database in which the model resides
      * @param model the name of the model
      * @throws NullPointerException if db or model are null
      * @throws IllegalArgumentException if db or model are invalid
      */
-    protected ObjectStoreFlyMineImpl(Database db, Model model) {
+    protected ObjectStoreInterMineImpl(Database db, Model model) {
         super(model);
         this.db = db;
     }
@@ -110,15 +110,15 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * Gets a ObjectStoreFlyMineImpl instance for the given underlying properties
+     * Gets a ObjectStoreInterMineImpl instance for the given underlying properties
      *
      * @param props The properties used to configure a FlyMine-based objectstore
      * @param model the metadata associated with this objectstore
-     * @return the ObjectStoreFlyMineImpl for this repository
+     * @return the ObjectStoreInterMineImpl for this repository
      * @throws IllegalArgumentException if props or model are invalid
      * @throws ObjectStoreException if there is any problem with the instance
      */
-    public static ObjectStoreFlyMineImpl getInstance(Properties props, Model model)
+    public static ObjectStoreInterMineImpl getInstance(Properties props, Model model)
         throws ObjectStoreException {
         String dbAlias = props.getProperty("db");
         if (dbAlias == null) {
@@ -133,10 +133,10 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl
         }
         synchronized (instances) {
             if (!(instances.containsKey(db))) {
-                instances.put(db, new ObjectStoreFlyMineImpl(db, model));
+                instances.put(db, new ObjectStoreInterMineImpl(db, model));
             }
         }
-        return (ObjectStoreFlyMineImpl) instances.get(db);
+        return (ObjectStoreInterMineImpl) instances.get(db);
     }
 
     /**

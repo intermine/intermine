@@ -24,7 +24,7 @@ import com.hp.hpl.jena.ontology.ObjectProperty;
 import org.intermine.metadata.*;
 import org.intermine.util.TypeUtil;
 import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
  * Convert a FlyMine metadata model to a Jena OntModel.
@@ -32,7 +32,7 @@ import org.intermine.modelproduction.xml.FlyMineModelParser;
  * @author Andrew Varley
  * @author Richard Smith
  */
-public class FlyMine2Owl
+public class InterMine2Owl
 {
 
     /**
@@ -136,7 +136,7 @@ public class FlyMine2Owl
      */
     public static void main(String[] args) throws Exception {
         if (args.length != 3) {
-            throw new IllegalArgumentException("Usage: FlyMine2Owl source dest format");
+            throw new IllegalArgumentException("Usage: InterMine2Owl source dest format");
         }
         String srcFilename = args[0];
         String tgtFilename = args[1];
@@ -145,9 +145,9 @@ public class FlyMine2Owl
         File srcFile = new File(srcFilename);
         File tgtFile = new File(tgtFilename);
 
-        FlyMine2Owl f2o = new FlyMine2Owl();
+        InterMine2Owl f2o = new InterMine2Owl();
         Model model = null;
-        ModelParser parser = new FlyMineModelParser();
+        ModelParser parser = new InterMineModelParser();
         model = parser.process(new FileReader(srcFile));
 
         OntModel ont = f2o.process(model);

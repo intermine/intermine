@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -22,7 +22,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.fql.FqlQuery;
-import org.intermine.objectstore.webservice.ser.FlyMineBusinessString;
+import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
 import org.intermine.util.Util;
 
@@ -107,11 +107,11 @@ public class ObjectStoreServer
      * @param start the start row
      * @param limit the maximum number of rows to return
      * @throws ObjectStoreException if an error occurs executing the query
-     * @throws FlyMineException if an error occurs promoting proxies in the Results
+     * @throws InterMineException if an error occurs promoting proxies in the Results
      * @return a List of ResultRows
      */
     public List execute(int queryId, int start, int limit)
-            throws ObjectStoreException, FlyMineException {
+            throws ObjectStoreException, InterMineException {
         // Results.range() can throw an IndexOutOfBoundsException if end is off the
         // end of the results set. Here we will catch it and then call range again
         // with size() (which is now known to the results set).
@@ -174,7 +174,7 @@ public class ObjectStoreServer
      * @return the object from the ObjectStore, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
-    public FlyMineBusinessString getObjectById(Integer id) throws ObjectStoreException {
+    public InterMineString getObjectById(Integer id) throws ObjectStoreException {
         try {
             return SerializationUtil.objectToString(os.getObjectById(id), getModel());
         } catch (ObjectStoreException e) {

@@ -33,7 +33,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.fql.FqlQuery;
-import org.intermine.objectstore.webservice.ser.FlyMineBusinessString;
+import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
 
 /**
@@ -186,7 +186,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      * @see ObjectStore#getObjectById
      */
     public InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        return SerializationUtil.stringToObject((FlyMineBusinessString)
+        return SerializationUtil.stringToObject((InterMineString)
                                                 remoteMethod("getObjectById", new Object[] {id}),
                                                 this);
     }

@@ -25,16 +25,16 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import org.intermine.metadata.*;
 
 
-public class Owl2FlyMineTest extends TestCase
+public class Owl2InterMineTest extends TestCase
 {
     private final String ns = "http://www.intermine.org/target#";
-    private Owl2FlyMine generator;
+    private Owl2InterMine generator;
     private final String ENDL = "\n";
     private OntModel ont;
 
-    public Owl2FlyMineTest(String arg) {
+    public Owl2InterMineTest(String arg) {
         super(arg);
-        generator = new Owl2FlyMine("testmodel", "org.intermine.model.testmodel");
+        generator = new Owl2InterMine("testmodel", "org.intermine.model.testmodel");
         ont = ModelFactory.createOntologyModel();
     }
 

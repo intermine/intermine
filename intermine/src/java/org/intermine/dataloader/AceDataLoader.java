@@ -29,7 +29,7 @@ import org.acedb.FloatValue;
 import org.acedb.Reference;
 import org.acedb.staticobj.StaticAceObject;
 
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -99,9 +99,9 @@ public class AceDataLoader extends DataLoader
      * store on each.
      *
      * @param source access to AceDb
-     * @throws FlyMineException if anything goes wrong with ace or storing
+     * @throws InterMineException if anything goes wrong with ace or storing
      */
-    public void processAce(AceURL source) throws FlyMineException {
+    public void processAce(AceURL source) throws InterMineException {
         try {
             Ace.registerDriver(new org.acedb.socket.SocketDriver());
 
@@ -127,7 +127,7 @@ public class AceDataLoader extends DataLoader
             LOG.error("Committing transaction");
             iw.commitTransaction();
         } catch (Exception e) {
-            throw new FlyMineException(e);
+            throw new InterMineException(e);
         }
     }
 
@@ -184,10 +184,10 @@ public class AceDataLoader extends DataLoader
      * @return an instance of the object
      *
      * @throws AceException if an error occurs with the Ace data
-     * @throws FlyMineException if object cannot be instantiated
+     * @throws InterMineException if object cannot be instantiated
      */
     protected InterMineObject processAceObject(AceObject aceObject)
-        throws AceException, FlyMineException {
+        throws AceException, InterMineException {
         if (aceObject == null) {
             throw new NullPointerException("aceObject must not be null");
         }
@@ -214,10 +214,10 @@ public class AceDataLoader extends DataLoader
      * @param currentObject the object in which to set field
      *
      * @throws AceException if an error occurs with the Ace data
-     * @throws FlyMineException if object cannot be instantiated
+     * @throws InterMineException if object cannot be instantiated
      */
     protected void processAceNode(AceNode aceNode, Object currentObject)
-        throws AceException, FlyMineException {
+        throws AceException, InterMineException {
         String nodeName; //name of the field in currentObject
         Object nodeValue; //identifier of the referred to object
         if (aceNode instanceof Reference) {
@@ -237,7 +237,7 @@ public class AceDataLoader extends DataLoader
                 TypeUtil.setFieldValue(nodeValue, "identifier", ((DateValue) aceNode).toDate());
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
-                throw new FlyMineException(e);
+                throw new InterMineException(e);
             }
         } else if (aceNode instanceof FloatValue) {
             try {
@@ -247,7 +247,7 @@ public class AceDataLoader extends DataLoader
                                        new Float(((FloatValue) aceNode).toFloat()));
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
-                throw new FlyMineException(e);
+                throw new InterMineException(e);
             }
         } else if (aceNode instanceof IntValue) {
             try {
@@ -257,7 +257,7 @@ public class AceDataLoader extends DataLoader
                                        new Integer(((IntValue) aceNode) .toInt()));
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
-                throw new FlyMineException(e);
+                throw new InterMineException(e);
             }
         } else if (aceNode instanceof StringValue) {
             try {
@@ -267,7 +267,7 @@ public class AceDataLoader extends DataLoader
                                        .duplicateQuotes(((StringValue) aceNode).toString()));
                 setField(currentObject, nodeName, nodeValue);
             } catch (Exception e) {
-                throw new FlyMineException(e);
+                throw new InterMineException(e);
             }
         } else if (!(aceNode instanceof AceObject)) { //node representing a field
             nodeName = aceNode.getName();
@@ -325,10 +325,10 @@ public class AceDataLoader extends DataLoader
      * @param target the object in which to set the field
      * @param fieldName the name of the field to set
      * @param fieldValue the value to set or to be added to a collection
-     * @throws FlyMineException if the field cannot be accessed
+     * @throws InterMineException if the field cannot be accessed
      */
     protected void setField(Object target, String fieldName, Object fieldValue)
-        throws FlyMineException {
+        throws InterMineException {
         try {
             if ((fieldValue instanceof String)) {  // single quotes need to duplicated for DB
                 fieldValue = StringUtil.duplicateQuotes((String) fieldValue);
@@ -344,7 +344,7 @@ public class AceDataLoader extends DataLoader
                             fieldValue = TypeUtil.getFieldValue(fieldValue, "identifier");
                         }
                     } catch (Exception e) {
-                        throw new FlyMineException(e);
+                        throw new InterMineException(e);
                     }
                     TypeUtil.setFieldValue(target, fieldName, fieldValue);
                 }
@@ -357,7 +357,7 @@ public class AceDataLoader extends DataLoader
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new FlyMineException(e);
+            throw new InterMineException(e);
         }
     }
 

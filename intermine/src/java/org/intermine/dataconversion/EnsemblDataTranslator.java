@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -84,7 +84,7 @@ public class EnsemblDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#translate
      */
-    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
+    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, InterMineException {
         tgtItemWriter.store(ItemHelper.convert(getOrganism()));
         tgtItemWriter.store(ItemHelper.convert(getEnsemblDb()));
         tgtItemWriter.store(ItemHelper.convert(getEmblDb()));
@@ -109,7 +109,7 @@ public class EnsemblDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#translateItem
      */
-    protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
+    protected Collection translateItem(Item srcItem) throws ObjectStoreException, InterMineException {
         Collection result = new HashSet();
         String srcNs = OntologyUtil.getNamespaceFromURI(srcItem.getClassName());
         String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());

@@ -35,7 +35,7 @@ import org.intermine.metadata.*;
  * @author Richard Smith
  */
 
-public class Owl2FlyMine
+public class Owl2InterMine
 {
     private String pkg;
     private String modelName;
@@ -48,7 +48,7 @@ public class Owl2FlyMine
      * @param modelName name of model to be created
      * @param pkg name of package within model
      */
-    public Owl2FlyMine(String modelName, String pkg) {
+    public Owl2InterMine(String modelName, String pkg) {
         this.modelName = modelName;
         this.pkg = pkg;
     }
@@ -323,7 +323,7 @@ public class Owl2FlyMine
      */
     public static void main(String[] args) throws Exception {
         if (args.length != 6) {
-            throw new IllegalArgumentException("Usage: FlyMine2Owl source_owl format"
+            throw new IllegalArgumentException("Usage: InterMine2Owl source_owl format"
                                                + " target_xml model_name package namespace");
         }
         String srcFilename = args[0];
@@ -333,7 +333,7 @@ public class Owl2FlyMine
         String pkg = args[4];
         String tgtNs = args[5];
 
-        Owl2FlyMine o2f = new Owl2FlyMine(modelName, pkg);
+        Owl2InterMine o2f = new Owl2InterMine(modelName, pkg);
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(srcFilename)), null, format);
         Model tgt = o2f.process(model, tgtNs);

@@ -19,7 +19,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flymine.ObjectStoreFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreInterMineImpl;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
@@ -83,16 +83,16 @@ public class DBRetrieverTask extends Task
             new DBConverter(m, db, new DirectDBReader(db),
                     new BufferedItemWriter(new ObjectStoreItemWriter(osw))).process();
             ObjectStore os = osw.getObjectStore();
-            if (os instanceof ObjectStoreFlyMineImpl) {
+            if (os instanceof ObjectStoreInterMineImpl) {
                 Connection c = null;
                 try {
-                    c = ((ObjectStoreFlyMineImpl) os).getConnection();
+                    c = ((ObjectStoreInterMineImpl) os).getConnection();
                     Statement s = c.createStatement();
                     s.execute("CREATE INDEX reference__refid ON reference (refid)");
                     s.execute("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
                     s.execute("ANALYSE");
                 } finally {
-                    ((ObjectStoreFlyMineImpl) os).releaseConnection(c);
+                    ((ObjectStoreInterMineImpl) os).releaseConnection(c);
                 }
             }
         } catch (Exception e) {

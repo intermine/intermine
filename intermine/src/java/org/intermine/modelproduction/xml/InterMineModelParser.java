@@ -26,7 +26,7 @@ import org.intermine.util.SAXParser;
  *
  * @author Mark Woodbridge
  */
-public class FlyMineModelParser implements ModelParser
+public class InterMineModelParser implements ModelParser
 {
     /**
      * Read source model information in FlyMine XML format and

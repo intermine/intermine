@@ -21,7 +21,7 @@ import java.util.HashMap;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.ontology.OntologyUtil;
@@ -55,7 +55,7 @@ public class ChadoDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#translateItem
      */
-    protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
+    protected Collection translateItem(Item srcItem) throws ObjectStoreException, InterMineException {
         Collection result = new HashSet();
         String className = OntologyUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);

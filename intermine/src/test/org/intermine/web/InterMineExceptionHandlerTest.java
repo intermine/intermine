@@ -21,18 +21,18 @@ import servletunit.struts.MockStrutsTestCase;
  * The way this will be tested is to call an actual action with
  * methods that we know cause Exceptions to be thrown
  */
-public class FlyMineExceptionHandlerTest extends MockStrutsTestCase {
+public class InterMineExceptionHandlerTest extends MockStrutsTestCase {
 
-    private FlyMineExceptionHandler handler;
+    private InterMineExceptionHandler handler;
     private ExceptionConfig ec;
 
-    public FlyMineExceptionHandlerTest(String testName) {
+    public InterMineExceptionHandlerTest(String testName) {
         super(testName);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        handler = new FlyMineExceptionHandler();
+        handler = new InterMineExceptionHandler();
         ec = new ExceptionConfig();
         ec.setPath("/rubbish");
         ec.setKey("ec.key");

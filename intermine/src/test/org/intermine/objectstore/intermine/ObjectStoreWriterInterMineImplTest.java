@@ -15,10 +15,10 @@ import junit.framework.Test;
 import org.intermine.objectstore.ObjectStoreWriterTestCase;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-public class ObjectStoreWriterFlyMineImplTest extends ObjectStoreWriterTestCase
+public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         ObjectStoreWriterTestCase.oneTimeSetUp();
     }
 
@@ -27,12 +27,12 @@ public class ObjectStoreWriterFlyMineImplTest extends ObjectStoreWriterTestCase
         ObjectStoreWriterTestCase.oneTimeTearDown();
     }
 
-    public ObjectStoreWriterFlyMineImplTest(String arg) throws Exception {
+    public ObjectStoreWriterInterMineImplTest(String arg) throws Exception {
         super(arg);
     }
 
     public static Test suite() {
-        return buildSuite(ObjectStoreWriterFlyMineImplTest.class);
+        return buildSuite(ObjectStoreWriterInterMineImplTest.class);
     }
 }
 

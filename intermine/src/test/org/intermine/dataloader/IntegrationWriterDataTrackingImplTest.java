@@ -30,7 +30,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.SetupDataTestCase;
-import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -77,7 +77,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
         //iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-        writer = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.unittest");
         iw = new IntegrationWriterDataTrackingImpl(writer, DataTrackerFactory.getDataTracker("dt.datatrackingtest"));
         os = iw.getObjectStore();
@@ -93,10 +93,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             throw new NullPointerException("iw must be set before trying to store data");
         }
         long start = new Date().getTime();
-        java.sql.Connection con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
+        java.sql.Connection con = ((ObjectStoreWriterInterMineImpl) writer).getConnection();
         java.sql.Statement s = con.createStatement();
         s.execute("vacuum analyze");
-        ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
+        ((ObjectStoreWriterInterMineImpl) writer).releaseConnection(con);
 
         try {
             iw.beginTransaction();
@@ -120,10 +120,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
 
 
-        con = ((ObjectStoreWriterFlyMineImpl) writer).getConnection();
+        con = ((ObjectStoreWriterInterMineImpl) writer).getConnection();
         s = con.createStatement();
         s.execute("vacuum analyze");
-        ((ObjectStoreWriterFlyMineImpl) writer).releaseConnection(con);
+        ((ObjectStoreWriterInterMineImpl) writer).releaseConnection(con);
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data and VACUUM ANALYZE");
     }
 /*

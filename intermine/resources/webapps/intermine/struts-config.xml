@@ -50,7 +50,7 @@
     <exception type="java.lang.Exception"
                key="exception.message"
                path="error.page"
-               handler="org.intermine.web.FlyMineExceptionHandler"/>
+               handler="org.intermine.web.InterMineExceptionHandler"/>
   </global-exceptions>
 
   <!-- ========== Global Forward Definitions ============================== -->

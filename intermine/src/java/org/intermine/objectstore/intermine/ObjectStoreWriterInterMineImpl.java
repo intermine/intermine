@@ -42,18 +42,18 @@ import org.apache.log4j.Logger;
 
 /**
  * An SQL-backed implementation of the ObjectStoreWriter interface, backed by
- * ObjectStoreFlyMineImpl.
+ * ObjectStoreInterMineImpl.
  *
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
+public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     implements ObjectStoreWriter
 {
-    protected static final Logger LOG = Logger.getLogger(ObjectStoreWriterFlyMineImpl.class);
+    protected static final Logger LOG = Logger.getLogger(ObjectStoreWriterInterMineImpl.class);
     protected Connection conn = null;
     protected boolean connInUse = false;
-    protected ObjectStoreFlyMineImpl os;
+    protected ObjectStoreInterMineImpl os;
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected Statement batch = null;
@@ -67,12 +67,12 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
      * Connection, grabbed from the provided ObjectStore.
      *
-     * @param os an ObjectStoreFlyMineImpl
+     * @param os an ObjectStoreInterMineImpl
      * @throws ObjectStoreException if a problem occurs
      */
-    public ObjectStoreWriterFlyMineImpl(ObjectStore os) throws ObjectStoreException {
+    public ObjectStoreWriterInterMineImpl(ObjectStore os) throws ObjectStoreException {
         super(null, os.getModel());
-        this.os = (ObjectStoreFlyMineImpl) os;
+        this.os = (ObjectStoreInterMineImpl) os;
         db = this.os.db;
         everOptimise = false;
         try {
@@ -97,7 +97,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
     
     /**
-     * @see ObjectStoreFlyMineImpl#getConnection
+     * @see ObjectStoreInterMineImpl#getConnection
      */
     public Connection getConnection() throws SQLException {
         synchronized (conn) {
@@ -146,7 +146,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
 
     /**
-     * @see ObjectStoreFlyMineImpl#releaseConnection
+     * @see ObjectStoreInterMineImpl#releaseConnection
      */
     public void releaseConnection(Connection c) {
         if (c == conn) {
@@ -171,7 +171,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      */
     public void finalize() {
         if (conn != null) {
-            LOG.error("Garbage collecting open ObjectStoreWriterFlyMineImpl with sequence = "
+            LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
                     + sequence + " createSituation: " + createSituation);
             outputLog();
             close();
@@ -182,11 +182,11 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      * @see ObjectStoreWriter#close
      */
     public void close() {
-        LOG.error("Close called on ObjectStoreWriterFlyMineImpl with sequence = " + sequence);
+        LOG.error("Close called on ObjectStoreWriterInterMineImpl with sequence = " + sequence);
         try {
            if (isInTransaction()) {
                abortTransaction();
-               LOG.error("ObjectStoreWriterFlyMineImpl closed in unfinished transaction"
+               LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
                        + " - transaction aborted");
            }
            os.releaseConnection(conn);
@@ -521,7 +521,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
 
     /**
-     * @see ObjectStoreFlyMineImpl#execute(Query, int, int, boolean, boolean, int)
+     * @see ObjectStoreInterMineImpl#execute(Query, int, int, boolean, boolean, int)
      *
      * This method is overridden in order to flush batches properly before the read.
      */
@@ -532,7 +532,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
     
     /**
-     * @see ObjectStoreFlyMineImpl#count
+     * @see ObjectStoreInterMineImpl#count
      * 
      * This method is overridden in order to flush batches properly before the read.
      */
@@ -542,7 +542,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
 
     /**
-     * @see ObjectStoreFlyMineImpl#internalGetObjectById
+     * @see ObjectStoreInterMineImpl#internalGetObjectById
      *
      * This method is overridden in order to flush matches properly before the read.
      */
@@ -609,7 +609,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
      */
     public void shutdown() {
         if (conn != null) {
-            LOG.error("Shutting down open ObjectStoreWriterFlyMineImpl with sequence = "
+            LOG.error("Shutting down open ObjectStoreWriterInterMineImpl with sequence = "
                     + sequence + ", createSituation = " + createSituation);
             outputLog();
             close();

@@ -26,13 +26,13 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import org.intermine.metadata.*;
 
-public class FlyMine2OwlTest extends TestCase
+public class InterMine2OwlTest extends TestCase
 {
-    FlyMine2Owl convertor;
+    InterMine2Owl convertor;
     String ns = "http://www.intermine.org/model/testmodel#";
 
     public void setUp() {
-        convertor = new FlyMine2Owl();
+        convertor = new InterMine2Owl();
     }
 
 

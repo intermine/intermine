@@ -22,7 +22,7 @@ import org.acedb.*;
 import org.acedb.staticobj.*;
 
 import org.intermine.util.StringUtil;
-import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.model.acedbtest.*;
 
 public class AceDataLoaderTest extends TestCase
@@ -35,7 +35,7 @@ public class AceDataLoaderTest extends TestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        FlyMineModelParser parser = new FlyMineModelParser();
+        InterMineModelParser parser = new InterMineModelParser();
         loader = new AceDataLoader(parser.process(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("acedbtest_model.xml"))));
     }
     

@@ -15,7 +15,7 @@ import java.io.Reader;
 import java.io.InputStreamReader;
 
 import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -37,7 +37,7 @@ public class XmiParserFunctionalTest extends TestCase
         ModelParser parser1 = new XmiParser(MODEL);
         Reader reader1 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xmi"));
         Model model1 = parser1.process(reader1);
-        ModelParser parser2 = new FlyMineModelParser();
+        ModelParser parser2 = new InterMineModelParser();
         Reader reader2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(MODEL + ".xml"));
         Model model2 = parser2.process(reader2);
         assertEquals(model1, model2);

@@ -72,7 +72,7 @@ public class ResultsConverter
                             String objectField = sqlResults.getString(alias);
                             currentColumn = objectField;
                             obj = LiteParser.parse(objectField, os);
-                            //if (objectField.length() < ObjectStoreFlyMineImpl
+                            //if (objectField.length() < ObjectStoreInterMineImpl
                             //        .CACHE_LARGEST_OBJECT) {
                                 os.cacheObjectById(obj.getId(), obj);
                             //} else {

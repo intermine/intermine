@@ -78,7 +78,7 @@ public class ModelOutputTask extends Task
             if (type.equals("java")) {
                 mo = new JavaModelOutput(model, destDir);
             } else if (type.equals("flyminetorque")) {
-                mo = new FlyMineTorqueModelOutput(model, destDir);
+                mo = new InterMineTorqueModelOutput(model, destDir);
             } else {
                 throw new BuildException("Unrecognised value for output type: " + type);
             }

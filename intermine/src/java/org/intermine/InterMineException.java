@@ -16,40 +16,40 @@ package org.intermine;
  *
  * @author Richard Smith
  */
-public class FlyMineException extends Exception
+public class InterMineException extends Exception
 {
     /**
-     * Constructs an FlyMineException
+     * Constructs an InterMineException
      */
-    public FlyMineException() {
+    public InterMineException() {
         super();
     }
 
     /**
-     * Constructs an FlyMineException with the specified detail message.
+     * Constructs an InterMineException with the specified detail message.
      *
      * @param msg the detail message
      */
-    public FlyMineException(String msg) {
+    public InterMineException(String msg) {
         super(msg);
     }
 
     /**
-     * Constructs an FlyMineException with the specified nested throwable.
+     * Constructs an InterMineException with the specified nested throwable.
      *
      * @param t the nested throwable
      */
-    public FlyMineException(Throwable t) {
+    public InterMineException(Throwable t) {
         super(t);
     }
 
     /**
-     * Constructs an FlyMineException with the specified detail message and nested throwable.
+     * Constructs an InterMineException with the specified detail message and nested throwable.
      *
      * @param msg the detail message
      * @param t the nested throwable
      */
-    public FlyMineException(String msg, Throwable t) {
+    public InterMineException(String msg, Throwable t) {
         super(msg, t);
     }
 }

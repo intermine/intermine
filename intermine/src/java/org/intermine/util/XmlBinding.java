@@ -18,7 +18,7 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 import org.intermine.metadata.Model;
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 
@@ -55,13 +55,13 @@ public class XmlBinding
      * Unmarshal an XML file to an object.
      * @param is the InputStream to read from
      * @return a collection of business objects
-     * @throws FlyMineException if an error occurs during unmarshalling
+     * @throws InterMineException if an error occurs during unmarshalling
      */
-    public Collection unmarshal(InputStream is) throws FlyMineException {
+    public Collection unmarshal(InputStream is) throws InterMineException {
         try {
             return FullParser.realiseObjects(FullParser.parse(is), model);
         } catch (Exception e) {
-            throw new FlyMineException("Error during unmarshalling: " + e);
+            throw new InterMineException("Error during unmarshalling: " + e);
         }
     }
 }

@@ -21,7 +21,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
 import org.intermine.ontology.OntologyUtil;
 import org.intermine.ontology.SubclassRestriction;
 import org.intermine.xml.full.Attribute;
@@ -73,7 +73,7 @@ public class DataTranslatorTest extends TestCase
         tgt3.setClassName(tgtNs + "Department");
         Set expected = new HashSet(Arrays.asList(new Object[] {tgt1, tgt2, tgt3}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
         assertEquals(expected, tgtIs.getItems());
@@ -90,7 +90,7 @@ public class DataTranslatorTest extends TestCase
         expected.setClassName(tgtNs + "Company");
         expected.setImplementations(tgtNs + "Organisation");
 
-        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -113,7 +113,7 @@ public class DataTranslatorTest extends TestCase
         a2.setValue("testname");
         expected.addAttribute(a2);
 
-        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -142,7 +142,7 @@ public class DataTranslatorTest extends TestCase
         ea1.setValue("testname");
         expected.addAttribute(ea1);
 
-        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -169,7 +169,7 @@ public class DataTranslatorTest extends TestCase
         r2.setRefId("2");
         expected.addReference(r2);
 
-        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -195,7 +195,7 @@ public class DataTranslatorTest extends TestCase
         r2.addRefId("3");
         expected.addCollection(r2);
 
-        translator = new DataTranslator(null, getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(null, getInterMineOwl(), tgtNs);
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -614,7 +614,7 @@ public class DataTranslatorTest extends TestCase
         String path = "Organisation.organisationType";
         StringTokenizer t = new StringTokenizer(path, ".");
         t.nextToken();
-        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
         assertEquals("business", translator.buildRestriction(t, (Item) srcItems.get("src1")));
 
         path = "Organisation.organisationType.type";
@@ -642,7 +642,7 @@ public class DataTranslatorTest extends TestCase
         }
 
         // model we use here is irrelevant
-        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
 
         SubclassRestriction template1 = new SubclassRestriction();
         template1.addRestriction("Organisation.organisationType", null);
@@ -694,7 +694,7 @@ public class DataTranslatorTest extends TestCase
         ItemWriter itemWriter = new MockItemWriter(itemMap);
         itemWriter.store(ItemHelper.convert(src1));
         itemWriter.store(ItemHelper.convert(src2));
-        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
         translator.promoteField(tgt, src1, "a1", "toSrc2", "a1");
         assertEquals(exp1, tgt);
 
@@ -722,7 +722,7 @@ public class DataTranslatorTest extends TestCase
 
         ItemWriter itemWriter = new MockItemWriter(itemMap);
         itemWriter.store(ItemHelper.convert(src1));
-        translator = new DataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs);
+        translator = new DataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs);
 
 
         Item exp1 = new Item("1", srcNs + "src1", "");
@@ -817,7 +817,7 @@ public class DataTranslatorTest extends TestCase
         return srcItems;
     }
 
-    private OntModel getFlyMineOwl() {
+    private OntModel getInterMineOwl() {
         String ENDL = System.getProperty("line.separator");
 
         String owl = "@prefix : <" + tgtNs + "> ." + ENDL

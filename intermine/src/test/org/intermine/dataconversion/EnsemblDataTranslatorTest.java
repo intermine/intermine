@@ -40,7 +40,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flymine.ObjectStoreWriterFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -60,7 +60,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
 
     public void setUp() throws Exception {
         itemMap = new LinkedHashMap();
-        osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+        osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.fulldatatest");
     }
 
@@ -90,8 +90,8 @@ public class EnsemblDataTranslatorTest extends TestCase {
         while (i.hasNext()) {
             iw.store(ItemHelper.convert((Item) i.next()));
         }
-        OntModel model = getFlyMineOwl();
-        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getFlyMineOwl(), tgtNs, "wildebeast", "W. beast", "1001");
+        OntModel model = getInterMineOwl();
+        DataTranslator translator = new EnsemblDataTranslator(new MockItemReader(itemMap), getInterMineOwl(), tgtNs, "wildebeast", "W. beast", "1001");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -99,7 +99,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
     }
 
     public void testDataLoadEnsembl() throws Exception {
-        ObjectStoreWriter osw = (ObjectStoreWriterFlyMineImpl) ObjectStoreWriterFactory
+        ObjectStoreWriter osw = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.fulldatatest");
         ItemWriter iw = new ObjectStoreItemWriter(osw);
 
@@ -136,7 +136,7 @@ public class EnsemblDataTranslatorTest extends TestCase {
     }
 
 
-    protected OntModel getFlyMineOwl() {
+    protected OntModel getInterMineOwl() {
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
 
         OntModel ont = ModelFactory.createOntologyModel();

@@ -28,7 +28,7 @@ import org.intermine.metadata.CollectionDescriptor;
  *
  * @author Andrew Varley
  */
-public class FlyMineTorqueModelOutput extends ModelOutput
+public class InterMineTorqueModelOutput extends ModelOutput
 {
     protected Set indirections = new HashSet();
     protected String className = "";
@@ -38,7 +38,7 @@ public class FlyMineTorqueModelOutput extends ModelOutput
     /**
      * @see ModelOutput#ModelOutput(Model, File)
      */
-    public FlyMineTorqueModelOutput(Model model, File file) throws Exception {
+    public InterMineTorqueModelOutput(Model model, File file) throws Exception {
         super(model, file);
     }
 

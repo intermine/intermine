@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.io.InputStream;
 
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
@@ -41,9 +41,9 @@ public class XmlDataLoader extends DataLoader
      * store on each.
      *
      * @param is access to xml file
-     * @throws FlyMineException if anything goes wrong with xml or storing
+     * @throws InterMineException if anything goes wrong with xml or storing
      */
-    public void processXml(InputStream is) throws FlyMineException {
+    public void processXml(InputStream is) throws InterMineException {
         try {
             XmlBinding binding = new XmlBinding(iw.getObjectStore().getModel());
 
@@ -54,7 +54,7 @@ public class XmlDataLoader extends DataLoader
                 iw.store((InterMineObject) iter.next());
             }
         } catch (ObjectStoreException e) {
-            throw new FlyMineException("Problem with store method", e);
+            throw new InterMineException("Problem with store method", e);
         }
     }
 }

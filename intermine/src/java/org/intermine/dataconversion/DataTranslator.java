@@ -30,7 +30,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import org.intermine.FlyMineException;
+import org.intermine.InterMineException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -90,9 +90,9 @@ public class DataTranslator
      * Mapping between source and target models contained in ontology model.
      * @param tgtItemWriter the ItemWriter used to store target items
      * @throws ObjectStoreException if error reading/writing an item
-     * @throws FlyMineException if no target class/property name can be found
+     * @throws InterMineException if no target class/property name can be found
      */
-    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, FlyMineException {
+    public void translate(ItemWriter tgtItemWriter) throws ObjectStoreException, InterMineException {
         int opCount = 0;
         long time = System.currentTimeMillis();
         long start = time;
@@ -139,9 +139,9 @@ public class DataTranslator
      * @param srcItem item to convert
      * @return converted items
      * @throws ObjectStoreException if error reading/writing an item
-     * @throws FlyMineException if no target class/property name can be found
+     * @throws InterMineException if no target class/property name can be found
      */
-    protected Collection translateItem(Item srcItem) throws ObjectStoreException, FlyMineException {
+    protected Collection translateItem(Item srcItem) throws ObjectStoreException, InterMineException {
         // see if there are any SubclassRestriction template for this class
         String tgtClsName = null;
         Set templates = (Set) templateMap.get(srcItem.getClassName());
@@ -157,7 +157,7 @@ public class DataTranslator
             tgtClsName = (String) equivMap.get(srcItem.getClassName());
             if (tgtClsName == null) {
                 // should perhaps log error and ignore this item?
-                throw new FlyMineException("Could not find a target class name for class: "
+                throw new InterMineException("Could not find a target class name for class: "
                                            + srcItem.getClassName());
             }
         }
@@ -180,7 +180,7 @@ public class DataTranslator
                 String attSrcURI = srcItem.getClassName() + "__" + att.getName();
                 String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
                 if (attTgtURI == null) {
-                    throw new FlyMineException("no target attribute found for " + attSrcURI
+                    throw new InterMineException("no target attribute found for " + attSrcURI
                                                + " in class " + tgtClsName);
                 }
                 if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
@@ -198,7 +198,7 @@ public class DataTranslator
             String refSrcURI = srcItem.getClassName() + "__" + ref.getName();
             String refTgtURI = getTargetFieldURI(tgtClsName, refSrcURI);
             if (refTgtURI == null) {
-                throw new FlyMineException("no target reference found for " + refSrcURI
+                throw new InterMineException("no target reference found for " + refSrcURI
                                            + " in class " + tgtClsName);
             }
             if (OntologyUtil.getNamespaceFromURI(refTgtURI).equals(tgtNs)) {
@@ -215,7 +215,7 @@ public class DataTranslator
             String colSrcURI = srcItem.getClassName() + "__" + col.getName();
             String colTgtURI = getTargetFieldURI(tgtClsName, colSrcURI);
             if (colTgtURI == null) {
-                throw new FlyMineException("no target collection found for " + colSrcURI
+                throw new InterMineException("no target collection found for " + colSrcURI
                                            + " in class " + tgtClsName);
             }
             if (OntologyUtil.getNamespaceFromURI(colTgtURI).equals(tgtNs)) {

@@ -24,7 +24,7 @@ import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.MockItemReader;
-import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -97,9 +97,9 @@ public class DefinitiveOwlTest extends XMLTestCase
         assertEquals(expected, classes);
     }
 
-    public void testGenerateFlyMineModel() throws Exception {
-        Model expected  = new FlyMineModelParser().process(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("DefinitiveOwlTest_model.xml")));
-        Model model = new Owl2FlyMine("test", "org.intermine.model.test").process(runMergeOwl(), tgtNs);
+    public void testGenerateInterMineModel() throws Exception {
+        Model expected  = new InterMineModelParser().process(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("DefinitiveOwlTest_model.xml")));
+        Model model = new Owl2InterMine("test", "org.intermine.model.test").process(runMergeOwl(), tgtNs);
         assertEquals(expected, model);
     }
 
@@ -108,7 +108,7 @@ public class DefinitiveOwlTest extends XMLTestCase
 //         ItemStore src1ItemStore = new MockItemStore();
 //         storeItems(src1Items, src1ItemStore);
 
-//         Model model = generateFlyMineModel();
+//         Model model = generateInterMineModel();
 //         DataTranslator translator2 = new DataTranslator(src1ItemStore, runMergeOwl(), tgtNs);
 
 // //         System.out.println("templateMap: " + translator2.templateMap.toString());
@@ -156,8 +156,8 @@ public class DefinitiveOwlTest extends XMLTestCase
         return merger.tgtModel;
     }
 
-    private Model generateFlyMineModel() throws Exception {
-        Owl2FlyMine o2f = new Owl2FlyMine("test", "org.intermine.model.test");
+    private Model generateInterMineModel() throws Exception {
+        Owl2InterMine o2f = new Owl2InterMine("test", "org.intermine.model.test");
         Model model = o2f.process(runMergeOwl(), tgtNs);
         return model;
     }

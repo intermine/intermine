@@ -13,8 +13,8 @@ package org.intermine.objectstore.flymine;
 import java.lang.ref.WeakReference;
 
 /**
- * This class supports ObjectStoreWriterFlyMineImpl, and prints out statistics on exit, if the
- * ObjectStoreFlyMineImpl is still in memory.
+ * This class supports ObjectStoreWriterInterMineImpl, and prints out statistics on exit, if the
+ * ObjectStoreInterMineImpl is still in memory.
  *
  * @author Matthew Wakeling
  */
@@ -23,11 +23,11 @@ public class StatsShutdownHook extends Thread
     private WeakReference wr;
 
     /**
-     * Creates a StatsShutdownHook for a given ObjectStoreWriterFlyMineImpl.
+     * Creates a StatsShutdownHook for a given ObjectStoreWriterInterMineImpl.
      *
-     * @param osw an ObjectStoreWriterFlyMineImpl
+     * @param osw an ObjectStoreWriterInterMineImpl
      */
-    public StatsShutdownHook(ObjectStoreWriterFlyMineImpl osw) {
+    public StatsShutdownHook(ObjectStoreWriterInterMineImpl osw) {
         wr = new WeakReference(osw);
     }
 
@@ -35,7 +35,7 @@ public class StatsShutdownHook extends Thread
      * @see Thread#run
      */
     public void run() {
-        ObjectStoreWriterFlyMineImpl osw = (ObjectStoreWriterFlyMineImpl) wr.get();
+        ObjectStoreWriterInterMineImpl osw = (ObjectStoreWriterInterMineImpl) wr.get();
         if (osw != null) {
             osw.shutdown();
         }

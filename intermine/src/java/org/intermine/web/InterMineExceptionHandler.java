@@ -32,7 +32,7 @@ import org.apache.struts.util.ModuleException;
  *
  * @author Andrew Varley
  */
-public class FlyMineExceptionHandler extends ExceptionHandler
+public class InterMineExceptionHandler extends ExceptionHandler
 {
 
     /**

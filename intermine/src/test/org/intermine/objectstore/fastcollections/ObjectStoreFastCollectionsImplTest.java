@@ -20,7 +20,7 @@ import junit.framework.*;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.flymine.ObjectStoreFlyMineImpl;
+import org.intermine.objectstore.flymine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -36,7 +36,7 @@ import org.intermine.model.testmodel.*;
 public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplTestCase
 {
     public static void oneTimeSetUp() throws Exception {
-        osai = (ObjectStoreFlyMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        osai = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         os = new ObjectStoreFastCollectionsImpl(osai);
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }

@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.xml.FlyMineModelParser;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.util.TypeUtil;
 import org.intermine.ontology.OntologyUtil;
 
@@ -65,7 +65,7 @@ public class Model
                                                    + filename + ")");
             }
             try {
-                ModelParser parser = new FlyMineModelParser();
+                ModelParser parser = new InterMineModelParser();
                 model = parser.process(new InputStreamReader(is));
             } catch (Exception e) {
                 throw new MetaDataException("Error parsing metadata", e);
