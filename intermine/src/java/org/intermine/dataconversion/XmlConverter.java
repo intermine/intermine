@@ -43,6 +43,7 @@ import org.apache.log4j.Logger;
  *
  * @author Andrew Varley
  * @author Richard Smith
+ * @author Thomas Riley
  */
 public class XmlConverter extends DataConverter
 {
@@ -134,10 +135,13 @@ public class XmlConverter extends DataConverter
                 Item item = (Item) items.peek();
                 ClassDescriptor cld = model.getClassDescriptorByName(clsName(item.getClassName()));
                 String fieldName = ("id".equals(qName) ? "identifier" : qName);
+                fieldName = StringUtil.decapitalise(fieldName);
                 if (cld.getAttributeDescriptorByName(fieldName, true) != null) {
+                    // Attribute
                     attributeName = fieldName;
                     isAttribute = true;
                 } else if (cld.getReferenceDescriptorByName(fieldName, true) != null) {
+                    // Reference
                     if (item.hasReference(fieldName)) {
                         throw new SAXException("Field (" + cld.getName() + "." + fieldName
                                                + ") is defined in model as"
@@ -147,20 +151,28 @@ public class XmlConverter extends DataConverter
                     String clsName = rfd.getReferencedClassDescriptor().getName();
                     String path = pushPaths(qName);
                     String identifier = null;
-                    if (xmlInfo.isReference(path)) {
-                        String refField = xmlInfo.getReferenceField(path);
-                        identifier = getReferenceIdentifier(xmlInfo.getIdPath(path)
+                    if (xmlInfo.isReferenceElement(path)) {
+                        String refField = xmlInfo.getReferenceElementField(path);
+                        String key = xmlInfo.getReferencingKeyName(path, refField);
+                        String clsPath = xmlInfo.getKeyPath(key);
+                        identifier = getReferenceIdentifier(clsPath //xmlInfo.getIdPath(path)
                                                             + attrs.getValue(refField));
-                    } else if (xmlInfo.isId(path)) {
-                        String idField = xmlInfo.getIdField(path);
+                        LOG.debug("found reference element identifier " + identifier);
+                    } else if (!xmlInfo.getKeyFieldsForPath(path).isEmpty()) {
+                        String idField = (String) xmlInfo.getKeyFieldsForPath(path).iterator()
+                                                                                            .next();
+                        path = xmlInfo.getKeyXPathMatchingPath(path);
                         Item newItem = new Item(getReferenceIdentifier(path
                                                + attrs.getValue(idField)), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
+                        LOG.debug("creating new item with key field and identifier "
+                                  + newItem.getIdentifier());
                     } else {
                         Item newItem = new Item(getIdentifier(), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
+                        LOG.debug("creating new item " + newItem.getIdentifier());
                     }
                     item.addReference(new Reference(fieldName, identifier));
                     elements.push(qName);
@@ -171,20 +183,31 @@ public class XmlConverter extends DataConverter
                     String clsName = cod.getReferencedClassDescriptor().getName();
                     String path = pushPaths(qName);
                     String identifier = null;
-                    if (xmlInfo.isReference(path)) {
-                        String refField = xmlInfo.getReferenceField(path);
-                        identifier = getReferenceIdentifier(xmlInfo.getIdPath(path)
+                    if (xmlInfo.isReferenceElement(path)) {
+                        String refField = xmlInfo.getReferenceElementField(path);
+                        String key = xmlInfo.getReferencingKeyName(path, refField);
+                        String clsPath = xmlInfo.getKeyPath(key);
+                        identifier = getReferenceIdentifier(clsPath
                                                             + attrs.getValue(refField));
-                    } else if (xmlInfo.isId(path)) {
-                        String idField = xmlInfo.getIdField(path);
+                        LOG.debug("found reference element identifier " + identifier
+                                  + " class:" + clsName);
+                    } else if (!xmlInfo.getKeyFieldsForPath(path).isEmpty()) {
+                        String idField = (String) xmlInfo.getKeyFieldsForPath(path).iterator()
+                                                                                        .next();
+                        path = xmlInfo.getKeyXPathMatchingPath(path);
                         Item newItem = new Item(getReferenceIdentifier(path
                                             + attrs.getValue(idField)), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
+                        LOG.debug("creating new item with key field and identifier "
+                                  + newItem.getIdentifier() + " class:" + clsName + " path:" + path
+                                  + attrs.getValue(idField));
                     } else {
                         Item newItem = new Item(getIdentifier(), itemName(clsName), "");
                         identifier = newItem.getIdentifier();
                         items.push(newItem);
+                        LOG.debug("creating new item " + newItem.getIdentifier()
+                                  + " class:" + clsName);
                     }
                     if (!item.hasCollection(StringUtil.pluralise(fieldName))) {
                         item.addCollection(new ReferenceList(StringUtil.pluralise(fieldName),
@@ -202,14 +225,34 @@ public class XmlConverter extends DataConverter
                 Item item = (Item) items.peek();
                 String path = (String) paths.peek();
                 String refField = "";
-                if (xmlInfo.isReference(path)) {
-                    refField = xmlInfo.getReferenceField(path);
+                if (xmlInfo.isReferenceElement(path)) {
+                    refField = xmlInfo.getReferenceElementField(path);
                 }
                 for (int i = 0; i < attrs.getLength(); i++) {
-                    if (!attrs.getQName(i).equals(refField)) {
-                        if (!(xmlInfo.isId(path)
-                              && attrs.getQName(i).equals(xmlInfo.getIdField(path)))) {
-                            item.addAttribute(new Attribute(attrs.getQName(i), attrs.getValue(i)));
+                    String attrName = attrs.getQName(i);
+                    if (!attrName.equals(refField)) {
+                        ClassDescriptor cld =
+                                    model.getClassDescriptorByName(clsName(item.getClassName()));
+                        if (cld.getReferenceDescriptorByName(attrName, true) != null) {
+                            // Reference
+                            if (item.hasReference(attrName)) {
+                                throw new SAXException("Field (" + cld.getName() + "." + attrName
+                                                   + ") is defined in model as"
+                                                 + " a reference but attempted to add two values");
+                            }
+                            ReferenceDescriptor rfd =
+                                cld.getReferenceDescriptorByName(attrName, true);
+                            String clsName = rfd.getReferencedClassDescriptor().getName();
+                            path = xmlInfo.getKeyXPathMatchingPath(path);
+                            Item newItem = new Item(getReferenceIdentifier(path
+                                               + attrs.getValue(attrName)), itemName(clsName), "");
+                            String identifier = newItem.getIdentifier();
+                            item.addReference(new Reference(attrName, identifier));
+                        } else if (!xmlInfo.getReferenceFields(path).contains(attrName)
+                            && !xmlInfo.getKeyFieldsForPath(path).contains(attrName)) {
+                            item.addAttribute(new Attribute(attrName, attrs.getValue(i)));
+                        } else {
+                           // skip
                         }
                     }
                 }
@@ -292,7 +335,7 @@ public class XmlConverter extends DataConverter
                 String tmp = (String) elements.pop();
                 String path = (String) paths.pop();
                 try {
-                    if (!xmlInfo.isReference(path)) {
+                    if (!xmlInfo.isReferenceElement(path)) {
                         writer.store((ItemHelper.convert((Item) items.pop())));
                         count++;
                         if (count % 10000 == 0) {
@@ -335,7 +378,10 @@ public class XmlConverter extends DataConverter
             String identifier = (String) identifiers.get(key);
             if (identifier == null) {
                 identifier = getIdentifier();
+                LOG.debug("created identifier " + identifier + " for key " + key);
                 identifiers.put(key, identifier);
+            } else {
+                LOG.debug("found identifier " + identifier + " for key " + key);
             }
             return identifier;
         }
@@ -345,6 +391,7 @@ public class XmlConverter extends DataConverter
             if (!paths.empty()) {
                 path = (String) paths.peek() + "/" + path;
             }
+            LOG.debug("pushing " + path);
             paths.push(path);
             return path;
         }
