@@ -50,22 +50,13 @@
     </para>
     <para>Thus, we need to run EXPLAIN on the original query and on each 'page' with OFFSET and LIMIT defined. This is done as follows:
       <itemizedlist>
-        <listitem><function>ObjectStore.estimate(query)</function> method that, given a query, will return an estimated number of rows.
-            This is called as required by the client application and is not necessary for normal query execution.
-            In future this could be modified to provide an actual computed number of rows.
-            An EXPLAIN could check whether COUNT(*) for the query would be fast to run, if so run it and return the actual number of rows.</listitem>
-        <listitem><function>ObjectStoreInterMineImpl.execute(query, start, limit)</function> calls <function>Objectstore.explain(query, start, limit)</function> and decides if the query is faster or slower that the given threshold.
+        <listitem><function>ObjectStore.estimate(query)</function> method that, given a query, will return a ResultsInfo object containing information about the estimated number of rows and time to run.
+            The Results object has a similar method (<function>getInfo()</function>) which will include information such as any knowledge the Results object has on the number of rows.
+            This is called as required by the client application and is not necessary for normal query execution.</listitem>
+        <listitem><function>ObjectStoreInterMineImpl.execute(query, start, limit)</function> performs an explain on the batch to be fetched, and decides if the query is faster or slower that the given threshold.
             If the query is too slow an Exception is thrown, otherwise the query runs as normal.
             The threshold is provided in the properties file, so that users could set their own maximum execution time (such that it is less than our global threshold).</listitem>
-        </itemizedlist>
-</para>
-
-  </sect1>
-
-  <sect1>
-    <title>Caching SQL statements</title>
-    <para>Our system of paging means that queries will often be run multiple times with different LIMIT and OFFSET parameters.
-        It might be thought therefore that it would be beneficial to implement a cache of generated SQL text.
-        However, the Query.equals() and Query.hashCode() methods are relatively heavy methods, so looking up an entry in such a cache would take as much time as generating the SQL in the first place.</para>
+      </itemizedlist>
+    </para>
   </sect1>
 </article>

@@ -14,7 +14,7 @@
   </artheader>
   
   <sect1>
-    <para>This document presents an introduction to the general form of query used in InterMine. Actual queries can be specified using a <ulink url="java_query/spec.xml">Java API</ulink> or as <ulink url="iql_query/spec.xml">IQL strings</ulink> (which are transparently mapped to the equivalent Java representation). The examples below are specified in IQL, which is generally more concise and readable that the equivalent Java. They refer to types in the model used by the <ulink url="start/tutorial.xml">tutorial</ulink>, so that the query strings can be directly substituted in to SimpleQuery.java.</para>
+    <para>This document presents an introduction to the general form of query used in InterMine. Actual queries can be specified using a <ulink url="java_query/spec.xml">Java API</ulink> or as <ulink url="iql_query/spec.xml">IQL strings</ulink> (which are transparently mapped to the equivalent Java representation). The examples below are specified in IQL, which is generally more concise and readable than the equivalent Java. They refer to types in the model used by the <ulink url="start/tutorial.xml">tutorial</ulink>, so that the query strings can be directly substituted in to SimpleQuery.java.</para>
   </sect1>
   
   <sect1>
@@ -26,9 +26,9 @@
         <programlisting>select Company from Company
 select Employable from Employable</programlisting></listitem>
       
-      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryEvaluable.html">QueryEvaluable</ulink>s are entities than can be evaluated to a "primitive" type. These include:<itemizedlist><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryField.html">QueryField</ulink>s  - primitive fields of QueryClasses (eg <synopsis>Employee.name</synopsis>)</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryValue.html">QueryValue</ulink>s  - literal values (eg <synopsis>'Alice</synopsis>')</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryExpression.html">QueryExpression</ulink>s formed by combinations of other QueryEvaluables (eg <synopsis>65 - Employee.age</synopsis>)</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryFunction.html">QueryFunction</ulink>s  - aggregates of fields or expressions (eg <synopsis>select count(*) as employee_count from Employee</synopsis>). Note that SQL GROUP BY rules apply to QueryFunctions (must GROUP BY selected non-aggregate columns), and that count functions in the select list must be aliased.</listitem></itemizedlist></listitem>
+      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryEvaluable.html">QueryEvaluable</ulink>s are entities than can be evaluated to a "primitive" type. These include:<itemizedlist><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryField.html">QueryField</ulink>s  - primitive fields of QueryClasses (eg. <synopsis>Employee.name</synopsis>)</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryValue.html">QueryValue</ulink>s  - literal values (eg. <synopsis>'Alice</synopsis>')</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryExpression.html">QueryExpression</ulink>s formed by combinations of other QueryEvaluables (eg. <synopsis>65 - Employee.age</synopsis>)</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryFunction.html">QueryFunction</ulink>s  - aggregates of fields or expressions (eg. <synopsis>select count(*) as employee_count from Employee</synopsis>). Note that SQL GROUP BY rules apply to QueryFunctions (must GROUP BY selected non-aggregate columns), and that count functions in the select list must be aliased.</listitem><listitem><ulink url="../../api/org/intermine/objectstore/query/QueryCast.html">QueryCast</ulink>s - typecasts from one QueryEvaluable primitive type to another</listitem></itemizedlist></listitem>
       
-      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryReference.html">QueryReference</ulink>s correspond to the non-primitive (ie object or collection) fields of queryclasses (eg <synopsis>Employee.department</synopsis>)</listitem>
+      <listitem><ulink url="../../api/org/intermine/objectstore/query/QueryReference.html">QueryReference</ulink>s correspond to the non-primitive (ie object or collection) fields of queryclasses (eg. <synopsis>Employee.department</synopsis>)</listitem>
       
       <listitem>Subqueries are queries that are embedded in the From list of another query. They must be aliased. A path-like syntax is used to refer to elements in their Select list:
         <programlisting>select subquery.Company.name as field from (select Company from Company) as subquery</programlisting>
@@ -53,13 +53,13 @@ select Employee from Employee, Department
   where Department.name='DepartmentA1' and Employee.department contains Department</programlisting></listitem>
 
 <listitem><ulink url="../../api/org/intermine/objectstore/query/ClassConstraint.html">ClassConstraint</ulink>s are used to compare QueryClasses to other QueryClasses or example objects.
-Available operators are EQUALS and DOES NOT EQUAL.
+Available operators are = and !=.
 <programlisting>select e1, e2 from Employee as e1, Employee as e2, Department
   where e1.department contains Department and e2.department contains Department and e1 != e2
 
 select Employee from Employee where Employee = [example object]</programlisting></listitem>
 
-<listitem><ulink url="../../api/org/intermine/objectstore/query/BagConstraint.html">BagConstraint</ulink>s correspond to more general "in" constraints where arbitrary (heterogeneous) collections of objects can be filtered by specifying that they "contain" a specific QueryClass. Alternatively the collection can be of primitive types, in which case the constraint is on a QueryEvaluable.
+<listitem><ulink url="../../api/org/intermine/objectstore/query/BagConstraint.html">BagConstraint</ulink>s correspond to more general "in" constraints where arbitrary (heterogeneous) collections of objects can be filtered by specifying that they "contain" a specific QueryClass. Alternatively the collection can be of primitive types, in which case the constraint is on a QueryEvaluable. Available operators are IN and NOT IN.
 <programlisting>select Company from Company
   where Company in [collection of company objects]
 
@@ -67,7 +67,7 @@ select Company from Company
   where Company.name in [collection of strings]</programlisting></listitem>
 
 <listitem><ulink url="../../api/org/intermine/objectstore/query/SubqueryConstraint.html">SubqueryConstraint</ulink>s are related to ContainsConstraints are are used where a QueryClass or QueryEvaluable should be present in the results (ie the From list) of a subquery. In practice this means that the results of a subquery contain a certain object, or equal a set of objects. Queries can be added to the from list of another query, and fields added to the top-level Select list by using the alias of the subquery.
-Available operators are CONTAINS and DOES NOT CONTAIN.
+Available operators are IN and NOT IN.
 <programlisting>select Company from Company
   where Company.name in (select Company.name as name from Company)</programlisting></listitem></itemizedlist>
 </sect1>

@@ -17,7 +17,6 @@
     <item><ulink url="howto_query.xml">Query overview</ulink></item>
     <item><ulink url="iql_query/spec.xml">OQL-like query interface specification</ulink></item>
     <item><ulink url="java_query/spec.xml">Java query interface specification</ulink></item>
-    <item><ulink url="graphical_query/spec.xml">Graphical query interface specification</ulink></item>
     <item><ulink url="building/webservice.xml">The InterMine web service</ulink></item>
   </section>
 
@@ -29,12 +28,6 @@
   </section>
   
   <section>
-    <heading>System documentation</heading>
-    <item><ulink url="InterMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
-    <item><ulink url="InterMineArchitecture.png">System architecture</ulink></item>
-  </section>
-
-  <section>
     <heading>Ontologies</heading>
     <item><ulink url="ontologies/overview.xml">Overview and Current Issues</ulink></item>
     <item><ulink url="ontologies/owl_generation.xml">Converting Source Ontologies to OWL</ulink></item>
@@ -44,16 +37,14 @@
   <section>
     <heading>ObjectStore</heading>
     <item><ulink url="objectstore/InterMineArchObjectStore.png">ObjectStore Architecture</ulink></item>
-    <item><ulink url="objectstore/proxies.xml">Reference and collection proxies</ulink></item>
     <item><ulink url="objectstore/results_prefetch.xml">Results prefetching</ulink></item>
-    <item><ulink url="objectstore/related.xml">Fetching related objects in the Results object</ulink></item>
+    <item><ulink url="objectstore/related.xml">Fetching related objects in the Results object - solving the N + 1 reads problem</ulink></item>
     <item><ulink url="objectstore/query_explain.xml">Explain plans for InterMine queries</ulink></item>
     <item><ulink url="objectstore/safe/characteristics.xml">Safe implementation: Characteristics</ulink></item>
   </section>
 
   <section>
     <heading>Data loading and integration</heading>
-    <item><ulink url="dataloader/index.xml">The dataloader store() method</ulink></item>
     <item><ulink url="dataloader/performance.xml">Performance tuning</ulink></item>
   </section>
 
@@ -62,7 +53,6 @@
     <item><ulink url="sql_optimisation/using-query-optimiser.xml">Using the SQL query optimiser in other projects</ulink></item>
     <item><ulink url="sql_optimisation/cache.xml">Implementation of the Optimiser cache</ulink></item>
     <item><ulink url="sql_optimisation/proposal.xml">Proposal to improve the optimiser for EXPLAINs</ulink></item>
-    <item><ulink url="sql_optimisation/proposal2.xml">Proposal to improve the optimiser queries with a non-zero OFFSET</ulink></item>
     <item><ulink url="sql_optimisation/proposal3.xml">Proposal to improve the optimiser by producing faster optimised queries earlier</ulink></item>
     <item><ulink url="sql_optimisation/proposal4.xml">Proposal to improve the optimiser so that it scales well for the number of procomputed tables</ulink></item>
   </section>

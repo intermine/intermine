@@ -19,6 +19,13 @@
 			The cache is managed by the org.intermine.sql.precompute.OptimiserCache class, which is called from the org.intermine.sql.precompute.QueryOptimiser class.</para>
 	</sect1>
 
+    <sect1>
+        <title>This section needs review</title>
+        <para>The optimiser is currently implemented as described below.
+            However, due to the implementation of large offset optimisation in the SqlGenerator, this cache is not as effective as it could be.
+            In addition, it is overcomplicated for the work that it is given by the new SqlGenerator, and a closer tie with the SqlGenerator would allow a more efficient cache.</para>
+    </sect1>
+
 	<sect1>
 		<title>Requirements</title>
 		<para>The intention of the optimiser cache system is to improve the performance of the optimiser in general by caching requests.

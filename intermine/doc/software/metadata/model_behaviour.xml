@@ -30,10 +30,10 @@
 			There is no other restriction that prevents an object being stored in the database.
 			All Java Classes and Interfaces generated from a model description implement this interface automatically.</para>
 		<para>The model represents the possibilities for searching in the database.
-			Fields in the model can take part in the WHERE clause of a query.
-			Interfaces and Classes in the model can take part in the the FROM clause of a query.</para>
+			Fields in the model can take part in the WHERE clause of a query and appear in the SELECT list, the GROUP BY clause and the ORDER BY list.
+			Interfaces and Classes in the model can take part in the the FROM clause of a query and appear in the SELECT list.</para>
 		<para>Like Java, an Interface may extend multiple Interfaces, but no Classes.
-			Also, like Java, a Class may extend a single Class, or not (in which case it implicitly implements java.lang.Object).
+			Also, like Java, a Class may extend a single Class, or not (in which case it implicitly extends java.lang.Object).
 			A Class may implement multiple Interfaces, or not.
 			If a Class or Interface implements or extends another Class or Interface, it automatically implements and extends everything that Class or Interface implements or extends.</para>
 	</sect1>

@@ -63,12 +63,14 @@
 						The textual representation depends on the type of the constant to be represented:
 						<itemizedlist>
 							<listitem><highlights>Number</highlights>. The textual representation is as a normal number with no embellishment.
-								The number will be created as a Long if there is no decimal point, and as a Double if there is.</listitem>
+								The exact type of the number is deduced from how it is used in the Query.</listitem>
 							<listitem><highlights>String</highlights>. The textual representation is with single quotes enclosing the required String.</listitem>
 							<listitem><highlights>Boolean</highlights>. The textual representation is "<emphasis>true</emphasis>" or "<emphasis>false</emphasis>".</listitem>
 							<listitem><highlights>Date</highlights>. The textual representation is "<emphasis>'yyyy-MM-dd HH:mm:ss.SSS'</emphasis>", including the single quotes enclosing it.
-								<highlights>Note: This definition overlaps with that of a String.</highlights></listitem>
-						</itemizedlist></listitem>
+								<highlights>Note: This definition overlaps with that of a String.
+                                A Date is distinguished from a String by how it is used in the Query.</highlights></listitem>
+						</itemizedlist>
+                        If, while converting an IQL query to a Java Query, the type of a QueryValue cannot be distinguished, then an UnknownTypeValue is used, which merely holds the textual representation of the value.</listitem>
 					<listitem><highlights>QueryFunction</highlights> - This represents an aggregate function.
 						Most of these functions require a single argument, which should be a QueryField, or maybe a QueryExpression.
 						The presence of an aggregate function in a query means that either the entire set of rows of the query are rolled together into one row with the results of the aggregate function, or the entire set of rows of the query are rolled into multiple groups of rows, dictated by the contents of the GROUP BY clause, if it exists.
@@ -81,11 +83,16 @@
 							<listitem><highlights>AVG(<emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - this evaluates to the average of all the value of the QueryEvaluable mentioned in the group of rows it represents.</listitem>
 						</itemizedlist></listitem>
 					<listitem><highlights>QueryExpression</highlights> - This represents an arithmetic expression, comprised of two other QueryEvaluables (QueryValue, QueryField, QueryFunction, or QueryExpression) and an operation, or a substring operation with three QueryEvaluable arguments.
-						The two types are:
+						The three types are:
 						<itemizedlist>
 							<listitem><highlights><emphasis>&lt;QueryEvaluable&gt;</emphasis> {+, -, *, /} <emphasis>&lt;QueryEvaluable&gt;</emphasis></highlights> - Normal arithmetic expressions.</listitem>
+                            <listitem><highlights>INDEXOF(<emphasis>&lt;QueryEvaluable&gt;</emphasis>, <emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - the result of the expression is the index of the second argument (a String) in the first argument (also a String), where the character positions are numbered from one, or a result of zero if the second argument does not occur in the first argument.</listitem>
 							<listitem><highlights>SUBSTR(<emphasis>&lt;QueryEvaluable&gt;</emphasis>, <emphasis>&lt;QueryEvaluable&gt;</emphasis>, <emphasis>&lt;QueryEvaluable&gt;</emphasis>)</highlights> - The result of the expression is the substring of the first argument, from the character numbered from 1 from the left determined by the second argument, and as many characters to the right as determined by the third argument or the end of the first argument being reached.</listitem>
 						</itemizedlist></listitem>
+                    <listitem><highlights>QueryCast</highlights> - This represents a typecast from one type of value to another. One cannot cast to a primitive type (int, long, etc.), but to java Classes (Integer, Long, etc). Some typecasts may not make sense, so an error may occur when the query is run. Due to the storage format of Date objects, typecasts involving them may not act as expected. The textual representation is:
+                        <itemizedlist>
+                            <listitem><highlights><emphasis>&lt;QueryEvaluable&gt;</emphasis>::<emphasis>&lt;class name (Short, Integer, Long, Float, Double, BigDecimal, Boolean, Date, String)&gt;</emphasis></highlights></listitem>
+                        </itemizedlist></listitem>
 				</itemizedlist></listitem>
 		</itemizedlist>
 		<para>These QueryNodes can be used in the SELECT, GROUP BY, and ORDER BY clauses, as well as inside different constraints.
@@ -117,7 +124,7 @@
 				The constraint will return true if the value of the QueryClass or QueryEvaluable is present (or not present) in one of the rows of the results of the subquery.
 				The textual representation is the QueryClass or QueryEvaluable, followed by "IN" or "NOT IN", followed by an IQL query statement with only one element in the SELECT list, enclosed in parentheses.
 				For example "<emphasis>Company.name IN (SELECT Company.name AS name FROM Company)</emphasis>".</listitem>
-			<listitem><highlights>NotConstraint</highlights> - This isn't actually a InterMine Query Java object - but it is a textual representation of reversing the <emphasis>negated</emphasis> flag on any Constraint.
+			<listitem><highlights>NotConstraint</highlights> - This isn't actually a InterMine Query Java object - but it is a textual representation of negating the result  of any Constraint.
 				The textual representation is "NOT", followed by the Constraint to reverse.
 				If In Doubt, Use Brackets.
 				For example "<emphasis>NOT Company.name = Department.name</emphasis>".</listitem>

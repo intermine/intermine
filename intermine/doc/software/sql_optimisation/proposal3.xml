@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-07-03</date>
-		<title>InterMine - A proposal to improve the Query Optimiser for requests with non-zero offsets</title>
+		<title>InterMine - A proposal to improve the Query Optimiser by producing faster optimised queries first</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
