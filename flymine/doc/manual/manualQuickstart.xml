@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+    <section>
+      <heading>Quick start guide</heading>
+      <item>FlyMine allows you to construct complex queries across multiple integrated data sources using a web interface</item>
+      <item>The FlyMine query builder consists of 3 main pages: <ulink url="manualClasschooser.xml">The class selection page</ulink>, the main <ulink url="manualQuerybuilder.xml">query builder</ulink> page and the <ulink url="manualResultdisplay.xml">result display.</ulink></item>
+      <item>To start a new FlyMine query select "<ulink url= "/query/classChooser.do">start a new query with a particular class</ulink>" from the main page.  This will take you to the <ulink url="manualClasschooser.xml">class chooser page</ulink>.  Select the class with which to start your query and press "select".  This will take you to the main <ulink url="manualQuerybuilder.xml">query builder</ulink> page.</item>
+      <item>The main query builder page is composed of 3 sections: a <ulink url="manualModelbrowser.xml">model browser</ulink>, a <ulink url="manualConstraintslist.xml">constraints list</ulink> and an <ulink url="manualOutputfields.xml">output fields list</ulink>.  The output fields list will initially just say: No fields selected for output.  </item>
+     <item>
+       Building a simple query using the FlyMine query builder involves the following steps:
+      </item>      
+      <item>
+       Select the classes and/or fields you wish to constrain using the -> constrain arrows. Specify your constraints in the right hand <ulink url= "manualConstraintslist.xml">constraints list.</ulink>   
+      </item>
+      <item>
+       Select the classes and/or fields you wish to show in the results output using the "show" buttons.  The classes/fields selected will appear in the <ulink url= "manualOutputfields.xml">output fields list.</ulink>
+      </item>
+      <item>
+       Press <ulink url= "manualShowresults.xml">show results</ulink> to view your results in the <ulink url= "manualResultdisplay.xml">results page</ulink>
+      </item>
+      <item>For a walk-through a simple query see the <ulink url= "/tutorials/tutorialIndex.xml">tutorials.</ulink></item>
+      
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+</index>
+
+</article>

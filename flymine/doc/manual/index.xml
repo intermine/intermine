@@ -7,11 +7,8 @@
 
     <section>
       <heading>Introduction</heading>
-      <item><ulink url="manualDataModel.xml">The FlyMine Data Model</ulink></item>
-      <item><ulink url="manualCOF.xml">Classes, Objects and Fields - the basics</ulink></item>
-      <item><ulink url="manualSelectingData.xml">Selecting data from classes</ulink></item>
-      <item><ulink url="manualCombiningData.xml">Combining data from different classes</ulink></item>
-      <item><ulink url="manualConstrainingData.xml">Constraining to subclasses</ulink></item>
+       <item><ulink url="manualIntroduction.xml">The FlyMine project</ulink></item>
+       <item><ulink url="manualQuickstart.xml">Quick start guide</ulink></item>
       </section>
 
 
@@ -46,6 +43,19 @@
       <section>
           <heading>Building complex queries</heading>
       </section>
+
+
+      <section>
+         <heading>FlyMine theory</heading>
+      <item><ulink url="manualDataModel.xml">The FlyMine Data Model</ulink></item>
+      <item><ulink url="manualCOF.xml">Classes, Objects and Fields - the basics</ulink></item>
+      <item><ulink url="manualSelectingData.xml">Selecting data from classes</ulink></item>
+      <item><ulink url="manualCombiningData.xml">Combining data from different classes</ulink></item>
+      <item><ulink url="manualConstrainingData.xml">Constraining to subclasses</ulink></item>
+      </section>
+
+
+
 
 </index>
 

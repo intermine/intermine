@@ -11,7 +11,7 @@
        Building a simple query using the FlyMine query builder involves the following steps:
       </item>
       <item>
-      Select the class from which you want to start your query, from the <ulink url= "manualClassselector.xml">Class selector.</ulink> 
+      Select the class from which you want to start your query, from the <ulink url= "manualClasschooser.xml">Class chooser.</ulink> 
       </item>
       <item>
        Select the classes and /or fields you wish to constrain using the -> constrain arrows. Specify your constraints in the right hand <ulink url= "manualConstraintslist.xml">constraints list.</ulink>   
