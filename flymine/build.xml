@@ -12,8 +12,6 @@
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
-  <property name="buildlib" location="buildlib"/>
-  <property name="weblib" location="weblib"/>
   <property name="bin" location="bin"/>
 
   <!-- source directories -->
@@ -698,6 +696,7 @@
   <target name="build-webapp" depends="prepare,prepare-dist,jar"
     description="Build the FlyMine web application">
     <mkdir dir="${build.webapp}/flymine"/>
+    <mkdir dir="${build.webapp}/flymine/model"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF/classes"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF/lib"/>
@@ -721,6 +720,25 @@
       <fileset dir="${dist}" includes="flymine*.jar"/>
     </copy>
     
+    <!-- model-specific files -->
+    <loadfile property="model.struts.config" srcFile="${model}/uml/resources/struts-config-model.xml"/>
+    <replace file="${build.webapp}/flymine/WEB-INF/struts-config.xml" value="${model.struts.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    <copy todir="${build.webapp}/flymine/model">
+      <fileset dir="${model}/uml/src/web"/>
+    </copy>
+
+    <copy todir="${build.webapp}/flymine/WEB-INF">
+       <fileset dir="${model}/uml/resources"/>
+    </copy>
+
+    <copy todir="${build.webapp}/flymine/WEB-INF/classes">
+       <fileset dir="${model}/uml/resources" includes="model*.properties"/>
+    </copy>
+
     <!-- this step is optional -->
     <antcall target="precompile-jsp"/>
 
@@ -731,6 +749,7 @@
       <webinf dir="${build.webapp}/flymine/WEB-INF"/>
       <fileset dir="${build.webapp}/flymine"/>
     </war>
+
   </target>
   
   <target name="precompile-jsp">
