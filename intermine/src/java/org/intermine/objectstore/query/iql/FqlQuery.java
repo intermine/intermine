@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.flymine.util.Util;
 import org.flymine.objectstore.query.*;
 
 /**
@@ -27,7 +28,13 @@ public class FqlQuery
 {
     private String queryString;
     private String packageName;
-    private List parameters = new ArrayList();;
+    private List parameters = new ArrayList();
+
+    /**
+     * No-arg constructor (for deserialization)
+     */
+    public FqlQuery() {
+    }
 
     /**
      * Construct an FQL query from a String.
@@ -325,5 +332,25 @@ public class FqlQuery
         return ret.toString();
     }
 
-
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof FqlQuery)) {
+            return false;
+        }
+        FqlQuery f = (FqlQuery) o;
+        return f.queryString.equals(queryString)
+            && Util.equals(f.packageName, packageName)
+            && Util.equals(f.parameters, parameters);
+    }
+    
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 2 * queryString.hashCode()
+            + 3 * Util.hashCode(packageName)
+            + 5 * Util.hashCode(parameters);
+    }
 }

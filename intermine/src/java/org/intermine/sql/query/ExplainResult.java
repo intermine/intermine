@@ -146,4 +146,36 @@ public class ExplainResult
         // TODO: Do this properly.
         return (complete * estimatedRows) / rows;
     }
+
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return "ExplainResult: rows=" + rows + " start=" + start + " complete=" + complete
+            + " width=" + width;
+    }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof ExplainResult)) {
+            return false;
+        }
+        ExplainResult e = (ExplainResult) o;
+        return e.rows == rows 
+            && e.start == start 
+            && e.complete == complete
+            && e.width == width;
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return (int) (2 * rows
+                      + 3 * start
+                      + 5 * complete
+                      + 7 * width);
+    }
 }
