@@ -24,6 +24,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DatabaseUtil;
 
 import org.apache.log4j.Logger;
 
@@ -63,7 +64,8 @@ public class ResultsConverter
                 Iterator selectIter = q.getSelect().iterator();
                 while (selectIter.hasNext()) {
                     QueryNode node = (QueryNode) selectIter.next();
-                    String alias = (String) q.getAliases().get(node);
+                    String alias = DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
+                            .get(node));
                     if (node instanceof QueryClass) {
                         Integer idField = new Integer(sqlResults.getInt(alias + "id"));
                         InterMineObject obj = os.pilferObjectById(idField);

@@ -270,7 +270,7 @@ ISNULL: "is null";
 ISNOTNULL: "is not null";
 
 IDENTIFIER options { testLiterals=true; } :
-        'a'..'z' ( 'a'..'z' | '0'..'9' | '_' | '$' | '#' )*
+        ('a'..'z' | '"') ('"' | 'a'..'z' | '0'..'9' | '_' | '$' | '#' )*
     ;
 
 QUOTED_STRING:

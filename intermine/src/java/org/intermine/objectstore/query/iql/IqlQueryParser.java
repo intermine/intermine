@@ -195,7 +195,7 @@ public class IqlQueryParser
                     tableName = null;
                     AST tableNameAst = ast.getFirstChild();
                     do {
-                        String temp = tableNameAst.getText();
+                        String temp = unescape(tableNameAst.getText());
                         tableName = (tableName == null ? temp : tableName + "." + temp);
                         tableNameAst = tableNameAst.getNextSibling();
                     } while (tableNameAst != null);
@@ -217,7 +217,7 @@ public class IqlQueryParser
                     classes.add(c);
                     break;
                 case IqlTokenTypes.TABLE_ALIAS:
-                    tableAlias = ast.getFirstChild().getText();
+                    tableAlias = unescape(ast.getFirstChild().getText());
                     break;
                 default:
                     throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -257,7 +257,7 @@ public class IqlQueryParser
                     }
                     break;
                 case IqlTokenTypes.TABLE_ALIAS:
-                    tableAlias = ast.getFirstChild().getText();
+                    tableAlias = unescape(ast.getFirstChild().getText());
                     break;
                 default:
                     throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -309,7 +309,7 @@ public class IqlQueryParser
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.FIELD_ALIAS:
-                    nodeAlias = ast.getFirstChild().getText();
+                    nodeAlias = unescape(ast.getFirstChild().getText());
                     break;
                 case IqlTokenTypes.FIELD:
                 case IqlTokenTypes.CONSTANT:
@@ -354,7 +354,7 @@ public class IqlQueryParser
             case IqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild(), q);
             case IqlTokenTypes.CONSTANT:
-                String value = ast.getFirstChild().getText();
+                String value = unescape(ast.getFirstChild().getText());
                 return new QueryValue(new UnknownTypeValue(value));
             case IqlTokenTypes.UNSAFE_FUNCTION:
                 return processNewUnsafeFunction(ast.getFirstChild(), q);
@@ -386,7 +386,7 @@ public class IqlQueryParser
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                         + ast.getType() + "]");
         }
-        Object obj = q.getReverseAliases().get(ast.getText());
+        Object obj = q.getReverseAliases().get(unescape(ast.getText()));
 
         if (obj instanceof QueryClass) {
             AST secondAst = ast.getNextSibling();
@@ -396,9 +396,10 @@ public class IqlQueryParser
                 AST thirdAst = secondAst.getNextSibling();
                 if (thirdAst == null) {
                     try {
-                        return new QueryField((QueryClass) obj, secondAst.getText());
+                        return new QueryField((QueryClass) obj, unescape(secondAst.getText()));
                     } catch (IllegalArgumentException e) {
-                        return new QueryObjectReference((QueryClass) obj, secondAst.getText());
+                        return new QueryObjectReference((QueryClass) obj, unescape(secondAst
+                                    .getText()));
                     }
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."
@@ -414,7 +415,7 @@ public class IqlQueryParser
                         + " cannot end at a subquery");
             } else {
                 AST thirdAst = secondAst.getNextSibling();
-                Object secondObj = q2.getReverseAliases().get(secondAst.getText());
+                Object secondObj = q2.getReverseAliases().get(unescape(secondAst.getText()));
                 if (secondObj instanceof QueryClass) {
                     if (thirdAst == null) {
                         throw new IllegalArgumentException("Cannot reference classes inside "
@@ -426,7 +427,7 @@ public class IqlQueryParser
                         if (fourthAst == null) {
                             if (q2.getSelect().contains(secondObj)) {
                                 return new QueryField(q2, (QueryClass) secondObj,
-                                                      thirdAst.getText());
+                                                      unescape(thirdAst.getText()));
                             } else {
                                 throw new IllegalArgumentException(ast.getText() + "."
                                         + secondAst.getText() + "." + thirdAst.getText()
@@ -639,7 +640,7 @@ public class IqlQueryParser
                     }
                     break;
                 case IqlTokenTypes.IDENTIFIER:
-                    type = ast.getText();
+                    type = unescape(ast.getText());
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node " + ast.getText() + " ["
@@ -782,12 +783,12 @@ public class IqlQueryParser
                 }
                 QueryReference leftc = null;
                 AST subSubAST = subAST.getFirstChild();
-                String firstString = subSubAST.getText();
+                String firstString = unescape(subSubAST.getText());
                 FromElement firstObj = (FromElement) q.getReverseAliases().get(firstString);
                 if (firstObj instanceof QueryClass) {
                     subSubAST = subSubAST.getNextSibling();
                     if (subSubAST != null) {
-                        String secondString = subSubAST.getText();
+                        String secondString = unescape(subSubAST.getText());
                         if (subSubAST.getNextSibling() != null) {
                             throw new IllegalArgumentException("Path expression " + firstString
                                     + "." + secondString + "."
@@ -978,4 +979,21 @@ public class IqlQueryParser
         }
     }
 
+    /**
+     * Unescapes a String, by removing quotes from the beginning and end.
+     *
+     * @param word the String
+     * @return the unescaped String
+     */
+    public static String unescape(String word) {
+        if (word != null) {
+            if ((word.charAt(0) == '"') && (word.charAt(word.length() - 1) == '"')) {
+                return word.substring(1, word.length() - 1);
+            } else if ((word.charAt(0) == '"') || (word.charAt(word.length() - 1) == '"')) {
+                throw new IllegalArgumentException("Identifier " + word + " is not properly escaped"
+                        + " by surrounding with double quotes");
+            }
+        }
+        return word;
+    }
 }

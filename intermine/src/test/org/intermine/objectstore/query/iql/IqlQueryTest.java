@@ -87,5 +87,4 @@ public class IqlQueryTest extends IqlQueryTestCase
         } catch (IllegalArgumentException e) {
         }
     }
-
 }

@@ -50,8 +50,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
      * Set up all the results expected for a given subset of queries
      */
     public static void setUpResults() {
-        results.put("SelectSimpleObject", new IqlQuery("SELECT Company FROM org.intermine.model.testmodel.Company AS Company", null));
-        results.put("SubQuery", new IqlQuery("SELECT DISTINCT a1_.a1_.name AS a2_, a1_.Alias AS a3_ FROM (SELECT DISTINCT a1_, 5 AS Alias FROM org.intermine.model.testmodel.Company AS a1_) AS a1_", null));
+        results.put("SelectSimpleObject", new IqlQuery("SELECT Alias FROM org.intermine.model.testmodel.Company AS Alias", null));
+        results.put("SubQuery", new IqlQuery("SELECT DISTINCT \"All\".Array.name AS a1_, \"All\".Alias AS Alias FROM (SELECT DISTINCT Array, 5 AS Alias FROM org.intermine.model.testmodel.Company AS Array) AS \"All\"", null));
         results.put("WhereSimpleEquals", new IqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber = 1234", null));
         results.put("WhereSimpleNotEquals", new IqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.vatNumber != 1234", null));
         results.put("WhereSimpleLike", new IqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.name LIKE 'Company%'", null));

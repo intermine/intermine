@@ -164,12 +164,13 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGenerateSqlCompatibleName() throws Exception {
-        assertEquals("finish", DatabaseUtil.generateSqlCompatibleName("end"));
+        assertEquals("intermine_end", DatabaseUtil.generateSqlCompatibleName("end"));
+        assertEquals("intermine_intermine_end", DatabaseUtil.generateSqlCompatibleName("intermine_end"));
         assertEquals("id", DatabaseUtil.generateSqlCompatibleName("id"));
-        assertEquals("indx", DatabaseUtil.generateSqlCompatibleName("index"));
-        assertEquals("ordr", DatabaseUtil.generateSqlCompatibleName("order"));
-        assertEquals("complete", DatabaseUtil.generateSqlCompatibleName("full"));
-        assertEquals("offst", DatabaseUtil.generateSqlCompatibleName("offset"));
+        assertEquals("index", DatabaseUtil.generateSqlCompatibleName("index"));
+        assertEquals("intermine_order", DatabaseUtil.generateSqlCompatibleName("order"));
+        assertEquals("intermine_full", DatabaseUtil.generateSqlCompatibleName("full"));
+        assertEquals("intermine_offset", DatabaseUtil.generateSqlCompatibleName("offset"));
         assertEquals("some_string", DatabaseUtil.generateSqlCompatibleName("some_string"));
 
         try {

@@ -282,7 +282,8 @@ public class SqlGenerator
                     if (cld == null) {
                         throw new ObjectStoreException(cls.toString() + " is not in the model");
                     }
-                    String baseAlias = (String) q.getAliases().get(qc);
+                    String baseAlias = DatabaseUtil.generateSqlCompatibleName((String) q
+                            .getAliases().get(qc));
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     if (sequence == 0) {
                         aliases.put(cld, baseAlias);
@@ -331,8 +332,11 @@ public class SqlGenerator
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema,
                                 state.getDb(), null, QUERY_SUBQUERY_FROM) + ") AS "
-                        + ((String) q.getAliases().get(fromElement)));
-                state.setFieldToAlias(fromElement, new AlwaysMap(q.getAliases().get(fromElement)));
+                        + DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
+                            .get(fromElement)));
+                state.setFieldToAlias(fromElement, new AlwaysMap(DatabaseUtil
+                            .generateSqlCompatibleName((String) (q.getAliases()
+                                    .get(fromElement)))));
             }
         }
     }
@@ -637,14 +641,20 @@ public class SqlGenerator
             DatabaseSchema schema, int kind, State state) {
         String alias = (String) q.getAliases().get(qc);
         if (kind == QUERY_SUBQUERY_CONSTRAINT) {
-            buffer.append(alias)
+            buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
                 .append(".id");
         } else {
-            buffer.append(alias)
+            buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
                 .append(".OBJECT");
-            if ((kind == QUERY_NORMAL) || (kind == QUERY_SUBQUERY_FROM)) {
+            if (kind == QUERY_NORMAL) {
                 buffer.append(" AS ")
-                    .append(alias.equals(alias.toLowerCase()) ? alias : "\"" + alias + "\"");
+                    .append(alias.equals(alias.toLowerCase())
+                            ? DatabaseUtil.generateSqlCompatibleName(alias)
+                            : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\"");
+            }
+            if (kind == QUERY_SUBQUERY_FROM) {
+                buffer.append(" AS ")
+                    .append(DatabaseUtil.generateSqlCompatibleName(alias));
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)) {
                 Set fields = schema.getModel().getClassDescriptorByName(qc.getType().getName())
@@ -670,16 +680,20 @@ public class SqlGenerator
                         .append(columnName);
                     if (kind == QUERY_SUBQUERY_FROM) {
                         buffer.append(" AS ")
-                            .append(alias.equals(alias.toLowerCase()) ? alias + columnName
-                                    : "\"" + alias + columnName + "\"");
+                            .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
+                            //.append(alias.equals(alias.toLowerCase())
+                            //        ? DatabaseUtil.generateSqlCompatibleName(alias) + columnName
+                            //        : "\"" + DatabaseUtil.generateSqlCompatibleName(alias)
+                            //        + columnName + "\"");
                     }
                 }
             } else {
                 buffer.append(", ")
-                    .append(alias)
+                    .append(DatabaseUtil.generateSqlCompatibleName(alias))
                     .append(".id AS ")
-                    .append(alias.equals(alias.toLowerCase()) ? alias + "id" : "\"" + alias
-                            + "id" + "\"");
+                    .append(alias.equals(alias.toLowerCase())
+                            ? DatabaseUtil.generateSqlCompatibleName(alias) + "id"
+                            : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "id" + "\"");
             }
         }
     }
@@ -834,10 +848,11 @@ public class SqlGenerator
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 String alias = (String) q.getAliases().get(node);
                 if (kind == QUERY_NORMAL) {
-                    retval.append(" AS " + (alias.equals(alias.toLowerCase()) ? alias : "\"" + alias
-                                + "\""));
+                    retval.append(" AS " + (alias.equals(alias.toLowerCase())
+                            ? DatabaseUtil.generateSqlCompatibleName(alias)
+                            : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\""));
                 } else if (kind == QUERY_SUBQUERY_FROM) {
-                    retval.append(" AS " + alias);
+                    retval.append(" AS " + DatabaseUtil.generateSqlCompatibleName(alias));
                 }
             }
         }

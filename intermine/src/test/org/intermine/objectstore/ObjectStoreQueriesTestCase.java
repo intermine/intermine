@@ -196,37 +196,40 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
-      select Company
-      from Company
+      select Alias
+      from Company AS Alias
       NOT DISTINCT
     */
     public static Query selectSimpleObject() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         Query q1 = new Query();
         q1.setDistinct(false);
-        q1.alias(c1, "Company");
+        q1.alias(c1, "Alias");
         q1.addFrom(c1);
         q1.addToSelect(c1);
         return q1;
     }
 
     /*
-      select subquery.company.name, subquery.alias
-      from (select company, 5 as Alias from Company) as subquery
+      select All.Array.name, All.alias as Alias
+      from (select Array, 5 as Alias from Company AS Array) as All
     */
     public static Query subQuery() throws Exception {
         QueryClass c1 = new QueryClass(Company.class);
         QueryValue v1 = new QueryValue(new Integer(5));
         Query q1 = new Query();
+        q1.alias(c1, "Array");
         q1.addFrom(c1);
         q1.addToSelect(c1);
         q1.alias(v1, "Alias");
         q1.addToSelect(v1);
         Query q2 = new Query();
+        q2.alias(q1, "All");
         q2.addFrom(q1);
         QueryField f1 = new QueryField(q1, c1, "name");
         QueryField f2 = new QueryField(q1, v1);
         q2.addToSelect(f1);
+        q2.alias(f2, "Alias");
         q2.addToSelect(f2);
         return q2;
     }

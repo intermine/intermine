@@ -143,6 +143,10 @@ public class BuildDbTask extends Task
         isql.setSrcDir(tempDir.toString());
         isql.execute();
 
+        ea.setValue("abort"); // "abort", "continue" or "stop"
+        isql.execute();
+        // TODO: properly
+
         try {
             Connection c = database.getConnection();
             c.setAutoCommit(true);

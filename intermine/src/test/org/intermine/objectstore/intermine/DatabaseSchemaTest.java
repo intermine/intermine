@@ -64,6 +64,7 @@ public class DatabaseSchemaTest extends TestCase
         employeeAttributes.add(employee.getFieldDescriptorByName("id"));
         employeeAttributes.add(employee.getFieldDescriptorByName("fullTime"));
         employeeAttributes.add(employee.getFieldDescriptorByName("age"));
+        employeeAttributes.add(employee.getFieldDescriptorByName("end"));
         employeeReferences.add(employee.getFieldDescriptorByName("department"));
         employeeReferences.add(employee.getFieldDescriptorByName("departmentThatRejectedMe"));
         employeeReferences.add(employee.getFieldDescriptorByName("address"));
@@ -77,6 +78,7 @@ public class DatabaseSchemaTest extends TestCase
         managerAttributes.add(manager.getFieldDescriptorByName("id"));
         managerAttributes.add(manager.getFieldDescriptorByName("fullTime"));
         managerAttributes.add(manager.getFieldDescriptorByName("age"));
+        managerAttributes.add(manager.getFieldDescriptorByName("end"));
         managerReferences.add(manager.getFieldDescriptorByName("department"));
         managerReferences.add(manager.getFieldDescriptorByName("departmentThatRejectedMe"));
         managerReferences.add(manager.getFieldDescriptorByName("address"));

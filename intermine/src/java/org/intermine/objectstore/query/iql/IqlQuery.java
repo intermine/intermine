@@ -13,8 +13,10 @@ package org.intermine.objectstore.query.iql;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.util.Util;
 import org.intermine.objectstore.query.*;
@@ -84,7 +86,8 @@ public class IqlQuery
             if (qn instanceof QueryClass) {
                 retval += nodeToString(q, qn);
             } else {
-                retval += nodeToString(q, qn) + (nodeAlias == null ? "" : " AS " + nodeAlias);
+                retval += nodeToString(q, qn) + (nodeAlias == null ? "" : " AS "
+                        + escapeReservedWord(nodeAlias));
             }
         }
         needComma = false;
@@ -92,7 +95,7 @@ public class IqlQuery
         Iterator qcIter = q.getFrom().iterator();
         while (qcIter.hasNext()) {
             FromElement fe = (FromElement) qcIter.next();
-            String classAlias = (String) q.getAliases().get(fe);
+            String classAlias = escapeReservedWord((String) q.getAliases().get(fe));
             if (needComma) {
                 retval += ", ";
             }
@@ -144,13 +147,14 @@ public class IqlQuery
      * @return a String
      */
     public static String nodeToString(Query q, QueryNode qn) {
-        String nodeAlias = (String) q.getAliases().get(qn);
         if (qn instanceof QueryClass) {
-            return nodeAlias;
+            String nodeAlias = (String) q.getAliases().get(qn);
+            return escapeReservedWord(nodeAlias);
         } else if (qn instanceof QueryField) {
             QueryField qf = (QueryField) qn;
-            return q.getAliases().get(qf.getFromElement()) + "." + qf.getFieldName()
-                + (qf.getSecondFieldName() == null ? "" : "." + qf.getSecondFieldName());
+            return escapeReservedWord((String) (q.getAliases().get(qf.getFromElement()))) + "."
+                + escapeReservedWord(qf.getFieldName()) + (qf.getSecondFieldName() == null ? ""
+                        : "." + escapeReservedWord(qf.getSecondFieldName()));
         } else if (qn instanceof QueryValue) {
             Object obj = ((QueryValue) qn).getValue();
             if (obj instanceof String) {
@@ -416,5 +420,70 @@ public class IqlQuery
         return 2 * queryString.hashCode()
             + 3 * Util.hashCode(packageName)
             + 5 * Util.hashCode(parameters);
+    }
+
+    private static final String[] RESERVED_WORDS = new String[] {
+        "EXPLAIN",
+        "SELECT",
+        "ALL",
+        "DISTINCT",
+        "FROM",
+        "WHERE",
+        "GROUP",
+        "BY",
+        "ORDER",
+        "AS",
+        "TRUE",
+        "FALSE",
+        "OR",
+        "AND",
+        "NOT",
+        "IN",
+        "CONTAINS",
+        "DOES",
+        "CONTAIN",
+        "LIKE",
+        "IS",
+        "COUNT",
+        "MAX",
+        "MIN",
+        "SUM",
+        "AVG",
+        "SUBSTR",
+        "INDEXOF"};
+    private static Set reservedWords = new HashSet();
+    static {
+        for (int i = 0; i < RESERVED_WORDS.length; i++) {
+            reservedWords.add(RESERVED_WORDS[i]);
+        }
+    }
+
+    /**
+     * Returns true if the given String is an IQL reserved word.
+     *
+     * @param word the String
+     * @return a boolean
+     */
+    public static boolean isReservedWord(String word) {
+        if (word != null) {
+            return reservedWords.contains(word.toUpperCase());
+        }
+        return false;
+    }
+
+    /**
+     * Converts words into escaped form.
+     *
+     * @param word the String
+     * @return an escaped String
+     */
+    public static String escapeReservedWord(String word) {
+        if (word != null) {
+            if (isReservedWord(word) || (word.charAt(0) == '"')
+                    || (word.charAt(word.length() - 1) == '"')) {
+                return "\"" + word + "\"";
+            }
+        }
+        return word;
     }
 }

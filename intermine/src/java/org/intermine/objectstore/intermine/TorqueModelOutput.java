@@ -141,13 +141,13 @@ public class TorqueModelOutput
         Iterator fieldIter = fields.getAttributes().iterator();
         while (fieldIter.hasNext()) {
             AttributeDescriptor field = (AttributeDescriptor) fieldIter.next();
-            sb.append(generateColumn(field.getName(), ((AttributeDescriptor) field)
-                        .getType()));
+            sb.append(generateColumn(DatabaseUtil.getColumnName(field),
+                        ((AttributeDescriptor) field).getType()));
         }
         fieldIter = fields.getReferences().iterator();
         while (fieldIter.hasNext()) {
             ReferenceDescriptor field = (ReferenceDescriptor) fieldIter.next();
-            sb.append(generateColumn(field.getName() + "Id", "int"));
+            sb.append(generateColumn(DatabaseUtil.getColumnName(field), "int"));
         }
         if (schema.isTruncated(cld)) {
             sb.append(generateColumn("class", "java.lang.String"));

@@ -41,11 +41,13 @@ public class LiteRendererTest extends TestCase
             + "org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress"
             + LiteRenderer.DELIM + "aage" + LiteRenderer.DELIM + "0"
             + LiteRenderer.DELIM + "afullTime" + LiteRenderer.DELIM + "false"
+            + LiteRenderer.DELIM + "aend" + LiteRenderer.DELIM + "0"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
             + LiteRenderer.DELIM + "aid" + LiteRenderer.DELIM + "1234"
             + LiteRenderer.DELIM + "rdepartment" + LiteRenderer.DELIM + "5678";
 
-        assertEquals(expected, LiteRenderer.render(e, model));
+        String got = LiteRenderer.render(e, model);
+        assertEquals(got, expected, got);
     }
 
 
@@ -60,12 +62,14 @@ public class LiteRendererTest extends TestCase
         String expected = "<object class=\"org.intermine.model.testmodel.Employee\" implements=\"org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress\">"
             + "<field name=\"age\" value=\"0\"/>"
             + "<field name=\"fullTime\" value=\"false\"/>"
+            + "<field name=\"end\" value=\"0\"/>"
             + "<field name=\"name\" value=\"Employee1\"/>"
             + "<field name=\"id\" value=\"1234\"/>"
             + "<reference name=\"department\" value=\"5678\"/>"
             + "</object>";
 
-        assertEquals(expected, LiteRenderer.renderXml(e, model));
+        String got = LiteRenderer.renderXml(e, model);
+        assertEquals(got, expected, got);
     }
 
 
@@ -84,22 +88,26 @@ public class LiteRendererTest extends TestCase
         f1.setName("age");
         f1.setValue("0");
         Field f2 = new Field();
-        f2.setName("fullTime");
-        f2.setValue("false");
+        f2.setName("end");
+        f2.setValue("0");
         Field f3 = new Field();
-        f3.setName("name");
-        f3.setValue("Employee1");
+        f3.setName("fullTime");
+        f3.setValue("false");
         Field f4 = new Field();
-        f4.setName("id");
-        f4.setValue("1234");
+        f4.setName("name");
+        f4.setValue("Employee1");
+        Field f5 = new Field();
+        f5.setName("id");
+        f5.setValue("1234");
         exp.addField(f1);
         exp.addField(f2);
         exp.addField(f3);
         exp.addField(f4);
-        Field f5 = new Field();
-        f5.setName("department");
-        f5.setValue("5678");
-        exp.addReference(f5);
+        exp.addField(f5);
+        Field f6 = new Field();
+        f6.setName("department");
+        f6.setValue("5678");
+        exp.addReference(f6);
 
         assertEquals(LiteRenderer.renderXml(exp), LiteRenderer.renderXml(LiteRenderer.objectToItem(e, model)));
 
