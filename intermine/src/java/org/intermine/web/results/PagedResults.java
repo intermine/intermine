@@ -86,7 +86,7 @@ public class PagedResults extends PagedTable
     }
 
     /**
-     * @see PageTable#updateRows
+     * @see PagedTable#updateRows
      */
     protected void updateRows() {
         rows = new ArrayList();

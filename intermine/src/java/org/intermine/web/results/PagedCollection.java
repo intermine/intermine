@@ -74,7 +74,7 @@ public class PagedCollection extends PagedTable
     }
 
     /**
-     * @see PageTable#updateRows
+     * @see PagedTable#updateRows
      */
     protected void updateRows() {
         rows = list.subList(startRow, Math.min(startRow + pageSize, list.size()));
