@@ -95,7 +95,7 @@ public class ItemFactory
     }
 
     /**
-     * Construct an item with no Model (and hence no checking of set methods).
+     * Construct an item from an identifier, a class name and the names of implemented classes
      * @param identifier item identifier - if null create a unique identifier prefixed with the
      * prefix argument to the constructor
      * @param className name of described class
@@ -113,6 +113,16 @@ public class ItemFactory
         item.setClassName(className);
         item.setImplementations(implementations);
         return item;
+    }
+
+    /**
+     * Construct an item from a class name.  A new unique identifier will be created for the object
+     * by the ItemFactory.
+     * @param className name of described class
+     * @return the new Item
+     */
+    public Item makeItemForClass(String className) {
+        return makeItem(null, className, "");
     }
 
     /**
