@@ -14,32 +14,37 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.FileSet;
 
 import org.apache.torque.task.TorqueSQLExec;
 import org.apache.torque.task.TorqueSQLTask;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 
 /**
- * Generates and inserts SQL given database name, schema fileset and destination directory
+ * Generates and inserts SQL given database name, schema and temporary directory
  *
  * @author Mark Woodbridge
  */
 public class BuildDbTask extends Task
 {
     protected static final String SEQUENCE_NAME = "serial";
-    protected List filesets = new ArrayList();
-    protected File destDir;
+    protected File tempDir;
     protected Database database;
+    protected String schemaFile;
 
     /**
      * Sets the database
@@ -55,18 +60,18 @@ public class BuildDbTask extends Task
 
     /**
      * Sets the directory for temporary files including sql output
-     * @param destDir the directory location
+     * @param tempDir the directory location
      */
-    public void setDestdir(File destDir) {
-        this.destDir = destDir;
+    public void setTempdir(File tempDir) {
+        this.tempDir = tempDir;
     }
 
     /**
-     * Adds a set of xml database schema files to be processed
-     * @param fileset a Set of xml schema files
+     * Adds the schemafile to be processed.
+     * @param schemafile to be processed
      */
-    public void addFileset(FileSet fileset) {
-        filesets.add(fileset);
+    public void setSchemafile(String schemafile) {
+        this.schemaFile = schemafile;
     }
 
     /**
@@ -74,28 +79,53 @@ public class BuildDbTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (this.destDir == null) {
-            throw new BuildException("destDir attribute is not set");
-        }
-        if (filesets.size() == 0) {
-            throw new BuildException("fileset attribute is not set");
+        if (tempDir == null) {
+            throw new BuildException("tempDir attribute is not set");
         }
         if (database == null) {
             throw new BuildException("database attribute is not set or database is not present");
         }
+        if (schemaFile == null) {
+            throw new BuildException("schemaFile attribute is not set");
+        }
        
         SQL sql = new SQL();
         sql.setControlTemplate("sql/base/Control.vm");
-        sql.setOutputDirectory(destDir);
+        sql.setOutputDirectory(tempDir);
         sql.setUseClasspath(true);
         //sql.setBasePathToDbProps("sql/base/");
-        sql.setSqlDbMap(destDir + "/sqldb.map");
+        sql.setSqlDbMap(tempDir + "/sqldb.map");
         sql.setOutputFile("report.sql.generation");
         sql.setTargetDatabase(database.getPlatform().toLowerCase()); // "postgresql"
-        Iterator iter = filesets.iterator();
-        while (iter.hasNext()) {
-            sql.addFileset((FileSet) iter.next());
+        InputStream schemaFileInputStream =
+            getClass().getClassLoader().getResourceAsStream(schemaFile);
+        
+        File tempFile;
+
+        try {
+            tempFile = File.createTempFile("schema", "xml", tempDir);
+
+            PrintWriter writer = new PrintWriter(new FileWriter(tempFile));
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(schemaFileInputStream));
+            
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                } else {
+                    writer.println(line);
+                }
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            throw new BuildException("cannot create temporary file for BuildDbTask: " +
+                                     e.getMessage());
         }
+
+        sql.setXmlFile(tempFile.getPath());
+
         sql.execute();
 
         InsertSQL isql = new InsertSQL();
@@ -107,8 +137,8 @@ public class BuildDbTask extends Task
         TorqueSQLExec.OnError ea = new TorqueSQLExec.OnError();
         ea.setValue("continue"); // "abort", "continue" or "stop"
         isql.setOnerror(ea);
-        isql.setSqlDbMap(destDir + "/sqldb.map");
-        isql.setSrcDir(destDir.toString());
+        isql.setSqlDbMap(tempDir + "/sqldb.map");
+        isql.setSrcDir(tempDir.toString());
         isql.execute();
 
         try {
@@ -118,17 +148,9 @@ public class BuildDbTask extends Task
             c.close();
         } catch (SQLException e) {
         }
-    }
 
-//     public static void main(String[] args) {
-//         BuildDbTask task = new BuildDbTask();
-//         FileSet f = new FileSet();
-//         f.setDir(new File("schema"));
-//         f.setIncludes("*-schema.xml");
-//         task.addFileset(f);
-//         task.setDestdir(new File("sql"));
-//         task.execute();
-//     }
+        tempFile.delete();
+    }
 }
 
 /**
