@@ -19,6 +19,8 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Batch batch;
     protected String createSituation;
     protected Map recentSequences;
+    protected Map tableToColNameArray;
+    protected Map tableToFieldNameArray;
+    protected Map tableToCollections;
 
     protected static final int SEQUENCE_MULTIPLE = 100;
     protected static final int MAX_BATCH_CHARS = 10000000;
@@ -98,6 +103,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     + " with sequence = " + sequence + ", model = \"" + model.getName()
                     + "\" recentSequences cache"));
         batch = new Batch(new BatchWriterPostgresCopyImpl());
+        tableToColNameArray = new HashMap();
+        tableToFieldNameArray = new HashMap();
+        tableToCollections = new HashMap();
     }
     
     /**
@@ -298,67 +306,86 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
+                String colNames[] = (String []) tableToColNameArray.get(tableName);
+                String fieldNames[] = (String []) tableToFieldNameArray.get(tableName);
+                Set collections = (Set) tableToCollections.get(tableName);
+                if (colNames == null) {
+                    int colCount = 1;
+                    fieldIter = cld.getAllFieldDescriptors().iterator();
+                    while (fieldIter.hasNext()) {
+                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                        if (!(field instanceof CollectionDescriptor)) {
+                            colCount++;
+                        }
+                    }
+                    colNames = new String[colCount];
+                    fieldNames = new String[colCount];
+                    collections = new HashSet();
+                    colNames[0] = "OBJECT";
+                    int colNo = 1;
+                    fieldIter = cld.getAllFieldDescriptors().iterator();
+                    while (fieldIter.hasNext()) {
+                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                        if (field instanceof CollectionDescriptor) {
+                            collections.add(field);
+                        } else {
+                            colNames[colNo] = DatabaseUtil.getColumnName(field);
+                            fieldNames[colNo] = field.getName();
+                            colNo++;
+                        }
+                    }
+                    tableToColNameArray.put(tableName, colNames);
+                    tableToFieldNameArray.put(tableName, fieldNames);
+                    tableToCollections.put(tableName, collections);
+                }
+                    
                 if (doDeletes) {
                     batch.deleteRow(c, tableName, "id", o.getId());
                 }
-                int colCount = 1;
-                fieldIter = cld.getAllFieldDescriptors().iterator();
-                while (fieldIter.hasNext()) {
-                    FieldDescriptor field = (FieldDescriptor) fieldIter.next();
-                    if (!(field instanceof CollectionDescriptor)) {
-                        colCount++;
-                    }
-                }
-                String colNames[] = new String[colCount];
-                Object values[] = new Object[colCount];
-                colNames[0] = "OBJECT";
+                Object values[] = new Object[colNames.length];
                 values[0] = xml;
-                int colNo = 1;
-                fieldIter = cld.getAllFieldDescriptors().iterator();
-                while (fieldIter.hasNext()) {
-                    FieldDescriptor field = (FieldDescriptor) fieldIter.next();
-                    if (field instanceof CollectionDescriptor) {
-                        Collection coll = (Collection) TypeUtil.getFieldValue(o, field.getName());
-                        if (!((coll instanceof Results)
-                                    && (((Results) coll).getObjectStore().equals(this)))) {
-                            CollectionDescriptor collection = (CollectionDescriptor) field;
-                            // Collection - if it's many to many, then write indirection table.
-                            if (field.relationType() == FieldDescriptor.M_N_RELATION) {
-                                String indirectTableName =
-                                    DatabaseUtil.getIndirectionTableName(collection);
-                                String inwardColumnName =
-                                    DatabaseUtil.getInwardIndirectionColumnName(collection);
-                                String outwardColumnName =
-                                    DatabaseUtil.getOutwardIndirectionColumnName(collection);
-                                boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
-                                String indirColNames[] = new String[2];
-                                indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
-                                indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
-                                Iterator collIter = coll.iterator();
-                                while (collIter.hasNext()) {
-                                    InterMineObject inCollection = (InterMineObject)
-                                        collIter.next();
-                                    Object indirValues[] = new Object[2];
-                                    indirValues[0] = (swap ? o.getId() : inCollection.getId());
-                                    indirValues[1] = (swap ? inCollection.getId() : o.getId());
-                                    batch.addRow(c, indirectTableName, null, indirColNames,
-                                            indirValues);
-                                }
-                            }
-                        }
-                    } else {
-                        colNames[colNo] = DatabaseUtil.getColumnName(field);
-                        Object value = TypeUtil.getFieldProxy(o, field.getName());
-                        if (value instanceof Date) {
-                            value = new Long(((Date) value).getTime());
-                        } else if (value instanceof InterMineObject) {
-                            value = ((InterMineObject) value).getId();
-                        }
-                        values[colNo] = value;
-                        colNo++;
+                for (int colNo = 1; colNo < colNames.length; colNo++) {
+                    Object value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
+                    if (value instanceof Date) {
+                        value = new Long(((Date) value).getTime());
+                    } else if (value instanceof InterMineObject) {
+                        value = ((InterMineObject) value).getId();
                     }
+                    values[colNo] = value;
                 }
                 batch.addRow(c, tableName, o.getId(), colNames, values);
+
+                Iterator collectionIter = collections.iterator();
+                while (collectionIter.hasNext()) {
+                    CollectionDescriptor collection = (CollectionDescriptor) collectionIter.next();
+                    Collection coll = (Collection) TypeUtil.getFieldValue(o, collection.getName());
+                    if (!((coll instanceof Results)
+                                && (((Results) coll).getObjectStore().equals(this)))) {
+                        // Collection - if it's many to many, then write indirection table.
+                        if (collection.relationType() == FieldDescriptor.M_N_RELATION) {
+                            String indirectTableName =
+                                DatabaseUtil.getIndirectionTableName(collection);
+                            String inwardColumnName =
+                                DatabaseUtil.getInwardIndirectionColumnName(collection);
+                            String outwardColumnName =
+                                DatabaseUtil.getOutwardIndirectionColumnName(collection);
+                            boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
+                            String indirColNames[] = new String[2];
+                            indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
+                            indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
+                            Iterator collIter = coll.iterator();
+                            while (collIter.hasNext()) {
+                                InterMineObject inCollection = (InterMineObject)
+                                    collIter.next();
+                                Object indirValues[] = new Object[2];
+                                indirValues[0] = (swap ? o.getId() : inCollection.getId());
+                                indirValues[1] = (swap ? inCollection.getId() : o.getId());
+                                batch.addRow(c, indirectTableName, null, indirColNames,
+                                        indirValues);
+                            }
+                        }
+                    }
+                }
             }
 
             try {
