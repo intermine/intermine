@@ -78,6 +78,8 @@ public class MainAction extends Action
             session.setAttribute("path", mf.getSubclass());
         }
 
+        mf.reset(mapping, request);
+
         return mapping.findForward("query");
     }
 }
