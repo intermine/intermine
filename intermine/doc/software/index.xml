@@ -2,9 +2,10 @@
   <section>
 
     <heading>Tutorials</heading>
-    <item><ulink url="tutorial">Getting started - a tutorial</ulink></item>
+    <item><ulink url="tutorials/getting_started">Getting started - a tutorial</ulink></item>
     <item><ulink url="tutorials/biologist">Getting started - a biologist's perspective</ulink></item>
     <item><ulink url="tutorials/using-own-model">Creating your own database</ulink></item>
+    <item><ulink url="tutorials/webservice">The FlyMine web service</ulink></item>
   </section>
 
   <section>
