@@ -26,6 +26,8 @@ import org.apache.struts.action.ActionMapping;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryNode;
+import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsRow;
 
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the
@@ -307,5 +309,43 @@ public class ChangeResultsAction extends DispatchAction
         session.setAttribute("query", q);
         return mapping.findForward("runquery");
     }
+
+    /**
+     * Change to the next results page
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception ServletException if a servlet error occurs
+     */
+    public ActionForward details(ActionMapping mapping, ActionForm form,
+                              HttpServletRequest request, HttpServletResponse response)
+        throws ServletException {
+        HttpSession session = request.getSession();
+
+        DisplayableResults dr = (DisplayableResults) session.getAttribute(DISPLAYABLERESULTS_NAME);
+
+        Results results = dr.getResults();
+        String column = request.getParameter("columnIndex");
+        if (column == null) {
+            throw new IllegalArgumentException("A column parameter must be present");
+        }
+        String row = request.getParameter("rowIndex");
+        if (row == null) {
+            throw new IllegalArgumentException("A row parameter must be present");
+        }
+
+        Object obj = ((ResultsRow) results.get(Integer.parseInt(row)))
+            .get(Integer.parseInt(column));
+
+        request.setAttribute("object", obj);
+
+        return mapping.findForward("details");
+    }
+
+
 
 }
