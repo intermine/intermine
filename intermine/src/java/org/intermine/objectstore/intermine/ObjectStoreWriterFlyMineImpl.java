@@ -25,6 +25,7 @@ import java.util.Set;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
@@ -100,6 +101,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             if (conn == null) {
                 throw new SQLException("This ObjectStoreWriter is closed");
             }
+            int loops = 0;
             while (connInUse) {
                 /*Exception trace = new Exception();
                 trace.fillInStackTrace();
@@ -108,12 +110,23 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 trace.printStackTrace(pw);
                 pw.flush();
                 LOG.error("Connection in use - entering wait - " + message.toString());*/
-                LOG.info("Connection in use - entering wait");
+                if (loops > 1000) {
+                    LOG.error("Waited for connection for 100 seconds - probably a deadlock"
+                            + " - throwing exception");
+                    throw new SQLException("This ObjectStoreWriter appears to be dead due to"
+                            + " deadlock");
+                } if (loops > 1) {
+                    LOG.error("Waited for connection for " + 2 + " seconds - perhaps there's"
+                            + " a deadlock");
+                } else {
+                    LOG.info("Connection in use - entering wait");
+                }
                 try {
                     conn.wait(1000L);
                 } catch (InterruptedException e) {
                 }
                 LOG.info("Notified or timed out");
+                loops++;
             }
             connInUse = true;
             /*
@@ -303,6 +316,14 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                                     addBatch(s, indirectSql.toString());
                                 }
                             }
+                        }
+                    } else if (field instanceof ReferenceDescriptor) {
+                        sql.append(", ");
+                        Object value = TypeUtil.getFieldProxy(o, field.getName());
+                        if (value == null) {
+                            sql.append("NULL");
+                        } else {
+                            SqlGenerator.objectToString(sql, value);
                         }
                     } else {
                         sql.append(", ");
