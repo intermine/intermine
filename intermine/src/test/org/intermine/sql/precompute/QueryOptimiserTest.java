@@ -826,4 +826,78 @@ public class QueryOptimiserTest extends TestCase
         QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
         assertEquals(Collections.EMPTY_SET, bestQuery.getQueries());
     }
+
+    public void testKimsBug() throws Exception {
+        Query q1 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id ORDER BY a1_.id, a3_.id, a4_.id");
+        Query q2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE (a4_.objectId = a1_.id AND a4_.subjectId = a3_.id) AND a1_.id > 5325019 ORDER BY a1_.id, a3_.id, a4_.id");
+        Query pq1 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id ORDER BY a1_.id, a3_.id, a4_.id");
+        Query pq2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id AND a1_.id = 10669827 ORDER BY a1_.id, a3_.id, a4_.id");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, "precomp2", con);
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+        precomps.add(pt2);
+        
+        Query eq1 = new Query("SELECT P42.a2_, P42.a3_, P42.a3_id, P42.a4_, P42.a4_id FROM precomp1 AS P42 ORDER BY P42.a2_, P42.a3_id, P42.a4_id");
+        Set eSet = new ConsistentSet();
+        eSet.add(eq1);
+        StringUtil.setNextUniqueNumber(42);
+        BestQueryStorer bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        assertEquals(eSet, bestQuery.getQueries());
+
+        Query eq2 = new Query("SELECT P42.a2_, P42.a3_, P42.a3_id, P42.a4_, P42.a4_id FROM precomp1 AS P42 WHERE P42.a2_ > 5325019 ORDER BY P42.a2_, P42.a3_id, P42.a4_id");
+        eSet = new ConsistentSet();
+        eSet.add(eq2);
+        StringUtil.setNextUniqueNumber(42);
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q2, bestQuery, q2);
+        assertEquals(eSet, bestQuery.getQueries());
+    }
+
+    public void testKimsBug2() throws Exception {
+        Table t = new Table("a", "b");
+        Constraint c1 = new Constraint(new Constant("5325019"), Constraint.LT, new Field("b", t));
+        Constraint c2 = new Constraint(new Constant("10669827"), Constraint.EQ, new Field("b", t));
+        Constraint c3 = new Constraint(new Constant("1066982"), Constraint.EQ, new Field("b", t));
+        Constraint c4 = new Constraint(new Constant("5325020"), Constraint.LT, new Field("b", t));
+
+        assertEquals(Constraint.IMPLIED_BY, c1.compare(c2));
+        assertEquals(Constraint.EXCLUDES, c1.compare(c3));
+        assertEquals(Constraint.IMPLIED_BY, c1.compare(c4));
+
+        Set set1 = Collections.singleton(c2);
+        Set set2 = Collections.singleton(c1);
+        Set equalsSet = new HashSet();
+        assertFalse(QueryOptimiser.compareConstraints(set1, set2, equalsSet));
+        assertTrue(equalsSet.isEmpty());
+    }
+
+    public void testKimsBug3() throws Exception {
+        Query q1 = new Query("SELECT a1_.a AS a2_ FROM Chromosome AS a1_ ORDER BY a1_.a");
+        Query q2 = new Query("SELECT a1_.a AS a2_ FROM Chromosome AS a1_ WHERE a1_.a > 5325019 ORDER BY a1_.a");
+        Query pq1 = new Query("SELECT a1_.a AS a2_ FROM Chromosome AS a1_ ORDER BY a1_.a");
+        Query pq2 = new Query("SELECT a1_.a AS a2_ FROM Chromosome AS a1_ WHERE a1_.a = 10669827 ORDER BY a1_.a");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, "precomp2", con);
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+        precomps.add(pt2);
+        
+        Query eq1 = new Query("SELECT P42.a2_ FROM precomp1 AS P42 ORDER BY P42.a2_");
+        Set eSet = new ConsistentSet();
+        eSet.add(eq1);
+        StringUtil.setNextUniqueNumber(42);
+        BestQueryStorer bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        assertEquals(eSet, bestQuery.getQueries());
+
+        Query eq2 = new Query("SELECT P42.a2_ FROM precomp1 AS P42 WHERE P42.a2_ > 5325019 ORDER BY P42.a2_");
+        eSet = new ConsistentSet();
+        eSet.add(eq2);
+        StringUtil.setNextUniqueNumber(42);
+        bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q2, bestQuery, q2);
+        assertEquals(eSet, bestQuery.getQueries());
+    }
 }

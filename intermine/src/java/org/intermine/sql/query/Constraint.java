@@ -63,6 +63,13 @@ public class Constraint extends AbstractConstraint
     }
 
     /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return getSQLString();
+    }
+
+    /**
      * Returns a String representation of this Constraint object, suitable for forming part of an
      * SQL query.
      *
