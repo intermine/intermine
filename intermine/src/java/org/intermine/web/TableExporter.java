@@ -40,9 +40,9 @@ public interface TableExporter
      *  an exception
      */
     public ActionForward export(ActionMapping mapping,
-                                         ActionForm form,
-                                         HttpServletRequest request,
-                                         HttpServletResponse response)
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
         throws Exception;
 
     /**
