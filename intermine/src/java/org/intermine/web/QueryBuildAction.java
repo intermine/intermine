@@ -61,7 +61,7 @@ public class QueryBuildAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         session.removeAttribute("queryClasses");
-        session.removeAttribute("editingAlias");
+        session.removeAttribute(Constants.EDITING_ALIAS);
 
         return mapping.findForward("buildquery");
     }
@@ -90,7 +90,7 @@ public class QueryBuildAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
-        String editingAlias = (String) session.getAttribute("editingAlias");
+        String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         if (queryClasses == null || editingAlias == null) {
             return mapping.findForward("buildquery");
@@ -149,7 +149,7 @@ public class QueryBuildAction extends LookupDispatchAction
         HttpSession session = request.getSession();
 
         Map queryClasses = (Map) session.getAttribute("queryClasses");
-        String editingAlias = (String) session.getAttribute("editingAlias");
+        String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         QueryBuildForm qbf = (QueryBuildForm) form;
 
@@ -157,7 +157,7 @@ public class QueryBuildAction extends LookupDispatchAction
         d.setFieldOps(qbf.getParsedFieldOps());
         d.setFieldValues(qbf.getParsedFieldValues());
         
-        session.removeAttribute("editingAlias");
+        session.removeAttribute(Constants.EDITING_ALIAS);
 
         return mapping.findForward("buildquery");
     }
@@ -195,7 +195,7 @@ public class QueryBuildAction extends LookupDispatchAction
         }
         
         //if we're editing something then update it before running query
-        if (session.getAttribute("editingAlias") != null) {
+        if (session.getAttribute(Constants.EDITING_ALIAS) != null) {
             updateClass(mapping, form, request, response);
         }
 

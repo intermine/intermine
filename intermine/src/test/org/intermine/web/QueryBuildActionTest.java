@@ -61,7 +61,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         String newAlias =
             QueryBuildHelper.aliasClass(queryClasses.keySet(), displayQueryClass.getType());
 
-        session.setAttribute("editingAlias", newAlias);
+        session.setAttribute(Constants.EDITING_ALIAS, newAlias);
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute("queryClasses", queryClasses);
 
@@ -78,7 +78,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
 
         verifyForward("buildquery");
         verifyNoActionErrors();
-        assertEquals(newAlias, session.getAttribute("editingAlias"));
+        assertEquals(newAlias, session.getAttribute(Constants.EDITING_ALIAS));
         Map afterQueryClasses = (Map)session.getAttribute("queryClasses");
         assertEquals(1, afterQueryClasses.size());
         DisplayQueryClass afterDisplayQueryClass =
@@ -163,7 +163,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         String newAlias =
             QueryBuildHelper.aliasClass(queryClasses.keySet(), displayQueryClass.getType());
 
-        session.setAttribute("editingAlias", newAlias);
+        session.setAttribute(Constants.EDITING_ALIAS, newAlias);
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute("queryClasses", queryClasses);
 
@@ -286,7 +286,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         String newAlias =
             QueryBuildHelper.aliasClass(queryClasses.keySet(), displayQueryClass.getType());
 
-        session.setAttribute("editingAlias", newAlias);
+        session.setAttribute(Constants.EDITING_ALIAS, newAlias);
         queryClasses.put(newAlias, displayQueryClass);
         session.setAttribute("queryClasses", queryClasses);
 
@@ -391,7 +391,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         displayQueryClass.setType("org.flymine.model.testmodel.Department");
         queryClasses.put(anAlias, displayQueryClass);
 
-        session.setAttribute("editingAlias", anAlias);
+        session.setAttribute(Constants.EDITING_ALIAS, anAlias);
         session.setAttribute("queryClasses", queryClasses);
 
         actionPerform();

@@ -21,13 +21,13 @@
     <font class="queryViewFromItemAlias">
       <c:out value="${alias}"/>
     </font>
-    <c:if test="${editingAlias == null}">
+    <c:if test="${EDITING_ALIAS == null}">
 [<html:link action="/changequery?method=editClass&alias=${alias}"><fmt:message key="button.edit"/></html:link>]
 [<html:link action="/changequery?method=removeClass&alias=${alias}"><fmt:message key="button.remove"/></html:link>]
     </c:if>
     <br/>
     <c:choose>
-      <c:when test="${alias == editingAlias}">
+      <c:when test="${alias == EDITING_ALIAS}">
 
         <c:choose>
 

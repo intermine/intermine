@@ -201,7 +201,7 @@ public class QueryBuildForm extends ActionForm
         HttpSession session = request.getSession();
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        String editingAlias = (String) session.getAttribute("editingAlias");
+        String editingAlias = (String) session.getAttribute(Constants.EDITING_ALIAS);
 
         if (editingAlias == null) {
             // all is well - nothing has happened yet

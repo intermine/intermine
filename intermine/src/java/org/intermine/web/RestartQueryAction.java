@@ -50,7 +50,7 @@ public class RestartQueryAction extends Action
         HttpSession session = request.getSession();
 
         session.removeAttribute("queryClasses");
-        session.removeAttribute("editingAlias");
+        session.removeAttribute(Constants.EDITING_ALIAS);
 
         return mapping.findForward("buildquery");
     }

@@ -81,7 +81,7 @@ public class QueryBuildChangeAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.setAttribute("editingAlias", request.getParameter("alias"));
+        session.setAttribute(Constants.EDITING_ALIAS, request.getParameter("alias"));
         
         return mapping.findForward("buildquery");
     }
