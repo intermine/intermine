@@ -76,6 +76,8 @@ public class TemplateAction extends InterMineAction
             queryName = (String) session.getAttribute("queryName");
         }
         
+        SessionMethods.logTemplateQueryUse(session, templateType, queryName);
+        
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         PathQuery queryCopy = TemplateHelper.templateFormToQuery((TemplateForm) form, template);
         

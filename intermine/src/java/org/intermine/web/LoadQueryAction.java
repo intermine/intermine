@@ -49,9 +49,10 @@ public class LoadQueryAction extends DispatchAction
         ServletContext servletContext = session.getServletContext();
         Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
         String queryName = request.getParameter("name");
-
+        
+        SessionMethods.logExampleQueryUse(session, queryName);
         SessionMethods.loadQuery((PathQuery) exampleQueries.get(queryName), session);
-
+        
         return mapping.findForward("query");
     }
 }
