@@ -79,7 +79,7 @@ public class OwlFunctionalTest extends TestCase
                 CollectionDescriptor newCod = new CollectionDescriptor(cod.getName(),
                                                                        cod.getReferencedClassDescriptor().getName(),
                                                                        reverseRef,
-                                                                       false);
+                                                                       true);
                 cods.add(newCod);
             }
 
