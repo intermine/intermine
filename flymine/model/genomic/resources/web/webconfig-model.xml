@@ -80,6 +80,9 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
     </fields>
+    <longdisplayers>
+      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.BioEntity">
@@ -116,6 +119,11 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.MicroarrayOligo">
+    <longdisplayers>
     </longdisplayers>
   </class>
 
