@@ -78,6 +78,7 @@
   <property name="flybase.chado" location="/shared/data/flybase/release_4_0"/>
   <property name="flybase.chado.fasta" location="${flybase.chado}/fasta"/>
   <property name="flybase.chado.gff" location="${flybase.chado}/gff"/>
+  <property name="flybase.uniprot.link.file" location="${flybase.chado}/cg2uniprot.txt"/>
 
   <!-- set up library filesets -->
 
@@ -745,7 +746,8 @@
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-flybase-production" depends="filter-chado,retrieve-chado,load-chado"/>
+  <target name="build-flybase-production" 
+          depends="compile-genomic-java, filter-chado,retrieve-chado,load-chado"/>
 
 
   <!-- ENSEMBL ORTHOLOGUES PIPELINE -->
@@ -1386,7 +1388,7 @@
                    target="osw.long_oligo-tgt-items"
                    seqClsName="Transcript"
                    orgAbbrev="DM"
-                   infoSourceTitle="LongOligo"
+                   infoSourceTitle="INDAC Long Oligo Set"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
       <fileset dir="/shared/data/long_oligo">
@@ -1839,6 +1841,14 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <link-ins objectStore="os.production" outputFile="FlyBaseToFlyMine" database="flybase"/>
+  </target>
+
+  <target name="create-flybase-to-uniprot-refs" depends="compile-genomic-java-from-db">
+    <taskdef name="fb-uniprot-refs" classname="org.flymine.postprocess.FlyBaseUniProtRefsTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <fb-uniprot-refs linkFile="${flybase.uniprot.link.file}"
+                     objectStoreWriter="osw.production"/>
   </target>
 
   <target name="post-process">
