@@ -653,7 +653,7 @@
                 merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
                 merge-ensembl-model, merge-phenotype-model,
                 merge-go-model, merge-uniprot-model,
-                merge-protein_structure-model, merge-mage-model, merge-so-model">
+                merge-protein_structure-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -1525,6 +1525,7 @@
       <property name="db.name" value="db.common-tgt-items"/>
       <property name="objectstore.name" value="os.uniprot-tgt-items-std"/>
     </ant>
+
     <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -1533,6 +1534,7 @@
                     target="osw.uniprot-tgt-items"
                     model="${build.model}/genomic/genomic.n3"
                     targetNamespace="http://www.flymine.org/model/genomic#"/>
+
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
