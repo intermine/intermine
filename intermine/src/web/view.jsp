@@ -34,23 +34,34 @@
                 <div>
                   <nobr>
                     <c:if test="${!status.first}">
+                      <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
+                        <fmt:param value="${path}"/>
+                      </fmt:message>
                       [
-                      <html:link action="/viewChange?method=moveLeft&index=${status.index}">
-                        &lt;
+                      <html:link action="/viewChange?method=moveLeft&index=${status.index}"
+                                 title="${moveLeftTitle}">
+                        <fmt:message key="view.moveLeftSymbol"/>
                       </html:link>
                       ]
                     </c:if>
                     <c:if test="${!status.last}">
+                      <fmt:message key="view.moveRightHelp" var="moveRightTitle">
+                        <fmt:param value="${path}"/>
+                      </fmt:message>
                       [
-                      <html:link
-                        action="/viewChange?method=moveRight&index=${status.index}">
-                        &gt;
+                      <html:link action="/viewChange?method=moveRight&index=${status.index}"
+                                 title="${moveRightTitle}">
+                        <fmt:message key="view.moveRightSymbol"/>
                       </html:link>
                       ]
                     </c:if>
+                    <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
+                      <fmt:param value="${path}"/>
+                    </fmt:message>
                     [
-                    <html:link action="/viewChange?method=removeFromView&path=${path}">
-                      x
+                    <html:link action="/viewChange?method=removeFromView&path=${path}"
+                               title="${removeFromViewTitle}">
+                      <fmt:message key="view.removeFromViewSymbol"/>
                     </html:link>
                     ]
                   </nobr>
