@@ -28,6 +28,8 @@ public class ForwardParameters
     protected ActionForward af;
     /** Map from parameter name to parameter value. */
     protected Map params = new HashMap();
+    /** Anchor name. */
+    protected String anchor;
     
     /**
      * Creates a new instance of ForwardParameters.
@@ -51,6 +53,17 @@ public class ForwardParameters
     }
     
     /**
+     * Add an anchor to the path.
+     * 
+     * @param anchor  anchor name
+     * @return        this ForwardParameters object
+     */
+    public ForwardParameters addAnchor(String anchor) {
+        this.anchor = anchor;
+        return this;
+    }
+    
+    /**
      * Construct the resulting ActionForward.
      * 
      * @return  ActionForward with parameters in path
@@ -65,6 +78,12 @@ public class ForwardParameters
             }
             path += entry.getKey() + "=" + entry.getValue();
         }
-        return new ActionForward(af.getPath() + "?" + path, af.getRedirect());
+        if (path.length() > 0) {
+            path = "?" + path;
+        }
+        if (anchor != null) {
+            path += "#" + anchor;
+        }
+        return new ActionForward(af.getPath() + path, af.getRedirect());
     }
 }
