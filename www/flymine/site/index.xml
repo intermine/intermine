@@ -40,54 +40,6 @@
         incorporating the following data sources:
       
         <sources sources="/sources.xml" version="1.0"/>
-      
-      <!--<itemizedlist>
-        <listitem>
-          <para>
-            Genome Annotation for D. melanogaster and A. gambiae from
-            <ulink url="http://www.ensembl.org">Ensembl</ulink>
-          </para>
-        </listitem>
-        
-        <listitem>
-          <para>Orthologues between D. melanogaster and A. gambiae from
-            <ulink url="http://www.ensembl.org">Ensembl</ulink>
-          </para>
-        </listitem>
-        
-        <listitem>
-          <para>
-            Orthologues and Paralogues between D. melanogaster and C. elegans
-            from <ulink url="http://inparanoid.cgb.ki.se/index.html">inParanoid</ulink>
-          </para>
-        </listitem>
-        
-        <listitem>
-          <para>2-hybrid protein-protein interactions for D. melanogaster: Curagen
-            set (Giot et al (2003) Science 302 1727-1736) and
-            <ulink url="http://pim.hybrigenics.com">Hybrigenics</ulink> set
-          </para>
-        </listitem>
-        
-        <listitem>
-          <para>2-hybrid protein-protein interactions for C. elegans (Li et al
-            (2004) Science 303 540-543)
-          </para>
-        </listitem>
-        
-        <listitem>
-          <para>
-            RNAi phenotypes for C. elegans from
-            <ulink url="http://www.wormbase.org">WormBase</ulink>
-          </para>
-        </listitem>
-        
-        <listitem>
-          <para>
-            <ulink url="http://www.geneontology.org">The Gene Ontology</ulink>
-          </para>
-        </listitem>
-      </itemizedlist> -->
       </para>
     </section>
   </column>
