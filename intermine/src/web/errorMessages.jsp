@@ -4,13 +4,15 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 
 <!-- errorMessages.jsp -->
-<div class="errorMessages">
+<div class="errors">
   <logic:messagesPresent>
     <html:messages id="error">
       <c:out value="${error}"/><br/>
     </html:messages>
   </logic:messagesPresent>
-  
+</div>  
+
+<div class="messages">
   <logic:messagesPresent message="true">
     <html:messages id="message" message="true">
       <c:out value="${message}"/><br>
