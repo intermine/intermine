@@ -10,12 +10,16 @@
 <sect1>
 <title>Instructions</title>
 
+<itemizedlist>
+
 <listitem><command>cd</command> to the directory into which you intend
 to check out the source.</listitem>
 
 <listitem>Issue the command <command>cvs -d
 :pserver:anonymous@cvs.flymine.org/cvs co
 flymine</command>.</listitem>
+
+</itemizedlist>
 
 <para>Once you have checked out the source from the CVS server, the
 command <command>cvs update</command> will obtain any updates to the
