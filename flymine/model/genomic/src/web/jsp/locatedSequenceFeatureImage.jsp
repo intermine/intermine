@@ -17,11 +17,11 @@
 
 <%-- This should be changed to check chromosomeLocation --%>
 
-<c:if test="${!empty hasLocation || cld.name == 'org.flymine.model.genomic.Chromosome'}">
+<c:if test="${!empty hasLocation || cld.unqualifiedName == 'Chromosome'}">
   <c:set var="track" value="${cld.unqualifiedName}s"/>
   
-  <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName ==
-              'Transcript' || cld.unqualifiedName == 'Pseudogene'}">
+  <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript' 
+              || cld.unqualifiedName == 'Pseudogene'}">
     <c:set var="track" value="Genes"/>
   </c:if>
   
@@ -32,15 +32,23 @@
     <c:set var="label" value="${label}-Genes"/>
   </c:if>
   
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=FlyMineInternalID_${object.id};width=750">
+  <c:set var="name" value="FlyMineInternalID_${object.id}"/>
+
+  <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">
+    <c:set var="name" value="mRNA:${name}"/>
+  </c:if>
+
+  <c:if test="${cld.unqualifiedName == 'Chromosome'}">
+    <c:set var="name" value="${object.organism.genus}_${object.organism.species}_chr_${object.identifier}"/>
+  </c:if>
+
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
     <div>
       <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
     </div>
-    <c:if test="${cld.name != 'org.flymine.model.genomic.Chromosome'}">
-      <div>
-        <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};track=${track};name=FlyMineInternalID_${object.id};width=400"/>
-      </div>
-    </c:if>
+    <div>
+      <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};track=${track};name=${name};width=400"/>
+    </div>
   </html:link>
 </c:if>
 <!-- /locatedSequenceFeatureImage.jsp -->
