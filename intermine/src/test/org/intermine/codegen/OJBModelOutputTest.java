@@ -212,7 +212,7 @@ public class OJBModelOutputTest extends TestCase
             + INDENT + INDENT + "</reference-descriptor>" + ENDL
             + INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"class1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL
             + INDENT + "</class-descriptor>" + ENDL + ENDL;
@@ -287,12 +287,12 @@ public class OJBModelOutputTest extends TestCase
             + INDENT + INDENT + "</reference-descriptor>" + ENDL;
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"class1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL
             + INDENT + INDENT + "<collection-descriptor name=\"cod2\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod2\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"class1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod2Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
 
@@ -318,7 +318,7 @@ public class OJBModelOutputTest extends TestCase
 
         String collections = INDENT + INDENT + "<collection-descriptor name=\"cod1\" element-class-ref=\"Class2\""
             + " collection-class=\"java.util.ArrayList\" proxy=\"true\" indirection-table=\"Class1Cod1\">" + ENDL
-            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"class1Id\"/>" + ENDL
+            + INDENT + INDENT + INDENT + "<fk-pointing-to-this-class column=\"Class1Id\"/>" + ENDL
             + INDENT + INDENT + INDENT + "<fk-pointing-to-element-class column=\"cod1Id\"/>" + ENDL
             + INDENT + INDENT + "</collection-descriptor>" + ENDL;
         assertEquals(collections, mo.collections.toString());
@@ -403,7 +403,10 @@ public class OJBModelOutputTest extends TestCase
         assertEquals("finish", mo.generateSqlCompatibleName("end"));
         assertEquals("identifier", mo.generateSqlCompatibleName("id"));
         assertEquals("number", mo.generateSqlCompatibleName("index"));
+        assertEquals("ord", mo.generateSqlCompatibleName("order"));
+        assertEquals("complete", mo.generateSqlCompatibleName("full"));
         assertEquals("some_string", mo.generateSqlCompatibleName("some_string"));
+
         try {
             mo.generateOJBSqlType(null);
             fail("Expected NullPointerException");

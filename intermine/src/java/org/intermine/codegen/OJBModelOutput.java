@@ -94,7 +94,8 @@ public class OJBModelOutput extends ModelOutput
             .append("<class-descriptor class=\"")
             .append(cld.getClassName())
             .append("\"")
-            .append(parentCld == null ? "" : " extends=\"" + parentCld.getClassName() + "\"")
+            .append(parentCld == null ? "" : " extends=\""
+                    + parentCld.getClassName() + "\"")
             .append(cld.isInterface() ? "" : " table=\"" + tableName + "\"")
             .append(">" + ENDL);
 
@@ -199,13 +200,12 @@ public class OJBModelOutput extends ModelOutput
         if (rd == null || rd instanceof CollectionDescriptor) { //many:many
             String name1;
             if (rd == null) {
-                name1 = StringUtil.decapitalise(TypeUtil.unqualifiedName(col.getClassDescriptor()
-                                                                         .getClassName()));
+                name1 = TypeUtil.unqualifiedName(col.getClassDescriptor().getClassName());
             } else {
                 name1 = rd.getName();
             }
             String joiningTableName = "";
-            if (name1.compareTo(name2) < 0) {
+            if (StringUtil.capitalise(name1).compareTo(StringUtil.capitalise(name2)) < 0) {
                 joiningTableName = StringUtil.capitalise(name1) + StringUtil.capitalise(name2);
             } else {
                 joiningTableName = StringUtil.capitalise(name2) + StringUtil.capitalise(name1);
@@ -319,7 +319,14 @@ public class OJBModelOutput extends ModelOutput
         if (n.equalsIgnoreCase("index")) {
             return StringUtil.toSameInitialCase("number", n);
         }
+        if (n.equalsIgnoreCase("order")) {
+            return StringUtil.toSameInitialCase("ord", n);
+        }
+        if (n.equalsIgnoreCase("full")) {
+            return StringUtil.toSameInitialCase("complete", n);
+        }
         return n;
+
     }
 
     /**
@@ -349,4 +356,5 @@ public class OJBModelOutput extends ModelOutput
         }
         return type;
     }
+
 }
