@@ -580,7 +580,8 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
     public void testCreateTempBagTables() throws Exception {
         Query q = ObjectStoreQueriesTestCase.bagConstraint();
         
-        Map bagTableNames = new HashMap();
+        Map bagTableNames = ((ObjectStoreInterMineImpl) os).bagConstraintTables;
+        bagTableNames.clear();
 
         Connection con = null;
 
@@ -588,9 +589,12 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             con = ((ObjectStoreInterMineImpl) os).getConnection();
             con.setAutoCommit(false);
 
-            ((ObjectStoreInterMineImpl) os).createTempBagTables(con, q, bagTableNames, 1);
+            int minBagSize = ((ObjectStoreInterMineImpl) os).minBagTableSize;
+            ((ObjectStoreInterMineImpl) os).minBagTableSize = 1;
+            ((ObjectStoreInterMineImpl) os).createTempBagTables(con, q);
+            ((ObjectStoreInterMineImpl) os).minBagTableSize = minBagSize;
 
-            assertEquals(1, bagTableNames.size());
+            assertEquals("Entries: " + bagTableNames, 1, bagTableNames.size());
 
             String tableName = (String) bagTableNames.values().iterator().next();
 

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -64,7 +65,6 @@ import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.TypeUtil;
-import org.intermine.util.CacheMap;
 
 import org.apache.log4j.Logger;
 
@@ -94,12 +94,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
+    protected Map bagConstraintTables = Collections.synchronizedMap(new WeakHashMap());
+    protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
+    protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
 
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise",
         "estimated", "execute", "permitted", "convert", "iql", "sql"};
-
-    // see generateSql()
-    protected Map queryBagTables = new CacheMap();
 
     /**
      * The name of the SEQUENCE in the database to use when generating unique integers in
@@ -359,22 +359,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * Set the cutoff value used to decide if a bag should be put in a table.
-     *
-     * @param minBagTableSize don't use a table to represent bags if the bag is smaller than this
-     * value
+     * Allows the log table to be flushed, guaranteeing that all log entries are committed to the
+     * database.
      */
-    public void setMinBagTableSize(int minBagTableSize) {
-        this.minBagTableSize = minBagTableSize;
-    }
-
-    /**
-     * Returns the cutoff value used to decide if a bag should be put in a table.
-     *
-     * @return an int
-     */
-    public int getMinBagTableSize() {
-        return minBagTableSize;
+    public synchronized void flushLogTable() {
+        if (logTableName != null) {
+            try {
+                logTableBatch.flush(logTableConnection);
+            } catch (SQLException e) {
+                LOG.error("Failed to flush log entries to log table: " + e);
+            }
+        }
     }
 
     /**
@@ -400,6 +395,25 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 LOG.error("Failed to write to log table: " + e);
             }
         }
+    }
+
+    /**
+     * Set the cutoff value used to decide if a bag should be put in a table.
+     *
+     * @param minBagTableSize don't use a table to represent bags if the bag is smaller than this
+     * value
+     */
+    public void setMinBagTableSize(int minBagTableSize) {
+        this.minBagTableSize = minBagTableSize;
+    }
+
+    /**
+     * Returns the cutoff value used to decide if a bag should be put in a table.
+     *
+     * @return an int
+     */
+    public int getMinBagTableSize() {
+        return minBagTableSize;
     }
 
     /*
@@ -548,15 +562,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Overrides Object.finalize - release the DB log connection.
      */
     protected synchronized void finalize() {
-        if (logTableName != null) {
-            LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequence
-                    + " and Database " + getDatabase().getURL());
-            try {
-                close();
-            } catch (ObjectStoreException e) {
-                LOG.error("Exception while garbage-collecting ObjectStoreInterMineImpl: "
-                        + e);
-            }
+        LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequence
+                + " and Database " + getDatabase().getURL());
+        try {
+            close();
+        } catch (ObjectStoreException e) {
+            LOG.error("Exception while garbage-collecting ObjectStoreInterMineImpl: "
+                    + e);
         }
     }
 
@@ -565,12 +577,32 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      *
      * @throws ObjectStoreException in subclasses
      */
-    public void close() throws ObjectStoreException {
+    public synchronized void close() throws ObjectStoreException {
         LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequence);
+        flushLogTable();
+        Connection c = null;
         try {
-            setLogTableName(null);
+            c = getConnection();
+            LOG.info("Temporary tables to drop: " + bagTablesInDatabase);
+            Iterator iter = bagTablesInDatabase.iterator();
+            while (iter.hasNext()) {
+                BagTableToRemove bttr = (BagTableToRemove) iter.next();
+                try {
+                    c.createStatement().execute(bttr.getDropSql());
+                    LOG.info("Closing objectstore - dropped temporary table: " + bttr.getDropSql());
+                } catch (SQLException e) {
+                    LOG.error("Failed to drop temporary bag table: " + bttr.getDropSql()
+                            + ", continuing");
+                }
+                iter.remove();
+            }
+            flushOldTempBagTables(c);
         } catch (SQLException e) {
-            LOG.error("Failed to close log table connection: " + e);
+            LOG.error("Failed to drop temporary bag tables: " + e);
+        } finally {
+            if (c != null) {
+                releaseConnection(c);
+            }
         }
     }
 
@@ -578,15 +610,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Called by the ShutdownHook on shutdown.
      */
     public synchronized void shutdown() {
-        if (logTableName != null) {
-            LOG.error("Shutting down open ObjectStoreInterMineImpl with sequence = " + sequence
-                    + " and Database " + getDatabase().getURL());
-            try {
-                close();
-            } catch (ObjectStoreException e) {
-                LOG.error("Exception caught while shutting down ObjectStoreInterMineImpl: "
-                        + e);
-            }
+        LOG.info("Shutting down open ObjectStoreInterMineImpl with sequence = " + sequence
+                + " and Database " + getDatabase().getURL());
+        try {
+            close();
+        } catch (ObjectStoreException e) {
+            LOG.error("Exception caught while shutting down ObjectStoreInterMineImpl: "
+                    + e);
         }
     }
 
@@ -697,7 +727,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         Object value = (thisObj instanceof InterMineObject
                                         ? ((InterMineObject) thisObj).getId() : thisObj);
                         SqlGenerator.registerOffset(q, start + rowNo + 1, schema, db,
-                                                    value, (Map) queryBagTables.get(q));
+                                                    value, bagConstraintTables);
                     }
                     rowNo--;
                 }
@@ -710,45 +740,43 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Create temporary tables for the bag in the BagConstraints of the given Query, then call
-     * SqlGenerator.generate().  A Map of BagConstraint -> table name is created for Query and saved
-     * in the queryBagTables Map.
+     * SqlGenerator.generate().  Entries are placed in the bagConstraintTables Map, which is a
+     * WeakHashMap from BagConstraint -&gt; table name. When the BagConstraint is garbage-
+     * collected, or when the JVM exits, the table associated with the table name is dropped from
+     * the database.
      *
      * @param c a Connection to use
      * @param q the Query
      * @param start the start row number (inclusive, from zero)
      * @param limit maximum number of rows to return
      * @return the SQL for the Query
+     * @throws ObjectStoreException if an error occurs
      */
-    private String generateSql(Connection c, Query q, int start, int limit)
+    protected String generateSql(Connection c, Query q, int start, int limit)
         throws ObjectStoreException {
 
-        Map bagTableNames = new CacheMap();
-
         if (getMinBagTableSize() != -1) {
-            if (queryBagTables.get(q) == null) {
-                createTempBagTables(c, q, bagTableNames, minBagTableSize);
+            // We have a strong reference to the Query, and therefore all the BagConstraints. We can
+            // count on the bagConstraintTables Map to be sane.
 
-                queryBagTables.put(q, bagTableNames);
-            }
+            createTempBagTables(c, q);
+            flushOldTempBagTables(c);
         }
 
-        return SqlGenerator.generate(q, start, limit, schema, db, bagTableNames);
+        return SqlGenerator.generate(q, start, limit, schema, db, bagConstraintTables);
     }
 
     /**
      * Create temporary tables for use with Query that use bags.  Each BagConstraint in the Query is
      * examined and a temporary table containing values of the appropriate type from the bag is
-     * created.  The new table names will be the values of the bagTableNames Map and the
+     * created. The new table names will be the values of the bagConstraintTables Map and the
      * BagConstraint references will be the keys.
      *
      * @param c a Connection to use
      * @param q the Query
-     * @param bagTableNames a Map from BagConstraint to temporary table name
-     * @param minBagSize no table will be created if the bag size is less than this parameter (small
-     *        bag are likely to be more effiently handled by not creating the temp table)
-     * @throws ObjectStoreException if the is a error in the ObjectStore
+     * @throws ObjectStoreException if there is a error in the ObjectStore
      */
-    protected void createTempBagTables(Connection c, Query q, Map bagTableNames, int minBagSize)
+    protected void createTempBagTables(Connection c, Query q)
         throws ObjectStoreException {
 
         final List bagConstraints = new ArrayList();
@@ -774,17 +802,24 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
             while (bagConstraintIterator.hasNext()) {
                 BagConstraint bagConstraint = (BagConstraint) bagConstraintIterator.next();
-                Collection bag = bagConstraint.getBag();
+                if (!bagConstraintTables.containsKey(bagConstraint)) {
+                    Collection bag = bagConstraint.getBag();
 
-                if (bag.size () < minBagSize) {
-                    continue;
+                    if (bag.size () < minBagTableSize) {
+                        continue;
+                    }
+
+                    Class type = bagConstraint.getQueryNode().getType();
+                    String tableName =
+                        TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger(c);
+                    DatabaseUtil.createBagTable(db, c, tableName, bag, type);
+                    bagConstraintTables.put(bagConstraint, tableName);
+                    LOG.info("Creating temporary table "
+                            + (wasNotInTransaction ? "" : "in transaction ") + tableName);
+                    BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
+                            bagTablesToRemove);
+                    bagTablesInDatabase.add(bagTableToRemove);
                 }
-
-                Class type = bagConstraint.getQueryNode().getType();
-                String tableName =
-                    TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger(c);
-                DatabaseUtil.createBagTable(db, c, tableName, bag, type);
-                bagTableNames.put(bagConstraint, tableName);
             }
             if (wasNotInTransaction) {
                 c.commit();
@@ -801,6 +836,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 throw new ObjectStoreException("database error while creating temporary "
                                                + "table for bag", e);
             }
+        }
+    }
+
+    /**
+     * Removes any temporary bag tables that are no longer reachable.
+     *
+     * @param c the Connection to use
+     */
+    public synchronized void flushOldTempBagTables(Connection c) {
+        BagTableToRemove bttr = (BagTableToRemove) bagTablesToRemove.poll();
+        while (bttr != null) {
+            if (bagTablesInDatabase.contains(bttr)) {
+                try {
+                    c.createStatement().execute(bttr.getDropSql());
+                } catch (SQLException e) {
+                    LOG.error("Failed to drop temporary bag table: " + bttr.getDropSql()
+                            + ", continuing");
+                }
+                bagTablesInDatabase.remove(bttr);
+                LOG.info("Dropped unreachable temporary table: " + bttr.getDropSql());
+            }
+            bttr = (BagTableToRemove) bagTablesToRemove.poll();
         }
     }
 
@@ -830,7 +887,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected ResultsInfo estimateWithConnection(Connection c,
             Query q) throws ObjectStoreException {
         String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
-                                           (Map) queryBagTables.get(q));
+                                           bagConstraintTables);
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -878,7 +935,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         checkSequence(sequence, q, "COUNT ");
 
         String sql =
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, (Map) queryBagTables.get(q));
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, bagConstraintTables);
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -1052,7 +1109,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             int tableNumber = getUniqueInteger(c);
             String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
-                                               (Map) queryBagTables.get(q));
+                    bagConstraintTables);
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     "precomputed_table_" + tableNumber, c);
             Set stringIndexes = null;
@@ -1104,5 +1161,23 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                        + " integer from " + UNIQUE_INTEGER_SEQUENCE_NAME);
         }
         return r.getInt(1);
+    }
+
+    private class BagTableToRemove extends WeakReference
+    {
+        String dropSql;
+
+        public BagTableToRemove(String tableName, ReferenceQueue refQueue) {
+            super(tableName, refQueue);
+            dropSql = "DROP TABLE " + tableName;
+        }
+
+        public String getDropSql() {
+            return dropSql;
+        }
+
+        public String toString() {
+            return dropSql;
+        }
     }
 }
