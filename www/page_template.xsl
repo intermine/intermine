@@ -4,6 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   version="1.0" 
   xmlns:ni="xalan://org.apache.xalan.lib.NodeInfo"
+  xmlns="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="ni">
   
   <xsl:output
@@ -27,7 +28,7 @@
         <title><xsl:value-of select="$brand/title"/></title>
         <xsl:for-each select="$brand/stylesheet">
           <link rel="stylesheet" type="text/css" href="{concat($basedir, '/', @file)}"
-                media="screen,printer"/>
+                media="screen,print"/>
         </xsl:for-each>
         <xsl:for-each select="$brand/meta">
           <meta>
@@ -60,10 +61,10 @@
         <div id="pagecontent">
           <table id="static-table" width="100%">
             <tr>
-              <td cellpadding="0" valign="top" id="sidebar" width="5%">
+              <td valign="top" id="sidebar" width="5%">
                 <xsl:call-template name="sidebar"/>
               </td>
-              <td cellpadding="0" valign="top" id="static-content" width="95%">
+              <td valign="top" id="static-content" width="95%">
                 <xsl:apply-templates/>
               </td>
             </tr>

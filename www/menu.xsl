@@ -23,13 +23,11 @@
         <ul>
           <xsl:for-each select="item">
             <li>
-              <nobr>
                 <!-- Display the link after alteration -->
                 <xsl:call-template name="menulink">
                   <xsl:with-param name="url" select="@url"/>
                   <xsl:with-param name="title" select="@title"/>
                 </xsl:call-template>
-              </nobr>
             </li>
           </xsl:for-each>
         </ul>
