@@ -38,6 +38,15 @@ table td {
 .heading a {
   color: black;
 }
+/* The following two rules stop superscript/subscript changing
+   div height in headings. */
+.heading {
+  line-height: 1.4em;
+}
+.heading sub, .heading sup {
+  line-height: 0;
+}
+
 
 table.templateForm td {
   padding: 5px;
