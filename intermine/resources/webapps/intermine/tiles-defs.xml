@@ -25,6 +25,9 @@
 <definition name="error.page" extends="layout.template">
     <put name="body" value="/error.jsp"/>
 </definition>
+<definition name="details.page" extends="layout.template">
+    <put name="body" value="objectDetails.tile"/>
+</definition>
 <definition name="documentation.page" extends="layout.template">
     <put name="body" value="/docbook.jsp"/>
 </definition>
@@ -52,6 +55,9 @@
 </definition>
 
 <definition name="resultsCell.tile" path="/resultsCell.jsp" controllerUrl="/initResultsCell.do">
+</definition>
+
+<definition name="objectDetails.tile" path="/details.jsp" controllerUrl="/initObjectDetails.do">
 </definition>
 
 </tiles-definitions>

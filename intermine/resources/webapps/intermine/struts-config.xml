@@ -136,6 +136,7 @@
                parameter="method">
       <forward name="runquery" path="/runQuery.do"/>
       <forward name="results" path="results.page"/>
+      <forward name="details" path="details.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
@@ -162,6 +163,9 @@
     </action>
 
     <action path="/initResultsCell" type="org.flymine.web.results.ResultsCellController">
+    </action>
+
+    <action path="/initObjectDetails" type="org.flymine.web.results.ObjectDetailsController">
     </action>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
