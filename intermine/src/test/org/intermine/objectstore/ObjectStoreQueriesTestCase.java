@@ -1,29 +1,12 @@
 package org.flymine.objectstore;
 
-import junit.framework.*;
-
-import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.lang.reflect.*;
-import java.beans.*;
-import java.net.URL;
-import java.io.*;
-
-import org.exolab.castor.mapping.*;
-import org.exolab.castor.xml.*;
 
 import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.*;
-import org.flymine.objectstore.SetupDataTestCase;
-import org.flymine.testing.OneTimeTestCase;
 
 /**
  * TestCase for testing FlyMine Queries
@@ -87,7 +70,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                 throw new Exception(type + " does not appear in the queries map");
             }
             try {
-                System.out.println("Running test " + type);
                 executeTest(type);
             } catch (Throwable t) {
                 throw new Throwable("Failed on " + type, t);
@@ -811,7 +793,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc1);
         q.addFrom(qc2);
         q.addToSelect(qc2);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ContainsConstraint.CONTAINS, qc2));
+        ConstraintSet qs = new ConstraintSet(ConstraintSet.AND);
+        qs.addConstraint(new SimpleConstraint(new QueryField(qc1, "name"), SimpleConstraint.EQUALS, new QueryValue("CompanyA")));
+        qs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "secretarys"), ContainsConstraint.CONTAINS, qc2));
+        q.setConstraint(qs);
         return q;
     }
 }

@@ -1,6 +1,7 @@
 package org.flymine.objectstore;
 
-import java.io.*;
+import java.io.Reader;
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collection;
@@ -10,8 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.exolab.castor.mapping.*;
-import org.exolab.castor.xml.*;
+import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.xml.Unmarshaller;
 
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.ClassConstraint;
