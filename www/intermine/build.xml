@@ -75,9 +75,9 @@
 </target>
 
 <target name="release-demo-webapp">
-  <ant dir="../../intermine" target="distclean"/>
-  <ant dir="../../intermine" target="build-testmodel-webapp"/>
-  <ant dir="../../intermine" target="release-webapp"/>
+  <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+  <ant dir="../../intermine" target="build-testmodel-webapp" inheritRefs="true"/>
+  <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
 </target>
 
 </project>
