@@ -1,11 +1,15 @@
 package org.flymine.objectstore.proxy;
 
-import net.sf.cglib.*;
 import java.lang.reflect.Method;
+
+import org.apache.log4j.Logger;
+
+import net.sf.cglib.*;
 
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.util.TypeUtil;
 
 /**
  * Class which intercepts all method calls to proxy
@@ -13,28 +17,34 @@ import org.flymine.objectstore.query.ResultsRow;
  */
 public class LazyInitializer implements MethodInterceptor
 {
+    protected static final Logger LOG = Logger.getLogger(LazyInitializer.class);
+
     private Query query;
     private Object realSubject;
     private ObjectStore os;
+    private Integer id;
 
     /**
      * Construct a dynamic proxy for a given class representing a persistent object
      *
      * @param cls the class to proxy
      * @param query the query that retrieves the real object
+     * @param id the internal id of the real object
      * @return the proxy object
      */
-    public static Object getDynamicProxy(Class cls, Query query) {
+    public static Object getDynamicProxy(Class cls, Query query, Integer id) {
         return Enhancer.enhance(cls, new Class[] {LazyReference.class},
-                                new LazyInitializer(query));
+                                new LazyInitializer(query, id));
     }
 
     /**
      * Construct the interceptor using an object identifier
      * @param query the query that retrieves the real object
+     * @param id the internal id of the real object
      */
-    LazyInitializer(Query query) {
+    LazyInitializer(Query query, Integer id) {
         this.query = query;
+        this.id = id;
     }
 
     /**
@@ -49,13 +59,27 @@ public class LazyInitializer implements MethodInterceptor
      */
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy)
         throws Throwable {
+        // java.lang.Object methods
+        if (method.getName().equals("equals")) {
+            Integer otherId = (Integer) TypeUtil.getFieldValue(args[0], "id");
+            return otherId == null ? new Boolean(false) : new Boolean(id.equals(otherId));
+        }
         if (method.getName().equals("finalize")) {
             return null;
         }
+        // org.flymine.objectstore.proxy.LazyReference methods
         if (method.getName().equals("setObjectStore")) {
             this.os = (ObjectStore) args[0];
             return null;
         }
+        if (method.getName().equals("isMaterialised")) {
+            return new Boolean(realSubject != null);
+        }
+        // org.flymine.model method
+        if (method.getName().equals("getId")) {
+            return id;
+        }
+        // any other method...
         if (realSubject == null) {
             if (os == null) {
                 throw new Exception(method.getName() + ": ObjectStore is null");
