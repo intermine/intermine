@@ -216,4 +216,15 @@ public class QueryTest extends TestCase
 
     }
 
+
+    public void testClearSelect() {
+        q1.clearSelect();
+        assertEquals(0, q1.getSelect().size());
+    }
+
+    public void testClearOrderBy() {
+        q1.clearOrderBy();
+        assertEquals(0, q1.getOrderBy().size());
+    }
+
 }
