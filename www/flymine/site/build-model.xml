@@ -43,11 +43,14 @@
 
 
   <!-- Model generation targets -->
-  <target name="generate-xmi-model" depends="unpack-xmi-model"
+  <target name="generate-xmi-model"
           description="Generate FlyMine model from an XMI file">
     <taskdef name="model-generation" classname="org.flymine.task.ModelGenerationTask">
       <classpath refid="class.path"/>
     </taskdef>
+
+    <!-- if from ArgoUML the XMI filename will have a trailing underscore -->
+
 
     <model-generation
       type="xmi"
@@ -159,7 +162,11 @@
           description="Build a usable model from a FlyMine model XML file">
   </target>
 
-  <target name="build-model-from-zargo" depends="generate-xmi-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
+  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
+          description="Build a usable model from a .zargo file">
+  </target>
+
+  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
           description="Build a usable model from a .zargo file">
   </target>
 
