@@ -61,8 +61,7 @@ public class MainController extends TilesAction
         if (qNodes == null) {
             String className = (String) request.getAttribute("class");
             if (className == null) {
-                //return mapping.findForward("begin");
-                className = "Company";
+                return mapping.findForward("begin");
             }
             className = TypeUtil.unqualifiedName(className);
             RightNode node = new RightNode(className);
