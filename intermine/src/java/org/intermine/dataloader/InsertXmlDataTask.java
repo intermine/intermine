@@ -59,7 +59,7 @@ public class InsertXmlDataTask extends ClassPathTask
         }
 
         try {
-            Object driver = loadClass("org.flymine.task.XmlDataLoaderDriver");
+            Object driver = loadClass("org.flymine.dataloader.XmlDataLoaderDriver");
 
             // Have to execute the loadData method by reflection as
             // cannot cast to something that this class (which may use

@@ -98,7 +98,7 @@ public class InsertAceDataTask extends ClassPathTask
 
         try {
 
-            Object driver = loadClass("org.flymine.task.AceDataLoaderDriver");
+            Object driver = loadClass("org.flymine.dataloader.AceDataLoaderDriver");
 
             // Have to execute the loadData method by reflection as
             // cannot cast to something that this class (which may use
