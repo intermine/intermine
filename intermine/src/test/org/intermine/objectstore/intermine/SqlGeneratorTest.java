@@ -18,11 +18,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.Failure;
@@ -36,6 +39,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
@@ -211,26 +215,40 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("OrderByReference", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.departmentId AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.departmentId, a1_.id");
         results2.put("OrderByReference", Collections.singleton("Employee"));
         results.put("FailDistinctOrder", new Failure(ObjectStoreException.class, "Field a1_.age in the ORDER BY list must be in the SELECT list, or the whole QueryClass org.intermine.model.testmodel.Employee must be in the SELECT list, or the query made non-distinct"));
+
         String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("test/largeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);
         results2.put("LargeBagConstraint", Collections.singleton("Employee"));
+
+        results2.put("LargeBagConstraintUsingTable", Collections.singleton("Employee"));
+        results.put("LargeBagConstraintUsingTable", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
     }
+
+    final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
 
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
         Object expected = results.get(type);
-        if ("LargeBagConstraint".equals(type)) {
-            System.out.println("LargeBagConstraint: " + expected);
-        }
         if (expected instanceof Failure) {
             try {
-                SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
+                SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
                 fail(type + " was expected to fail");
             } catch (Exception e) {
                 assertEquals(type + " was expected to produce a particular exception", expected, new Failure(e));
             }
         } else {
-            String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
+            Map bagTableNames = new HashMap();
+
+            if (type.equals("LargeBagConstraintUsingTable")) {
+                // special case - the Map will tell generate() what table to use to find the values
+                // of large bags
+                Query largeBagQuery = (Query) queries.get("LargeBagConstraintUsingTable");
+                BagConstraint largeBagConstraint = (BagConstraint) largeBagQuery.getConstraint();
+                bagTableNames.put(largeBagConstraint, "large_string_bag_table");
+            }
+
+            String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db,
+                                                     bagTableNames);
             if (expected instanceof String) {
                 assertEquals("", results.get(type), generated);
             } else if (expected instanceof Collection) {
@@ -330,7 +348,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         q.addFrom(c1);
         q.addToSelect(c1);
         try {
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST), db);
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST), db, new HashMap());
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
@@ -342,35 +360,35 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        SqlGenerator.registerOffset(q, 5, schema, db, new Integer(10));
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
-        SqlGenerator.registerOffset(q, 11000, schema, db, new Integer(20));
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 20 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
-        SqlGenerator.registerOffset(q, 21000, schema, db, new Integer(30));
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
-        SqlGenerator.registerOffset(q, 21005, schema, db, new Integer(31));
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
-        SqlGenerator.registerOffset(q, 11002, schema, db, new Integer(29));
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
-        SqlGenerator.registerOffset(q, 101000, schema, db, new Integer(40));
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 21000", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db));
-        assertEquals(getRegisterOffset2() + "a1_.id > 40 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 101005, Integer.MAX_VALUE, schema, db));
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        SqlGenerator.registerOffset(q, 5, schema, db, new Integer(10), new HashMap());
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
+        SqlGenerator.registerOffset(q, 11000, schema, db, new Integer(20), new HashMap());
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 20 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        SqlGenerator.registerOffset(q, 21000, schema, db, new Integer(30), new HashMap());
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        SqlGenerator.registerOffset(q, 21005, schema, db, new Integer(31), new HashMap());
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        SqlGenerator.registerOffset(q, 11002, schema, db, new Integer(29), new HashMap());
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 30 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        SqlGenerator.registerOffset(q, 101000, schema, db, new Integer(40), new HashMap());
+        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 11000", SqlGenerator.generate(q, 11005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 21000", SqlGenerator.generate(q, 21005, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals(getRegisterOffset2() + "a1_.id > 40 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 101005, Integer.MAX_VALUE, schema, db, new HashMap()));
     }
 
     protected DatabaseSchema getSchema() {
