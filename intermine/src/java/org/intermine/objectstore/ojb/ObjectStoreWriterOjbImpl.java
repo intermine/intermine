@@ -31,11 +31,12 @@ public class ObjectStoreWriterOjbImpl implements ObjectStoreWriter
      * NB There can be multiple ObjectStoreWriters per Database, each holding a PersistenceBroker
      *
      * @param db the database in which the model resides
+     * @param model the name of the model
      * @throws ObjectStoreException if there is any problem with the underlying OJB instance
      */
-    public ObjectStoreWriterOjbImpl(Database db) throws ObjectStoreException {
+    public ObjectStoreWriterOjbImpl(Database db, String model) throws ObjectStoreException {
         pb = ((PersistenceBrokerFactoryFlyMineImpl) PersistenceBrokerFactoryFactory.instance())
-            .createPersistenceBroker(db);
+            .createPersistenceBroker(db, model);
     }
 
     /**
