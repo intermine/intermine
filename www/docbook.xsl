@@ -3,11 +3,11 @@
 version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns="http://www.w3.org/1999/xhtml">
-
+<!--
 <xsl:template match="section/title">
-<h3><xsl:apply-templates/></h3>
+<div class="heading2"><xsl:apply-templates/></div>
 </xsl:template>
-
+-->
 <xsl:template match="inlinemediaobject/imageobject/imagedata">
     <img alt="[{@fileref}]">
     <xsl:attribute name="class">
