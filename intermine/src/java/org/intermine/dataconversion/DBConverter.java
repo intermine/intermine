@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
@@ -236,23 +235,5 @@ public class DBConverter extends DataConverter
     protected  ResultSet executeQuery(Connection c, String sql) throws SQLException {
         Statement s = c.createStatement();
         return s.executeQuery(sql);
-    }
-    
-    protected Map aliases = new HashMap();
-    protected static int index = 0;
-
-    /**
-     * Provide a (short) alias for a table name
-     * @param className the name of the class
-     * @return the alias for the class
-     */
-    protected String alias(String className) {
-        String alias = (String) aliases.get(className);
-        if (alias != null) {
-            return alias;
-        }
-        String nextIndex = "" + (index++);
-        aliases.put(className, nextIndex);
-        return nextIndex;
     }
 }
