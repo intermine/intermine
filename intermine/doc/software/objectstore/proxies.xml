@@ -67,6 +67,10 @@
         <listitem><classname>Results</classname> (which set the ObjectStores of reference proxies so that materialisation queries can be run, and replaces collection queries with <classname>SingletonResults</classname>)</listitem>
       </itemizedlist>
     </para>
+
+    <para>Note that an alternative method for delaying queries would be to make everything a proxy. This could be a more elegant approach (though at odds with the approach favoured by Hibernate and OJB.) This involves intercepting all attempts to access fields of an object, and at that time running a query for the field. This means that every object has access to an object store, along with ids (or queries) for each of its references. Such an implementation would work above any ObjectStore implementation. To illustrate this approach, consider a query for an Employee. In this case, an Employee object is an element in the ResultsRow. Using the current method, the Employee is a real object, whereas Employee.getDepartment() returns a proxy. No database access to materialise the department is made until an attempt is made a access one of its fields. Using the new method, Employee would be a proxy, and a database access would be made on a call to Employee.getDepartment().</para>
+
+    <para>Note also that, at present, the LazyInitializer has both the id and a query for its real subject. The id is not strictly necessary, but allows the avoidance of early materialisation. Notice that an ObjectStore.getById method would make the query redundant, and avoid the overhead of parsing the query.</para>
   </sect1>
 </article>
 
