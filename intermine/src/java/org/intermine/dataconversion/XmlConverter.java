@@ -81,7 +81,6 @@ import org.intermine.xml.full.ItemHelper;
     class XmlHandler extends DefaultHandler
     {
         String modelName;
-        String modelNameSpace;
         Stack elements = new Stack();
         Stack items = new Stack();
         Stack paths = new Stack();

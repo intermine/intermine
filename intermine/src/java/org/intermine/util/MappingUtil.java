@@ -130,24 +130,6 @@ public class MappingUtil
         return resultSet;
     }
 
-    private static String stateToString(int state) {
-        switch(state) {
-            case PUT_IN_STACK:
-                return "PUT_IN_STACK";
-            case TAKE_FROM_SET:
-                return "TAKE_FROM_SET";
-            case LOOK_IN_LIST:
-                return "LOOK_IN_LIST";
-            case PUT_IN_SET:
-                return "PUT_IN_SET";
-            case TAKE_FROM_STACK:
-                return "TAKE_FROM_STACK";
-            case FINISHED:
-                return "FINISHED";
-        }
-        return "";
-    }
-
     /**
      * Produces a Set of possible combinations of multiple mappings (as produced by
      * findCombinations), where all mappings in a multiple mapping combination map onto distinct

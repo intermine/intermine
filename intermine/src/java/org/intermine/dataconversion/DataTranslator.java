@@ -513,16 +513,16 @@ public class DataTranslator
                 }
 
                 // build implementations map
-                String imps = "";
+                StringBuffer imps = new StringBuffer();
                 ExtendedIterator superIter = cls.listSuperClasses(true);
                 while (superIter.hasNext()) {
                     OntClass sup = (OntClass) superIter.next();
                     if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
-                        imps += sup.getURI() + " ";
+                        imps.append(sup.getURI() + " ");
                     }
                 }
                 superIter.close();
-                impMap.put(cls.getURI(), imps.trim());
+                impMap.put(cls.getURI(), imps.toString().trim());
             }
         }
         clsIter.close();
@@ -572,26 +572,6 @@ public class DataTranslator
         }
         stmtIter.close();
     }
-
-    private void buildImplementationsMap(OntModel model) {
-        impMap = new HashMap();
-        ExtendedIterator clsIter = model.listClasses();
-        while (clsIter.hasNext()) {
-            String imps = "";
-            OntClass cls = (OntClass) clsIter.next();
-            ExtendedIterator superIter = cls.listSuperClasses(false);
-            while (superIter.hasNext()) {
-                OntClass sup = (OntClass) superIter.next();
-                if (!sup.isAnon() && sup.getNameSpace().equals(cls.getNameSpace())) {
-                    imps += sup.getURI() + " ";
-                }
-            }
-            superIter.close();
-            impMap.put(cls.getURI(), imps.trim());
-        }
-        clsIter.close();
-    }
-
 
     /**
      * Main method
