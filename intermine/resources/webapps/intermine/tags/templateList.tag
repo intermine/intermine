@@ -18,7 +18,10 @@
 
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
   <span class="templateDesc"><c:out value="${templateQuery.description}"/></span>&nbsp;
-  <html:link action="/template?name=${templateQuery.name}&type=${type}">
+  <fmt:message var="linkTitle" key="templateList.run">
+    <fmt:param value="${templateQuery.name}"/>
+  </fmt:message>
+  <html:link action="/template?name=${templateQuery.name}&type=${type}" title="${linkTitle}">
     <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
   </html:link>
   <c:if test="${type == 'user'}">
