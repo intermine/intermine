@@ -3,8 +3,11 @@ package org.flymine.util;
 import junit.framework.TestCase;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.flymine.model.testmodel.*;
 
@@ -62,5 +65,27 @@ public class TypeUtilTest extends TestCase
         Collection c = new ArrayList();
         c.add(new String());
         assertEquals(String.class, TypeUtil.getElementType(c));
+    }
+
+    public void testGetFieldToGetter() throws Exception {
+        Map expected = new HashMap();
+        Class c = Address.class;
+        Field f1 = c.getDeclaredField("address");
+        Method m1 = c.getMethod("getAddress", new Class[] {});
+        expected.put(f1, m1);
+
+        assertEquals(expected, TypeUtil.getFieldToGetter(c));
+        assertEquals(expected, TypeUtil.getFieldToGetter(c));
+    }
+
+    public void testGetFieldToSetter() throws Exception {
+        Map expected = new HashMap();
+        Class c = Address.class;
+        Field f1 = c.getDeclaredField("address");
+        Method m1 = c.getMethod("setAddress", new Class[] {String.class});
+        expected.put(f1, m1);
+
+        assertEquals(expected, TypeUtil.getFieldToSetter(c));
+        assertEquals(expected, TypeUtil.getFieldToSetter(c));
     }
 }
