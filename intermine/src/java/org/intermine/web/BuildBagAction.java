@@ -22,11 +22,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.upload.FormFile;
 
 /**
@@ -35,7 +33,7 @@ import org.apache.struts.upload.FormFile;
  * @author Kim Rutherford
  */
 
-public class BuildBagAction extends LookupDispatchAction
+public class BuildBagAction extends InterMineLookupDispatchAction
 {
     /**
      * Action for creating a bag of Strings from a text field.
@@ -64,10 +62,8 @@ public class BuildBagAction extends LookupDispatchAction
         if (trimmedText.length() == 0) {
             FormFile formFile = buildBagForm.getFormFile();
             if (formFile.getFileName() == null || formFile.getFileName().length() == 0) {
-                ActionMessages actionMessages = new ActionMessages();
-                actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                                   new ActionError("bagBuild.noBagToSave"));
-                saveMessages(request, actionMessages);
+                recordError(new ActionMessage("bagBuild.noBagToSave"), request);
+
                 return mapping.findForward("buildBag");
             } else {
                 BufferedReader reader =
@@ -94,10 +90,7 @@ public class BuildBagAction extends LookupDispatchAction
         String newBagName = buildBagForm.getBagName();
         profile.saveBag(newBagName, bag);
 
-        ActionMessages actionMessages = new ActionMessages();
-        actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                           new ActionError("bagBuild.saved", newBagName));
-        saveMessages(request, actionMessages);
+        recordMessage(new ActionMessage("bagBuild.saved"), request);
 
         request.setAttribute("bagName", newBagName);
         return mapping.findForward("buildBag");

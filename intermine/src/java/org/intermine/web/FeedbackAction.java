@@ -22,14 +22,10 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 
 import org.apache.log4j.Logger;
@@ -39,7 +35,7 @@ import org.apache.log4j.Logger;
  *
  * @author Thomas Riley
  */
-public class FeedbackAction extends Action
+public class FeedbackAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(FeedbackAction.class);
     
@@ -83,21 +79,14 @@ public class FeedbackAction extends Action
             message.setText(text);
             Transport.send(message);
             
-            ActionMessages messages = new ActionMessages();
-            messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("feedback.sent"));
-            saveMessages(request, messages);
+            recordMessage(new ActionMessage("feedback.sent"), request);
             
             // avoid showing form
             request.setAttribute("sent", Boolean.TRUE);
             ff.reset(mapping, request); // clear bean (we don't clear it if an error occurs)
         
-        } catch (Exception err) {
-            
-            ActionMessages errors = getErrors(request);
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionError("feedback.failed", err));
-            saveErrors(request, errors);
-            
-            LOG.warn(err);
+        } catch (Exception e) {
+            recordError(new ActionMessage("feedback.failed", e), request, e, LOG);
         }
 
         return mapping.findForward("feedback");

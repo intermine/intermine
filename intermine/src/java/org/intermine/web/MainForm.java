@@ -23,7 +23,8 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -242,7 +243,7 @@ public class MainForm extends ActionForm
      * @return the parsed value
      */
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
-                                    Locale locale, ActionErrors errors) {
+                                    Locale locale, ActionMessages errors) {
         Object parsedValue = null;
         
         if (Date.class.equals(type)) {
@@ -250,14 +251,14 @@ public class MainForm extends ActionForm
             try {
                 parsedValue = df.parse(value);
             } catch (ParseException e) {
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors.date", value, df.format(new Date())));
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.date", value, df.format(new Date())));
             }
         } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES
                    || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
             // Is the expression valid? We need a non-zero length string at least 
             if (value.length() == 0) {
-                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.like"));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.like"));
             } else {
                 parsedValue = wildcardUserToSql(value);
             }
@@ -266,8 +267,8 @@ public class MainForm extends ActionForm
                 parsedValue = TypeUtil.stringToObject(type, value);
             } catch (NumberFormatException e) {
                 String shortName = TypeUtil.unqualifiedName(type.getName()).toLowerCase();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("errors." + shortName, value));
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors." + shortName, value));
             }
         }
         return parsedValue;

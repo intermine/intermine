@@ -11,7 +11,7 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
@@ -98,7 +98,7 @@ public class TemplatesImportForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                        new ActionError("errors.badtemplatexml", err.getMessage()));
+                        new ActionMessage("errors.badtemplatexml", err.getMessage()));
         }
         return errors;
     }

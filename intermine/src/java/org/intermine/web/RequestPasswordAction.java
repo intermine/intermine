@@ -20,13 +20,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMessage;
 
 import java.text.MessageFormat;
@@ -41,7 +37,7 @@ import org.apache.log4j.Logger;
  * Action to handle button presses RequestPasswordForm
  * @author Mark Woodbridge
  */
-public class RequestPasswordAction extends Action
+public class RequestPasswordAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(RequestPasswordAction.class);
 
@@ -82,14 +78,9 @@ public class RequestPasswordAction extends Action
         }
 
         if (successful) {
-            ActionMessages messages = new ActionMessages();
-            messages.add(ActionMessages.GLOBAL_MESSAGE,
-                         new ActionMessage("login.emailed", username));
-            saveMessages(request, messages);
+            recordMessage(new ActionMessage("login.emailed", username), request);
         } else {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("login.invalidemail"));
-            saveErrors(request, errors);
+            recordError(new ActionMessage("login.invalidemail"), request);
         }
 
         return mapping.findForward("login");

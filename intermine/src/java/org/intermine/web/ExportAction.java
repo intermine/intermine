@@ -19,12 +19,12 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
+
+import org.apache.log4j.Logger;
 
 import org.apache.poi.hssf.usermodel.*;
 
@@ -41,8 +41,10 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Kim Rutherford
  */
 
-public class ExportAction extends Action
+public class ExportAction extends InterMineAction
 {
+    protected static final Logger LOG = Logger.getLogger(ExportAction.class);
+
     /** 
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
      * export method.
@@ -171,10 +173,7 @@ public class ExportAction extends Action
 
             wb.write(response.getOutputStream());
         } catch (ObjectStoreException e) {
-            ActionMessages actionMessages = new ActionMessages();
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                               new ActionError("errors.query.objectstoreerror"));
-            saveMessages(request, actionMessages);
+            recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
         }
 
         return null;

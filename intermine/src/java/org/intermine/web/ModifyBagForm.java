@@ -13,9 +13,10 @@ package org.intermine.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
 import java.util.List;
@@ -73,14 +74,15 @@ public class ModifyBagForm extends ActionForm
         ActionErrors errors = new ActionErrors();
 
         if (selectedBags.length == 0) {
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.modifyBag.none"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
         } else {
             for (int i = 0; i < getSelectedBags().length; i++) {
                 List queries = queriesThatMentionBag(profile.getSavedQueries(),
                                                      getSelectedBags()[i]);
                 if (queries.size() > 0) {
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("history.baginuse", getSelectedBags()[i], queries));
+                    ActionMessage actionMessage =
+                        new ActionMessage("history.baginuse", getSelectedBags()[i], queries);
+                    errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
                 }
             }
         }

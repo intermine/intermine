@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -25,7 +24,7 @@ import org.intermine.web.results.ChangeResultsForm;
  * Action to handle buttons on view tile
  * @author Mark Woodbridge
  */
-public class ViewAction extends Action
+public class ViewAction extends InterMineAction
 {
     /**
      * Run the query and forward to the results page.

@@ -13,10 +13,15 @@ package org.intermine.web;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
+
+import org.apache.log4j.Logger;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -36,6 +41,8 @@ import org.intermine.web.results.TableHelper;
  */
 public class SessionMethods
 {
+    protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
+
     /**
      * Executes current query and sets session attributes QUERY_RESULTS and RESULTS_TABLE. If the
      * query fails for some reason, this method returns false and ActionErrors are set on the
@@ -47,7 +54,7 @@ public class SessionMethods
      * @throws Exception if getting results info from paged results fails
      */
     public static boolean runQuery(HttpSession session, HttpServletRequest request)
-                                                                        throws Exception {
+        throws Exception {
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -66,7 +73,12 @@ public class SessionMethods
             String key = (e instanceof ObjectStoreQueryDurationException)
                 ? "errors.query.estimatetimetoolong"
                 : "errors.query.objectstoreerror";
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(key));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(key));
+
+            // put stack trace in the log
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            LOG.error(sw.toString());
             
             return false;
         }

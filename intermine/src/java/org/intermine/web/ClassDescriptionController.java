@@ -13,7 +13,6 @@ package org.intermine.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -23,7 +22,7 @@ import org.apache.struts.action.ActionMapping;
  * @author Mark Woodbridge
  * @author Kim Rutherford
  */
-public class ClassDescriptionController extends Action
+public class ClassDescriptionController extends InterMineAction
 {
     /**
      * @see TilesAction#execute

@@ -15,11 +15,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMessage;
 
 import java.util.HashMap;
@@ -28,7 +26,7 @@ import java.util.HashMap;
  * Action to handle button presses on the main tile
  * @author Mark Woodbridge
  */
-public class LoginAction extends Action
+public class LoginAction extends InterMineAction
 {
     /** 
      * Method called when user has finished updating a constraint
@@ -66,10 +64,7 @@ public class LoginAction extends Action
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
 
-        ActionMessages messages = new ActionMessages();
-        messages.add(ActionMessages.GLOBAL_MESSAGE,
-                     new ActionMessage("login.loggedin", lf.getUsername()));
-        saveMessages(request, messages);
+        recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
 
         return mapping.findForward("history");
     }

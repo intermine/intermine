@@ -17,12 +17,12 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
+import org.apache.log4j.Logger;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,8 +32,10 @@ import org.intermine.objectstore.ObjectStoreException;
  *
  * @author Thomas Riley
  */
-public class CreateTemplateAction extends Action
+public class CreateTemplateAction extends InterMineAction
 {
+    protected static final Logger LOG = Logger.getLogger(CreateTemplateAction.class);
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -60,14 +62,13 @@ public class CreateTemplateAction extends Action
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        
-        ActionErrors actionErrors = new ActionErrors();
-        
+
+        boolean seenProblem = false;
+
         // Check whether query has at least one constraint and at least one output
         if (query.getView().size() == 0) {
-            actionErrors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("errors.createtemplate.nooutputs"));
-            saveErrors(request, actionErrors);
+            recordError(new ActionMessage("errors.createtemplate.nooutputs"), request);
+            seenProblem = true;
         }
         Iterator iter = query.getNodes().values().iterator();
         boolean foundConstraint = false;
@@ -81,26 +82,24 @@ public class CreateTemplateAction extends Action
             }
         }
         if (!foundConstraint) {
-            actionErrors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("errors.createtemplate.noconstraints"));
-            saveErrors(request, actionErrors);
+            recordError(new ActionMessage("errors.createtemplate.noconstraints"), request);
+            seenProblem = true;
         }
-        
+
         // Ensure that we can actually execute the query
         try {
             if (query.getInfo() == null) {
                 query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
             }
         } catch (ObjectStoreException e) {
-            actionErrors.add(ActionErrors.GLOBAL_ERROR,
-                               new ActionError("errors.query.objectstoreerror"));
-            saveErrors(request, actionErrors);
+            recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+            seenProblem = true;
         }
-        
-        if (actionErrors.size() > 0) {
+
+        if (seenProblem) {
             return mapping.findForward("query");
         }
-        
+
         PathQuery queryClone = (PathQuery) query.clone();
         session.setAttribute(Constants.TEMPLATE_PATHQUERY, queryClone);
         return mapping.findForward("templateBuilder");
