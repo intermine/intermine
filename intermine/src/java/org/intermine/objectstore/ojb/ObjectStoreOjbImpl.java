@@ -87,15 +87,25 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if there is any problem with the underlying OJB instance
      */
     public static ObjectStoreOjbImpl getInstance(Properties props) throws ObjectStoreException {
+        String dbAlias = props.getProperty("db");
+        if (dbAlias == null) {
+            throw new ObjectStoreException("No 'db' property specified for OJB"
+                                           + " objectstore (check properties file)");
+        }
+        String modelName = props.getProperty("model");
+        if (modelName == null) {
+            throw new ObjectStoreException("No 'model' property specified for OJB"
+                                           + " objectstore (check properties file)");
+        }
         Database db;
         try {
-            db = DatabaseFactory.getDatabase(props.getProperty("db"));
+            db = DatabaseFactory.getDatabase(dbAlias);
         } catch (Exception e) {
-            throw new ObjectStoreException("Unable to get database: " + e);
+            throw new ObjectStoreException("Unable to get database for OJB ObjectStore: " + e);
         }
         synchronized (instances) {
             if (!(instances.containsKey(db))) {
-                instances.put(db, new ObjectStoreOjbImpl(db, props.getProperty("model")));
+                instances.put(db, new ObjectStoreOjbImpl(db, modelName));
             }
         }
         return (ObjectStoreOjbImpl) instances.get(db);
