@@ -28,6 +28,10 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Perform initialisation steps for query editing tile prior to calling query.jsp
@@ -54,17 +58,17 @@ public class QueryBuildController extends TilesAction
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Query q = (Query) session.getAttribute(Constants.QUERY);
 
-        if (queryClasses == null) {
-            session.setAttribute(Constants.QUERY_CLASSES, new LinkedHashMap());
-        }
-        
         //there's a query on the session but it hasn't been rendered yet
-        if (q != null) {
+        if (q != null && queryClasses == null) {
             queryClasses = QueryBuildHelper.getQueryClasses(q, savedBagsInverse,
                                                             savedQueriesInverse);
 
             session.setAttribute(Constants.QUERY_CLASSES, queryClasses);
             session.setAttribute(Constants.QUERY, null);
+        }
+
+        if (queryClasses == null) {
+            session.setAttribute(Constants.QUERY_CLASSES, new LinkedHashMap());
         }
 
         QueryBuildForm qbf = (QueryBuildForm) form;
@@ -75,15 +79,57 @@ public class QueryBuildController extends TilesAction
             QueryBuildHelper.populateForm(qbf, d);
         }
 
+        if (qbf.getButton().equals("")
+            || qbf.getButton().startsWith("editIql")
+            || qbf.getButton().startsWith("runQuery")
+            || qbf.getButton().startsWith("updateClass")
+            || qbf.getButton().startsWith("removeClass")
+            || qbf.getButton().startsWith("addClass")) {
+
+            Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+            Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+
+            q = QueryBuildHelper.createQuery(queryClasses, model, savedBags, savedQueries);
+
+            session.setAttribute(Constants.QUERY, q);
+
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+
+            ResultsInfo estimatedResultsInfo;
+
+            try {
+                estimatedResultsInfo = os.estimate(q);
+
+                String newQueryName = SaveQueryHelper.findNewQueryName(savedQueries);
+
+                if (estimatedResultsInfo.getStart() < 100000) {
+                    Results results = os.execute(q);
+                    request.setAttribute("results", results);
+
+                    ResultsInfo resultsInfo;
+
+                    resultsInfo = results.getInfo();
+
+                    SaveQueryHelper.saveQuery(request, newQueryName, q, resultsInfo);
+                } else {
+                    SaveQueryHelper.saveQuery(request, newQueryName, q, estimatedResultsInfo);
+                }
+            } catch (ObjectStoreException e) {
+                // results.getInfo() called explain and it failed or os.estimate() failed
+                // - ignore
+            }
+
+        }
+
         //editing is continuing
         if (editingAlias != null) {
             DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
             ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
             boolean bagsPresent = savedBagsInverse != null && savedBagsInverse.size () != 0;
             request.setAttribute("validOps", QueryBuildHelper.getValidOps(cld, bagsPresent));
-            
+
             request.setAttribute("allFieldNames", QueryBuildHelper.getAllFieldNames(cld));
-            
+
             Collection savedBagNames = (savedBagsInverse == null
                                         ? new HashSet()
                                         : savedBagsInverse.values());
@@ -95,7 +141,7 @@ public class QueryBuildController extends TilesAction
                                                                                   savedBagNames,
                                                                                   savedQueryNames));
         }
-        
+
         return null;
     }
 }

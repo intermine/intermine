@@ -23,29 +23,29 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.QueryHelper;
 
 /**
- * Displayable section of a Results object, containing various
- * bits of configuration information
+ * A pageable and configurable table created from the Results object.
  *
  * @author Andrew Varley
+ * @author Kim Rutherford
  */
-public class DisplayableResults
+public class PagedResults implements PagedTable
 {
     // Map to quickly look up columns from aliases
-    protected Map aliasToColumn = new HashMap();
+    private Map aliasToColumn = new HashMap();
 
     // The columns and their order
-    protected List columns = new LinkedList();
-    protected int start = 0;
-    protected int pageSize = 10;
+    private List columns = new LinkedList();
+    private int start = 0;
+    private int pageSize = 10;
 
-    protected Results results;
+    private Results results;
 
     /**
-     * Constructor
+     * Create a new PagedResults object from the given Results object.
      *
-     * @param results the results object to configure
+     * @param results the Results object
      */
-    public DisplayableResults(Results results) {
+    public PagedResults(Results results) {
         this.results = results;
 
         // Add some blank column configurations
@@ -54,42 +54,12 @@ public class DisplayableResults
         while (columnIter.hasNext()) {
             String alias = (String) columnIter.next();
             Column column = new Column();
-            column.setAlias(alias);
+            column.setName(alias);
             column.setIndex(i++);
             aliasToColumn.put(alias, column);
             columns.add(column);
         }
     }
-
-    /**
-     * Update from another DisplayableResults
-     *
-     * @param other the DisplayableResults to update from
-     */
-    public void update(DisplayableResults other) {
-        setStart(other.getStart());
-        setPageSize(other.getPageSize());
-
-        // For now we are not dealing with adding more columns. If
-        // more have been added, then just return, ie. only update
-        // start and pageSize
-        if (!(getColumns().containsAll(other.getColumns())
-              && other.getColumns().containsAll(getColumns()))) {
-            return;
-        }
-
-        Iterator columnIter = other.getColumns().iterator();
-        List newColumns = new LinkedList();
-        while (columnIter.hasNext()) {
-            Column otherCol = (Column) columnIter.next();
-            Column thisCol = (Column) aliasToColumn.get(otherCol.getAlias());
-            thisCol.update(otherCol);
-            newColumns.add(thisCol);
-        }
-        // Set the ordering
-        columns = newColumns;
-    }
-
 
     /**
      * Get the list of column configurations
@@ -106,7 +76,7 @@ public class DisplayableResults
      * @param alias the alias of the column to get
      * @return the column for the given alias
      */
-    public Column getColumn(String alias) {
+    public Column getColumnByName(String alias) {
         return (Column) aliasToColumn.get(alias);
     }
 
@@ -116,7 +86,7 @@ public class DisplayableResults
      * @param alias the alias of the column to move
      */
     public void moveColumnUp(String alias) {
-        Column column = getColumn(alias);
+        Column column = getColumnByName(alias);
         int index = columns.indexOf(column);
         if (index > 0) {
             columns.remove(index);
@@ -130,7 +100,7 @@ public class DisplayableResults
      * @param alias the alias of the column to move
      */
     public void moveColumnDown(String alias) {
-        Column column = getColumn(alias);
+        Column column = getColumnByName(alias);
         int index = columns.indexOf(column);
         if ((index != -1) && (index < (columns.size() - 1))) {
             columns.remove(index);
@@ -181,7 +151,7 @@ public class DisplayableResults
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
     public int getEnd() throws ObjectStoreException {
-        int size = getSize();
+        int size = getExactSize();
         int end = this.start + this.pageSize - 1;
         if ((end + 1) > size) {
             end = size - 1;
@@ -199,13 +169,12 @@ public class DisplayableResults
     }
 
     /**
-     * Get the size of the underlying results object
-     * NOTE: this may be approximate
+     * Get the approximate size of the underlying Results object
      *
-     * @return the size of the underlying results object
+     * @return the approximate size of the underlying Results object
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public int getSize() throws ObjectStoreException {
+    public int getEstimatedSize() throws ObjectStoreException {
         // Force the underlying results to check that the end is not
         // within this page, or at the end of this page. If it is, the
         // results object will now know the exact size.
@@ -228,11 +197,21 @@ public class DisplayableResults
     }
 
     /**
+     * Get the exact size of the underlying object.
+     *
+     * @return the exact size of the underlying Results object
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     */
+    public int getExactSize() throws ObjectStoreException {
+        return getResults().size();
+    }
+
+    /**
      * Gets whether or not there could be any previous rows
      *
      * @return true if the "previous" button should be shown
      */
-    public boolean isPreviousButton() {
+    public boolean isPreviousRows() {
         return (start > 0);
     }
 
@@ -242,8 +221,8 @@ public class DisplayableResults
      * @return true if the "next" button should be shown
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
-    public boolean isNextButton() throws ObjectStoreException {
-        int size = getSize();
+    public boolean isMoreRows() throws ObjectStoreException {
+        int size = getEstimatedSize();
         if (isSizeEstimate()) {
             // If we were on the end, size would not be an estimate
             return true;
@@ -254,4 +233,12 @@ public class DisplayableResults
         return true;
     }
 
+    /**
+     * Return the rows of the table as a List of Lists.
+     *
+     * @return the rows of the table
+     */
+    public List getList() {
+        return getResults();
+    }
 }

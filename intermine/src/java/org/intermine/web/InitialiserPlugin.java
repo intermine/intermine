@@ -48,25 +48,31 @@ public class InitialiserPlugin implements PlugIn
     public void init(ActionServlet servlet, ModuleConfig config)
         throws ServletException {
 
-        ServletContext context = servlet.getServletContext();
+        ServletContext servletContext = servlet.getServletContext();
 
         try {
             WebConfig wc =
-                WebConfig.parse(context.getResourceAsStream("/WEB-INF/webconfig-model.xml"));
+                WebConfig.parse(servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml"));
             ObjectStore os = ObjectStoreFactory.getObjectStore();
             Model model = os.getModel();
-            
-            context.setAttribute(Constants.OBJECTSTORE, os);
-            context.setAttribute(Constants.MODEL, model);
-            context.setAttribute("webconfig", wc);
 
-            InputStream externalLinkPropertiesStream =
-                context.getResourceAsStream("/WEB-INF/web.properties");
-            
-            Properties externalLinkProperties = new Properties();
-            externalLinkProperties.load(externalLinkPropertiesStream);
+            servletContext.setAttribute(Constants.OBJECTSTORE, os);
+            servletContext.setAttribute(Constants.MODEL, model);
+            servletContext.setAttribute("webconfig", wc);
 
-            context.setAttribute(Constants.WEB_PROPERTIES, externalLinkProperties);
+            Properties webProperties = new Properties();
+
+            InputStream globalPropertiesStream =
+                servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
+
+            webProperties.load(globalPropertiesStream);
+
+            InputStream modelPropertiesStream =
+                servletContext.getResourceAsStream("/WEB-INF/web.properties");
+
+            webProperties.load(modelPropertiesStream);
+
+            servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
         } catch (Exception e) {
             throw new ServletException("there was a problem while initialising", e);
         }

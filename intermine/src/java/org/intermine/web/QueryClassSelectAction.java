@@ -13,7 +13,6 @@ package org.intermine.web;
 import java.util.Map;
 import java.util.HashMap;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,22 +51,15 @@ public class QueryClassSelectAction extends LookupDispatchAction
                                   HttpServletRequest request,
                                   HttpServletResponse response)
         throws Exception {
-        //duplication: see TreeAction#select
-        HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String className = ((QueryClassSelectForm) form).getClassName();
 
-        //it's possible that someone has clicked the button without selecting a class from the list
-        if (className != null) {
-            QueryBuildHelper.addClass(queryClasses, className);
-        }
-
-        return mapping.findForward("buildquery");
+        request.setAttribute("class", className);
+        return mapping.findForward("query");
     }
 
     /**
-     * Browse the full class hierarchy and allow the user to choose a type to add 
+     * Browse the full class hierarchy and allow the user to choose a type to add
      * to the current query.
      * Return an <code>ActionForward</code> instance describing where and how
      * control should be forwarded, or <code>null</code> if the response has

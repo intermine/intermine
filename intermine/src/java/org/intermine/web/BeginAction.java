@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,21 +19,15 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.query.Results;
-
 /**
- * Implementation of <strong>Action</strong> that runs a Query. The query to run
- * is passed in as a session parameter and the results are put on to the session as well.
+ * Implementation of <strong>Action</strong> that cleans the session of most attributes (except, for
+ * example, SAVED_BAGS and SAVED_QUERIES).
  *
- * @author Andrew Varley
+ * @author Kim Rutherford
  */
 
-public class RunQueryAction extends Action
+public class BeginAction extends Action
 {
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -57,19 +50,16 @@ public class RunQueryAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
 
-        Query q = (Query) session.getAttribute(Constants.QUERY);
-
-        if (q == null) {
-            return mapping.findForward("buildquery");
-        } else {
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-            Results results = os.execute(QueryCloner.cloneQuery(q));
-            request.setAttribute("results", results);
-
-            return mapping.findForward("results");
+        if (session != null) {
+            session.removeAttribute(Constants.QUERY);
+            session.removeAttribute(Constants.QUERY_CLASSES);
+            session.removeAttribute(Constants.EDITING_ALIAS);
+            session.removeAttribute("qNodes");
+            session.removeAttribute("view");
+            session.removeAttribute("path");
         }
+
+        return mapping.findForward("beginpage");
     }
 }

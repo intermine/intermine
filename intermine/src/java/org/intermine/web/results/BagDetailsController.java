@@ -13,7 +13,6 @@ package org.intermine.web.results;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -21,23 +20,23 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.Constants;
+import org.intermine.web.InterMineBag;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
- * a results view.
+ * viewing a bag.
  *
- * @author Andrew Varley
+ * @author Kim Rutherford
  */
-public class ResultsViewController extends TilesAction
+
+public class BagDetailsController extends TilesAction
 {
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
+     * Set up session attributes for the bag details page.
      *
      * @param context The Tiles ComponentContext
      * @param mapping The ActionMapping used to select this instance
@@ -46,25 +45,28 @@ public class ResultsViewController extends TilesAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      *
-     * @exception ServletException if a servlet error occurs
+     * @exception Exception if an error occurs
      */
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) throws ServletException {
+                                 HttpServletResponse response)
+        throws Exception {
         HttpSession session = request.getSession();
 
-        Results results = (Results) request.getAttribute("results");
+        String bagName = request.getParameter("bagName");
 
-        DisplayableResults dr = null;
-        if (results != null) {
-            dr = new DisplayableResults(results);
-        } else {
-            DisplayableResults drOrig = (DisplayableResults)
-                session.getAttribute(Constants.RESULTS_TABLE);
-            dr = new DisplayableResults(drOrig.getResults());
-            dr.update(drOrig);
+        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+ 
+        Collection bag = (Collection) savedBags.get(bagName);
+
+        if (bag == null) {
+            // display an empty bag
+            bag = new InterMineBag();
         }
-        session.setAttribute(Constants.RESULTS_TABLE, dr);
+
+        TableHelper.makeTable(session, bagName, bag);
 
         return null;
     }

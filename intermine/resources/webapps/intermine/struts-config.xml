@@ -10,9 +10,8 @@
 
   <form-beans>
 
-    <!-- QueryBuild form bean -->
-    <form-bean name="queryBuildForm"
-               type="org.intermine.web.QueryBuildForm"/>
+    <form-bean name="mainForm"
+               type="org.intermine.web.MainForm"/>
 
     <!-- IQL Query form bean -->
     <form-bean name="iqlQueryForm"
@@ -27,7 +26,7 @@
                type="org.intermine.web.results.ChangeResultsForm"/>
 
     <!-- run query has no properties, uses an DynaActionForm -->
-    <form-bean name="runQueryForm"
+    <form-bean name="emptyForm"
                type="org.apache.struts.action.DynaActionForm"/>
 
     <!-- restart query -->
@@ -41,6 +40,10 @@
     <!-- save query -->
     <form-bean name="saveQueryForm"
                type="org.intermine.web.SaveQueryForm"/>
+
+    <!-- query history -->
+    <form-bean name="historyForm"
+               type="org.intermine.web.HistoryForm"/>
 
   </form-beans>
 
@@ -63,22 +66,52 @@
   <!-- ========== Action Mapping Definitions ============================== -->
   <action-mappings>
 
-    <!-- Input a query -->
-    <action path="/buildquery"
+    <action path="/query"
             forward="query.page"/>
 
+    <action path="/mainChange"
+            type="org.intermine.web.MainChange"
+            parameter="method">
+      <forward name="query" path="query.page"/>
+    </action>
+
+    <action path="/mainAction"
+            type="org.intermine.web.MainAction"
+            name="mainForm"
+            parameter="action">
+      <forward name="query" path="query.page"/>
+    </action>
+
+    <action path="/viewChange"
+            type="org.intermine.web.ViewChange"
+            parameter="method">
+      <forward name="query" path="query.page"/>
+      <forward name="results" path="results.page"/>
+    </action>
+
+    <!-- Input a query -->
     <action path="/buildiqlquery"
             forward="iqlquery.page"/>
 
-    <action path="/query"
-            input="buildquery"
-            type="org.intermine.web.QueryBuildAction"
-            name="queryBuildForm"
-            parameter="action">
-      <forward name="runquery" path="/runQuery.do"/>
-      <forward name="buildquery" path="query.page"/>
-      <forward name="buildiqlquery" path="iqlquery.page"/>
+    <action path="/history"
+            forward="history.page"/>
+
+    <action path="/classChooser"
+            forward="classChooser.page"/>
+
+    <action path="/begin"
+            type="org.intermine.web.BeginAction">
+      <forward name="beginpage" path="begin.page"/>
     </action>
+
+    <action path="/index"
+            forward="index.page"/>
+
+    <action path="/examples"
+            forward="templates.page"/>
+
+    <action path="/help"
+            forward="help.page"/>
 
     <!-- Input an iql query -->
     <action path="/iqlquery"
@@ -98,23 +131,8 @@
             scope="request"
             input="query"
             parameter="action">
-      <forward name="buildquery" path="query.page"/>
+      <forward name="query" path="query.page"/>
       <forward name="tree" path="tree.page"/>
-    </action>
-
-    <!-- Action to run a query for a Query object on the session -->
-    <action path="/runQuery"
-            type="org.intermine.web.RunQueryAction"
-            name="runQueryForm">
-      <forward name="buildquery" path="query.page"/>
-      <forward name="results" path="results.page"/>
-    </action>
-
-    <!-- Action to reset the current query -->
-    <action path="/restartQuery"
-            type="org.intermine.web.RestartQueryAction"
-            name="restartQueryForm">
-      <forward name="buildquery" path="query.page"/>
     </action>
 
     <!-- Action to load a Query from the saved queries -->
@@ -130,13 +148,18 @@
       <forward name="results" path="results.page"/>
     </action>
 
+    <!-- Action to create a new query from the history page -->
+    <action path="/createBoolean"
+            type="org.intermine.web.HistoryAction"
+            name="historyForm">
+      <forward name="history" path="/history"/>
+    </action>
+
     <!-- Action to chnge the displayed results in some way -->
     <action path="/changeResults"
             type="org.intermine.web.results.ChangeResultsAction"
             parameter="method">
-      <forward name="runquery" path="/runQuery.do"/>
       <forward name="results" path="results.page"/>
-      <forward name="details" path="details.page"/>
     </action>
 
     <!-- Action to chnge the displayed results in some way -->
@@ -152,7 +175,7 @@
             type="org.intermine.web.TreeAction"
             parameter="method">
       <forward name="renderTree" path="tree.page"/>
-      <forward name="buildquery" path="query.page"/>
+      <forward name="query" path="query.page"/>
     </action>
 
     <action path="/objectDetails"
@@ -161,15 +184,16 @@
     <action path="/collectionDetails"
             forward="collectionDetails.page"/>
 
+    <action path="/bagDetails"
+            forward="bagDetails.page"/>
+
     <action path="/results"
             forward="results.page"/>
 
     <!-- Controllers -->
 
-    <action path="/initQueryBuild"
-            validate="false"
-            type="org.intermine.web.QueryBuildController"
-            name="queryBuildForm"/>
+    <action path="/initMain"
+            type="org.intermine.web.MainController"/>
 
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
@@ -177,9 +201,6 @@
 
     <action path="/initQueryView"
             type="org.intermine.web.QueryViewController"/>
-
-    <action path="/initResultsView"
-            type="org.intermine.web.results.ResultsViewController"/>
 
     <action path="/initResultsCell"
             type="org.intermine.web.results.ResultsCellController"/>
@@ -190,11 +211,11 @@
     <action path="/initCollectionDetails"
             type="org.intermine.web.results.CollectionDetailsController"/>
 
+    <action path="/initBagDetails"
+            type="org.intermine.web.results.BagDetailsController"/>
+
     <action path="/initTree"
             type="org.intermine.web.TreeController"/>
-
-    <action path="/initSaveQuery"
-            type="org.intermine.web.SaveQueryController"/>
 
     <action path="/initQueryClassSelect"
             type="org.intermine.web.QueryClassSelectController"/>
@@ -213,7 +234,7 @@
   </controller>
 
   <!-- ========== Message Resources Definitions =========================== -->
-
+  <!-- used by LookupDispatchActions -->
   <message-resources parameter="InterMineWebApp"/>
 
   <!-- model-specific resources -->
@@ -231,7 +252,7 @@
   </plug-in>
 
   <plug-in className="org.apache.struts.tiles.TilesPlugin">
-    <set-property property="definitions-config" 
+    <set-property property="definitions-config"
                   value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
   </plug-in>
 

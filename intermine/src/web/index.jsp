@@ -15,7 +15,7 @@
 </h3>
 <ul>
   <li>
-    <html:link page="/buildquery.do">
+    <html:link page="/begin.do">
       <fmt:message key="index.query"/>
     </html:link>
   </li>

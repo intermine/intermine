@@ -1,108 +1,62 @@
-h3 {
-    clear: left;
+body {
+  font-family: arial, helvetica, sans-serif;
+  color: black; 
+  background: #f4eeff
 }
-body {	font-family: arial, helvetica, sans-serif;
-//        font-size: 8pt;
-	color: #000000; 
-	background: #f4eeff}
-p {	color: #000000;}
-a:link {color: #220077;
-	text-decoration: none}
-a:visited {color: #220077;
-	text-decoration: none}
-a:active {color: #220077;
-	text-decoration: none}
-a:hover {color: #220077;
-	text-decoration: underline}
-.main-layout {
-    width: 100%
+a {
+  color: #220077;
+  text-decoration: none
 }
-.sidebar {
-    font-size: small;
-    background-color: #ccaaff;
-}
-.links {
-    font-size: small;
-    background-color: #ccaaff;
-}
-.links .menu-item {
-    padding: 1em
-}
-.footer {
-    font-size: x-small;
-    background-color: #ccaaff;
-    padding: 1em;
-    width: 100%;
-}
-.menu-heading {
-    font-weight: bold;
-}
-.title {
-    font-size: x-large;
-    font-weight: bold;
-    color: #220077;
-}
-.subtitle {
-    font-size: large;
-    font-weight: normal;
-}
-.main {
-    font-size: normal;
-    font-weight: normal;
-}
-.queryViewFromItemTitle {
-    font-size: normal;
-    font-weight: normal;
-}
-.queryViewFromItemAlias {
-    color: #009900;
-}
-.queryViewConstraintLeft {
-    color: #000099;
-}
-.queryViewConstraintOp {
-    color: #990000;
-}
-.queryViewConstraintRight {
-    color: #000099;
-}
-.queryViewConstraintExtra {
-    color: #880088;
-}
-.resultsHeader {
-    background: #880088;
-}
-.resultsOddRow {
-    background: #ccaaff;
-}
-.resultsEvenRow {
-    background: #f4eeff;
-}
-.resultsFooter {
-    background: #880088;
-}
-.resultsCellTitle {
-    font-size: small;
-    font-style: italic;
-    font-weight: normal;
-}
-.resultsCellName {
-    font-size: small;
-    font-weight: bold;
-}
-.resultsCellValue {
-    font-size: small;
-}
-.queryErrorMessage { 
-    color: red;
-}
-.queryBuildQueryClasses {
-    margin-left: 1em;
-}
-.queryBuildCurrentQuery {
-    margin-left: 1em;
-}
-.savedView {
-    font-size:small;
+a:hover {
+  text-decoration: underline
 }
 
+.sidebar, .links, .footer {
+  font-size: small;
+  background-color: #ccaaff;
+}
+.links .menu-item {
+  padding: 1em
+}
+.footer {
+  width: 100%;
+}
+.menu-heading {
+  font-weight: bold;
+}
+.title {
+  font-size: x-large;
+  font-weight: bold;
+  color: #220077;
+}
+.subtitle {
+  font-size: large;
+}
+.errorMessages { 
+  color: red;
+}
+
+.query table, .results table {
+border-left: solid 1px;
+border-top: solid 1px;
+}
+.query th, .query td, .results th, .results td {
+padding: 4px;
+border-right: solid 1px;
+border-bottom: solid 1px;
+}
+.query th, .results th { 
+  background: #ccaaff;
+}
+.even { 
+  background: #ccaaff;
+}
+.type {
+  color: gray;
+}
+.constraint {
+  color: purple;
+}
+.metadata {
+  color: green;
+}

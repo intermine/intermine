@@ -22,19 +22,19 @@ public class ColumnTest extends TestCase
 
     public void setUp() {
         col1 = new Column();
-        col1.setAlias("c1");
+        col1.setName("c1");
         col1.setIndex(1);
         col1.setVisible(true);
         col2 = new Column();
-        col2.setAlias("c1");
+        col2.setName("c1");
         col2.setIndex(1);
         col2.setVisible(false);
         col3 = new Column();
-        col3.setAlias("c1");
+        col3.setName("c1");
         col3.setIndex(2);
         col3.setVisible(false);
         col4 = new Column();
-        col4.setAlias("c2");
+        col4.setName("c2");
         col4.setIndex(2);
         col4.setVisible(false);
     }

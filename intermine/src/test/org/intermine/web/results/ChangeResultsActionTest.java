@@ -32,7 +32,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
     }
 
     private Results results;
-    private DisplayableResults dr;
+    private PagedResults dr;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -47,7 +47,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         os.addRow(row);
         IqlQuery fq = new IqlQuery("select c, d from Company as c, Department as d order by c", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
-        dr = new DisplayableResults(results);
+        dr = new PagedResults(results);
         dr.setPageSize(10);
     }
 
@@ -118,12 +118,12 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.getColumn("c").setVisible(true);
-        assertTrue(dr.getColumn("c").isVisible());
+        dr.getColumnByName("c").setVisible(true);
+        assertTrue(dr.getColumnByName("c").isVisible());
 
         actionPerform();
 
-        assertFalse(dr.getColumn("c").isVisible());
+        assertFalse(dr.getColumnByName("c").isVisible());
         verifyForward("results");
         verifyNoActionErrors();
     }
@@ -135,19 +135,19 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
 
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-        dr.getColumn("c").setVisible(false);
-        assertFalse(dr.getColumn("c").isVisible());
+        dr.getColumnByName("c").setVisible(false);
+        assertFalse(dr.getColumnByName("c").isVisible());
 
         actionPerform();
 
-        assertTrue(dr.getColumn("c").isVisible());
+        assertTrue(dr.getColumnByName("c").isVisible());
         verifyForward("results");
         verifyNoActionErrors();
     }
 
     /**
      * No need to test every single thing about moving columns up or
-     * down - that is done in DisplayableResultsTest. Here we just do
+     * down - that is done in PagedResultsTest. Here we just do
      * a quick check to see if a couple of operations work, and that
      * we are forwarded to the correct page
      */
@@ -159,11 +159,11 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
-        assertEquals(dr.getColumn("c"), dr.getColumns().get(0));
+        assertEquals(dr.getColumnByName("c"), dr.getColumns().get(0));
 
         actionPerform();
 
-        assertEquals(dr.getColumn("d"), dr.getColumns().get(0));
+        assertEquals(dr.getColumnByName("d"), dr.getColumns().get(0));
         verifyForward("results");
         verifyNoActionErrors();
     }
@@ -176,36 +176,12 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         getSession().setAttribute("results", results);
         getSession().setAttribute(Constants.RESULTS_TABLE, dr);
 
-        assertEquals(dr.getColumn("c"), dr.getColumns().get(0));
+        assertEquals(dr.getColumnByName("c"), dr.getColumns().get(0));
 
         actionPerform();
 
-        assertEquals(dr.getColumn("d"), dr.getColumns().get(0));
+        assertEquals(dr.getColumnByName("d"), dr.getColumns().get(0));
         verifyForward("results");
-        verifyNoActionErrors();
-    }
-
-    public void testOrderByColumn() throws Exception {
-        setRequestPathInfo("/changeResults");
-        addRequestParameter("method", "orderByColumn");
-        addRequestParameter("columnAlias", "d");
-
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
-
-        Query q = results.getQuery();
-        QueryNode qnc = (QueryNode) q.getReverseAliases().get("c");
-        QueryNode qnd = (QueryNode) q.getReverseAliases().get("d");
-
-        assertEquals(1, q.getOrderBy().size());
-        assertEquals(qnc, q.getOrderBy().get(0));
-
-        actionPerform();
-
-        assertEquals(1, q.getOrderBy().size());
-        assertEquals(qnd, q.getOrderBy().get(0));
-
-        assertEquals(q, getSession().getAttribute(Constants.QUERY));
-        verifyForward("runquery");
         verifyNoActionErrors();
     }
 }

@@ -17,6 +17,6 @@
 </c:choose>
 <br/>
 <html:link action="/results">
-  <fmt:message key="results.return"/>
+  <fmt:message key="results.returnToResults"/>
 </html:link>
 <!-- /objectDetailsPage.jsp -->

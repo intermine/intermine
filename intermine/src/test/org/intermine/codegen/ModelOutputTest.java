@@ -48,20 +48,4 @@ public class ModelOutputTest extends TestCase
         assertEquals(testString, new String(text).trim());
         f.delete();
     }
-
-    public void testIsPrimitive() throws Exception {
-        assertTrue(mo.isPrimitive("float"));
-        assertFalse(mo.isPrimitive("Float"));
-    }
-
-    public void testIsBasicType() throws Exception {
-        assertTrue(mo.isBasicType("java.lang.String"));
-        assertTrue(mo.isBasicType("java.lang.Float"));
-        assertTrue(mo.isBasicType("java.lang.Double"));
-        assertTrue(mo.isBasicType("java.lang.Boolean"));
-        assertTrue(mo.isBasicType("java.lang.Integer"));
-        assertTrue(mo.isBasicType("java.util.Date"));
-        assertFalse(mo.isBasicType("java.monkey"));
-    }
-
 }

@@ -10,8 +10,8 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
@@ -65,7 +65,7 @@ public class ResultsCellController extends TilesAction
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Object o = request.getAttribute("object");
 
-        Set leafClds = new HashSet();
+        List leafClds = new ArrayList();
 
         if (o instanceof InterMineObject) {
             for (Iterator i = DynamicUtil.decomposeClass(o.getClass()).iterator(); i.hasNext();) {

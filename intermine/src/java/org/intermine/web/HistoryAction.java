@@ -10,29 +10,22 @@ package org.intermine.web;
  *
  */
 
-import org.apache.struts.tiles.actions.TilesAction;
-
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
+import org.apache.struts.action.ActionMapping;
 
 /**
- * Implementation of <strong>TilesAction</strong> the sets up session
- * attributes for the saveQuery action.
+ * Implementation of <strong>Action</strong> that creates a new Query from the history of queries.
  *
  * @author Kim Rutherford
  */
 
-public class SaveQueryController extends TilesAction
+public class HistoryAction extends Action
 {
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -47,25 +40,17 @@ public class SaveQueryController extends TilesAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      *
-     * @exception ServletException if a servlet error occurs
+     * @exception Exception if the application business logic throws
+     *  an exception
      */
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) throws ServletException {
+                                 HttpServletResponse response)
+        throws Exception {
+
         HttpSession session = request.getSession();
 
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
-        if (savedQueries == null) {
-            savedQueries = new HashMap();
-            session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
-        }
-
-        Map savedQueriesInverse = (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
-        if (savedQueriesInverse == null) {
-            savedQueriesInverse = new IdentityHashMap();
-            session.setAttribute(Constants.SAVED_QUERIES_INVERSE, savedQueriesInverse);
-        }
-
-        return null;
+        return mapping.findForward("buildquery");
     }
 }

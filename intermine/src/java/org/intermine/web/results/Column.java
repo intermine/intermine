@@ -18,7 +18,7 @@ package org.intermine.web.results;
 public class Column
 {
     protected boolean visible = true;
-    protected String alias = "";
+    protected String name = "";
     protected int index;
 
     /**
@@ -29,12 +29,10 @@ public class Column
     public void update(Column other) {
         if (!(this.equals(other))) {
             throw new IllegalArgumentException("Cannot update a column from one"
-                                               + " with a different alias");
+                                               + " with a different columnName");
         }
         setVisible(other.isVisible());
     }
-
-
 
     /**
      * Is the column visible
@@ -55,21 +53,21 @@ public class Column
     }
 
     /**
-     * Get the alias of the column
+     * Get the name of the column
      *
-     * @return the alias of the column
+     * @return the name of the column
      */
-    public String getAlias() {
-        return alias;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Set the alias of the column
+     * Set the name of the column
      *
-     * @param alias the alias for the column
+     * @param name the name for the column
      */
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -99,7 +97,7 @@ public class Column
      */
     public boolean equals(Object other) {
         if (other instanceof Column) {
-            return alias.equals(((Column) other).getAlias());
+            return name.equals(((Column) other).getName());
         }
         return false;
     }
@@ -110,7 +108,14 @@ public class Column
      * @return a hashCode for this column
      */
     public int hashCode() {
-        return alias.hashCode();
+        return name.hashCode();
     }
 
+    /**
+     * @see Object#toString
+     */
+    public String toString() {
+        return "[Column " + super.toString() + " "
+            + name + " at " + index + (visible ? "visible" : "not visible") + "]";
+    }
 }

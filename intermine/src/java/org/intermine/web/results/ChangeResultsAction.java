@@ -10,10 +10,6 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,8 +20,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.Constants;
 
 /**
@@ -52,12 +47,12 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int prevStart = dr.getStart();
-        int pageSize = dr.getPageSize();
+        int prevStart = pt.getStart();
+        int pageSize = pt.getPageSize();
 
-        dr.setStart(prevStart + pageSize);
+        pt.setStart(prevStart + pageSize);
 
         return mapping.findForward("results");
     }
@@ -78,17 +73,17 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int prevStart = dr.getStart();
-        int pageSize = dr.getPageSize();
+        int prevStart = pt.getStart();
+        int pageSize = pt.getPageSize();
 
         int newStart = prevStart - pageSize;
         if (newStart < 0) {
             newStart = 0;
         }
 
-        dr.setStart(newStart);
+        pt.setStart(newStart);
 
         return mapping.findForward("results");
     }
@@ -109,8 +104,8 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
-        dr.setStart(0);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        pt.setStart(0);
 
         return mapping.findForward("results");
     }
@@ -131,18 +126,22 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
-        int pageSize = dr.getPageSize();
+        int pageSize = pt.getPageSize();
 
-        // Here we have to force the results to give us an exact size
-        int size = dr.getResults().size();
-        int start = ((size - 1) / pageSize) * pageSize;
+        try {
+            // Here we have to force the results to give us an exact size
+            int size = pt.getExactSize();
+            int start = ((size - 1) / pageSize) * pageSize;
 
-        if (start < 0) {
-            start = 0;
+            if (start < 0) {
+                start = 0;
+            }
+            pt.setStart(start);
+        } catch (ObjectStoreException e) {
+            throw new ServletException("exception while getting results size", e);
         }
-        dr.setStart(start);
 
         return mapping.findForward("results");
     }
@@ -164,14 +163,14 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
             throw new IllegalArgumentException("A columnAlias parameter must be present");
         }
 
-        dr.getColumn(columnAlias).setVisible(false);
+        pt.getColumnByName(columnAlias).setVisible(false);
 
         return mapping.findForward("results");
     }
@@ -193,14 +192,14 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
             throw new IllegalArgumentException("A columnAlias parameter must be present");
         }
 
-        dr.getColumn(columnAlias).setVisible(true);
+        pt.getColumnByName(columnAlias).setVisible(true);
 
         return mapping.findForward("results");
     }
@@ -223,14 +222,14 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
             throw new IllegalArgumentException("A columnAlias parameter must be present");
         }
 
-        dr.moveColumnUp(columnAlias);
+        pt.moveColumnUp(columnAlias);
         return mapping.findForward("results");
     }
 
@@ -252,58 +251,14 @@ public class ChangeResultsAction extends DispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
 
         String columnAlias = request.getParameter("columnAlias");
         if (columnAlias == null) {
             throw new IllegalArgumentException("A columnAlias parameter must be present");
         }
 
-        dr.moveColumnDown(columnAlias);
+        pt.moveColumnDown(columnAlias);
         return mapping.findForward("results");
-    }
-
-    /**
-     * Order by a particular column. Must pass in a parameter
-     * "columnAlias" to indicate the column being ordered by.
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     *
-     * @exception ServletException if a servlet error occurs
-     */
-    public ActionForward orderByColumn(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
-        HttpSession session = request.getSession();
-
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
-
-        Query q = dr.getResults().getQuery();
-
-        String columnAlias = request.getParameter("columnAlias");
-        if (columnAlias == null) {
-            throw new IllegalArgumentException("A columnAlias parameter must be present");
-        }
-
-        // For now, we will delete everything that exists in the order
-        // by and then add the QueryNode corresponding to the
-        // columnAlias. This might not be a sensible long-term solution
-        // but will do for now
-        List nodes = new LinkedList();
-        nodes.addAll(q.getOrderBy());
-        Iterator nodesIter = nodes.iterator();
-        while (nodesIter.hasNext()) {
-            QueryNode qn = (QueryNode) nodesIter.next();
-            q.deleteFromOrderBy(qn);
-        }
-
-        q.addToOrderBy((QueryNode) q.getReverseAliases().get(columnAlias));
-
-        session.setAttribute(Constants.QUERY, q);
-        return mapping.findForward("runquery");
     }
 }

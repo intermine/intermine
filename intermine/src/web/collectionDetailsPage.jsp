@@ -6,16 +6,5 @@
 <tiles:importAttribute scope="request"/>
 
 <!-- collectionDetailsPage.jsp -->
-<c:choose>
-  <c:when test="${object != null}">
-    <tiles:insert name="/collectionDetails.jsp"/>
-  </c:when>
-  <c:otherwise>
-    null
-  </c:otherwise>
-</c:choose>
-<br/>
-<html:link action="/results">
-  <fmt:message key="results.return"/>
-</html:link>
+<tiles:get name="table"/>
 <!-- /collectionDetailsPage.jsp -->

@@ -66,9 +66,20 @@ public interface Constants
     public static final String SAVED_QUERIES_INVERSE = "SAVED_QUERIES_INVERSE";
 
     /**
+     * The attribute name to use when storing the Map of queries to QueryInfo objects.
+     */
+    public static final String QUERY_INFO_MAP = "QUERY_INFO_MAP";
+
+    /**
      * The attribute name to use when storing the Query in the ServletContext.
      */
     public static final String QUERY = "QUERY";
+
+    /**
+     * Set on the request by RunQueryAction and SaveQueryAction to be the name of the last run
+     * query saved. 
+     */
+    public static final String SAVED_QUERY_NAME = "SAVED_QUERY_NAME";
 
     /**
      * The attribute name to use when storing the results of a query in the ServletContext.

@@ -34,7 +34,7 @@
 
   <!-- The Welcome File List -->
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>begin.do</welcome-file>
   </welcome-file-list>
 
   <!-- the following are only used when testing the webapp -->

@@ -67,7 +67,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("results");
         verifyNoActionErrors();
-        assertNull(session.getAttribute(Constants.QUERY));
+        assertEquals("query1", getRequest().getAttribute(Constants.SAVED_QUERY_NAME));
         assertEquals(1, ((Map)session.getAttribute(Constants.SAVED_QUERIES)).size());
     }
 
@@ -92,7 +92,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("results");
         verifyNoActionErrors();
-        assertNull(session.getAttribute(Constants.QUERY));
+        assertEquals("query3", getRequest().getAttribute(Constants.SAVED_QUERY_NAME));
         Map savedQueriesFromSession =
             (Map)session.getAttribute(Constants.SAVED_QUERIES);
         assertEquals(3, savedQueriesFromSession.size());
@@ -123,7 +123,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("results");
         verifyNoActionErrors();
-        assertNull(session.getAttribute(Constants.QUERY));
+        assertEquals("query2", getRequest().getAttribute(Constants.SAVED_QUERY_NAME));
         Map savedQueriesFromSession =
             (Map)session.getAttribute(Constants.SAVED_QUERIES);
         assertEquals(2, savedQueries.size ());

@@ -10,7 +10,7 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Set;
+import java.util.List;
 
 import servletunit.struts.MockStrutsTestCase;
 import org.apache.struts.tiles.ComponentContext;
@@ -36,9 +36,9 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
 
         Model model = Model.getInstanceByName("testmodel");
         assertNotNull(context.getAttribute("leafClds"));
-        assertTrue(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
-        assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
-        assertFalse(((Set) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
+        assertTrue(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
+        assertFalse(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
+        assertFalse(((List) context.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
     }
 
     public void testNonBusinessObject() throws Exception {
@@ -48,6 +48,6 @@ public class ResultsCellControllerTest extends MockStrutsTestCase
 
         getRequest().setAttribute("object", "test string");
         actionPerform();
-        assertEquals(0, ((Set) context.getAttribute("leafClds")).size());
+        assertEquals(0, ((List) context.getAttribute("leafClds")).size());
     }
 }

@@ -23,15 +23,15 @@ public class QueryClassSelectActionTest extends MockStrutsTestCase
 
     public void testSelectValidClassName() throws Exception {
         setRequestPathInfo("/queryClassSelect");
-        getSession().setAttribute(Constants.QUERY_CLASSES, new HashMap());
         QueryClassSelectForm form = new QueryClassSelectForm();
         form.setClassName("org.intermine.model.testmodel.Company");
         setActionForm(form);
         addRequestParameter("action", "Add");
         actionPerform();
 
-        verifyForward("buildquery");
-        assertEquals(1, ((Map) getSession().getAttribute(Constants.QUERY_CLASSES)).size());
+        verifyForward("query");
+        assertEquals("org.intermine.model.testmodel.Company",
+                     getRequest().getAttribute("class"));
     }
 
     public void testSelectNullClassName() throws Exception {

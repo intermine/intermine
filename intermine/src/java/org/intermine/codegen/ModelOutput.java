@@ -31,7 +31,7 @@ public abstract class ModelOutput
     protected static final String ENDL = System.getProperty("line.separator");
 
     protected Model model;
-    protected File file;
+    protected File file; //note: this is a directory
 
     /**
      * Constructor
@@ -88,7 +88,7 @@ public abstract class ModelOutput
      * Create a file, after removing it if it already exists
      * @param f the file
      */
-    protected void initFile(File f) {
+    protected static void initFile(File f) {
         try {
             f.delete();
         } catch (SecurityException exp) {
@@ -102,7 +102,7 @@ public abstract class ModelOutput
      * @param f the output file
      * @param src the String to output
      */
-    protected void outputToFile(File f, String src) {
+    protected static void outputToFile(File f, String src) {
         BufferedWriter fos = null;
         try {
             fos = new BufferedWriter(new FileWriter (f, true));
@@ -117,32 +117,6 @@ public abstract class ModelOutput
                 LOG.warn("FAILED: " + f.getPath());
             }
         }
-    }
-
-    /**
-     * Check whether the specified type name represents a primitive
-     * @param type the type String
-     * @return true if it is a primitive
-     */
-    protected boolean isPrimitive(String type) {
-        return type.indexOf(".") == -1 && Character.isLowerCase(type.charAt(0));
-    }
-
-    /**
-     * Check whether the specified type name represents a basic type (String, Integer, etc)
-     * @param type the type String
-     * @return true if it is a basic type
-     */
-    protected boolean isBasicType(String type) {
-        if ((type.equals("java.lang.String"))
-            || (type.equals("java.lang.Float"))
-            || (type.equals("java.lang.Double"))
-            || (type.equals("java.lang.Boolean"))
-            || (type.equals("java.lang.Integer"))
-            || (type.equals("java.util.Date"))) {
-            return true;
-        }
-        return false;
     }
 }
 

@@ -37,7 +37,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         super(arg1);
     }
 
-    private DisplayableResults dr;
+    private PagedResults pr;
     private Results results;
 
     private Company company1, company2, company3;
@@ -49,8 +49,8 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         os.setResultsSize(15);
         IqlQuery fq = new IqlQuery("select c, d from Company as c, Department as d", "org.intermine.model.testmodel");
         results = os.execute(fq.toQuery());
-        dr = new DisplayableResults(results);
-        dr.setPageSize(5);
+        pr = new PagedResults(results);
+        pr.setPageSize(5);
 
         // Set up some known objects in the first 3 results rows
         company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -94,15 +94,15 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         form.setPageSize("25");
         setActionForm(form);
 
-        dr.setStart(0);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+        pr.setStart(0);
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(0, dr.getStart());
-        assertEquals(25, dr.getPageSize());
+        assertEquals(0, pr.getStart());
+        assertEquals(25, pr.getPageSize());
     }
 
     public void testChangePageSize2() throws Exception {
@@ -113,21 +113,21 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
         form.setPageSize("10");
         setActionForm(form);
 
-        dr.setStart(12);
-        getSession().setAttribute(Constants.RESULTS_TABLE, dr);
+        pr.setStart(12);
+        getSession().setAttribute(Constants.RESULTS_TABLE, pr);
 
         actionPerform();
 
         verifyForward("results");
         verifyNoActionErrors();
-        assertEquals(10, dr.getStart());
-        assertEquals(10, dr.getPageSize());
+        assertEquals(10, pr.getStart());
+        assertEquals(10, pr.getPageSize());
     }
 
     public void testSaveNewBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("action", "Save selections in new collection");
-        getSession().setAttribute(Constants.RESULTS_TABLE, new DisplayableResults(results));
+        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,0", "1,2"});
@@ -150,7 +150,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testAddToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("action", "Add selections to existing collection");
-        getSession().setAttribute(Constants.RESULTS_TABLE, new DisplayableResults(results));
+        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});
@@ -184,7 +184,7 @@ public class ChangeResultsSizeActionTest extends MockStrutsTestCase
     public void testAddSameToExistingBag() throws Exception {
         setRequestPathInfo("/changeResultsSize");
         addRequestParameter("action", "Add selections to existing collection");
-        getSession().setAttribute(Constants.RESULTS_TABLE, new DisplayableResults(results));
+        getSession().setAttribute(Constants.RESULTS_TABLE, new PagedResults(results));
 
         ChangeResultsForm form = new MockChangeResultsForm();
         form.setSelectedObjects(new String[] {"0,1", "1,1"});

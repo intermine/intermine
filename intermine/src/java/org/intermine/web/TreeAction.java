@@ -12,10 +12,8 @@ package org.intermine.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import java.util.Set;
-import java.util.Map;
 
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -101,18 +99,14 @@ public class TreeAction extends DispatchAction
      *  an exception
      */
     public ActionForward select(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
         throws Exception {
-        //duplication: see QueryClassSelectAction#select
-        HttpSession session = request.getSession();
 
-        Map queryClasses = (Map) session.getAttribute(Constants.QUERY_CLASSES);
         String className = (String) request.getParameter("node");
 
-        QueryBuildHelper.addClass(queryClasses, className);
-
-        return mapping.findForward("buildquery");
+        request.setAttribute("class", className);
+        return mapping.findForward("query");
     }
 }

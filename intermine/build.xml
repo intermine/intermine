@@ -694,7 +694,10 @@
       <fileset dir="${resources}/webapps/intermine/images"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF">
-      <fileset dir="${resources}/webapps/intermine" excludes="web.xml images/**, *.properties intermine.css"/>
+      <fileset dir="${resources}/webapps/intermine" 
+               excludes="web.xml images/** *.properties intermine.css"/>
+      <fileset dir="${resources}/webapps/intermine"
+               includes="global.web.properties"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF/classes">
       <fileset dir="${resources}/webapps/intermine" includes="*.properties"/>

@@ -12,9 +12,10 @@ package org.intermine.web.results;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.IdentityHashMap;
-import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -28,9 +29,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.Constants;
+import org.intermine.web.InterMineBag;
 
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the
@@ -41,7 +41,7 @@ import org.intermine.web.Constants;
 public class ChangeResultsSizeAction extends LookupDispatchAction
 {
     /**
-     * Change the page size of the DisplayableResults
+     * Change the page size of the PagedTable
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -56,13 +56,13 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         throws ServletException {
         HttpSession session = request.getSession();
 
-        DisplayableResults dr = (DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE);
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
 
-        dr.setPageSize(Integer.parseInt(changeResultsForm.getPageSize()));
+        pt.setPageSize(Integer.parseInt(changeResultsForm.getPageSize()));
 
         // Need to set the start so that we are on the page containing the current start item
-        dr.setStart((dr.getStart() / dr.getPageSize()) * dr.getPageSize());
+        pt.setStart((pt.getStart() / pt.getPageSize()) * pt.getPageSize());
 
         return mapping.findForward("results");
     }
@@ -120,7 +120,7 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
 
         Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         if (savedBags == null) {
-            savedBags = new HashMap();
+            savedBags = new LinkedHashMap();
             session.setAttribute(Constants.SAVED_BAGS, savedBags);
         }
 
@@ -129,14 +129,14 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
             savedBagsInverse = new IdentityHashMap();
             session.setAttribute(Constants.SAVED_BAGS_INVERSE, savedBagsInverse);
         }
-        
-        Results results = ((DisplayableResults) session.getAttribute(Constants.RESULTS_TABLE))
-            .getResults();
+
+        PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         String[] selectedObjects = changeResultsForm.getSelectedObjects();
 
         Collection bag = (Collection) savedBags.get(bagName);
+
         if (bag == null) {
-            bag = new LinkedHashSet();
+            bag = new InterMineBag();
             savedBags.put(bagName, bag);
             savedBagsInverse.put(bag, bagName);
         }
@@ -145,11 +145,11 @@ public class ChangeResultsSizeAction extends LookupDispatchAction
         for (Iterator i =  Arrays.asList(selectedObjects).iterator(); i.hasNext();) {
             String selectedObject = (String) i.next();
             // selectedObject is of the form column,row - we use those
-            // to pick out the object from the underlying results
+            // to pick out the object from PagedTable
             int commaIndex = selectedObject.indexOf(",");
             int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
             int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-            bag.add(((ResultsRow) results.get(row)).get(column));
+            bag.add(((List) pt.getList().get(row)).get(column));
         }
     }
 

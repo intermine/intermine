@@ -29,6 +29,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -220,7 +221,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                 //}
 
                 if (explainResult.getTime() > maxTime) {
-                    throw (new ObjectStoreException("Estimated time to run query("
+                    throw (new ObjectStoreQueryDurationException("Estimated time to run query("
                                 + explainResult.getTime() + ") greater than permitted maximum ("
                                 + maxTime + "): IQL query: " + q + ", SQL query: " + sql));
                 }
