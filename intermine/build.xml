@@ -979,7 +979,11 @@
     <delete dir="${build}"/>
     <delete dir="${results}"/>
     <delete>
-      <fileset dir="." includes="junit*.properties"/>
+      <fileset dir=".">
+        <include name="junit*.properties"/>
+        <include name="velocity.log*"/>
+        <include name="flymine.log*"/>
+      </fileset>
     </delete>
   </target>
 
