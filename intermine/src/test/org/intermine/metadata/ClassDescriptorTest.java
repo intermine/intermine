@@ -47,7 +47,6 @@ public class ClassDescriptorTest extends TestCase {
         }
     }
 
-
     public void testInterfaceDescriptors() throws Exception {
         ClassDescriptor int1 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor int2 = new ClassDescriptor("Interface2", null, null, true, new HashSet(), new HashSet(), new HashSet());
@@ -92,7 +91,6 @@ public class ClassDescriptorTest extends TestCase {
         }
     }
 
-
     public void testInterfaceNotImplemented() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, null, true, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", Collections.singleton(cld1));
@@ -109,9 +107,7 @@ public class ClassDescriptorTest extends TestCase {
         ClassDescriptor cld = new ClassDescriptor("cld", "superCld", null, false,  new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
         assertEquals(superCld, cld.getSuperclassDescriptor());
-
     }
-
 
     public void testSuperClassNotExists() throws Exception {
         ClassDescriptor superCld = new ClassDescriptor("superCld", null, null, false,
@@ -294,7 +290,17 @@ public class ClassDescriptorTest extends TestCase {
         assertEquals(impls, cld1.getImplementorDescriptors());
     }
 
-    // ------------
+    public void testToString() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", "Class2", "Interface1", false, new HashSet(), new HashSet(), new HashSet());
+        String expected = "<class name=\"Class1\" extends=\"Class2\" implements=\"Interface1\" is-interface=\"false\">"
+            + "</class>";
+
+        assertEquals(expected, cld1.toString());
+    }
+
+
+
+    // ============================================
 
     private Set getAttributes() {
         Set attributes = new HashSet();
