@@ -11,6 +11,7 @@ import org.apache.ojb.broker.metadata.*;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
 import org.flymine.objectstore.ojb.PersistenceBrokerFlyMineImpl;
@@ -19,12 +20,8 @@ import org.flymine.objectstore.proxy.LazyCollection;
 import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.model.testmodel.*;
 
-
-
-public class PersistenceBrokerFlymineImplTest extends TestCase {
-
-    Database db;
-    ObjectStoreOjbImpl os;
+public class PersistenceBrokerFlymineImplTest extends TestCase
+{
     PersistenceBrokerFlyMineImpl broker;
     DescriptorRepository dr;
 
@@ -33,10 +30,9 @@ public class PersistenceBrokerFlymineImplTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        db = DatabaseFactory.getDatabase("db.unittest");
-        os = ObjectStoreOjbImpl.getInstance(db);
-        dr = ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker().getDescriptorRepository();
+        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         broker = (PersistenceBrokerFlyMineImpl) os.getPersistenceBroker();
+        dr = broker.getDescriptorRepository();
     }
 
 

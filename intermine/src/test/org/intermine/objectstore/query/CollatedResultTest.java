@@ -9,6 +9,8 @@ import org.flymine.model.testmodel.*;
 
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.ojb.FlymineSqlSelectStatement;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
@@ -683,8 +685,7 @@ public class CollatedResultTest extends TestCase
      * methods in XxxConstraint, QueryXxx classes.
      */
     public void assertEquals(Query q1, Query q2) throws Exception {
-        Database db = DatabaseFactory.getDatabase("db.unittest");
-        ObjectStoreOjbImpl os = ObjectStoreOjbImpl.getInstance(db);
+        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         PersistenceBroker broker = os.getPersistenceBroker();
         DescriptorRepository dr = broker.getDescriptorRepository();
 

@@ -35,8 +35,6 @@ import org.flymine.sql.query.ExplainResult;
 
 public class JdbcAccessFlymineImplTest extends QueryTestCase
 {
-
-    private PersistenceBroker broker;
     private JdbcAccessFlymineImpl ja;
     private Query q1, q2;
 
@@ -46,8 +44,7 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        broker = ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
-        ja = (JdbcAccessFlymineImpl) broker.serviceJdbcAccess();
+        ja = (JdbcAccessFlymineImpl) pb.serviceJdbcAccess();
 
         // simple query
         q1 = new Query();
@@ -86,7 +83,7 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
 
     public void executeTest(String type) throws Exception {
         ResultSetAndStatement retval =
-            new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
+            new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
         retval = ja.executeQuery((Query) queries.get(type), 0, 10000);
         ResultSet rs = retval.m_rs;
         ResultSetMetaData md = retval.m_rs.getMetaData();
@@ -110,21 +107,21 @@ public class JdbcAccessFlymineImplTest extends QueryTestCase
 
     public void testStatementNotNull() throws Exception {
         ResultSetAndStatement retval =
-            new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
+            new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
         retval = ja.executeQuery(q1, 0, 10);
         assertNotNull(retval.m_stmt);
     }
 
     public void testResultSetNotNull() throws Exception {
         ResultSetAndStatement retval =
-            new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
+            new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
         retval = ja.executeQuery(q1, 0, 10);
         assertNotNull(retval.m_rs);
     }
 
     public void testResultSetStatement() throws Exception {
         ResultSetAndStatement retval =
-            new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
+            new ResultSetAndStatement(pb.serviceConnectionManager().getSupportedPlatform());
         retval = ja.executeQuery(q1, 0, 10);
         assertEquals(retval.m_stmt, retval.m_rs.getStatement());
     }

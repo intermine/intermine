@@ -26,7 +26,10 @@ import org.flymine.model.testmodel.*;
 
 public abstract class QueryTestCase extends TestCase
 {
+    private ObjectStoreWriter writer;
     protected Database db;
+    protected ObjectStoreOjbImpl os;
+    protected PersistenceBrokerFlyMineImpl pb;
     protected DescriptorRepository dr;    
     protected Map data = new LinkedHashMap();
     protected Map queries = new HashMap();
@@ -46,9 +49,11 @@ public abstract class QueryTestCase extends TestCase
      */
     public void setUp() throws Exception {
         super.setUp();
-
-        db = DatabaseFactory.getDatabase("db.unittest");
-        dr = ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker().getDescriptorRepository();
+        os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        pb = (PersistenceBrokerFlyMineImpl) os.getPersistenceBroker();
+        db = pb.getDatabase();
+        dr = pb.getDescriptorRepository();
+        writer = new ObjectStoreWriterOjbImpl(db, "testmodel");
         setUpData();
         setUpQueries();
         setUpResults();
@@ -104,7 +109,6 @@ public abstract class QueryTestCase extends TestCase
     public void setUpData() throws Exception {
         long start = new Date().getTime();
         data();
-        ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
         try {
             writer.beginTransaction();
             Iterator iter = data.keySet().iterator();
@@ -128,7 +132,6 @@ public abstract class QueryTestCase extends TestCase
     }
     
     public void tearDownData() throws Exception {
-        ObjectStoreWriter writer = new ObjectStoreWriterOjbImpl(db);
          try {
             writer.beginTransaction();
             Iterator iter = data.keySet().iterator();

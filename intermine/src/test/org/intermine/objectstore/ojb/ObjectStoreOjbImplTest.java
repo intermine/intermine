@@ -30,15 +30,12 @@ import org.flymine.model.testmodel.*;
 
 public class ObjectStoreOjbImplTest extends QueryTestCase
 {
-    private ObjectStoreOjbImpl os;
-
     public ObjectStoreOjbImplTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        os = ObjectStoreOjbImpl.getInstance(db);
         //Thread.sleep(10000);
     }
 
