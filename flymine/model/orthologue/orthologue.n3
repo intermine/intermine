@@ -17,8 +17,3 @@
 :Paralogue a owl:Class;
     rdfs:subClassOf :Relation.
 
-:INPARANOIDResult a owl:Class;
-    rdfs:subClassOf :ComputationalResult.
-
-:INPARANOIDAnalysis a owl:Class;
-    rdfs:subClassOf :ComputationalAnalysis.
