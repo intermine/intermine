@@ -89,6 +89,15 @@
 
         </form>
 
+        <form name="fqlQueryForm">
+
+            <field property="querystring"
+                    depends="required,email">
+                <arg0   key="prompt.querystring"/>
+            </field>
+
+        </form>
+
 
     </formset>
 
