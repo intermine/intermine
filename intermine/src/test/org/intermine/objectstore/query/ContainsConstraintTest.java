@@ -52,10 +52,34 @@ public class ContainsConstraintTest extends TestCase {
     public void testIncompatibleTypesReference() throws Exception {
         try {
             // objRef has type Manager, qc3 is type Employee
-            constraint = new ContainsConstraint(objRef, 1, qc3);
+            constraint = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc3);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    public void testEquals() throws Exception {
+        ContainsConstraint cc1 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
+        ContainsConstraint cc2 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
+        ContainsConstraint cc3 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc4 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2, true);
+
+        assertEquals(cc1, cc1);
+        assertEquals(cc1, cc2);
+        assertTrue("Expected cc1 to not equal cc3:", !cc1.equals(cc3));
+        assertTrue("Expected cc3 to not equal cc4:", !cc3.equals(cc4));
+    }
+
+        public void testHashCode() throws Exception {
+        ContainsConstraint cc1 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
+        ContainsConstraint cc2 = new ContainsConstraint(collRef, ContainsConstraint.CONTAINS, qc3);
+        ContainsConstraint cc3 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2);
+        ContainsConstraint cc4 = new ContainsConstraint(objRef, ContainsConstraint.CONTAINS, qc2, true);
+
+        assertEquals(cc1.hashCode(), cc1.hashCode());
+        assertEquals(cc1.hashCode(), cc2.hashCode());
+        assertTrue("Expected cc1.hashCode() to not equal cc3.hashCode():", cc1.hashCode() != cc3.hashCode());
+        assertTrue("Expected cc3.hashCode() to not equal cc4.hashCode():", cc3.hashCode() != cc4.hashCode());
     }
 
 }
