@@ -10,19 +10,16 @@ package org.intermine.web;
  *
  */
 
-import java.util.List;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.query.Results;
-import org.intermine.web.results.PagedResults;
+import org.apache.struts.util.MessageResources;
 
 /**
  * Action to handle submit from the template page. <code>setSavingQueries</code>
@@ -67,6 +64,8 @@ public class TemplateAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         String queryName = request.getParameter("queryName");
         String templateType = request.getParameter("templateType");
+        boolean saveQuery = (request.getParameter("noSaveQuery") == null);
+        boolean skipBuilder = (request.getParameter("skipBuilder") != null);
         
         if (templateType == null) {
             templateType = (String) session.getAttribute("templateType");
@@ -80,62 +79,18 @@ public class TemplateAction extends InterMineAction
         
         TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
         PathQuery queryCopy = TemplateHelper.templateFormToQuery((TemplateForm) form, template);
-        
         SessionMethods.loadQuery(queryCopy, request.getSession());
         form.reset (mapping, request);
-        return handleTemplateQuery(mapping, request, response,
-                                    (request.getParameter("skipBuilder") != null),
-                                    (request.getParameter("noSaveQuery") == null));
-    }
-    
-    /**
-     * Called after the form has been read and the query has been loaded into the session.
-     * Decides whether to forward to the query builder, the results page or to an object
-     * details page.
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @param skipBuilder If true then skip query builder
-     * @param saveQuery If true then query is saved automatically in user's query history
-     * @return an ActionForward object defining where control goes next
-     *
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    protected ActionForward handleTemplateQuery(ActionMapping mapping,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response,
-                                                boolean skipBuilder,
-                                                boolean saveQuery)
-                                                 
-        throws Exception {
-        HttpSession session = request.getSession();
         
-        if (skipBuilder) {
-            RunQueryMonitor monitor = new RunQueryMonitor() {
-                public boolean queryProgress(HttpServletRequest request, Results r) {
-                    return true;
-                }
-            };
-            
-            // If the form wants to skip the query builder we need to execute the query
-            if (!SessionMethods.runQuery (this, session, request, saveQuery, monitor)) {
-                return mapping.findForward("failure");
-            }
-            // Look at results, if only one result, go straight to object details page
-            PagedResults pr = (PagedResults) session.getAttribute (Constants.QUERY_RESULTS);
-            if (pr.getSize () == 1 && ((List) pr.getAllRows ().get(0)).size() == 1) {
-                Object o = ((List) pr.getAllRows ().get(0)).get(0);
-                if (o instanceof InterMineObject) {
-                    return new ActionForward("/objectDetails.do?id="
-                            + ((InterMineObject) o).getId()
-                            + "&trail=_" + ((InterMineObject) o).getId(), true);
-                }
-            }
-            return mapping.findForward("results");
-        } else {
+        if (!skipBuilder) {
             return mapping.findForward("query");
         }
+        
+        QueryMonitorTimeout clientState
+                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startQuery(clientState, session, messages, saveQuery);
+        return new ForwardParameters(mapping.findForward("waiting"))
+                            .addParameter("qid", qid).forward();
     }
 }

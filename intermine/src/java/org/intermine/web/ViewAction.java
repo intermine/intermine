@@ -10,20 +10,19 @@ package org.intermine.web;
  *
  */
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
+import org.apache.struts.util.MessageResources;
 import org.intermine.web.results.ChangeResultsSizeForm;
 
 /**
- * Action to handle buttons on view tile.
+ * Action to run constructed query.
  * 
  * @author Mark Woodbridge
  * @author Tom Riley
@@ -54,26 +53,11 @@ public class ViewAction extends InterMineAction
             resultsForm.reset(mapping, request);
         }
 
-        final OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
-        String msg = getResources(request).getMessage("query.runningquery");
-        writer.write(msg);
-        writer.flush();
-
-        RunQueryMonitorDots monitor = new RunQueryMonitorDots(writer);
-        
-        String destUrl = null;
-        
-        if (SessionMethods.runQuery(this, session, request, true, monitor)) {
-            destUrl = mapping.findForward("results").getPath();
-        } else {
-            destUrl = mapping.findForward("query").getPath();
-        }
-        
-        try {
-            monitor.forwardClient(request.getContextPath() + destUrl);
-        } catch (IOException _) {
-            // user cancelled - swallow
-        }
-        return null;
+        QueryMonitorTimeout clientState
+                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startQuery(clientState, session, messages, true);
+        return new ForwardParameters(mapping.findForward("waiting"))
+                            .addParameter("qid", qid).forward();
     }
 }
