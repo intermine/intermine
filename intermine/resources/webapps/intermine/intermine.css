@@ -13,6 +13,9 @@ a:hover {
 img { 
   border: none;
 }
+form { 
+  margin: 0px
+}
 
 .links, .footer {
   font-size: small;
