@@ -50,17 +50,27 @@ public class DBRetrieverTask extends ConverterTask
             throw new BuildException("model attribute is not set");
         }
 
+        ObjectStoreWriter osw = null;
+        ItemWriter writer = null;
         try {
             Database db = DatabaseFactory.getDatabase(database);
             Model m = Model.getInstanceByName(model);
-            ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            writer = new ObjectStoreItemWriter(osw);
             DBReader reader = new ReadAheadDBReader(db, m);
             System.err .println("Processing data from DB " + db.getURL());
-            new DBConverter(m, db, reader, new ObjectStoreItemWriter(osw)).process();
+            new DBConverter(m, db, reader, writer).process();
             reader.close();
             doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
+        } finally {
+            try {
+                writer.close();
+                osw.close();
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
         }
     }
 }

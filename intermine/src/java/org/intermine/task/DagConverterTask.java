@@ -86,14 +86,23 @@ public class DagConverterTask extends Task
             throw new BuildException("termClass attribute is not set");
         }
 
+        ObjectStoreWriter osw = null;
+        ItemWriter writer = null;
         try {
-            ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
-            ItemWriter writer = new ObjectStoreItemWriter(osw);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            writer = new ObjectStoreItemWriter(osw);
 
             DagConverter converter = new DagConverter(writer, file, dagName, termClass);
             converter.process();
         } catch (Exception e) {
             throw new BuildException(e);
+        } finally {
+            try {
+                writer.close();
+                osw.close();
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
         }
     }
 }

@@ -94,9 +94,11 @@ public class FileConverterTask extends ConverterTask
             throw new BuildException("model attribute is not set");
         }
 
+        ObjectStoreWriter osw = null;
+        ItemWriter writer = null;
         try {
-            ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
-            ItemWriter writer = new ObjectStoreItemWriter(osw);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            writer = new ObjectStoreItemWriter(osw);
 
             Class c = Class.forName(clsName);
             if (!FileConverter.class.isAssignableFrom(c)) {
@@ -120,10 +122,16 @@ public class FileConverterTask extends ConverterTask
                 converter.process(new BufferedReader(new FileReader(f)));
             }
             converter.close();
-            writer.close();
             doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
+        } finally {
+            try {
+                writer.close();
+                osw.close();
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ import junit.framework.TestCase;
 public class ItemToObjectTranslatorFunctionalTest extends TestCase
 {
     List items;
-    
+
     public ItemToObjectTranslatorFunctionalTest(String arg) {
         super(arg);
     }
@@ -50,6 +50,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
             itemWriter.store(ItemHelper.convert((Item) i.next()));
         }
         itemWriter.close();
+        osw.close();
     }
 
     public void tearDown() throws Exception {
@@ -70,7 +71,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         osw.commitTransaction();
         osw.close();
     }
- 
+
     public void testTranslation() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         ObjectStore sub = ObjectStoreFactory.getObjectStore("os.unittest");

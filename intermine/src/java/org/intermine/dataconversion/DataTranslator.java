@@ -647,7 +647,7 @@ public class DataTranslator
     protected Item getReference(Item item, String refName) throws ObjectStoreException {
         Reference ref = item.getReference(refName);
         return (ref == null ? null : ItemHelper.convert(srcItemReader.getItemById(ref.getRefId())));
-    }    
+    }
 
     /**
      * Retrieve an Iterator over the elements of a collection field of an Item
@@ -720,5 +720,6 @@ public class DataTranslator
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();
+        oswTgt.close();
     }
 }
