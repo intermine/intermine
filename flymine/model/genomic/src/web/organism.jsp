@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- organism.jsp -->
 <fmt:setBundle basename="model"/>
