@@ -25,6 +25,8 @@ import org.intermine.metadata.*;
 import org.intermine.util.TypeUtil;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.ontology.OntologyUtil;
+import org.intermine.model.InterMineObject;
 
 /**
  * Convert a InterMine metadata model to a Jena OntModel.
@@ -101,7 +103,14 @@ public class InterMine2Owl
      * @return the OntClass
      */
     protected OntClass getOntClass(ClassDescriptor cld, OntModel ont) {
-        String uri =  cld.getModel().getNameSpace() + TypeUtil.unqualifiedName(cld.getName());
+        String uri;
+
+        if (cld.getName().equals(InterMineObject.class.getName())) {
+            uri = OntologyUtil.getNamespaceFromClassName(InterMineObject.class.getName());
+        } else {
+            uri = cld.getModel().getNameSpace() + TypeUtil.unqualifiedName(cld.getName());
+        }
+
         OntClass ontCls = ont.getOntClass(uri);
         if (ontCls == null) {
             ontCls = ont.createClass(uri);
