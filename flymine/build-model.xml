@@ -156,7 +156,7 @@
 
   <!-- Targets that could be called from another build script -->
   <target name="build-model-from-xml" depends="compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
-          description="Build a usable model from a .zargo file">
+          description="Build a usable model from a FlyMine model XML file">
   </target>
 
   <target name="build-model-from-zargo" depends="generate-xmi-model, compile-java, generate-ojb-mapping, generate-xml-mapping, generate-torque"
