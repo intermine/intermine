@@ -75,7 +75,7 @@ public class MergeOwl
                                                + "(was: " + format + ")");
         }
         OntModel source = ModelFactory.createOntologyModel();
-        source.read(sourceOwl, null, format);
+        source.read(sourceOwl, "owl", format);
         mergeByEquivalence(source, srcNamespace);
     }
 
@@ -115,7 +115,7 @@ public class MergeOwl
         while (stmtIter.hasNext()) {
             Statement stmt = (Statement) stmtIter.next();
             Resource subject = stmt.getSubject();
-            if (subject.getNameSpace().equals(srcNamespace)) {
+            if (!subject.isAnon() && subject.getNameSpace().equals(srcNamespace)) {
                 if (stmt.getPredicate().getNameSpace().equals(OntologyUtil.RDF_NAMESPACE)
                     && stmt.getPredicate().getLocalName().equals("type")) {
                     if (!equiv.containsKey(subject.getURI())) {
@@ -134,6 +134,13 @@ public class MergeOwl
                     }
                     statements.add(tgtModel.createStatement(subject, stmt.getPredicate(), object));
                 }
+            } else if (subject.isAnon()) {
+                subject = getTargetResource(subject, srcNamespace);
+                RDFNode object = stmt.getObject();  // RDFNode can be Resource or literal
+                if (object instanceof Resource) {
+                    object = getTargetResource((Resource) object, srcNamespace);
+                }
+                statements.add(tgtModel.createStatement(subject, stmt.getPredicate(), object));
             }
         }
         tgtModel.add(statements);
@@ -149,7 +156,7 @@ public class MergeOwl
     protected Resource getTargetResource(Resource res, String srcNamespace) {
         if (equiv.containsKey(res.getURI())) {
             return (Resource) equiv.get(res.getURI());
-        } else if (res.getNameSpace().equals(srcNamespace)) {
+        } else if (!res.isAnon() && res.getNameSpace().equals(srcNamespace)) {
             return tgtModel.createResource(tgtNamespace + res.getLocalName());
         }
         return res;

@@ -83,6 +83,40 @@ public class MergeOwlTest extends TestCase
     }
 
 
+    public void testMergeByEquivalenceAnonymous() throws Exception {
+        String owl = "@prefix : <" + src1Namespace + "> ." + ENDL
+            + ENDL
+            + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
+            + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
+            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
+            + ENDL
+            + ":LtdCompany a owl:Class ;" + ENDL
+            + "         rdfs:subClassOf" + ENDL
+            + "            [ a owl:Restriction ;" + ENDL
+            + "              owl:maxCardinality \"1\" ;" + ENDL
+            + "              owl:onProperty :ceo ] ." + ENDL
+            + ":companyName a rdf:Property ;" + ENDL
+            + "             rdfs:domain :LtdCompany ." + ENDL
+            + ":vatNumber a rdf:Property ;" + ENDL
+            + "           rdfs:domain :LtdCompany ." + ENDL
+            + ":Address a owl:Class ." + ENDL
+                        + ":CEO a owl:Class ." + ENDL
+            + ":ceo a rdfs:Property ;" + ENDL
+            + "             rdfs:domain :Company ;" + ENDL
+            + "             rdfs:range :CEO ." + ENDL;
+
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+
+        OntModel src1 = ModelFactory.createOntologyModel();
+        src1.read(new StringReader(owl), null, "N3");
+
+        merger.mergeByEquivalence(src1, src1Namespace);
+
+        assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
+        OntClass ontCls1 = merger.tgtModel.getOntClass(tgtNamespace + "Company");
+        OntProperty ontProp1 = merger.tgtModel.getOntProperty(tgtNamespace + "ceo");
+        assertTrue(OntologyUtil.hasMaxCardinalityOne(merger.tgtModel, ontProp1, ontCls1));
+    }
 
     // getTargetResource() should find resource from equiv Map
     public void testGetTargetResourceExists() throws Exception {
@@ -237,59 +271,8 @@ public class MergeOwlTest extends TestCase
         assertTrue(s.getResource().equals(subject));
     }
 
-    // =================================================================================
+    //================================================================================================
 
-//     public void testWriteTargetModel() throws Exception {
-//         String mergeSpec = getMergeSpec();
-
-//         String src1Str = "@prefix : <" + src1Namespace + "> ." + ENDL
-//             + ENDL
-//             + "@prefix rdf:  <" + OntologyUtil.RDF_NAMESPACE + "> ." + ENDL
-//             + "@prefix rdfs: <" + OntologyUtil.RDFS_NAMESPACE + "> ." + ENDL
-//            + "@prefix owl:  <" + OntologyUtil.OWL_NAMESPACE + "> ." + ENDL
-//             + ENDL
-//             + ":LtdCompany rdf:type owl:Class ." + ENDL
-//             + ":Address rdf:type owl:Class ." + ENDL
-//             + ":companyName rdf:type rdf:Property ;" + ENDL
-//             + "             rdfs:domain :LtdCompany ." + ENDL
-//             + ":postcode rdf:type rdf:Property ;" + ENDL
-//             + "          rdfs:domain :Address ." + ENDL;
-
-
-//         String owl = "<?xml version=\"1.0\"?>" + ENDL
-//             + "<!DOCTYPE rdf:RDF [" + ENDL
-//             + "<!ENTITY rdf  \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" >" + ENDL
-//             + "<!ENTITY rdfs \"http://www.w3.org/2000/01/rdf-schema#\" >" + ENDL
-//             + "<!ENTITY owl  \"http://www.w3.org/2002/07/owl#\" >" + ENDL
-//             + "]>" + ENDL
-//             + "<rdf:RDF" + ENDL
-//             + "xmlns     =\"&owl;\"" + ENDL
-//             + "xmlns:owl =\"&owl;\"" + ENDL
-//             + "xml:base  =\"http://www.w3.org/2002/07/owl\"" + ENDL
-//             + "xmlns:rdf =\"&rdf;\"" + ENDL
-//             + "xmlns:rdfs=\"&rdfs;\">" + ENDL
-//             + ENDL
-//             + "<owl:class rdf:ID=\"Company\">" + ENDL
-//             + "  <rdfs:subClassOf>" + ENDL
-//             + "    <owl:restriction>" + ENDL
-//             + "      <owl:onProperty rdf:resource=\"goalie\"/>" + ENDL
-//             + "      <owl:cardinality>1</owl:cardinality>" + ENDL
-//             + "    </owl:restriction>" + ENDL
-//             + "  </rdfs:subClassOf>" + ENDL
-//             + "</owl:class>" + ENDL
-//             + "</rdf:RDF>" + ENDL;
-
-//         //MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
-//         OntModel owlModel = ModelFactory.createOntologyModel();
-//         //src1.read(new StringReader(getSrc1()), null, "N3");
-//         owlModel.read(new StringReader(owl), null, "RDF/XML");
-
-//         //merger.mergeByEquivalence(src1, src1Namespace);
-//         File out = new File("/home/rns/tgt.owl");
-
-//         //OntModel tgtModel = merger.getTargetModel();
-//         owlModel.write(new BufferedWriter(new FileWriter(out)), "N3");
-//     }
 
     private boolean hasStatement(OntModel model, OntResource subject, String predicate, OntResource object) {
         Iterator stmtIter = model.listStatements();
@@ -341,6 +324,7 @@ public class MergeOwlTest extends TestCase
             + "           rdfs:domain :LtdCompany ." + ENDL
             + ":Address a owl:Class ." + ENDL;
     }
+
 
     private String getSrc2() {
         return "@prefix : <" + src2Namespace + "> ." + ENDL
