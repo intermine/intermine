@@ -56,7 +56,7 @@ public class FeatureFMTemplateTest extends FlyMineFixture {
     super.tearDown();
   }
 
-    public void testThatPasses() Expection {
+    public void testThatPasses() throws Exception {
         // see comment below
         // this test is here so that JUnit doesn't complain that there are no tests
     }
