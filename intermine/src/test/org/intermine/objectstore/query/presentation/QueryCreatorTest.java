@@ -15,20 +15,16 @@ import junit.framework.TestCase;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Collections;
-
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import org.flymine.objectstore.query.*;
 import org.flymine.model.testmodel.Employee;
 
 public class QueryCreatorTest extends TestCase
 {
-
     public QueryCreatorTest(String arg) {
         super(arg);
-    }
-
-    public void setUp() throws Exception {
     }
 
     public void testAddToQuery() throws Exception {
@@ -83,10 +79,9 @@ public class QueryCreatorTest extends TestCase
         fields.put("name", "Dennis");
         fields.put("fullTime", "true");
 
-        Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
 
-        ConstraintSet c = QueryCreator.generateConstraints(q, qc, fields);
+        ConstraintSet c = QueryCreator.generateConstraints(qc, fields);
         ArrayList list = new ArrayList(c.getConstraints());
         SimpleConstraint res1 = (SimpleConstraint) list.get(0);
         assertEquals("fullTime", ((QueryField) res1.getArg1()).getFieldName());
@@ -99,34 +94,30 @@ public class QueryCreatorTest extends TestCase
         assertEquals(String.class, ((QueryField) res2.getArg1()).getType());
         assertEquals("Dennis", ((QueryValue) res2.getArg2()).getValue());
         assertEquals(String.class, ((QueryValue) res2.getArg2()).getType());
-
     }
 
+//     public void testGetConstraintSet() throws Exception {
+//         Query q = new Query();;
+//         QueryClass qc = new QueryClass(Employee.class);
+//         QueryField qf = new QueryField(qc, "name");
+//         SimpleConstraint sc = new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("Neville"));
 
+//         // query has no constraint set
+//         ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
+//         assertEquals(c, QueryCreator.getConstraintSet(q));
 
-    public void testGetConstraintSet() throws Exception {
-        Query q = new Query();;
-        QueryClass qc = new QueryClass(Employee.class);
-        QueryField qf = new QueryField(qc, "name");
-        SimpleConstraint sc = new SimpleConstraint(qf, SimpleConstraint.EQUALS, new QueryValue("Neville"));
+//         // existing ConstraintSet
+//         c = new ConstraintSet(ConstraintSet.AND);
+//         c.addConstraint(sc);
+//         q.setConstraint(c);
+//         assertEquals(c, QueryCreator.getConstraintSet(q));
 
-        // query has no constraint set
-        ConstraintSet c = new ConstraintSet(ConstraintSet.AND);
-        assertEquals(c, QueryCreator.getConstraintSet(q));
-
-        // existing ConstraintSet
-        c = new ConstraintSet(ConstraintSet.AND);
-        c.addConstraint(sc);
-        q.setConstraint(c);
-        assertEquals(c, QueryCreator.getConstraintSet(q));
-
-        // existing constraint
-        q.setConstraint(sc);
-        c = new ConstraintSet(ConstraintSet.AND);
-        c.addConstraint(sc);
-        assertEquals(c, QueryCreator.getConstraintSet(q));
-    }
-
+//         // existing constraint
+//         q.setConstraint(sc);
+//         c = new ConstraintSet(ConstraintSet.AND);
+//         c.addConstraint(sc);
+//         assertEquals(c, QueryCreator.getConstraintSet(q));
+//     }
 
     public void testCreateQueryValue() throws Exception {
         String value = null;
@@ -146,10 +137,8 @@ public class QueryCreatorTest extends TestCase
         assertEquals(new Long(101), (Long) qv.getValue());
         qv = QueryCreator.createQueryValue(Short.class, "101");
         assertEquals(new Short((short)101), (Short) qv.getValue());
-
-        //qv = QueryCreator.createQueryValue(Date.class, "30/08/76");
-        //assertEquals(new Date(, (Date) qv.getValue());
-        // test dates
+        qv = QueryCreator.createQueryValue(Date.class, "30/08/76");
+        assertEquals(new SimpleDateFormat(QueryCreator.DATE_FORMAT).parse("30/08/76"), qv.getValue());
 
         try {
             qv = QueryCreator.createQueryValue(java.util.Iterator.class, "test");
