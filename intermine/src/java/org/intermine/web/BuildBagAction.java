@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
+import java.io.StringReader;
 import java.io.InputStreamReader;
 
 import org.apache.struts.action.ActionForm;
@@ -62,53 +63,38 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         String trimmedText = buildBagForm.getText().trim();
         FormFile formFile = buildBagForm.getFormFile();
 
+        BufferedReader reader = null;
+        
         if (trimmedText.length() == 0) {
             if (formFile.getFileName() == null || formFile.getFileName().length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagToSave"), request);
-
                 return mapping.findForward("buildBag");
             } else {
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(formFile.getInputStream()));
-
-                StringBuffer buffer = new StringBuffer();
-                String thisLine;
-                while ((thisLine = reader.readLine()) != null) {
-                    StringTokenizer st = new StringTokenizer(thisLine, " \n\t");
-                    while (st.hasMoreTokens()) {
-                        String token = st.nextToken();
-                        bag.add(token);
-
-                        if (bag.size() > maxBagSize) {
-                            ActionMessage actionMessage =
-                                new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                            recordError(actionMessage, request);
-
-                            return mapping.findForward("buildBag");
-                        }
-                    }
-                }
+                reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
             }
         } else {
             if (formFile.getFileName() == null || formFile.getFileName().length() == 0) {
-                StringTokenizer st = new StringTokenizer(trimmedText, " \n\t");
-                while (st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    bag.add(token);
-
-                    if (bag.size() > maxBagSize) {
-                        ActionMessage actionMessage =
-                            new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                        recordError(actionMessage, request);
-
-                        return mapping.findForward("buildBag");
-                    }
-
-                }
+                reader = new BufferedReader(new StringReader(trimmedText));
             } else {
                 recordError(new ActionMessage("bagBuild.textAndFilePresent"), request);
-
                 return mapping.findForward("buildBag");
+            }
+        }
+
+        String thisLine;
+        while ((thisLine = reader.readLine()) != null) {
+            StringTokenizer st = new StringTokenizer(thisLine, " \n\t");
+            while (st.hasMoreTokens()) {
+                String token = st.nextToken();
+                bag.add(token);
+
+                if (bag.size() > maxBagSize) {
+                    ActionMessage actionMessage =
+                        new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                    recordError(actionMessage, request);
+
+                    return mapping.findForward("buildBag");
+                }
             }
         }
 
