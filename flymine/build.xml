@@ -139,6 +139,7 @@
     <pathelement location="${build.model}/psi"/>
     <pathelement location="${build.model}/go"/>
     <pathelement location="${build.model}/taxonomy"/>
+    <pathelement location="${build.model}/protein_structure"/>
   </path>
 
   <path id="project.class.path">
@@ -510,19 +511,59 @@
       <arg value="N3" />
       <arg value="y" />
     </java>
-
   </target>
 
+  <!-- PROTEIN_STRUCTURE MODEL GENERATION -->
+
+  <target name="protein_structure-to-owl" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-xmlschema" inheritRefs="true">
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="model.name" value="protein_structure"/>
+      <property name="package.prefix" value="org.flymine.model"/>
+      <property name="namespace" value="http://www.flymine.org/model/protein_structure#"/>
+    </ant>    
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/protein_structure/protein_structure_model.xml" />
+      <arg value="${build.model}/protein_structure/protein_structure.n3" />
+      <arg value="N3" />
+    </java>
+  </target>
+  
+  <!-- merge protein_structure model with current genomic model owl -->
+  <target name="merge-protein_structure-model" depends="prepare-genomic-model, protein_structure-to-owl">
+    <copy file="${model}/protein_structure/protein_structure_merge_spec.n3" todir="${build.model}/protein_structure/"/>
+    <!-- combine the protein_structure merge_spec with current genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/protein_structure/protein_structure_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+    <!-- merge protein_structure model with target genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" >
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/protein_structure/protein_structure.n3" />
+      <arg value="http://www.flymine.org/model/protein_structure#" />
+      <arg value="N3" />
+      <arg value="y" />
+    </java>
+  </target>
 
   <!-- PSI MODEL GENERATION -->
 
   <!-- convert PSI-DEV XML-Schema to OWL -->
   <target name="psi-to-owl" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-xmlschema" inheritRefs="true">
-      <property name="model.name" value="psi"/>
-      <property name="pkg" value="org.flymine.model.psi"/>
-      <property name="build.model.dir" value="${build.model}/psi"/>
       <reference torefid="class.path" refid="models.class.path"/>
+      <property name="model.name" value="psi"/>
+      <property name="package.prefix" value="org.flymine.model"/>
+      <property name="namespace" value="http://www.flymine.org/model/psi#"/>
     </ant>    
 
      <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
@@ -1296,6 +1337,39 @@
 
   <target name="build-mage-production" depends="retrieve-mage, translate-mage, load-mage"/>
 
+  <!-- PROTEIN_STRUCTURE PIPELINE -->
+
+  <target name="retrieve-protein_structure" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.protein_structure-src-items-std"/>
+    </ant>
+    
+    <taskdef name="convert-xml" classname="org.intermine.task.XmlConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <convert-xml schema="${model}/protein_structure/protein_structure.xsd"
+                 model="protein_structure"
+                 osName="osw.protein_structure-src-items">
+      <fileset dir="/shared/data/kenji" includes="**/*.xml"/>
+    </convert-xml>
+    
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+    </ant>
+    
+    <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <analyse-db database="db.common-src-items"/>
+  </target>
+  
   <!-- GO PIPELINE -->
 
   <!-- load go dag data -->
@@ -1908,7 +1982,6 @@
     </ant>
   </target>
 
-
   <!-- ============================================================================== -->
 
   <!-- JAVADOC TARGETS -->
@@ -1953,7 +2026,6 @@
   <target name="dot-mage" depends="compile-mage-model">
     <dot directory="${build.model}/mage" packagename="MAGEOM" file="mage.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
   </target>
-
 
   <!-- PACKAGING/DISTRIBUTION TARGETS -->
 
