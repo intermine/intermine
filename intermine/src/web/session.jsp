@@ -1,5 +1,3 @@
-<%@ taglib uri="/WEB-INF/struts-bean-el.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <h3>Application</h3>
