@@ -1,0 +1,80 @@
+package org.flymine.sql.query;
+
+import junit.framework.*;
+
+public class AbstractConstraintTest extends TestCase
+{
+    public AbstractConstraintTest(String arg1) {
+        super(arg1);
+    }
+
+    public void testAlterComparisonNotThis() throws Exception {
+        assertEquals(AbstractConstraint.OPPOSITE,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.EQUAL));
+        assertEquals(AbstractConstraint.EQUAL,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.OPPOSITE));
+        assertEquals(AbstractConstraint.EXCLUDES,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.IMPLIED_BY));
+        assertEquals(AbstractConstraint.OR,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.IMPLIES));
+        assertEquals(AbstractConstraint.IMPLIED_BY,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.EXCLUDES));
+        assertEquals(AbstractConstraint.IMPLIES,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.OR));
+        assertEquals(AbstractConstraint.INDEPENDENT,
+                AbstractConstraint.alterComparisonNotThis(AbstractConstraint.INDEPENDENT));
+    }
+
+    public void testAlterComparisonNotObj() throws Exception {
+        assertEquals(AbstractConstraint.OPPOSITE,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.EQUAL));
+        assertEquals(AbstractConstraint.EQUAL,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.OPPOSITE));
+        assertEquals(AbstractConstraint.OR,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.IMPLIED_BY));
+        assertEquals(AbstractConstraint.EXCLUDES,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.IMPLIES));
+        assertEquals(AbstractConstraint.IMPLIES,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.EXCLUDES));
+        assertEquals(AbstractConstraint.IMPLIED_BY,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.OR));
+        assertEquals(AbstractConstraint.INDEPENDENT,
+                AbstractConstraint.alterComparisonNotObj(AbstractConstraint.INDEPENDENT));
+    }
+
+    public void testAlterComparisonSwitch() throws Exception {
+        assertEquals(AbstractConstraint.EQUAL,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.EQUAL));
+        assertEquals(AbstractConstraint.OPPOSITE,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.OPPOSITE));
+        assertEquals(AbstractConstraint.IMPLIES,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.IMPLIED_BY));
+        assertEquals(AbstractConstraint.IMPLIED_BY,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.IMPLIES));
+        assertEquals(AbstractConstraint.EXCLUDES,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.EXCLUDES));
+        assertEquals(AbstractConstraint.OR,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.OR));
+        assertEquals(AbstractConstraint.INDEPENDENT,
+                AbstractConstraint.alterComparisonSwitch(AbstractConstraint.INDEPENDENT));
+    }
+
+    public void testAlterComparisonAORB() throws Exception {
+        assertEquals(AbstractConstraint.IMPLIES,
+                AbstractConstraint.alterComparisonAORB(AbstractConstraint.EQUAL,
+                    AbstractConstraint.INDEPENDENT));
+        assertEquals(AbstractConstraint.INDEPENDENT,
+                AbstractConstraint.alterComparisonAORB(AbstractConstraint.EXCLUDES,
+                    AbstractConstraint.IMPLIED_BY));
+        assertEquals(AbstractConstraint.IMPLIES,
+                AbstractConstraint.alterComparisonAORB(AbstractConstraint.EXCLUDES,
+                    AbstractConstraint.IMPLIES));
+    }
+
+    public void testAlterComparisonAnd() throws Exception {
+        assertEquals(AbstractConstraint.EQUAL,
+                AbstractConstraint.alterComparisonAnd(AbstractConstraint.IMPLIES,
+                    AbstractConstraint.IMPLIED_BY));
+    }
+}
+

@@ -71,6 +71,45 @@ public class ConstraintSet extends AbstractConstraint
      * @see AbstractConstraint#compare
      */
     public int compare(AbstractConstraint obj) {
-        return INDEPENDENT;
+        if (obj instanceof ConstraintSet) {
+            return alterComparisonAnd(internalCompare(obj),
+                    alterComparisonSwitch(((ConstraintSet) obj).internalCompare(this)));
+        }
+        return internalCompare(obj);
     }
+
+    /**
+     * Compare this ConstraintSet with another AbstractConstraint, ignoring aliases in member
+     * fields and tables. If obj is a ConstraintSet, then the comparison returned is loose - 
+     * that is, it accepts the possibility of an occurance that cannot actually happen. This is
+     * a safe operation, but to get a correct result, one should combine A.internalCompare(B) with
+     * B.internalCompare(A), using the AbstractConstraint.alterComparisonAnd method. Even then,
+     * we have not written a proof that this method returns a completely strict comparison.
+     * 
+     * <br>Also, note that it is possible that this method will return values other than the seven
+     * recognised comparisons, if a ConstraintSet contains constraints that EXCLUDE each other or
+     * compare to each other with the OR comparison. This is alright - the value that the method
+     * has returned is merely more strict than the seven "useful" values are, and reflects the fact
+     * that one of the ConstraintSets is always true or false. We don't think we will be 
+     * constructing any such ConstraintSets, so it ought to be alright.
+     *
+     * @param obj an AbstractConstraint to compare to
+     * @return INDEPENDENT, IMPLIED_BY, IMPLIES, EQUAL, OPPOSITE, EXCLUDES, or OR, depending on the
+     * constraints.
+     */
+    protected int internalCompare(AbstractConstraint obj) {
+        int currentComp = 3; // This is a "A is false, but we don't know about B" comparison.
+                             // We use it because it is the identity, with the
+                             // AbstractConstraint.alterComparisonAORB operator. It happens to be
+                             // a subset of "A IMPLIES B".
+        Iterator consIter = cons.iterator();
+        while (consIter.hasNext()) {
+            AbstractConstraint con = (AbstractConstraint) consIter.next();
+            currentComp = alterComparisonSwitch(alterComparisonAORB(
+                        alterComparisonSwitch(currentComp),
+                        alterComparisonSwitch(con.compare(obj))));
+        }
+        return currentComp;
+    }
+
 }

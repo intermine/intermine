@@ -15,46 +15,46 @@ public abstract class AbstractConstraint
      * constraint.
      * <br>For example, "a &gt; 5" and "b &lt; 4".
      */
-    public static final int INDEPENDENT = 0;
+    public static final int INDEPENDENT = 15;
     /**
      * Describes one constraint as being implied by another constraint.
      * That is, if the second constraint is true, then the first constraint must also be true.
      * This can also be thought of as the first constraint being less restrictive than the second.
      * <br>For example, "a &gt; 5" and "a = 8".
      */
-    public static final int IMPLIED_BY = 1;
+    public static final int IMPLIED_BY = 13;
     /**
      * Describes one constraint as implying another constraint.
      * That is, if the first constraint is true, then the second constraint must also be true.
      * This can also be thought of as the first constraint being more restrictive than the second.
      * <br>For example, "a &gt; 5" and "a &gt; 2".
      */
-    public static final int IMPLIES = 2;
+    public static final int IMPLIES = 11;
     /**
      * Describes one constraint as being equal to another constraint.
      * That is, the result of the first constraint is always the same as the result of the second
      * constraint.
      */
-    public static final int EQUAL = 3;
+    public static final int EQUAL = 9;
     /**
      * Describes two constraints as being opposite to each other.
      * That is, the result of the first constraint is always the opposite of the result of the
      * second constraint.
      * <br>For example, "a &gt; 5" and "a &le; 5".
      */
-    public static final int OPPOSITE = 4;
+    public static final int OPPOSITE = 6;
     /**
      * Describes two constraints as being mutually exclusive.
      * That is, the results of both constraints cannot be true at the same time.
      * <br>For example, "a &gt; 5" and "a &lt; 5".
      */
-    public static final int EXCLUDES = 5;
+    public static final int EXCLUDES = 7;
     /**
      * Describes two constraints as following "constraint 1 OR constraint 2 IS TRUE".
      * That is, at least one of the results of the two constraints must be true.
      * <br>For example, "a &gt; 5" and "a &lt; 8".
      */
-    public static final int OR = 6;
+    public static final int OR = 14;
     
     /**
      * Returns a String representation of this AbstractConstraint object, suitable for forming
@@ -82,21 +82,12 @@ public abstract class AbstractConstraint
      * @return an alternative comparison value, for if this had been NOTed
      */
     protected static int alterComparisonNotThis(int comp) {
-        switch (comp) {
-            case EQUAL:
-                return OPPOSITE;
-            case OPPOSITE:
-                return EQUAL;
-            case IMPLIED_BY:
-                return EXCLUDES;
-            case IMPLIES:
-                return OR;
-            case EXCLUDES:
-                return IMPLIED_BY;
-            case OR:
-                return IMPLIES;
-        }
-        return INDEPENDENT;
+        boolean nThisNObj = ((comp & 1) == 1);
+        boolean nThisObj = ((comp & 2) == 2);
+        boolean thisNObj = ((comp & 4) == 4);
+        boolean thisObj = ((comp & 8) == 8);
+
+        return (nThisNObj ? 4 : 0) + (nThisObj ? 8 : 0) + (thisNObj ? 1 : 0) + (thisObj ? 2 : 0);
     }
 
     /**
@@ -109,21 +100,12 @@ public abstract class AbstractConstraint
      * @return an alternative comparison value, for if this had been NOTed
      */
     protected static int alterComparisonNotObj(int comp) {
-        switch (comp) {
-            case EQUAL:
-                return OPPOSITE;
-            case OPPOSITE:
-                return EQUAL;
-            case IMPLIED_BY:
-                return OR;
-            case IMPLIES:
-                return EXCLUDES;
-            case OR:
-                return IMPLIED_BY;
-            case EXCLUDES:
-                return IMPLIES;
-        }
-        return INDEPENDENT;
+        boolean nThisNObj = ((comp & 1) == 1);
+        boolean nThisObj = ((comp & 2) == 2);
+        boolean thisNObj = ((comp & 4) == 4);
+        boolean thisObj = ((comp & 8) == 8);
+
+        return (nThisNObj ? 2 : 0) + (nThisObj ? 1 : 0) + (thisNObj ? 8 : 0) + (thisObj ? 4 : 0);
     }
 
     /**
@@ -135,12 +117,62 @@ public abstract class AbstractConstraint
      * @return an alternative comparison value, for if this and obj had been switched
      */
     protected static int alterComparisonSwitch(int comp) {
-        switch (comp) {
-            case IMPLIES:
-                return IMPLIED_BY;
-            case IMPLIED_BY:
-                return IMPLIES;
-        }
-        return comp;
+        boolean nThisNObj = ((comp & 1) == 1);
+        boolean nThisObj = ((comp & 2) == 2);
+        boolean thisNObj = ((comp & 4) == 4);
+        boolean thisObj = ((comp & 8) == 8);
+
+        return (nThisNObj ? 1 : 0) + (nThisObj ? 4 : 0) + (thisNObj ? 2 : 0) + (thisObj ? 8 : 0);
+    }
+
+    /**
+     * Take a couple of integers as if they are values returned by compare, for this compared to A,
+     * and this compared to B, and return the value that compare should return for this compared
+     * to (A OR B).
+     *
+     * @param compA a previous comparison returned by compare for this.compare(A)
+     * @param compB a previous comparison returned by compare for this.compare(B)
+     * @return an alternative comparison, for this.compare(A OR B)
+     */
+    protected static int alterComparisonAORB(int compA, int compB) {
+        boolean nThisNA = ((compA & 1) == 1);
+        boolean nThisA = ((compA & 2) == 2);
+        boolean thisNA = ((compA & 4) == 4);
+        boolean thisA = ((compA & 8) == 8);
+
+        boolean nThisNB = ((compB & 1) == 1);
+        boolean nThisB = ((compB & 2) == 2);
+        boolean thisNB = ((compB & 4) == 4);
+        boolean thisB = ((compB & 8) == 8);
+
+        return (nThisNA && nThisNB ? 1 : 0) + (nThisA || nThisB ? 2 : 0) 
+            + (thisNA && thisNB ? 4 : 0) + (thisA || thisB ? 8 : 0);
+    }
+
+    /**
+     * Take a couple of integers as if they are values returned by compare, and assume that they
+     * are two loose (and possibly different) descriptions of the relation between the same two
+     * AbstractConstraints, and return a value that is a more strict description.
+     * For example, passing this method IMPLIES and IMPLIED_BY will return EQUAL.
+     *
+     * @param compA a previous comparison returned by compare.
+     * @param compB another previous comparison returned by compare for the same set of
+     *      AbstractConstraints.
+     * @return an alternative comparison which is the strictest comparison that can be infered from
+     *      from the two input comparisons.
+     */
+    protected static int alterComparisonAnd(int compA, int compB) {
+        boolean nThisNA = ((compA & 1) == 1);
+        boolean nThisA = ((compA & 2) == 2);
+        boolean thisNA = ((compA & 4) == 4);
+        boolean thisA = ((compA & 8) == 8);
+
+        boolean nThisNB = ((compB & 1) == 1);
+        boolean nThisB = ((compB & 2) == 2);
+        boolean thisNB = ((compB & 4) == 4);
+        boolean thisB = ((compB & 8) == 8);
+
+        return (nThisNA && nThisNB ? 1 : 0) + (nThisA && nThisB ? 2 : 0) 
+            + (thisNA && thisNB ? 4 : 0) + (thisA && thisB ? 8 : 0);
     }
 }

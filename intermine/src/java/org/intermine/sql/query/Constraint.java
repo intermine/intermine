@@ -187,6 +187,8 @@ public class Constraint extends AbstractConstraint
         } else if (obj instanceof NotConstraint) {
             NotConstraint objNC = (NotConstraint) obj;
             return alterComparisonNotObj(compare(objNC.con));
+        } else if (obj instanceof ConstraintSet) {
+            return alterComparisonSwitch(obj.compare(this));
         }
         // TODO: we shouldn't ever reach this bit of the code. Log?
         return INDEPENDENT;
