@@ -50,7 +50,7 @@ public class TemplatesController extends Action
         Iterator iter = templateQueries.values().iterator();
         
         while (iter.hasNext()) {
-            TemplateQuery template = (TemplateQuery)iter.next();
+            TemplateQuery template = (TemplateQuery) iter.next();
             if (category == null || category.equals(template.getCategory ())) {
                 templates.add(template);
             }

@@ -120,7 +120,10 @@ public class FeedbackForm extends ValidatorForm
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         
-        name = subject = message = email = "";
+        name = "";
+        subject = "";
+        message = "";
+        email = "";
         
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
         if (profile != null) {

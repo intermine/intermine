@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.io.IOException;
-import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
@@ -271,7 +270,8 @@ public class InitialiserPlugin implements PlugIn
      * If a specified class cannot be found in the model, the class is ignored and not added to
      * the category.
      */
-    private void loadClassCategories(ServletContext servletContext, ObjectStore os) throws ServletException {
+    private void loadClassCategories(ServletContext servletContext, ObjectStore os)
+                                                                       throws ServletException {
         List categories = new ArrayList();
         Map subcategories = new HashMap();
         InputStream in = servletContext.getResourceAsStream("/WEB-INF/classCategories.properties");
@@ -296,13 +296,13 @@ public class InitialiserPlugin implements PlugIn
             
             subcats = StringUtils.stripAll(subcats);
             
-            for (int i = 0 ; i < subcats.length ; i++) {
+            for (int i = 0;i < subcats.length;i++) {
                 String className = os.getModel().getPackageName() + "." + subcats[i];
                 if (os.getModel().hasClassDescriptor(className)) {
                     subcatlist.add(subcats[i]);
                 } else {
-                    LOG.warn("Category \"" + catname + "\" contains unknown class \"" + subcats[i] +
-                       "\"");
+                    LOG.warn("Category \"" + catname + "\" contains unknown class \"" + subcats[i]
+                        + "\"");
                 }
             }
             categories.add(catname);
