@@ -10,15 +10,12 @@
 <c:choose>
   <c:when test="${cld != null}">
   <%-- Go through all the items in the WebConfig for this object --%>
-  <table><tr>
     <c:if test="${empty webconfig.types[cld.name].longDisplayers}">
-      <td><tiles:insert name="/allFields.jsp" /></td>
+      <tiles:insert name="/allFields.jsp" />
     </c:if>
     <c:forEach items="${webconfig.types[cld.name].longDisplayers}" var="displayer">
-      <td><tiles:insert beanName="displayer" beanProperty="src"/></td>
+      <tiles:insert beanName="displayer" beanProperty="src"/>
     </c:forEach>
-  </tr></table>
-
   </c:when>
   <c:otherwise>
     <font class="resultsCellValue">
