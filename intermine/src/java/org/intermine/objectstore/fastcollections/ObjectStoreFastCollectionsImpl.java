@@ -10,6 +10,7 @@ package org.flymine.objectstore.fastcollections;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -122,11 +123,19 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                         String fieldName = (String) fieldEntry.getKey();
                         FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
                         if (field instanceof CollectionDescriptor) {
-                            Iterator bagIter = bag.iterator();
-                            while (bagIter.hasNext()) {
-                                TypeUtil.setFieldValue(bagIter.next(), fieldName, new HashSet());
-                            }
                             CollectionDescriptor coll = (CollectionDescriptor) field;
+                            Iterator bagIter = bag.iterator();
+                            if (HashSet.class.equals(coll.getCollectionClass())) {
+                                while (bagIter.hasNext()) {
+                                    TypeUtil.setFieldValue(bagIter.next(), fieldName,
+                                            new HashSet());
+                                }
+                            } else {
+                                while (bagIter.hasNext()) {
+                                    TypeUtil.setFieldValue(bagIter.next(), fieldName,
+                                            new ArrayList());
+                                }
+                            }
                             Query subQ = new Query();
                             QueryClass qc1 = new QueryClass(clazz);
                             QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
