@@ -395,7 +395,7 @@
       <classpath refid="test.class.path"/>
     </taskdef>
 
-    <insert-xml-data integrationWriter="integration.unittestsingle" xmlFile="${build.resources.test}/testmodel_data.xml" source="test">
+    <insert-xml-data integrationWriter="integration.unittestsingle" xmlFile="${build.resources.test}/testmodel_data.xml" sourceName="test">
       <classpath refid="test.class.path"/>
     </insert-xml-data>
   </target>
