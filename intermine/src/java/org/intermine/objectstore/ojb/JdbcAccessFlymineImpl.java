@@ -71,6 +71,7 @@ import java.sql.SQLException;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.sql.precompute.QueryOptimiser;
 
 /**
  * This Implementation of JdbcAccess overrides executeQuery to
@@ -128,6 +129,8 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
             // should probably put jdbc stuff somewhere else...?
             ConnectionManagerIF conMan = broker.serviceConnectionManager();
             Connection conn = conMan.getConnection();
+            sql = QueryOptimiser.optimise(sql,
+                    ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             ResultSet rs = stmt.executeQuery();

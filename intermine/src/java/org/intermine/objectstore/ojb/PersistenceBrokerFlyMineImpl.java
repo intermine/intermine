@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.sql.Database;
 
 /**
  * Extension of PersistenceBrokerImpl to allow execution of ObjectStore queries
@@ -18,6 +19,8 @@ import org.flymine.sql.query.ExplainResult;
  */
 public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
 {
+    private Database database;
+    
     /**
      * No argument constructor for testing purposes
      *
@@ -60,5 +63,23 @@ public class PersistenceBrokerFlyMineImpl extends PersistenceBrokerImpl
      */
     public ExplainResult explain(Query query, int start, int limit) {
         return ((JdbcAccessFlymineImpl) serviceJdbcAccess()).explainQuery(query, start, limit);
+    }
+
+    /**
+     * Sets the database object that this PersistenceBroker object carries around.
+     *
+     * @param db the Database object
+     */
+    public void setDatabase(Database db) {
+        database = db;
+    }
+
+    /**
+     * Gets the database object from this PersistenceBroker object.
+     *
+     * @return the Database object
+     */
+    public Database getDatabase() {
+        return database;
     }
 }

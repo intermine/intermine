@@ -78,6 +78,7 @@ public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactor
             throw new IllegalArgumentException("PersistenceBrokerClass is not set to "
                                                + "PersistenceBrokerFlyMineImpl in OJB.properties");
         }
+        ((PersistenceBrokerFlyMineImpl) pb).setDatabase(db);
         return (PersistenceBrokerFlyMineImpl) pb;
     }
 }
