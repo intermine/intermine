@@ -218,4 +218,35 @@ public class Query implements FromElement
             aliases.put(obj, "a" + (alias++) + "_");
         }
     }
+
+    /**
+     * Overrides Object.equals()
+     *
+     * @param obj and Object to compare to
+     * @return true if object is equivalent
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof Query) {
+            Query q = (Query) obj;
+            return (distinct == q.distinct) && select.equals(q.select)
+                && queryClasses.equals(q.queryClasses)
+                && (constraint != null) ? (constraint.equals(q.constraint)) : (q.constraint == null)
+                && groupBy.equals(q.groupBy) && orderBy.equals(q.orderBy)
+                && aliases.equals(q.aliases);
+        }
+        return false;
+    }
+
+    /**
+     * Overrides Object.hashCode().
+     *
+     * @return an arbitrary integer created from the contents of the Query
+     */
+    public int hashCode() {
+        return (distinct ? 29 : 0) + (5 * select.hashCode())
+            + (7 * queryClasses.hashCode())
+            + ((constraint != null) ? constraint.hashCode() : 31)
+            + (13 * groupBy.hashCode()) + (15 * orderBy.hashCode())
+            + (17 * aliases.hashCode());
+    }
 }
