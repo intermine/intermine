@@ -97,7 +97,7 @@ public class ChadoConvertor extends DataConvertor
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         ResultSet r = executeQuery(c, "SELECT * FROM " + clsName
                                    + " ORDER BY " + clsName + "_id LIMIT 1");
-	while (r.next()) {
+        while (r.next()) {
             String clsId = r.getObject(clsName + "_id").toString();
             Item item = new Item();
             item.setClassName(cld.getModel().getNameSpace() + clsName);
