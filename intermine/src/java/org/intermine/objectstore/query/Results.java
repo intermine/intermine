@@ -14,6 +14,7 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ojb.LazyCollection;
 
+
 /**
  * Results representation as a List of ResultRows
  * Extending AbstractList requires implementation of get(int) and size()
@@ -61,6 +62,7 @@ public class Results extends AbstractList
      * @param end the end index
      * @return the relevant ResultRows as a List
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @throws FlyMineException if an error occurs promoting proxies
      */
     public List range(int start, int end) throws ObjectStoreException, FlyMineException {
         List rows;
@@ -92,6 +94,7 @@ public class Results extends AbstractList
      * @param start the start row
      * @param end the end row
      * @return a List of ResultsRows made up of the ResultsRows in the individual batches
+     * @throws FlyMineException if an error occurs promoting proxies
      */
     protected List localRange(int start, int end) throws FlyMineException {
         List ret = new ArrayList();
@@ -251,7 +254,8 @@ public class Results extends AbstractList
                         if (Collection.class.isAssignableFrom(fields[i].getType())) {
                             Collection col = (Collection) fields[i].get(obj);
                             if (col instanceof LazyCollection) {
-                                Results res = new Results(((LazyCollection)fields[i].get(obj)).getQuery(), os);
+                                Query q = ((LazyCollection) fields[i].get(obj)).getQuery();
+                                Results res = new Results(q, os);
                                 fields[i].set(obj, res);
                             }
                         }
