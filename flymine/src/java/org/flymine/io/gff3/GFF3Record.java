@@ -31,15 +31,10 @@ public class GFF3Record
     private String type;
     private int start;
     private int end;
-    private double score;
+    private Double score;
     private String strand;
     private String phase;
     private Map attributes = new LinkedHashMap();
-
-    /**
-     * Flag to indicate that there is no score info.
-     */
-    private static final double NO_SCORE = Double.NEGATIVE_INFINITY;
 
     /**
      * Create a GFF3Record from a line of a GFF3 file
@@ -54,7 +49,13 @@ public class GFF3Record
         }
 
         sequenceID = st.nextToken();
+
         source = st.nextToken();
+
+        if (source.equals("") || source.equals(".")) {
+            source = null;
+        }
+
         type = st.nextToken();
 
         String startString = st.nextToken();
@@ -73,11 +74,11 @@ public class GFF3Record
 
         String scoreString = st.nextToken();
 
-        if (scoreString.equals("") || scoreString.equals(".") || scoreString.equals("0")) {
-            score = NO_SCORE;
+        if (scoreString.equals("") || scoreString.equals(".")) {
+            score = null;
         } else {
             try {
-                score = Double.parseDouble(scoreString);
+                score = new Double(scoreString);
             } catch (NumberFormatException nfe) {
                 throw new IOException("can not parse score: " + scoreString);
             }
@@ -85,7 +86,15 @@ public class GFF3Record
 
         strand = st.nextToken();
 
+        if (strand.equals("") || strand.equals(".")) {
+            strand = null;
+        }
+
         phase = st.nextToken();
+
+        if (phase.equals("") || phase.equals(".")) {
+            phase = null;
+        }
 
         if (st.hasMoreTokens()) {
             parseAttribute(st.nextToken(), line);
@@ -178,7 +187,7 @@ public class GFF3Record
      * Return the score field of this record.
      * @return the score field of this record
      */
-    public double getScore () {
+    public Double getScore () {
         return score;
     }
 
