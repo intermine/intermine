@@ -120,7 +120,7 @@ public class ChangeResultsSizeAction extends Action
             if (commaIndex == -1) {
                 int column = Integer.parseInt(selectedObject);
 
-                for (Iterator rowIterator = pt.getRows().iterator();
+                for (Iterator rowIterator = pt.getAllRows().iterator();
                      rowIterator.hasNext();) {
                     List thisRow = (List) rowIterator.next();
                     bag.add(thisRow.get(column));
