@@ -4,11 +4,11 @@
 
 	<artheader>
 		<date>2003-04-17</date>
-		<title>Using the FlyMine Query Optimiser as a standalone module</title>
+		<title>Using the InterMine Query Optimiser as a standalone module</title>
 	</artheader>
 
-	<para>The FlyMine Query Optimiser can be used by itself in a number of ways, depending on your needs.
-		All options require the <filename>flymine.jar</filename> file to be in your classpath.
+	<para>The InterMine Query Optimiser can be used by itself in a number of ways, depending on your needs.
+		All options require the <filename>intermine.jar</filename> file to be in your classpath.
 		See the <ulink url="../building">download/building instructions</ulink> for details of how to obtain this file.</para>
 
 	<sect1>
@@ -40,9 +40,9 @@
 			<itemizedlist>
 				<listitem><highlights>Create your database as normal</highlights>.
 					Completely set up the entire database, populate it with all data, and commit to never changing that data again.</listitem>
-				<listitem><highlights>Configure the Flymine Optimiser to access that database</highlights>.
-					This is done by editing the flymine.properties file to include a description of the database.
-					An example flymine.properties file is included in the distribution with example values.</listitem>
+				<listitem><highlights>Configure the InterMine Optimiser to access that database</highlights>.
+					This is done by editing the intermine.properties file to include a description of the database.
+					An example intermine.properties file is included in the distribution with example values.</listitem>
 				<listitem><highlights>Create some precomputed tables</highlights>.
 					This can be done by writing a program in Java as described below, and running it.
 					Precomputed tables can be created before, during, or after enabling read access to the database.</listitem>
@@ -60,14 +60,14 @@
 			table. For example:</para>
 
 		<programlisting>
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-import org.flymine.sql.query.Query;
-import org.flymine.sql.precompute.PrecomputedTable;
-import org.flymine.sql.precompute.PrecomputedTableManager;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.query.Query;
+import org.intermine.sql.precompute.PrecomputedTable;
+import org.intermine.sql.precompute.PrecomputedTableManager;
 
 // Create a PrecomputedTableManager
-Database db = DatabaseFactory.getDatabase("db.main"); // configure db.main in flymine.properties
+Database db = DatabaseFactory.getDatabase("db.main"); // configure db.main in intermine.properties
 PrecomputedTableManager ptm = new PrecomputedTableManager.getInstance(db);
 
 // Add a precomputed table to the database
@@ -87,7 +87,7 @@ ptm.add(pt2);
 		<title>Query Optimising</title>
 		<sect2>
 			<title>From within an existing Java application</title>
-			<para>Simply call the function <command>optimisedSqlString = QueryOptimiser.optimise(sqlString, database)</command> (where database is an org.flymine.sql.Database as created in the above code snippet), wherever you have an sql string that needs optimising.
+			<para>Simply call the function <command>optimisedSqlString = QueryOptimiser.optimise(sqlString, database)</command> (where database is an org.intermine.sql.Database as created in the above code snippet), wherever you have an sql string that needs optimising.
 				Run the resulting optimised SQL string as usual.</para>
 		</sect2>
 

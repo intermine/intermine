@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-07-02</date>
-		<title>Flymine - A proposal to improve the Query Optimiser for EXPLAIN operations</title>
+		<title>InterMine - A proposal to improve the Query Optimiser for EXPLAIN operations</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -20,10 +20,10 @@
 
 	<sect1>
 		<title>Rationale</title>
-		<para>At the moment, the Flymine objectstore performs an EXPLAIN operation on every page request, before running a query to retrieve that page.
+		<para>At the moment, the InterMine objectstore performs an EXPLAIN operation on every page request, before running a query to retrieve that page.
 			The query optimiser in the process of optimising the query also runs EXPLAIN operations on the query, until it finds the quickest query.
 			Therefore, an EXPLAIN is run multiple times on identical queries.</para>
-		<para>In addition, the Flymine objectstore will continue paging through the results set, running the same query with different LIMIT and OFFSET values.
+		<para>In addition, the InterMine objectstore will continue paging through the results set, running the same query with different LIMIT and OFFSET values.
 			The optimiser cache divides the results set into a small set of partitions which are individually optimised because all the queries in each partition are very similar.
 			Therefore, currently the overall system optimises the query first (which involves EXPLAINing the query), then performs an EXPLAIN on every page request.
 			However, each EXPLAIN result in a given partition will be very similar.
@@ -36,7 +36,7 @@
 			However, the OptimiserCache only stores the expected number of rows in the unlimited query.
 			I propose that the OptimiserCache is changed to accept the full EXPLAIN result as well, with the OptimiserCacheLine.
 			Then the optimise() method can be altered to return an object with both the optimised query and its explain result.
-			The Flymine objectstore can then either make use of this (therefore avoiding performing SQL generation twice), or it can use two new methods which return only the optimised query or the explain result respectively.</para>
+			The InterMine objectstore can then either make use of this (therefore avoiding performing SQL generation twice), or it can use two new methods which return only the optimised query or the explain result respectively.</para>
 		<para>In addition, it would be good to re-adjust the partitioning that the optimiser cache performs, because an EXPLAIN result is likely to vary with OFFSET lots when OFFSET is low.</para>
 	</sect1>
 </article>

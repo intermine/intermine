@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-07-01</date>
-		<title>Flymine - The optimiser cache</title>
+		<title>InterMine - The optimiser cache</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -15,14 +15,14 @@
 
 	<sect1>
 		<title>Introduction</title>
-		<para>This document is intended to describe the layout of the Flymine Query Optimiser, particularly the portion that handles caching of optimisations.
-			The cache is managed by the org.flymine.sql.precompute.OptimiserCache class, which is called from the org.flymine.sql.precompute.QueryOptimiser class.</para>
+		<para>This document is intended to describe the layout of the InterMine Query Optimiser, particularly the portion that handles caching of optimisations.
+			The cache is managed by the org.intermine.sql.precompute.OptimiserCache class, which is called from the org.intermine.sql.precompute.QueryOptimiser class.</para>
 	</sect1>
 
 	<sect1>
 		<title>Requirements</title>
 		<para>The intention of the optimiser cache system is to improve the performance of the optimiser in general by caching requests.
-			It turns out that due to the operation of the Flymine code that uses the optimiser, identical and similar queries are often requested to be optimised close together in time.
+			It turns out that due to the operation of the InterMine code that uses the optimiser, identical and similar queries are often requested to be optimised close together in time.
 			This is because:
 			<itemizedlist>
 				<listitem>The objectstore always performs an EXPLAIN to check whether the query will use an acceptable amount of computing resources before running the actual query.

@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-07-03</date>
-		<title>Flymine - A proposal to improve the Query Optimiser for requests with non-zero offsets</title>
+		<title>InterMine - A proposal to improve the Query Optimiser for requests with non-zero offsets</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -20,7 +20,7 @@
 
 	<sect1>
 		<title>Rationale</title>
-		<para>At the moment, the Flymine performs paging of results sets, by running queries in the database with an OFFSET according to the page requested.
+		<para>At the moment, the InterMine performs paging of results sets, by running queries in the database with an OFFSET according to the page requested.
 			PostgreSQL must produce the entire results set up to the end of data required, and <highlights>count</highlights> OFFSET rows to throw away before returning useful data.
 			This operation has a time complexity of O(OFFSET), therefore the operation of paging straight through a large results set has a time complexity of O(square of rows).
 			However, it should be possible to perform a page request in constant time complexity, and therefore page straight through the results set in time complexity O(rows).</para>

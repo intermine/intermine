@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-08-01</date>
-		<title>Flymine - Fetching related objects in the Results object</title>
+		<title>InterMine - Fetching related objects in the Results object</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -15,7 +15,7 @@
 
 	<sect1>
 		<title>Introduction</title>
-		<para>This document is a proposal for a performance improvement to the org.flymine.objectstore.query.Results object.
+		<para>This document is a proposal for a performance improvement to the org.intermine.objectstore.query.Results object.
 			The proposal is intended to alleviate a problem inherent in an object-based database - that is that following references from objects will result in a request to the database to fetch the data.
 			Each of these database requests is small, and returns a tiny amount of data for a large amount of work spent.
 			If many of these operations are performed, the efficiency of the database system is greatly reduced.

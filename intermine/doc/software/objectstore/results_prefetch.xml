@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-04-01</date>
-		<title>Flymine - Prefetch in the Results object</title>
+		<title>InterMine - Prefetch in the Results object</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>
@@ -15,8 +15,8 @@
 
 	<sect1>
 		<title>Introduction</title>
-		<para>This document is an attempt to describe the prefetch mechanism in the org.flymine.objectstore.query.Results object.
-			The prefetch mechanism is managed by a class - org.flymine.objectstore.query.PrefetchManager.</para>
+		<para>This document is an attempt to describe the prefetch mechanism in the org.intermine.objectstore.query.Results object.
+			The prefetch mechanism is managed by a class - org.intermine.objectstore.query.PrefetchManager.</para>
 	</sect1>
 
 	<sect1>

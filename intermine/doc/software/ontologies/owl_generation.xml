@@ -14,7 +14,7 @@
   </artheader>
   
   <para>
-    The FlyMine merged ontology is an OWL format file created by merging OWL versions of all source ontologies (an overview of the process can be found <ulink url="overview">here</ulink>.  For merging to take place each source ontology must first be converted into OWL format, this document describes the translation of source formats (currently DAG and Daml) into OWL.
+    The InterMine merged ontology is an OWL format file created by merging OWL versions of all source ontologies (an overview of the process can be found <ulink url="overview">here</ulink>.  For merging to take place each source ontology must first be converted into OWL format, this document describes the translation of source formats (currently DAG and Daml) into OWL.
   </para>
 
   <sect1>
@@ -22,14 +22,14 @@
     <para>
       <itemizedlist>
         <listitem>Used for: Sequence Ontology (SO), Gene Ontology (GO)</listitem>
-        <listitem>Java class: org.flymine.ontology.Dag2Owl</listitem>
-        <listitem>Related classes: org.flymine.ontology.DagParser, org.flymine.ontology.DagTerm, org.flymine.ontology.DagValidator, jena.jar</listitem>
+        <listitem>Java class: org.intermine.ontology.Dag2Owl</listitem>
+        <listitem>Related classes: org.intermine.ontology.DagParser, org.intermine.ontology.DagTerm, org.intermine.ontology.DagValidator, jena.jar</listitem>
         <listitem>To run: (see below)</listitem>
       </itemizedlist>
     </para>
    
     <para>
-       A DAG file is parsed using <classname>org.flymine.DagParser</classname> which reads a DAG document into a simple tree of <classname>org.flymine.ontology.DagTerm</classname> objects.  The return of the <classname>DagParser</classname> <function>process()</function> method is a <classname>Set</classname> of root <classname>DagTerm</classname>s in the file.  The resulting tree is validated by <classname>org.flymine.ontology.DagValidator</classname> and converted to OWL format by <classname>org.flymine.ontology.Dag2Owl</classname>.  
+       A DAG file is parsed using <classname>org.intermine.DagParser</classname> which reads a DAG document into a simple tree of <classname>org.intermine.ontology.DagTerm</classname> objects.  The return of the <classname>DagParser</classname> <function>process()</function> method is a <classname>Set</classname> of root <classname>DagTerm</classname>s in the file.  The resulting tree is validated by <classname>org.intermine.ontology.DagValidator</classname> and converted to OWL format by <classname>org.intermine.ontology.Dag2Owl</classname>.  
       </para>
       <sect2>
         <title>DAG Validation</title>
@@ -53,10 +53,10 @@
 
      <sect2>
        <title>Running Dag2Owl</title>
-       Until a formal method for converting source ontologies the java can be run directly by the following (where $FLYMINE is the root of the flymine cvs tree):
+       Until a formal method for converting source ontologies the java can be run directly by the following (where $INTERMINE is the root of the intermine cvs tree):
       <itemizedlist>
-        <listitem><command>cd $FLYMINE/build/java</command></listitem>
-        <listitem><command>java -classpath $JIKESPATH:$FLYMINE/lib/jena.jar:$FLYMINE/lib/log4j.jar:$FLYMINE/lib/icu4j.jar:$FLYMINE/lib/jakarta-oro.jar:. org.flymine.ontology.Dag2Owl source_file.dag target_file.owl errorFile</command></listitem>
+        <listitem><command>cd $INTERMINE/build/java</command></listitem>
+        <listitem><command>java -classpath $JIKESPATH:$INTERMINE/lib/jena.jar:$INTERMINE/lib/log4j.jar:$INTERMINE/lib/icu4j.jar:$INTERMINE/lib/jakarta-oro.jar:. org.intermine.ontology.Dag2Owl source_file.dag target_file.owl errorFile</command></listitem>
       </itemizedlist>
     </sect2>
 
@@ -67,7 +67,7 @@
     <para>
       <itemizedlist>
         <listitem>Used for: MGED Ontology</listitem>
-        <listitem>Java class: org.flymine.ontology.Daml2Owl</listitem>
+        <listitem>Java class: org.intermine.ontology.Daml2Owl</listitem>
         <listitem>Related classes: jena.jar</listitem>
         <listitem>To run: (see below)</listitem>
       </itemizedlist>
@@ -78,10 +78,10 @@
     </para>
     <sect2>
       <title>Running Daml2Owl</title>
-      Until a formal method for converting source ontologies the java can be run directly by the following (where $FLYMINE is the root of the flymine cvs tree):
+      Until a formal method for converting source ontologies the java can be run directly by the following (where $INTERMINE is the root of the intermine cvs tree):
       <itemizedlist>
-        <listitem><command>cd $FLYMINE/build/java</command></listitem>
-        <listitem><command>java -classpath $JIKESPATH:$FLYMINE/lib/jena.jar:$FLYMINE/lib/log4j.jar:$FLYMINE/lib/icu4j.jar:$FLYMINE/lib/jakarta-oro.jar:. org.flymine.ontology.Daml2Owl source_file.daml target_file.owl</command></listitem>
+        <listitem><command>cd $INTERMINE/build/java</command></listitem>
+        <listitem><command>java -classpath $JIKESPATH:$INTERMINE/lib/jena.jar:$INTERMINE/lib/log4j.jar:$INTERMINE/lib/icu4j.jar:$INTERMINE/lib/jakarta-oro.jar:. org.intermine.ontology.Daml2Owl source_file.daml target_file.owl</command></listitem>
       </itemizedlist>
     </sect2>
   </sect1> 

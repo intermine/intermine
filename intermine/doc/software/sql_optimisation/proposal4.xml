@@ -4,7 +4,7 @@
 
 	<artheader>
 		<date>2003-07-03</date>
-		<title>Flymine - A proposal to improve the Query Optimiser to scale well for many precomputed tables</title>
+		<title>InterMine - A proposal to improve the Query Optimiser to scale well for many precomputed tables</title>
 		<authorgroup>
 			<author>
 				<firstname>Matthew</firstname>

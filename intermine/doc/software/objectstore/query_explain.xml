@@ -4,7 +4,7 @@
 
   <artheader>
     <date>2003-03-12</date>
-    <title>Running Explain for Flymine Queries</title>
+    <title>Running Explain for InterMine Queries</title>
     <authorgroup>
       <author>
         <firstname>Richard</firstname>
@@ -19,7 +19,7 @@
 
   <sect1>
     <title>Overview</title>
-    <para>This document summarises our discussion about the role of EXPLAIN in running FlyMine queries and how it should be implemented. The purpose of running EXPLAIN is to obtain estimated information about the time to run a query and the number of rows it will return allowing us to limit what is run in the database.  We also want to make estimated (and/or computed) statistics about a query available to client applications prior to execution.</para>
+    <para>This document summarises our discussion about the role of EXPLAIN in running InterMine queries and how it should be implemented. The purpose of running EXPLAIN is to obtain estimated information about the time to run a query and the number of rows it will return allowing us to limit what is run in the database.  We also want to make estimated (and/or computed) statistics about a query available to client applications prior to execution.</para>
     
   </sect1>
   
@@ -54,7 +54,7 @@
             This is called as required by the client application and is not necessary for normal query execution.
             In future this could be modified to provide an actual computed number of rows.
             An EXPLAIN could check whether COUNT(*) for the query would be fast to run, if so run it and return the actual number of rows.</listitem>
-        <listitem><function>ObjectStoreFlyMineImpl.execute(query, start, limit)</function> calls <function>Objectstore.explain(query, start, limit)</function> and decides if the query is faster or slower that the given threshold.
+        <listitem><function>ObjectStoreInterMineImpl.execute(query, start, limit)</function> calls <function>Objectstore.explain(query, start, limit)</function> and decides if the query is faster or slower that the given threshold.
             If the query is too slow an Exception is thrown, otherwise the query runs as normal.
             The threshold is provided in the properties file, so that users could set their own maximum execution time (such that it is less than our global threshold).</listitem>
         </itemizedlist>
