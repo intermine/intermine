@@ -85,7 +85,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected String logTableName = null;
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"optimise", "estimated",
         "execute", "permitted", "convert", "iql", "sql"};
-    
+
     /**
      * Constructs an ObjectStoreInterMineImpl.
      *
@@ -115,7 +115,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         this.schema = schema;
         ShutdownHook.registerObject(new WeakReference(this));
     }
-  
+
     /**
      * Read the Model from the intermine_metadata table of the given Database.
      * @param db the Database to read from
@@ -132,7 +132,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             ResultSet rs = statement.getResultSet();
             if (rs.next()) {
                 String modelXML = rs.getString(1);
-                
+
                 ModelParser parser = new InterMineModelParser();
                 StringReader reader = new StringReader(modelXML);
                 try {
@@ -221,7 +221,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String dbAlias = props.getProperty("db");
         if (dbAlias == null) {
             throw new ObjectStoreException("No 'db' property specified for InterMine"
-                                           + " objectstore (check properties file)");
+                                           + " objectstore (" + osAlias + ")."
+                                           + "Check properties file");
         }
 
         String missingTablesString = props.getProperty("missingTables");
@@ -269,7 +270,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         os = new ObjectStoreInterMineImpl(database, getModelFromDatabase(database));
                     } catch (Exception e) {
                         Model osModel;
-                        
+
                         try {
                             osModel = getModelFromClasspath(osAlias, props);
                         } catch (MetaDataException metaDataException) {
@@ -391,7 +392,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * 
+     *
     /**
      * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
