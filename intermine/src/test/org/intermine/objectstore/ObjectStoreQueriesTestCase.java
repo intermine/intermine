@@ -200,6 +200,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("OrderByReference", orderByReference());
         queries.put("FailDistinctOrder", failDistinctOrder());
         queries.put("LargeBagConstraint", largeBagConstraint());
+        queries.put("NegativeNumbers", negativeNumbers());
 
         // tests using a temporary table for the bag
         queries.put("LargeBagConstraintUsingTable", largeBagConstraint());
@@ -1319,6 +1320,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         company.setId(new Integer(6000));
         bag.add(company);
         q.setConstraint(new BagConstraint(new QueryField(qc, "name"), ConstraintOp.IN, bag));
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS 1_ WHERE a1_.age > -50
+     */
+    public static Query negativeNumbers() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(-51))));
+        q.setDistinct(false);
         return q;
     }
 }
