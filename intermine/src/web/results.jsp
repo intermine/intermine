@@ -3,6 +3,6 @@
 <tiles:importAttribute/>
 
 <!-- results.jsp -->
-<tiles:get name="queryName"/>
 <tiles:get name="table"/>
+<tiles:get name="queryName"/>
 <!-- /results.jsp -->
