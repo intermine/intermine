@@ -10,7 +10,13 @@ package org.intermine.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.Collection;
+
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Item;
 
 /**
  * Parent class for DataConverters that read from files
@@ -18,25 +24,30 @@ import java.io.BufferedReader;
  */
 public abstract class FileConverter extends DataConverter
 {
-    protected BufferedReader reader;
     protected String param1;
     protected String param2;
 
     /**
      * Constructor
-     * @param reader BufferedReader used as input
      * @param writer the Writer used to output the resultant items
      */
-    public FileConverter(BufferedReader reader, ItemWriter writer) {
+    public FileConverter(ItemWriter writer) {
         super(writer);
-        this.reader = reader;
     }
     
     /**
      * Perform the file conversion
+     * @param reader BufferedReader used as input
      * @throws Exception if an error occurs during processing
      */
-    public abstract void process() throws Exception;
+    public abstract void process(Reader reader) throws Exception;
+
+    /**
+     * Perform any necessary clean-up after post-conversion
+     * @throws Exception if an error occurs
+     */
+    public void close() throws Exception {
+    }
 
     /**
      * Set some param1 to some String value.
@@ -53,4 +64,16 @@ public abstract class FileConverter extends DataConverter
     public void setParam2(String param2) {
         this.param2 = param2;
     }
+
+    /**
+     * Store a Collection of Items
+     * @param c the Collection
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    protected void store(Collection c) throws ObjectStoreException {
+        for (Iterator i = c.iterator(); i.hasNext(); ) {
+            writer.store(ItemHelper.convert((Item) i.next()));
+        }
+    }
+
 }

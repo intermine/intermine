@@ -12,6 +12,7 @@ package org.intermine.task;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.File;
 import java.lang.reflect.Constructor;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -20,9 +21,10 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.FileConverter;
 
-
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
 
 import org.apache.log4j.Logger;
 
@@ -37,8 +39,8 @@ public class FileConverterTask extends Task
 {
     protected static final Logger LOG = Logger.getLogger(FileConverterTask.class);
 
+    protected FileSet fileSet;
     protected String clsName;
-    protected String file;
     protected String osName;
     protected String param1 = null;
     protected String param2 = null;
@@ -52,11 +54,11 @@ public class FileConverterTask extends Task
     }
 
     /**
-     * Set the input file name
-     * @param file the database name
+     * Set the data fileset
+     * @param fileSet the fileset
      */
-    public void setFile(String file) {
-        this.file = file;
+    public void addFileSet(FileSet fileSet) {
+        this.fileSet = fileSet;
     }
 
     /**
@@ -88,18 +90,17 @@ public class FileConverterTask extends Task
      * @throws BuildException if a problem occurs
      */
     public void execute() throws BuildException {
+        if (fileSet == null) {
+            throw new BuildException("fileSet must be specified");
+        }
         if (clsName == null) {
             throw new BuildException("clsName attribute is not set");
         }
-        if (file == null) {
-            throw new BuildException("database attribute is not set");
-        }
         if (osName == null) {
-            throw new BuildException("model attribute is not set");
+            throw new BuildException("osName attribute is not set");
         }
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
             ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             ItemWriter writer = new ObjectStoreItemWriter(osw);
 
@@ -109,15 +110,22 @@ public class FileConverterTask extends Task
                                              + "of org.intermine.dataconversion.FileConverter.");
             }
 
-            Constructor m = c.getConstructor(new Class[] {BufferedReader.class, ItemWriter.class});
-            FileConverter converter = (FileConverter) m.newInstance(new Object[] {reader, writer});
+            Constructor m = c.getConstructor(new Class[] {ItemWriter.class});
+            FileConverter converter = (FileConverter) m.newInstance(new Object[] {writer});
             if (param1 != null) {
                 converter.setParam1(param1);
             }
             if (param2 != null) {
                 converter.setParam2(param2);
             }
-            converter.process();
+            DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
+            String[] files = ds.getIncludedFiles();
+            for (int i = 0; i < files.length; i++) {
+                converter.process(new BufferedReader(new FileReader(new File(ds.getBasedir(),
+                                                                             files[i]))));
+            }
+            converter.close();
+            writer.close();
         } catch (Exception e) {
             throw new BuildException(e);
         }
