@@ -4,8 +4,8 @@
 
 <tiles:importAttribute/>
 
-<!-- objectSummary.jsp -->
-<div class="objectSummary">
+<!-- objectView.jsp -->
+<div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
       <c:out value="${object}" default="null"/>
@@ -36,13 +36,18 @@
                   <c:if test="${primaryKeyFields[fieldName] == fieldName}">
                     <div>     
                       <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
+                      <c:set var="object" value="${object}" scope="request"/>
                       <tiles:insert name="/oneField.jsp"/>
                     </div>
                   </c:if>
                 </c:forEach>
               </c:when>
               <c:otherwise>
-                <tiles:insert name="/allFields.jsp"/>
+                <c:forEach items="${cld.allFieldDescriptors}" var="fieldDescriptor">
+                  <c:set var="fieldDescriptor" value="${fieldDescriptor}" scope="request"/>
+                  <c:set var="object" value="${object}" scope="request"/>
+                  <tiles:insert name="/oneField.jsp"/>
+                </c:forEach>
               </c:otherwise>
             </c:choose>
           </c:otherwise>
@@ -51,4 +56,4 @@
     </c:otherwise>
   </c:choose>
 </div>
-<!-- /objectSummary.jsp -->
+<!-- /objectView.jsp -->
