@@ -19,7 +19,7 @@ import org.intermine.objectstore.ObjectStoreException;
  *
  * @author Matthew Wakeling
  */
-public class ProxyReference implements InterMineObject
+public class ProxyReference implements InterMineObject, Lazy
 {
     private ObjectStore os;
     private Integer id;
@@ -68,5 +68,14 @@ public class ProxyReference implements InterMineObject
      */
     public void setId(Integer id) {
         throw new IllegalArgumentException("Cannot change the id of a ProxyReference");
+    }
+
+    /**
+     * Returns the ObjectStore that this proxy will use
+     *
+     * @return an ObjectStore
+     */
+    public ObjectStore getObjectStore() {
+        return os;
     }
 }

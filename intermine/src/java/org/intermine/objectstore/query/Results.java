@@ -22,18 +22,20 @@ import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.util.CacheMap;
 
 /**
- * Results representation as a List of ResultRows
- * Extending AbstractList requires implementation of get(int) and size()
- * In addition subList(int, int) overrides AbstractList implementation for efficiency
+ * Results representation as a List of ResultRows.
+ * Extending AbstractList requires implementation of get(int) and size().
+ * In addition subList(int, int) overrides AbstractList implementation for efficiency.
+ * Also iterator() and isEmpty() to avoid evaluating the entire collection.
  *
  * @author Mark Woodbridge
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class Results extends AbstractList
+public class Results extends AbstractList implements Lazy
 {
     private static final Logger LOG = Logger.getLogger(Results.class);
 
@@ -392,6 +394,25 @@ public class Results extends AbstractList
         return maxSize;
     }
 
+    /**
+     * @see List#isEmpty
+     */
+    public boolean isEmpty() {
+        if (minSize > 0) {
+            return false;
+        }
+        if (maxSize <= 0) {
+            return true;
+        }
+        // Okay, we don't know anything. Fetch the first batch.
+        try {
+            get(0);
+        } catch (IndexOutOfBoundsException e) {
+            // Ignore - that means there are NO rows in this results object.
+        }
+        return isEmpty();
+    }
+        
     /**
      * Gets the best current estimate of the characteristics of the query.
      *
