@@ -11,11 +11,17 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Form bean to used in combining bags
@@ -61,15 +67,43 @@ public class ModifyBagForm extends ActionForm
      * @see ActionForm#validate
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        ActionErrors errors = null;
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
+        ActionErrors errors = new ActionErrors();
 
         if (selectedBags.length == 0) {
-            errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                       new ActionError("errors.modifyBag.none"));
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.modifyBag.none"));
+        } else {
+            for (int i = 0; i < getSelectedBags().length; i++) {
+                List queries = queriesThatMentionBag(profile.getSavedQueries(),
+                                                     getSelectedBags()[i]);
+                if (queries.size() > 0) {
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                               new ActionError("history.baginuse", getSelectedBags()[i], queries));
+                }
+            }
         }
 
         return errors;
+    }
+
+    /**
+     * Provide a list of queries that mention a named bag
+     * @param savedQueries a saved queries map (name -> query)
+     * @param bagName the name of a bag
+     * @return the list of queries
+     */
+    public List queriesThatMentionBag(Map savedQueries, String bagName) {
+        List queries = new ArrayList();
+        for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
+            String queryName = (String) i.next();
+            PathQuery query = (PathQuery) savedQueries.get(queryName);
+            if (query.getBagNames().contains(bagName)) {
+                queries.add(queryName);
+            }
+        }
+        return queries;
     }
 
     /**

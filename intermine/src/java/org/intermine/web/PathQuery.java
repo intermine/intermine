@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.BagConstraint;
 
 /**
  * Class to represent a path-based query
@@ -95,9 +96,27 @@ public class PathQuery
     }
 
     /**
+     * Provide a list of the names of bags mentioned in the query
+     * @return the list of bag names
+     */
+    public List getBagNames() {
+        List bagNames = new ArrayList();
+        for (Iterator i = nodes.values().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                Constraint c = (Constraint) j.next();
+                if (BagConstraint.VALID_OPS.contains(c.getOp())) {
+                    bagNames.add(c.getValue());
+                }
+            }
+        }
+        return bagNames;
+    }
+
+    /**
      * Add a node to the query using a path, adding parent nodes if necessary
      * @param path the path for the new Node
-     * @return the PathNode that was added to the qNodes Map
+     * @return the PathNode that was added to the nodes Map
      */
     public PathNode addNode(String path) {
         PathNode node;
