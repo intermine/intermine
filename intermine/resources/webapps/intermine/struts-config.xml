@@ -54,6 +54,9 @@
 -->
     <form-bean name="buildTemplateForm"
                type="org.intermine.web.BuildTemplateForm"/>
+    
+    <form-bean name="importTemplatesForm"
+               type="org.intermine.web.TemplatesImportForm"/>
                     
   </form-beans>
 
@@ -101,6 +104,9 @@
     <action path="/templates"
             forward="templates.page"/>
 
+    <action path="/import"
+            forward="importTemplates.page"/>
+            
     <action path="/history"
             forward="history.page"/>
 
@@ -239,6 +245,15 @@
       <forward name="failure" path="template.page"/>
       <forward name="query" path="query.page"/>
       <forward name="results" path="results.page"/>
+    </action>
+    
+    <action path="/importTemplates"
+            type="org.intermine.web.TemplatesImportAction"
+            scope="request"
+            name="importTemplatesForm"
+            input="import">
+      <forward name="import" path="importTemplates.page"/>
+      <forward name="begin" path="/begin.do" redirect="true"/>
     </action>
     
     <action path="/browseAction"
