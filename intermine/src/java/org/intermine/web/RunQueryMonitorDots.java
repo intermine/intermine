@@ -44,7 +44,7 @@ public class RunQueryMonitorDots implements RunQueryMonitor
      * @param results  the Results object associated with the running query
      */
     public void queryProgress(Results results) {
-        tickCount++;
+        //tickCount++;
         try {
             //if (tickCount % 40 == 0) {
             //    writer.write("<br>");
