@@ -12,6 +12,8 @@ package org.intermine.web.results;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -25,19 +27,22 @@ import org.intermine.util.TypeUtil;
  * Class to represent a reference field of an object for display in the webapp
  * @author Mark Woodbridge
  */
-public class DisplayReference
+public class DisplayReference extends DisplayField
 {
     ProxyReference proxy;
-    ClassDescriptor cld;
     Map keyAttributes;
 
     /**
-     * Constructor
+     * Create a new DisplayReference object.
      * @param proxy proxy for the referenced object
      * @param cld metadata for the referenced object
+     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayReference(ProxyReference proxy, ClassDescriptor cld) throws Exception {
+    public DisplayReference(ProxyReference proxy, ClassDescriptor cld,
+                            Map webconfigTypeMap, Map webProperties) throws Exception {
+        super(getProxyList(proxy), cld, webconfigTypeMap, webProperties);
         this.proxy = proxy;
         this.cld = cld;
     }
@@ -59,14 +64,6 @@ public class DisplayReference
     }
 
     /**
-     * Get the clds of the object
-     * @return the clds
-     */
-    public ClassDescriptor getCld() {
-        return cld;
-    }
-    
-    /**
      * Get the identifier fields and values for the object
      * @return the identifiers
      * @throws Exception if an error occurs
@@ -85,5 +82,14 @@ public class DisplayReference
             }
         }
         return keyAttributes;
+    }
+
+    /**
+     * Helper method for the constructor.
+     */
+    private static List getProxyList(ProxyReference proxy) {
+        List proxyList = new ArrayList();
+        proxyList.add(proxy);
+        return proxyList;
     }
 }
