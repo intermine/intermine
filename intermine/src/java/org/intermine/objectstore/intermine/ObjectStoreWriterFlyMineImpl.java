@@ -34,6 +34,7 @@ import org.flymine.objectstore.query.Results;
 import org.flymine.util.CacheMap;
 import org.flymine.util.DatabaseUtil;
 import org.flymine.util.TypeUtil;
+import org.flymine.xml.lite.LiteParser;
 import org.flymine.xml.lite.LiteRenderer;
 
 import org.apache.log4j.Logger;
@@ -324,7 +325,11 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
                 //System//.out.println(getModel().getName()
                 //        + ": Executed SQL batch at end of store()");
             }
-            invalidateObjectById(o.getId());
+            try {
+                FlyMineBusinessObject toCache = LiteParser.parse(xml, this);
+                cacheObjectById(toCache.getId(), toCache);
+            } catch (Exception e) {
+            }
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
         } catch (IllegalAccessException e) {
