@@ -277,7 +277,8 @@ public class InitialiserPlugin implements PlugIn
     }
     
     /**
-     * Read the template queries into the GLOBAL_TEMPLATE_QUERIES servlet context attribute.
+     * Read the template queries into the GLOBAL_TEMPLATE_QUERIES servlet context attribute and set
+     * CATEGORY_TEMPLATES and CLASS_CATEGORY_TEMPLATES. 
      * This is also called when the superuser updates his or her templates.
      *
      * @param servletContext  servlet context in which to place template map
@@ -303,6 +304,11 @@ public class InitialiserPlugin implements PlugIn
         
         // Sort into categories
         Map categoryTemplates = new HashMap();
+        // a Map from class name to a Map from category to template
+        Map classCategoryTemplates = new HashMap();
+        // a Map from class name to a Map from template name to field name - the field name is the
+        // one that should be set when a template is linked to from the object details page
+        Map classTemplateFieldName = new HashMap();
         Iterator iter = templateMap.values().iterator();
         while (iter.hasNext()) {
             TemplateQuery template = (TemplateQuery) iter.next();
@@ -312,10 +318,69 @@ public class InitialiserPlugin implements PlugIn
                 categoryTemplates.put(template.getCategory(), list);
             }
             list.add(template);
+
+            Object osObject = servletContext.getAttribute(Constants.OBJECTSTORE);
+            ObjectStore os = (ObjectStore) osObject;
+
+            
+            setClassesForTemplate(os, template, classCategoryTemplates, classTemplateFieldName);
         }
         servletContext.setAttribute(Constants.CATEGORY_TEMPLATES, categoryTemplates);
+        servletContext.setAttribute(Constants.CLASS_CATEGORY_TEMPLATES, classCategoryTemplates);
+        servletContext.setAttribute(Constants.CLASS_TEMPLATE_FIELDNAMES, classTemplateFieldName);
     }
     
+    /**
+     * Return a List of the names of the classes for which this template is relevant - ie. it
+     * should appear on the object details page for objects of the class.
+     */
+    private static void setClassesForTemplate(ObjectStore os, TemplateQuery template,
+                                              Map classCategoryTemplates,
+                                              Map classTemplateFieldName) {
+        List constraints = template.getAllConstraints();
+        Model model = os.getModel();
+        Iterator constraintIter = constraints.iterator();
+        
+        // look for ClassName.fieldname  (Gene.identifier)
+        while (constraintIter.hasNext()) {
+            Constraint c = (Constraint) constraintIter.next();
+
+            String constraintIdentifier = c.getIdentifier();
+            String[] bits = constraintIdentifier.split("\\.");
+
+            if (bits.length == 2) {
+                String className = model.getPackageName() + "." + bits[0];
+                String fieldName = bits[1];
+                ClassDescriptor cd = model.getClassDescriptorByName(className);
+
+                if (cd != null) {
+                    FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName); 
+                    if (fd != null) {
+                        if (!classCategoryTemplates.containsKey(className)) {
+                            classCategoryTemplates.put(className, new HashMap());
+                        }
+                        
+                        Map categoryTemplatesMap = (Map) classCategoryTemplates.get(className);
+                        
+                        if (!categoryTemplatesMap.containsKey(template.getCategory())) {
+                            categoryTemplatesMap.put(template.getCategory(), new ArrayList());
+                        }
+                        
+                        ((List) categoryTemplatesMap.get(template.getCategory())).add(template);
+                        
+                        if (!classTemplateFieldName.containsKey(className)) {
+                            classTemplateFieldName.put(className, new HashMap());
+                        }
+                        
+                        Map fieldNameTemplatesMap = (Map) classTemplateFieldName.get(className);
+                        
+                        fieldNameTemplatesMap.put(template.getName(), fieldName);
+                    }
+               }
+            }
+        }
+    }
+
     /**
      * Load the CATEGORY_CLASSES and CATEGORIES servlet context attribute. Loads cateogires and
      * subcateogires from roperties file /WEB-INF/classCategories.properties<p>
