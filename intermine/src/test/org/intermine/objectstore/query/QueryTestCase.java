@@ -29,6 +29,8 @@ public class QueryTestCase extends TestCase
      */
     protected void assertEquals(String msg, Query q1, Query q2) {
         if ((q1 != null) && (q2 != null)) {
+            //msg += ": q1 = " + q1.toString() + ", q2 = " + q2.toString();
+
             // Are the SELECT lists equal?
             checkQueryClassLists(msg + ": SELECT lists are not equal", q1.getSelect(), q2.getSelect(), q1, q2);
             // Are the FROM lists equal?
@@ -40,8 +42,8 @@ public class QueryTestCase extends TestCase
         } else if ((q1 == null) && (q2 == null)) {
             // They are equal - albeit null.
         } else {
-            assertNotNull(msg + "q1 is null, while q2 is not null", q1);
-            fail(msg + "q2 is null, while q1 is not null");
+            assertNotNull(msg + ": q1 is null, while q2 is not null", q1);
+            fail(msg + ": q2 is null, while q1 is not null");
         }
     }
 
@@ -50,10 +52,28 @@ public class QueryTestCase extends TestCase
         Iterator i1 = l1.iterator();
         Iterator i2 = l2.iterator();
         while (i1.hasNext()) {
-            QueryClass qc1 = (QueryClass) i1.next();
-            QueryClass qc2 = (QueryClass) i2.next();
+            Object qc1 = i1.next();
+            Object qc2 = i2.next();
 
-            checkQueryNodes(msg + ": query classes are not the same", qc1, qc2, q1, q2);
+            if (qc1 instanceof QueryNode) {
+                if (qc2 instanceof QueryNode) {
+                    checkQueryNodes(msg + ": query nodes are not the same", (QueryNode) qc1, (QueryNode) qc2, q1, q2);
+                } else if (qc2 instanceof Query) {
+                    fail(msg + ": QueryNode does not match Subquery");
+                } else {
+                    fail(msg + ": Unknown type of Object in list");
+                }
+            } else if (qc1 instanceof Query) {
+                if (qc2 instanceof QueryNode) {
+                    fail(msg + ": Subquery does not match QueryNode");
+                } else if (qc2 instanceof Query) {
+                    assertEquals(msg + ": subquery", (Query) qc1, (Query) qc2);
+                } else {
+                    fail(msg + ": Unknown type of Object in list");
+                }
+            } else {
+                fail(msg + ": Unknown type of Object in list");
+            }
         }
 
     }
@@ -78,18 +98,37 @@ public class QueryTestCase extends TestCase
         } else if (qn1 instanceof QueryField) {
             QueryField qf1 = (QueryField) qn1;
             QueryField qf2 = (QueryField) qn2;
-            checkQueryNodes(msg, (QueryClass) qf1.getFromElement(), (QueryClass) qf2.getFromElement(), q1, q2);
+            FromElement fe1 = qf1.getFromElement();
+            FromElement fe2 = qf2.getFromElement();
+
+            if (fe1 instanceof QueryClass) {
+                if (fe2 instanceof QueryClass) {
+                    checkQueryNodes(msg, (QueryClass) fe1, (QueryClass) fe2, q1, q2);
+                } else {
+                    fail(msg + ": field member of QueryClass does not match field member of subquery");
+                }
+            } else {
+                if (fe2 instanceof QueryClass) {
+                    fail(msg + ": field member of subquery does not match field member of QueryClass");
+                } else {
+                    String alias1 = (String) q1.getAliases().get(fe1);
+                    String alias2 = (String) q2.getAliases().get(fe2);
+                    assertNotNull(msg + ": alias1 is null - " + q1.getAliases() + ", " + fe1, alias1);
+                    assertNotNull(msg + ": alias2 is null - " + q2.getAliases() + ", " + fe2, alias2);
+                    assertEquals(msg + ": field members of different subquery aliases", q1.getAliases().get(fe1), q2.getAliases().get(fe2));
+                }
+            }
             assertEquals(msg + ": QueryField fieldnames are not equal", qf1.getFieldName(), qf2.getFieldName());
         } else if (qn1 instanceof QueryValue) {
             QueryValue qv1 = (QueryValue) qn1;
             QueryValue qv2 = (QueryValue) qn2;
 
-            assertEquals(msg + ": QueryValues are not equal", qv1.getValue(), qv2.getValue());
+            assertEquals(msg + ": QueryValues are not equal", qv1, qv2);
         } else if (qn1 instanceof QueryFunction) {
             QueryFunction qf1 = (QueryFunction) qn1;
             QueryFunction qf2 = (QueryFunction) qn2;
 
-            checkQueryNodes(msg + "parameters are not equal", qf1.getParam(), qf1.getParam(), q1, q2);
+            checkQueryNodes(msg + ": parameters are not equal", qf1.getParam(), qf2.getParam(), q1, q2);
             assertEquals(msg + ": functions are not the same", qf1.getOperation(), qf2.getOperation());
         } else if (qn1 instanceof QueryExpression) {
             QueryExpression qe1 = (QueryExpression) qn1;
@@ -97,9 +136,9 @@ public class QueryTestCase extends TestCase
 
             assertEquals(msg + ": type of QueryExpressions are not the same", qe1.getType(), qe2.getType());
 
-            checkQueryNodes(msg + "first QueryEvaluables are not equal", qe1.getArg1(), qe1.getArg1(), q1, q2);
-            checkQueryNodes(msg + "second QueryEvaluables are not equal", qe1.getArg2(), qe1.getArg2(), q1, q2);
-            checkQueryNodes(msg + "third QueryEvaluables are not equal", qe1.getArg3(), qe1.getArg3(), q1, q2);
+            checkQueryNodes(msg + ": first QueryEvaluables are not equal", qe1.getArg1(), qe2.getArg1(), q1, q2);
+            checkQueryNodes(msg + ": second QueryEvaluables are not equal", qe1.getArg2(), qe2.getArg2(), q1, q2);
+            checkQueryNodes(msg + ": third QueryEvaluables are not equal", qe1.getArg3(), qe2.getArg3(), q1, q2);
 
         }
 
@@ -141,7 +180,7 @@ public class QueryTestCase extends TestCase
             SimpleConstraint sc2 = (SimpleConstraint) c2;
             checkQueryNodes(msg + ": first QueryEvaluables are not equal", sc1.getArg1(), sc2.getArg1(), q1, q2);
             checkQueryNodes(msg + ": first QueryEvaluables are not equal", sc1.getArg2(), sc2.getArg2(), q1, q2);
-            assertEquals(msg + ":types are not equal", sc1.getRealType(), sc2.getRealType());
+            assertEquals(msg + ": types are not equal", sc1.getRealType(), sc2.getRealType());
         } else if (c1 instanceof ClassConstraint) {
             ClassConstraint cc1 = (ClassConstraint) c1;
             ClassConstraint cc2 = (ClassConstraint) c2;
@@ -163,6 +202,20 @@ public class QueryTestCase extends TestCase
             checkQueryNodes(msg + ": QueryClasses are not equal", cc1.getQueryClass(), cc2.getQueryClass(), q1, q2);
             assertEquals(msg + ": types are not equal", cc1.isNotContains(), cc2.isNotContains());
 
+        } else if (c1 instanceof SubqueryConstraint) {
+            SubqueryConstraint cc1 = (SubqueryConstraint) c1;
+            SubqueryConstraint cc2 = (SubqueryConstraint) c2;
+
+            QueryNode node1 = cc1.getQueryEvaluable();
+            if (node1 == null) {
+                node1 = cc1.getQueryClass();
+            }
+            QueryNode node2 = cc2.getQueryEvaluable();
+            if (node2 == null) {
+                node2 = cc2.getQueryClass();
+            }
+            checkQueryNodes(msg + ": nodes of subquery constraint are not equal", node1, node2, q1, q2);
+            assertEquals(msg + ": queries of subquery constraint are not equal", cc1.getQuery(), cc2.getQuery());
         } else {
             fail(msg + ": non-supported object in Query");
         }

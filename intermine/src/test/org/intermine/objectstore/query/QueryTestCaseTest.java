@@ -238,4 +238,98 @@ public class QueryTestCaseTest extends QueryTestCase
         Query q2 = null;
         assertEquals(q1, q2);
     }
+
+    public void testBothSubqueriesSame() throws Exception {
+        Query q1 = new Query();
+        Query q2 = new Query();
+        Query q1Sub = new Query();
+        Query q2Sub = new Query();
+        q1.addFrom(q1Sub);
+        q2.addFrom(q2Sub);
+
+        assertEquals(q1, q2);
+    }
+
+    public void testBothSubqueriesDifferent() throws Exception {
+        Query q1 = new Query();
+        Query q2 = new Query();
+        Query q1Sub = new Query();
+        Query q2Sub = new Query();
+        q2Sub.addFrom(new QueryClass(Department.class));
+        q1.addFrom(q1Sub);
+        q2.addFrom(q2Sub);
+
+        failed = false;
+        try {
+            assertEquals(q1, q2);
+            failed = true;
+        } catch (AssertionFailedError e) {
+        } finally {
+            if (failed) {
+                fail("Failure should have happened");
+            }
+        }
+    }
+
+    public void testOneSubquery() throws Exception {
+        Query q1 = new Query();
+        Query q2 = new Query();
+        Query q1Sub = new Query();
+        q1.addFrom(q1Sub);
+        q2.addFrom(new QueryClass(Department.class));
+
+        failed = false;
+        try {
+            assertEquals(q1, q2);
+            failed = true;
+        } catch (AssertionFailedError e) {
+        } finally {
+            if (failed) {
+                fail("Failure should have happened");
+            }
+        }
+    }
+
+    public void testDifferentSubquery() throws Exception {
+        Query q1 = new Query();
+        Query q2 = new Query();
+        Query q1Sub1 = new Query();
+        Query q1Sub2 = new Query();
+        Query q2Sub1 = new Query();
+        Query q2Sub2 = new Query();
+        QueryClass c1 = new QueryClass(Department.class);
+        QueryClass c2 = new QueryClass(Company.class);
+        QueryClass c3 = new QueryClass(Department.class);
+        QueryClass c4 = new QueryClass(Company.class);
+        q1Sub1.addFrom(c1);
+        q1Sub1.addToSelect(c1);
+        q1Sub2.addFrom(c2);
+        q1Sub2.addToSelect(c2);
+        q2Sub1.addFrom(c3);
+        q2Sub1.addToSelect(c3);
+        q2Sub2.addFrom(c4);
+        q2Sub2.addToSelect(c4);
+        q1.addFrom(q1Sub1);
+        q1.addFrom(q1Sub2);
+        q2.addFrom(q2Sub1);
+        q2.addFrom(q2Sub2);
+
+        QueryField f1 = new QueryField(q1Sub1, c1, "name");
+        QueryField f2 = new QueryField(q2Sub2, c4, "name");
+        q1.addToSelect(f1);
+        q2.addToSelect(f2);
+        
+        failed = false;
+        try {
+            assertEquals(q1, q2);
+            failed = true;
+        } catch (AssertionFailedError e) {
+            assertEquals("null: SELECT lists are not equal: query nodes are not the same: field members of different subquery aliases expected:<a1_> but was:<a2_>", e.getMessage());
+        } finally {
+            if (failed) {
+                fail("Failure should have happened");
+            }
+        }
+    }
+
 }
