@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
@@ -28,8 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import org.flymine.util.TypeUtil;
-import org.flymine.util.DynamicUtil;
-import org.flymine.util.StringUtil;
 import org.flymine.metadata.Model;
 
 /**
@@ -97,52 +93,28 @@ public class FullParser
         throws ClassNotFoundException {
         Map objMap = new LinkedHashMap(); // map from id to outline object
 
-        Iterator iter = items.iterator();
-        while (iter.hasNext()) {
-            Item item = (Item) iter.next();
-            objMap.put(item.getIdentifier(), realiseObject(item, model));
-        }
-
-        iter = items.iterator();
-        while (iter.hasNext()) {
-            populateObject((Item) iter.next(), objMap);
+        for (Iterator i = items.iterator(); i.hasNext();) {
+            Item item = (Item) i.next();
+            objMap.put(item.getIdentifier(), ItemHelper.instantiateObject(item, model));
         }
 
         List result = new ArrayList();
-        Iterator i = objMap.keySet().iterator();
-        while (i.hasNext()) {
-            result.add(objMap.get(i.next()));
+        for (Iterator i = items.iterator(); i.hasNext();) {
+            result.add(populateObject((Item) i.next(), objMap));
         }
+
         return result;
     }
 
     /**
-     * Create an outline business object from an Item, does not fill in fields.
-     * @param item a the Item to realise
-     * @param model the parent model
-     * @return the materialised business object
-     * @throws ClassNotFoundException if item className is not valid
-     */
-    protected static Object realiseObject(Item item, Model model) throws ClassNotFoundException {
-        Set classes = new HashSet();
-        if (item.getClassName() != null && !item.getClassName().equals("")) {
-            classes.add(generateClass(item.getClassName(), model));
-        }
-        if (item.getImplementations() != null) {
-            for (Iterator i =  StringUtil.tokenize(item.getImplementations()).iterator();
-                 i.hasNext();) {
-                classes.add(generateClass((String) i.next(), model));
-            }
-        }
-        return DynamicUtil.createObject(classes);
-    }
-
-    /**
-     * Fill in fields of an outline business object.
+     * Fill in fields of an outline business object which is in the map under item.identifier
+     * Note that this modifies the relevant object in the map
+     * It also returns the object for convenience
      * @param item a the Item to read field data from
      * @param objMap a map of item identifiers to outline business objects
+     * @return a populated object
      */
-    protected static void populateObject(Item item, Map objMap) {
+    protected static Object populateObject(Item item, Map objMap) {
         Object obj = objMap.get(item.getIdentifier());
 
         try {
@@ -176,24 +148,7 @@ public class FullParser
             }
         } catch (IllegalAccessException e) {
         }
-    }
-
-    /**
-     * Create a class given a namspace qualified string, if class is not in the
-     * the given model looks for core classes in org.flymine.model package.
-     * @param a namespace qualified class name
-     * @param model the parent model
-     * @throws ClassNotFoundException if invalid class string
-     */
-    private static Class generateClass(String namespacedClass, Model model)
-        throws ClassNotFoundException {
-        String localName = namespacedClass.substring(namespacedClass.indexOf("#") + 1);
-        Class cls;
-        try {
-            cls = Class.forName(model.getPackageName() + "." + localName);
-        } catch (ClassNotFoundException e) {
-            cls = Class.forName("org.flymine.model." + localName);
-        }
-        return cls;
+        
+        return obj;
     }
 }
