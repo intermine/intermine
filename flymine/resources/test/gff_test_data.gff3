@@ -1,5 +1,6 @@
 ##gff-version   3
 ##sequence-region   ctg123 1 1497228
+   #
 ctg123	.	gene	1000	9000	.	+	.	ID=gene00001;Name=EDEN,zen
 ctg123	.	TF_binding_site	1000	1012	.	+	.	ID=tfbs00001;Name="name1","name2";Parent=gene00001
 
