@@ -4,6 +4,7 @@ import junit.extensions.TestSetup;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 
+import java.lang.reflect.Method;
 
 import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
@@ -14,11 +15,14 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     protected static final org.apache.log4j.Logger LOG
         = org.apache.log4j.Logger.getLogger(SetupDataTestCase.class);
 
+    protected static Class subClass;
+
     public SetupDataTestCase(String arg) {
         super(arg);
     }
 
     public static Test buildSuite(Class cls) {
+        subClass = cls;
         TestSetup setup = new TestSetup(new TestSuite(cls)) {
                 protected void setUp() throws Exception {
                     oneTimeSetUp();
@@ -37,12 +41,21 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) osLocal);
         setUpData();
         storeData();
-        setUpQueries();
-        setUpResults();
+        Method setUpQueries = subClass.getMethod("setUpQueries", new Class[] {});
+        setUpQueries.invoke(null, new Object[] {});
+        Method setUpResults = subClass.getMethod("setUpResults", new Class[] {});
+        setUpResults.invoke(null, new Object[] {});
     }
 
     public static void oneTimeTearDown() throws Exception {
         removeDataFromStore();
     }
+
+    public void setUp() {
+    }
+
+    public void tearDown() {
+    }
+
 
 }
