@@ -49,6 +49,8 @@ public class ObjectStoreItemReader implements ItemReader
      */
     public Iterator itemIterator() throws ObjectStoreException {
         Query q = new Query();
+        // database has a hard time selecting distinct on object xml
+        q.setDistinct(false);
         QueryClass qc = new QueryClass(Item.class);
         q.addFrom(qc);
         q.addToSelect(qc);
