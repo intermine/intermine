@@ -74,8 +74,7 @@ public class TemplateController extends Action
                 Constraint c = (Constraint) node.getConstraints().get(0);
                 int j = template.getNodes().indexOf(node);
                 
-                ((TemplateForm) form).setAttributeValues("" + (j + 1), "" + c.getDisplayValue());
-                
+                ((TemplateForm) form).setAttributeValues("" + (j + 1), "" + c.getDisplayValue(node));
                 ((TemplateForm) form).setAttributeOps("" + (j + 1), "" + c.getOp().getIndex());
             }
         }
