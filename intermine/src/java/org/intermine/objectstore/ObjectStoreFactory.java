@@ -50,7 +50,7 @@ public class ObjectStoreFactory
         }
         String modelName = props.getProperty("model");
         if (modelName == null) {
-            throw new ObjectStoreException(alias + " does not have an model specified"
+            throw new ObjectStoreException(alias + " does not have a model specified"
                                            + " (check properties file)");
         }
         Model model;
