@@ -60,17 +60,13 @@ public class ExportAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
-
+        
         if (type.equals("excel")) {
             return excel(mapping, form, request, response);
-        } else {
-            if (type.equals("csv")) {
-                return csv(mapping, form, request, response);
-            } else {
-                if (type.equals("tab")) {
-                    return tab(mapping, form, request, response);
-                }
-            }
+        } else if (type.equals("csv")) {
+            return csv(mapping, form, request, response);
+        } else if (type.equals("tab")) {
+            return tab(mapping, form, request, response);
         }
 
         HttpSession session = request.getSession();

@@ -4,21 +4,25 @@
 
 <!-- export.jsp -->
 <div>
-  <div>
+  <fmt:message key="export.as"/>
+  <%-- disabling excel export as whole file must be built in-memory --%>
+  <%--div>
     <html:link action="/exportAction?type=excel">
       <fmt:message key="export.excel"/>
-    </html:link>
-  </div>
-  <div>
-    <html:link action="/exportAction?type=csv">
-      <fmt:message key="export.csv"/>
-    </html:link>
-  </div>
-  <div>
-    <html:link action="/exportAction?type=tab">
-      <fmt:message key="export.tabdelimited"/>
-    </html:link>
-  </div>
+    </html:link--%>
+  </div--%>
+  <ul>
+    <li>
+      <html:link action="/exportAction?type=csv">
+        <fmt:message key="export.csv"/>
+      </html:link>
+    </li>
+    <li>
+      <html:link action="/exportAction?type=tab">
+        <fmt:message key="export.tabdelimited"/>
+      </html:link>
+    </li>
+  </ul>
 
   <fmt:setBundle basename="model"/>
 
