@@ -221,7 +221,7 @@ public class CalculateLocationsTest extends TestCase {
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     getChromosome(), gene, trans1, trans2,
                                                     exon1, exon2,
-                                                    exon1OnChr, exon2OnChr
+                                                    exon1OnChr, exon2OnChr, trans2OnChr
                                                 }));
 
         Iterator i = toStore.iterator();
@@ -231,8 +231,6 @@ public class CalculateLocationsTest extends TestCase {
 
         CalculateLocations cl = new CalculateLocations(osw);
         cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
-
-        // bug - does nothing at the moment:
         cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
 
         ObjectStore os = osw.getObjectStore();
@@ -242,6 +240,12 @@ public class CalculateLocationsTest extends TestCase {
         Location resTrans1Location = (Location) resTrans1.getObjects().get(0);
         assertEquals(51, resTrans1Location.getStart().intValue());
         assertEquals(250, resTrans1Location.getEnd().intValue());
+
+        Gene resGene = (Gene) os.getObjectById(new Integer(301));
+        assertEquals(1, resGene.getObjects().size());
+        Location resGeneLocation = (Location) resGene.getObjects().get(0);
+        assertEquals(51, resGeneLocation.getStart().intValue());
+        assertEquals(300, resGeneLocation.getEnd().intValue());
     }
     
     public void testSupercontigToChromosome() throws Exception {
