@@ -7,7 +7,7 @@ import org.flymine.sql.query.Query;
  *
  * @author Andrew Varley
  */
-public class PrecomputedTable
+public class PrecomputedTable implements SQLStringable
 {
     protected Query q;
     protected String name;
