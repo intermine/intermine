@@ -880,7 +880,6 @@
     <jar destfile="${dist}/intermine-webapp.jar" manifest="${build.tmp}/MANIFEST.MF">
       <fileset dir="${build.java}" includes="org/intermine/web/**"/>
       <fileset dir="${build.model}/userprofile" excludes="tmp/**"/>
-      <fileset file="${build.resources}/log4j.properties"/>
     </jar>
   </target>
 
@@ -914,8 +913,14 @@
       <fileset dir="${dist}" includes="intermine.jar intermine-webapp.jar"/>
     </copy>
     <copy todir="${build.webapp}/intermine/WEB-INF/classes">
-      <fileset dir="${resources}/webapps/intermine"
-               includes="InterMineWebApp*.properties default.intermine.properties"/>
+      <fileset dir="${resources}/webapps/intermine">
+        <include name="InterMineWebApp*.properties"/>
+        <include name="default.intermine.properties"/>
+      </fileset>
+      <fileset dir="${resources}/runtime/">
+        <include name="log4j.properties"/>
+        <include name="commons-logging.properties"/>
+      </fileset>
     </copy>
     <war destfile="${dist}/webapp/intermine.war" webxml="${resources}/webapps/intermine/web.xml">
       <fileset dir="${build.webapp}/intermine"/>
