@@ -43,6 +43,7 @@
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.www" location="${build}/www"/>
   <property name="build.www-internal" location="${build}/www/internal"/>
+  <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
 
   <!-- tutorial directory -->
@@ -120,6 +121,13 @@
     <include name="checkstyle*.jar"/>
   </patternset>
 
+  <!-- Jasper libraries -->
+  <patternset id="lib.jasper">
+    <include name="jasper*.jar"/>
+    <include name="ant*.jar"/>
+    <include name="cactus*.jar"/>
+  </patternset>
+
   <!-- Libraries that the FlyMine query webapp uses -->
   <patternset id="lib.webapp.flymine">
     <include name="aspect*.jar" />
@@ -150,6 +158,7 @@
       <patternset refid="lib.build"/>
       <patternset refid="lib.webapp.flymine"/>
       <patternset refid="lib.webapp.webservice"/>
+      <patternset refid="lib.jasper"/>
       <patternset refid="lib.acedb"/>
       <patternset refid="lib.uml"/>
     </fileset>
@@ -166,7 +175,7 @@
     <fileset dir="${lib}">
       <patternset refid="lib.checkstyle"/>
     </fileset>
-  </path>
+ </path>
 
   <path id="test.class.path">
     <path refid="project.class.path"/>
@@ -690,20 +699,77 @@
 
   <target name="build-webapp" depends="prepare,prepare-dist,jar"
     description="Build the FlyMine web application">
-    <war destfile="${dist.webapp}/flymine.war" webxml="${resources}/webapps/flymine/web.xml">
-      <lib dir="${lib}">
+    <mkdir dir="${build.webapp}/flymine"/>
+    <mkdir dir="${build.webapp}/flymine/WEB-INF"/>
+    <mkdir dir="${build.webapp}/flymine/WEB-INF/classes"/>
+    <mkdir dir="${build.webapp}/flymine/WEB-INF/lib"/>
+    <mkdir dir="${build.webapp}/flymine/WEB-INF/src"/>
+    <copy todir="${build.webapp}/flymine">
+      <fileset dir="${src.webapp}"/>
+      <fileset dir="${src.www}" includes="flymine.css"/>
+    </copy>
+    <copy todir="${build.webapp}/flymine/WEB-INF">
+      <fileset dir="${resources}/webapps/flymine" excludes="FlyMineWebApp*.properties"/>
+    </copy>
+    <copy todir="${build.webapp}/flymine/WEB-INF/classes">
+      <fileset dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
+    </copy>
+    <copy todir="${build.webapp}/flymine/WEB-INF/lib">
+      <fileset dir="${lib}">
         <patternset refid="lib.common"/>
         <patternset refid="lib.antlr"/>
         <patternset refid="lib.webapp.flymine"/>
-      </lib>
-      <lib dir="${dist}" includes="flymine*.jar"/>
-      <classes dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
-      <webinf dir="${resources}/webapps/flymine" excludes="web.xml FlyMineWebApp*.properties"/>
-      <fileset dir="${src.webapp}"/>
-      <fileset dir="${src.www}" includes="flymine.css"/>
+      </fileset>
+      <fileset dir="${dist}" includes="flymine*.jar"/>
+    </copy>
+    
+    <!-- (begin jsp precompilation) -->
+    <jspc srcdir="${build.webapp}/flymine"
+      destdir="${build.webapp}/flymine/WEB-INF/src"
+      package="org.flymine.jsp"
+      compiler="jasper41"
+      verbose="9"
+      webinc="${build.tmp}/generated-web.xml">
+      <include name="*.jsp"/>
+      <!-- have to exclude index.jsp because listed as a welcome-file in web.xml -->
+      <exclude name="index.jsp"/>
+      <classpath refid="base.class.path"/>
+    </jspc>
+
+    <delete>
+      <fileset dir="${build.webapp}/flymine" includes="**/*.jsp" excludes="**/WEB-INF/** index.jsp"/>
+      <!-- have to remove web.xml now - required by jspc but not allowed by war task -->
+      <fileset dir="${build.webapp}/flymine/WEB-INF" includes="web.xml"/>
+    </delete>
+
+    <loadfile property="generated.xml" srcFile="${build.tmp}/generated-web.xml"/>
+
+    <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
+
+    <replace file="${build.tmp}/web.xml" value="${generated.xml}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@JSPC_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    <javac
+      srcdir="${build.webapp}/flymine/WEB-INF/src"
+      destdir="${build.webapp}/flymine/WEB-INF/classes"
+      listfiles="yes">
+      <classpath refid="base.class.path"/>
+    </javac>
+
+    <!-- don't need the .java files -->
+    <delete dir="${build.webapp}/flymine/WEB-INF/src"/>
+    <!-- (end jsp precompilation) -->
+    
+    <war destfile="${dist.webapp}/flymine.war" webxml="${build.tmp}/web.xml">
+      <lib dir="${build.webapp}/flymine/WEB-INF/lib"/>
+      <classes dir="${build.webapp}/flymine/WEB-INF/classes"/>
+      <webinf dir="${build.webapp}/flymine/WEB-INF"/>
+      <fileset dir="${build.webapp}/flymine"/>
     </war>
   </target>
-
+  
   <target name="build-testable-webapp" depends="build-webapp,jar-testmodel"
     description="Build a FlyMine webapp including the test classes and libraries">
     <war destfile="${dist.webapp}/flymine.war" update="true">
@@ -716,7 +782,6 @@
   </target>
 
   <!-- Webservice targets -->
- 
   <target name="build-webservice" depends="prepare,prepare-dist,jar"
     description="Build the FlyMine webservice">
     <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
@@ -733,10 +798,10 @@
   <target name="build-testable-webservice" depends="build-webservice,jar-testmodel"
     description="Build the FlyMine webservice including the test classes and libraries">
     <war destfile="${dist.webapp}/webservice.war" update="true">
-      <lib dir="${dist}" includes="flymine-testmodel.jar" />
       <lib dir="${lib}">
         <patternset refid="lib.webapptest" />
       </lib>
+      <lib dir="${dist}" includes="flymine-testmodel.jar" />
     </war>
   </target>
 
