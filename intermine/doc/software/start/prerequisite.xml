@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<article>
+  <artheader>
+    <date>2004-06-30</date>
+    <title>Prerequisites</title>
+  </artheader>
+  <sect1>
+     <para>The FlyMine project is building an integrated database of genomic, expression and protein data for Drosophila and Anopheles and making this available to the worldwide research community via web and bioinformatics interfaces. InterMine is a generic object data warehouse system developed as part of the FlyMine project and made available as standalone open-source software. Both FlyMine and InterMine are developed using Java and XML with a PostgreSQL as backend database and Tomcat as web application server running in a Linux/Unix environment. Prerequisites for the running environment are Java, PostgreSQL, Ant, and Tomcat. These can be obtained at the following locations if you do not already have them on your system.</para>
+    <para>
+      <orderedlist>
+	<listitem><ulink url="http://java.sun.com/j2se/1.4.2/download.html">Java 1.4.2 SDK for different platforms is available here</ulink></listitem>
+	<listitem><ulink url="http://www.postgresql.org/">The latest version of PostgreSQL is on this site</ulink></listitem>
+	<listitem><ulink url="http://ant.apache.org/">Get the Ant tool here</ulink></listitem>
+        <listitem><ulink url="http://jakarta.apache.org/tomcat/">Get Tomcat here</ulink></listitem>
+      </orderedlist>
+    </para>
+
+    <para>InterMine supports users running queries based on their own UML models. ArgoUML can be obtained <ulink url="http://argouml.tigris.org/">here</ulink> as a tool.
+
+    </para>
+  </sect1>
+</article>

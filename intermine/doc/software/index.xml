@@ -1,30 +1,27 @@
 <index>
-  <section>
 
-    <heading>Tutorials</heading>
-    <item><ulink url="tutorials/getting_started.xml">Getting started - a tutorial</ulink></item>
-    <item><ulink url="tutorials/biologist/index.xml">Getting started - a biologist's perspective</ulink></item>
-    <item><ulink url="tutorials/using-own-model/index.xml">Creating your own database</ulink></item>
-    <item><ulink url="tutorials/webservice.xml">The InterMine web service</ulink></item>
-  </section>
+   <section>
+    <heading>Getting started</heading>
+    <item><ulink url="start/obtaining.xml">Obtaining software</ulink></item>
+    <item><ulink url="start/prerequisite.xml">Prerequisite</ulink></item>
+    <item><ulink url="start/getting_started.xml">Building a tutorial</ulink></item>
+   </section>
+
+ <section>
+    <heading>Building your own InterMine</heading>
+    <item><ulink url="metadata/model_creation.xml">Using InterMine with your own model</ulink></item>
+    <item><ulink url="building/using-own-model.xml">Creating your own model</ulink></item>
+    <item><ulink url="metadata/model_behaviour.xml">Behaviour of a model</ulink></item>
+    <item><ulink url="building.xml">Building Intermine ?? </ulink></item>
+    <item><ulink url="building/webservice.xml">The InterMine web service</ulink></item>
+   </section>
+
 
   <section>
     <heading>System documentation</heading>
     <item><ulink url="overview.xml">Technical overview</ulink></item>
     <item><ulink url="InterMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
     <item><ulink url="InterMineArchitecture.png">System architecture</ulink></item>
-  </section>
-
-  <section>
-    <heading>Obtaining and building InterMine</heading>
-    <item><ulink url="building.xml">Downloading and building InterMine</ulink></item>
-    <item><ulink url="cvs-user.xml">Obtaining source code via anonymous CVS</ulink></item>
-  </section>
-
-  <section>
-    <heading>Using InterMine models</heading>
-    <item><ulink url="metadata/model_creation.xml">Creating a model</ulink></item>
-    <item><ulink url="metadata/model_behaviour.xml">Bahaviour of a model</ulink></item>
   </section>
 
   <section>
@@ -50,7 +47,7 @@
     <item><ulink url="objectstore/results_prefetch.xml">Results prefetching</ulink></item>
     <item><ulink url="objectstore/related.xml">Fetching related objects in the Results object</ulink></item>
     <item><ulink url="objectstore/query_explain.xml">Explain plans for InterMine queries</ulink></item>
-    <item>Safe implementation: <ulink url="objectstore/safe/characteristics.xml">Characteristics</ulink></item>
+    <item><ulink url="objectstore/safe/characteristics.xml">Safe implementation: Characteristics</ulink></item>
   </section>
 
   <section>
@@ -75,3 +72,10 @@
   </section>
 
 </index>
+
+
+
+
+
+
+
