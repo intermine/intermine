@@ -86,11 +86,17 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             throw new IllegalArgumentException("Unable to get sub-ObjectStore for Translating"
                     + " ObjectStore (check properties file)");
         }
+        Model model;
+        try {
+            model = getModelFromClasspath(osAlias, props);
+        } catch (MetaDataException metaDataException) {
+            throw new ObjectStoreException("Cannot load model", metaDataException);
+        }
         Translator t;
         try {
             Class c = Class.forName(translatorClass);
-            Constructor con = c.getConstructor(new Class[] {String.class, ObjectStore.class});
-            t = (Translator) con.newInstance(new Object[] {subAlias, sub});
+            Constructor con = c.getConstructor(new Class[] {Model.class, ObjectStore.class});
+            t = (Translator) con.newInstance(new Object[] {model, sub});
         } catch (Exception e) {
             // preserve ObjectStoreExceptions for more useful message
             Throwable thr = e.getCause();
@@ -105,15 +111,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             }
         }
 
-        Model osModel;
-
-        try {
-            osModel = getModelFromClasspath(osAlias, props);
-        } catch (MetaDataException metaDataException) {
-            throw new ObjectStoreException("Cannot load model", metaDataException);
-        }
-
-        return new ObjectStoreTranslatingImpl(osModel, sub, t);
+        return new ObjectStoreTranslatingImpl(model, sub, t);
     }
 
     /**
