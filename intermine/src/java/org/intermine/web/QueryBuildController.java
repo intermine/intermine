@@ -30,15 +30,7 @@ import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.util.TypeUtil;
-import org.flymine.objectstore.query.SimpleConstraint;
-import org.flymine.objectstore.query.ContainsConstraint;
-import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.Constraint;
-import org.flymine.objectstore.query.QueryValue;
-import org.flymine.objectstore.query.QueryField;
-import org.flymine.objectstore.query.QueryNode;
-import org.flymine.objectstore.query.FromElement;
+import org.flymine.objectstore.query.*;
 
 import org.flymine.objectstore.query.presentation.ConstraintListCreator;
 import org.flymine.objectstore.query.presentation.AssociatedConstraint;
@@ -108,7 +100,7 @@ public class QueryBuildController extends TilesAction
                                        ((QueryValue) sc.getArg2()).getValue());
 
                     form.setFieldOp(((QueryField) sc.getArg1()).getFieldName(),
-                                    new Integer(sc.getType()));
+                                    sc.getType().getIndex());
                 }
             }
         }
@@ -126,9 +118,11 @@ public class QueryBuildController extends TilesAction
         while (iter.hasNext()) {
             AttributeDescriptor attr = (AttributeDescriptor) iter.next();
             Map opString = new LinkedHashMap();
-            int[] ops = SimpleConstraint.validOperators(TypeUtil.instantiate(attr.getType()));
-            for (int i = 0; i < ops.length; i++) {
-                opString.put(new Integer(ops[i]), SimpleConstraint.getOpString(ops[i]));
+            Iterator opIter = SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType()))
+                .iterator();
+            while (opIter.hasNext()) {
+                QueryOp op = (QueryOp) opIter.next();
+                opString.put(op.getIndex(), op.toString());
             }
             fieldOps.put(attr.getName(), opString);
         }
@@ -136,9 +130,10 @@ public class QueryBuildController extends TilesAction
         while (iter.hasNext()) {
             ReferenceDescriptor ref = (ReferenceDescriptor) iter.next();
             Map opString = new LinkedHashMap();
-            int[] ops = ContainsConstraint.validOperators();
-            for (int i = 0; i < ops.length; i++) {
-                opString.put(new Integer(ops[i]), ContainsConstraint.getOpString(ops[i]));
+            Iterator opIter = ContainsConstraint.validOps().iterator();
+            while (opIter.hasNext()) {
+                QueryOp op = (QueryOp) opIter.next();
+                opString.put(op.getIndex(), op.toString());
             }
             fieldOps.put(ref.getName(), opString);
         }

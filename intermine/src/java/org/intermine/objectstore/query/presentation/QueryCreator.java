@@ -52,15 +52,15 @@ public class QueryCreator
             throw new NullPointerException("fieldOps parameter is null");
         } 
 
+        QueryClass qc;
         try {
-            QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-            q.addFrom(qc);
-            addConstraint(q, generateConstraints(qc, fieldValues, fieldOps, q.getReverseAliases(),
-                                                 cld));
+            qc = new QueryClass(Class.forName(cld.getName()));
         } catch (Exception e) {
-            throw new FlyMineException("Problem occurred adding class (" + cld.getName()
-                                + ") to query: " + e);
+            throw new FlyMineException(e);
         }
+        q.addFrom(qc);
+        addConstraint(q, generateConstraints(qc, fieldValues, fieldOps, q.getReverseAliases(),
+                                             cld));
     }
 
     /**
@@ -72,36 +72,40 @@ public class QueryCreator
      * @param aliases map of aliases to QueryNodes and FromElements
      * @param cld ClassDescriptor for the QueryClass Java type
      * @return a populated ConstraintSet
-     * @throws Exception if it goes wrong
+     * @throws FlyMineException if it goes wrong
      */
     protected static ConstraintSet generateConstraints(QueryClass qc, Map fieldValues,
                                                        Map fieldOps, Map aliases,
-                                                       ClassDescriptor cld) throws Exception {
+                                                       ClassDescriptor cld)
+        throws FlyMineException {
+        try {
         ConstraintSet constraints = new ConstraintSet(ConstraintSet.AND);
         Iterator iter = fieldValues.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry fieldEntry = (Map.Entry) iter.next();
             String fieldValue = (String) fieldEntry.getValue();
             if (!"".equals(fieldValue)) {
-                String fieldName = (String) fieldEntry.getKey();
-                int fieldOp = Integer.parseInt((String) fieldOps.get(fieldName));
-
+                FieldDescriptor field = cld.getFieldDescriptorByName((String) fieldEntry.getKey());
+                int opCode = Integer.parseInt((String) fieldOps.get(field.getName()));
+                QueryOp op = QueryOp.getOpForIndex(opCode);
                 Constraint c = null;
-
-                FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 if (field instanceof AttributeDescriptor) {
-                    QueryField qf = new QueryField(qc, fieldName);
+                    QueryField qf = new QueryField(qc, field.getName());
                     QueryValue qv = createQueryValue(qf.getType(), fieldValue);
-                    c = new SimpleConstraint(qf, fieldOp, qv);
+                    c = new SimpleConstraint(qf, op, qv);
                 } else if (field instanceof ReferenceDescriptor) {
-                    QueryReference qr = new QueryObjectReference(qc, fieldName);
+                    QueryReference qr = new QueryObjectReference(qc, field.getName());
                     // queryclass implements fromelement and querynode
-                    c = new ContainsConstraint(qr, fieldOp, (QueryClass) aliases.get(fieldValue));
+                    c = new ContainsConstraint(qr, op, (QueryClass) aliases.get(fieldValue));
                 }
                 constraints.addConstraint(c);
             }
         }
         return constraints;
+        } catch (Exception e) {
+            throw new FlyMineException("Problem occurred adding class (" + cld.getName()
+                                + ") to query", e);
+        }
     }
 
     /**
@@ -141,15 +145,15 @@ public class QueryCreator
         throws IllegalArgumentException, ParseException {
         QueryValue qv = null;
         if (type.equals(Integer.class)) {
-            qv = new QueryValue(new Integer(Integer.parseInt(value)));
+            qv = new QueryValue(Integer.valueOf(value));
         } else if (type.equals(Float.class)) {
-            qv = new QueryValue(new Float(Float.parseFloat(value)));
+            qv = new QueryValue(Float.valueOf(value));
         } else if (type.equals(Double.class)) {
-            qv = new QueryValue(new Double(Double.parseDouble(value)));
+            qv = new QueryValue(Double.valueOf(value));
         } else if (type.equals(Long.class)) {
-            qv = new QueryValue(new Long(Long.parseLong(value)));
+            qv = new QueryValue(Long.valueOf(value));
         } else if (type.equals(Short.class)) {
-            qv = new QueryValue(new Short(Short.parseShort(value)));
+            qv = new QueryValue(Short.valueOf(value));
         } else if (type.equals(Boolean.class)) {
             qv = new QueryValue(Boolean.valueOf(value));
         } else if (type.equals(Date.class)) {
