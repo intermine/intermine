@@ -186,14 +186,12 @@ public class UniprotDataTranslator extends DataTranslator
                 // We have a recognised organism
                 Set retval = new HashSet();
                 if (databaseId == null) {
-                    Item database = new Item(getUniqueIdentifier(),
-                            TGT_NS + "Database", "");
+                    Item database = new Item(getUniqueIdentifier(), TGT_NS + "Database", "");
                     database.addAttribute(new Attribute("title", "Uniprot"));
                     databaseId = database.getIdentifier();
                     retval.add(database);
                 }
-                Item protein = new Item(getUniqueIdentifier(),
-                        TGT_NS + "Protein", "");
+                Item protein = new Item(getUniqueIdentifier(), TGT_NS + "Protein", "");
                 String proteinName = getAttributeValue(srcItem, "name");
                 protein.addAttribute(new Attribute("identifier", proteinName));
                 List srcAccessions = getItemsInCollection(srcItem.getCollection("accessions"));
@@ -207,8 +205,7 @@ public class UniprotDataTranslator extends DataTranslator
                     while (srcAccIter.hasNext()) {
                         Item srcAccession = (Item) srcAccIter.next();
                         String srcAccessionString = getAttributeValue(srcAccession, "accession");
-                        Item synonym = new Item(getUniqueIdentifier(),
-                                TGT_NS + "Synonym", "");
+                        Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym", "");
                         synonym.addAttribute(new Attribute("value", srcAccessionString));
                         synonym.addAttribute(new Attribute("type", "accession"));
                         synonym.addReference(new Reference("subject", protein.getIdentifier()));
@@ -223,8 +220,7 @@ public class UniprotDataTranslator extends DataTranslator
                     String srcCommentType = getAttributeValue(srcComment, "type");
                     String srcCommentText = getAttributeValue(srcComment, "text");
                     if ((srcCommentType != null) && (srcCommentText != null)) {
-                        Item comment = new Item(getUniqueIdentifier(),
-                                TGT_NS + "Comment", "");
+                        Item comment = new Item(getUniqueIdentifier(), TGT_NS + "Comment", "");
                         comment.addAttribute(new Attribute("type", srcCommentType));
                         comment.addAttribute(new Attribute("text", srcCommentText));
                         comment.addReference(new Reference("subject", protein.getIdentifier()));
@@ -245,8 +241,7 @@ public class UniprotDataTranslator extends DataTranslator
                         if (srcProteinNameEvidence != null) {
                             srcProteinNameString += " (Evidence " + srcProteinNameEvidence + ")";
                         }
-                        Item comment = new Item(getUniqueIdentifier(),
-                                TGT_NS + "Comment", "");
+                        Item comment = new Item(getUniqueIdentifier(), TGT_NS + "Synonym", "");
                         comment.addAttribute(new Attribute("type", "name"));
                         comment.addAttribute(new Attribute("text", srcProteinNameString));
                         comment.addReference(new Reference("subject", protein.getIdentifier()));
@@ -257,8 +252,7 @@ public class UniprotDataTranslator extends DataTranslator
                 Reference geneOrganismReference = null;
                 if (taxonId == 7227) {
                     if (drosophilaId == null) {
-                        Item drosophila = new Item(getUniqueIdentifier(),
-                                TGT_NS + "Organism", "");
+                        Item drosophila = new Item(getUniqueIdentifier(), TGT_NS + "Organism", "");
                         drosophila.addAttribute(new Attribute("taxonId", "7227"));
                         retval.add(drosophila);
                         drosophilaId = drosophila.getIdentifier();
@@ -271,8 +265,8 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 } else if (taxonId == 6239) {
                     if (caenorhabditisId == null) {
-                        Item caenorhabditis = new Item(getUniqueIdentifier(),
-                                TGT_NS + "Organism", "");
+                        Item caenorhabditis = new Item(getUniqueIdentifier(), TGT_NS + "Organism",
+                                "");
                         caenorhabditis.addAttribute(new Attribute("taxonId", "6239"));
                         retval.add(caenorhabditis);
                         caenorhabditisId = caenorhabditis.getIdentifier();
@@ -304,8 +298,8 @@ public class UniprotDataTranslator extends DataTranslator
                                 .get(pubMedString);
                             pubLinkCount++;
                             if (publicationId == null) {
-                                Item publication = new Item(getUniqueIdentifier(),
-                                        TGT_NS + "Publication", "");
+                                Item publication = new Item(getUniqueIdentifier(), TGT_NS
+                                        + "Publication", "");
                                 publication.addAttribute(new Attribute("pubMedId", pubMedString));
                                 retval.add(publication);
                                 publicationId = publication.getIdentifier();
@@ -413,8 +407,7 @@ public class UniprotDataTranslator extends DataTranslator
                         // We have a gene id.
                         String geneId = (String) geneIdentifierToId.get(geneIdentifier);
                         if (geneId == null) {
-                            Item gene = new Item(getUniqueIdentifier(),
-                                    TGT_NS + "Gene", "");
+                            Item gene = new Item(getUniqueIdentifier(), TGT_NS + "Gene", "");
                             gene.addAttribute(new Attribute("organismDbId", geneIdentifier));
                             if (primaryGeneName != null) {
                                 gene.addAttribute(new Attribute("identifier", primaryGeneName));
@@ -433,8 +426,8 @@ public class UniprotDataTranslator extends DataTranslator
                                 if ("primary".equals(type)) {
                                     gene.addAttribute(new Attribute("name", name));
                                 }
-                                Item synonym = new Item(getUniqueIdentifier(),
-                                        TGT_NS + "Synonym", "");
+                                Item synonym = new Item(getUniqueIdentifier(), TGT_NS + "Synonym",
+                                        "");
                                 synonym.addAttribute(new Attribute("value", name));
                                 synonym.addAttribute(new Attribute("type", type));
                                 synonym.addReference(new Reference("subject",
