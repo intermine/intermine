@@ -30,15 +30,17 @@ public class PagedCollection extends PagedTable
      * @param name the String to use when displaying this collection - used as the column name for
      * the single column of results
      * @param collection the Collection
+     * @param collectionType the class Object of the collection, either a Class object or a
+     * ClassDescriptor object
      */
-    public PagedCollection(String name, Collection collection) {
+    public PagedCollection(String name, Collection collection, Object collectionType) {
         super(Arrays.asList(new Object[] {name}));
         if (collection instanceof List) {
             list = (List) collection;
         } else {
             list = new ArrayList(collection);
         }
-        ((Column) getColumns().get(0)).setType(Object.class);
+        ((Column) getColumns().get(0)).setType(collectionType);
         updateRows();
     }
 

@@ -22,10 +22,15 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -57,14 +62,33 @@ public class CollectionDetailsController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
         Integer id = new Integer((String) request.getParameter("id"));
         String field = request.getParameter("field");
         String pageSize = request.getParameter("pageSize");
 
         Object o = os.getObjectById(id);
 
+        Set cds = model.getClassDescriptorsForClass(o.getClass());
+
+        CollectionDescriptor colDesc = null;
+        
+        Iterator iter = cds.iterator();
+
+        while (iter.hasNext()) {
+            ClassDescriptor cd = (ClassDescriptor) iter.next();
+
+            colDesc = (CollectionDescriptor) cd.getFieldDescriptorByName(field);
+
+            if (colDesc != null) {
+                break;
+            }
+        }
+
+        ClassDescriptor collectionClass = colDesc.getReferencedClassDescriptor();
+
         Collection c = (Collection) TypeUtil.getFieldValue(o, field);
-        PagedCollection pc = new PagedCollection(field, c);
+        PagedCollection pc = new PagedCollection(field, c, collectionClass);
         if (pageSize != null) {
             try {
                 int pageSizeInt = Integer.parseInt(pageSize);
