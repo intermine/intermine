@@ -11,37 +11,41 @@ Details for
 </c:forEach>
 object<br/><br/>
 
-Identifiers:<br/>
-<table style="padding-left: 20px" cellspacing="10">
-  <c:forEach items="${object.identifiers}" var="entry">
-    <tr>
-      <td valign="top"><b>${entry.key}</b></td>
-      <td>${entry.value}</td>
-    </tr>
-  </c:forEach>
-</table>
-
+<c:if test="${!empty object.identifiers}">
+  Identifiers:<br/>
+  <table style="padding-left: 20px" cellspacing="10">
+    <c:forEach items="${object.identifiers}" var="entry">
+      <tr>
+        <td valign="top"><b>${entry.key}</b></td>
+        <td>${entry.value}</td>
+      </tr>
+    </c:forEach>
+  </table>
 <br/>
+</c:if>
 
-Attributes:<br/>
-<table style="padding-left: 20px" cellspacing="10">
-  <c:forEach items="${object.attributes}" var="entry">
-    <tr>
-      <td valign="top"><b>${entry.key}</b></td>
-      <td>
-        <c:choose>
-         <c:when test="${entry.value.class.name == 'java.lang.String'}">
-           ${fn:substring(entry.value, 0, 32)}...
-         </c:when>
-         <c:otherwise>
-           ${entry.value}
-         </c:otherwise>
-       </c:choose>
-      </td>
-    </tr>
-  </c:forEach>
-</table>
-<br/>
+<c:if test="${!empty object.attributes}">
+  Attributes:<br/>
+  <table style="padding-left: 20px" cellspacing="10">
+    <c:forEach items="${object.attributes}" var="entry">
+      <tr>
+        <td valign="top"><b>${entry.key}</b></td>
+        <td>
+          <c:set var="maxLength" value="32"/>
+          <c:choose>
+            <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
+              ${fn:substring(entry.value, 0, maxLength)}...
+            </c:when>
+            <c:otherwise>
+              ${entry.value}
+            </c:otherwise>
+          </c:choose>
+        </td>
+      </tr>
+    </c:forEach>
+  </table>
+  <br/>
+</c:if>
 
 <c:if test="${!empty object.references}">
   References:<br/>
