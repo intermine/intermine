@@ -337,7 +337,7 @@ public class JavaModelOutput extends ModelOutput
                     if (((AttributeDescriptor) field).getType().equals("boolean")) {
                         sb.append("(" + field.getName() + " ? 0 : 1)");
                     } else {
-                        sb.append(field.getName());
+                        sb.append("((int) " + field.getName() + ")");
                     }
                 } else {
                     // sb.append(field.getName() + ".hashCode()");

@@ -300,14 +300,15 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void testGenerateHashCodePrimitive() throws Exception {
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "int");
-        Set atts = new HashSet(Collections.singleton(atd1));
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", true, "float");
+        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", true, "int");
+        Set atts = new LinkedHashSet(Arrays.asList(new Object[] { atd1, atd2}));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", new HashSet(Collections.singleton(cld1)));
 
         String expected = INDENT  + "public int hashCode() {" + ENDL
             + INDENT + INDENT + "if (id != null) return id.hashCode();" + ENDL
-            + INDENT + INDENT + "return atd1;" + ENDL
+            + INDENT + INDENT + "return ((int) atd1) ^ ((int) atd2);" + ENDL
             + INDENT + "}" + ENDL + ENDL;
 
         assertEquals(expected, mo.generateHashCode(cld1));
