@@ -267,6 +267,25 @@ public class MainHelper
             pathToQueryNode.putAll(queryBits);
         }
 
+        // avoid setting Query.distinct == true if we are only select classes
+        boolean onlySelectedClasses = true;
+        Iterator i = q.getSelect().iterator();
+
+        while (i.hasNext()) {
+            QueryNode queryNode = (QueryNode) i.next();
+            
+            if (!(queryNode instanceof QueryClass)) {
+                onlySelectedClasses = false;
+                break;
+            }
+        }
+
+        if (onlySelectedClasses) {
+            // if we've only selected classes the result must be distinct - this works around a
+            // postgres/ObjectStore
+            q.setDistinct(false);
+        }
+
         return q;
     }
 
