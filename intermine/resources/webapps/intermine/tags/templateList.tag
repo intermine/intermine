@@ -1,4 +1,3 @@
-
 <%@ tag body-content="empty"  %>
 
 <%@ attribute name="category" required="true" %>
@@ -28,9 +27,11 @@
   </fmt:message>
   <c:set var="extra" value=""/>
   <c:if test="${!empty className}">
-    <c:set var="fieldName" value="${CLASS_TEMPLATE_FIELDNAMES[className][templateQuery.name]}"/>
-    <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
-    <c:set var="extra" value="&${fn:split(className, '.')[fn:length(fn:split(className, '.')) - 1]}.${fieldName}_value=${fieldValue}"/>
+    <c:forEach items="${CLASS_TEMPLATE_EXPRS[className][templateQuery.name]}" var="fieldExpr">
+      <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
+      <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
+      <c:set var="extra" value="${extra}&${fieldExpr}_value=${fieldValue}"/>
+    </c:forEach>
   </c:if>
   <html:link action="/template?name=${templateQuery.name}&type=${type}${extra}" 
              title="${linkTitle}">
