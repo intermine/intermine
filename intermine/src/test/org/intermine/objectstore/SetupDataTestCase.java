@@ -293,7 +293,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     private static Map map(Collection c) throws Exception {
-        Map data = new LinkedHashMap();
+        Map returnData = new LinkedHashMap();
         Iterator iter = c.iterator();
         while(iter.hasNext()) {
             Object o = iter.next();
@@ -306,13 +306,13 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
                 } catch (Exception e2) {
                 }
             }
-            if(name!=null) {
-                data.put((String)name.invoke(o, new Object[] {}), o);
+            if (name != null) {
+                returnData.put((String)name.invoke(o, new Object[] {}), o);
             } else {
-                data.put(new Integer(o.hashCode()), o);
+                returnData.put(new Integer(o.hashCode()), o);
             }
         }
-        return data;
+        return returnData;
     }
 
     /*
