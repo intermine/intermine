@@ -26,10 +26,10 @@
    rdfs:subClassOf :BioEntity;
    rdfs:subClassOf [a owl:Restriction;
                     owl:maxCardinality "1";
-                    owl:onProperty :ProteinRegion__protein].
-#   rdfs:subClassOf [a owl:Restriction;
-#                    owl:maxCardinality "1";
-#                    owl:onProperty :ProteinRegion__sequenceFamily];
+                    owl:onProperty :ProteinRegion__protein];
+   rdfs:subClassOf [a owl:Restriction;
+                    owl:maxCardinality "1";
+                    owl:onProperty :ProteinRegion__sequenceFamily].
 #   rdfs:subClassOf [a owl:Restriction;
 #                    owl:maxCardinality "1";
 #                    owl:onProperty :ProteinRegion__structuralFamily].
@@ -59,7 +59,24 @@
 
 :ProteinRegion__structures a owl:ObjectProperty;
    rdfs:domain :ProteinRegion;
-   rdfs:range :ProteinStructure.
+   rdfs:range :ProteinStructure;
+   owl:inverseOf :ProteinStructure__region.
+
+:ProteinRegion__sequenceFamily a owl:ObjectProperty;
+   rdfs:domain :ProteinRegion;
+   rdfs:range :ProteinSequenceFamily.
+
+:ProteinSequenceFamily a owl:Class;
+   rdfs:subClassOf :BioProperty.
+
+:ProteinSequenceFamily__name a owl:DatatypeProperty;
+   rdfs:domain :ProteinSequenceFamily;
+   rdfs:range xsd:string.
+
+:ProteinSequenceFamily__regions a owl:ObjectProperty;
+   rdfs:domain :ProteinSequenceFamily;
+   rdfs:range :ProteinRegion;
+   owl:inverseOf :ProteinRegion__sequenceFamily.
 
 :ProteinStructure a owl:Class;
    rdfs:subClassOf :BioProperty;

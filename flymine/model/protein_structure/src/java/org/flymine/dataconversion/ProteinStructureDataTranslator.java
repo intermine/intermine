@@ -123,20 +123,38 @@ public class ProteinStructureDataTranslator extends DataTranslator
                 throw new InterMineException(e);
             }
             modelledProteinStructure.addAttribute(new Attribute("atm", atm.toString()));
-            modelledProteinStructure.addReference(new Reference("region",
-                                                                proteinRegion.getIdentifier()));
 
-            // link proteinRegion and modelledProteinStructure using annotation
+            // link proteinRegion and modelledProteinStructure using annotation, and add shortcut
             Item annotation = createItem(tgtNs + "Annotation", "");
             annotation.addReference(new Reference("subject", proteinRegion.getIdentifier()));
             annotation.addReference(new Reference("property", modelledProteinStructure
                                                   .getIdentifier()));
+            modelledProteinStructure.addReference(new Reference("region",
+                                                                proteinRegion.getIdentifier()));
+
+            // sequenceFamily -> proteinSequenceFamily
+            Item sequenceFamily = getReferencedItem(srcItem, "sequence_family");
+            Item proteinSequenceFamily = createItem(tgtNs + "ProteinSequenceFamily", "");
+            proteinSequenceFamily.addAttribute(new Attribute("name", sequenceFamily
+                                                             .getAttribute("pfam_id").getValue()));
+
+            // link proteinRegion and proteinSequenceFamily using annotation, and add shortcut
+            Item annotation2 = createItem(tgtNs + "Annotation", "");
+            annotation2.addReference(new Reference("subject", proteinRegion.getIdentifier()));
+            annotation2.addReference(new Reference("property", proteinSequenceFamily
+                                                  .getIdentifier()));
+            annotation2.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {db.getIdentifier()})));
+            proteinRegion.addReference(new Reference("sequenceFamily",
+                                                     proteinSequenceFamily.getIdentifier()));
 
             result.add(proteinRegion);
             result.add(protein);
             result.add(location);
             result.add(modelledProteinStructure);
             result.add(annotation);
+            result.add(annotation2);
+            result.add(proteinSequenceFamily);
         }
 
         return result;
