@@ -20,7 +20,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.flymine.metadata.CollectionDescriptor;
 import org.flymine.metadata.FieldDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
@@ -183,7 +182,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             bag.add(toId);
                             toIdIter.remove();
                         }
-                        
+
                         Query subQ = new Query();
                         subQ.setDistinct(false);
                         QueryClass qc = new QueryClass(FlyMineBusinessObject.class);

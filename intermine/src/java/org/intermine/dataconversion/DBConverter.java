@@ -83,7 +83,8 @@ public class DBConverter extends DataConverter
             try {
                 c = db.getConnection();
 
-                for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
+                for (Iterator cldIter = model.getClassDescriptors().iterator();
+                     cldIter.hasNext();) {
                     ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                     if (!cld.getName().equals("org.flymine.model.FlyMineBusinessObject")) {
                         if (idsProvided(cld) && !idIsUnique(cld)) {
@@ -368,7 +369,8 @@ public class DBConverter extends DataConverter
      */
     protected String getNextTableId(String clsName) throws SQLException {
         if (!maxIdMap.containsKey(clsName)) {
-            Iterator i = reader.execute("SELECT MAX(" + clsName + "_id) FROM " + clsName).iterator();
+            Iterator i = reader.execute("SELECT MAX(" + clsName + "_id) FROM "
+                                        + clsName).iterator();
             String id = "" + (((Map) i.next()).get("MAX(" + clsName + "_id)"));
             maxIdMap.put(clsName, id);
         }
