@@ -13,10 +13,6 @@ package org.flymine.web;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.flymine.objectstore.query.QueryClass;
-
-import org.flymine.model.testmodel.Department;
-
 import servletunit.struts.MockStrutsTestCase;
 
 public class TreeActionTest extends MockStrutsTestCase

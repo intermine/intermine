@@ -10,15 +10,9 @@ package org.flymine.web;
  *
  */
 
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 
 import servletunit.struts.MockStrutsTestCase;
-
-import org.flymine.objectstore.query.Query;
-import org.flymine.model.testmodel.Company;
-
 
 public class QueryClassSelectActionTest extends MockStrutsTestCase {
 

@@ -13,6 +13,7 @@ package org.flymine.web;
 import servletunit.struts.MockStrutsTestCase;
 
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,10 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryClass;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
-import org.flymine.model.testmodel.Employee;
-import org.flymine.model.testmodel.Types;
 
 public class QueryBuildActionTest extends MockStrutsTestCase
 {
@@ -123,6 +121,8 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         setRequestPathInfo("/query");
         addRequestParameter("action", "Update");
         session.setAttribute("model", new DisplayModel(model));
+        //this is necessary because the mock session is US locale by default
+        session.setAttribute(Globals.LOCALE_KEY, Locale.getDefault());
 
         Map queryClasses = new HashMap();
 
@@ -185,7 +185,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         queryBuildForm.setFieldValue("bigDecimalObjType_0", "12345678901234567890.123456789");
         queryBuildForm.setFieldOp("bigDecimalObjType_0",
                                   ConstraintOp.EQUALS.getIndex().toString());
-        queryBuildForm.setFieldValue("dateObjType_0", "3/5/04 9:30 AM");
+        queryBuildForm.setFieldValue("dateObjType_0", "21/5/04 9:30 AM");
         queryBuildForm.setFieldOp("dateObjType_0",
                                   ConstraintOp.EQUALS.getIndex().toString());
 
@@ -215,7 +215,7 @@ public class QueryBuildActionTest extends MockStrutsTestCase
                                       new BigDecimal("12345678901234567890.123456789"));
         DateFormat df = new SimpleDateFormat();
         try {
-            expected.getFieldValues().put("dateObjType_0", df.parse("3/5/04 9:30 AM"));
+            expected.getFieldValues().put("dateObjType_0", df.parse("21/5/04 9:30 AM"));
         } catch (ParseException e) {
         }
 
