@@ -14,7 +14,6 @@
     </c:otherwise>
   </c:choose>
   <br/><br/>
-  <div class="queryBuildCurrentQuery">
   <c:forEach items="${QUERY_CLASSES}" var="entry" varStatus="classStatus">
     <c:set var="alias" value="${entry.key}"/>
     <c:set var="queryClass" value="${entry.value}"/>
@@ -125,16 +124,15 @@
     </c:choose>
 
     <c:if test="${!classStatus.last}"><hr/></c:if>
-
   </c:forEach>
-  </div>
 
-  <%-- only display the run query button if at least one queryclass is present --%>
-  <c:if test="${queryClass != null}">
-    <br/>
-    <html:submit property="action"><fmt:message key="query.run"/></html:submit>
-
-    <c:if test="${EDITING_ALIAS == null && ADVANCED_MODE}">
+  <c:if test="${EDITING_ALIAS == null}">
+    <c:if test="${!empty QUERY_CLASSES}">
+      <html:submit property="action">
+        <fmt:message key="query.run"/>
+      </html:submit>
+    </c:if>
+    <c:if test="${ADVANCED_MODE}">
       <html:submit property="action">
         <fmt:message key="query.editfql"/>
       </html:submit>
