@@ -20,230 +20,41 @@
 </para>
 </sect1>
 
-<sect1>
-<title>Parsing a SQL statement</title>
-<para>
-	A SQL statement follows the following form:
-</para>
+<itemizedlist>
+	<listitem><ulink url="parsing">Parsing a SQL Query</ulink></listitem>
+	<listitem><ulink url="usingparsed">Using a parsed query</ulink></listitem>
+	<listitem><ulink url="metadata">Meta-data in the database</ulink></listitem>
+	<listitem><ulink url="todo">Current status and todo list</ulink></listitem>
+</itemizedlist>
 
-<para>
-	SELECT <emphasis>&lt;list of fields&gt;</emphasis> FROM <emphasis>&lt;list of tables&gt;</emphasis> [ WHERE <emphasis>&lt;where clause&gt;</emphasis> ] [ GROUP BY <emphasis>&lt;list of fields&gt;</emphasis> [ HAVING <emphasis>&lt;where clause&gt;</emphasis> ] ] [ ORDER BY <emphasis>&lt;list of fields&gt;</emphasis> ] [ LIMIT <emphasis>&lt;number&gt;</emphasis> [ OFFSET <emphasis>&lt;number&gt;</emphasis> ] ]
-</para>
-
-<para>
-	If the statement we are passed as a String does not follow this form, we simply throw an exception, and code elsewhere keeps the original String without rewriting it.
-	Therefore, our parser needn't be particularly sophisticated.
-	The parser needs to produce the following items:
-	<itemizedlist>
-		<listitem>List of tables the search is ranging over.
-			Each table may be renamed in the SQL statement, with or without the keyword "AS".</listitem>
-		<listitem>List of fields to show.
-			Each field must be canonicalised - ie converted to the form "<emphasis>table.field</emphasis>".
-			There are three situations:
-			<itemizedlist>
-				<listitem>A wildcard is used (ie. "<emphasis>SELECT * ...</emphasis>").
-					In the prototype, we will not handle this, but rather throw an Exception to pass through the String.</listitem>
-				<listitem>There is only one table.
-					This is a fairly simple situation - every field can be canonicalised easily.
-					In the prototype however, we may not bother, and just do the same as the next situation.</listitem>
-				<listitem>There are multiple tables.
-					In this situation, we cannot canonicalise fieldnames unless we have the schema to refer to.
-					Therefore, in the prototype we will throw an Exception if any of the fields in the SQL string are not already canonicalised.</listitem>
-			</itemizedlist>
-			This list needs to be parsed after the list of tables, so that table names can be verified against the tables listed.
-			Each field may be renamed in the SQL statement with the keyword "AS".</listitem>
-		<listitem>List of restrictions or combined restrictions which were ANDed together in the SQL where clause.
-			This is the form it must take (nearly conjunctive normal form), since it is possible to restrict a precomputed table further (by adding a restriction ANDed in), but not possible to add more rows (by adding a restriction ORed in).</listitem>
-		<listitem>A GROUP BY String.
-			In the prototype, we won't touch this String, but merely pass it on, and optimise the tables underneath.
-			In the future, one could see a system that produces and uses precomputed tables with aggregates.
-			This String should include the HAVING stuff as well.</listitem>
-		<listitem>A list of fields to order by.
-			<!--If this isn't specified, but a LIMIT is specified, then we must make up a field to order by, so that the subset specified by LIMIT (and especially OFFSET) is consistent.
-			What is more, we need the choice of field to order by to be the same for the same set of fields to show-->
-			Note that if LIMIT is specified, the results may not be consistent if the sort order does not uniquely specify the order of every row.</listitem>
-		<listitem>A LIMIT number, and possibly an OFFSET number.
-			We can use hints from the ORDER BY fields to improve the performance of large offsets.</listitem>
-	</itemizedlist>
-</para>
-
-<para>
-	Therefore, I recommend the first step of the program should be to break the input SQL String into component Strings - one for the SELECT list, another for the FROM list, another for the WHERE clause, another for the GROUP BY list with HAVING, another for the ORDER BY list, and lastly the LIMIT and OFFSET.
-	If anything goes wrong, throw an Exception, and pass the query through.
-</para>
-</sect1>
+<inlinegraphic fileref="arch_pic1" />
+<inlinegraphic fileref="arch_pic2" />
 
 <sect1>
-<title>How this information is used to optimise the query</title>
+<title>Data formats present during execution</title>
 <para>
-	Some of the chunks of data are just passed through - others are fiddled with.
 	<itemizedlist>
-		<listitem>List of tables the search is ranging over.
-			We use this to help choose which precomputed tables will help our query.
-			We can only use precomputed tables that have an improper subset of this list of tables.</listitem>
-		<listitem>List of fields to show.
-			This must be converted to the new precomputed table names, and passed through.</listitem>
-		<listitem>List of restrictions ANDed together from the where clause.
-			We also use this to help choose which precomputed tables will help our query.
-			We can only use precomputed tables that have an improper subset of this list of restrictions.
-			We also need to convert the restrictions to the new precomputed table names before passing them through.</listitem>
-		<listitem>A GROUP BY String.
-			This must be converted to the new precomputed table names, and passed through.</listitem>
-		<listitem>A list of fields to order by.
-			This must be converted to the new precomputed table names, and passed through.</listitem>
-		<listitem>A LIMIT number, and possibly an OFFSET number.
-			At first, we can just pass this through.
-			If we find that it is a bottleneck, we could do some clever caching of positions, taking advantage of the order by thingy.</listitem>
-	</itemizedlist>
-</para>
-</sect1>
-
-<sect1>
-<title>Meta-data in the database</title>
-<para>
-	We are going to need to store data in the database regarding what precomputed join tables are available, and what form they take.
-	Each precomputed table will contain data produced by joining a certain set of tables together (note that a given table can be specified more than once), restricted by a certain set of restrictions, and ordered in a certain way.
-	Therefore, we need to be able to ask the database to return all rows of table, where each row represents a precomputed join table, where none of the precomputed join tables have any tables that are not present in our list created from the query (again, noting that any table can be specified more than once, and it should be able to reorder duplicate tables to get a good match), and none of the precomputed join tables have any restrictions that are not present in our list of restrictions created from the query.
-	We also need this query to return very quickly, otherwise there is no point in doing it.
-</para>
-
-<para>
-	Therefore, the following database layout should be used:
-	<itemizedlist>
-		<listitem>TABLE: join_list. Precomputed joins.
-			Each row represents a precomputed join table.
-			<itemizedlist>
-				<listitem>FIELD: name. table name.
-					This is the name of the table that the entry points to.</listitem>
-				<listitem>FIELD: selectstatement. full select statement used to create the precomputed table</listitem>
-			</itemizedlist></listitem>
-		<listitem>TABLE: tables contained in precomputed joins.
-			Each row represents a table included in a precomputed join table.
-			<itemizedlist>
-				<listitem>FIELD: precomputed table name.
-					This is the name of the precomputed join table, so the same name as the field in the previous table.
-					These objects link to the above table through this field.</listitem>
-				<listitem>FIELD: table name.
-					This is the name of the table included in the precomputed join table.</listitem>
-			</itemizedlist></listitem>
-		<listitem>TABLE: restrictions contained in precomputed joins.
-			Each row represents a restriction included in a precomputed join table.
-			A particular precomputed join table may have more than one of these, in which case they act as if they are ANDed together.
-			<itemizedlist>
-				<listitem>FIELD: precomputed table name.
-					This is the name of the precomputed join table.
-					These objects link to the first table through this field.</listitem>
-				<listitem>FIELD: text of restriction.
-					This is in the form of the original (non-precomputed) table field names, rather than the field names of the precomputed tables.</listitem>
-			</itemizedlist></listitem>
-	</itemizedlist>
-	A SQL query like 
-	<emphasis>select fa.name from (select f.name from (select join_list.name, joined_restrict.restriction from join_list left join joined_restrict on joined_restrict.restriction not in (</emphasis>list of restrictions<emphasis>) and join_list.name = joined_restrict.join_name) as f where f.restriction is null) as fa, (select f.name from (select join_list.name, joined_tables.table_name from join_list left join joined_tables on joined_tables.table_name not in (</emphasis>list of tables<emphasis>) and join_list.name = joined_tables.join_name) as f where f.table_name is null) as fb where fa.name = fb.name;</emphasis>
-	would extract a list of suitable precomputed tables from the database.
-	The query searches for all precomputed joins that do not contain any tables or restrictions other than those in the query we wish to optimise.
-</para>
-
-<para>
-	This search will give us a list of precomputed tables.
-	We can then load in all the information on those precomputed tables into memory.
-	The optimiser can then go through all the possible selections of these precomputed tables.
-	For each selection, no two precomputed tables should refer to the same table in the query we wish to optimise.
-	The optimiser can then produce a list of selections of precomputed tables that do not clash with each other.
-	For each of these selections, the optimiser can reconstruct the query we wish to optimise, replacing tables with the precomputed tables, and removing restrictions that are already encoded in the precomputed tables.
-	For each of these reconstructed queries, the optimiser can then ask the database to estimate how long each would take to execute.
-	The optimiser can then easily pick the fastest reconstructed query.
-</para>
-
-<para>
-	In addition, to perform optimisation of a query where there are multiple copies of the same table, the optimiser produces a list of mappings, which reorder the copies of a tables in all possible combinations (up to three copies of each table) - one of the mappings is the null mapping.
-	From this, it produces a list of all the mappings from symbolic precomputed table copy names to the combination of a mapping described in the previous sentence and a normal precomputed table.
-	Each symbolic precomputed table copy can rewrite a certain set of original query tables, determined by the set of tables that the original precomputed table rewrites, and the mapping that reorders the original query table copies.
-	These symbolic precomputed table copies are then applied to the original query as in the previous paragraph, replacing "precomputed table" with "symbolic precomputed table copy".
-</para>
-
-<para>
-	While producing the list of symbolic precomputed table copies, the optimiser attempts to exclude copies that perform a translation identical to one that a previous symbolic precomputed table copy performs.
-	The optimiser performs a database query to retrieve a list of precomputed tables (to be converted into symbolic precomputed table copies) for each query table copy reordering mapping.
-	The null mapping produces a SQL query like that described a few paragraphs earlier, which returns all precomputed tables that will help with the null mapping.
-	Subsequent mappings produce SQL queries that have extra conditions attached, to try to exclude precomputed tables that would be converted into symbolic precomputed table copies that perform a translation that a previous one does.
-	The following list describes what conditions are imposed for a particular query table that has more than one copy, ignoring other query tables with more than one copy.
-	In fact, the optimiser does all the possible combinations, and combines the extra conditions with the AND operator.
-	<itemizedlist>
-		<listitem>With the null mapping (for this query table only of course), no extra conditions are added.
-			This covers all symbolic precomputed table copies where the mapping between copies is null.</listitem>
-		<listitem>With the mapping that swaps the first two tables (which is used when there are two or more copies of the query table), the condition should be that the precomputed table references the first or second copy of the table (or both).
-			All other precomputed tables are not actually altered by the mapping, therefore their symbolic precomputed table copies would be duplicates of ones created by the null mapping.</listitem>
-		<listitem>The third mapping is that which swaps the first and third copies of a query table.
-			The condition should be that the precomputed table references the first or third copy of the table (or both).
-			This is because neither the first or third copies have yet been mapped in this way.</listitem>
-		<listitem>The fourth mapping is that which swaps the second and third copies copies of a query table.
-			As neither of these have been mapped in this way, the condition is that the precomputed table references the second or third copy of the table (or both).</listitem>
-		<listitem>The fifth mapping is that which maps the first copy to the second copy, the second copy to the third, and the third to the first.
-			Now, each of these mappings has happened before, but never more than one at a time.
-			Therefore, the condition should be that the precomputed table references at least two of copies one, two, and three.</listitem>
-		<listitem>The sixth mapping is the reverse of the fifth mapping, and as such should have the same conditions.</listitem>
-	</itemizedlist>
-</para>
-</sect1>
-
-<sect1>
-<title>Current status, and TODO list</title>
-<para>
-	The org.flymine.p6flatten package currently performs all the above, to optimise a query.
-	It is capable of finding reconstructed queries that use more than one precomputed table to speed up the execution.
-	<itemizedlist>
-		<listitem>It doesn't perform full optimisation when there are more than three copies of a particular table in the query to optimise.
-			Currently, it assigns a name of "tablename" to the first copy of a table that it sees, and "tablename_copy1", "tablename_copy2"... to multiple copies.
-			This avoids the possibility that multiple tables will be confused, resulting in a query that does not produce identical results to the original query.
-			However it does not perform any optimisation of any tables except the first three copies, unless a precomputed table is produced that explicitly specifies a table of the form "tablename_copyn".
-			It probably isn't worth fixing this, because the gains seem to become small when dealing with multiple copies of the same table, and the cost of optimising the query grows as somewhere between the square of x and two to the power of x, where x is the multiple of the factorials of the number of copies of the tables.</listitem>
-		<listitem>It doesn't ever create new precomputed tables.
-			Currently, we have to manually create precomputed tables.
-			There are three circumstances where we want to create new precomputed tables:
-			<itemizedlist>
-				<listitem>A user has just requested a small portion (using LIMIT and OFFSET) of a query that would take a long time to complete in fullness, but a short amount of time to complete just the portion required.
-					We also do not have a precomputed join that matches it completely (hence the query would take a long time to complete in fullness).
-					In this circumstance, it is okay for the user to keep requesting portions (pages) of the results, since they don't take too long each.
-					However, it would be good to create a precomputed table for the query in fullness, ordered by the same ordering as the ordering of the original query (which should be a unique ordering, so that requesting portions is consistent), before many portions have been requested.
-					In fact, it would probably be sensible to block after a certain number of portions until the precomputed table is ready, to leave some CPU time for the process creating the precomputed table.</listitem>
-				<listitem>A user has just requested a small portion (using LIMIT and OFFSET) of a query that would not take much less time to complete than to complete the query in fullness.
-					In this case, we should produce a precomputed table on the spot (in the same process), since we would be getting a precomputed table out of it, without delaying the user much more than is necessary anyway.</listitem>
-				<listitem>Over time, we gather statistics on what fragments of queries are most popular in the queries that we are given.
-					We can then (during a quiet period) create some of the more popular fragments.
-					In this circumstance, it would probably be best to create precomputed tables for every possible single-column ordering, because it is difficult to tell in advance what ordering the database can use to its advantage to avoid sorting a table prior to doing a merge-join.</listitem>
-			</itemizedlist></listitem>
-		<listitem>Depending on how Hibernate does paging, it might be necessary to write a JDBC layer to do the paging.
-			This would probably be a completely separate P6Spy module to our P6Flatten stuff.
-			It would implement paging using LIMIT and OFFSET, and by inserting an extra restriction into the WHERE clause, by looking at the primary sort key and caching some values with how many rows through the output those values change.
-			It would have to enforce a unique ordering, which can be done by taking the original ordering (or lack thereof) and appending it with a preset string for each table the query references.
-			These preset strings would be lists of fields which are guaranteed to uniquely order its table.
-			Subselects would be ignored.</listitem>
-		<listitem>It doesn't cope with any SQL string that contains any keywords like "DISTINCT", "JOIN", "UNION", "INTERSECT", "EXCEPT", "FOR UPDATE".
-			Unfortunately, Hibernate appears to do lots of LEFT OUTER JOINs in its queries, which disqualifies them from being optimised with the current code.
-			We need to inspect the queries that hibernate produces that would benefit from optimisation, and see if we need to extend the optimiser.</listitem>
-		<listitem>At the moment, it has a very na&#239;ve method of giving up if it thinks that the optimisation process will take longer than the time saved by the optimisation.
-			It merely asks the database for an estimate of the time it will take, and if it is less than approximately two seconds, it gives up.
-			In the future, we could implement a more sophisticated system, where it firstly doesn't bother if the query would take a shorter time than that to parse the SQL.
-			Secondly, it could count the number of tables, and give up if the query would take less time than the average time to find symbolic precomputed table copies for that number of tables.
-			Thirdly, it could count the number of symbolic precomputed table copies, and give up if the query would take less time to explain every combination of that number of symbolic precomputed table copies.
-			Fourthly, while going through the list of possible queries, if a query comes up that is estimated to take less time than has been spent optimising the query so far, then the optimiser may as well just return that particular query, rather than go on and try every possibility.
-			In fact, this should probably be extended so that if a quick query is found right at the beginning, and then a long list of slow queries appears, at some point the optimiser would give up and return the current quickest query.
-			The decisions of when to give up will probably involve lots of tweaking to find the absolute best values - probably this tweaking should be done automatically.
-			Note: if the query is being optimised to form a CallableStatement or a PreparedStatement, then we should probably not give up, because the resulting optimised query will be used lots of times.</listitem>
-		<listitem>At the moment, restrictions are matched against those in precomputed joins using simple textual comparison.
-			This means that if the query has the restriction "x = y", and a precomputed table has the restriction "y = x", then that precomputed table is not used.
-			In the future, we should probably convert the entire WHERE clause to conjunctive normal form, then order the components by a specific ordering, to give us the best possible chance of being able to use a precomputed table.
-			This will involve writing a full WHERE clause parser and converter to conjunctive normal form.</listitem>
-		<listitem>It doesn't currently optimise subselects very well.
-			In practice, SQL databases clump the whole query into one lump which they plan as a whole, which allows them to take advantage of being able to choose the ordering of the results from the subselect.
-			Our optimiser should probably look at the subselect, and find all results from it that are used in any restrictions, then optimise the subselect ordered by each of those values.
-			It should then try optimising the whole query once for each of the optimised subselects.
-			This doesn't quite give us all the flexibility that a real SQL planner has, but it probably gives us most of the advantage in all but the most obscure of circumstances.
-			It isn't completely clear what happens when you have more than two levels of select statements.</listitem>
-		<listitem>It doesn't cope with non-fully-qualified value names in the SELECT portion of the SQL statement, even if there is only one table present in the FROM portion.</listitem>
-		<listitem>It doesn't cope with aggregate functions at all - it sees them as non-fully-qualified value names, and therefore rejects them.</listitem>
-		<listitem>It might be a good idea to cache results a little - that way, a query which is being paged shouldn't have optimisation overhead for every paging call made. One way to do this that already works is for paging requests to use prepared statements. However, it still might be good to implement some sort of cache, depending on whether we think it might be useful. Needs to be investigated. Note: if the usual practice is to explain a query then execute it if it won't take too long, then a cache would indeed halve the number of optimisations.</listitem>
-		<listitem>We need some method of returning to the user the estimated time it will take to execute a query that has just been optimised. This may be by recognising queries starting with "EXPLAIN" and optimising them.</listitem>
+		<listitem>Original query string</listitem>
+		<listitem>Original query table aliases, with names</listitem>
+		<listitem>Tally of multiple original query table names</listitem>
+		<listitem>Original query table aliases, with unique names</listitem>
+		<listitem>Original query field aliases, with names</listitem>
+		<listitem>Original query where clauses</listitem>
+		<listitem>The rest of the original query</listitem>
+		<listitem>Mappings that reorder unique original query table names.</listitem>
+		<listitem>Reverse mappings of the above</listitem>
+		<listitem>SQL Queries to produce lists of useful precomputed tables</listitem>
+		<listitem>A set of precomputed table names, to load later</listitem>
+		<listitem>Symbolic precomputed table copies, which are a combination of a precomputed table, a mapping to reorder unique original query table names, and the reverse mapping</listitem>
+		<listitem>Precomputed table descriptions, including lists of tables and restrictions</listitem>
+		<listitem>A set of the symbolic precomputed table copies that are being used currently</listitem>
+		<listitem>A mapping from original table aliases to symbolic precomputed table copies that are covering them currently</listitem>
+		<listitem>A set of original table where causes that are not needed because they are covered by a symbolic precomputed table copy that is being used currently</listitem>
+		<listitem>Optimised query table aliases and names</listitem>
+		<listitem>Optimised query field aliases and names</listitem>
+		<listitem>Optimised query restrictions</listitem>
+		<listitem>The rest of the optimised query</listitem>
+		<listitem>Optimised query string</listitem>
 	</itemizedlist>
 </para>
 </sect1>

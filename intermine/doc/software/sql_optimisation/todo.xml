@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+	<date>2002-12-2</date>
+	<title>Flymine - SQL Query Optimsation</title>
+	<authorgroup>
+		<author>
+			<firstname>Matthew</firstname>
+			<surname>Wakeling</surname>
+		</author>
+	</authorgroup>
+</artheader>
+
+<sect1>
+<title>Current status, and TODO list</title>
+<para>
+	The org.flymine.p6flatten package currently performs all the above, to optimise a query.
+	It is capable of finding reconstructed queries that use more than one precomputed table to speed up the execution.
+	<itemizedlist>
+		<listitem>It doesn't perform full optimisation when there are more than three copies of a particular table in the query to optimise.
+			Currently, it assigns a name of "tablename" to the first copy of a table that it sees, and "tablename_copy1", "tablename_copy2"... to multiple copies.
+			This avoids the possibility that multiple tables will be confused, resulting in a query that does not produce identical results to the original query.
+			However it does not perform any optimisation of any tables except the first three copies, unless a precomputed table is produced that explicitly specifies a table of the form "tablename_copyn".
+			It probably isn't worth fixing this, because the gains seem to become small when dealing with multiple copies of the same table, and the cost of optimising the query grows as somewhere between the square of x and two to the power of x, where x is the multiple of the factorials of the number of copies of the tables.</listitem>
+		<listitem>It doesn't ever create new precomputed tables.
+			Currently, we have to manually create precomputed tables.
+			There are three circumstances where we want to create new precomputed tables:
+			<itemizedlist>
+				<listitem>A user has just requested a small portion (using LIMIT and OFFSET) of a query that would take a long time to complete in fullness, but a short amount of time to complete just the portion required.
+					We also do not have a precomputed join that matches it completely (hence the query would take a long time to complete in fullness).
+					In this circumstance, it is okay for the user to keep requesting portions (pages) of the results, since they don't take too long each.
+					However, it would be good to create a precomputed table for the query in fullness, ordered by the same ordering as the ordering of the original query (which should be a unique ordering, so that requesting portions is consistent), before many portions have been requested.
+					In fact, it would probably be sensible to block after a certain number of portions until the precomputed table is ready, to leave some CPU time for the process creating the precomputed table.</listitem>
+				<listitem>A user has just requested a small portion (using LIMIT and OFFSET) of a query that would not take much less time to complete than to complete the query in fullness.
+					In this case, we should produce a precomputed table on the spot (in the same process), since we would be getting a precomputed table out of it, without delaying the user much more than is necessary anyway.</listitem>
+				<listitem>Over time, we gather statistics on what fragments of queries are most popular in the queries that we are given.
+					We can then (during a quiet period) create some of the more popular fragments.
+					In this circumstance, it would probably be best to create precomputed tables for every possible single-column ordering, because it is difficult to tell in advance what ordering the database can use to its advantage to avoid sorting a table prior to doing a merge-join.</listitem>
+			</itemizedlist></listitem>
+		<listitem>Depending on how Hibernate does paging, it might be necessary to write a JDBC layer to do the paging.
+			This would probably be a completely separate P6Spy module to our P6Flatten stuff.
+			It would implement paging using LIMIT and OFFSET, and by inserting an extra restriction into the WHERE clause, by looking at the primary sort key and caching some values with how many rows through the output those values change.
+			It would have to enforce a unique ordering, which can be done by taking the original ordering (or lack thereof) and appending it with a preset string for each table the query references.
+			These preset strings would be lists of fields which are guaranteed to uniquely order its table.
+			Subselects would be ignored.</listitem>
+		<listitem>It doesn't cope with any SQL string that contains any keywords like "DISTINCT", "JOIN", "UNION", "INTERSECT", "EXCEPT", "FOR UPDATE".
+			Unfortunately, Hibernate appears to do lots of LEFT OUTER JOINs in its queries, which disqualifies them from being optimised with the current code.
+			We need to inspect the queries that hibernate produces that would benefit from optimisation, and see if we need to extend the optimiser.</listitem>
+		<listitem>At the moment, it has a very na&#239;ve method of giving up if it thinks that the optimisation process will take longer than the time saved by the optimisation.
+			It merely asks the database for an estimate of the time it will take, and if it is less than approximately two seconds, it gives up.
+			In the future, we could implement a more sophisticated system, where it firstly doesn't bother if the query would take a shorter time than that to parse the SQL.
+			Secondly, it could count the number of tables, and give up if the query would take less time than the average time to find symbolic precomputed table copies for that number of tables.
+			Thirdly, it could count the number of symbolic precomputed table copies, and give up if the query would take less time to explain every combination of that number of symbolic precomputed table copies.
+			Fourthly, while going through the list of possible queries, if a query comes up that is estimated to take less time than has been spent optimising the query so far, then the optimiser may as well just return that particular query, rather than go on and try every possibility.
+			In fact, this should probably be extended so that if a quick query is found right at the beginning, and then a long list of slow queries appears, at some point the optimiser would give up and return the current quickest query.
+			The decisions of when to give up will probably involve lots of tweaking to find the absolute best values - probably this tweaking should be done automatically.
+			Note: if the query is being optimised to form a CallableStatement or a PreparedStatement, then we should probably not give up, because the resulting optimised query will be used lots of times.</listitem>
+		<listitem>At the moment, restrictions are matched against those in precomputed joins using simple textual comparison.
+			This means that if the query has the restriction "x = y", and a precomputed table has the restriction "y = x", then that precomputed table is not used.
+			In the future, we should probably convert the entire WHERE clause to conjunctive normal form, then order the components by a specific ordering, to give us the best possible chance of being able to use a precomputed table.
+			This will involve writing a full WHERE clause parser and converter to conjunctive normal form.</listitem>
+		<listitem>It doesn't currently optimise subselects very well.
+			In practice, SQL databases clump the whole query into one lump which they plan as a whole, which allows them to take advantage of being able to choose the ordering of the results from the subselect.
+			Our optimiser should probably look at the subselect, and find all results from it that are used in any restrictions, then optimise the subselect ordered by each of those values.
+			It should then try optimising the whole query once for each of the optimised subselects.
+			This doesn't quite give us all the flexibility that a real SQL planner has, but it probably gives us most of the advantage in all but the most obscure of circumstances.
+			It isn't completely clear what happens when you have more than two levels of select statements.</listitem>
+		<listitem>It doesn't cope with non-fully-qualified value names in the SELECT portion of the SQL statement, even if there is only one table present in the FROM portion.</listitem>
+		<listitem>It doesn't cope with aggregate functions at all - it sees them as non-fully-qualified value names, and therefore rejects them.</listitem>
+		<listitem>It might be a good idea to cache results a little - that way, a query which is being paged shouldn't have optimisation overhead for every paging call made. One way to do this that already works is for paging requests to use prepared statements. However, it still might be good to implement some sort of cache, depending on whether we think it might be useful. Needs to be investigated. Note: if the usual practice is to explain a query then execute it if it won't take too long, then a cache would indeed halve the number of optimisations.</listitem>
+		<listitem>We need some method of returning to the user the estimated time it will take to execute a query that has just been optimised. This may be by recognising queries starting with "EXPLAIN" and optimising them.</listitem>
+	</itemizedlist>
+</para>
+</sect1>
+</article>

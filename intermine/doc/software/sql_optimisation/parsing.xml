@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+	<date>2002-12-2</date>
+	<title>Flymine - SQL Query Optimsation - Parsing</title>
+	<authorgroup>
+		<author>
+			<firstname>Matthew</firstname>
+			<surname>Wakeling</surname>
+		</author>
+	</authorgroup>
+</artheader>
+
+<sect1>
+<title>Parsing a SQL statement</title>
+<para>
+	A SQL statement follows the following form:
+</para>
+
+<para>
+	SELECT <emphasis>&lt;list of fields&gt;</emphasis> FROM <emphasis>&lt;list of tables&gt;</emphasis> [ WHERE <emphasis>&lt;where clause&gt;</emphasis> ] [ GROUP BY <emphasis>&lt;list of fields&gt;</emphasis> [ HAVING <emphasis>&lt;where clause&gt;</emphasis> ] ] [ ORDER BY <emphasis>&lt;list of fields&gt;</emphasis> ] [ LIMIT <emphasis>&lt;number&gt;</emphasis> [ OFFSET <emphasis>&lt;number&gt;</emphasis> ] ]
+</para>
+
+<para>
+	If the statement we are passed as a String does not follow this form, we simply throw an exception, and code elsewhere keeps the original String without rewriting it.
+	Therefore, our parser needn't be particularly sophisticated.
+	The parser needs to produce the following items:
+	<itemizedlist>
+		<listitem>List of tables the search is ranging over.
+			Each table may be renamed in the SQL statement, with or without the keyword "AS".</listitem>
+		<listitem>List of fields to show.
+			Each field must be canonicalised - ie converted to the form "<emphasis>table.field</emphasis>".
+			There are three situations:
+			<itemizedlist>
+				<listitem>A wildcard is used (ie. "<emphasis>SELECT * ...</emphasis>").
+					In the prototype, we will not handle this, but rather throw an Exception to pass through the String.</listitem>
+				<listitem>There is only one table.
+					This is a fairly simple situation - every field can be canonicalised easily.
+					In the prototype however, we may not bother, and just do the same as the next situation.</listitem>
+				<listitem>There are multiple tables.
+					In this situation, we cannot canonicalise fieldnames unless we have the schema to refer to.
+					Therefore, in the prototype we will throw an Exception if any of the fields in the SQL string are not already canonicalised.</listitem>
+			</itemizedlist>
+			This list needs to be parsed after the list of tables, so that table names can be verified against the tables listed.
+			Each field may be renamed in the SQL statement with the keyword "AS".</listitem>
+		<listitem>List of restrictions or combined restrictions which were ANDed together in the SQL where clause.
+			This is the form it must take (nearly conjunctive normal form), since it is possible to restrict a precomputed table further (by adding a restriction ANDed in), but not possible to add more rows (by adding a restriction ORed in).</listitem>
+		<listitem>A GROUP BY String.
+			In the prototype, we won't touch this String, but merely pass it on, and optimise the tables underneath.
+			In the future, one could see a system that produces and uses precomputed tables with aggregates.
+			This String should include the HAVING stuff as well.</listitem>
+		<listitem>A list of fields to order by.
+			<!--If this isn't specified, but a LIMIT is specified, then we must make up a field to order by, so that the subset specified by LIMIT (and especially OFFSET) is consistent.
+			What is more, we need the choice of field to order by to be the same for the same set of fields to show-->
+			Note that if LIMIT is specified, the results may not be consistent if the sort order does not uniquely specify the order of every row.</listitem>
+		<listitem>A LIMIT number, and possibly an OFFSET number.
+			We can use hints from the ORDER BY fields to improve the performance of large offsets.</listitem>
+	</itemizedlist>
+</para>
+
+<para>
+	Therefore, I recommend the first step of the program should be to break the input SQL String into component Strings - one for the SELECT list, another for the FROM list, another for the WHERE clause, another for the GROUP BY list with HAVING, another for the ORDER BY list, and lastly the LIMIT and OFFSET.
+	If anything goes wrong, throw an Exception, and pass the query through.
+</para>
+</sect1>
+
+</article>
