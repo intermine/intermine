@@ -1982,6 +1982,7 @@
       <fileset dir="${model}">
         <include name="**/src/java/**/*.java" />
         <include name="**/web/java/**/*.java" />
+        <exclude name="genomic/src/java/**/biojava*/**/*.java" />
       </fileset>
       <fileset dir=".">
         <include name="src/java/**/*.java" />
