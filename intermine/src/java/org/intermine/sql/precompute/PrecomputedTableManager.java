@@ -209,7 +209,7 @@ public class PrecomputedTableManager
             try {
                 precomputedTables.put(tableName,
                                       new PrecomputedTable(new Query(queryString), tableName));
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 // This would be a poor query string in the TABLE_INDEX
             }
         }
