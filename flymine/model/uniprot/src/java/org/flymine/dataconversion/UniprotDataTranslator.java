@@ -219,14 +219,19 @@ public class UniprotDataTranslator extends DataTranslator
                 Iterator srcProtNameIter = srcProteinNames.iterator();
                 while (srcProtNameIter.hasNext()) {
                     Item srcProteinName = (Item) srcProtNameIter.next();
-                    String srcProteinNameString = getAttributeValue(srcProteinName, "name");
+                    String srcProteinNameStr = getAttributeValue(srcProteinName, "name");
+
+                    if (!protein.hasAttribute("name")) {
+                        protein.setAttribute("name", srcProteinNameStr);
+                    }
+
                     String srcProteinNameEvidence = getAttributeValue(srcProteinName,
                                                                       "evidence");
                     if (srcProteinNameEvidence != null) {
-                        srcProteinNameString += " (Evidence " + srcProteinNameEvidence + ")";
+                        srcProteinNameStr += " (Evidence " + srcProteinNameEvidence + ")";
                     }
                     retval.add(createSynonym(protein.getIdentifier(), "name",
-                                             srcProteinNameString, getDbId("UniProt")));
+                                             srcProteinNameStr, getDbId("UniProt")));
                 }
             }
 
