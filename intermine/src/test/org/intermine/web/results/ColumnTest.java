@@ -24,15 +24,36 @@ public class ColumnTest extends TestCase
         col1 = new Column();
         col1.setAlias("c1");
         col1.setIndex(1);
+        col1.setVisible(true);
         col2 = new Column();
         col2.setAlias("c1");
         col2.setIndex(1);
+        col2.setVisible(false);
         col3 = new Column();
         col3.setAlias("c1");
         col3.setIndex(2);
+        col3.setVisible(false);
         col4 = new Column();
         col4.setAlias("c2");
         col4.setIndex(2);
+        col4.setVisible(false);
+    }
+
+    public void testUpdate() {
+        col1.setVisible(true);
+        col1.update(col2);
+        assertFalse(col1.isVisible());
+
+        col1.setVisible(true);
+        col1.update(col3);
+        assertFalse(col1.isVisible());
+
+        col1.setVisible(true);
+        try {
+            col1.update(col4);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     public void testEquals() {
