@@ -65,7 +65,8 @@ public class BeginController extends TilesAction
         }
             
         HttpSession session = request.getSession();
-        Properties properties = (Properties) request.getSession().getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+        Properties properties = (Properties)
+            request.getSession().getServletContext().getAttribute(Constants.WEB_PROPERTIES);
         if (properties != null) {
             session.setAttribute("queryName", properties.getProperty("begin.browse.template"));
             // might want to make the operator a model web.properties property
