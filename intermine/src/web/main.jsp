@@ -4,6 +4,8 @@
 
 <tiles:importAttribute/>
 
+<c:out value="${prefix}.${path}"/>
+
 <!-- main.jsp -->
 <table class="query" width="100%" cellspacing="0">
   <tr>

@@ -17,21 +17,21 @@
         <th align="right">
           <fmt:message key="query.savedqueries.countcolumnheader"/>
         </th>
-        <c:forEach items="${SAVED_QUERIES}" var="savedQuery">
-          <tr>
-            <td align="left">
-              <html:link action="/loadQuery?queryName=${savedQuery.key}">
-                <c:out value="${savedQuery.key}"/>
-              </html:link>
-            </td>
-            <td align="right">
-              <c:if test="${savedQuery.value.resultsInfo != null}">
-                <c:out value="${savedQuery.value.resultsInfo.rows}"/>
-              </c:if>
-            </td>
-          </tr>
-        </c:forEach>
       </tr>
+      <c:forEach items="${SAVED_QUERIES}" var="savedQuery">
+        <tr>
+          <td align="left">
+            <html:link action="/loadQuery?queryName=${savedQuery.key}">
+              <c:out value="${savedQuery.key}"/>
+            </html:link>
+          </td>
+          <td align="right">
+            <c:if test="${savedQuery.value.resultsInfo != null}">
+              <c:out value="${savedQuery.value.resultsInfo.rows}"/>
+            </c:if>
+          </td>
+        </tr>
+      </c:forEach>
     </table>
   </c:if>
 </div>

@@ -46,8 +46,8 @@ public class Node
      */
     public Node(Node parent, String fieldName, Model model) {
         this.fieldName = fieldName;
-        path = parent.getPath() + "." + fieldName;
-        prefix = path.substring(0, path.lastIndexOf("."));
+        prefix = parent.getPath();
+        path = prefix + "." + fieldName;
         ClassDescriptor cld = MainHelper.getClassDescriptor(parent.getType(), model);
         FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
         type = TypeUtil.unqualifiedName(fd.isAttribute()

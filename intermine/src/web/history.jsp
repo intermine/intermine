@@ -10,25 +10,17 @@
   </c:when>
   <c:otherwise>
     <html:form action="/createBoolean">
-      <table width="100%">
-        <tr>
-          <td valign="left">
-            <tiles:get name="historyBagView"/>
-          </td>
-        </tr>
-        <tr>
-          <td valign="left">
-            <tiles:get name="historyQueryView"/>
-          </td>
-        </tr>
-      </table>
-      <hr/>
-      <html:submit property="action">
-        <fmt:message key="history.union"/>
-      </html:submit>
-      <html:submit property="action">
-        <fmt:message key="history.intersect"/>
-      </html:submit>
+      <tiles:get name="historyBagView"/>
+      <br/>
+      <tiles:get name="historyQueryView"/>
+      <%--
+        <html:submit property="action">
+          <fmt:message key="history.union"/>
+        </html:submit>
+        <html:submit property="action">
+          <fmt:message key="history.intersect"/>
+        </html:submit>
+        --%>
     </html:form>
   </c:otherwise>
 </c:choose>

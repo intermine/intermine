@@ -8,22 +8,25 @@
     <span class="historyViewTitle">
       <fmt:message key="query.savedbags.header"/>
     </span>
-    <table>
-      <th align="left">
-        <fmt:message key="query.savedbags.namecolumnheader"/>
-      </th>
-      <th align="right">
-        <fmt:message key="query.savedbags.countcolumnheader"/>
-      </th>
-      <c:forEach items="${SAVED_BAGS}" var="bagName">
-        <tr align="left">
-          <td>
-            <html:link action="/bagDetails?bagName=${bagName.key}">
-              <c:out value="${bagName.key}"/>
+    <br/><br/>
+    <table class="results" cellspacing="0">
+      <tr>
+        <th align="left">
+          <fmt:message key="query.savedbags.namecolumnheader"/>
+        </th>
+        <th align="right">
+          <fmt:message key="query.savedbags.countcolumnheader"/>
+        </th>
+      </tr>
+      <c:forEach items="${SAVED_BAGS}" var="savedBag">
+        <tr>
+          <td align="left">
+            <html:link action="/bagDetails?bagName=${savedBag.key}">
+              <c:out value="${savedBag.key}"/>
             </html:link>
           </td>
           <td align="right">
-            <c:out value="${SAVED_BAGS[bagName.key].size}"/>
+            <c:out value="${savedBag.value.size}"/>
           </td>
         </tr>
       </c:forEach>

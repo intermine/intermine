@@ -25,7 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class PagedCollection implements PagedTable
 {
-    private Column column;
     private List columns;
     private int start = 0;
     private int pageSize = 10;
@@ -51,6 +50,7 @@ public class PagedCollection implements PagedTable
             collectionAsList.add(row);
         }
 
+        Column column = new Column();
         column.setVisible(true);
         column.setName(name);
 
