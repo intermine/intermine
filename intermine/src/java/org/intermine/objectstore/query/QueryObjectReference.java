@@ -28,11 +28,19 @@ public class QueryObjectReference extends QueryReference
         }
         Field field = TypeUtil.getField(qc.getType(), fieldName);
         if (field == null) {
-            throw new NoSuchFieldException("Field " + fieldName + " not found in class "
+            throw new NoSuchFieldException("Field " + fieldName + " not found in "
                                            + qc.getType());
         }
         if (java.util.Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
+        }
+        if (Number.class.isAssignableFrom(field.getType())
+                || String.class.isAssignableFrom(field.getType())
+                || Boolean.class.isAssignableFrom(field.getType())
+                || java.util.Date.class.isAssignableFrom(field.getType())
+                || field.getType().isPrimitive()) {
+            throw new IllegalArgumentException("Field " + fieldName + " is not a separate database "
+                    + "object");
         }
         this.qc = qc;
         this.fieldName = fieldName;

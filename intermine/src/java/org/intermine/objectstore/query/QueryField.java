@@ -39,6 +39,13 @@ public class QueryField implements QueryEvaluable
         if (java.util.Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
         }
+        if (!(Number.class.isAssignableFrom(field.getType())
+                || String.class.isAssignableFrom(field.getType())
+                || Boolean.class.isAssignableFrom(field.getType())
+                || java.util.Date.class.isAssignableFrom(field.getType())
+                || field.getType().isPrimitive())) {
+            throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
+        }
         this.qc = qc;
         this.fieldName = fieldName;
         this.type = TypeUtil.toContainerType(field.getType());
@@ -67,6 +74,13 @@ public class QueryField implements QueryEvaluable
         }
         if (java.util.Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
+        }
+        if (!(Number.class.isAssignableFrom(field.getType())
+                || String.class.isAssignableFrom(field.getType())
+                || Boolean.class.isAssignableFrom(field.getType())
+                || java.util.Date.class.isAssignableFrom(field.getType())
+                || field.getType().isPrimitive())) {
+            throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
         }
         this.fieldName = ((String) q.getAliases().get(qc)) + fieldName;
         this.qc = q;

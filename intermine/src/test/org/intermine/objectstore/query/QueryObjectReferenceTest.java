@@ -48,11 +48,19 @@ public class QueryObjectReferenceTest extends TestCase
         }
     }
 
-    public void testValidField() {
+    public void testInvalidField2() {
         try {
             new QueryObjectReference(qc, "name");
+            fail("An IllegalArgumentException should have been thrown");
         } catch (Exception e) {
-            fail("An exception should not be thrown for a valid field");
+        }
+    }
+
+    public void testValidField() {
+        try {
+            new QueryObjectReference(qc, "company");
+        } catch (Exception e) {
+            fail("An exception should not be thrown for a valid field: " + e);
         }
     }
 }
