@@ -95,10 +95,18 @@ public class QueryBuildAction extends LookupDispatchAction
         Map queryClasses = (Map) session.getAttribute("queryClasses");
         String editingAlias = (String) session.getAttribute("editingAlias");
 
+        if (queryClasses == null || editingAlias == null) {
+            return mapping.findForward("buildquery");
+        }
+
         QueryBuildForm qbf = (QueryBuildForm) form;
 
         String fieldName = qbf.getNewFieldName();
         DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(editingAlias);
+        if (d == null) {
+            return mapping.findForward("buildquery");
+        }
+
         List constraintNames = d.getConstraintNames();
         
         int maxNum = -1;
