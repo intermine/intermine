@@ -9,7 +9,7 @@
 </collection>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Database">
-<attribute name="title" value="Ensembl"/>
+<attribute name="title" value="ensembl"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="shortName" value="ORG1"/>
