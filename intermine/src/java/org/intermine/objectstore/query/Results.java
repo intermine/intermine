@@ -44,6 +44,7 @@ public class Results extends AbstractList implements LazyCollection
     protected int sequence;
     protected boolean optimise = true;
     protected boolean explain = true;
+    protected boolean prefetch = true;
 
     protected int minSize = 0;
     // TODO: update this to use ObjectStore.getMaxRows().
@@ -114,6 +115,15 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
+     * Tells this Results object to never do any background prefetching.
+     * This means that Query cancellation via the ObjectStoreInterMineImpl.cancelRequest()
+     * will never leave the database busy with cancelled work.
+     */
+    public void setNoPrefetch() {
+        prefetch = false;
+    }
+
+    /**
      * Get the Query that produced this Results object
      *
      * @return the Query that produced this Results object
@@ -172,6 +182,7 @@ public class Results extends AbstractList implements LazyCollection
             //        + query.hashCode() + "         access " + start + " - " + end);
         }
         if ((os != null)
+                && prefetch
                 && os.isMultiConnection()
                 && (sequential > PREFETCH_SEQUENTIAL_THRESHOLD)
                 && (getBatchNoForRow(maxSize) > endBatch)
