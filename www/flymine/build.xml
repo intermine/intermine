@@ -5,6 +5,7 @@
   <property name="src.www" location="site"/>
   <property name="src.doc" location="../../flymine/doc"/>
   <property name="src.internal" location="../../flymine-private/doc"/>
+  <property name="common.style" location="../style"/>
   <property name="build.www" location="build"/>
   <property name="dist.www" location="dist"/>
   
@@ -15,6 +16,11 @@
       <fileset dir="${src.www}">
         <include name="**/*"/>
       </fileset>
+    </copy>
+
+    <!-- copy common style -->
+    <copy todir="${build.www}/style">
+      <fileset dir="${common.style}" includes="**/*"/>
     </copy>
     
     <copy todir="${build.www}/doc">
