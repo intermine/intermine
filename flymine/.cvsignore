@@ -1,1 +1,1 @@
-build dist results velocity.log* flymine.log*
+build dist results velocity.log* flymine.log* intermine.log*
