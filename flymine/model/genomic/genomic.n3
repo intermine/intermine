@@ -28,10 +28,6 @@
     rdfs:domain :BioEntity ;
     rdfs:range :BioProperty .
 
-:BioEntity__cvterms a owl:ObjectProperty ;
-    rdfs:domain :BioEntity ;
-    rdfs:range :CVTerm .
-
 :BioEntity__analysisResults a owl:ObjectProperty ;
     rdfs:domain :BioEntity ;
     rdfs:range :AnalysisResult .
@@ -51,8 +47,7 @@
         owl:onProperty :BioProperty__subject ] .
 
 :BioProperty__subject a owl:ObjectProperty ;
-    rdfs:domain :BioProperty ;
-    rdfs:range :BioEntity .
+    owl:inverseOf :BioEntity__properties .
 
 :BioProperty__evidence a owl:ObjectProperty ;
     rdfs:domain :BioProperty ;
