@@ -5,7 +5,7 @@
 <fmt:setBundle basename="model"/>
 
 <!-- locatedSequenceFeatureImage.jsp -->
-<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.source]}?name=${cld.unqualifiedName}:FlyMineInternalID_${object.id};width=800">
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.source']}?name=${cld.unqualifiedName}:FlyMineInternalID_${object.id};width=800">
   <div>
     <html:img src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.source']}?name=${cld.unqualifiedName}:FlyMineInternalID_${object.id};width=400"/>
   </div>
