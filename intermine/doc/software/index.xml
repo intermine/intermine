@@ -69,4 +69,9 @@
     <item><ulink url="sql_optimisation/proposal4.xml">Proposal to improve the optimiser so that it scales well for the number of procomputed tables</ulink></item>
   </section>
 
+  <section>
+    <heading>The InterMine webapp</heading>
+    <item><ulink url="webapp/technical_overview.xml">Technical overview</ulink></item>
+  </section>
+
 </index>
