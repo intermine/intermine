@@ -253,6 +253,50 @@ public class QueryHelperTest extends QueryTestCase
         assertEquals(expected, q);
     }
 
+    public void testQueryForExampleObjectKeyAttributes2ReferencesToSameClass() throws Exception {
+        // Contractor's key is "name", "personalAddress", "businessAddress" fields
+        Address a1 = new Address();
+        a1.setAddress("1 The Street");
+        Address a2 = new Address();
+        a2.setAddress("2 The Street");
+
+        Contractor c = new Contractor();
+        c.setPersonalAddress(a1);
+        c.setBusinessAddress(a2);
+        c.setName("Contractor 1");
+
+        Query q = QueryHelper.createQueryForExampleObject(c);
+
+        Query expected = new Query();
+        QueryClass qcContractor = new QueryClass(Contractor.class);
+        QueryClass qcAddress1 = new QueryClass(Address.class);
+        QueryClass qcAddress2 = new QueryClass(Address.class);
+        expected.addToSelect(qcContractor);
+        expected.addFrom(qcContractor);
+        expected.addFrom(qcAddress1);
+        expected.addFrom(qcAddress2);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintSet.AND);
+
+        QueryField qf1 = new QueryField(qcContractor, "name");
+        cs1.addConstraint(new SimpleConstraint(qf1, SimpleConstraint.EQUALS, new QueryValue("Contractor 1")));
+
+        QueryReference qr1 = new QueryObjectReference(qcContractor, "personalAddress");
+        cs1.addConstraint(new ContainsConstraint(qr1, ContainsConstraint.CONTAINS, qcAddress1));
+
+        QueryField qf2 = new QueryField(qcAddress1, "address");
+        cs1.addConstraint(new SimpleConstraint(qf2, SimpleConstraint.EQUALS, new QueryValue("1 The Street")));
+
+        QueryReference qr2 = new QueryObjectReference(qcContractor, "businessAddress");
+        cs1.addConstraint(new ContainsConstraint(qr2, ContainsConstraint.CONTAINS, qcAddress2));
+
+        QueryField qf3 = new QueryField(qcAddress2, "address");
+        cs1.addConstraint(new SimpleConstraint(qf3, SimpleConstraint.EQUALS, new QueryValue("2 The Street")));
+
+        expected.setConstraint(cs1);
+
+        assertEquals(expected, q);
+    }
+
     public void testQueryForExampleObjectSubclass() throws Exception {
         // Employee's key is "name", "address", "fullTime" fields
         Address a = new Address();
