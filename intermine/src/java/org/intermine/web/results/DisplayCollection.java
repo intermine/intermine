@@ -36,8 +36,8 @@ public class DisplayCollection
      */
     public DisplayCollection(SingletonResults collection, ClassDescriptor cld) throws Exception {
         this.cld = cld;
-        size = collection.getInfo().getRows();
         table = new InlineResultsTable(collection);
+        size = collection.getInfo().getRows();
 //         for (Iterator i = c.iterator(); i.hasNext();) {
 //             Set clds = ObjectViewController.getLeafClds(i.next().getClass(), cld.getModel());
 //             if (clds.size() == 1 && clds.iterator().next().equals(cld)) {
