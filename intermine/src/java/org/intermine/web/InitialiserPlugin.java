@@ -71,6 +71,7 @@ public class InitialiserPlugin implements PlugIn
         ObjectStore os = null;
         try {
             os = ObjectStoreFactory.getObjectStore();
+            os.flushObjectById();
         } catch (Exception e) {
             throw new ServletException("Unable to instantiate ObjectStore", e);
         }
