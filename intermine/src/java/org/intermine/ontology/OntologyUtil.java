@@ -386,7 +386,7 @@ public class OntologyUtil
                     if (res.onProperty(prop)) {
                         if (prop.getLocalName().indexOf("__") == -1) {
                             throw new IllegalArgumentException("Attribute name '"
-                                                               + prop.getLocalName() 
+                                                               + prop.getLocalName()
                                                                + "' is not of form "
                                                                + "'className__propertyName'");
                         }
@@ -495,7 +495,8 @@ public class OntologyUtil
             // if just changing name of property just set onProperty
             if (domain.equals(prop.getDomain())) {
                 res.setOnProperty(newProp);
-            } else if (res.isMaxCardinalityRestriction()) {
+            } else if (res.isMaxCardinalityRestriction()
+                       && !hasMaxCardinalityOne(model, newProp, domain)) {
                 Restriction newRes = model.createMaxCardinalityRestriction(null, newProp,
                   ((MaxCardinalityRestriction) res.as(MaxCardinalityRestriction.class))
                                                                            .getMaxCardinality());

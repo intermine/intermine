@@ -177,11 +177,16 @@ public class Owl2FlyMine
         }
 
         // if this is an inherited duplicate property ignore it, in FlyMine model property
-        // will get inherited
-        OntProperty superProp = prop.getSuperProperty();
-        if (superProp != null && domain.canAs(OntClass.class)) {
-            if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superProp.getDomain(), true)) {
-                return;
+        // will get inherited ... Jena makes everything subPropertyOf itself -> look through
+        // all super properties
+        Iterator s = prop.listSuperProperties();
+        while (s.hasNext()) {
+            OntProperty superProp = (OntProperty) s.next();
+            if (superProp != null && domain.canAs(OntClass.class)) {
+                if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superProp.getDomain(),
+                                                                         true)) {
+                    return;
+                }
             }
         }
 
