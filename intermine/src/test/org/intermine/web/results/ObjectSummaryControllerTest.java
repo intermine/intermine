@@ -49,6 +49,6 @@ public class ObjectSummaryControllerTest extends MockStrutsTestCase
         getRequest().setAttribute("object", "test string");
         actionPerform();
 
-        assertEquals(null, context.getAttribute("leafClds"));
+        assertEquals(0, ((ArrayList) context.getAttribute("leafClds")).size());
     }
 }
