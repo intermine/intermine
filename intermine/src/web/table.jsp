@@ -11,7 +11,7 @@
   <!--//<![CDATA[
     function selectColumnCheckboxes(column) {
       var columnCheckBox = 'selectedObjects_' + column;
-      with(document.changeResultsForm) {
+      with(document.saveBagForm) {
       for(i=0;i < elements.length;i++) {
         thiselm = elements[i];
         var testString = 'selectedObjects_' + column + '_';
