@@ -95,9 +95,11 @@ public class ObjectViewController extends TilesAction
                                                                      o.getClass()).iterator();
                      i.hasNext();) {
                     FieldDescriptor fd = (FieldDescriptor) i.next();
-                    primaryKeyFields.put(fd.getName(), fd.getName());
-                    context.putAttribute("primaryKeyFields", primaryKeyFields);
+                    if (fd.isAttribute()) {
+                        primaryKeyFields.put(fd.getName(), fd.getName());
+                    }
                 }
+                context.putAttribute("primaryKeyFields", primaryKeyFields);
             }
             leafClds = getLeafClds(o.getClass(), model);
         } else {
