@@ -217,15 +217,7 @@
     </html:form>
 
     <br/>
-    <div>
-      <html:link action="/exportAction?method=excel"><fmt:message key="export.excel"/></html:link>
-    </div>
-    <div>
-      <html:link action="/exportAction?method=csv"><fmt:message key="export.csv"/></html:link>
-    </div>
-    <div>
-      <html:link action="/exportAction?method=tab"><fmt:message key="export.tabdelimited"/></html:link>
-    </div>
+    <tiles:get name="export.tile" />
   </c:otherwise>
 </c:choose>
 <!-- /table.jsp -->
