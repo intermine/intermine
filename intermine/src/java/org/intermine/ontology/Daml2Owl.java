@@ -39,31 +39,32 @@ public class Daml2Owl
      * Convert a DAML document to the corresponding OWL OntModel
      * @param daml the input document
      * @return the corresponding OntModel
-     * @throws IOException if something goes wrong in accessing either of the files
+     * @throws IOException if something goes wrong in accessing the input
      */
     public static OntModel process(URL daml) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(daml.openStream()));
+        return process(new BufferedReader(new InputStreamReader(daml.openStream())));
+    }
+
+    /**
+     * Convert a DAML document to the corresponding OWL OntModel
+     * @param in the input document reader
+     * @return the corresponding OntModel
+     * @throws IOException if something goes wrong in accessing the input
+     */
+    protected static OntModel process(BufferedReader in) throws IOException {
         StringBuffer sb = new StringBuffer();
-        String damlNS = null;
-        Pattern pattern = Pattern.compile("xmlns:(.*)=.*" + DAML_NS_PATTERN);
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.find()) {
-                line = line.replaceAll("xmlns:" + matcher.group(1), "xmlns:owl");
-                line = line.replaceAll(DAML_NS_PATTERN, OWL_NS);
-                damlNS = matcher.group(1).replaceAll(" ", "");
-            }
-            if (damlNS != null) {
-                line = line.replaceAll(damlNS + ":", "owl:");
-            }
-            line.replaceAll("differentIndividualFrom", "differentFrom");
-            line.replaceAll("equivalentTo", "sameAs");
-            line.replaceAll("sameClassAs", "equivalentClass");
-            line.replaceAll("samePropertyAs", "equivalentProperty");
-            line.replaceAll("hasClass", "someValuesFrom");
-            line.replaceAll("toClass", "allValuesFrom");
-            line.replaceAll("UnambiguousProperty", "InverseFunctionalProperty");
-            line.replaceAll("UniqueProperty", "FunctionalProperty");
+            line = line.replaceAll("xmlns:daml=\"" + DAML_NS_PATTERN+"\"",
+                                   "xmlns:owl=\"" + OWL_NS + "\"");
+            line = line.replaceAll("daml:differentIndividualFrom", "owl:differentFrom");
+            line = line.replaceAll("daml:equivalentTo", "owl:sameAs");
+            line = line.replaceAll("daml:sameClassAs", "owl:equivalentClass");
+            line = line.replaceAll("daml:samePropertyAs", "owl:equivalentProperty");
+            line = line.replaceAll("daml:hasClass", "owl:someValuesFrom");
+            line = line.replaceAll("daml:toClass", "owl:allValuesFrom");
+            line = line.replaceAll("daml:UnambiguousProperty", "owl:InverseFunctionalProperty");
+            line = line.replaceAll("daml:UniqueProperty", "owl:FunctionalProperty");
+            line = line.replaceAll("daml:", "owl:");
             sb.append(line + ENDL);
         }
         in.close();
