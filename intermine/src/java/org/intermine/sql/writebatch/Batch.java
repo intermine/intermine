@@ -213,7 +213,7 @@ public class Batch
         putFlushJobs(jobs);
         batchSize = 0;
         long end = System.currentTimeMillis();
-        if ((end > middle + 10) && (lastDutyCycle < 93)) {
+        if ((end > middle + 10) && (lastDutyCycle < 75)) {
             LOG.info("Enqueued batch to flush - took " + (middle - start) + " + "
                     + (end - middle) + " ms");
         }
