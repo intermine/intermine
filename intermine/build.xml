@@ -78,6 +78,7 @@
     <include name="velocity*.jar" />
     <include name="jena*.jar" />
     <include name="icu4j*.jar"/>
+    <include name="MAGE*.jar"/>
   </patternset>
 
   <!-- Ant tasks and unit testing stuff -->
@@ -182,6 +183,8 @@
     <pathelement location="${build.model}/testmodel"/>
     <pathelement location="${build.model}/acedbtest"/>
     <pathelement location="${build.model}/xmitest"/>
+    <pathelement location="${build.model}/mage"/>
+    
   </path>
 
   <path id="acedbtest.class.path">
@@ -256,6 +259,12 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
+     <copy todir="${build.resources}" flatten="true">
+      <fileset dir="${model}">
+        <include name="*/resources/*"/>
+      </fileset>
+    </copy>
+
 
   </target>
 
@@ -462,6 +471,46 @@
   <target name="build-production" depends ="insert-data-productionmodel"
           description="build the production FlyMine system with acedb model" >
   </target>
+
+
+  <!-- convert MAGE-OM xmi to FlyMine model -->
+  <target name="convert-mage" depends="compile-main">
+    <ant antfile="build-model.xml" target="generate-model-from-xmi">
+      <property name="model.src" value="/home/rns/resources/mage/"/>
+      <property name="model.name" value="mage"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+  <!-- test out creating java objects from mage model -->
+  <target name="compile-mage" depends="convert-mage">
+    <ant antfile="build-model.xml" target="compile-java">
+      <property name="model.name" value="mage"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
+
+   <target name="mage-to-owl" depends="convert-mage">
+    <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
+      <classpath refid="test.class.path" />
+      <arg value="${build.model}/mage/mage_model.xml" />
+      <arg value="${build.model}/mage/mage.owl" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+<!--  <target name="mage-to-owl" depends="convert-mage">
+    <taskdef
+      name="flymine-to-owl"
+      classname="org.flymine.task.FlyMine2OwlTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+
+    <flymine-to-owl source="${build.model}/mage/mage_model.xml"
+                    dest="${build.model}/mage/mage.owl"
+                    format="N3">
+    </flymine-to-owl>
+  </target>  -->
 
 
   <!-- Unit test targets -->
@@ -735,7 +784,7 @@
     </copy>
     
     <!-- model-specific files -->
-    <loadfile property="model.struts.config" srcFile="${model}/testmodel/resources/struts-config-model.xml"/>
+    <loadfile property="model.struts.config" srcFile="${model}/testmodel/resources/web/struts-config-model.xml"/>
     <replace file="${build.webapp}/flymine/WEB-INF/struts-config.xml" value="${model.struts.config}">
       <!-- can't use normal token as xml must be parseable before this replacement -->
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
@@ -746,11 +795,11 @@
     </copy>
 
     <copy todir="${build.webapp}/flymine/WEB-INF">
-       <fileset dir="${model}/testmodel/resources"/>
+       <fileset dir="${model}/testmodel/resources/web"/>
     </copy>
 
     <copy todir="${build.webapp}/flymine/WEB-INF/classes">
-       <fileset dir="${model}/testmodel/resources" includes="model*.properties"/>
+       <fileset dir="${model}/testmodel/resources/web" includes="model*.properties"/>
     </copy>
 
     <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>

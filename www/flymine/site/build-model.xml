@@ -42,6 +42,11 @@
   </target>
 
 
+  <!-- copy an exiting xmi file to build/tmp -->
+  <target name="copy-xmi" depends="prepare">
+    <copy file="${model.src}/${model.name}.xmi" tofile="${build.tmp}/${model.name}_.xmi"/>
+  </target>
+
   <!-- Model generation targets -->
   <target name="generate-xmi-model"
           description="Generate FlyMine model from an XMI file">
@@ -162,9 +167,14 @@
           description="Build a usable model from a .zargo file">
   </target>
 
-  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, generate-xml-mapping, generate-torque"
+  <target name="build-model-from-xmi" depends="generate-xmi-model, compile-java, generate-torque"
           description="Build a usable model from a .zargo file">
   </target>
+
+  <target name="generate-model-from-xmi" depends="copy-xmi, generate-xmi-model"
+          description="Generate a FlyMine xml model from a xmi file">
+  </target>
+  
 
   <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, generate-xml-mapping, generate-torque"
           description="Build a usable model from an AceDB .wrm file">

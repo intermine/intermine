@@ -46,7 +46,7 @@ public class FullRenderer
      *
      * @param objects a collection of objects to render
      * @param model the parent model
-     * @return the XML for that object
+     * @return the XML for the list of objects
      */
     public static String render(Collection objects, Model model) {
         StringBuffer sb = new StringBuffer();
@@ -55,6 +55,24 @@ public class FullRenderer
         Iterator iter = objects.iterator();
         while (iter.hasNext()) {
             sb.append(renderObject((FlyMineBusinessObject) iter.next(), model));
+        }
+        sb.append("</items>" + ENDL);
+
+        return sb.toString();
+    }
+
+    /**
+     * Render a collection of items in FlyMine Full XML format.
+     *
+     * @param items a collection of items to render
+     * @return the XML for the list of items
+     */
+    public static String render(Collection items) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<items>" + ENDL);
+        Iterator iter = items.iterator();
+        while (iter.hasNext()) {
+            sb.append(iter.next().toString());
         }
         sb.append("</items>" + ENDL);
 

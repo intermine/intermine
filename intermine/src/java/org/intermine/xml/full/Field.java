@@ -80,6 +80,6 @@ public class Field
      * @see Object#toString
      */
     public String toString() {
-        return name + ", " + value;
+        return "name=\"" + name + "\" value=\"" + value + "\"";
     }
 }

@@ -30,6 +30,8 @@
     <heading>Ontologies</heading>
     <item><ulink url="ontologies/overview">Overview and Current Issues</ulink></item>
     <item><ulink url="ontologies/owl_generation">Converting Source Ontologies to OWL</ulink></item>
+    <item><ulink url="ontologies/owl_merging">Method of merging OWL ontologies</ulink></item>
+
   </section>
 
   <section>

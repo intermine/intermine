@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<items>
+  <object xml_id="1" class="http://www.biomage.org#Array_package">
+    <collection name="array_list">
+      <reference ref_id="2"/>
+      <reference ref_id="4"/>
+      <reference ref_id="7"/>
+      <reference ref_id="8"/>
+      <reference ref_id="9"/>
+      <reference ref_id="10"/>
+      <reference ref_id="11"/>
+      <reference ref_id="12"/>
+      <reference ref_id="13"/>
+    </collection>
+    <collection name="arrayManufacture_list">
+      <reference ref_id="3"/>
+    </collection>
+  </object>
+  <object xml_id="2" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:38"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="3" class="http://www.biomage.org#ArrayManufacture">
+    <field name="identifier" value="Affymetrix"/>
+    <field name="name" value="Affymetrix"/>
+    <collection name="arrays">
+      <reference ref_id="2"/>
+      <reference ref_id="4"/>
+      <reference ref_id="7"/>
+      <reference ref_id="8"/>
+      <reference ref_id="9"/>
+      <reference ref_id="10"/>
+      <reference ref_id="11"/>
+      <reference ref_id="12"/>
+      <reference ref_id="13"/>
+    </collection>
+  </object>
+  <object xml_id="4" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:39"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="5" class="http://www.biomage.org#PhysicalArrayDesign">
+    <field name="identifier" value="A-AFFY-1"/>
+    <collection name="propertySets">
+      <reference ref_id="6"/>
+    </collection>
+  </object>
+  <object xml_id="6" class="http://www.biomage.org#NameValueType">
+    <field name="name" value="Placeholder"/>
+  </object>
+  <object xml_id="7" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:40"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="8" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:41"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="9" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:42"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="10" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:43"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="11" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:44"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="12" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:45"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+  <object xml_id="13" class="http://www.biomage.org#Array">
+    <field name="arrayIdentifier" value="900303"/>
+    <field name="identifier" value="AR:46"/>
+    <field name="name" value="900303 "/>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
+  </object>
+</items>

@@ -112,7 +112,7 @@ public class OntologyUtil
         } else if (javaType.equals("java.util.Date")) {
             return (OntologyUtil.XSD_NAMESPACE + "dateTime");
         } else {
-            throw new IllegalArgumentException("Unrecognised Java type");
+            throw new IllegalArgumentException("Unrecognised Java type: " + javaType);
         }
     }
 
@@ -149,7 +149,7 @@ public class OntologyUtil
         } else if (xmlType.equals("dateTime")) {
             return "java.util.Date";
         } else {
-            throw new IllegalArgumentException("Unrecognised XML data type");
+            throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
         }
     }
 

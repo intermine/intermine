@@ -13,6 +13,7 @@ package org.flymine.xml.full;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Representation of an object
@@ -192,7 +193,36 @@ public class Item
      * @see Object#toString
      */
     public String toString() {
-        return identifier + ", " + className + ", " + implementations + ", " + fields + ", "
-            + references + ", " + collections;
+        String endl = System.getProperty("line.separator");
+        StringBuffer sb = new StringBuffer();
+        sb.append("<object xml_id=\"" + identifier + "\"");
+        if (!className.equals("")) {
+            sb.append(" class=\"" + className + "\"");
+        }
+        if (!implementations.equals("")) {
+            sb.append(" implements=\"" + implementations + "\"");
+        }
+        sb.append(">" + endl);
+        Iterator i = fields.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry entry = (Map.Entry) i.next();
+            Field field = (Field) entry.getValue();
+            sb.append("<field name=\"" + field.getName() + "\" value=\""
+                      + field.getValue() + "\"/>" + endl);
+        }
+        i = references.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry entry = (Map.Entry) i.next();
+            Field field = (Field) entry.getValue();
+            sb.append("<reference name=\"" + field.getName() + "\" ref_id=\""
+                      + field.getValue() + "\"/>" + endl);
+        }
+        i = collections.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry entry = (Map.Entry) i.next();
+            sb.append(entry.getValue().toString());
+        }
+        sb.append("</object>" + endl);
+        return sb.toString();
     }
 }

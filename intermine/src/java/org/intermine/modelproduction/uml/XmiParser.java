@@ -90,7 +90,7 @@ public class XmiParser implements ModelParser
      */
     public Model process(Reader reader) throws Exception {
         recurse(new XMIReader().parse(new InputSource(reader)));
-        return new Model(modelName, "http://www.flymine.org/model/" + modelName, classes);
+        return new Model(modelName, "http://www.flymine.org/model/" + modelName + "#", classes);
     }
 
     /**
@@ -99,9 +99,18 @@ public class XmiParser implements ModelParser
      */
     protected void generateAttribute(MAttribute attr) {
         String name = attr.getName();
-        String type = qualify(attr.getType().getName());
+        //String type = qualify(attr.getType().getName());
+        String type = attr.getType().getName();
         boolean primaryKey = keys.contains(attr.getName());
-        attributes.add(new AttributeDescriptor(name, primaryKey, type));
+        if (type.indexOf("[") > 0) {
+            int index = type.indexOf("[");
+            collections.add(new CollectionDescriptor(name, primaryKey, qualify(type.substring(0, index)),
+                                                     null, true));
+        } else if (type.startsWith("any")) {
+            references.add(new ReferenceDescriptor(name, primaryKey, qualify(type), null));
+        } else {
+            attributes.add(new AttributeDescriptor(name, primaryKey, qualify(type)));
+        }
     }
 
     /**
@@ -123,14 +132,14 @@ public class XmiParser implements ModelParser
 
         keys = getKeys(cls);
 
+        references = new LinkedHashSet();
+        collections = new LinkedHashSet();
         attributes = new LinkedHashSet();
         Iterator strIter = getAttributes(cls).iterator();
         while (strIter.hasNext()) {
             generateAttribute((MAttribute) strIter.next());
         }
 
-        references = new LinkedHashSet();
-        collections = new LinkedHashSet();
         Iterator endIter = cls.getAssociationEnds().iterator();
         while (endIter.hasNext()) {
             generateAssociationEnd(((MAssociationEnd) endIter.next()).getOppositeEnd());
@@ -235,7 +244,17 @@ public class XmiParser implements ModelParser
     }
 
     private String qualified(MClassifier cls) {
-        return getPackagePath(cls) + "." + cls.getName();
+        return stripIllegal(getPackagePath(cls) + "." + cls.getName());
+    }
+
+    private String stripIllegal(String s) {
+        StringBuffer sb = new StringBuffer();
+        for(int i=0; i < s.length(); i++) {
+            if ('-' != s.charAt(i)) {
+                sb.append(s.charAt(i));
+            }
+        }
+        return sb.toString();
     }
 
     private Collection getSpecifications(MClassifier cls) {
@@ -305,9 +324,11 @@ public class XmiParser implements ModelParser
                 name = StringUtil.pluralise(name);
             }
         }
-        return StringUtil.decapitalise(name);
+        return stripIllegal(StringUtil.decapitalise(name));
     }
 
+    // converts 'any' found in MAGE-OM to FlyMineBusinessObject - not a long term
+    // solution, awaiting handling of collections of java.lang objects
     private String qualify(String type) {
         if ((type.equals("String")) || (type.equals("Integer"))
             || (type.equals("Float")) || (type.equals("Double"))
@@ -317,7 +338,12 @@ public class XmiParser implements ModelParser
         if (type.equals("Date")) {
             return "java.util." + type;
         }
-
+        if (type.startsWith("enum")) {
+            return "java.lang.String";
+        }
+        if (type.equals("any")) {
+            return "org.flymine.model.FlyMineBusinessObject";
+        }
         return type;
     }
 

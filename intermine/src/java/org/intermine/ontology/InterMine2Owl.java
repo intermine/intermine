@@ -11,6 +11,9 @@ package org.flymine.ontology;
  */
 
 import java.util.Iterator;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -20,6 +23,8 @@ import com.hp.hpl.jena.ontology.ObjectProperty;
 
 import org.flymine.metadata.*;
 import org.flymine.util.TypeUtil;
+import org.flymine.modelproduction.ModelParser;
+import org.flymine.modelproduction.xml.FlyMineModelParser;
 
 /**
  * Convert a FlyMine metadata model to a Jena OntModel.
@@ -120,6 +125,29 @@ public class FlyMine2Owl
             prop = ont.createObjectProperty(uri);
         }
         return prop;
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        if (args.length != 3) {
+            throw new IllegalArgumentException("Usage: FlyMine2Owl source dest format");
+        }
+        String srcFilename = args[0];
+        String tgtFilename = args[1];
+        String format = args[2];
+
+        File srcFile = new File(srcFilename);
+        File tgtFile = new File(tgtFilename);
+
+        FlyMine2Owl f2o = new FlyMine2Owl();
+        Model model = null;
+        ModelParser parser = new FlyMineModelParser();
+        model = parser.process(new FileReader(srcFile));
+
+        OntModel ont = f2o.process(model);
+        FileWriter writer = new FileWriter(tgtFile);
+        ont.write(writer, format);
+        writer.close();
     }
 
 }

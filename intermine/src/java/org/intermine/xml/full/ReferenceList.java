@@ -12,6 +12,7 @@ package org.flymine.xml.full;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Representation of a field in an object.
@@ -82,6 +83,14 @@ public class ReferenceList
      * @see Object#toString
      */
     public String toString() {
-        return name + ", " + references;
+        String endl = System.getProperty("line.separator");
+        StringBuffer sb = new StringBuffer();
+        sb.append("<collection name=\"" + name + "\">" + endl);
+        Iterator i = references.iterator();
+        while (i.hasNext()) {
+            sb.append("<reference ref_id=\"" + i.next().toString() + "\"/>" + endl);
+        }
+        sb.append("</collection>" + endl);
+        return sb.toString();
     }
 }
