@@ -77,7 +77,7 @@
       Daml+Oil is converted to OWL by simple text replacement of Daml specific terms with corresponding OWL ones, eg. daml:class -> owl:class, daml:sameClassAs -> owl:equivalentClass, daml:UnambigiuousProperty -> owl:inverseFunctionalProperty.  Terms that are part of the rdf(s) vocubaluary are not altered.  Some level of validation is inherent in creating a jena OntModel class, running an OWL validator may be advisable.
     </para>
     <sect2>
-      <title>Running Daml2Oil</title>
+      <title>Running Daml2Owl</title>
       Until a formal method for converting source ontologies the java can be run directly by the following (where $FLYMINE is the root of the flymine cvs tree):
       <itemizedlist>
         <listitem><command>cd $FLYMINE/build/java</command></listitem>
