@@ -1390,7 +1390,7 @@
                    infoSourceTitle="LongOligo"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.LongOligoGFF3RecordHandler">
-      <fileset dir ="/tmp/shared/data/long_oligo">
+      <fileset dir ="/shared/data/long_oligo">
         <include name ="*.gff3"/>
         <include name ="*.GFF3"/>
       </fileset>
