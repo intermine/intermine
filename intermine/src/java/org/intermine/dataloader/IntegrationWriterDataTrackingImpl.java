@@ -204,8 +204,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                             : "from database") + "), source1 = \"" + source
                                     + "\", source2 = \"" + fieldSource + "\" for field \""
                                     + field.getName() + "\"";
-                                LOG.error(errMessage);
-                                throw new IllegalArgumentException(errMessage);
+                                if (!ignoreDuplicates) {
+                                    LOG.error(errMessage);
+                                    throw new IllegalArgumentException(errMessage);
+                                }
                             }
                             if (type != FROM_DB) {
                                 assignMapping(o.getId(), obj.getId());

@@ -27,6 +27,7 @@ public class ObjectStoreDataLoaderTask extends ClassPathTask
     protected String integrationWriter;
     protected String source;
     protected String sourceName;
+    protected boolean ignoreDuplicates;
 
     /**
      * Set the IntegrationWriter.
@@ -56,6 +57,14 @@ public class ObjectStoreDataLoaderTask extends ClassPathTask
     }
 
     /**
+     * Set the value of ignoreDuplicates for the IntegrationWriter
+     * @param ignoreDuplicates the value of ignoreDuplicates
+     */
+    public void setIgnoreDuplicates(boolean ignoreDuplicates) {
+        this.ignoreDuplicates = ignoreDuplicates;
+    }
+
+    /**
      * @see Task#execute
      * @throws BuildException
      */
@@ -75,8 +84,13 @@ public class ObjectStoreDataLoaderTask extends ClassPathTask
             // a different ClassLoader) can see
 
             Method method = driver.getClass().getMethod("loadData", new Class[] {String.class,
-                String.class, String.class});
-            method.invoke(driver, new Object [] {integrationWriter, source, sourceName });
+                                                                                 String.class,
+                                                                                 String.class,
+                                                                                 Boolean.TYPE});
+            method.invoke(driver, new Object [] {integrationWriter,
+                                                 source,
+                                                 sourceName,
+                                                 Boolean.valueOf(ignoreDuplicates)});
         } catch (Exception e) {
             e.printStackTrace();
             throw new BuildException(e);

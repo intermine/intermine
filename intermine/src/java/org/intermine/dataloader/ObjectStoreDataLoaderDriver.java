@@ -30,13 +30,16 @@ public class ObjectStoreDataLoaderDriver
      * @param iwAlias the name of the IntegrationWriter to use
      * @param sourceAlias the ObjectStore from which to read
      * @param sourceName the name of the data source, as used by primary key priority config
+     * @param ignoreDuplicates tell the IntegrationWriter whether to ignore duplicate objects
      * @throws BuildException if any error occurs
      */
-    public void loadData(String iwAlias, String sourceAlias, String sourceName)
+    public void loadData(String iwAlias, String sourceAlias, String sourceName,
+                         boolean ignoreDuplicates)
         throws BuildException {
 
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(iwAlias);
+            iw.setIgnoreDuplicates(ignoreDuplicates);
             ObjectStore os = ObjectStoreFactory.getObjectStore(sourceAlias);
             ObjectStoreDataLoader dl = new ObjectStoreDataLoader(iw);
             Source source = iw.getMainSource(sourceName);

@@ -59,4 +59,11 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @throws ObjectStoreException if something goes wrong
      */
     public Source getSkeletonSource(String name) throws ObjectStoreException;
+
+
+    /**
+     * Tell this IntegrationWriter whether to ignore duplicate objects from the same source
+     * @param ignoreDuplicates the value of ignoreDuplicates
+     */
+    public void setIgnoreDuplicates(boolean ignoreDuplicates);
 }
