@@ -54,7 +54,7 @@
     <echo message="See 'ant -projecthelp' for full target list"/>
   </target>
 
-  <!-- process model -->
+  <!-- build model -->
   <target name="build-model" depends="prepare" >
     <copy file="${model}/tutorial_model.xml" todir="${build.model}/tutorial"/>
     <ant antfile="build-model.xml" target="build-model-from-xml">
@@ -62,6 +62,21 @@
       <reference torefid="class.path" refid="tutorial.class.path"/>
     </ant>
   </target>
+
+  <!-- Example of building model from an ArgoUML file -->
+  <!-- Note: The nsuml.jar file needs to be in your classpath (eg. in the lib/ directory) -->
+  <!-- for this step to work. nsuml.jar is distributed with the main FlyMine distribution. -->
+  <!-- The name of the project within the zargo file should be the same as ${model.name} here. -->
+
+  <!--
+  <target name="build-model" depends="prepare" >
+    <ant antfile="build-model.xml" target="build-model-from-zargo">
+      <property name="model.name" value="tutorial"/>
+      <property name="model.src" value="/path/to/directory/containing/zargo/file"/>
+      <reference torefid="class.path" refid="tutorial.class.path"/>
+    </ant>
+  </target>
+  -->
 
   <!-- create database -->
   <target name="build-db" depends="build-model">
