@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,13 +22,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+
 /**
  * Action to handle links on main tile
  * @author Mark Woodbridge
  */
 public class MainChange extends DispatchAction
 {
-     /**
+    /**
      * Remove all nodes under a given path
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -42,9 +47,29 @@ public class MainChange extends DispatchAction
                                     HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
+        // ensure removal of any view nodes that depend on a type constraint
+        // eg. Department.employees.salary where salary is only defined in a subclass of Employee
+        ClassDescriptor cld = MainHelper.getClassDescriptorForPath(path, model);
+        for (Iterator i = query.getView().iterator(); i.hasNext();) {
+            String viewPath = (String) i.next();
+            if (viewPath.startsWith(path) && !viewPath.equals(path)) {
+                String fieldName = viewPath.substring(path.length() + 1);
+                if (fieldName.indexOf(".") != -1) {
+                    fieldName = fieldName.substring(0, fieldName.indexOf("."));
+                }
+                if (cld.getFieldDescriptorByName(fieldName) == null) {
+                    i.remove();
+                }
+            }
+        }
+
+        // remove any child nodes
         for (Iterator i = query.getNodes().keySet().iterator(); i.hasNext();) {
             if (((String) i.next()).startsWith(path)) {
                 i.remove();
@@ -60,7 +85,6 @@ public class MainChange extends DispatchAction
         }
         session.setAttribute("prefix", prefix);
         session.setAttribute("path", path);
-
 
         return mapping.findForward("query");
     }
