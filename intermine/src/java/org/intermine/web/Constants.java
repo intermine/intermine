@@ -34,6 +34,11 @@ public interface Constants
     public static final String DISPLAYERS = "DISPLAYERS";
 
     /**
+     * ServletContext attribute used to store the WebConfig object for the Model.
+     */
+    public static final String WEBCONFIG = "WEBCONFIG";
+
+    /**
      * ServletContext attribute used to store the ObjectStore
      */
     public static final String OBJECTSTORE = "OBJECTSTORE";
@@ -63,3 +68,4 @@ public interface Constants
      */
     public static final String RESULTS_TABLE = "RESULTS_TABLE";
 }
+
