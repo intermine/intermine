@@ -1,0 +1,119 @@
+#!/bin/bash
+
+FILENAME="stdin"
+RES=100
+ANTIALIAS=4
+DELETE_AFTER=False
+RES_SET=False
+SZX_SET=False
+SZY_SET=False
+ALPHA=False
+
+while test $# -gt 0 ; do
+	case $1 in
+	    -r)
+		if test $# -gt 1 ; then
+			RES=$2
+			RES_SET=True
+			shift
+			#echo "Resolution set to $RES" 1>&2
+		else
+			echo "-r needs an option" 1>&2
+			exit
+		fi
+		;;
+	    -a)
+		if test $# -gt 1 ; then
+			ANTIALIAS=$2
+			shift
+			#echo "Antialiasing set to $ANTIALIAS" 1>&2
+		else
+			echo "-a needs an option" 1>&2
+			exit
+		fi
+		;;
+	    -x)
+		if test $# -gt 1 ; then
+			SZX=$2
+			SZX_SET=True
+			shift
+			#echo "X-Size set to $SZX" 1>&2
+		else
+			echo "-x needs an option" 1>&2
+			exit
+		fi
+		;;
+	    -y)
+		if test $# -gt 1 ; then
+			SZY=$2
+			SZY_SET=True
+			shift
+			#echo "Y-Size set to $SZY" 1>&2
+		else
+			echo "-y needs an option" 1>&2
+			exit
+		fi
+		;;
+	    -A)
+		ALPHA=True
+		;;
+	    *)
+		FILENAME=$1
+		;;
+	esac
+	shift
+done
+
+if test "True" = "$RES_SET" && ( test "True" = "$SZX_SET" || test "True" = "SZY_SET" ) ; then
+	echo "You can't mix resolution and size arguments" 1>&2
+	exit
+fi
+if test "True" = "$SZY_SET" && test "True" = "$SZX_SET" ; then
+	echo "You can't mix -x and -y arguments" 1>&2
+	exit
+fi
+
+if test "$FILENAME" == "stdin" ; then
+	FILENAME=~/tmp/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+	DELETE_AFTER=True
+	TODELETE=$FILENAME
+	cat >$FILENAME
+fi
+
+BBOX=`gs -q -sDEVICE=bbox -sOutputFile=- -r1600x1600 -g16000x9600 -dBATCH -dNOPAUSE $FILENAME 2>&1 | grep "%%BoundingBox:" | sed -e "s/^%%BoundingBox: //"`
+WIDTH=`echo $BBOX | sed -e "s/^\([^ ]\+\) [^ ]\+ \([^ ]\+\) [^ ]\+$/\2-\1/g" | bc`
+HEIGHT=`echo $BBOX | sed -e "s/^[^ ]\+ \([^ ]\+\) [^ ]\+ \([^ ]\+\)$/\2-\1/g" | bc`
+
+if test "True" = "$SZX_SET" ; then
+	USWIDTH=`echo "$SZX * $ANTIALIAS" | bc`
+	USHEIGHT=`echo "($SZX * $ANTIALIAS * $HEIGHT) / $WIDTH" | bc`
+	USRES=`echo "($SZX * $ANTIALIAS * 72) / $WIDTH" | bc`
+elif test "True" = "$SZY_SET" ; then
+	USWIDTH=`echo "($SZY * $ANTIALIAS * $WIDTH) / $HEIGHT" | bc`
+	USHEIGHT=`echo "$SZY * $ANTIALIAS" | bc`
+	USRES=`echo "($SZY * $ANTIALIAS * 72) / $HEIGHT" | bc`
+else
+	USWIDTH=`echo "($WIDTH * $RES * $ANTIALIAS) / 72" | bc`
+	USHEIGHT=`echo "($HEIGHT * $RES * $ANTIALIAS) / 72" | bc`
+	USRES=`echo "$RES * $ANTIALIAS" | bc`
+fi
+
+#echo "$BBOX $WIDTH $HEIGHT $USWIDTH $USHEIGHT $USRES" 1>&2
+
+if test "True" = "$ALPHA" ; then
+	TEMP_FILENAME=~/tmp/`hexdump </dev/urandom | head -n 1 | tr -d " "`
+	gs -q -sDEVICE=pgmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME | pnmscale --reduce $ANTIALIAS 2>/dev/null >$TEMP_FILENAME.blackonwhite
+	pnminvert <$TEMP_FILENAME.blackonwhite >$TEMP_FILENAME.alpha
+	XY_SIZE=`head -n 3 <$TEMP_FILENAME.alpha | grep -v "^#" | tr "\n	" "  " | sed -e "s/P[1-6] \+\([0-9]\+\) \+\([0-9]\+\).*$/-xsize \1 -ysize \2/"`
+#	echo "P1 1 1 1" | pnmscale $XY_SIZE 2>/dev/null >$TEMP_FILENAME.black
+	pnmgamma 0.00001 <$TEMP_FILENAME.blackonwhite >$TEMP_FILENAME.black
+	pnmtopng -alpha $TEMP_FILENAME.alpha $TEMP_FILENAME.black 2>/dev/null
+	rm $TEMP_FILENAME.alpha $TEMP_FILENAME.black $TEMP_FILENAME.blackonwhite
+else
+	gs -q -sDEVICE=pgmraw -sOutputFile=- -r${USRES}x${USRES} -g${USWIDTH}x${USHEIGHT} -dBATCH -dNOPAUSE $FILENAME | pnmscale --reduce $ANTIALIAS 2>/dev/null | pnmtopng
+fi
+
+if test "$DELETE_AFTER" = "True" ; then
+	rm $TODELETE
+fi
+

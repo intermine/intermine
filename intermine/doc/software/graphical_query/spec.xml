@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+	<date>2002-11-13</date>
+	<title>Flymine - Graphical Query Specification</title>
+	<authorgroup>
+		<author>
+			<firstname>Matthew</firstname>
+			<surname>Wakeling</surname>
+		</author>
+	</authorgroup>
+</artheader>
+
+<sect1>
+<title>Introduction</title>
+
+<para>
+	This document is an attempt to create a consistent specification of the Flymine query, specifically its graphical representation.
+</para>
+</sect1>
+
+<sect1>
+<title>Initial description</title>
+
+<para>
+	<graphic fileref="Test" format="PNG" align="Right" />
+	Our database stores separate collections of data, where each collection stores data all of the same type.
+	These collections can be compared to tables in SQL or object classes in an Object Oriented DB.
+	A query will retrieve data from one or more of these collections - so the graphical representation of a query consists of an arrangement of objects on the screen, each of which represent one of these collections.
+	The figure on the right is an example of such an object, which represents the collection of Genes in the database.
+</para>
+
+<para>
+</para>
+</sect1>
+
+
+</article>

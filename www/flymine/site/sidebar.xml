@@ -11,4 +11,7 @@
     <section>
         <heading><ulink url="/internal/index">Internal</ulink></heading>
     </section>
+    <section>
+        <heading><ulink url="/system/query_spec/spec">Query Specification</ulink></heading>
+    </section>	
 </menu>

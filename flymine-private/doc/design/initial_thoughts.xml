@@ -67,7 +67,7 @@ grant, but not allowed for in the grant application.</para>
 
 <sect2><title>Big issues</title>
 
-<para>Decisions we need to mae very early on in the design process</para>
+<para>Decisions we need to make very early on in the design process</para>
 
 <itemizedlist>
 <listitem>To what extent will we flatten the source databases when

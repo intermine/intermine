@@ -164,6 +164,27 @@ version="1.0">
 </img>
 </xsl:template>
 
+<xsl:template match="graphic">
+<img>
+<xsl:attribute name="src">
+<xsl:choose>
+    <xsl:when test="substring(@fileref, 1, 1) = '/'">
+        <xsl:copy-of select="$basedir"/>
+        <xsl:value-of select="@fileref"/>
+    </xsl:when>
+    <xsl:otherwise>
+        <xsl:value-of select="@fileref"/>
+    </xsl:otherwise>
+</xsl:choose>
+</xsl:attribute>
+<xsl:attribute name="align">
+    <xsl:value-of select="@align"/>
+</xsl:attribute>
+<xsl:attribute name="border">0</xsl:attribute>
+<xsl:apply-templates/>
+</img>
+</xsl:template>
+
 <xsl:template match="ulink">
 <a>
 <xsl:attribute name="href">

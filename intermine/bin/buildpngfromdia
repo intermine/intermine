@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Building PNG picture $2"
+
+export PATH=$PATH:$PWD/bin
+
+diatopng -r 100 -a 16 -A $1 >$2

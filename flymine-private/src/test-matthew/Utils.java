@@ -21,7 +21,7 @@ public class Utils
 		long n = getUniqueNumber();
 		do
 		{
-			retVal += (char) ((n % 26) + 'a');
+			retVal = ((char) ((n % 26) + 'a')) + retVal;
 			n = n / 26;
 		} while (n>0);
 		return retVal;

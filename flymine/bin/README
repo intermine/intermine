@@ -1,0 +1,4 @@
+These files are non-portable scripts used by the Flymine system.
+
+In order for builds to work, these scripts should be in your search path ($PATH).
+
