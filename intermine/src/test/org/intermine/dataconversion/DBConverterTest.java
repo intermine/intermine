@@ -155,7 +155,7 @@ public class DBConverterTest extends TestCase {
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Company");
 
         List rows = rowify(
-                           new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
+                           new String[] {"Company_id", "name", "vatNumber", "CEO_id"},
                            new Object[] {new Integer(12), null, null, null});
 
         map.put("SELECT * FROM Company", rows);
@@ -274,7 +274,7 @@ public class DBConverterTest extends TestCase {
         item.addAttribute(attribute);
 
         List rows2 = rowify(
-                            new String[] {"Company_id", "name", "vatNumber", "cEO_id"},
+                            new String[] {"Company_id", "name", "vatNumber", "CEO_id"},
                             new Object[] {new Integer(13), null, null, null});
 
         map.put("SELECT * FROM Company", rows2);

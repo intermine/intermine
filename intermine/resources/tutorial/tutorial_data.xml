@@ -25,7 +25,7 @@
 <attribute name="name" value="CompanyB"/>
 <attribute name="vatNumber" value="5678"/>
 <reference name="address" ref_id="19"/>
-<reference name="cEO" ref_id="11"/>
+<reference name="CEO" ref_id="11"/>
 <collection name="contractors">
 <reference ref_id="3"/>
 <reference ref_id="4"/>

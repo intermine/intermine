@@ -58,7 +58,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     public static void setUpResults() throws Exception {
         results.put("SelectSimpleObject", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company ORDER BY Company.id");
-        results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.Alias AS a3_ FROM (SELECT DISTINCT a1_.OBJECT AS a1_, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS Alias FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.Alias");
+        results.put("SubQuery", "SELECT DISTINCT a1_.a1_name AS a2_, a1_.Alias AS a3_ FROM (SELECT DISTINCT a1_.OBJECT AS a1_, a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, 5 AS Alias FROM Company AS a1_) AS a1_ ORDER BY a1_.a1_name, a1_.Alias");
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
         results.put("WhereSimpleNotEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
         results.put("WhereSimpleNegEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber != 1234 ORDER BY a1_.name");
@@ -85,7 +85,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("ContainsDuplicatesMN", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS indirect0 WHERE (a1_.id = indirect0.OldComs AND indirect0.OldContracts = a2_.id) ORDER BY a1_.id, a2_.id");
         id1 = (Integer) TypeUtil.getFieldValue(data.get("EmployeeA1"), "id");
         results.put("ContainsObject", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_ WHERE a1_.managerId = " + id1 + " ORDER BY a1_.id");
-        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.addressId, a1_.cEOId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results.put("MultiJoin", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Company AS a1_, Department AS a2_, Manager AS a3_, Address AS a4_ WHERE (a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1') ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
         results.put("SelectComplex", "SELECT DISTINCT (AVG(a1_.vatNumber) + 20) AS a3_, a2_.name AS a4_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Company AS a1_, Department AS a2_ GROUP BY a2_.OBJECT, a2_.companyId, a2_.id, a2_.managerId, a2_.name ORDER BY (AVG(a1_.vatNumber) + 20), a2_.name, a2_.id");
         results.put("SelectClassAndSubClasses", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.name AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.name, a1_.id");

@@ -38,7 +38,7 @@
     <class name="org.flymine.model.testmodel.Company" extends="org.flymine.model.testmodel.RandomInterface org.flymine.model.testmodel.HasAddress org.flymine.model.testmodel.HasSecretarys" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
         <attribute name="vatNumber" type="int"/>
-        <reference name="cEO" referenced-type="org.flymine.model.testmodel.CEO" reverse-reference="company"/>
+        <reference name="CEO" referenced-type="org.flymine.model.testmodel.CEO" reverse-reference="company"/>
         <collection name="departments" referenced-type="org.flymine.model.testmodel.Department" ordered="true" reverse-reference="company"/>
         <collection name="contractors" referenced-type="org.flymine.model.testmodel.Contractor" ordered="true" reverse-reference="companys"/>
         <collection name="oldContracts" referenced-type="org.flymine.model.testmodel.Contractor" ordered="true" reverse-reference="oldComs"/>
@@ -49,7 +49,7 @@
     <class name="org.flymine.model.testmodel.RandomInterface" is-interface="true"></class>
     <class name="org.flymine.model.testmodel.CEO" extends="org.flymine.model.testmodel.Manager org.flymine.model.testmodel.HasSecretarys" is-interface="false">
         <attribute name="salary" type="int"/>
-        <reference name="company" referenced-type="org.flymine.model.testmodel.Company" reverse-reference="cEO"/>
+        <reference name="company" referenced-type="org.flymine.model.testmodel.Company" reverse-reference="CEO"/>
     </class>
     <class name="org.flymine.model.testmodel.ImportantPerson" is-interface="true">
         <attribute name="seniority" type="java.lang.Integer"/>

@@ -601,7 +601,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         dataTracker.setSource(ca.getId(), "name", source);
         dataTracker.setSource(ca.getId(), "address", source);
         dataTracker.setSource(ca.getId(), "vatNumber", source);
-        dataTracker.setSource(ca.getId(), "cEO", source);
+        dataTracker.setSource(ca.getId(), "CEO", source);
         dataTracker.clearObj(conA.getId());
         dataTracker.setSource(conA.getId(), "personalAddress", source);
         dataTracker.setSource(conA.getId(), "businessAddress", source);

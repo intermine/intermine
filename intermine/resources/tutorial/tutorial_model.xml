@@ -47,7 +47,7 @@
     <class name="org.flymine.model.tutorial.Company" extends="org.flymine.model.tutorial.RandomInterface org.flymine.model.tutorial.HasAddress org.flymine.model.tutorial.HasSecretarys" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
         <attribute name="vatNumber" type="int"/>
-        <reference name="cEO" referenced-type="org.flymine.model.tutorial.CEO" reverse-reference="company"/>
+        <reference name="CEO" referenced-type="org.flymine.model.tutorial.CEO" reverse-reference="company"/>
         <collection name="departments" referenced-type="org.flymine.model.tutorial.Department" ordered="true" reverse-reference="company"/>
         <collection name="contractors" referenced-type="org.flymine.model.tutorial.Contractor" ordered="true" reverse-reference="companys"/>
         <collection name="oldContracts" referenced-type="org.flymine.model.tutorial.Contractor" ordered="true" reverse-reference="oldComs"/>
@@ -62,7 +62,7 @@
 
     <class name="org.flymine.model.tutorial.CEO" extends="org.flymine.model.tutorial.Manager org.flymine.model.tutorial.HasSecretarys" is-interface="false">
         <attribute name="salary" type="int"/>
-        <reference name="company" referenced-type="org.flymine.model.tutorial.Company" reverse-reference="cEO"/>
+        <reference name="company" referenced-type="org.flymine.model.tutorial.Company" reverse-reference="CEO"/>
     </class>
 
     <class name="org.flymine.model.tutorial.ImportantPerson" is-interface="true">

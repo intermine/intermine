@@ -29,7 +29,7 @@
     <attribute name="name" type="java.lang.String" primary-key="true"/>
     <attribute name="vatNumber" type="int" primary-key="false"/>
     <reference name="address" referenced-type="org.flymine.model.testmodel.Address" primary-key="true"/>
-    <reference name="cEO" referenced-type="org.flymine.model.testmodel.CEO" reverse-reference="company" primary-key="false"/>
+    <reference name="CEO" referenced-type="org.flymine.model.testmodel.CEO" reverse-reference="company" primary-key="false"/>
     <collection name="departments" referenced-type="org.flymine.model.testmodel.Department" ordered="true" reverse-reference="company" primary-key="false"/>
     <collection name="contractors" referenced-type="org.flymine.model.testmodel.Contractor" ordered="true" reverse-reference="companys" primary-key="false"/>
     <collection name="oldContracts" referenced-type="org.flymine.model.testmodel.Contractor" ordered="true" reverse-reference="oldComs" primary-key="false"/>
@@ -42,7 +42,7 @@
   <class name="org.flymine.model.testmodel.RandomInterface" is-interface="true"/>
   <class name="org.flymine.model.testmodel.CEO" extends="org.flymine.model.testmodel.Manager" is-interface="false">
     <attribute name="salary" type="int" primary-key="false"/>
-    <reference name="company" referenced-type="org.flymine.model.testmodel.Company" reverse-reference="cEO" primary-key="false"/>
+    <reference name="company" referenced-type="org.flymine.model.testmodel.Company" reverse-reference="CEO" primary-key="false"/>
   </class>
   <class name="org.flymine.model.testmodel.ImportantPerson" is-interface="true"/>
   <class name="org.flymine.model.testmodel.Secretary" is-interface="false">
