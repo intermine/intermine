@@ -197,11 +197,42 @@ public class RNAiConverter extends FileConverter
         pub.addAttribute(new Attribute("year", "2003"));
         pub.addAttribute(new Attribute("pages", "231-7"));
         pub.addAttribute(new Attribute("pubMedId", "12529635"));
+        addAuthor(pub, "Kamath RS");
+        addAuthor(pub, "Fraser AG");
+        addAuthor(pub, "Dong Y");
+        addAuthor(pub, "Poulin G");
+        addAuthor(pub, "Durbin R");
+        addAuthor(pub, "Gotta M");
+        addAuthor(pub, "Kanapin A");
+        addAuthor(pub, "Le Bot N");
+        addAuthor(pub, "Moreno S");
+        addAuthor(pub, "Sohrmann M");
+        addAuthor(pub, "Welchman DP");
+        addAuthor(pub, "Zipperlen P");
+        addAuthor(pub, "Ahringer J");
         writer.store(ItemHelper.convert(pub));
 
         expt = newItem("RNAiExperiment");
-        expt.addAttribute(new Attribute("publication", pub.getIdentifier()));
+        expt.addReference(new Reference("publication", pub.getIdentifier()));
         writer.store(ItemHelper.convert(expt));
+    }
+
+    protected void addAuthor(Item pub, String name) throws ObjectStoreException {
+        Item item = newItem("Author");
+        item.addAttribute(new Attribute("name", name));
+        item.addCollection(new ReferenceList("publications", Arrays.asList(new Object[]
+            {pub.getIdentifier()})));
+        writer.store(ItemHelper.convert(item));
+
+        ReferenceList refs = pub.getCollection("authors");
+        if (refs == null) {
+            refs = new ReferenceList();
+            refs.setName("authors");
+            pub.addCollection(refs);
+        }
+        if (!refs.getRefIds().contains(item.getIdentifier())) {
+            refs.addRefId(item.getIdentifier());
+        }
     }
 
     /**
