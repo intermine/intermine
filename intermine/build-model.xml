@@ -15,6 +15,7 @@
 
   <property name="build.model.dir" location="${build.model}/${model.name}"/>
   <property name="build.model.dir.tmp" location="${build.model.dir}/tmp"/>
+  <property name="build.model.dir.tmp.builddb" location="${build.model.dir.tmp}/builddb"/>
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
   <property name="model.lib" location="${model.src}/lib"/>
 
@@ -37,6 +38,7 @@
     <mkdir dir="${build.model.dir}" />
     <mkdir dir="${build.model.dir.resources}" />
     <mkdir dir="${build.model.dir.tmp}" />
+    <mkdir dir="${build.model.dir.tmp.builddb}" />
   </target>
 
 
@@ -205,11 +207,14 @@
       <classpath refid="class.path"/>
     </taskdef>
     
-    <echo message="${model.name}-schema.xml"/>
+    <!-- clean the directory so that torque doesn't find any files from the
+         last execution of this target -->
+    <delete dir="${build.model.dir.tmp.builddb}"/>
+    <mkdir dir="${build.model.dir.tmp.builddb}"/>
 
     <build-db
       database="${db.name}"
-      tempdir="${build.tmp}"
+      tempdir="${build.model.dir.tmp.builddb}"
       schemafile="${model.name}-schema.xml">
     </build-db>
   </target>
