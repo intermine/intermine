@@ -36,8 +36,8 @@
       
       
       <para>
-        FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>, 
-        incorporating the following data sources:
+        FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>.
+        Release 2.0 of FlyMine incorporates the following data sources:
       
         <sources sources="/sources.xml" version="2.0"/>
       </para>
