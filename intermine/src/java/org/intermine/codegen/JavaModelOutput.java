@@ -122,7 +122,8 @@ public class JavaModelOutput extends ModelOutput
         }
 
         sb.append(";\n")            
-            .append(generateGetSet(generateNoncapitalName(attr.getName()), generateClassifierRef(type)))
+            .append(generateGetSet(generateNoncapitalName(attr.getName()), 
+                                   generateClassifierRef(type)))
             .append("\n");
 
         return sb.toString();
@@ -190,7 +191,7 @@ public class JavaModelOutput extends ModelOutput
 
         if (OJB && (MMultiplicity.M1_1.equals(m) || MMultiplicity.M0_1.equals(m))) {
             sb.append(INDENT + "protected int ")
-                .append(generateNoncapitalName(name)+"Id;\n");
+                .append(generateNoncapitalName(name) + "Id;\n");
         }
 
         sb.append(INDENT + "protected ")
@@ -311,8 +312,9 @@ public class JavaModelOutput extends ModelOutput
             if (baseClass.equals("")) {
                 sb.append(INDENT + "protected int id;\n");
             }
-            if (!baseClass.equals("") || cls.getSpecializations().size()>0) {
-                sb.append(INDENT + "protected String ojbConcreteClass = \"" + getPackagePath(cls) + "." + cls.getName() + "\";\n");
+            if (!baseClass.equals("") || cls.getSpecializations().size() > 0) {
+                sb.append(INDENT + "protected String ojbConcreteClass = \"" + getPackagePath(cls) 
+                          + "." + cls.getName() + "\";\n");
             }
         }
 
