@@ -34,6 +34,7 @@ import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.ojb.PersistenceBrokerFlyMine;
 import org.flymine.objectstore.ojb.FlyMineSqlSelectStatement;
+import org.flymine.util.TypeUtil;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.gnu.readline.Readline;
@@ -477,9 +478,9 @@ public class Query implements FromElement
      */
     public static void main(String args[]) throws Exception {
         PrintStream out = System.out;
-        if (args.length > 1) {
-            out.println("Usage: java org.flymine.objectstore.query.Query - to enter shell-mode");
-            out.println("       java org.flymine.objectstore.query.Query \"<FQL Query>\" - to run");
+        if (args.length > 2) {
+            out.println("Usage: java org.flymine.objectstore.query.Query <objectstore alias> - to enter shell-mode");
+            out.println("       java org.flymine.objectstore.query.Query <objectstore alias> \"<FQL Query>\" - to run");
             out.println("                      a one-off query");
         } else {
             try {
@@ -487,11 +488,11 @@ public class Query implements FromElement
                 //props.load(new FileInputStream("/home/mnw21/flymine.properties"));
                 //System.setProperties(props);
 
-                ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+                ObjectStore os = ObjectStoreFactory.getObjectStore(args[0]);
                 PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
                 DescriptorRepository dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
-                if (args.length == 1) {
-                    runQuery(args[0], dr, os);
+                if (args.length == 2) {
+                    runQuery(args[1], dr, os);
                 } else {
                     doShell(dr, os);
                 }
@@ -585,7 +586,9 @@ public class Query implements FromElement
         //frame.setVisible(true);
 
         Query q = new Query();
-        q.modelPackage = "org.flymine.model.testmodel";
+        // The following will only work when there is one package in the model
+        q.modelPackage = TypeUtil.packageName((String) os.getModel().getClassNames()
+                                              .iterator().next());
         q.processFqlStatementAST(ast);
 
         out.println("\nQuery: " + q.toString());
