@@ -18,6 +18,7 @@
                            expr, Object.class, null, (PageContext) jspContext);
       request.setAttribute(evalVariable, ex);
    } catch (Exception e) {
-       request.setAttribute(evalVariable, "[???" + expr + "??? - " + e.getClass().getName() + "]");
+      application.log("eval.tag: no value found for \"" + expr + "\": " + e.getClass()); 
+      request.setAttribute(evalVariable, "[no value]");
    }
 %>
