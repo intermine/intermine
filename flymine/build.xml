@@ -72,6 +72,7 @@
     <include name="db-ojb*.jar" />
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
+    <include name="postgresql*.jar" />
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
   </patternset>
@@ -83,7 +84,6 @@
     <include name="junit*.jar" />
     <include name="mockobjects*.jar" />
     <include name="nsuml*.jar" />
-    <include name="postgresql*.jar" />
     <include name="xmlunit*.jar" />
   </patternset>
 
@@ -688,7 +688,7 @@
         <patternset refid="lib.webapp.webservice" />
       </lib>
       <lib dir="${dist}">
-        <include name="flymine.jar" />
+        <include name="flymine*.jar" />
       </lib>
     </war>
   </target>
