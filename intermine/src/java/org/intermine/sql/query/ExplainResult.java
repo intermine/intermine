@@ -144,7 +144,7 @@ public class ExplainResult
      */
     public long getTime() {
         // TODO: Do this properly.
-        return (complete * estimatedRows) / rows;
+        return (long) ((((double) complete) * ((double) estimatedRows)) / ((double) rows));
     }
 
     /**
