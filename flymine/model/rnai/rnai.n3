@@ -130,34 +130,6 @@
 
 :Publication a owl:Class.
 
-:Publication__title a owl:DatatypeProperty;
-    rdfs:domain :Publication;
-    rdfs:range xsd:string.
-
-:Publication__authors a owl:ObjectProperty;
-    rdfs:domain :Publication;
-    rdfs:range :Author.
-
-:Publication__journal  a owl:DatatypeProperty;
-    rdfs:domain :Publication;
-    rdfs:range xsd:string.
-
-:Publication__volume a owl:DatatypeProperty;
-    rdfs:domain :Publication;
-    rdfs:range xsd:string.
-
-:Publication__issue a owl:DatatypeProperty;
-    rdfs:domain :Publication;
-    rdfs:range xsd:string.
-
-:Publication__year a owl:DatatypeProperty;
-    rdfs:domain :Publication;
-    rdfs:range xsd:string.
-
-:Publication__pages a owl:DatatypeProperty;
-    rdfs:domain :Publication;
-    rdfs:range xsd:string.
-
 :Publication__pubMedId a owl:DatatypeProperty;
     rdfs:domain :Publication;
     rdfs:range xsd:string.
