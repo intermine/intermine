@@ -213,4 +213,73 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
 
         return explain;
     }
+
+
+    /**
+     * Runs a COUNT(*) on the given query.
+     *
+     * @param query a Flymine Query object to COUNT
+     * @return number of rows to be returned from the query
+     * @throws PersistenceBrokerException if anyhting goes wrong
+     */
+    public int countQuery(Query query)
+        throws PersistenceBrokerException {
+
+        ResultSetAndStatement retval =
+            new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
+
+        PreparedStatement stmt = null;
+        int count = -1;
+
+        try {
+            SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
+                this.broker.serviceSqlGenerator();
+            DescriptorRepository dr = this.broker.getDescriptorRepository();
+
+            String sql = gen.getPreparedCountStatement(query, dr);
+
+            sql = QueryOptimiser.optimise(sql,
+                    ((PersistenceBrokerFlyMineImpl) broker).getDatabase());
+
+            ConnectionManagerIF conMan = broker.serviceConnectionManager();
+            Connection conn = conMan.getConnection();
+            stmt = conn.prepareStatement(sql);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                throw new PersistenceBrokerException("ResultSet was empty doing count on query");
+            }
+
+            count = rs.getInt(1);
+
+            if (count == -1) {
+                throw new PersistenceBrokerException("Error retieving count on query");
+            }
+
+        } catch (PersistenceBrokerException e) {
+            logger.error("PersistenceBrokerException during the explanantion of the query: "
+                         + e.getMessage(), e);
+            throw e;
+        } catch (SQLException e) {
+            logger.error("SQLException exlaining the query: " + e.getMessage(), e);
+            // PreparedStatement opened before try, must be released if a problem
+            throw new PersistenceBrokerSQLException(e);
+        } catch (LookupException e) {
+            throw new PersistenceBrokerException(
+                    "ConnectionManager instance could not obtain a connection", e);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                }
+            }
+            // pb.servicePlatform().afterStatementClose();
+        }
+
+        return count;
+
+    }
+
 }
