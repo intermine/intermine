@@ -253,4 +253,19 @@ public class QueryHelperTest extends QueryTestCase
         assertEquals(expected, q);
     }
 
+    public void testQueryForExampleObjectKeyNotFullyGiven() throws Exception {
+        // Employee's key is "name", "address", "fullTime" fields
+
+        Employee employee = new Employee();
+        employee.setName("Employee 1");
+        employee.setAge(20);
+
+        // Address not set
+
+        try {
+            Query q = QueryHelper.createQueryForExampleObject(employee);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 }
