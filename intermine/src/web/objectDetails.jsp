@@ -252,9 +252,13 @@
       <c:forEach items="${object.clds}" var="cld">
         <c:set var="className" value="${cld.name}"/>
         <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className][category]}">
+          <div class="heading">${category}</div>
           <c:set var="interMineObject" value="${object.object}"/>
-          <im:templateList type="global" category="${category}" className="${className}" 
-                           interMineObject="${object.object}"/>
+          <div class="body">
+            <im:templateList type="global" category="${category}" className="${className}" 
+                             interMineObject="${object.object}"/>
+          </div>
+          <im:vspacer height="5"/>
         </c:if>
       </c:forEach>
     </c:forEach>
