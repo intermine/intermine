@@ -53,12 +53,11 @@ public class ResultsViewController extends TilesAction
                                  HttpServletResponse response) throws ServletException {
         HttpSession session = request.getSession();
 
-        Results results = (Results) session.getAttribute("results");
+        Results results = (Results) request.getAttribute("results");
 
         DisplayableResults dr = null;
         if (results != null) {
             dr = new DisplayableResults(results);
-            session.removeAttribute("results");
         } else {
             DisplayableResults drOrig = (DisplayableResults)
                 session.getAttribute(Constants.RESULTS_TABLE);
