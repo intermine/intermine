@@ -14,9 +14,7 @@ import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Collection;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;

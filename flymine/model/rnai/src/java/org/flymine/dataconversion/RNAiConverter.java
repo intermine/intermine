@@ -14,7 +14,6 @@ import java.io.Reader;
 import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,6 +79,9 @@ public class RNAiConverter extends FileConverter
         }
     }
 
+    /**
+     * @see FileConverter#close
+     */
     public void close() throws ObjectStoreException {
         store(genes.values());
         store(annotations.values());
