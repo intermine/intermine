@@ -39,6 +39,8 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.DatabaseSchema;
 import org.intermine.sql.Database;
 
+import org.apache.log4j.Logger;
+
 /**
  * Task to create indexes on a database holding objects conforming to a given model by
  * reading that model's primary key configuration information.
@@ -55,6 +57,7 @@ public class CreateIndexesTask extends Task
     protected String alias;
     protected Connection c;
     protected boolean attributeIndexes = false;
+    private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
 
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
@@ -236,8 +239,10 @@ public class CreateIndexesTask extends Task
                 }
             }
 
-            dropIndex(tableName + "__"  + att.getName());
-            createIndex(tableName + "__"  + att.getName(), tableName, fieldName + ", id");
+            String indexName = tableName + "__"  + att.getName();
+            dropIndex(indexName);
+            createIndex(indexName, tableName, fieldName + ", id");
+            LOG.info("created index: " + indexName);
         }
     }
 
