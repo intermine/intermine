@@ -50,7 +50,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initQueryView");
-        getRequest().getSession().setAttribute("query", new Query());
+        getRequest().getSession().setAttribute(Constants.QUERY, new Query());
         actionPerform();
         assertEquals(Collections.EMPTY_MAP, context.getAttribute("perFromConstraints"));
         assertEquals(Collections.EMPTY_SET, context.getAttribute("noFromConstraints"));
@@ -75,7 +75,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initQueryView");
-        getRequest().getSession().setAttribute("query", null);
+        getRequest().getSession().setAttribute(Constants.QUERY, null);
         actionPerform();
         assertEquals(Collections.EMPTY_MAP, context.getAttribute("perFromConstraints"));
         assertEquals(Collections.EMPTY_SET, context.getAttribute("noFromConstraints"));
@@ -88,7 +88,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(context, getRequest());
         setRequestPathInfo("/initQueryView");
         Query q = FqlQueryParser.parse(new FqlQuery("select a from Company as a", "org.flymine.model.testmodel"));
-        getRequest().getSession().setAttribute("query", q);
+        getRequest().getSession().setAttribute(Constants.QUERY, q);
         actionPerform();
         FromElement from1 = (FromElement) q.getFrom().iterator().next();
         Map expected1 = Collections.singletonMap(from1, new HashSet());
@@ -135,7 +135,7 @@ public class QueryViewControllerTest extends MockStrutsTestCase
         c.addConstraint(c5);
         q.setConstraint(c);
         //Query q = FqlQueryParser.parse(new FqlQuery("select a from Company a, Department b, (select Company from Company) as c where a.vatNumber = 5 and a.departments CONTAINS b and c.Company.name = a.name and (a.vatNumber = c.Company.vatNumber OR c.Company.vatNumber = 3) and b.name = 'hello'", "org.flymine.model.testmodel"));
-        getRequest().getSession().setAttribute("query", q);
+        getRequest().getSession().setAttribute(Constants.QUERY, q);
         actionPerform();
         Map expected1 = new HashMap();
         Set setA = new HashSet();

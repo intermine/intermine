@@ -50,7 +50,7 @@ public class QueryBuildController extends TilesAction
         Map savedBagsInverse = (Map) session.getAttribute(Constants.SAVED_BAGS_INVERSE);
         ServletContext servletContext = session.getServletContext();
         Model model = ((DisplayModel) servletContext.getAttribute(Constants.MODEL)).getModel();
-        Query q = (Query) session.getAttribute("query");
+        Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (queryClasses == null) {
             session.setAttribute("queryClasses", new LinkedHashMap());
@@ -61,7 +61,7 @@ public class QueryBuildController extends TilesAction
             queryClasses = QueryBuildHelper.getQueryClasses(q, savedBagsInverse);
 
             session.setAttribute("queryClasses", queryClasses);
-            session.setAttribute("query", null);
+            session.setAttribute(Constants.QUERY, null);
         }
     
         //we are editing a QueryClass - render it as a form

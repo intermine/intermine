@@ -60,7 +60,7 @@ public class SaveQueryAction extends Action
         Map savedQueriesInverse =
             (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
 
-        Query query = (Query) session.getAttribute("query");
+        Query query = (Query) session.getAttribute(Constants.QUERY);
 
         if (query == null) {
             return mapping.findForward("buildquery");
@@ -83,7 +83,7 @@ public class SaveQueryAction extends Action
         savedQueries.put(queryName, clonedQuery);
         savedQueriesInverse.put(clonedQuery, queryName);
 
-        session.removeAttribute("query");
+        session.removeAttribute(Constants.QUERY);
         session.removeAttribute("queryClass");
         session.removeAttribute("ops");
         session.removeAttribute("constraints");

@@ -10,7 +10,7 @@
   <tr>
     <td>
       <table border="0" bordercolor="yellow" cellpadding="5">
-        <c:forEach var="fromElement" items="${query.from}" varStatus="status">
+        <c:forEach var="fromElement" items="${QUERY.from}" varStatus="status">
           <c:if test="${status.count % 2 == 1}">
             <c:if test="{status.count > 0}"> </tr> </c:if>
               <tr>
@@ -38,6 +38,6 @@
       </table>
     </td>
   </tr>
-  <tr><td><c:out value="${query}"/></td></tr>
+  <tr><td><c:out value="${QUERY}"/></td></tr>
 </table>
 <!-- /queryView.jsp -->

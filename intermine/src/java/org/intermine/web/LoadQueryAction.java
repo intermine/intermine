@@ -61,7 +61,7 @@ public class LoadQueryAction extends Action
         Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
         if ((savedQueries != null) && savedQueries.containsKey(queryName)) {
-            session.setAttribute("query", savedQueries.get(queryName));
+            session.setAttribute(Constants.QUERY, savedQueries.get(queryName));
             session.removeAttribute("queryClass");
             session.removeAttribute("ops");
             session.removeAttribute("constraints");

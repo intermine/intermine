@@ -43,7 +43,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
     public void testEditSuccessful() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         addRequestParameter("alias", "company1");
         addRequestParameter("method", "edit");
@@ -70,7 +70,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
     public void testEditQueryClassNotInQuery() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", new Query());
+        session.setAttribute(Constants.QUERY, new Query());
 
         addRequestParameter("alias", "wrong_alias");
         addRequestParameter("method", "edit");
@@ -85,7 +85,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
     public void testEditNoAliasSetInForm() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         addRequestParameter("method", "edit");
 
@@ -98,7 +98,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
     public void testRemoveSuccessful() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         q.addFrom(new QueryClass(Department.class));
 
@@ -108,14 +108,14 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNull(session.getAttribute("queryClass"));
-        assertNotNull(session.getAttribute("query"));
+        assertNotNull(session.getAttribute(Constants.QUERY));
         assertEquals(1, q.getFrom().size());
     }
     
     public void testRemoveLastSuccessful() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         addRequestParameter("alias", "company1");
         addRequestParameter("method", "remove");
@@ -123,7 +123,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
         verifyForward("buildquery");
         verifyNoActionErrors();
         assertNull(session.getAttribute("queryClass"));
-        assertNull(session.getAttribute("query"));
+        assertNull(session.getAttribute(Constants.QUERY));
     }
 
     public void testRemoveNoQueryOnSession() throws Exception {
@@ -141,7 +141,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
     public void testRemoveQueryClassNotInQuery() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", new Query());
+        session.setAttribute(Constants.QUERY, new Query());
 
         addRequestParameter("alias", "wrong_alias");
         addRequestParameter("method", "remove");
@@ -156,7 +156,7 @@ public class QueryAliasChangeActionTest extends MockStrutsTestCase {
     public void testRemoveNoAliasSetInForm() throws Exception {
         setRequestPathInfo("/changealias");
         HttpSession session = getSession();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         addRequestParameter("method", "remove");
 

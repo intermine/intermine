@@ -47,7 +47,7 @@ public class QueryViewController extends TilesAction
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
-        Query query = (Query) request.getSession().getAttribute("query");
+        Query query = (Query) request.getSession().getAttribute(Constants.QUERY);
         Map perFromConstraints = new HashMap();
         Set noFromConstraints = new HashSet();
         Map perFromTitle = new HashMap();

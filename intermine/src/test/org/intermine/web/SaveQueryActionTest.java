@@ -63,7 +63,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
 
         session.setAttribute(Constants.SAVED_QUERIES, new HashMap());
         session.setAttribute(Constants.SAVED_QUERIES_INVERSE, new IdentityHashMap());
-        session.setAttribute("query", new Query());
+        session.setAttribute(Constants.QUERY, new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("constraints", "constraints");
         session.setAttribute("ops", "ops");
@@ -75,7 +75,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("buildquery");
         verifyNoActionErrors();
-        assertNull(session.getAttribute("query"));
+        assertNull(session.getAttribute(Constants.QUERY));
         assertNull(session.getAttribute("queryClass"));
         assertNull(session.getAttribute("constraints"));
         assertNull(session.getAttribute("ops"));
@@ -94,7 +94,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
                              new HashMap(savedQueries));
         session.setAttribute(Constants.SAVED_QUERIES_INVERSE,
                              new IdentityHashMap(savedQueriesInverse));
-        session.setAttribute("query", new Query());
+        session.setAttribute(Constants.QUERY, new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("constraints", "constraints");
         session.setAttribute("ops", "ops");
@@ -106,7 +106,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("buildquery");
         verifyNoActionErrors();
-        assertNull(session.getAttribute("query"));
+        assertNull(session.getAttribute(Constants.QUERY));
         assertNull(session.getAttribute("queryClass"));
         assertNull(session.getAttribute("constraints"));
         assertNull(session.getAttribute("ops"));
@@ -131,7 +131,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
                              new HashMap(savedQueries));
         session.setAttribute(Constants.SAVED_QUERIES_INVERSE,
                              new IdentityHashMap(savedQueriesInverse));
-        session.setAttribute("query", new Query());
+        session.setAttribute(Constants.QUERY, new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("constraints", "constraints");
         session.setAttribute("ops", "ops");
@@ -143,7 +143,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyForward("buildquery");
         verifyNoActionErrors();
-        assertNull(session.getAttribute("query"));
+        assertNull(session.getAttribute(Constants.QUERY));
         assertNull(session.getAttribute("queryClass"));
         assertNull(session.getAttribute("constraints"));
         assertNull(session.getAttribute("ops"));

@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- runQuery.jsp -->
-<c:if test="${query != null}">
+<c:if test="${QUERY != null}">
   <html:form action="/runQuery">
     <html:submit property="action">
       <fmt:message key="query.run"/>

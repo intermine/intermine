@@ -63,7 +63,7 @@ public class FqlQueryAction extends LookupDispatchAction
 
         Query q = new FqlQuery(queryform.getQuerystring(),
                                "org.flymine.model.testmodel").toQuery();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         return (mapping.findForward("runquery"));
 
@@ -99,7 +99,7 @@ public class FqlQueryAction extends LookupDispatchAction
 
         Query q = new FqlQuery(queryform.getQuerystring(), "org.flymine.model.testmodel")
             .toQuery();
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
 
         return (mapping.findForward("buildquery"));
 

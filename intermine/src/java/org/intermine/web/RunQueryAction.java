@@ -57,7 +57,7 @@ public class RunQueryAction extends Action
         throws Exception {
         HttpSession session = request.getSession();
 
-        Query q = (Query) session.getAttribute("query");
+        Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (q == null) {
             return mapping.findForward("buildquery");

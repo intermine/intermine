@@ -36,7 +36,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("runquery");
-        assertNotNull(getSession().getAttribute("query"));
+        assertNotNull(getSession().getAttribute(Constants.QUERY));
         verifyNoActionErrors();
     }
 
@@ -46,7 +46,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("error");
-        assertNull(getSession().getAttribute("query"));
+        assertNull(getSession().getAttribute(Constants.QUERY));
     }
 
     public void testSubmitRubbishQuery() {
@@ -55,7 +55,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "Run");
         actionPerform();
         verifyForward("error");
-        assertNull(getSession().getAttribute("query"));
+        assertNull(getSession().getAttribute(Constants.QUERY));
     }
 
     public void testViewSuccessfulQuery() {
@@ -64,7 +64,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "View");
         actionPerform();
         verifyForward("buildquery");
-        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getSession().getAttribute("query")).toString());
+        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getSession().getAttribute(Constants.QUERY)).toString());
         verifyNoActionErrors();
     }
 
@@ -74,7 +74,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "View");
         actionPerform();
         verifyForward("error");
-        assertNull((String) getSession().getAttribute("query"));
+        assertNull((String) getSession().getAttribute(Constants.QUERY));
     }
 
     public void testViewRubbishQuery() {
@@ -83,6 +83,6 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "View");
         actionPerform();
         verifyForward("error");
-        assertNull((String) getSession().getAttribute("query"));
+        assertNull((String) getSession().getAttribute(Constants.QUERY));
     }
 }

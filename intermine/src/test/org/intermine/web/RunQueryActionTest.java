@@ -23,7 +23,7 @@ public class RunQueryActionTest extends MockStrutsTestCase
 
     public void testRunValidQuery() {
         setRequestPathInfo("/runQuery");
-        getSession().setAttribute("query", new FqlQuery("select c from Company as c", "org.flymine.model.testmodel").toQuery());
+        getSession().setAttribute(Constants.QUERY, new FqlQuery("select c from Company as c", "org.flymine.model.testmodel").toQuery());
         actionPerform();
         verifyForward("results");
         assertNotNull(getSession().getAttribute("results"));

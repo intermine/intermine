@@ -7,11 +7,11 @@
 <tiles:importAttribute/>
 
 <!-- queryAliasChange.jsp -->
-<c:if test="${query != null}">
+<c:if test="${QUERY != null}">
     <font size="-1"><fmt:message key="query.modifyclass"/></font>
     <br/>
     <table>
-        <c:forEach var="fromElement" items="${query.from}">
+        <c:forEach var="fromElement" items="${QUERY.from}">
             <tr>
                 <td align="top">
                     <font class="queryViewFromItemTitle">

@@ -204,7 +204,7 @@ public class ChangeResultsActionTest extends MockStrutsTestCase
         assertEquals(1, q.getOrderBy().size());
         assertEquals(qnd, q.getOrderBy().get(0));
 
-        assertEquals(q, getSession().getAttribute("query"));
+        assertEquals(q, getSession().getAttribute(Constants.QUERY));
         verifyForward("runquery");
         verifyNoActionErrors();
     }

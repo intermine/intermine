@@ -305,7 +305,7 @@ public class ChangeResultsAction extends DispatchAction
 
         q.addToOrderBy((QueryNode) q.getReverseAliases().get(columnAlias));
 
-        session.setAttribute("query", q);
+        session.setAttribute(Constants.QUERY, q);
         return mapping.findForward("runquery");
     }
 

@@ -52,7 +52,7 @@ public class QueryAliasChangeAction extends DispatchAction
         HttpSession session = request.getSession();
         
         String alias = request.getParameter("alias");
-        Query q = (Query) session.getAttribute("query");
+        Query q = (Query) session.getAttribute(Constants.QUERY);
 
         if (q == null) {
             return mapping.findForward("buildquery");
@@ -65,7 +65,7 @@ public class QueryAliasChangeAction extends DispatchAction
                 QueryHelper.removeFromQuery(q, qc);
 
                 if (q.getFrom().size() == 0) {
-                    session.removeAttribute("query");
+                    session.removeAttribute(Constants.QUERY);
                 }
                 
                 session.removeAttribute("queryClass");
@@ -95,7 +95,7 @@ public class QueryAliasChangeAction extends DispatchAction
         HttpSession session = request.getSession();
         
         String alias = request.getParameter("alias");
-        Query q = (Query) session.getAttribute("query");
+        Query q = (Query) session.getAttribute(Constants.QUERY);
         
         if (q == null) {
             return mapping.findForward("buildquery");

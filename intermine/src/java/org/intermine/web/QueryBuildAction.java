@@ -199,7 +199,7 @@ public class QueryBuildAction extends LookupDispatchAction
             updateClass(mapping, form, request, response);
         }
 
-        session.setAttribute("query", QueryBuildHelper.createQuery(queryClasses, model,
+        session.setAttribute(Constants.QUERY, QueryBuildHelper.createQuery(queryClasses, model,
                                                                    savedBags));
 
         return mapping.findForward("runquery");

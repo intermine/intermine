@@ -114,11 +114,11 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         HttpSession session = getSession();
         setRequestPathInfo("/query");
         addRequestParameter("action", "Add");
-        session.setAttribute("query", new Query());
+        session.setAttribute(Constants.QUERY, new Query());
 
         actionPerform();
         verifyForward("error");
-        assertNotNull(session.getAttribute("query"));
+        assertNotNull(session.getAttribute(Constants.QUERY));
         assertNull(session.getAttribute("queryClass"));
     }
 
@@ -397,8 +397,8 @@ public class QueryBuildActionTest extends MockStrutsTestCase
         actionPerform();
 
         verifyForward("runquery");
-        assertNotNull(session.getAttribute("query"));
-        Query q = (Query) session.getAttribute("query");
+        assertNotNull(session.getAttribute(Constants.QUERY));
+        Query q = (Query) session.getAttribute(Constants.QUERY);
         assertEquals(1, q.getFrom().size());
     }
 }
