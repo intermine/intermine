@@ -30,7 +30,8 @@ import org.intermine.metadata.ReferenceDescriptor;
  *
  * @author Thomas Riley
  */
-public class ModelMerger {
+public class ModelMerger
+{
     
     /**
      * Creates a new instance of ModelMerger.
