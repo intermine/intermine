@@ -4,6 +4,9 @@ img {
 form {
   margin: 0px
 }
+table td {
+  font-size: 12px;
+}
 .links {
   background-color: #fff;
   border-bottom: solid black 1px;
@@ -41,6 +44,7 @@ form {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: black;
+  white-space: nowrap;
 }
 
 .heading a {
@@ -67,7 +71,7 @@ form {
   font-size: 12px;
 }
 
-.body > .collapsed {
+.body .collapsed {
   font-size: 11px;
   font-style: italic;
   text-align: center;
@@ -198,21 +202,36 @@ table.results tr.even {
 }
 
 /* classes for the object details page */
-.refSummary {
-  margin-left: 15px; 
-  padding: 5px; 
-}
 table.refSummary {
-  border: 1px solid #888;
+  border-top: 1px solid #888;
+  border-left: 1px solid #888;
+  width: 100%;
 }
 table.refSummary thead tr td {
   background: #eee;
+  border-bottom: 1px solid #888;
+  border-right: 1px solid #888;
 }
 table.refSummary tbody tr td {
   padding: 3px;
   background: #FAF8FF;
+  border-bottom: 1px solid #888;
+  border-right: 1px solid #888;
 }
 span.collectionDescription {
+}
+/* IE (at least version 6, will actually parse the following
+   rules prefixed with // - this makes up for the lack of
+   "rules" parameter support on the table tags.
+*/
+.objSummary {
+  //border-top: 1px solid #888;
+  //border-left: 1px solid #888;
+}
+
+.objSummary td {
+  //border-bottom: 1px solid #888;
+  //border-right: 1px solid #888;
 }
 
 /* classes relating to the begin page */
