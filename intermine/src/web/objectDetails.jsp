@@ -34,7 +34,8 @@ object<br/><br/>
           <c:set var="maxLength" value="32"/>
           <c:choose>
             <c:when test="${entry.value.class.name == 'java.lang.String' && fn:length(entry.value) > maxLength}">
-              ${fn:substring(entry.value, 0, maxLength)}...
+              ${fn:substring(entry.value, 0, maxLength)}
+              <html:link action="/getAttributeAsFile?object=${object.id}&field=${entry.key}">...</html:link>
             </c:when>
             <c:otherwise>
               ${entry.value}
