@@ -96,7 +96,7 @@ public class CastorModelOutput extends ModelOutput {
                 reference = true;
             }
             else {
-                reference = false;
+                reference = true;  // use references in all cases to simplify XML
             }
 
             if (!fields.contains(name2)) {

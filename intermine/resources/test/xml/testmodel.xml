@@ -1,84 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list-bean>
-    <item name="CompanyA" vatNumber="1234" department="17"
+    <item name="CompanyA" vatNumber="1234" address="16" department="17"
         contractor="2 4" oldContract="2 2 4 4" _xml-id="1"
-        xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Company Street, AVille" _xml-id="16"/>
-    </item>
-    <item name="ContractorA" company="1 3" oldCom="1 1 3 3" _xml-id="2"
-        xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <personalAddress address="Contractor Personal Street, AVille" _xml-id="15"/>
-        <businessAddress address="Contractor Business Street, AVille" _xml-id="14"/>
-    </item>
-    <item name="CompanyB" vatNumber="5678" department="8 12"
+        xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="ContractorA" personalAddress="15" businessAddress="14"
+        company="1 3" oldCom="1 1 3 3" _xml-id="2" xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="CompanyB" vatNumber="5678" address="7" department="8 12"
         contractor="2 4" oldContract="2 2 4 4" _xml-id="3"
-        xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Company Street, BVille" _xml-id="7"/>
-    </item>
-    <item name="ContractorB" company="1 3" oldCom="1 1 3 3" _xml-id="4"
-        xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <personalAddress address="Contractor Personal Street, BVille" _xml-id="6"/>
-        <businessAddress address="Contractor Business Street, BVille" _xml-id="5"/>
-    </item>
+        xsi:type="company" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="ContractorB" personalAddress="6" businessAddress="5"
+        company="1 3" oldCom="1 1 3 3" _xml-id="4" xsi:type="contractor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Contractor Business Street, BVille" _xml-id="5"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Contractor Personal Street, BVille" _xml-id="6"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Company Street, BVille" _xml-id="7"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-    <item name="DepartmentB1" company="3" employee="9 11" _xml-id="8"
-        xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <manager name="EmployeeB1" fullTime="true" age="40"
-            department="8" _xml-id="9" title="Mr." salary="45000">
-            <address address="Employee Street, BVille" _xml-id="10"/>
-        </manager>
-    </item>
+    <item name="DepartmentB1" company="3" manager="9" employee="9 11"
+        _xml-id="8" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeB1" fullTime="true" age="40" department="8"
-        _xml-id="9" title="Mr." salary="45000" xsi:type="CEO" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Employee Street, BVille" _xml-id="10"/>
-    </item>
+        address="10" _xml-id="9" title="Mr." salary="45000"
+        xsi:type="CEO" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Employee Street, BVille" _xml-id="10"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeB2" fullTime="true" age="50" department="8"
-        _xml-id="11" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Employee Street, BVille" _xml-id="10"/>
-    </item>
-    <item name="DepartmentB2" company="3" employee="13" _xml-id="12"
-        xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <manager name="EmployeeB3" fullTime="true" age="60"
-            department="12" _xml-id="13">
-            <address address="Employee Street, BVille" _xml-id="10"/>
-        </manager>
-    </item>
+        address="10" _xml-id="11" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <item name="DepartmentB2" company="3" manager="13" employee="13"
+        _xml-id="12" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeB3" fullTime="true" age="60" department="12"
-        _xml-id="13" xsi:type="manager" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Employee Street, BVille" _xml-id="10"/>
-    </item>
+        address="10" _xml-id="13" xsi:type="manager" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Contractor Business Street, AVille" _xml-id="14"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Contractor Personal Street, AVille" _xml-id="15"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Company Street, AVille" _xml-id="16"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-    <item name="DepartmentA1" company="1" employee="18 20 21"
-        _xml-id="17" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <manager name="EmployeeA1" fullTime="true" age="10"
-            department="17" _xml-id="18">
-            <address address="Employee Street, AVille" _xml-id="19"/>
-        </manager>
-    </item>
+    <item name="DepartmentA1" company="1" manager="18"
+        employee="18 20 21" _xml-id="17" xsi:type="department" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeA1" fullTime="true" age="10" department="17"
-        _xml-id="18" xsi:type="manager" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Employee Street, AVille" _xml-id="19"/>
-    </item>
+        address="19" _xml-id="18" xsi:type="manager" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item address="Employee Street, AVille" _xml-id="19"
         xsi:type="address" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeA2" fullTime="true" age="20" department="17"
-        _xml-id="20" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Employee Street, AVille" _xml-id="19"/>
-    </item>
+        address="19" _xml-id="20" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
     <item name="EmployeeA3" fullTime="false" age="30" department="17"
-        _xml-id="21" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <address address="Employee Street, AVille" _xml-id="19"/>
-    </item>
+        address="19" _xml-id="21" xsi:type="employee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
 </list-bean>
