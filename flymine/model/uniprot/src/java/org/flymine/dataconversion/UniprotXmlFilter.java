@@ -47,6 +47,7 @@ public class UniprotXmlFilter
         String line = null;
         boolean keep = true;
         boolean inOrganism = false;
+        boolean foundTaxon = false;
 
         while ((line = in.readLine()) != null) {
             // quicker to trim whole file first?
@@ -59,15 +60,21 @@ public class UniprotXmlFilter
                 sb = new StringBuffer();
                 keep = true;
                 inOrganism = false;
+                foundTaxon = false;
             } else if (trimmed.startsWith("<organism")) {
                 inOrganism = true;
+                foundTaxon = false;
             } else if (inOrganism && trimmed.startsWith("<dbReference type=\"NCBI Taxonomy")) {
                 // ignores the possibility of a protein being linked to multiple organisms
+                foundTaxon = true;
                 int start = trimmed.indexOf("id=\"") + 4;
                 String taxonId = trimmed.substring(start, trimmed.indexOf('"', start));
                 if (!(organisms.contains(taxonId))) {
                     keep = false;
                 }
+            } else if (inOrganism && trimmed.startsWith("</organism") && !foundTaxon) {
+                // if the organism has no taxon defined then we don't want it
+                keep = false;
             }
             if (keep) {
                 sb.append(line + System.getProperty("line.separator"));
