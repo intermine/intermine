@@ -78,8 +78,30 @@
 
 <target name="release-demo-webapp">
   <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+  <ant dir="../../intermine" target="jar" inheritRefs="true"/>
   <ant dir="../../intermine" target="build-testmodel-webapp" inheritRefs="true"/>
   <ant dir="../../intermine" target="release-webapp" inheritRefs="true"/>
+
+  <path id="project.class.path">
+    <fileset dir="../../intermine/dist" includes="*.jar">
+  </path>
+
+  <ant dir="../../intermine" antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="demo.class.path"/>
+      <property name="db.name" value="db.demo"/>
+  </ant>
+
+  <taskdef
+      name="insert-xml-data"
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="test.class.path"/>
+  </taskdef>
+
+  <insert-xml-data integrationWriter="integration.unittestsingle" xmlFile="../../intermine/resources/test/testmodel_data.xml" sourceName="demosource">
+    <classpath refid="demo.class.path"/>
+  </insert-xml-data>
+
 </target>
 
 </project>
