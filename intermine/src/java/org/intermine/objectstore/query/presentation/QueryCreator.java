@@ -26,7 +26,7 @@ import org.flymine.FlyMineException;
  */
 public class QueryCreator
 {
-    static final String DATE_FORMAT = "dd/MM/yyyy";
+    protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
     /**
      * Add a QueryClass to the from list of query and add constraints
@@ -89,6 +89,9 @@ public class QueryCreator
      * @param constraints the new constraints
      */
     protected static void addConstraint(Query q, ConstraintSet constraints) {
+        if (constraints == null) {
+            throw new NullPointerException("constraints cannot be null");
+        }
         if (constraints.getConstraints().size() > 0) {
             Constraint c = q.getConstraint();
             if (c == null) {
@@ -97,7 +100,7 @@ public class QueryCreator
                 ((ConstraintSet) c).addConstraint(constraints);
             }  else { // any other type of constraint
                 constraints.addConstraint(c);
-            q.setConstraint(constraints);
+                q.setConstraint(constraints);
             }
         }
     }
