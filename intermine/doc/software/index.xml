@@ -25,13 +25,12 @@
 
   <section>
     <heading>OQL-like query interface</heading>
-    <item><!--ulink url="fql_query/tutorial"-->User tutorial (coming soon)<!--/ulink--></item>
+    <item><!--ulink url="fql_query/tutorial"-->Tutorial (coming soon)<!--/ulink--></item>
     <item><ulink url="fql_query/specification">Specification (for developers)</ulink></item>
   </section>
 
   <section>
     <heading>Java query interface</heading>
-    <item><!--ulink url="java_query/tutorial"-->Tutorial (coming soon)<!--/ulink--></item>
     <item><ulink url="java_query/spec">Specification</ulink></item>
   </section>
 
