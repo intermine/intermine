@@ -33,11 +33,11 @@
       <fmt:message key="menu.examples"/>
     </html:link>
   </span>
-  <!--<span class="menu-item">
+  <span class="menu-item">
     <html:link action="/templates.do">
       <fmt:message key="menu.templates"/>
     </html:link>
-  </span>-->
+  </span>
   <c:if test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
     <span class="menu-item">
       <html:link action="/login.do">
@@ -56,4 +56,5 @@
     </html:link>
   </span>
 </div>
+
 <!-- /menu.jsp -->
