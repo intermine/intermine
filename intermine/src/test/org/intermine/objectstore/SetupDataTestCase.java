@@ -1,16 +1,10 @@
 package org.flymine.objectstore;
 
-import junit.extensions.TestSetup;
-import junit.framework.TestSuite;
-import junit.framework.Test;
-
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,24 +14,17 @@ import org.exolab.castor.mapping.*;
 import org.exolab.castor.xml.*;
 
 import org.flymine.model.testmodel.*;
-import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
-import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.query.ClassConstraint;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.sql.Database;
-import org.flymine.testing.OneTimeTestCase;
 import org.flymine.util.TypeUtil;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 {
     protected static ObjectStoreWriter writer;
-    protected static ObjectStore os;
-    protected static Database db;
     protected static Map data = new LinkedHashMap();
-    protected static final org.apache.log4j.Logger LOG
-        = org.apache.log4j.Logger.getLogger(SetupDataTestCase.class);
 
     public SetupDataTestCase(String arg) {
         super(arg);
@@ -45,10 +32,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
     public static void oneTimeSetUp() throws Exception {
         ObjectStoreQueriesTestCase.oneTimeSetUp();
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-        db = DatabaseFactory.getDatabase("db.unittest");
-        // this needs to be changed to use AbstractImpl when one is written...
-        writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
+        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         setUpData();
         storeData();
         queries.put("WhereClassObject", whereClassObject());
@@ -66,8 +50,8 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
      */
     public static void storeData() throws Exception {
         System.out.println("Storing data");
-        if ((writer == null) || (db == null)) {
-            throw new NullPointerException("writer and db must be set before trying to store data");
+        if (writer == null) {
+            throw new NullPointerException("writer must be set before trying to store data");
         }
         long start = new Date().getTime();
         try {
@@ -82,6 +66,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
             throw new Exception(e);
         }
 
+        Database db = DatabaseFactory.getDatabase("db.unittest");
         java.sql.Connection con = db.getConnection();
         java.sql.Statement s = con.createStatement();
         con.setAutoCommit(true);
@@ -109,7 +94,6 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     }
 
     public static void setUpData() throws Exception {
-
         URL mapFile = ObjectStoreQueriesTestCase.class.getClassLoader().getResource("castor_xml_testmodel.xml");
         Mapping map = new Mapping();
         map.loadMapping(mapFile);
@@ -147,8 +131,6 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
     public static Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
         Object obj = data.get("CompanyA");
-        //obj hasn't actually been stored, so set id manually
-        //TypeUtil.setFieldValue(obj, "id", new Integer(42));
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
         Query q1 = new Query();
         q1.addFrom(qc1);
