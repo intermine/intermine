@@ -63,4 +63,11 @@ public class PagedCollection extends PagedTable
     public boolean isSizeEstimate() {
         return false;
     }
+
+    /**
+     * @see PagedTable#getExactSize
+     */
+    protected int getExactSize() {
+        return getSize();
+    }
 }

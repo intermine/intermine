@@ -83,6 +83,13 @@ public class PagedResults extends PagedTable
     }
 
     /**
+     * @see PagedTable#getExactSize
+     */
+    protected int getExactSize() {
+        return results.size();
+    }
+
+    /**
      * Return information about the results
      * @return the relevant ResultsInfo
      * @throws ObjectStoreException if an error occurs accessing the underlying ObjectStore

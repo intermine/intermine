@@ -115,7 +115,7 @@ public abstract class PagedTable
      * Go to the last page
      */
     public void lastPage() {
-        startRow = ((getSize() - 1) / pageSize) * pageSize;
+        startRow = ((getExactSize() - 1) / pageSize) * pageSize;
     }
 
     /**
@@ -199,4 +199,10 @@ public abstract class PagedTable
      * @return true if the size is an estimate
      */
     public abstract boolean isSizeEstimate();
+
+    /**
+     * Get the exact number of rows of this table
+     * @return the number of rows
+     */
+    protected abstract int getExactSize();
 }
