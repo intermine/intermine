@@ -94,7 +94,7 @@ public abstract class ModelOutput
         } catch (SecurityException exp) {
             LOG.warn("Cannot delete: " + f.getPath());
         }
-        LOG.info("Generating " + f.getPath());
+        LOG.debug("Generating " + f.getPath());
     }
 
     /**
