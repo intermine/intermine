@@ -26,12 +26,6 @@ import org.flymine.util.DynamicUtil;
 import org.flymine.model.testmodel.*;
 import org.flymine.metadata.Model;
 
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Identifier;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -45,38 +39,29 @@ public class FullRendererTest extends XMLTestCase
     }
 
     public void testRenderItem() throws Exception {
-        Identifier id1 = newIdentifier("1");
-        Identifier id2 = newIdentifier("2");
-        Identifier id3 = newIdentifier("3");
-        Identifier id4 = newIdentifier("4");
-
         Item item1 = new Item();
         item1.setImplementations("http://www.flymine.org/testmodel#Company");
-        item1.setIdentifier(id1);
+        item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
         attr1.setValue("Company1");
-        item1.addAttributes(attr1);
+        item1.addAttribute(attr1);
         Reference ref1 = new Reference();
         ref1.setName("address");
-        ref1.setIdentifier(id2);
-        item1.addReferences(ref1);
+        ref1.setRefId("2");
+        item1.addReference(ref1);
         ReferenceList col1 = new ReferenceList();
         col1.setName("departments");
-        col1.addIdentifiers(id3);
-        col1.addIdentifiers(id4);
-        item1.addCollections(col1);
+        col1.addRefId("3");
+        col1.addRefId("4");
+        item1.addCollection(col1);
 
-
-        String expected = "<item class=\"\" implements=\"http://www.flymine.org/testmodel#Company\">" + ENDL
-            + "<identifier value=\"1\"/>" + ENDL
+        String expected = "<item id=\"1\" class=\"\" implements=\"http://www.flymine.org/testmodel#Company\">" + ENDL
             + "<attribute name=\"name\" value=\"Company1\"/>" + ENDL
-            + "<reference name=\"address\">" + ENDL
-            + "<ref_id identifier=\"2\"/>" + ENDL
-            + "</reference>" + ENDL
+            + "<reference name=\"address\" ref_id=\"2\"/>" + ENDL
             + "<collection name=\"departments\">" + ENDL
-            + "<ref_id identifier=\"3\"/>" + ENDL
-            + "<ref_id identifier=\"4\"/>" + ENDL
+            + "<reference ref_id=\"3\"/>" + ENDL
+            + "<reference ref_id=\"4\"/>" + ENDL
             + "</collection>" + ENDL
             + "</item>" + ENDL;
 
@@ -84,15 +69,12 @@ public class FullRendererTest extends XMLTestCase
     }
 
     public void testRenderItems() throws Exception {
-        List exampleItems = getExampleItems();
-        String generated = FullRenderer.render(exampleItems);
-
+        String generated = FullRenderer.render(getExampleItems());
         InputStream expected = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(new InputStreamReader(expected), new StringReader(generated));
     }
-
 
     public void testToItemMaterial() throws Exception {
         Employee e = new Employee();
@@ -103,31 +85,28 @@ public class FullRendererTest extends XMLTestCase
         e.setDepartment(d);
 
         Item exp1 = new Item();
-        Identifier id1 = newIdentifier("1234");
-        exp1.setIdentifier(id1);
+        exp1.setIdentifier("1234");
         exp1.setClassName(model.getNameSpace() + "Employee");
         exp1.setImplementations("http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress");
         Attribute atr1 = new Attribute();
         atr1.setName("name");
         atr1.setValue("Employee1");
-        exp1.addAttributes(atr1);
+        exp1.addAttribute(atr1);
         Attribute atr2 = new Attribute();
         atr2.setName("age");
         atr2.setValue("0");
-        exp1.addAttributes(atr2);
+        exp1.addAttribute(atr2);
         Attribute atr3 = new Attribute();
         atr3.setName("fullTime");
         atr3.setValue("false");
-        exp1.addAttributes(atr3);
+        exp1.addAttribute(atr3);
         Reference ref = new Reference();
-        Identifier id2 = newIdentifier("5678");
         ref.setName("department");
-        ref.setIdentifier(id2);
-        exp1.addReferences(ref);
+        ref.setRefId("5678");
+        exp1.addReference(ref);
 
-        assertEquals(FullRenderer.render(exp1), FullRenderer.render(FullRenderer.toItem(e, model)));
+        assertEquals(exp1, FullRenderer.toItem(e, model));
     }
-
 
     public void testToItemDynamic() throws Exception {
         Department d1 = new Department();
@@ -144,35 +123,30 @@ public class FullRendererTest extends XMLTestCase
         Broke b = (Broke) o;
         b.setDebt(10);
 
-        Identifier id1 = newIdentifier("1234");
-        Identifier id2 = newIdentifier("5678");
-        Identifier id3 = newIdentifier("6789");
-
         Item exp1 = new Item();
-        exp1.setIdentifier(id1);
+        exp1.setIdentifier("1234");
         exp1.setClassName("");
         exp1.setImplementations("http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company");
         Attribute atr1 = new Attribute();
         atr1.setName("name");
         atr1.setValue("BrokeCompany1");
-        exp1.addAttributes(atr1);
+        exp1.addAttribute(atr1);
         Attribute atr2 = new Attribute();
         atr2.setName("debt");
         atr2.setValue("10");
-        exp1.addAttributes(atr2);
+        exp1.addAttribute(atr2);
         Attribute atr3 = new Attribute();
         atr3.setName("vatNumber");
         atr3.setValue("0");
-        exp1.addAttributes(atr3);
+        exp1.addAttribute(atr3);
         ReferenceList refList1 = new ReferenceList();
         refList1.setName("departments");
-        refList1.addIdentifiers(id2);
-        refList1.addIdentifiers(id3);
-        exp1.addCollections(refList1);
+        refList1.addRefId("5678");
+        refList1.addRefId("6789");
+        exp1.addCollection(refList1);
 
-        assertEquals(FullRenderer.render(exp1), FullRenderer.render(FullRenderer.toItem(b, model)));
+        assertEquals(exp1, FullRenderer.toItem(b, model));
     }
-
 
     public void testToItems() throws Exception {
         List expected = getExampleItems();
@@ -197,10 +171,9 @@ public class FullRendererTest extends XMLTestCase
 
         List objects = Arrays.asList(new Object[] {c1, a1, d1, d2});
 
-        assertEquals(FullRenderer.render(expected), FullRenderer.render(FullRenderer.toItems(objects, model)));
+        assertEquals(expected, FullRenderer.toItems(objects, model));
 
     }
-
 
     public void testRenderObjectNoId() throws Exception {
         Employee e = new Employee();
@@ -213,7 +186,6 @@ public class FullRendererTest extends XMLTestCase
         }
     }
 
-
     public void testRenderObjectMaterial() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
@@ -222,19 +194,15 @@ public class FullRendererTest extends XMLTestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<item class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
-            + "<identifier value=\"1234\"/>" + ENDL
+        String expected = "<item id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Employee\" implements=\"http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress\">" + ENDL
             + "<attribute name=\"age\" value=\"0\"/>" + ENDL
             + "<attribute name=\"fullTime\" value=\"false\"/>" + ENDL
             + "<attribute name=\"name\" value=\"Employee1\"/>" + ENDL
-            + "<reference name=\"department\">" + ENDL
-            + "<ref_id identifier=\"5678\"/>" + ENDL
-            + "</reference>" + ENDL
+            + "<reference name=\"department\" ref_id=\"5678\"/>" + ENDL
             + "</item>" + ENDL;
 
         assertEquals(expected, FullRenderer.render(e, model));
     }
-
 
     public void testRenderObjectDynamic() throws Exception {
         Department d1 = new Department();
@@ -251,20 +219,18 @@ public class FullRendererTest extends XMLTestCase
         Broke b = (Broke) o;
         b.setDebt(10);
 
-        String expected = "<item class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
-            + "<identifier value=\"1234\"/>" + ENDL
+        String expected = "<item id=\"1234\" class=\"\" implements=\"http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company\">" + ENDL
             + "<attribute name=\"debt\" value=\"10\"/>" + ENDL
             + "<attribute name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
             + "<attribute name=\"vatNumber\" value=\"0\"/>" + ENDL
             + "<collection name=\"departments\">" + ENDL
-            + "<ref_id identifier=\"5678\"/>" + ENDL
-            + "<ref_id identifier=\"6789\"/>" + ENDL
+            + "<reference ref_id=\"5678\"/>" + ENDL
+            + "<reference ref_id=\"6789\"/>" + ENDL
             + "</collection>" + ENDL
             + "</item>" + ENDL;
 
         assertEquals(expected, FullRenderer.render(b, model));
     }
-
 
     public void testRenderBusinessObjects() throws Exception {
         Department d1 = new Department();
@@ -275,17 +241,14 @@ public class FullRendererTest extends XMLTestCase
         List list = Arrays.asList(new Object[] {d1, d2});
 
         String expected = "<items>" + ENDL
-            + "<item class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
-            + "<identifier value=\"5678\"/>" + ENDL
+            + "<item id=\"5678\" class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
             + "</item>" + ENDL
-            + "<item class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
-            + "<identifier value=\"6789\"/>" + ENDL
+            + "<item id=\"6789\" class=\"http://www.flymine.org/model/testmodel#Department\" implements=\"http://www.flymine.org/model/testmodel#RandomInterface\">" + ENDL
             + "</item>" + ENDL
             + "</items>" + ENDL;
 
         assertEquals(expected, FullRenderer.render(list, model));
     }
-
 
     public void testRenderTypes() throws Exception {
         Types t = new Types();
@@ -307,8 +270,7 @@ public class FullRendererTest extends XMLTestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<item class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
-            + "<identifier value=\"1234\"/>" + ENDL
+        String expected = "<item id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
             + "<attribute name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>" + ENDL
             + "<attribute name=\"booleanObjType\" value=\"true\"/>" + ENDL
             + "<attribute name=\"booleanType\" value=\"true\"/>" + ENDL
@@ -330,17 +292,11 @@ public class FullRendererTest extends XMLTestCase
         assertEquals(expected, FullRenderer.render(t, model));
     }
 
-    private Identifier newIdentifier(String value) {
-        Identifier id = new Identifier();
-        id.setValue(value);
-        return id;
-    }
-
     public List getExampleItems() {
-        Identifier id1 = newIdentifier("1");
-        Identifier id2 = newIdentifier("2");
-        Identifier id3 = newIdentifier("3");
-        Identifier id4 = newIdentifier("4");
+        String id1 = "1";
+        String id2 = "2";
+        String id3 = "3";
+        String id4 = "4";
 
         Item item1 = new Item();
         item1.setImplementations("http://www.flymine.org/model/testmodel#Company");
@@ -348,21 +304,21 @@ public class FullRendererTest extends XMLTestCase
         Attribute attr1 = new Attribute();
         attr1.setName("name");
         attr1.setValue("Company1");
-        item1.addAttributes(attr1);
+        item1.addAttribute(attr1);
         Attribute attr2 = new Attribute();
         attr2.setName("vatNumber");
         attr2.setValue("10");
-        item1.addAttributes(attr2);
+        item1.addAttribute(attr2);
 
         Reference ref1 = new Reference();
         ref1.setName("address");
-        ref1.setIdentifier(id2);
-        item1.addReferences(ref1);
+        ref1.setRefId(id2);
+        item1.addReference(ref1);
         ReferenceList col1 = new ReferenceList();
         col1.setName("departments");
-        col1.addIdentifiers(id3);
-        col1.addIdentifiers(id4);
-        item1.addCollections(col1);
+        col1.addRefId(id3);
+        col1.addRefId(id4);
+        item1.addCollection(col1);
 
         Item item2 = new Item();
         item2.setClassName("http://www.flymine.org/model/testmodel#Address");
@@ -371,7 +327,7 @@ public class FullRendererTest extends XMLTestCase
         Attribute attr3 = new Attribute();
         attr3.setName("address");
         attr3.setValue("Address1");
-        item2.addAttributes(attr3);
+        item2.addAttribute(attr3);
 
         Item item3 = new Item();
         item3.setClassName("http://www.flymine.org/model/testmodel#Department");
@@ -380,7 +336,7 @@ public class FullRendererTest extends XMLTestCase
         Attribute attr4 = new Attribute();
         attr4.setName("name");
         attr4.setValue("Department1");
-        item3.addAttributes(attr4);
+        item3.addAttribute(attr4);
 
         Item item4 = new Item();
         item4.setClassName("http://www.flymine.org/model/testmodel#Department");
@@ -389,10 +345,9 @@ public class FullRendererTest extends XMLTestCase
         Attribute attr5 = new Attribute();
         attr5.setName("name");
         attr5.setValue("Department2");
-        item4.addAttributes(attr5);
+        item4.addAttribute(attr5);
 
         List exampleItems = Arrays.asList(new Object[] {item1, item2, item3, item4});
         return exampleItems;
     }
-
 }

@@ -32,12 +32,6 @@ import org.flymine.util.DynamicUtil;
 import org.flymine.util.StringUtil;
 import org.flymine.metadata.Model;
 
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Identifier;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
-
 /**
  * Unmarshal XML Full format data into java business objects.
  *
@@ -71,33 +65,23 @@ public class FullParser
         digester.addObjectCreate("items", ArrayList.class);
 
         digester.addObjectCreate("items/item", Item.class);
-        digester.addSetProperties("items/item", new String[]{"class", "implements"},
-                                  new String[] {"className", "implementations"});
+        digester.addSetProperties("items/item", new String[]{"id", "class", "implements"},
+                                  new String[] {"identifier", "className", "implementations"});
         digester.addSetNext("items/item", "add");
-
-        digester.addObjectCreate("items/item/identifier", Identifier.class);
-        digester.addSetProperties("items/item/identifier");
-        digester.addSetNext("items/item/identifier", "setIdentifier");
 
         digester.addObjectCreate("items/item/attribute", Attribute.class);
         digester.addSetProperties("items/item/attribute");
-        digester.addSetNext("items/item/attribute", "addAttributes");
+        digester.addSetNext("items/item/attribute", "addAttribute");
 
         digester.addObjectCreate("items/item/reference", Reference.class);
-        digester.addSetProperties("items/item/reference");
-        digester.addSetNext("items/item/reference", "addReferences");
-
-        digester.addObjectCreate("items/item/reference/ref_id", Identifier.class);
-        digester.addSetProperties("items/item/reference/ref_id", "identifier", "value");
-        digester.addSetNext("items/item/reference/ref_id", "setIdentifier");
+        digester.addSetProperties("items/item/reference", "ref_id", "refId");
+        digester.addSetNext("items/item/reference", "addReference");
 
         digester.addObjectCreate("items/item/collection", ReferenceList.class);
         digester.addSetProperties("items/item/collection");
-        digester.addSetNext("items/item/collection", "addCollections");
-
-        digester.addObjectCreate("items/item/collection/ref_id", Identifier.class);
-        digester.addSetProperties("items/item/collection/ref_id", "identifier", "value");
-        digester.addSetNext("items/item/collection/ref_id", "addIdentifiers");
+        digester.addCallMethod("items/item/collection/reference", "addRefId", 1);
+        digester.addCallParam("items/item/collection/reference", 0, "ref_id");
+        digester.addSetNext("items/item/collection", "addCollection");
 
         return (List) digester.parse(is);
     }
@@ -116,7 +100,7 @@ public class FullParser
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
-            objMap.put(item.getIdentifier().getValue(), realiseObject(item, model));
+            objMap.put(item.getIdentifier(), realiseObject(item, model));
         }
 
         iter = items.iterator();
@@ -153,17 +137,16 @@ public class FullParser
         return DynamicUtil.createObject(classes);
     }
 
-
     /**
      * Fill in fields of an outline business object.
      * @param item a the Item to read field data from
      * @param objMap a map of item identifiers to outline business objects
      */
     protected static void populateObject(Item item, Map objMap) {
-        Object obj = objMap.get(item.getIdentifier().getValue());
+        Object obj = objMap.get(item.getIdentifier());
 
         try {
-            // Set the data for every given Field
+            // Set the data for every given attribute except id
             Iterator attrIter = item.getAttributes().iterator();
             while (attrIter.hasNext()) {
                 Attribute attr = (Attribute) attrIter.next();
@@ -178,7 +161,7 @@ public class FullParser
             Iterator refIter = item.getReferences().iterator();
             while (refIter.hasNext()) {
                 Reference ref = (Reference) refIter.next();
-                Object refObj = objMap.get(ref.getIdentifier().getValue());
+                Object refObj = objMap.get(ref.getRefId());
                 TypeUtil.setFieldValue(obj, ref.getName(), refObj);
             }
 
@@ -187,9 +170,8 @@ public class FullParser
             while (colIter.hasNext()) {
                 ReferenceList refList = (ReferenceList) colIter.next();
                 Collection col = (Collection) TypeUtil.getFieldValue(obj, refList.getName());
-                Iterator refs = refList.getIdentifiers().iterator();
-                while (refs.hasNext()) {
-                    col.add(objMap.get(((Identifier) refs.next()).getValue()));
+                for (Iterator i = refList.getRefIds().iterator(); i.hasNext();) {
+                    col.add(objMap.get(i.next()));
                 }
             }
         } catch (IllegalAccessException e) {

@@ -1,176 +1,127 @@
 <items>
-<item class="" implements="http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company">
-<identifier value="1"/>
+<item id="1" class="" implements="http://www.flymine.org/model/testmodel#Broke http://www.flymine.org/model/testmodel#Company">
 <attribute name="debt" value="876324"/>
 <attribute name="name" value="CompanyA"/>
 <attribute name="vatNumber" value="1234"/>
-<reference name="address">
-<ref_id identifier="23"/>
-</reference>
+<reference name="address" ref_id="23"/>
 <collection name="contractors">
-<ref_id identifier="3"/>
-<ref_id identifier="4"/>
+<reference ref_id="3"/>
+<reference ref_id="4"/>
 </collection>
 <collection name="departments">
-<ref_id identifier="5"/>
+<reference ref_id="5"/>
 </collection>
 <collection name="oldContracts">
-<ref_id identifier="3"/>
-<ref_id identifier="4"/>
+<reference ref_id="3"/>
+<reference ref_id="4"/>
 </collection>
 <collection name="secretarys">
-<ref_id identifier="14"/>
-<ref_id identifier="15"/>
-<ref_id identifier="16"/>
+<reference ref_id="14"/>
+<reference ref_id="15"/>
+<reference ref_id="16"/>
 </collection>
 </item>
-<item class="" implements="http://www.flymine.org/model/testmodel#Company">
-<identifier value="2"/>
+<item id="2" class="" implements="http://www.flymine.org/model/testmodel#Company">
 <attribute name="name" value="CompanyB"/>
 <attribute name="vatNumber" value="5678"/>
-<reference name="address">
-<ref_id identifier="19"/>
-</reference>
-<reference name="cEO">
-<ref_id identifier="11"/>
-</reference>
+<reference name="address" ref_id="19"/>
+<reference name="cEO" ref_id="11"/>
 <collection name="contractors">
-<ref_id identifier="3"/>
-<ref_id identifier="4"/>
+<reference ref_id="3"/>
+<reference ref_id="4"/>
 </collection>
 <collection name="departments">
-<ref_id identifier="6"/>
-<ref_id identifier="7"/>
+<reference ref_id="6"/>
+<reference ref_id="7"/>
 </collection>
 <collection name="oldContracts">
-<ref_id identifier="3"/>
-<ref_id identifier="4"/>
+<reference ref_id="3"/>
+<reference ref_id="4"/>
 </collection>
 <collection name="secretarys">
-<ref_id identifier="14"/>
-<ref_id identifier="15"/>
+<reference ref_id="14"/>
+<reference ref_id="15"/>
 </collection>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Broke">
-<identifier value="3"/>
+<item id="3" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Broke">
 <attribute name="debt" value="7634"/>
 <attribute name="name" value="ContractorA"/>
 <attribute name="seniority" value="128764"/>
-<reference name="businessAddress">
-<ref_id identifier="21"/>
-</reference>
-<reference name="personalAddress">
-<ref_id identifier="22"/>
-</reference>
+<reference name="businessAddress" ref_id="21"/>
+<reference name="personalAddress" ref_id="22"/>
 <collection name="companys">
-<ref_id identifier="1"/>
-<ref_id identifier="2"/>
+<reference ref_id="1"/>
+<reference ref_id="2"/>
 </collection>
 <collection name="oldComs">
-<ref_id identifier="1"/>
-<ref_id identifier="2"/>
+<reference ref_id="1"/>
+<reference ref_id="2"/>
 </collection>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
-<identifier value="4"/>
+<item id="4" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
 <attribute name="name" value="ContractorB"/>
 <attribute name="seniority" value="62341"/>
-<reference name="businessAddress">
-<ref_id identifier="17"/>
-</reference>
-<reference name="personalAddress">
-<ref_id identifier="18"/>
-</reference>
+<reference name="businessAddress" ref_id="17"/>
+<reference name="personalAddress" ref_id="18"/>
 <collection name="companys">
-<ref_id identifier="1"/>
-<ref_id identifier="2"/>
+<reference ref_id="1"/>
+<reference ref_id="2"/>
 </collection>
 <collection name="oldComs">
-<ref_id identifier="1"/>
-<ref_id identifier="2"/>
+<reference ref_id="1"/>
+<reference ref_id="2"/>
 </collection>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
-<identifier value="5"/>
+<item id="5" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
 <attribute name="name" value="DepartmentA1"/>
-<reference name="company">
-<ref_id identifier="1"/>
-</reference>
-<reference name="manager">
-<ref_id identifier="8"/>
-</reference>
+<reference name="company" ref_id="1"/>
+<reference name="manager" ref_id="8"/>
 <collection name="employees">
-<ref_id identifier="8"/>
-<ref_id identifier="9"/>
-<ref_id identifier="10"/>
+<reference ref_id="8"/>
+<reference ref_id="9"/>
+<reference ref_id="10"/>
 </collection>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
-<identifier value="6"/>
+<item id="6" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
 <attribute name="name" value="DepartmentB1"/>
-<reference name="company">
-<ref_id identifier="2"/>
-</reference>
-<reference name="manager">
-<ref_id identifier="11"/>
-</reference>
+<reference name="company" ref_id="2"/>
+<reference name="manager" ref_id="11"/>
 <collection name="employees">
-<ref_id identifier="11"/>
-<ref_id identifier="12"/>
+<reference ref_id="11"/>
+<reference ref_id="12"/>
 </collection>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
-<identifier value="7"/>
+<item id="7" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
 <attribute name="name" value="DepartmentB2"/>
-<reference name="company">
-<ref_id identifier="2"/>
-</reference>
-<reference name="manager">
-<ref_id identifier="13"/>
-</reference>
+<reference name="company" ref_id="2"/>
+<reference name="manager" ref_id="13"/>
 <collection name="employees">
-<ref_id identifier="13"/>
+<reference ref_id="13"/>
 </collection>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
-<identifier value="8"/>
+<item id="8" class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
 <attribute name="age" value="10"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeA1"/>
 <attribute name="seniority" value="876123"/>
-<reference name="address">
-<ref_id identifier="24"/>
-</reference>
-<reference name="department">
-<ref_id identifier="5"/>
-</reference>
+<reference name="address" ref_id="24"/>
+<reference name="department" ref_id="5"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
-<identifier value="9"/>
+<item id="9" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
 <attribute name="age" value="20"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeA2"/>
-<reference name="address">
-<ref_id identifier="24"/>
-</reference>
-<reference name="department">
-<ref_id identifier="5"/>
-</reference>
+<reference name="address" ref_id="24"/>
+<reference name="department" ref_id="5"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
-<identifier value="10"/>
+<item id="10" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
 <attribute name="age" value="30"/>
 <attribute name="fullTime" value="false"/>
 <attribute name="name" value="EmployeeA3"/>
-<reference name="address">
-<ref_id identifier="24"/>
-</reference>
-<reference name="department">
-<ref_id identifier="5"/>
-</reference>
+<reference name="address" ref_id="24"/>
+<reference name="department" ref_id="5"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#CEO" implements="http://www.flymine.org/model/testmodel#Broke">
-<identifier value="11"/>
+<item id="11" class="http://www.flymine.org/model/testmodel#CEO" implements="http://www.flymine.org/model/testmodel#Broke">
 <attribute name="age" value="40"/>
 <attribute name="debt" value="340"/>
 <attribute name="fullTime" value="true"/>
@@ -178,84 +129,58 @@
 <attribute name="salary" value="45000"/>
 <attribute name="seniority" value="76321"/>
 <attribute name="title" value="Mr."/>
-<reference name="company">
-<ref_id identifier="2"/>
-</reference>
-<reference name="department">
-<ref_id identifier="6"/>
-</reference>
+<reference name="company" ref_id="2"/>
+<reference name="department" ref_id="6"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
-<identifier value="12"/>
+<item id="12" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
 <attribute name="age" value="50"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeB2"/>
-<reference name="address">
-<ref_id identifier="20"/>
-</reference>
-<reference name="department">
-<ref_id identifier="6"/>
-</reference>
+<reference name="address" ref_id="20"/>
+<reference name="department" ref_id="6"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
-<identifier value="13"/>
+<item id="13" class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
 <attribute name="age" value="60"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeB3"/>
 <attribute name="seniority" value="761231"/>
-<reference name="address">
-<ref_id identifier="20"/>
-</reference>
-<reference name="department">
-<ref_id identifier="7"/>
-</reference>
+<reference name="address" ref_id="20"/>
+<reference name="department" ref_id="7"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-<identifier value="14"/>
+<item id="14" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
 <attribute name="name" value="Secretary1"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-<identifier value="15"/>
+<item id="15" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
 <attribute name="name" value="Secretary2"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-<identifier value="16"/>
+<item id="16" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
 <attribute name="name" value="Secretary3"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="17"/>
+<item id="17" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Contractor Business Street, BVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="18"/>
+<item id="18" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Contractor Personal Street, BVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="19"/>
+<item id="19" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Company Street, BVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="20"/>
+<item id="20" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Employee Street, BVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="21"/>
+<item id="21" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Contractor Business Street, AVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="22"/>
+<item id="22" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Contractor Personal Street, AVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="23"/>
+<item id="23" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Company Street, AVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-<identifier value="24"/>
+<item id="24" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
 <attribute name="address" value="Employee Street, AVille"/>
 </item>
-<item class="http://www.flymine.org/model/testmodel#Types" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-<identifier value="25"/>
+<item id="25" class="http://www.flymine.org/model/testmodel#Types" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
 <attribute name="bigDecimalObjType" value="876323428764587621764532432.8768173432887324123645"/>
 <attribute name="booleanObjType" value="true"/>
 <attribute name="booleanType" value="true"/>

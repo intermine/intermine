@@ -21,11 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.flymine.model.testmodel.*;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Identifier;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
 import org.flymine.metadata.Model;
 
 public class FullParserTest extends TestCase
@@ -39,65 +34,58 @@ public class FullParserTest extends TestCase
     public void setUp() throws Exception {
         Item item1 = new Item();
         item1.setImplementations("http://www.flymine.org/model/testmodel#Company");
-        item1.setIdentifier(newIdentifier("1"));
+        item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
         attr1.setValue("Company1");
-        item1.addAttributes(attr1);
+        item1.addAttribute(attr1);
         Attribute attr2 = new Attribute();
         attr2.setName("vatNumber");
         attr2.setValue("10");
-        item1.addAttributes(attr2);
+        item1.addAttribute(attr2);
         Reference ref1 = new Reference();
         ref1.setName("address");
-        ref1.setIdentifier(newIdentifier("2"));
-        item1.addReferences(ref1);
+        ref1.setRefId("2");
+        item1.addReference(ref1);
         ReferenceList col1 = new ReferenceList();
         col1.setName("departments");
-        col1.addIdentifiers(newIdentifier("3"));
-        col1.addIdentifiers(newIdentifier("4"));
-        item1.addCollections(col1);
+        col1.addRefId("3");
+        col1.addRefId("4");
+        item1.addCollection(col1);
 
         Item item2 = new Item();
         item2.setClassName("http://www.flymine.org/model/testmodel#Address");
         item2.setImplementations("http://www.flymine.org/model/testmodel#Thing");
-        item2.setIdentifier(newIdentifier("2"));
+        item2.setIdentifier("2");
         Attribute field2 = new Attribute();
         field2.setName("address");
         field2.setValue("Address1");
-        item2.addAttributes(field2);
+        item2.addAttribute(field2);
 
         Item item3 = new Item();
         item3.setClassName("http://www.flymine.org/model/testmodel#Department");
         item3.setImplementations("http://www.flymine.org/model/testmodel#RandomInterface");
-        item3.setIdentifier(newIdentifier("3"));
+        item3.setIdentifier("3");
         Attribute field3 = new Attribute();
         field3.setName("name");
         field3.setValue("Department1");
-        item3.addAttributes(field3);
+        item3.addAttribute(field3);
 
         Item item4 = new Item();
         item4.setClassName("http://www.flymine.org/model/testmodel#Department");
         item4.setImplementations("http://www.flymine.org/model/testmodel#RandomInterface");
-        item4.setIdentifier(newIdentifier("4"));
+        item4.setIdentifier("4");
         Attribute field4 = new Attribute();
         field4.setName("name");
         field4.setValue("Department2");
-        item4.addAttributes(field4);
+        item4.addAttribute(field4);
 
         exampleItems = Arrays.asList(new Object[] {item1, item2, item3, item4});
     }
 
-    private Identifier newIdentifier(String value) {
-        Identifier id = new Identifier();
-        id.setValue(value);
-        return id;
-    }
-
     public void testParse() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/FullParserTest.xml");
-        List items = FullParser.parse(is);
-        assertEquals(FullRenderer.render(exampleItems), FullRenderer.render(items));
+        assertEquals(exampleItems, FullParser.parse(is));
     }
 
     public void testParseNull() throws Exception {

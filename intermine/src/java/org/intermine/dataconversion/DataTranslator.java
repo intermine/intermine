@@ -10,8 +10,8 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.util.Set;
-import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,10 +19,10 @@ import java.util.Map;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
+import org.flymine.xml.full.Attribute;
+import org.flymine.xml.full.Item;
+import org.flymine.xml.full.Reference;
+import org.flymine.xml.full.ReferenceList;
 import org.flymine.ontology.OntologyUtil;
 import org.flymine.util.StringUtil;
 
@@ -43,10 +43,10 @@ public class DataTranslator
      * @param model OWL model specifying mapping between source and target models
      * @return list of converted items
      */
-    public static Collection translate(Collection srcItems, OntModel model) {
+    public static List translate(Collection srcItems, OntModel model) {
         Map equivMap = OntologyUtil.buildEquivalenceMap(model);
 
-        Set tgtItems = new LinkedHashSet();
+        List tgtItems = new ArrayList();
         Iterator iter = srcItems.iterator();
         while (iter.hasNext()) {
             tgtItems.add(translateItem((Item) iter.next(), equivMap));
@@ -85,7 +85,7 @@ public class DataTranslator
             newAttr.setName(OntologyUtil.getFragmentFromURI(
                 ((Resource) equivMap.get(ns + attr.getName())).getURI()));
             newAttr.setValue(attr.getValue());
-            tgtItem.addAttributes(newAttr);
+            tgtItem.addAttribute(newAttr);
         }
 
         //references
@@ -94,8 +94,8 @@ public class DataTranslator
             Reference newRef = new Reference();
             newRef.setName(OntologyUtil.getFragmentFromURI(
                 ((Resource) equivMap.get(ns + ref.getName())).getURI()));
-            newRef.setIdentifier(ref.getIdentifier());
-            tgtItem.addReferences(newRef);
+            newRef.setRefId(ref.getRefId());
+            tgtItem.addReference(newRef);
         }
 
         //collections
@@ -104,8 +104,8 @@ public class DataTranslator
             ReferenceList newCol = new ReferenceList();
             newCol.setName(OntologyUtil.getFragmentFromURI(
                 ((Resource) equivMap.get(ns + col.getName())).getURI()));
-            newCol.setIdentifiers(col.getIdentifiers());
-            tgtItem.addCollections(newCol);
+            newCol.setRefIds(col.getRefIds());
+            tgtItem.addCollection(newCol);
         }
         return tgtItem;
     }

@@ -1,155 +1,106 @@
 <?xml version="1.0"?>
 <items>
-  <item class="http://www.biomage.org#Array_package">
-    <identifier value="1"/>
+  <item id="1" class="http://www.biomage.org#Array_package">
     <collection name="array_list">
-      <ref_id identifier="2"/>
-      <ref_id identifier="4"/>
-      <ref_id identifier="7"/>
-      <ref_id identifier="8"/>
-      <ref_id identifier="9"/>
-      <ref_id identifier="10"/>
-      <ref_id identifier="11"/>
-      <ref_id identifier="12"/>
-      <ref_id identifier="13"/>
+      <reference ref_id="2"/>
+      <reference ref_id="4"/>
+      <reference ref_id="7"/>
+      <reference ref_id="8"/>
+      <reference ref_id="9"/>
+      <reference ref_id="10"/>
+      <reference ref_id="11"/>
+      <reference ref_id="12"/>
+      <reference ref_id="13"/>
     </collection>
     <collection name="arrayManufacture_list">
-      <ref_id identifier="3"/>
+      <reference ref_id="3"/>
     </collection>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="2"/>
+  <item id="2" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:38"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#ArrayManufacture">
-    <identifier value="3"/>
+  <item id="3" class="http://www.biomage.org#ArrayManufacture">
     <attribute name="identifier" value="Affymetrix"/>
     <attribute name="name" value="Affymetrix"/>
     <collection name="arrays">
-      <ref_id identifier="2"/>
-      <ref_id identifier="4"/>
-      <ref_id identifier="7"/>
-      <ref_id identifier="8"/>
-      <ref_id identifier="9"/>
-      <ref_id identifier="10"/>
-      <ref_id identifier="11"/>
-      <ref_id identifier="12"/>
-      <ref_id identifier="13"/>
+      <reference ref_id="2"/>
+      <reference ref_id="4"/>
+      <reference ref_id="7"/>
+      <reference ref_id="8"/>
+      <reference ref_id="9"/>
+      <reference ref_id="10"/>
+      <reference ref_id="11"/>
+      <reference ref_id="12"/>
+      <reference ref_id="13"/>
     </collection>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="4"/>
+  <item id="4" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:39"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#PhysicalArrayDesign">
-    <identifier value="5"/>
+  <item id="5" class="http://www.biomage.org#PhysicalArrayDesign">
     <attribute name="identifier" value="A-AFFY-1"/>
     <collection name="propertySets">
-      <ref_id identifier="6"/>
+      <reference ref_id="6"/>
     </collection>
   </item>
-  <item class="http://www.biomage.org#NameValueType">
-    <identifier value="6"/>
+  <item id="6" class="http://www.biomage.org#NameValueType">
     <attribute name="name" value="Placeholder"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="7"/>
+  <item id="7" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:40"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="8"/>
+  <item id="8" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:41"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="9"/>
+  <item id="9" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:42"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="10"/>
+  <item id="10" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:43"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="11"/>
+  <item id="11" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:44"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="12"/>
+  <item id="12" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:45"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
-  <item class="http://www.biomage.org#Array">
-    <identifier value="13"/>
+  <item id="13" class="http://www.biomage.org#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:46"/>
     <attribute name="name" value="900303 "/>
-    <reference name="information">
-      <ref_id identifier="3"/>
-    </reference>
-    <reference name="arrayDesign">
-      <ref_id identifier="5"/>
-    </reference>
+    <reference name="information" ref_id="3"/>
+    <reference name="arrayDesign" ref_id="5"/>
   </item>
 </items>

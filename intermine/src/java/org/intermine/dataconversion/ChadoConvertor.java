@@ -10,7 +10,6 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.io.IOException;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,12 +26,10 @@ import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.sql.Database;
 import org.flymine.util.TypeUtil;
 import org.flymine.util.DatabaseUtil;
-import org.flymine.xml.full.FullRenderer;
-import org.flymine.model.fulldata.Attribute;
-import org.flymine.model.fulldata.Identifier;
-import org.flymine.model.fulldata.Item;
-import org.flymine.model.fulldata.Reference;
-import org.flymine.model.fulldata.ReferenceList;
+import org.flymine.xml.full.Attribute;
+import org.flymine.xml.full.Item;
+import org.flymine.xml.full.Reference;
+import org.flymine.xml.full.ReferenceList;
 
 import org.apache.log4j.Logger;
 
@@ -42,7 +39,7 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class ChadoConvertor 
+public class ChadoConvertor extends DataConvertor
 {
     protected static final Logger LOG = Logger.getLogger(ChadoConvertor.class);
     protected static final String ENDL = System.getProperty("line.separator");
@@ -56,34 +53,22 @@ public class ChadoConvertor
      *
      * @param model the Model
      * @param db the Database
+     * @param processor the ItemProcessor used to handle the resultant Items
      */
-    protected ChadoConvertor(Model model, Database db) {
+    protected ChadoConvertor(Model model, Database db, ItemProcessor processor) {
+        super(processor);
         this.model = model;
         this.db = db;
     }
 
     /**
-     * Output representations of  all the instances of all the classes in the model present in a
-     * database to a Writer
+     * Process representations of  all the instances of all the classes in the model present in a
+     * database
      *
-     * @param writer the Writer
-     * @throws SQLException if an error occurs when accessing the Database
-     * @throws IOException if an error occurs when writing to the Writer
+     * @throws Exception if an error occurs in processing
      */
-    public void process(Writer writer) throws SQLException, IOException  {
-        this.writer = writer;
-        writer.write(FullRenderer.getHeader() + ENDL);
-        process();
-        writer.write(FullRenderer.getFooter() + ENDL);
-    }
-
-    /**
-     * Produce all the instances of all the classes in the model present in a database
-     *
-     * @throws SQLException if an error occurs when accessing the Database
-     * @throws IOException if an error occurs when writing to the Writer
-     */
-    protected void process() throws SQLException, IOException {
+    public void process() throws Exception {
+        processor.preProcess();
         try {
             c = db.getConnection();
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
@@ -97,16 +82,16 @@ public class ChadoConvertor
                 c.close();
             }
         }
+        processor.postProcess();
     }
 
     /** 
      * Process the items in the database for a given ClassDescriptor
      *
      * @param cld the ClassDescriptor
-     * @throws SQLException if an error occurs in accessing the database
-     * @throws IOException if an error occurs when writing to the Writer
+     * @throws Exception if an error occurs in processing
      */
-    protected void processClassDescriptor(ClassDescriptor cld) throws SQLException, IOException {
+     protected void processClassDescriptor(ClassDescriptor cld) throws Exception {
         List items = new ArrayList();
         String clsName = TypeUtil.unqualifiedName(cld.getName());
         ResultSet r = executeQuery(c, "SELECT * FROM " + clsName
@@ -115,7 +100,7 @@ public class ChadoConvertor
             String clsId = r.getObject(clsName + "_id").toString();
             Item item = new Item();
             item.setClassName(cld.getModel().getNameSpace() + clsName);
-            item.setIdentifier(newIdentifier(clsId));
+            item.setIdentifier(clsId);
             LOG.info("Processing item: " + clsName + " " + clsId);
             for (Iterator fdIter = cld.getFieldDescriptors().iterator(); fdIter.hasNext();) {
                 FieldDescriptor fd = (FieldDescriptor) fdIter.next();
@@ -126,15 +111,15 @@ public class ChadoConvertor
                     Object value = r.getObject(fieldName);
                     if (value != null) {
                         attr.setValue(TypeUtil.objectToString(value));
-                        item.addAttributes(attr);
+                        item.addAttribute(attr);
                     }
                 } else if (fd.isReference()) {
                     Reference ref = new Reference();
                     ref.setName(fieldName);
                     Object value = r.getObject(fieldName + "_id");
                     if (value != null) {
-                        ref.setIdentifier(newIdentifier(TypeUtil.objectToString(value)));
-                        item.addReferences(ref);
+                        ref.setRefId(TypeUtil.objectToString(value));
+                        item.addReference(ref);
                     }
                 } else if (fd.isCollection()) {
                     String sql;
@@ -156,28 +141,18 @@ public class ChadoConvertor
                     ReferenceList refs = new ReferenceList();
                     refs.setName(fieldName);
                     while (idSet.next()) {
-                        refs.addIdentifiers(newIdentifier(idSet.getObject(1).toString()));
+                        refs.addRefId(idSet.getObject(1).toString());
                     }
-                    if (refs.getIdentifiers().size() > 0) {
-                        item.addCollections(refs);
+                    if (refs.getRefIds().size() > 0) {
+                        item.addCollection(refs);
                     }
                 }
             }
-            processItem(item);
+            processor.process(item);
             r.close();
             r = executeQuery(c, "SELECT * FROM " + clsName + " WHERE " + clsName + "_id > " + clsId
                              + " ORDER BY " + clsName + "_id LIMIT 1");
         }
-    }
-
-    /**
-     * Process an item
-     *
-     * @param item the Item
-     * @throws IOException if an error occurs when writing to the Writer
-     */
-    protected void processItem(Item item) throws IOException {
-        writer.write(FullRenderer.render(item));
     }
 
     /**
@@ -208,16 +183,4 @@ public class ChadoConvertor
         Statement s = c.createStatement();
         return s.executeQuery(sql);
     }
-
-    private Identifier newIdentifier(String value) {
-        Identifier id = new Identifier();
-        id.setValue(value);
-        return id;
-    }
-
-//     public static void main(String[] args) throws Exception {
-//         Database db = org.flymine.sql.DatabaseFactory.getDatabase("db.chado");
-//         Model model = Model.getInstanceByName("chado");
-//         Collection c = ChadoConvertor.process(model, db);
-//     }
 }
