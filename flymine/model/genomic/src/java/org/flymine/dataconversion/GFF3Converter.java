@@ -307,7 +307,8 @@ public class GFF3Converter
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
             seq = createItem(seqClsName);
-            seq.addAttribute(new Attribute("identifier", identifier));
+            seq.setAttribute("identifier", identifier);
+            seq.addReference(getOrgRef());
             seqs.put(identifier, seq);
             handler.setSequence(seq);
         }
