@@ -348,13 +348,22 @@
   <!-- Models to build -->
 
   <!-- Datatracking -->
-    <target name="build-db-datatrackingtest" depends="compile-datatracking">
+  <target name="build-db-datatrackingtest" depends="compile-datatracking">
     <ant antfile="build-model.xml" target="build-db">
       <property name="model.name" value="datatracking"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.unittest"/>
     </ant>
   </target>
+  
+  <!-- Fulldata -->
+   <target name="build-db-fulldatatest" depends="compile-fulldata">
+     <ant antfile="build-model.xml" target="build-db">
+       <property name="model.name" value="fulldata"/>
+       <reference torefid="class.path" refid="test.class.path"/>
+       <property name="db.name" value="db.unittest"/>
+     </ant>
+   </target>
 
   <!-- Testmodel -->
   <target name="build-testmodel" depends="compile-main" >
@@ -580,7 +589,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-datatrackingtest, copy-model-acedbtest, copy-model-xmitest"
+  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-datatrackingtest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
@@ -986,6 +995,7 @@
     <jar destfile="${dist}/flymine.jar" manifest="${build.tmp}/MANIFEST.MF">
       <fileset dir="${build.java}" />
       <fileset dir="${build.resources}"/>
+      <fileset dir="${build.model}/fulldata"/>
     </jar>
 
   </target>
@@ -1169,17 +1179,12 @@
   </target>
 
   <!-- AntDoc target -->
-
-  <taskdef
-	name="AntDoc"
-	classname="org.ed.pack.ant.AntDoc">
-        <classpath refid="project.class.path"/>
+  
+  <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
+    <classpath refid="project.class.path"/>
   </taskdef>
 
    <target name="ant-doc"> 
-     <AntDoc
-	destination="${results.antdoc}"
-	buildfile="${ant.file}"/>
-    </target>
-
+     <AntDoc destination="${results.antdoc}" buildfile="${ant.file}"/>
+   </target>
 </project>
