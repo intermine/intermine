@@ -418,7 +418,7 @@
       <property name="objectstore.name" value="os.unittest"/>
       <property name="db.name" value="db.unittest"/>
       <property name="model.name" value="testmodel"/>
-      <property name="precompute.minRows" value="2"/>
+      <property name="precompute.minRows" value="0"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
