@@ -115,7 +115,14 @@ public class GFF3Converter
         Item location = createItem(NAMESPACE + "Location", "", itemid++);
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
-        location.addAttribute(new Attribute("strand", record.getStrand()));
+        if (record.getStrand().equals("+")) {
+            location.addAttribute(new Attribute("strand", "1"));
+        } else if (record.getStrand().equals("-")) {
+            location.addAttribute(new Attribute("strand", "-1"));
+        } else if (record.getStrand().equals(".")) {
+            location.addAttribute(new Attribute("strand", "0"));
+        }
+
         location.addReference(new Reference("object", seq.getIdentifier()));
         location.addReference(new Reference("subject", feature.getIdentifier()));
         location.addCollection(new ReferenceList("evidence",
@@ -137,7 +144,6 @@ public class GFF3Converter
                     {computationalResult.getIdentifier(), infoSource.getIdentifier()}));
                 feature.addCollection(evidence);
             }
-
 
         try {
             writer.store(ItemHelper.convert(infoSource));
