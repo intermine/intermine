@@ -51,6 +51,9 @@ public class DBConverter extends DataConverter
     protected Map uniqueIdMap = new HashMap();
     protected Map uniqueRefIdMap = new HashMap();
     protected Map maxIdMap = new HashMap();
+    protected Map indirectionMap = new HashMap();
+    protected Map idsProvidedMap = new HashMap();
+    protected Map idIsUniqueMap = new HashMap();
 
     protected int count = 0;
     protected long start, time, times[];
@@ -77,12 +80,6 @@ public class DBConverter extends DataConverter
      * @throws Exception if an error occurs in processing
      */
     public void process() throws Exception {
-        start = System.currentTimeMillis();
-        time = start;
-        times = new long[20];
-        for (int i = 0; i < 20; i++) {
-            times[i] = -1;
-        }
         try {
             // if source db table has a non-unique id need to create a unique identifier
             // references to the non-unique id will be pointed at an arbitrary unique
@@ -105,6 +102,13 @@ public class DBConverter extends DataConverter
                 if (c != null) {
                     c.close();
                 }
+            }
+
+            start = System.currentTimeMillis();
+            time = start;
+            times = new long[20];
+            for (int i = 0; i < 20; i++) {
+                times[i] = -1;
             }
 
             for (Iterator cldIter = model.getClassDescriptors().iterator(); cldIter.hasNext();) {
@@ -191,7 +195,7 @@ public class DBConverter extends DataConverter
             if (!idsProvided || nonUniqueId) {
                 iter = reader.execute("SELECT * FROM " + clsName).iterator();
             } else {
-                iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id");
+                iter = reader.sqlIterator("SELECT * FROM " + clsName, clsName + "_id", clsName);
             }
 
             int identifier = 0;
@@ -243,16 +247,21 @@ public class DBConverter extends DataConverter
      * @throws SQLException if an error occurs when accessing the database
      */
     protected boolean idsProvided(ClassDescriptor cld) throws SQLException {
-        String clsName = TypeUtil.unqualifiedName(cld.getName());
-        ResultSet r = executeQuery(c, "SELECT * FROM " + clsName + " LIMIT 1");
-        boolean idsProvided = false;
-        ResultSetMetaData rsmd = r.getMetaData();
-        for (int i = rsmd.getColumnCount(); i > 0; i--) { //cols start at 1
-            if (rsmd.getColumnName(i).equals(clsName + "_id")) {
-                idsProvided = true;
+        Boolean retval = (Boolean) idsProvidedMap.get(cld);
+        if (retval == null) {
+            String clsName = TypeUtil.unqualifiedName(cld.getName());
+            ResultSet r = executeQuery(c, "SELECT * FROM " + clsName + " LIMIT 1");
+            boolean idsProvided = false;
+            ResultSetMetaData rsmd = r.getMetaData();
+            for (int i = rsmd.getColumnCount(); i > 0; i--) { //cols start at 1
+                if (rsmd.getColumnName(i).equals(clsName + "_id")) {
+                    idsProvided = true;
+                }
             }
+            retval = (idsProvided ? Boolean.TRUE : Boolean.FALSE);
+            idsProvidedMap.put(cld, retval);
         }
-        return idsProvided;
+        return retval.booleanValue();
     }
 
     /**
@@ -262,23 +271,21 @@ public class DBConverter extends DataConverter
      * @throws SQLException if problem querying database
      */
     protected boolean idIsUnique(ClassDescriptor cld) throws SQLException {
-        String clsName = TypeUtil.unqualifiedName(cld.getName()).toLowerCase();
-        String idCol = clsName + "_id";
+        Boolean retval = (Boolean) idIsUniqueMap.get(cld);
+        if (retval == null) {
+            String clsName = TypeUtil.unqualifiedName(cld.getName()).toLowerCase();
+            String idCol = clsName + "_id";
 
-        // seems to return true even if index is not unique
- //        ResultSet rs = c.getMetaData().getIndexInfo(null, null, clsName, true, false);
-//         while (rs.next()) {
-//             if (rs.getString(9).equals(idCol)) {
-//                 return true;
-//             }
-//         }
-
-        ResultSet rs = executeQuery(c, "SELECT " + idCol + ", COUNT(*) FROM " + clsName
-                                    + " GROUP BY " + idCol + " HAVING COUNT(*) > 1");
-        while (rs.next()) {
-            return false;
+            ResultSet rs = executeQuery(c, "SELECT " + idCol + ", COUNT(*) FROM " + clsName
+                                        + " GROUP BY " + idCol + " HAVING COUNT(*) > 1");
+            if (rs.next()) {
+                retval = Boolean.FALSE;
+            } else {
+                retval = Boolean.TRUE;
+            }
+            idIsUniqueMap.put(cld, retval);
         }
-        return true;
+        return retval.booleanValue();
     }
 
     /**
@@ -328,7 +335,7 @@ public class DBConverter extends DataConverter
                                                 + TypeUtil.objectToString(value)));
                     item.addReferences(ref);
                 }
-            } else if (fd.isCollection()) {
+            } else if (fd.isCollection() && (fd.relationType() == FieldDescriptor.M_N_RELATION)) {
                 String sql, refClsName;
                 if (fd.relationType() == FieldDescriptor.ONE_N_RELATION) {
                     ReferenceDescriptor rd =
@@ -372,10 +379,15 @@ public class DBConverter extends DataConverter
      */
     protected String findIndirectionTable(String clsName, String otherClsName) throws SQLException {
         String tableName = clsName + "_" + otherClsName;
-        if (!DatabaseUtil.tableExists(c, tableName)) {
-            tableName = otherClsName + "_" + clsName;
+        String retval = (String) indirectionMap.get(tableName);
+        if (retval == null) {
+            retval = tableName;
+            if (!DatabaseUtil.tableExists(c, retval)) {
+                retval = otherClsName + "_" + clsName;
+            }
+            indirectionMap.put(tableName, retval);
         }
-        return tableName;
+        return retval;
     }
 
     /**
@@ -388,6 +400,7 @@ public class DBConverter extends DataConverter
      */
     protected  ResultSet executeQuery(Connection c, String sql) throws SQLException {
         Statement s = c.createStatement();
+        LOG.error("Running SQL: " + sql);
         return s.executeQuery(sql);
     }
 

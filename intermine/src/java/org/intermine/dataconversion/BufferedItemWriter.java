@@ -63,6 +63,7 @@ public class BufferedItemWriter implements ItemWriter
      * @see ItemWriter#store
      */
     public void store(Item item) throws ObjectStoreException {
+        //long start = System.currentTimeMillis();
         int itemSize = 100;
         Iterator iter = item.getAttributes().iterator();
         while (iter.hasNext()) {
@@ -85,12 +86,17 @@ public class BufferedItemWriter implements ItemWriter
             batchCharCounter = 0;
             checkException();
         }
+        //long end = System.currentTimeMillis();
+        //if (end - start > 50) {
+        //    LOG.error("Had to wait for PipeReader for " + (end - start) + " ms");
+        //}
     }
 
     /**
      * @see ItemWriter#storeAll
      */
     public void storeAll(Collection items) throws ObjectStoreException {
+        //long start = System.currentTimeMillis();
         if (batchCounter > 0) {
             pipe.put(batch);
             batch = new ArrayList();
@@ -99,6 +105,10 @@ public class BufferedItemWriter implements ItemWriter
         }
         pipe.put(batch);
         checkException();
+        //long end = System.currentTimeMillis();
+        //if (end - start > 50) {
+        //    LOG.error("Had to wait for PipeReader for " + (end - start) + " ms");
+        //}
     }
 
     

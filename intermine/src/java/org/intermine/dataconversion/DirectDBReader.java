@@ -24,6 +24,8 @@ import java.util.NoSuchElementException;
 
 import org.intermine.sql.Database;
 
+import org.apache.log4j.Logger;
+
 /**
  * A reasonably dumb implementation of the DBReader interface.
  *
@@ -31,13 +33,19 @@ import org.intermine.sql.Database;
  */
 public class DirectDBReader implements DBReader
 {
-    private static final int BATCH_SIZE = 1000;
-    private static final int MAX_SIZE = 10000000;
-    private Database db;
+    protected static final Logger LOG = Logger.getLogger(DirectDBReader.class);
+
+    protected static final int BATCH_SIZE = 1000;
+    protected static final int MAX_SIZE = 10000000;
+    protected Database db;
     protected DBBatch batch;
-    private int queryNo;
-    private String sql;
-    private String idField;
+    protected int queryNo;
+    protected String sql;
+    protected String idField;
+    protected String tableName;
+
+    protected long iteratorTime = 0;
+    protected long oobTime = 0;
 
     /**
      * Constructs a new DirectDBReader.
@@ -53,11 +61,12 @@ public class DirectDBReader implements DBReader
     /**
      * @see DBReader#sqlIterator
      */
-    public Iterator sqlIterator(String sql, String idField) {
+    public Iterator sqlIterator(String sql, String idField, String tableName) {
         queryNo++;
         batch = null;
         this.sql = sql;
         this.idField = idField;
+        this.tableName = tableName;
         return new SqlIterator(queryNo);
     }
 
@@ -65,21 +74,31 @@ public class DirectDBReader implements DBReader
      * @see DBReader#execute
      */
     public List execute(String sql) throws SQLException {
+        long start = System.currentTimeMillis();
         Connection c = db.getConnection();
         Statement s = c.createStatement();
         ResultSet r = s.executeQuery(sql);
         List rows = new ArrayList();
         ResultSetMetaData rMeta = r.getMetaData();
         int columnCount = rMeta.getColumnCount();
+        String columnNames[] = new String[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            columnNames[i] = rMeta.getColumnName(i + 1);
+        }
         while (r.next()) {
             Map row = new HashMap();
             for (int i = 1; i <= columnCount; i++) {
-                String columnName = rMeta.getColumnName(i);
-                row.put(columnName, r.getObject(i));
+                row.put(columnNames[i - 1], r.getObject(i));
             }
             rows.add(row);
         }
         c.close();
+        long end = System.currentTimeMillis();
+        oobTime += end - start;
+        if (oobTime / 10000 > (oobTime - end + start) / 10000) {
+            LOG.error("Spent " + oobTime + " ms on out-of-band queries like (" + (end - start)
+                    + " ms) " + sql);
+        }
         return rows;
     }
 
@@ -93,56 +112,85 @@ public class DirectDBReader implements DBReader
     protected DBBatch getBatch(DBBatch previous) throws SQLException {
         String tempSql = sql;
         String sizeQuery = null;
-        Connection c = db.getConnection();
-        if (previous != null) {
-            sizeQuery = previous.getSizeQuery();
-            int whereIndex = sql.toUpperCase().indexOf(" WHERE ");
-            String tempSizeQuery = sizeQuery + (whereIndex == -1 ? " WHERE " : " AND ") + idField
-                + " > " + previous.getLastId() + " ORDER BY " + idField + " LIMIT " + BATCH_SIZE;
-            Statement s = c.createStatement();
-            ResultSet r = s.executeQuery(tempSizeQuery);
-            int rowCount = 0;
-            int sizeSum = 0;
-            while (r.next() && (sizeSum <= MAX_SIZE)) {
-                sizeSum += r.getInt("size");
-                rowCount++;
-            }
-            if (rowCount <= 0) {
-                rowCount = 1;
-            }
-            tempSql = tempSql + (whereIndex == -1 ? " WHERE " : " AND ") + idField + " > "
-                + previous.getLastId() + " ORDER BY " + idField + " LIMIT " + rowCount;
-        } else {
-            tempSql = tempSql + " ORDER BY " + idField + " LIMIT 1";
-        }
-        Statement s = c.createStatement();
-        ResultSet r = s.executeQuery(tempSql);
-        List rows = new ArrayList();
-        ResultSetMetaData rMeta = r.getMetaData();
-        int columnCount = rMeta.getColumnCount();
-        while (r.next()) {
-            Map row = new HashMap();
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = rMeta.getColumnName(i);
-                row.put(columnName, r.getObject(i));
-            }
-            rows.add(row);
-        }
-        if (sizeQuery == null) {
-            sizeQuery = "SELECT " + idField + ", 30";
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = rMeta.getColumnName(i);
-                if (rMeta.getColumnType(i) != java.sql.Types.BIT) {
-                    sizeQuery += " + char_length(" + columnName + ")";
+        Connection c = null;
+        try {
+            c = db.getConnection();
+            if (previous != null) {
+                if (previous.getRows().isEmpty()) {
+                    return previous;
                 }
+                long start = System.currentTimeMillis();
+                sizeQuery = previous.getSizeQuery();
+                int whereIndex = sql.toUpperCase().indexOf(" WHERE ");
+                String tempSizeQuery = sizeQuery + (whereIndex == -1 ? " WHERE " : " AND ")
+                    + idField + " > " + previous.getLastId() + " ORDER BY " + idField + " LIMIT "
+                    + BATCH_SIZE;
+                Statement s = c.createStatement();
+                ResultSet r = s.executeQuery(tempSizeQuery);
+                int rowCount = 0;
+                int sizeSum = 0;
+                while (r.next() && (sizeSum <= MAX_SIZE)) {
+                    sizeSum += r.getInt("size");
+                    rowCount++;
+                }
+                if (rowCount <= 0) {
+                    rowCount = 1;
+                }
+                long end = System.currentTimeMillis();
+                iteratorTime += end - start;
+                if (iteratorTime / 10000 > (iteratorTime - end + start) / 10000) {
+                    LOG.error("Spent " + iteratorTime + " ms on iterator queries like ("
+                            + (end - start) + " ms) " + tempSizeQuery);
+                }
+                tempSql = tempSql + (whereIndex == -1 ? " WHERE " : " AND ") + idField + " > "
+                    + previous.getLastId() + " ORDER BY " + idField + " LIMIT " + rowCount;
+            } else {
+                tempSql = tempSql + " ORDER BY " + idField + " LIMIT 1";
             }
-            sizeQuery += " AS size";
-            int whereIndex = sql.toUpperCase().indexOf(" FROM ");
-            sizeQuery += sql.substring(whereIndex);
+            long start = System.currentTimeMillis();
+            Statement s = c.createStatement();
+            ResultSet r = s.executeQuery(tempSql);
+            long afterExecute = System.currentTimeMillis();
+            List rows = new ArrayList();
+            ResultSetMetaData rMeta = r.getMetaData();
+            int columnCount = rMeta.getColumnCount();
+            String columnNames[] = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                columnNames[i] = rMeta.getColumnName(i + 1);
+            }
+            while (r.next()) {
+                Map row = new HashMap();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(columnNames[i - 1], r.getObject(i));
+                }
+                rows.add(row);
+            }
+            long end = System.currentTimeMillis();
+            iteratorTime += end - start;
+            if (iteratorTime / 10000 > (iteratorTime - end + start) / 10000) {
+                LOG.error("Spent " + iteratorTime + " ms on iterator queries like ("
+                        + (afterExecute - start) + " + " + (end - afterExecute) + " ms) "
+                        + tempSql);
+            }
+            if (sizeQuery == null) {
+                sizeQuery = "SELECT " + idField + ", 30";
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = rMeta.getColumnName(i);
+                    if (rMeta.getColumnType(i) != java.sql.Types.BIT) {
+                        sizeQuery += " + char_length(" + columnName + ")";
+                    }
+                }
+                sizeQuery += " AS size";
+                int whereIndex = sql.toUpperCase().indexOf(" FROM ");
+                sizeQuery += sql.substring(whereIndex);
+            }
+            return new DBBatch((previous == null ? 0 : previous.getOffset()
+                        + previous.getRows().size()), rows, new HashMap(), idField, sizeQuery);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
         }
-        c.close();
-        return new DBBatch((previous == null ? 0 : previous.getOffset()
-                    + previous.getRows().size()), rows, null, idField, sizeQuery);
     }
 
     /**

@@ -24,7 +24,7 @@ public class DirectDBReaderTest extends DBReaderTestCase
         super(arg);
     }
 
-    public DBReader getDBReader() {
+    public DBReader getDBReader() throws Exception {
         return new DirectDBReader(db);
     }
 
@@ -57,7 +57,7 @@ public class DirectDBReaderTest extends DBReaderTestCase
 
         DBReader reader = getDBReader();
 
-        Iterator iter = reader.sqlIterator("SELECT value, id FROM testread", "value");
+        Iterator iter = reader.sqlIterator("SELECT value, id FROM testread", "value", "testread");
         int v = 0;
         while (iter.hasNext()) {
             Map row = (Map) iter.next();

@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * A class representing a collection of writes to an SQL database. This class is intended for the
  * purpose of improving the performance of systems that write to an SQL database, by bunching all
@@ -28,6 +30,7 @@ import java.util.Map;
  */
 public class Batch
 {
+    protected static final Logger LOG = Logger.getLogger(Batch.class);
     private static final int MAX_BATCH_SIZE = 20000000;
 
     private Map tables = new HashMap();
@@ -102,8 +105,11 @@ public class Batch
      * @throws SQLException if a flush occurs, and an error occurs while flushing
      */
     public void flush(Connection con) throws SQLException {
+        //long start = System.currentTimeMillis();
         batchWriter.write(con, tables);
         batchSize = 0;
+        //long end = System.currentTimeMillis();
+        //LOG.error("Flushed batch - took " + (end - start) + " ms");
     }
 
     /**

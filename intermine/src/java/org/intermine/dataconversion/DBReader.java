@@ -33,9 +33,10 @@ public interface DBReader
      *
      * @param sql an SQL String query
      * @param idField a String describing the field name of the object id field
+     * @param tableName a String describing the name of the table that this query accesses
      * @return an Iterator through the result rows
      */
-    public Iterator sqlIterator(String sql, String idField);
+    public Iterator sqlIterator(String sql, String idField, String tableName);
 
     /**
      * Runs an SQL query and returns an sql ResultSet. It is expected that this facility will be

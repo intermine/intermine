@@ -120,7 +120,8 @@ public class DBConverterTest extends TestCase {
         assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
 
-
+/*
+ * This test is not relevant - 1N collections are ignored by the dataloader, so the DBConverter doesn't have to bother with them.
     public void test1NCollection() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
@@ -150,6 +151,7 @@ public class DBConverterTest extends TestCase {
         converter.processClassDescriptor(cld);
         assertEquals(Collections.singleton(item), itemWriter.getItems());
     }
+    */
 
     public void testMNCollection() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
@@ -412,7 +414,7 @@ public class DBConverterTest extends TestCase {
     }
 
     class MockDBReader implements DBReader {
-        public Iterator sqlIterator(String sql, String idField) {
+        public Iterator sqlIterator(String sql, String idField, String tableName) {
             try {
                 return execute(sql).iterator();
             } catch (SQLException e) {}
