@@ -13,12 +13,14 @@ package org.intermine.task;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.DatabaseUtil;
 
 /**
- * Task to run ANALYSE on a database.
+ * Task to run ANALYSE on a table or whole database.
  *
  * @author Richard Smith
  * @author Andrew Varley
@@ -29,6 +31,8 @@ public class AnalyseDbTask extends Task
 
     protected String database;
     protected boolean full = false;
+    protected String clsName;
+    protected String model;
 
     /**
      * Set the database alias
@@ -36,6 +40,22 @@ public class AnalyseDbTask extends Task
      */
     public void setDatabase(String database) {
         this.database = database;
+    }
+
+    /**
+     * Set an optional class name, must also set model name
+     * @param clsName name of class to ANALYSE
+     */
+    public void setClassName(String clsName) {
+        this.clsName = clsName;
+    }
+
+    /**
+     * Set model name, must be set if class name specified
+     * @param model containing the class
+     */
+    public void setModel(String model) {
+        this.model = model;
     }
 
     /**
@@ -56,7 +76,20 @@ public class AnalyseDbTask extends Task
 
         try {
             Database db = DatabaseFactory.getDatabase(database);
-            DatabaseUtil.analyse(db, full);
+
+            if (clsName != null && !clsName.equals("")) {
+                if (model == null) {
+                    throw new BuildException("model attribute is not set");
+                }
+                Model m = Model.getInstanceByName(model);
+                ClassDescriptor cld = m.getClassDescriptorByName(clsName);
+                if (cld == null) {
+                    throw new BuildException("class does not exist in model: " + clsName);
+                }
+                DatabaseUtil.analyse(db, cld, full);
+            } else {
+                DatabaseUtil.analyse(db, full);
+            }
         } catch (Exception e) {
             throw new BuildException(e);
         }
