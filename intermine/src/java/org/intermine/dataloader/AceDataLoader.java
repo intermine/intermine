@@ -30,6 +30,13 @@ import org.flymine.util.TypeUtil;
  */
 public class AceDataLoader extends DataLoader
 {
+    protected static final org.apache.log4j.Logger LOG
+        = org.apache.log4j.Logger.getLogger(AceDataLoader.class);
+
+
+
+    private String packageName;
+
     /**
      * No-arg constructor for testing purposes
      */
@@ -61,8 +68,9 @@ public class AceDataLoader extends DataLoader
             Iterator clazzIter = clazzNames.iterator();
             while (clazzIter.hasNext()) {
                 String clazzName = (String) clazzIter.next();
+                packageName = TypeUtil.packageName(clazzName);
 
-                AceURL objURL = source.relativeURL(clazzName);
+                AceURL objURL = source.relativeURL(TypeUtil.unqualifiedName(clazzName));
                 AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
                 if (fetchedAceObjects != null) {
                     Collection objects = processAceObjects(fetchedAceObjects);
@@ -123,7 +131,7 @@ public class AceDataLoader extends DataLoader
         try {
             String clazzName = ((AceObject) aceObject).getClassName();
             if (iw != null) {
-                clazzName = iw.getObjectStore().getModel().getName() + "." + clazzName;
+                clazzName = this.packageName + "." + clazzName;
             }
             currentObject = Class.forName(clazzName).newInstance();
             setField(currentObject, "identifier", AceUtils.decode(aceObject.getName()));
@@ -161,7 +169,9 @@ public class AceDataLoader extends DataLoader
             nodeValue = AceUtils.decode(aceNode.getName());
             // nodeClass is the class of the referred to object, and is part of the target AceURL
             String nodeClass = ((Reference) aceNode).getTarget().getPath();
-            nodeClass = nodeClass.substring(1, nodeClass.indexOf("/", 1));
+            //          LOG.info("ACE: " + nodeClass);
+
+            nodeClass = nodeClass.substring(0, nodeClass.indexOf("/", 1));
             // Set up a dummy AceObject to encapsulate this info and convert to proper Object
             AceObject referredToAceObject = new StaticAceObject((String) nodeValue,
                                                                 null, nodeClass);
