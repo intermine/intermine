@@ -53,7 +53,6 @@ public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactor
             String alias = "jcdAlias";
             
             jcd.setJcdAlias(alias);
-            //jcd.setDefaultConnection(true);
             
             jcd.setDriver(db.getDriver());
             jcd.setDbms(db.getPlatform());
