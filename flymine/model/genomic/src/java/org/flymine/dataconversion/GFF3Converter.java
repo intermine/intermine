@@ -12,8 +12,6 @@ package org.flymine.dataconversion;
 
 import java.io.BufferedReader;
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -90,25 +88,23 @@ public class GFF3Converter
      * @throws ObjectStoreException if an error occurs storing items
      */
     public void parse(BufferedReader bReader) throws java.io.IOException, ObjectStoreException {
-        List list = new ArrayList();
+
         GFF3Record record;
         long start, now, opCount;
 
-        list = parser.parse(bReader);
         writer.store(ItemHelper.convert(organism));
         writer.store(ItemHelper.convert(infoSource));
 
-        System.err .println("Total " + list.size() + " lines in file");
-        LOG.info("Total " + list.size() + " lines in file");
         opCount = 0;
         start = System.currentTimeMillis();
-        for (int i = 0; i < list.size(); i++) {
-            record = (GFF3Record) list.get(i);
+        for (Iterator i = parser.parse(bReader); i.hasNext();) {
+            record = (GFF3Record) i.next();
             process(record);
             opCount++;
             if (opCount % 1000 == 0) {
                 now = System.currentTimeMillis();
-                System.err .println("processed " + opCount + " lines --took " + (now - start) + " ms");
+                System.err .println("processed " + opCount + " lines --took "
+                                  + (now - start) + " ms");
                 LOG.info("processed " + opCount + " lines --took " + (now - start) + " ms");
                 start = System.currentTimeMillis();
             }
@@ -199,7 +195,7 @@ public class GFF3Converter
 
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
-                                                               computationalAnalysis.getIdentifier()));
+                                                 computationalAnalysis.getIdentifier()));
             }
             result.add(computationalResult);
             evidence.addRefId(computationalResult.getIdentifier());
