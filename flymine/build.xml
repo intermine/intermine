@@ -288,8 +288,8 @@
         outputdirectory="${build.src.java}/org/flymine/sql/query">
       <classpath refid="project.class.path"/>
     </antlr>
-    <antlr target="${src.java}/org/flymine/objectstore/query/flymine_fql.g"
-        outputdirectory="${build.src.java}/org/flymine/objectstore/query">
+    <antlr target="${src.java}/org/flymine/objectstore/query/fql/flymine_fql.g"
+        outputdirectory="${build.src.java}/org/flymine/objectstore/query/fql">
       <classpath refid="project.class.path"/>
     </antlr>
     <javac destdir="${build.java}" listfiles="yes">
