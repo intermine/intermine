@@ -10,7 +10,6 @@ package org.flymine.metadata;
 
 public class CollectionDescriptor extends ReferenceDescriptor
 {
-
     protected final boolean ordered;
     private boolean setReverseRef = false;
     protected final Class collectionClass;
@@ -71,7 +70,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @return true if the collection is ordered
      */
     public boolean isOrdered() {
-        return this.isOrdered();
+        return ordered;
     }
     
     /**

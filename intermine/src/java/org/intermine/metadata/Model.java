@@ -94,7 +94,7 @@ public class Model
             // add this to list of subclasses if a superclass exists
             ClassDescriptor superCld = cld.getSuperclassDescriptor();
             if (superCld != null) {
-               List sub = (List) subclassMap.get(superCld);
+                List sub = (List) subclassMap.get(superCld);
                 sub.add(cld);
             }
 
@@ -118,9 +118,7 @@ public class Model
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
 
             List sub = (List) subclassMap.get(cld);
-            if (sub.size() > 0) {
-                cld.setSubclassDescriptors(sub);
-            }
+            cld.setSubclassDescriptors(sub);
 
             if (cld.isInterface()) {
                 List implementors = (List) implementorsMap.get(cld);
