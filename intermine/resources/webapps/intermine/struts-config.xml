@@ -82,6 +82,9 @@
 
     <action path="/bagBuild"
             forward="bagBuild.page"/>
+    
+    <action path="/tree"
+            forward="tree.page"/>
 
     <action path="/examples"
             forward="examples.page"/>
@@ -204,6 +207,17 @@
       <forward name="query" path="query.page"/>
     </action>
     
+    <!-- Actions invoked from begin.jsp browse form -->
+    <action path="/templateActionBrowse"
+            type="org.intermine.web.TemplateAction"
+            name="templateForm"
+            parameter="action"
+            input="template">
+      <forward name="template" path="begin.page"/>
+      <forward name="query" path="query.page"/>
+      <forward name="results" path="/viewAction.do"/>
+    </action>
+    
     <action path="/feedbackAction"
             type="org.intermine.web.FeedbackAction"
             name="feedbackForm"
@@ -247,11 +261,9 @@
             type="org.intermine.web.QueryClassSelectAction"
             name="queryClassSelectForm"
             scope="request"
-            input="query"
-            parameter="action">
+            input="query">
       <forward name="classChooser" path="classChooser.page"/>
       <forward name="query" path="query.page"/>
-      <forward name="tree" path="tree.page"/>
     </action>
 
     <action path="/mainAction"
@@ -292,6 +304,9 @@
     <!-- Controllers -->
     <action path="/initMain"
             type="org.intermine.web.MainController"/>
+
+    <action path="/initBegin"
+            type="org.intermine.web.BeginController"/>
 
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
