@@ -80,6 +80,7 @@
     <item><ulink url="contributing">Introduction</ulink></item>
     <item><ulink url="coding-standards">Coding standards</ulink></item>
     <item><ulink url="cvs-developer">Writable CVS access for developers</ulink></item>
+    <item><ulink url="http://www.flymine.org/autobuild">Automated build daemon results</ulink></item>
   </section>
 
 </menu>
