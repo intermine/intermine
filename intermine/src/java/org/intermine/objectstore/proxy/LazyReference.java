@@ -11,6 +11,7 @@ package org.flymine.objectstore.proxy;
  */
 
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.query.fql.FqlQuery;
 
 /**
  * LazyReference
@@ -22,14 +23,32 @@ import org.flymine.objectstore.ObjectStore;
 public interface LazyReference
 {
     /**
-     * set the objectstore used to run the proxy's embedded query
+     * Return the query that will be used to retrieve the real object
+     * @return the query
+     */
+    public FqlQuery getFqlQuery();
+
+    /**
+     * Get the type of the real object
+     * @return the type
+     */
+    public Class getType();
+
+    /**
+     * Get the internal id of the real object
+     * @return the id
+     */
+    public Integer getId();
+
+    /**
+     * Set the objectstore used to run the proxy's embedded query
      *
      * @param os the ObjectStore
      */
     public void setObjectStore(ObjectStore os);
 
     /**
-     * check whether the proxy has been materialised
+     * Check whether the proxy has been materialised
      *
      * @return true if the proxy has been materialised
      */
