@@ -112,7 +112,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
                 iw.store(o, source, skelSource);
             }
             //DataTracking.releasePrecached(iw.getDataTracker());
-            
+
             iw.commitTransaction();
         } catch (Exception e) {
             iw.abortTransaction();
@@ -151,7 +151,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
 
 
-    
+
     // Not doing the Query tests here
     public void executeTest(String type) throws Exception {
     }
@@ -279,7 +279,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         exampleCEOA.setName("Fred");
         CEO exampleCEOB = new CEO();
         exampleCEOB.setName("EmployeeB1");
-        
+
         Company rCompanyA = (Company) iw.getObjectByExample(exampleCompanyA, Collections.singleton("name"));
         Company rCompanyB = (Company) iw.getObjectByExample(exampleCompanyB, Collections.singleton("name"));
         CEO rCEOA = (CEO) iw.getObjectByExample(exampleCEOA, Collections.singleton("name"));
@@ -293,7 +293,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertEquals(rCompanyB, rCEOB.getCompany());
         assertEquals(rCEOA, rCompanyA.getCEO());
         assertEquals(rCEOB, rCompanyB.getCEO());
-        
+
         Source source2 = iw.getMainSource("testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2");
         {
@@ -415,10 +415,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertNotNull(re);
 
         Department rd = re.getDepartment();
-        
+
         assertNotNull(rd);                          // Employee has a department
         assertEquals(d.getName(), rd.getName());    // Department is the right one
-        
+
         assertTrue(rd.getEmployees().contains(re)); // And that department has the employee
 
         Department exampleOD = new Department();
@@ -454,7 +454,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertNotNull(re);
 
         assertNull(re.getDepartment());             // Employee no longer has a department
-        
+
         Department exampleOD = new Department();
         exampleOD.setName("DepartmentA1");
         Department od = (Department) iw.getObjectByExample(exampleOD, Collections.singleton("name"));
@@ -612,7 +612,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         exampleCB.setName("CompanyB");
         Company dbCB = (Company) iw.getObjectByExample(exampleCB, Collections.singleton("name"));
         conA.addCompanys(dbCB);
-        
+
         Contractor conC = new Contractor();
         conC.setName("ContractorC");
         conC.setSeniority(new Integer(2784112));
@@ -622,7 +622,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         conD.setName("ContractorD");
         conD.setSeniority(new Integer(276423341));
         conD.addCompanys(ca);
-        
+
         if (doIds) {
             ca.setId(new Integer(1));
             conA.setId(new Integer(2));
@@ -684,13 +684,13 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
-        
+
         try {
             Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
             fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
-        
+
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
@@ -735,7 +735,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(e, source, skelSource);  // method we are testing
-        
+
         InterMineObject re = iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
         assertTrue(re instanceof Broke);
@@ -772,7 +772,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Manager e1 = new Manager();
         e1.setName("EmployeeA2");
         e1.setTitle("Mr.");
-        
+
         if (doIds) {
             e1.setId(new Integer(1));
         }
@@ -798,7 +798,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyZ")));
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(876213))));
         q.setConstraint(cs);
-        
+
         Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         Address a2 = new Address();
         Company c3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -826,10 +826,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         Source source2 = iw.getMainSource("testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2");
-        
+
         iw.store(c2, source2, skelSource2);
         iw.store(a2, source2, skelSource2);
-        
+
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
@@ -837,9 +837,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         Source source3 = iw.getMainSource("testsource3");
         Source skelSource3 = iw.getSkeletonSource("testsource3");
-        
+
         iw.store(c3, source3, skelSource3);
-        
+
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
@@ -847,13 +847,52 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         Source source4 = iw.getMainSource("testsource4");
         Source skelSource4 = iw.getSkeletonSource("testsource4");
-        
+
         iw.store(c4, source4, skelSource4);
         iw.store(a4, source4, skelSource4);
-        
+
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
         assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
     }
+
+    // a bug existed whereby storing a skeleton then a real object retrieved and failed to materialise
+    // a ProxyReference - failing a check that a field being processed was a member of the class
+    public void testStoreObjectAfterSkeleton() throws Exception {
+        // CompanyA is in db with source "storedata"
+        // source "testsource3" has a lower priority than "storedata"
+
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setVatNumber(1234);
+
+        Department d = new Department();
+        d.setCompany(c);
+        d.setName("new_department");
+
+        if (doIds) {
+            c.setId(new Integer(1));
+            d.setId(new Integer(3));
+        }
+        Source source = iw.getMainSource("testsource3");
+        Source skelSource = iw.getSkeletonSource("testsource3");
+
+        Company before = (Company) iw.getObjectByExample(c, Collections.singleton("vatNumber"));
+        assertNotNull("before example from db should not be null", before);
+
+        // storing the dept should store CompanyA as a skeleton
+        iw.store(d, source, skelSource);  // method we are testing
+        iw.store(c, source, skelSource);  // method we are testing
+
+        // assert that storing a CompanyA with no vatNumber does not overwrite
+        // the existing higher priority value
+        Company after = (Company) iw.getObjectByExample(c, Collections.singleton("vatNumber"));
+        assertNotNull("after example from db should not be null", after);
+
+        assertEquals(before.getVatNumber(), after.getVatNumber());
+        assertEquals(before.getName(), after.getName());
+        assertEquals(before.getAddress().getAddress(), after.getAddress().getAddress());
+
+    }
+
 }
