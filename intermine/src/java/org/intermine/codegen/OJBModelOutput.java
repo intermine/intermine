@@ -117,12 +117,12 @@ public class OJBModelOutput extends ModelOutput
             parent = (MClassifier) parents.get(0);
             tableName = ((MClassifier) parents.get(parents.size() - 1)).getName();
         }
-            
+
         StringBuffer sb = new StringBuffer ();
         sb.append(INDENT + "<class-descriptor class=\"")
             .append(generateQualified(cls) + "\"")
             .append(parent == null ? "" : " extends=\"" + generateQualified(parent) + "\"")
-            .append((cls.isAbstract() || cls instanceof MInterface) 
+            .append((cls.isAbstract() || cls instanceof MInterface)
                     ? "" : " table=\"" + tableName + "\"")
             .append(">\n");
 
@@ -159,13 +159,13 @@ public class OJBModelOutput extends ModelOutput
 
     private StringBuffer generateClassifierBody(MClassifier cls) {
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append(INDENT + INDENT + "<field-descriptor name=\"id\"")
             .append(" column=\"ID\"")
             .append(" jdbc-type=\"INTEGER\"")
             .append(" primarykey=\"true\"")
             .append(" autoincrement=\"true\" />\n");
-        
+
         Iterator parents = cls.getGeneralizations().iterator();
         if (parents.hasNext() || cls.getSpecializations().size() > 0) {
             sb.append(INDENT + INDENT + "<field-descriptor")
@@ -198,7 +198,7 @@ public class OJBModelOutput extends ModelOutput
             }
         }
     }
-    
+
     void doAssociations(Collection c, StringBuffer sb) {
         if (!c.isEmpty()) {
             Iterator iter = c.iterator();
@@ -218,7 +218,7 @@ public class OJBModelOutput extends ModelOutput
     }
 
     private String generateAssociationEnd(MAssociationEnd ae1, MAssociationEnd ae2) {
-        //if (!(ae1.isNavigable() && ae2.isNavigable())) 
+        //if (!(ae1.isNavigable() && ae2.isNavigable()))
         if (!ae2.isNavigable()) {
             return "";
         }
@@ -228,6 +228,7 @@ public class OJBModelOutput extends ModelOutput
         String endName1 = ae1.getName();
 
         String name1 = "";
+        String impl = "";
 
         if (endName1 != null && endName1.length() > 0) {
             name1 = endName1;
@@ -255,21 +256,31 @@ public class OJBModelOutput extends ModelOutput
                     .append("Id\" column=\"")
                     .append(generateNoncapitalName(name2))
                     .append("Id\" jdbc-type=\"INTEGER\" />\n");
-                
+
                 references.append(INDENT + INDENT + "<reference-descriptor name=\"")
                     .append(generateNoncapitalName(name2))
                     .append("\" class-ref=\"" + generateQualified(ae2.getType()) + "\"")
+                    .append(" proxy=\"true\"")
                     .append(" auto-delete=\"true\"")
                     .append(">\n" + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"")
                     .append(generateNoncapitalName(name2) + "Id")
                     .append("\" />\n" + INDENT + INDENT + "</reference-descriptor>\n");
             }
-        } else if ((MMultiplicity.M1_N.equals(m2) || MMultiplicity.M0_N.equals(m2)) 
+        } else if ((MMultiplicity.M1_N.equals(m2) || MMultiplicity.M0_N.equals(m2))
                    && (MMultiplicity.M1_1.equals(m1) || MMultiplicity.M0_1.equals(m1))) {
             // If more than one of the other class AND one or zero of this one
+
+            if (ae2.getOrdering()==null || ae2.getOrdering().getName().equals("unordered")) {
+                impl="java.util.HashSet";
+            } else {
+                impl = "java.util.ArrayList";
+            }
+
             collections.append(INDENT + INDENT + "<collection-descriptor name=\"")
                 .append(generateNoncapitalName(name2))
                 .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
+                .append(" collection-class=\"" + impl + "\"")
+                .append(" proxy=\"true\"")
                 .append(" auto-delete=\"true\"")
                 .append(">\n" + INDENT + INDENT + INDENT + "<inverse-foreignkey field-ref=\"")
                 .append(generateNoncapitalName(name1) + "Id")
@@ -284,9 +295,17 @@ public class OJBModelOutput extends ModelOutput
                 joiningTableName = generateCapitalName(name2) + generateCapitalName(name1);
             }
 
+            if (ae2.getOrdering()==null || ae2.getOrdering().getName().equals("unordered")) {
+                impl="java.util.HashSet";
+            } else {
+                impl = "java.util.ArrayList";
+            }
+
             collections.append(INDENT + INDENT + "<collection-descriptor name=\"")
                 .append(generateNoncapitalName(name2))
                 .append("s\" element-class-ref=\"" + generateQualified(ae2.getType()) + "\"")
+                .append(" collection-class=\"" + impl + "\"")
+                .append(" proxy=\"true\"")
                 .append(" auto-delete=\"true\"")
                 .append(" indirection-table=\"")
                 .append(joiningTableName)
@@ -333,7 +352,7 @@ public class OJBModelOutput extends ModelOutput
         String projectName = args[0];
         String inputDir = args[1];
         String outputDir = args[2];
-        
+
         File xmiFile = new File(inputDir, projectName + "_.xmi");
         InputSource source = new InputSource(xmiFile.toURL().toString());
         File path = new File(outputDir, "repository_" + projectName.toLowerCase() + ".xml");
