@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -184,9 +185,9 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 toIdIter.remove();
                             }
                         }
-                        
+
                         int toIdSizeAfterCache = toIds.size();
-                        
+
                         // Now, we don't need to load in objects that the dataloader has already
                         // handled. That includes basically everything we have seen ever.
 
@@ -251,9 +252,9 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 Map.Entry collectionEntry = (Map.Entry) collectionIter.next();
                                 String collectionName = (String) collectionEntry.getKey();
                                 Object contents = collectionEntry.getValue();
-                                if (contents instanceof Set) {
-                                    Set collectionContents = (Set) collectionEntry.getValue();
-                                    Collection substituteCollection = new HashSet();
+                                if (contents instanceof List) {
+                                    List collectionContents = (List) collectionEntry.getValue();
+                                    Collection substituteCollection = new ArrayList();
                                     Iterator contentIter = collectionContents.iterator();
                                     while (contentIter.hasNext()) {
                                         Integer idToAdd = (Integer) contentIter.next();
