@@ -22,6 +22,7 @@ import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 
 import org.intermine.objectstore.query.ResultsRow;
@@ -56,8 +57,9 @@ public class TransferSequences
         throws Exception {
         osw.beginTransaction();
         ObjectStore os = osw.getObjectStore();
+
         Results results = PostProcessUtil.findLocations(os, Chromosome.class, Contig.class, false);
-        results.setBatchSize(500);
+        results.setBatchSize(200);
 
         Iterator resIter = results.iterator();
 
@@ -117,6 +119,7 @@ public class TransferSequences
 
         Results results = PostProcessUtil.findLocations(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
+        results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
 
@@ -241,8 +244,9 @@ public class TransferSequences
 
         q.setConstraint(cs);
 
+        ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(10000);
+        res.setBatchSize(200);
 
         Iterator resIter = res.iterator();
 
