@@ -101,7 +101,7 @@ public class FlyMineModelParser implements ModelParser
     /**
      * Semi-constructed ClassDescriptor
      */
-    class SkeletonClass
+    static class SkeletonClass
     {
         String name, supers;
         boolean isInterface;
