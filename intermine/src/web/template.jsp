@@ -58,11 +58,14 @@
       <c:forEach items="${templateQuery.nodes}" var="node">
         <c:forEach items="${constraints[node]}" var="con">
           <c:set var="index" value="${index+1}"/>
+          <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
+          <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
+          <c:set var="options" value="${displayConstraints[con].optionsList}"/>
           
           <script type="text/javascript">
             <!--
               fixedOps[${index-1}] = new Array();
-              <c:forEach items="${fixedOps[con]}" var="op" varStatus="oi">
+              <c:forEach items="${fixedOps}" var="op" varStatus="oi">
                 fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
               </c:forEach>
             //-->
@@ -89,7 +92,7 @@
             </td>
             <td valign="top">
               <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
-                <c:forEach items="${ops[con]}" var="op">
+                <c:forEach items="${validOps}" var="op">
                   <html:option value="${op.key}">
                     <c:out value="${op.value}"/>
                   </html:option>
@@ -100,15 +103,15 @@
               <span id="operandEditSpan${index-1}">
                <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
-                <c:if test="${!empty options[con]}">
+                <c:if test="${!empty options}">
                   <im:vspacer width="5"/>
                   <img src="images/left-arrow.gif" alt="&lt;-" border="0" height="13" width="13"/>
                   <im:vspacer width="5"/>
                 </c:if>
               </span>
-              <c:if test="${!empty options[con]}">
+              <c:if test="${!empty options}">
                 <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
-                <c:forEach items="${options[con]}" var="option">
+                <c:forEach items="${options}" var="option">
                   <option value="${option}">
                     <c:out value="${option}"/>
                   </option>

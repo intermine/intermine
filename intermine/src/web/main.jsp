@@ -319,13 +319,17 @@
         //-->
         </script>
         
+        <c:set var="validOps" value="${displayConstraint.validOps}"/>
+        <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
+        <c:set var="options" value="${displayConstraint.optionsList}"/>
+        
         <script type="text/javascript">
         <!--
-        
-        fixedOps[0] = new Array();
-        <c:forEach items="${fixedOptionsOps}" var="op" varStatus="status">
-          fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
-        </c:forEach>
+
+          fixedOps[0] = new Array();
+          <c:forEach items="${fixedOps}" var="op" varStatus="status">
+            fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
+          </c:forEach>
         
         //-->
         </script>
@@ -347,9 +351,9 @@
                     <c:otherwise>
                       <td valign="top">
                         <html:select property="attributeOp" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue)">
-                          <c:forEach items="${attributeOps}" var="attributeOp">
-                            <html:option value="${attributeOp.key}">
-                              <c:out value="${attributeOp.value}"/>
+                          <c:forEach items="${validOps}" var="op">
+                            <html:option value="${op.key}">
+                              <c:out value="${op.value}"/>
                             </html:option>
                           </c:forEach>
                         </html:select>
@@ -358,15 +362,15 @@
                         <span id="operandEditSpan0">
                           <html:text property="attributeValue"/><br/>
                           <%-- might want to show up arrow --%>
-                          <c:if test="${!empty attributeOptions}">
+                          <c:if test="${!empty options}">
                             <im:vspacer height="5"/><br/>
                             <img src="images/up-arrow.gif" alt="^^^" border="0" height="13" width="13"/><br/>
                             <im:vspacer height="5"/><br/>
                           </c:if>
                         </span>
-                        <c:if test="${!empty attributeOptions}">
+                        <c:if test="${!empty options}">
                           <select name="attributeOptions" onchange="this.form.attributeValue.value=this.value;">
-                          <c:forEach items="${attributeOptions}" var="option">
+                          <c:forEach items="${options}" var="option">
                             <option value="${option}">
                               <c:out value="${option}"/>
                             </option>
@@ -378,7 +382,7 @@
                   </c:choose>
                   <td valign="top">&nbsp;
                     <html:submit property="attribute">
-                       <fmt:message key="query.submitConstraint"/>
+                      <fmt:message key="query.submitConstraint"/>
                     </html:submit>
                   </td>
                 </tr>
