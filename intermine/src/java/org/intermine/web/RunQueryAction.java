@@ -60,12 +60,15 @@ public class RunQueryAction extends Action
 
         Query q = (Query) session.getAttribute("query");
 
-        ObjectStore os = ObjectStoreFactory.getObjectStore();
+        if (q == null) {
+            return (mapping.findForward("buildquery"));
+        } else {
+            ObjectStore os = ObjectStoreFactory.getObjectStore();
 
-        Results results = os.execute(QueryCloner.cloneQuery(q));
-        session.setAttribute("results", results);
+            Results results = os.execute(QueryCloner.cloneQuery(q));
+            session.setAttribute("results", results);
 
-        return (mapping.findForward("results"));
-
+            return (mapping.findForward("results"));
+        }
     }
 }
