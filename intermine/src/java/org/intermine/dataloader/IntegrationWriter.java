@@ -62,7 +62,13 @@ public interface IntegrationWriter extends ObjectStoreWriter
 
 
     /**
-     * Tell this IntegrationWriter whether to ignore duplicate objects from the same source
+     * Tell this IntegrationWriter whether to ignore duplicate objects from the same source.
+     * ALL DUPLICATES OF THE OBJECT MUST HAVE THE SAME FIELDS FILLED IN WITH THE SAME DATA.
+     * Data that differs between copies will result in undefined behaviour as so what data will
+     * appear in the destination database. Data that differs in primary keys may result in
+     * an exception being thrown during data loading. Note that setting a field to null differs
+     * from another copy with the field set to a value.
+     * 
      * @param ignoreDuplicates the value of ignoreDuplicates
      */
     public void setIgnoreDuplicates(boolean ignoreDuplicates);
