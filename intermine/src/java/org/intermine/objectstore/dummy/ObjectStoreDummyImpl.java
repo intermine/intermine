@@ -246,8 +246,9 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
 
     /**
      * Set the model to be returned by this ObjectStore
+     * @param model the Model
      */
-    public void setModel() {
+    public void setModel(Model model) {
         this.model = model;
     }
 
