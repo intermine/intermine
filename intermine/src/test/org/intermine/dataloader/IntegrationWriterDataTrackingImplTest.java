@@ -70,17 +70,15 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public void tearDown() throws Exception {
         super.tearDown();
         iw.commitTransaction();
-        //removeDataFromTracker();
+        iw.getDataTracker().clear();
         removeDataFromStore();
         iw.idMap.clear();
     }
 
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
-        //iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-            .getObjectStoreWriter("osw.unittest");
-        iw = new IntegrationWriterDataTrackingImpl(writer, DataTrackerFactory.getDataTracker("dt.datatrackingtest"));
+        iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+        writer = (ObjectStoreWriterInterMineImpl) iw.getObjectStoreWriter();
         os = iw.getObjectStore();
     }
 

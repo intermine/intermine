@@ -14,6 +14,7 @@ import org.intermine.model.datatracking.Source;
 import org.intermine.model.datatracking.Field;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.sql.DatabaseFactory;
 
 import org.intermine.model.testmodel.Department;
 
@@ -24,7 +25,7 @@ public class DataTrackingTest extends TestCase {
     protected Source source1, source2;
     
     public void setUp() throws Exception {
-        dt = DataTrackerFactory.getDataTracker("dt.datatrackingtest");
+        dt = new DataTracker(DatabaseFactory.getDatabase("db.unittest"), 30, 10);
         source1 = dt.stringToSource("Source1");
         source2 = dt.stringToSource("Source2");
     }

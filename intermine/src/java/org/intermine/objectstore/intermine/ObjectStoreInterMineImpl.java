@@ -72,6 +72,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     }
 
     /**
+     * Returns the Database used by this ObjectStore
+     *
+     * @return the db
+     */
+    public Database getDatabase() {
+        return db;
+    }
+
+    /**
      * Returns a Connection. Please put them back.
      *
      * @return a java.sql.Connection
@@ -139,6 +148,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                             + " ObjectStore", e);
                 }
                 os = new ObjectStoreInterMineImpl(db, model);
+                instances.put(objectStoreDescription, os);
             }
             return os;
         }

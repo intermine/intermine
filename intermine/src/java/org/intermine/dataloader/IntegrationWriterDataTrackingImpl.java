@@ -26,7 +26,9 @@ import org.intermine.model.datatracking.Source;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
@@ -58,15 +60,31 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     + " alias specified (check properties file)");
         }
 
-        String trackerAlias = props.getProperty("datatracker");
-        if (trackerAlias == null) {
+        String trackerMaxSizeString = props.getProperty("datatrackerMaxSize");
+        String trackerCommitSizeString = props.getProperty("datatrackerCommitSize");
+        if (trackerMaxSizeString == null) {
             throw new ObjectStoreException(props.getProperty("alias") + " does not have a"
-                    + " datatracker alias specified (check properties file)");
+                    + " datatracker maximum size specified (check properties file)");
+        }
+        if (trackerCommitSizeString == null) {
+            throw new ObjectStoreException(props.getProperty("alias") + " does not have a"
+                    + " datatracker commit size specified (check properties file)");
         }
 
         ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
-        DataTracker dataTracker = DataTrackerFactory.getDataTracker(trackerAlias);
-        return new IntegrationWriterDataTrackingImpl(writer, dataTracker);
+        try {
+            int maxSize = Integer.parseInt(trackerMaxSizeString);
+            int commitSize = Integer.parseInt(trackerCommitSizeString);
+            Database db = ((ObjectStoreWriterInterMineImpl) writer).getDatabase();
+            DataTracker dataTracker = new DataTracker(db, maxSize, commitSize);
+
+            return new IntegrationWriterDataTrackingImpl(writer, dataTracker);
+        } catch (Exception e) {
+            IllegalArgumentException e2 = new IllegalArgumentException("Problem instantiating"
+                    + " IntegrationWriterDataTrackingImpl " + props.getProperty("alias"));
+            e2.initCause(e);
+            throw e2;
+        }
     }
 
     /**

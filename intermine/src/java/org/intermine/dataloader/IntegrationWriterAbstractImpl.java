@@ -72,6 +72,15 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
+     * Returns the underlying ObjectStoreWriter.
+     *
+     * @return osw
+     */
+    public ObjectStoreWriter getObjectStoreWriter() {
+        return osw;
+    }
+    
+    /**
      * Returns a Set of objects from the database that are equivalent to the given object, according
      * to the primary keys defined by the given Source.
      *
