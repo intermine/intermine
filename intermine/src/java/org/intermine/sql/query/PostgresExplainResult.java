@@ -20,9 +20,9 @@ public class PostgresExplainResult extends ExplainResult
      * Constructs an instance of PostgresExplainResult without any data.
      *
      */
-    public PostgresExplainResult() {
+    protected PostgresExplainResult() {
     }
-    
+
     /**
      * Constructs an instance of PostgresExplainResult for a given Query and
      * database Connection.
@@ -30,8 +30,13 @@ public class PostgresExplainResult extends ExplainResult
      * @param query the org.flymine.sql.query.Query to be explained
      * @param database a java.sql.Connection by which to access the database
      * @throws SQLException if a database error occurs
+     * @throws NullPointerException if either query or database are null
      */
     public PostgresExplainResult(Query query, Connection database) throws SQLException {
+        if ((query == null) || (database == null)) {
+            throw new NullPointerException("Arguments cannot be null");
+        }
+
         Statement s = database.createStatement();
         String queryString = query.getSQLString();
         s.execute("explain" + queryString);
