@@ -61,8 +61,7 @@
         
         os.ws-client.class=org.intermine.objectstore.webservice.ObjectStoreClient
         os.ws-client.model=testmodel
-        os.ws-client.alias=client
-        os.ws-client.client.url=http://localhost:8080/webservice/services/ObjectStore
+        os.ws-client.url=http://localhost:8080/webservice/services/ObjectStore
         
         os.query.max-time=1000000000
         os.query.max-limit=10000

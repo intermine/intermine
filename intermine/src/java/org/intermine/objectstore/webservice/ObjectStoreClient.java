@@ -26,6 +26,7 @@ import org.apache.axis.client.Service;
 import javax.xml.namespace.QName;
 
 import org.intermine.metadata.Model;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
@@ -77,12 +78,12 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     /**
      * Gets a ObjectStoreClient instance for the given properties
      *
+     * @param osAlias the alias of this objectstore
      * @param props The properties used to configure an ObjectStoreClient
-     * @param model the metadata associated with this objectstore
      * @return the ObjectStoreClient for the given properties
      * @throws ObjectStoreException if there is any problem with the underlying ObjectStore
      */
-    public static ObjectStoreClient getInstance(Properties props, Model model)
+    public static ObjectStoreClient getInstance(String osAlias, Properties props)
         throws ObjectStoreException {
         String urlString = props.getProperty("url");
         if (urlString == null) {
@@ -97,6 +98,12 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
         }
         synchronized (instances) {
             if (!(instances.containsKey(urlString))) {
+                Model model;
+                try {
+                    model = getModelFromClasspath(osAlias, props);
+                } catch (MetaDataException metaDataException) {
+                    throw new ObjectStoreException("Cannot load model", metaDataException);
+                }
                 instances.put(urlString, new ObjectStoreClient(url, model));
             }
         }

@@ -57,9 +57,9 @@ public class IntegrationWriterFactory
         IntegrationWriter iw = null;
         try {
             Class integrationWriterClass = Class.forName(integrationWriterClassName);
-            Method m = integrationWriterClass.getMethod("getInstance", new Class[]
-                    {Properties.class});
-            iw = (IntegrationWriter) m.invoke(null, new Object[] {props});
+            Class[] parameterTypes = new Class[] {String.class, Properties.class};
+            Method m = integrationWriterClass.getMethod("getInstance", parameterTypes);
+            iw = (IntegrationWriter) m.invoke(null, new Object[] {alias, props});
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified IntegrationWriter class '"
                                            + integrationWriterClassName

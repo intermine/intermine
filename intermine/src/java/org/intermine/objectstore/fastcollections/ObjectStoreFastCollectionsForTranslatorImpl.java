@@ -23,7 +23,6 @@ import java.util.TreeSet;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -72,29 +71,30 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * Gets an ObjectStoreFastCollectionsForTranslatorImpl instance for the given properties
      *
+     * @param osAlias the alias of this objectstore
      * @param props the properties
-     * @param model - thrown away
      * @return the ObjectStore
      * @throws IllegalArgumentException if props are invalid
      * @throws ObjectStoreException if there is a problem with the instance
      */
-    public static ObjectStoreFastCollectionsForTranslatorImpl getInstance(Properties props,
-            Model model) throws ObjectStoreException {
-        String osAlias = props.getProperty("os");
-        if (osAlias == null) {
+    public static ObjectStoreFastCollectionsForTranslatorImpl getInstance(String osAlias,
+                                                                          Properties props)
+        throws ObjectStoreException {
+        String underlyingOsAlias = props.getProperty("os");
+        if (underlyingOsAlias == null) {
             throw new IllegalArgumentException("No 'os' property specified for FastCollections"
-                    + " objectstore");
+                                               + " objectstore");
         }
         ObjectStore objectStore;
         try {
-            objectStore = ObjectStoreFactory.getObjectStore(osAlias);
+            objectStore = ObjectStoreFactory.getObjectStore(underlyingOsAlias);
         } catch (Exception e) {
             // preserve ObjectStoreExceptions for more useful message
             Throwable t = e.getCause();
             if (t instanceof ObjectStoreException) {
                 throw (ObjectStoreException) t;
             } else {
-                throw new IllegalArgumentException("ObjectStore '" + osAlias
+                throw new IllegalArgumentException("ObjectStore '" + underlyingOsAlias
                                                    + "' not found in properties");
             }
         }

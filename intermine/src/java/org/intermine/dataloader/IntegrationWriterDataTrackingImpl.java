@@ -48,11 +48,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * Creates a new instance of this class, given the properties defining it.
      *
+     * @param osAlias the alias of this objectstore
      * @param props the Properties
      * @return an instance of this class
      * @throws ObjectStoreException sometimes
      */
-    public static IntegrationWriterDataTrackingImpl getInstance(Properties props)
+    public static IntegrationWriterDataTrackingImpl getInstance(String osAlias, Properties props)
             throws ObjectStoreException {
         String writerAlias = props.getProperty("osw");
         if (writerAlias == null) {

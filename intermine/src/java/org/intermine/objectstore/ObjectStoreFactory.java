@@ -14,8 +14,6 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.intermine.util.PropertiesUtil;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
 
 /**
  * Produce ObjectStores
@@ -48,36 +46,16 @@ public class ObjectStoreFactory
             throw new ObjectStoreException(alias + " does not have an ObjectStore class specified"
                                            + " (check properties file)");
         }
-        String modelName = props.getProperty("model");
-        if (modelName == null) {
-            throw new ObjectStoreException(alias + " does not have a model specified"
-                                           + " (check properties file)");
-        }
-        Model model;
-        try {
-            model = Model.getInstanceByName(modelName);
-            if (model == null) {
-                throw new MetaDataException("Model is null despite load");
-            }
-        } catch (MetaDataException e) {
-            throw new ObjectStoreException(e);
-        }
-        String impl = props.getProperty("alias");
-        if (impl == null) {
-            throw new ObjectStoreException(alias + " does not have an alias specified"
-                                           + " (check properties file)");
-        }
-        Properties subProps = PropertiesUtil.stripStart(impl, props);
         Class cls = null;
         try {
             cls = Class.forName(clsName);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified ObjectStore class '" + clsName
-                                           + "' for " + alias + " (check properties file)");
+                                           + "' for " + alias + " (check properties file)", e);
         }
-        Method m = cls.getDeclaredMethod("getInstance",
-                                         new Class[] {Properties.class, Model.class});
-        return (ObjectStore) m.invoke(null, new Object[] {subProps, model});
+        Class[] parameterTypes = new Class[] {String.class, Properties.class};
+        Method m = cls.getDeclaredMethod("getInstance", parameterTypes);
+        return (ObjectStore) m.invoke(null, new Object[] {alias, props});
     }
 
     /**

@@ -24,6 +24,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.metadata.MetaDataException;
 
 import org.apache.log4j.Logger;
 
@@ -153,6 +154,28 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             return o;
         }
         return null;
+    }
+
+    /**
+     * Read the Model from the classpath.
+     * @param osAlias the alias of the ObjectStore properties to get the model name from.
+     * @param properties the Properties object containing the model name
+     * @return a Model
+     * @throws MetaDataException if the model can't be read
+     */
+    protected static Model getModelFromClasspath(String osAlias, Properties properties)
+        throws MetaDataException {
+        String modelName = properties.getProperty("model");
+        if (modelName == null) {
+            throw new MetaDataException(osAlias
+                                        + " does not have a model specified ("
+                                        + modelName + ") - check properties");
+        }
+        Model model = Model.getInstanceByName(modelName);
+        if (model == null) {
+            throw new MetaDataException("Model is null despite load from classpath");
+        }
+        return model;
     }
 
     /**

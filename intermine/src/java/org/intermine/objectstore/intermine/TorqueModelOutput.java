@@ -118,6 +118,13 @@ public class TorqueModelOutput
             sb.append(generateIndirectionTable((CollectionDescriptor) indirectionIter.next()));
         }
 
+        // create a metadata table
+        sb.append(INDENT).append("<table name=\"intermine_metadata\">").append(ENDL);
+        sb.append(generateColumn("key", "java.lang.String"));
+        sb.append(generateColumn("value", "java.lang.String"));
+
+        sb.append(INDENT + "</table>" + ENDL);
+
         sb.append("</database>" + ENDL);
         return sb.toString();
     }
