@@ -14,6 +14,8 @@ import junit.framework.TestCase;
 
 import java.io.InputStream;
 
+import org.intermine.metadata.Model;
+
 public class WebConfigTest extends TestCase
 {
 
@@ -23,12 +25,12 @@ public class WebConfigTest extends TestCase
 
     public void testParse() throws Exception{
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/WebConfigTest.xml");
-        WebConfig wc1 = WebConfig.parse(is);
+        WebConfig wc1 = WebConfig.parse(is, Model.getInstanceByName("testmodel"));
 
         Displayer disp1 = new Displayer();
         disp1.setSrc("/model/page2.jsp");
         Type type1 = new Type();
-        type1.setClassName("Class1");
+        type1.setClassName("org.intermine.model.testmodel.Employable");
         type1.addLongDisplayer(disp1);
         FieldConfig df1 = new FieldConfig();
         df1.setFieldExpr("class1field1");
@@ -42,7 +44,7 @@ public class WebConfigTest extends TestCase
         Displayer disp3 = new Displayer();
         disp3.setSrc("tile2.tile");
         Type type2 = new Type();
-        type2.setClassName("Class2");
+        type2.setClassName("org.intermine.model.testmodel.Thing");
         type2.addLongDisplayer(disp2);
         type2.addLongDisplayer(disp3);
 
@@ -55,13 +57,14 @@ public class WebConfigTest extends TestCase
         wc2.addType(type1);
         wc2.addType(type2);
         wc2.addExporter(exporter);
+        wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
 
         assertEquals(wc2, wc1);
     }
 
     public void testParseNull() throws Exception{
         try {
-            WebConfig.parse(null);
+            WebConfig.parse(null, Model.getInstanceByName("testmodel"));
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }
