@@ -214,47 +214,47 @@ public class CalculateLocationsTest extends TestCase {
 
     public void testOverlap() throws Exception {
         CalculateLocations cl = new CalculateLocations(osw);
-        CalculateLocations.SimpleLoc parent = cl.new SimpleLoc(101, 102, 101, 200, 0);
+        CalculateLocations.SimpleLoc parent = cl.new SimpleLoc(101, 102, 101, 200, 1);
 
         //   ------------>       parent
         //          |
         //          --------->   child
-        CalculateLocations.SimpleLoc s1 = cl.new SimpleLoc(101, 103, 151, 250, 0);
+        CalculateLocations.SimpleLoc s1 = cl.new SimpleLoc(101, 103, 151, 250, 1);
         assertTrue(cl.overlap(s1, parent));
         assertTrue(cl.overlap(parent, s1));
 
         //       -------------->   parent
         //            |
         //   ---------->           child
-        CalculateLocations.SimpleLoc s2 = cl.new SimpleLoc(101, 103, 51, 150, 0);
+        CalculateLocations.SimpleLoc s2 = cl.new SimpleLoc(101, 103, 51, 150, 1);
         assertTrue(cl.overlap(s2, parent));
         assertTrue(cl.overlap(parent, s2));
 
         //  ------------------>   parent
         //      |        |
         //      ---------->       child
-        CalculateLocations.SimpleLoc s3 = cl.new SimpleLoc(101, 103, 126, 175, 0);
+        CalculateLocations.SimpleLoc s3 = cl.new SimpleLoc(101, 103, 126, 175, 1);
         assertTrue(cl.overlap(s3, parent));
         assertTrue(cl.overlap(parent, s3));
 
         //      -------->        parent
         //      |      |
         //   -------------->     child
-        CalculateLocations.SimpleLoc s4 = cl.new SimpleLoc(101, 103, 51, 250, 0);
+        CalculateLocations.SimpleLoc s4 = cl.new SimpleLoc(101, 103, 51, 250, 1);
         assertTrue(cl.overlap(s4, parent));
         assertTrue(cl.overlap(parent, s4));
 
         // ------->               parent
         //
         //           ------->     child
-        CalculateLocations.SimpleLoc s5 = cl.new SimpleLoc(101, 103, 251, 350, 0);
+        CalculateLocations.SimpleLoc s5 = cl.new SimpleLoc(101, 103, 251, 350, 1);
         assertFalse(cl.overlap(s5, parent));
         assertFalse(cl.overlap(parent, s5));
 
         //           ------->     parent
         //
         // ------->               child
-        CalculateLocations.SimpleLoc s6 = cl.new SimpleLoc(101, 103, 26, 75, 0);
+        CalculateLocations.SimpleLoc s6 = cl.new SimpleLoc(101, 103, 26, 75, 1);
         assertFalse(cl.overlap(s6, parent));
         assertFalse(cl.overlap(parent, s6));
     }
@@ -274,7 +274,7 @@ public class CalculateLocationsTest extends TestCase {
         //      ---------->       child
         CalculateLocations cl = new CalculateLocations(osw);
         CalculateLocations.SimpleLoc parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 400, 1);
-        CalculateLocations.SimpleLoc childOnChr = cl.new SimpleLoc(parentId, childId, 151, 250, 0);
+        CalculateLocations.SimpleLoc childOnChr = cl.new SimpleLoc(parentId, childId, 151, 250, 1);
         Location res = cl.createLocation(parent, parentOnChr, child, childOnChr);
 
         Location exp3 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -282,7 +282,7 @@ public class CalculateLocationsTest extends TestCase {
         exp3.setEnd(new Integer(150));
         exp3.setStartIsPartial(Boolean.FALSE);
         exp3.setEndIsPartial(Boolean.FALSE);
-        exp3.setStrand(new Integer(0));
+        exp3.setStrand(new Integer(1));
         exp3.setObject(parent);
         exp3.setSubject(child);
         assertEquals(toItem(exp3), toItem(res));
@@ -291,8 +291,8 @@ public class CalculateLocationsTest extends TestCase {
         //          |
         //          --------->    child
         cl = new CalculateLocations(osw);
-        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 450, 0);
-        childOnChr = cl.new SimpleLoc(parentId, childId, 251, 500, 0);
+        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 450, 1);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 251, 500, 1);
         res = cl.createLocation(parent, parentOnChr, child, childOnChr);
 
         PartialLocation exp1 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
@@ -302,7 +302,7 @@ public class CalculateLocationsTest extends TestCase {
         exp1.setEndIsPartial(Boolean.TRUE);
         exp1.setSubjectStart(new Integer(1));
         exp1.setSubjectEnd(new Integer(200));
-        exp1.setStrand(new Integer(0));
+        exp1.setStrand(new Integer(1));
         exp1.setObject(parent);
         exp1.setSubject(child);
         assertEquals(toItem(exp1), toItem(res));
@@ -311,7 +311,7 @@ public class CalculateLocationsTest extends TestCase {
         //            |
         //   ---------->           child
         cl = new CalculateLocations(osw);
-        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 400, 0);
+        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 400, 1);
         childOnChr = cl.new SimpleLoc(parentId, childId, 51, 150, 1);
         res = cl.createLocation(parent, parentOnChr, child, childOnChr);
 
@@ -332,7 +332,7 @@ public class CalculateLocationsTest extends TestCase {
         //   -------------->     child
         cl = new CalculateLocations(osw);
         parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 300, 1);
-        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 400, 0);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 400, 1);
         res = cl.createLocation(parent, parentOnChr, child, childOnChr);
 
         PartialLocation exp4 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
@@ -342,7 +342,7 @@ public class CalculateLocationsTest extends TestCase {
         exp4.setEndIsPartial(Boolean.TRUE);
         exp4.setSubjectStart(new Integer(51));
         exp4.setSubjectEnd(new Integer(250));
-        exp4.setStrand(new Integer(0));
+        exp4.setStrand(new Integer(1));
         exp4.setObject(parent);
         exp4.setSubject(child);
         assertEquals(toItem(exp4), toItem(res));
@@ -386,9 +386,9 @@ public class CalculateLocationsTest extends TestCase {
 
         PartialLocation exp1 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
         exp1.setStart(new Integer(1));
-        exp1.setEnd(new Integer(151));
-        exp1.setStartIsPartial(Boolean.FALSE);
-        exp1.setEndIsPartial(Boolean.TRUE);
+        exp1.setEnd(new Integer(200));
+        exp1.setStartIsPartial(Boolean.TRUE);
+        exp1.setEndIsPartial(Boolean.FALSE);
         exp1.setSubjectStart(new Integer(1));
         exp1.setSubjectEnd(new Integer(200));
         exp1.setStrand(new Integer(-1));
@@ -407,8 +407,8 @@ public class CalculateLocationsTest extends TestCase {
         PartialLocation exp2 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
         exp2.setStart(new Integer(251));
         exp2.setEnd(new Integer(300));
-        exp2.setStartIsPartial(Boolean.TRUE);
-        exp2.setEndIsPartial(Boolean.FALSE);
+        exp2.setStartIsPartial(Boolean.FALSE);
+        exp2.setEndIsPartial(Boolean.TRUE);
         exp2.setSubjectStart(new Integer(51));
         exp2.setSubjectEnd(new Integer(100));
         exp2.setStrand(new Integer(-1));
@@ -421,7 +421,7 @@ public class CalculateLocationsTest extends TestCase {
         //   -------------->     child
         cl = new CalculateLocations(osw);
         parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 300, -1);
-        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 400, 0);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 400, 1);
         res = cl.createLocation(parent, parentOnChr, child, childOnChr);
 
         PartialLocation exp4 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
@@ -527,7 +527,91 @@ public class CalculateLocationsTest extends TestCase {
 
 
     public void testCreateLocationBothReversed() throws Exception {
+        Chromosome chr = getChromosome();
+        BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
+        int parentId = 101;
+        parent.setId(new Integer(parentId));
+        BioEntity child = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
+        int childId = 102;
+        child.setId(new Integer(childId));
 
+        //  <------------------   parent
+        //      |        |
+        //     <----------        child
+        CalculateLocations cl = new CalculateLocations(osw);
+        CalculateLocations.SimpleLoc parentOnChr= cl.new SimpleLoc(parentId, childId,101, 500, -1);
+        CalculateLocations.SimpleLoc childOnChr = cl.new SimpleLoc(parentId, childId, 151, 250, -1);
+        Location res = cl.createLocation(parent, parentOnChr, child, childOnChr);
+
+        Location exp3 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exp3.setStart(new Integer(251));
+        exp3.setEnd(new Integer(350));
+        exp3.setStartIsPartial(Boolean.FALSE);
+        exp3.setEndIsPartial(Boolean.FALSE);
+        exp3.setStrand(new Integer(1));
+        exp3.setObject(parent);
+        exp3.setSubject(child);
+        assertEquals(toItem(exp3), toItem(res));
+
+        //   <------------       parent
+        //          |
+        //         <---------    child
+        cl = new CalculateLocations(osw);
+        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 350, -1);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 251, 500, -1);
+        res = cl.createLocation(parent, parentOnChr, child, childOnChr);
+
+        PartialLocation exp1 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
+        exp1.setStart(new Integer(1));
+        exp1.setEnd(new Integer(100));
+        exp1.setStartIsPartial(Boolean.TRUE);
+        exp1.setEndIsPartial(Boolean.FALSE);
+        exp1.setSubjectStart(new Integer(151));
+        exp1.setSubjectEnd(new Integer(250));
+        exp1.setStrand(new Integer(1));
+        exp1.setObject(parent);
+        exp1.setSubject(child);
+        assertEquals(toItem(exp1), toItem(res));
+
+        //       <--------------  parent
+        //            |
+        //   <---------           child
+        cl = new CalculateLocations(osw);
+        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 400, -1);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 150, -1);
+        res = cl.createLocation(parent, parentOnChr, child, childOnChr);
+
+        PartialLocation exp2 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
+        exp2.setStart(new Integer(251));
+        exp2.setEnd(new Integer(300));
+        exp2.setStartIsPartial(Boolean.FALSE);
+        exp2.setEndIsPartial(Boolean.TRUE);
+        exp2.setSubjectStart(new Integer(1));
+        exp2.setSubjectEnd(new Integer(50));
+        exp2.setStrand(new Integer(1));
+        exp2.setObject(parent);
+        exp2.setSubject(child);
+        assertEquals(toItem(exp2), toItem(res));
+
+        //     <--------         parent
+        //      |      |
+        //   <--------------     child
+        cl = new CalculateLocations(osw);
+        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 300, -1);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 550, -1);
+        res = cl.createLocation(parent, parentOnChr, child, childOnChr);
+
+        PartialLocation exp4 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
+        exp4.setStart(new Integer(1));
+        exp4.setEnd(new Integer(200));
+        exp4.setStartIsPartial(Boolean.TRUE);
+        exp4.setEndIsPartial(Boolean.TRUE);
+        exp4.setSubjectStart(new Integer(251));
+        exp4.setSubjectEnd(new Integer(450));
+        exp4.setStrand(new Integer(1));
+        exp4.setObject(parent);
+        exp4.setSubject(child);
+        assertEquals(toItem(exp4), toItem(res));
     }
 
     private Location createLocation(BioEntity object, BioEntity subject, int strand, int start, int end) {
@@ -539,7 +623,7 @@ public class CalculateLocationsTest extends TestCase {
         loc.setEnd(new Integer(end));
         loc.setStartIsPartial(Boolean.FALSE);
         loc.setEndIsPartial(Boolean.FALSE);
-
+        loc.setStrand(new Integer(1));
         return loc;
     }
 
@@ -600,7 +684,7 @@ public class CalculateLocationsTest extends TestCase {
             bandOnChr = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
             bandOnChr.setObject(getChromosome());
             bandOnChr.setSubject(getChromosomeBand());
-            bandOnChr.setStrand(new Integer(0));
+            bandOnChr.setStrand(new Integer(1));
             bandOnChr.setStart(new Integer(1001));
             bandOnChr.setEnd(new Integer(2000));
             bandOnChr.setId(new Integer(103));
