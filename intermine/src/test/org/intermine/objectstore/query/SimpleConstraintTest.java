@@ -62,19 +62,19 @@ public class SimpleConstraintTest extends TestCase {
         }
     }
 
-    public void testSingleInvalidType() throws Exception {
+    public void testSingleNullType() throws Exception {
         try {
-            constraint = new SimpleConstraint(qeStr1, 234);
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+            constraint = new SimpleConstraint(qeStr1, null);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
         }
     }
 
     public void testDualInvalidType() throws Exception {
         try {
-            constraint = new SimpleConstraint(qeStr1, 234, qeStr2);
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+            constraint = new SimpleConstraint(qeStr1, null, qeStr2);
+            fail("Expected: NullPointerException");
+        } catch (NullPointerException e) {
         }
     }
 

@@ -41,8 +41,8 @@ public class QueryCreatorTest extends TestCase
         fields.put("fullTime", "true");
 
         Map ops = new HashMap();
-        ops.put("name", String.valueOf(SimpleConstraint.EQUALS));
-        ops.put("fullTime", String.valueOf(SimpleConstraint.EQUALS));
+        ops.put("name", SimpleConstraint.EQUALS.getIndex().toString());
+        ops.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
 
         Query q = new Query();
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");
@@ -100,8 +100,8 @@ public class QueryCreatorTest extends TestCase
         fields.put("fullTime", "true");
 
         Map ops = new HashMap();
-        ops.put("name", String.valueOf(SimpleConstraint.EQUALS));
-        ops.put("fullTime", String.valueOf(SimpleConstraint.EQUALS));
+        ops.put("name", SimpleConstraint.EQUALS.getIndex().toString());
+        ops.put("fullTime", SimpleConstraint.EQUALS.getIndex().toString());
 
         QueryClass qc = new QueryClass(Employee.class);
         ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Employee");

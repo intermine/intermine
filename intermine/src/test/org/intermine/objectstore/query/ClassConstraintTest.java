@@ -42,9 +42,9 @@ public class ClassConstraintTest extends TestCase {
 
     public void testInvalidTypeQCQC() throws Exception{
         try {
-            constraint = new ClassConstraint(company1, 234, company2);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            constraint = new ClassConstraint(company1, null, company2);
+            fail("An NullPointerException should have been thrown");
+        } catch (NullPointerException e) {
         }
     }
 
@@ -91,9 +91,9 @@ public class ClassConstraintTest extends TestCase {
 
     public void testInvalidTypeQCObj() throws Exception{
         try {
-            constraint = new ClassConstraint(company1, 234, company1Object);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            constraint = new ClassConstraint(company1, null, company1Object);
+            fail("An NullPointerException should have been thrown");
+        } catch (NullPointerException e) {
         }
     }
 

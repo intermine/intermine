@@ -53,9 +53,9 @@ public class ContainsConstraintTest extends TestCase {
 
     public void testInvalidType() {
         try {
-            constraint = new ContainsConstraint(collRef, 234, qc3);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            constraint = new ContainsConstraint(collRef, null, qc3);
+            fail("An NullPointerException should have been thrown");
+        } catch (NullPointerException e) {
         }
     }
 

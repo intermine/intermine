@@ -62,14 +62,14 @@ public class SubqueryConstraintTest extends TestCase {
 
     public void testInvalidType() {
         try {
-            constraint = new SubqueryConstraint(subquery, 234, qc1);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            constraint = new SubqueryConstraint(subquery, null, qc1);
+            fail("An NullPointerException should have been thrown");
+        } catch (NullPointerException e) {
         }
         try {
-            constraint = new SubqueryConstraint(subquery, 234, qe1);
-            fail("An IllegalArgumentException should have been thrown");
-        } catch (IllegalArgumentException e) {
+            constraint = new SubqueryConstraint(subquery, null, qe1);
+            fail("An NullPointerException should have been thrown");
+        } catch (NullPointerException e) {
         }
 
     }
