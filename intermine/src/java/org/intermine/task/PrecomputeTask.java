@@ -608,7 +608,7 @@ public class PrecomputeTask extends Task
 
     /**
      * Take three class objects and two connecting collection or reference field name and create a
-     * new Query.  Eg. for
+     * new Query.
      * @param object1Class an object class
      * @param connectingFieldname1 the field name to use to reference objectClass2 from objectClass1
      * @param object2Class an object class
@@ -695,7 +695,7 @@ public class PrecomputeTask extends Task
     }
 
     /**
-     * Return a List containing clones of the given Query, but with each ordered by a different 
+     * Return a List containing clones of the given Query, but with each ordered by a different
      * field of the Query.
      * @param q the Query
      * @return clones of the Query order by each of the fields
