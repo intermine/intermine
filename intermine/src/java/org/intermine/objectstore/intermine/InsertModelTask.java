@@ -13,10 +13,6 @@ package org.intermine.objectstore.intermine;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import java.io.File;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.metadata.Model;
