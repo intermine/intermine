@@ -16,7 +16,7 @@
     <item url="/doc/usage_scenarios/index.xml" title="Usage scenarios"/>
   </item>
   
-  <item url="/download/index.xml" title="Download&#160;software">
+  <item url="/download/index.xml" title="Download software">
     <item url="http://download.flymine.org/releases/" title="Latest release"/>
     <item url="http://download.flymine.org/nightly/" title="Nightly build"/>
     <item url="http://cvs.flymine.org/" title="Browse CVS"/>
