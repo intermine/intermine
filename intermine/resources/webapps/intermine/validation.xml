@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE form-validation PUBLIC
+          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
+          "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
+
+<!--
+    Validation Rules for the Struts Example Web Application
+
+    $Id$
+-->
+
+<form-validation>
+
+
+    <!-- ========== Default Language Form Definitions ===================== -->
+    <formset>
+
+        <form name="logonForm">
+
+            <field property="username"
+                    depends="minlength,maxlength">
+                <arg0   key="prompt.username"/>
+                <arg1   key="${var:minlength}" name="minlength"
+                   resource="false"/>
+                <arg2   key="${var:maxlength}" name="maxlength"
+                   resource="false"/>
+                <var>
+                    <var-name>maxlength</var-name>
+                    <var-value>16</var-value>
+                </var>
+                <var>
+                    <var-name>minlength</var-name>
+                    <var-value>3</var-value>
+                </var>
+            </field>
+
+            <field property="password"
+                    depends="minlength,maxlength"
+                    bundle="alternate">
+                <arg0   key="prompt.password"/>
+                <arg1   key="${var:minlength}" name="minlength"
+                   resource="false"/>
+                <arg2   key="${var:maxlength}" name="maxlength"
+                   resource="false"/>
+                <var>
+                    <var-name>maxlength</var-name>
+                    <var-value>16</var-value>
+                </var>
+                <var>
+                    <var-name>minlength</var-name>
+                    <var-value>3</var-value>
+                </var>
+            </field>
+
+        </form>
+
+
+        <form name="registrationForm">
+
+            <field property="fromAddress"
+                    depends="required,email">
+                <arg0   key="prompt.fromAddress"/>
+            </field>
+
+            <field property="fullName"
+                    depends="required">
+              <arg0     key="prompt.fullName"/>
+            </field>
+
+            <field property="replyToAddress"
+                    depends="email">
+                <arg0   key="prompt.replyToAddress"/>
+            </field>
+
+            <field property="username"
+                    depends="required">
+              <arg0     key="prompt.username"/>
+            </field>
+
+        </form>
+
+        <form name="queryForm">
+
+            <field property="querystring"
+                    depends="required,email">
+                <arg0   key="prompt.querystring"/>
+            </field>
+
+        </form>
+
+
+    </formset>
+
+
+</form-validation>

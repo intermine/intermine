@@ -1,0 +1,41 @@
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+  "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+<definition 
+    name="layout" 
+    path="/layout.jsp">
+    <put name="title" value="FlyMine" />
+    <put name="header" value="/header.jsp"/>
+    <put name="menu" value="/menu.jsp"/>
+    <put name="footer" value="/footer.jsp"/>
+    <put name="body" value=""/>
+</definition>
+<definition name="index.page" extends="layout">
+    <put 
+        name="body" 
+        value="/index.jsp"/>
+</definition>
+<definition name="query.page" extends="layout">
+    <put 
+        name="body" 
+        value="/query.jsp"/>
+</definition>
+<definition name="results.page" extends="layout">
+    <put 
+        name="body" 
+        value="/results.jsp"/>
+</definition>
+<definition name="error.page" extends="layout">
+    <put 
+        name="body" 
+        value="/error.jsp"/>
+</definition>
+<definition name="documentation.page" extends="layout">
+    <put 
+        name="body" 
+        value="/docbook.jsp"/>
+</definition>
+</tiles-definitions>
+
