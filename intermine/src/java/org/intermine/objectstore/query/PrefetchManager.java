@@ -46,7 +46,7 @@ public class PrefetchManager
         synchronized (sync) {
             synchronized (result) {
                 // Synchronise on BOTH locks, so we can muck about with anything.
-                if (!result.batches.containsKey(new Integer(batchNo))) {
+                if (!result.getBatches().containsKey(new Integer(batchNo))) {
                     // The request has not been done.
                     if (!serviced.contains(request)) {
                         // And it isn't currently being serviced.
@@ -112,7 +112,7 @@ public class PrefetchManager
                 // We need both locks, because we need to exclude the possibility that someone
                 // finishes a request between us checking to see if it is already fetched, and
                 // checking if we need to wait for someone to finish fetching it.
-                retval = (List) request.result.batches.get(new Integer(request.batchNo));
+                retval = (List) request.result.getBatches().get(new Integer(request.batchNo));
                 if (retval != null) {
                     // The batch has already been fetched.
                     //LOG.debug("doRequest - the request has already been done:        " + request);
@@ -185,7 +185,7 @@ public class PrefetchManager
                 retval = request.result.fetchBatchFromObjectStore(request.batchNo);
                 // And add the result to batches, assuming we didn't get an exception.
                 Integer key = new Integer(request.batchNo);
-                request.result.batches.put(key, retval);
+                request.result.getBatches().put(key, retval);
             } finally {
                 // And then report that it is finished, inside a lock, even if we did get an
                 // exception.
@@ -292,7 +292,7 @@ public class PrefetchManager
                         List batch = request.result.fetchBatchFromObjectStore(request.batchNo);
                         // And add the result to batches, assuming we didn't get an exception.
                         Integer key = new Integer(request.batchNo);
-                        request.result.batches.put(key, batch);
+                        request.result.getBatches().put(key, batch);
                     } catch (Exception e) {
                         LOG.info("ServiceThread.run - Received exception                " + request
                                 + " " + e);

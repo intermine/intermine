@@ -107,6 +107,14 @@ public class Results extends AbstractList
     }
 
     /**
+     * Return the batches retrieved for this Results object
+     * @return a map from batch number to items
+     */
+    protected Map getBatches() {
+        return batches;
+    }
+
+    /**
      * Returns a range of rows of results. Will fetch batches from the
      * underlying ObjectStore if necessary.
      *
