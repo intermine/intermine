@@ -255,5 +255,9 @@ version="1.0">
 <i><xsl:apply-templates/></i>
 </xsl:template>
 
+<xsl:template match="synopsis">
+<code><xsl:apply-templates/></code>
+</xsl:template>
+
 </xsl:stylesheet>
 
