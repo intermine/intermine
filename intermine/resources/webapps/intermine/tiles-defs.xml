@@ -7,7 +7,7 @@
 <tiles-definitions>
   <!--templates-->
   <definition name="layout.template" path="/layout.jsp">
-    <put name="pageDescription" value=""/>
+    <put name="pageName" value=""/>
     <put name="title" value="InterMine" />
     <put name="header" value="/header.jsp"/>
     <put name="menu" value="/menu.jsp"/>
@@ -19,71 +19,71 @@
   <!--pages-->
   <definition name="login.page" extends="layout.template">
     <put name="body" value="login.jsp"/>
-    <put name="pageDescription" value="login.page.description"/>
+    <put name="pageName" value="login.page"/>
   </definition>
   <definition name="query.page" extends="layout.template">
     <put name="body" value="query.tile"/>
-    <put name="pageDescription" value="query.page.description"/>
+    <put name="pageName" value="query.page"/>
   </definition>
   <definition name="iqlQuery.page" extends="layout.template">
     <put name="body" value="iqlQuery.tile"/>
-    <put name="pageDescription" value="iqlquery.page.description"/>
+    <put name="pageName" value="iqlquery.page"/>
   </definition>
   <definition name="history.page" extends="layout.template">
     <put name="body" value="history.tile"/>
-    <put name="pageDescription" value="history.page.description"/>
+    <put name="pageName" value="history.page"/>
   </definition>
   <definition name="begin.page" extends="layout.template">
     <put name="body" value="begin.tile"/>
-    <put name="pageDescription" value="begin.page.description"/>
+    <put name="pageName" value="begin.page"/>
   </definition>
   <definition name="templates.page" extends="layout.template">
     <put name="body" value="templates.jsp"/>
-    <put name="pageDescription" value="templates.page.description"/>
+    <put name="pageName" value="templates.page"/>
   </definition>
   <definition name="examples.page" extends="layout.template">
     <put name="body" value="examples.jsp"/>
-    <put name="pageDescription" value="examples.page.description"/>
+    <put name="pageName" value="examples.page"/>
   </definition>
   <definition name="bagBuild.page" extends="layout.template">
     <put name="body" value="bagBuild.tile"/>
-    <put name="pageDescription" value="bagBuild.page.description"/>
+    <put name="pageName" value="bagBuild.page"/>
   </definition>
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.jsp"/>
-    <put name="pageDescription" value="help.page.description"/>
+    <put name="pageName" value="help.page"/>
   </definition>
   <definition name="classChooser.page" extends="layout.template">
     <put name="body" value="queryClassSelect.jsp"/>
-    <put name="pageDescription" value="classChooser.page.description"/>
+    <put name="pageName" value="classChooser.page"/>
   </definition>
   <definition name="results.page" extends="layout.template">
     <put name="body" value="table.jsp"/>
-    <put name="pageDescription" value="results.page.description"/>
+    <put name="pageName" value="results.page"/>
   </definition>
   <definition name="error.page" extends="layout.template">
     <put name="body" value="error.jsp"/>
-    <put name="pageDescription" value="error.page.description"/>
+    <put name="pageName" value="error.page"/>
   </definition>
   <definition name="objectDetails.page" extends="layout.template">
     <put name="body" value="objectDetailsPage.tile"/>
-    <put name="pageDescription" value="objectDetails.page.description"/>
+    <put name="pageName" value="objectDetails.page"/>
   </definition>
   <definition name="collectionDetails.page" extends="layout.template">
     <put name="body" value="collectionDetailsPage.tile"/>
-    <put name="pageDescription" value="collectionDetails.page.description"/>
+    <put name="pageName" value="collectionDetails.page"/>
   </definition>
   <definition name="bagDetails.page" extends="layout.template">
     <put name="body" value="bagDetailsPage.tile"/>
-    <put name="pageDescription" value="bagDetails.page.description"/>
+    <put name="pageName" value="bagDetails.page"/>
   </definition>
   <definition name="documentation.page" extends="layout.template">
     <put name="body" value="docbook.jsp"/>
-    <put name="pageDescription" value="documentation.page.description"/>
+    <put name="pageName" value="documentation.page"/>
   </definition>
   <definition name="tree.page" extends="layout.template">
     <put name="body" value="tree.tile"/>
-    <put name="pageDescription" value="tree.page.description"/>
+    <put name="pageName" value="tree.page"/>
   </definition>
   <definition name="classDescription.page" extends="layout.template">
     <put name="body" value="classDescription.tile"/>
