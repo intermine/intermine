@@ -83,7 +83,9 @@ public class MainHelper
         // compare FieldDescriptors by name
         Comparator comparator = new Comparator() {
             public int compare(Object o1, Object o2) {
-                return ((FieldDescriptor) o1).getName().compareTo(((FieldDescriptor) o2).getName());
+                String fieldName1 = ((FieldDescriptor) o1).getName().toLowerCase();
+                String fieldName2 = ((FieldDescriptor) o2).getName().toLowerCase();
+                return fieldName1.compareTo(fieldName2);
             }
         };
 
