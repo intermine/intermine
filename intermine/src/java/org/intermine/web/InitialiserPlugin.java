@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.TreeSet;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -86,9 +88,25 @@ public class InitialiserPlugin implements PlugIn
             }
             servletContext.setAttribute("classes", classes);
             servletContext.setAttribute("classCounts", classCounts);
+            
+            readExampleQueries(servletContext);            
         } catch (Exception e) {
             throw new ServletException("Initialisation failed: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
+     */
+    private void readExampleQueries(ServletContext servletContext) throws Exception {
+        InputStream exampleQueriesStream =
+            servletContext.getResourceAsStream("/WEB-INF/example-queries.xml");
+
+        Reader exampleQueriesReader = new InputStreamReader(exampleQueriesStream);
+        SavedQueryParser savedQueryParser = new SavedQueryParser();
+        Map exampleQueries = savedQueryParser.process(exampleQueriesReader);
+        
+        servletContext.setAttribute(Constants.EXAMPLE_QUERIES, exampleQueries);
     }
 
     /**
