@@ -69,6 +69,9 @@
             forward="bagBuild.page"/>
 
     <action path="/examples"
+            forward="examples.page"/>
+
+    <action path="/templates"
             forward="templates.page"/>
 
     <action path="/history"
@@ -99,6 +102,12 @@
       <forward name="query" path="query.page"/>
     </action>
     
+    <action path="/loadExampleQuery"
+            type="org.intermine.web.LoadQueryAction"
+            parameter="method">
+      <forward name="query" path="query.page"/>
+    </action>
+
     <action path="/mainChange"
             type="org.intermine.web.MainChange"
             parameter="method">
