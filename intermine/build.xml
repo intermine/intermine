@@ -131,8 +131,10 @@
   <!-- Libraries that the webservice uses -->
   <patternset id="lib.webapp.webservice">
     <include name="axis*.jar" />
+    <include name="commons-discovery*.jar" />
     <include name="saaj*.jar" />
     <include name="jaxrpc*.jar" />
+    <include name="wsdl*.jar" />
   </patternset>
 
 
@@ -186,6 +188,13 @@
     </fileset>
     <fileset dir="${dist.webapp}">
       <include name="flymine.war"/>
+    </fileset>
+  </path>
+
+  <path id="webservice.class.path">
+    <path refid="project.class.path"/>
+    <fileset dir="${lib}">
+      <patternset refid="lib.webapp.webservice"/>
     </fileset>
   </path>
 
@@ -675,6 +684,7 @@
       </webinf>
       <lib dir="${lib}">
         <patternset refid="lib.common" />
+        <patternset refid="lib.antlr" />
         <patternset refid="lib.webapp.webservice" />
       </lib>
       <lib dir="${dist}">
@@ -836,9 +846,16 @@
       <classpath refid="project.class.path"/>
     </taskdef>
 
-    <tomcat-install url="${webservice.managerurl}" username="${webservice.manager}" 
+    <tomcat-install url="${webservice.baseurl}/manager" username="${webservice.manager}" 
                   password="${webservice.password}" path="${webservice.path}" 
                   war="${webservice.warfileurl}"/> 
+    <!-- This should probably be a waitfor task -->
+    <java classname="org.apache.axis.client.AdminClient" fork="true">
+      <classpath refid="webservice.class.path" />
+      <arg value="-l ${webservice.baseurl}/${webservice.path}/servlet/AxisServlet" />
+      <arg value="${resources}/webapps/webservice/deploy-ObjectStore.wsdd" />
+    </java>
+
   </target>
 
   <target name="remove-webservice"
@@ -847,7 +864,7 @@
         classname="org.apache.catalina.ant.RemoveTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    <tomcat-remove url="${webservice.managerurl}" username="${webservice.manager}" 
+    <tomcat-remove url="${webservice.baseurl}/manager" username="${webservice.manager}" 
             password="${webservice.password}" path="${webservice.path}"/>
   </target>
   
