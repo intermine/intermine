@@ -725,6 +725,13 @@ public abstract class BatchWriterTestCase extends TestCase
             } catch (Exception e) {
             }
             try {
+                Statement s = con.createStatement();
+                s.execute("DROP TABLE table2");
+                con.commit();
+                con.close();
+            } catch (Exception e) {
+            }
+            try {
                 con.close();
             } catch (Exception e) {
             }
