@@ -239,16 +239,20 @@
       classname="org.intermine.task.BuildDbTask">
       <classpath refid="class.path"/>
     </taskdef>
+    <taskdef name="build-torque" classname="org.intermine.objectstore.intermine.TorqueModelOutputTask">
+      <classpath refid="class.path"/>
+    </taskdef>
     
     <!-- clean the directory so that torque doesn't find any files from the
          last execution of this target -->
     <delete dir="${build.model.dir.tmp.builddb}"/>
     <mkdir dir="${build.model.dir.tmp.builddb}"/>
 
+    <build-torque osName="${objectstore.name}" destFile="${build.model.dir}/${objectstore.name}-schema.xml"/>
     <build-db
       database="${db.name}"
       tempdir="${build.model.dir.tmp.builddb}"
-      schemafile="${model.name}-schema.xml">
+      schemafile="${objectstore.name}-schema.xml">
     </build-db>
   </target>
 

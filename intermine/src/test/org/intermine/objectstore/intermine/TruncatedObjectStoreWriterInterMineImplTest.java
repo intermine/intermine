@@ -15,24 +15,21 @@ import junit.framework.Test;
 import org.intermine.objectstore.ObjectStoreWriterTestCase;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
+public class TruncatedObjectStoreWriterInterMineImplTest extends ObjectStoreWriterInterMineImplTest
 {
     public static void oneTimeSetUp() throws Exception {
-        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
+        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.truncunittest");
         ObjectStoreWriterTestCase.oneTimeSetUp();
     }
 
-    public static void oneTimeTearDown() throws Exception {
-        ObjectStoreWriterTestCase.oneTimeTearDown();
-        writer.close();
-    }
-
-    public ObjectStoreWriterInterMineImplTest(String arg) throws Exception {
+    public TruncatedObjectStoreWriterInterMineImplTest(String arg) throws Exception {
         super(arg);
     }
 
     public static Test suite() {
-        return buildSuite(ObjectStoreWriterInterMineImplTest.class);
+        return buildSuite(TruncatedObjectStoreWriterInterMineImplTest.class);
     }
 }
+
 

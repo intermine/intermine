@@ -12,7 +12,6 @@ package org.intermine.dataloader;
 
 import java.util.Set;
 import java.util.LinkedHashSet;
-import java.util.StringTokenizer;
 
 /**
  * Class represing a primary key as a list of field names
@@ -33,8 +32,10 @@ public class PrimaryKey
         if (fields == null) {
             throw new NullPointerException("fields parameter cannot be null");
         }
-        for (StringTokenizer st = new StringTokenizer(fields, ", "); st.hasMoreTokens();) {
-            fieldNames.add(st.nextToken());
+        String[] tokens = fields.split(",");
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i].trim();
+            fieldNames.add(token);
         }
     }
     

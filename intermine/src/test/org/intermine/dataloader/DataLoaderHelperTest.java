@@ -11,9 +11,11 @@ package org.intermine.dataloader;
  */
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -74,6 +76,16 @@ public class DataLoaderHelperTest extends QueryTestCase
         Source source = new Source();
         source.setName("testsource");
         assertEquals(Collections.singleton(new PrimaryKey("name, address")), DataLoaderHelper.getPrimaryKeys(cld, source));
+    }
+
+    public void testGetPrimaryKeysCldSource2() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        Source source = new Source();
+        source.setName("testsource4");
+        Set expected = new HashSet();
+        expected.add(new PrimaryKey("name,address"));
+        expected.add(new PrimaryKey("vatNumber"));
+        assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld, source));
     }
 
     public void testCreateQuery1() throws Exception {
@@ -166,11 +178,63 @@ public class DataLoaderHelperTest extends QueryTestCase
         assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
     }
 
+    public void testCreateQuery5() throws Exception {
+        Source source = new Source();
+        source.setName("testsource4");
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+        Query qB = new Query();
+        QueryClass qcB = new QueryClass(Company.class);
+        qB.addFrom(qcB);
+        qB.addToSelect(qcB);
+        ConstraintSet csB = new ConstraintSet(ConstraintOp.AND);
+        csB.addConstraint(new SimpleConstraint(new QueryField(qcB, "name"), ConstraintOp.EQUALS, new QueryValue("jkhsdfg")));
+        QueryClass qcB2 = new QueryClass(Address.class);
+        qB.addFrom(qcB2);
+        Query qC = new Query();
+        QueryClass qcC = new QueryClass(Address.class);
+        qC.addFrom(qcC);
+        qC.addToSelect(qcC);
+        ConstraintSet csC = new ConstraintSet(ConstraintOp.AND);
+        csC.addConstraint(new SimpleConstraint(new QueryField(qcC, "address"), ConstraintOp.EQUALS, new QueryValue("10 Downing Street")));
+        qC.setConstraint(csC);
+        qC.setDistinct(false);
+        csB.addConstraint(new ContainsConstraint(new QueryObjectReference(qcB, "address"), ConstraintOp.CONTAINS, qcB2));
+        csB.addConstraint(new SubqueryConstraint(qcB2, ConstraintOp.IN, qC));
+        qB.setConstraint(csB);
+        qB.setDistinct(false);
+        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qB));
+        Query qD = new Query();
+        QueryClass qcD = new QueryClass(Company.class);
+        qD.addFrom(qcD);
+        qD.addToSelect(qcD);
+        ConstraintSet csD = new ConstraintSet(ConstraintOp.AND);
+        csD.addConstraint(new SimpleConstraint(new QueryField(qcD, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(765213))));
+        qD.setConstraint(csD);
+        qD.setDistinct(false);
+        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qD));
+        q.setConstraint(cs);
+        q.setDistinct(false);
+
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setName("jkhsdfg");
+        Address a = new Address();
+        a.setAddress("10 Downing Street");
+        c.setAddress(a);
+        c.setVatNumber(765213);
+
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
+    }
+
     public void testGetDescriptors() throws Exception {
         Map expected = new HashMap();
         expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
-        expected.put("Company", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
-        expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Company", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
+        expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource4"}));
         expected.put("Employable", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("ImportantPerson", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Secretary", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
@@ -179,7 +243,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         expected.put("Employee.age", Arrays.asList(new Object[] {"storedata", "testsource2", "testsource"}));
         expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Broke", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
-        expected.put("HasAddress", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("HasAddress", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Manager", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("CEO", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Contractor", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));

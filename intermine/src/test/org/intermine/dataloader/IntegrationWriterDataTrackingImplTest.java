@@ -31,8 +31,13 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
@@ -762,5 +767,93 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         } catch (IllegalArgumentException e) {
         }
     }
-}
 
+    public void testMergeWithSuperclass() throws Exception {
+        Manager e1 = new Manager();
+        e1.setName("EmployeeA2");
+        e1.setTitle("Mr.");
+        
+        if (doIds) {
+            e1.setId(new Integer(1));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(e1, source, skelSource);
+
+        Employee e2 = new Employee();
+        e2.setName("EmployeeA2");
+        Manager e3 = (Manager) iw.getObjectByExample(e2, Collections.singleton("name"));
+        assertEquals("Mr.", e3.getTitle());
+        assertEquals("EmployeeA2", e3.getName());
+    }
+
+    public void testMergeWithDifferentFields() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyZ")));
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(876213))));
+        q.setConstraint(cs);
+        
+        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Address a2 = new Address();
+        Company c3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c4 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Address a4 = new Address();
+
+        c2.setName("CompanyZ");
+        c2.setAddress(a2);
+        a2.setAddress("Flibble");
+        c3.setVatNumber(876213);
+        c4.setName("CompanyZ");
+        c4.setAddress(a4);
+        a4.setAddress("Flibble");
+        c4.setVatNumber(876213);
+
+        if (doIds) {
+            c2.setId(new Integer(1));
+            a2.setId(new Integer(2));
+            c3.setId(new Integer(1));
+            c4.setId(new Integer(1));
+            a4.setId(new Integer(2));
+        }
+
+        assertEquals(0, (new SingletonResults(q, iw, iw.getSequence())).size());
+
+        Source source2 = iw.getMainSource("testsource2");
+        Source skelSource2 = iw.getSkeletonSource("testsource2");
+        
+        iw.store(c2, source2, skelSource2);
+        iw.store(a2, source2, skelSource2);
+        
+        iw.idMap.clear();
+        iw.commitTransaction();
+        iw.beginTransaction();
+        assertEquals(1, (new SingletonResults(q, iw, iw.getSequence())).size());
+
+        Source source3 = iw.getMainSource("testsource3");
+        Source skelSource3 = iw.getSkeletonSource("testsource3");
+        
+        iw.store(c3, source3, skelSource3);
+        
+        iw.idMap.clear();
+        iw.commitTransaction();
+        iw.beginTransaction();
+        assertEquals(2, (new SingletonResults(q, iw, iw.getSequence())).size());
+
+        Source source4 = iw.getMainSource("testsource4");
+        Source skelSource4 = iw.getSkeletonSource("testsource4");
+        
+        iw.store(c4, source4, skelSource4);
+        iw.store(a4, source4, skelSource4);
+        
+        iw.idMap.clear();
+        iw.commitTransaction();
+        iw.beginTransaction();
+        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
+    }
+}

@@ -10,11 +10,18 @@ package org.intermine.sql.writebatch;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * A class representing all changes to be made to an SQL table.
@@ -23,6 +30,8 @@ import java.util.Set;
  */
 public class TableBatch
 {
+    private static final Logger LOG = Logger.getLogger(TableBatch.class);
+
     private String idField;
     private String colNames[];
     private Set idsToDelete;
@@ -40,14 +49,13 @@ public class TableBatch
 
     /**
      * Adds a row to the batch. This action depends on any previous information on the given id
-     * value:
-     * <ul><li>If there is no previous information, a row is added to the list of rows to
-     *         insert</li>
-     *     <li>If there is only an entry for deletion, a row is added to the list of rows to
-     *         insert (ie the row will be deleted then inserted)</li>
-     *     <li>If there is only an entry for insertion, an exception will be thrown</li>
-     *     <li>If there is both an entry for insertion and deletion, an exception will be
-     *         thrown</li>
+     * value. If the id value is currently marked as deleted, then it will change to "delete, then
+     * insert". This system allows multiple rows to be inserted for the same id, so there are three
+     * insertion modes:
+     * <ul><li>If there is no insertion data, then the row is inserted straight</li>
+     *     <li>If there is only one insertion entry, it is converted into a List containing two
+     *         entries</li>
+     *     <li>If there is a List, then the new entry is added to it</li>
      * </ul>
      *
      * @param idValue the value of the ID field for this row, or null if there is no relevant
@@ -70,15 +78,33 @@ public class TableBatch
                         throw new IllegalStateException("Cannot change colNames once it is set");
                     }
                 }
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                Exception e = new Exception();
+                e.fillInStackTrace();
+                e.printStackTrace(pw);
+                pw.flush();
+                LOG.warn("Potential inefficiency - seen two equivalent column name arrays, and had"
+                        + " to compare them as arrays (slowly). Try to cache the column name array"
+                        + " so they can be compared by reference (fast). old = " + this.colNames
+                        + ", new: " + colNames + ", stack trace = " + sw);
+                this.colNames = colNames;
             }
         }
         if (idValue == null) {
-            idValue = new Object();
+            idValue = this;
         }
-        if (idsToInsert.containsKey(idValue)) {
-            throw new IllegalStateException("Cannot insert row with id " + idValue + " twice");
+        Object currentEntry = idsToInsert.get(idValue);
+        if (currentEntry == null) {
+            idsToInsert.put(idValue, values);
+        } else if (currentEntry instanceof List) {
+            ((List) currentEntry).add(values);
+        } else {
+            List newEntry = new ArrayList();
+            newEntry.add(currentEntry);
+            newEntry.add(values);
+            idsToInsert.put(idValue, newEntry);
         }
-        idsToInsert.put(idValue, values);
         return sizeOfArray(values) + 16;
     }
 
@@ -88,7 +114,8 @@ public class TableBatch
      * <ul><li>If there is no previous information, a row is added to the list of rows to
      *         delete</li>
      *     <li>If there is only an entry for deletion, nothing happens</li>
-     *     <li>If there is only an entry for insertion, that entry is removed</li>
+     *     <li>If there is only an entry for insertion, that entry is removed, and an entry created
+     *         for deletion</li>
      *     <li>If there is both an entry for insertion and deletion, the insertion entry is
      *         removed</li>
      * </ul>
@@ -105,11 +132,17 @@ public class TableBatch
             throw new IllegalStateException("Cannot change idField once it is set");
         }
         int retval = 20;
-        if ((idsToInsert != null) && idsToInsert.containsKey(idValue)) {
-            retval -= sizeOfArray((Object[]) idsToInsert.remove(idValue));
-        } else {
-            idsToDelete.add(idValue);
+        if (idsToInsert != null) {
+            Object removed = idsToInsert.remove(idValue);
+            if (removed != null) {
+                if (removed instanceof Object[]) {
+                    retval -= sizeOfArray((Object[]) removed);
+                } else {
+                    retval -= sizeOfList((List) removed);
+                }
+            }
         }
+        idsToDelete.add(idValue);
         return retval;
     }
 
@@ -179,6 +212,22 @@ public class TableBatch
             } else {
                 retval += 4;
             }
+        }
+        return retval;
+    }
+
+    /**
+     * Calculates the size of a List of arrays, in bytes.
+     *
+     * @param list a List of arrays
+     * @return an int
+     */
+    protected static int sizeOfList(List list) {
+        int retval = 0;
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+            Object array[] = (Object[]) iter.next();
+            retval += sizeOfArray(array);
         }
         return retval;
     }

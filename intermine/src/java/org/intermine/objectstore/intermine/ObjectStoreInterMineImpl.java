@@ -19,6 +19,8 @@ import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
@@ -64,18 +67,43 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     protected Set missingTables = new HashSet();
     protected Set noObjectTables = new HashSet();
     protected Writer log = null;
+    protected DatabaseSchema schema;
 
     /**
      * Constructs an ObjectStoreInterMineImpl.
      *
      * @param db the database in which the model resides
-     * @param model the name of the model
+     * @param model the model
      * @throws NullPointerException if db or model are null
      * @throws IllegalArgumentException if db or model are invalid
      */
     protected ObjectStoreInterMineImpl(Database db, Model model) {
         super(model);
         this.db = db;
+        schema = new DatabaseSchema(model, Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Constructs an ObjectStoreInterMineImpl, with a schema.
+     *
+     * @param db the database in which the model resides
+     * @param schema the schema
+     * @throws NullPointerException if db or model are null
+     * @throws IllegalArgumentException if db or model are invalid
+     */
+    protected ObjectStoreInterMineImpl(Database db, DatabaseSchema schema) {
+        super(schema.getModel());
+        this.db = db;
+        this.schema = schema;
+    }
+
+    /**
+     * Returns the DatabaseSchema used by this ObjectStore.
+     *
+     * @return a DatabaseSchema
+     */
+    public DatabaseSchema getSchema() {
+        return schema;
     }
 
     /**
@@ -143,10 +171,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         }
         String missingTablesString = props.getProperty("missingTables");
         String noObjectTablesString = props.getProperty("noObjectTables");
+        String logfile = props.getProperty("logfile");
+        String truncatedClassesString = props.getProperty("truncatedClasses");
+
         String objectStoreDescription = "db = " + dbAlias + ", model = " + model.getName()
             + (missingTablesString == null ? "" : ", missingTables = " + missingTablesString)
-            + (noObjectTablesString == null ? "" : ", noObjectTables = " + noObjectTablesString);
-        String logfile = props.getProperty("logfile");
+            + (noObjectTablesString == null ? "" : ", noObjectTables = " + noObjectTablesString)
+            + (logfile == null ? "" : ", logfile = " + logfile)
+            + (truncatedClassesString == null ? "" : ", truncatedClasses = "
+                    + truncatedClassesString);
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances
@@ -159,7 +192,23 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     throw new ObjectStoreException("Unable to get database for InterMine"
                             + " ObjectStore", e);
                 }
-                os = new ObjectStoreInterMineImpl(db, model);
+                if (truncatedClassesString != null) {
+                    List truncatedClasses = new ArrayList();
+                    String classes[] = truncatedClassesString.split(",");
+                    for (int i = 0; i < classes.length; i++) {
+                        ClassDescriptor truncatedClassDescriptor = model
+                            .getClassDescriptorByName(classes[i]);
+                        if (truncatedClassDescriptor == null) {
+                            throw new ObjectStoreException("Truncated class " + classes[i]
+                                    + " does not exist in the model");
+                        }
+                        truncatedClasses.add(truncatedClassDescriptor);
+                    }
+                    os = new ObjectStoreInterMineImpl(db, new DatabaseSchema(model,
+                                truncatedClasses));
+                } else {
+                    os = new ObjectStoreInterMineImpl(db, model);
+                }
                 if (missingTablesString != null) {
                     String tables[] = missingTablesString.split(",");
                     for (int i = 0; i < tables.length; i++) {
@@ -241,7 +290,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         checkStartLimit(start, limit);
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
-        String sql = SqlGenerator.generate(q, start, limit, model, db);
+        String sql = SqlGenerator.generate(q, start, limit, schema, db);
         try {
             long estimatedTime = 0;
             if (optimise && everOptimise) {
@@ -309,7 +358,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
                     if ((lastObj != null) && (thisObj != null) && !lastObj.equals(thisObj)) {
                         done = true;
-                        SqlGenerator.registerOffset(q, start + rowNo + 1, model, db,
+                        SqlGenerator.registerOffset(q, start + rowNo + 1, schema, db,
                                 (thisObj instanceof InterMineObject
                                     ? ((InterMineObject) thisObj).getId() : thisObj));
                     }
@@ -347,7 +396,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      */
     protected ResultsInfo estimateWithConnection(Connection c,
             Query q) throws ObjectStoreException {
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -394,7 +443,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             int sequence) throws ObjectStoreException {
         checkSequence(sequence, q, "COUNT ");
 
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
+        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db);
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -458,7 +507,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      */
     protected InterMineObject internalGetObjectByIdWithConnection(Connection c,
             Integer id, Class clazz) throws ObjectStoreException {
-        String sql = SqlGenerator.generateQueryForId(id, clazz, model);
+        String sql = SqlGenerator.generateQueryForId(id, clazz, schema);
         String currentColumn = null;
         try {
             //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);

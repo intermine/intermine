@@ -61,9 +61,9 @@ public class Batch
 
     /**
      * Adds a row to the batch for a given table. This action will override any previously deleted
-     * rows. If the batch already shows that row to exist (by idField), then an exception will be
-     * thrown. If the table is not set up, then it will be set up using the provided array of field
-     * names, but without an idField (which will be set up the first time deleteRow is called).
+     * rows. Multiple rows with the same id can be added. If the table is not set up, then it will
+     * be set up using the provided array of field names, but without an idField (which will be set
+     * up the first time deleteRow is called).
      * <br>
      * Note that the batch may hang on to (and use) the Connection that you provide. It is your
      * responsibility to call flush(Connection) before using that same Connection with anything
@@ -165,8 +165,12 @@ public class Batch
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             TableBatch table = (TableBatch) entry.getValue();
-            table.getIdsToInsert().clear();
-            table.getIdsToDelete().clear();
+            if (table.getIdsToInsert() != null) {
+                table.getIdsToInsert().clear();
+            }
+            if (table.getIdsToDelete() != null) {
+                table.getIdsToDelete().clear();
+            }
         }
         batchSize = 0;
         waitForFreeConnection();

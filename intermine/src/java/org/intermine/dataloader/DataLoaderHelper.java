@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -123,9 +122,10 @@ public class DataLoaderHelper
                     String descriptorName = (String) entry.getKey();
                     String sourceNames = (String) entry.getValue();
                     List sources = new ArrayList();
-                    for (StringTokenizer st = new StringTokenizer(sourceNames, ", ");
-                            st.hasMoreTokens();) {
-                        sources.add(st.nextToken());
+                    String[] tokens = sourceNames.split(",");
+                    for (int o = 0; o < tokens.length; o++) {
+                        String token = tokens[o].trim();
+                        sources.add(token);
                     }
                     descriptorSources.put(descriptorName, sources);
                 }
@@ -175,8 +175,10 @@ public class DataLoaderHelper
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         String keyList = (String) keys.get(cldName);
         if (keyList != null) {
-            for (StringTokenizer st = new StringTokenizer(keyList, ", "); st.hasMoreTokens();) {
-                keySet.add(map.get(st.nextToken()));
+            String[] tokens = keyList.split(",");
+            for (int i = 0; i < tokens.length; i++) {
+                String token = tokens[i].trim();
+                keySet.add(map.get(token));
             }
         }
         return keySet;
@@ -268,15 +270,15 @@ public class DataLoaderHelper
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
                 if (!primaryKeys.isEmpty()) {
-                    subQ = new Query();
-                    subQ.setDistinct(false);
-                    QueryClass qc = new QueryClass(cld.getType());
-                    subQ.addFrom(qc);
-                    subQ.addToSelect(qc);
-                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                     Iterator pkSetIter = primaryKeys.iterator();
                     while (pkSetIter.hasNext()) {
                         PrimaryKey pk = (PrimaryKey) pkSetIter.next();
+                        subQ = new Query();
+                        subQ.setDistinct(false);
+                        QueryClass qc = new QueryClass(cld.getType());
+                        subQ.addFrom(qc);
+                        subQ.addToSelect(qc);
+                        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                         Iterator pkIter = pk.getFieldNames().iterator();
                         while (pkIter.hasNext()) {
                             String fieldName = (String) pkIter.next();
@@ -331,10 +333,10 @@ public class DataLoaderHelper
                                 }
                             }
                         }
+                        subQ.setConstraint(cs);
+                        where.addConstraint(new SubqueryConstraint(qcIMO, ConstraintOp.IN, subQ));
+                        subCount++;
                     }
-                    subQ.setConstraint(cs);
-                    where.addConstraint(new SubqueryConstraint(qcIMO, ConstraintOp.IN, subQ));
-                    subCount++;
                 }
             }
             q.setConstraint(where);

@@ -176,11 +176,13 @@ public class CreateIndexesTask extends Task
      * @param indexName the index name
      * @param tableName the table name
      * @param columnNames the column names
-     * @throws SQLException if an error occurs
      */
-    protected void createIndex(String indexName, String tableName, String columnNames)
-        throws SQLException {
-        execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
+    protected void createIndex(String indexName, String tableName, String columnNames) {
+        try {
+            execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
+        } catch (SQLException e) {
+            System.err .println("Failed to create index: " + e);
+        }
     }
 
     /**

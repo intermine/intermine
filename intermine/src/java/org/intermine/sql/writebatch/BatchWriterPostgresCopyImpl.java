@@ -65,10 +65,22 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     Iterator insertIter = table.getIdsToInsert().entrySet().iterator();
                     while (insertIter.hasNext()) {
                         Map.Entry insertEntry = (Map.Entry) insertIter.next();
-                        Object values[] = (Object[]) insertEntry.getValue();
-                        dos.writeShort(colNames.length);
-                        for (int i = 0; i < colNames.length; i++) {
-                            writeObject(dos, values[i]);
+                        Object inserts = insertEntry.getValue();
+                        if (inserts instanceof Object[]) {
+                            Object values[] = (Object[]) inserts;
+                            dos.writeShort(colNames.length);
+                            for (int i = 0; i < colNames.length; i++) {
+                                writeObject(dos, values[i]);
+                            }
+                        } else {
+                            Iterator iter = ((List) inserts).iterator();
+                            while (iter.hasNext()) {
+                                Object values[] = (Object[]) iter.next();
+                                dos.writeShort(colNames.length);
+                                for (int i = 0; i < colNames.length; i++) {
+                                    writeObject(dos, values[i]);
+                                }
+                            }
                         }
                     }
                     StringBuffer sqlBuffer = new StringBuffer("COPY ").append(name).append(" (");

@@ -44,12 +44,12 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         SingletonResults r = new SingletonResults(q, os, os.getSequence());
         r.setBatchSize(2);
         InterMineObject o = (InterMineObject) r.get(5);
-        SqlGenerator.registerOffset(q2, 6, os.getModel(), ((ObjectStoreInterMineImpl) os).db, o.getId());
+        SqlGenerator.registerOffset(q2, 6, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId());
         SingletonResults r2 = new SingletonResults(q2, os, os.getSequence());
         r2.setBatchSize(2);
 
         Query q3 = QueryCloner.cloneQuery(q);
-        SqlGenerator.registerOffset(q3, 5, os.getModel(), ((ObjectStoreInterMineImpl) os).db, o.getId());
+        SqlGenerator.registerOffset(q3, 5, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId());
         SingletonResults r3 = new SingletonResults(q3, os, os.getSequence());
         r3.setBatchSize(2);
 

@@ -351,7 +351,8 @@
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.unittest"/>
+      <property name="db.name" value="db.fulldatatest"/>
+      <property name="objectstore.name" value="os.fulldatatest"/>
     </ant>
   </target>
 
@@ -360,6 +361,16 @@
       <property name="model.name" value="testmodel"/>
       <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.unittest"/>
+      <property name="objectstore.name" value="os.unittest"/>
+    </ant>
+  </target>
+
+  <target name="build-db-truncunittest" depends="compile-testmodel">
+    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.truncunittest"/>
+      <property name="objectstore.name" value="os.truncunittest"/>
     </ant>
   </target>
   
@@ -452,7 +463,7 @@
   </target>
 
   <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-unittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
+  <target name="test-main" depends="compile-test, build-db-unittest, build-db-truncunittest, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest, copy-model-xmlschematest"
           description="perform JUnit tests on main source code" >
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
@@ -988,6 +999,15 @@
     <dot directory="${src.test}" packageName="org.intermine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
   </target>
 
+  <target name="dot-testmodel" depends="compile-test">
+    <taskdef
+      name="dot"
+      classname="org.intermine.task.InheritanceDotTask">
+      <classpath refid="test.class.path"/>
+    </taskdef>
+    <dot directory="${build.model}/testmodel" packageName="org.intermine.model.testmodel" file="testmodel.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
+  </target>
+    
   <!-- Cleaning-up targets -->
 
   <target name="clean"

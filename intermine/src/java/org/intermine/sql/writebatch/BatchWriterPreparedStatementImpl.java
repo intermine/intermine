@@ -82,16 +82,26 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             sqlBuffer.append(")");
             String sql = sqlBuffer.toString();
             PreparedStatement prepS = con.prepareStatement(sql);
-            int insertCount = 0;
             Iterator insertIter = table.getIdsToInsert().entrySet().iterator();
             while (insertIter.hasNext()) {
                 Map.Entry insertEntry = (Map.Entry) insertIter.next();
-                Object values[] = (Object[]) insertEntry.getValue();
-                for (int i = 0; i < colNames.length; i++) {
-                    prepS.setObject(i + 1, values[i]);
+                Object inserts = insertEntry.getValue();
+                if (inserts instanceof Object[]) {
+                    Object values[] = (Object[]) inserts;
+                    for (int i = 0; i < colNames.length; i++) {
+                        prepS.setObject(i + 1, values[i]);
+                    }
+                    prepS.addBatch();
+                } else {
+                    Iterator iter = ((List) inserts).iterator();
+                    while (iter.hasNext()) {
+                        Object values[] = (Object[]) iter.next();
+                        for (int i = 0; i < colNames.length; i++) {
+                            prepS.setObject(i + 1, values[i]);
+                        }
+                        prepS.addBatch();
+                    }
                 }
-                prepS.addBatch();
-                insertCount++;
             }
             retval.add(new FlushJobStatementBatchImpl(prepS));
             table.getIdsToInsert().clear();

@@ -70,10 +70,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Map recentSequences;
     protected Map tableToColNameArray;
     protected Map tableToFieldNameArray;
+    protected Map tableToReferencesFrom;
     protected Map tableToCollections;
 
     protected static final int SEQUENCE_MULTIPLE = 1000000;
     protected static final int MAX_BATCH_CHARS = 10000000;
+
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
      * Connection, grabbed from the provided ObjectStore.
@@ -82,7 +84,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @throws ObjectStoreException if a problem occurs
      */
     public ObjectStoreWriterInterMineImpl(ObjectStore os) throws ObjectStoreException {
-        super(null, os.getModel());
+        super(null, ((ObjectStoreInterMineImpl) os).getSchema());
         this.os = (ObjectStoreInterMineImpl) os;
         db = this.os.db;
         everOptimise = false;
@@ -110,6 +112,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         batch = new Batch(new BatchWriterPostgresCopyImpl());
         tableToColNameArray = new HashMap();
         tableToFieldNameArray = new HashMap();
+        tableToReferencesFrom = new HashMap();
         tableToCollections = new HashMap();
         Iterator missingTableIter = this.os.missingTables.iterator();
         while (missingTableIter.hasNext()) {
@@ -165,7 +168,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @see ObjectStoreInterMineImpl#getConnection
      */
     public Connection getConnection() throws SQLException {
-        synchronized (conn) {
+        synchronized (this) {
             if (conn == null) {
                 throw new SQLException("This ObjectStoreWriter is closed");
             }
@@ -190,7 +193,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     LOG.debug("Connection in use - entering wait");
                 }
                 try {
-                    conn.wait(1000L);
+                    wait(1000L);
                 } catch (InterruptedException e) {
                 }
                 LOG.debug("Notified or timed out");
@@ -214,11 +217,13 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @see ObjectStoreInterMineImpl#releaseConnection
      */
     public void releaseConnection(Connection c) {
-        if (c == conn) {
-            synchronized (conn) {
+        if (conn == null) {
+            // Nothing happens
+        } else if (c == conn) {
+            synchronized (this) {
                 connInUse = false;
                 //LOG.debug("Released connection - notifying");
-                conn.notify();
+                notify();
             }
         } else if (c != null) {
             Exception trace = new Exception();
@@ -248,14 +253,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     public void close() {
         LOG.info("Close called on ObjectStoreWriterInterMineImpl with sequence = " + sequence);
         try {
-           if (isInTransaction()) {
-               abortTransaction();
-               LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
-                       + " - transaction aborted");
-           }
-           os.releaseConnection(conn);
-           conn = null;
-           connInUse = true;
+            Connection c = getConnection();
+            if (isInTransactionWithConnection(c)) {
+                abortTransactionWithConnection(c);
+                LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
+                        + " - transaction aborted");
+            }
+            os.releaseConnection(c);
+            conn = null;
         } catch (Exception e) {
         }
     }
@@ -339,52 +344,92 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                String tableName = DatabaseUtil.getTableName(cld);
+                ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                String tableName = DatabaseUtil.getTableName(tableMaster);
+                if (!os.missingTables.contains(tableName)) {
+                    if (doDeletes) {
+                        batch.deleteRow(c, tableName, "id", o.getId());
+                    }
+                }
+            }
+            cldIter = classDescriptors.iterator();
+            while (cldIter.hasNext()) {
+                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                String tableName = DatabaseUtil.getTableName(tableMaster);
                 String colNames[] = (String []) tableToColNameArray.get(tableName);
                 String fieldNames[] = (String []) tableToFieldNameArray.get(tableName);
-                Set collections = (Set) tableToCollections.get(tableName);
+                Integer referencesFromInteger = (Integer) tableToReferencesFrom.get(tableName);
                 if (colNames == null) {
-                    int colCount = 1;
-                    fieldIter = cld.getAllFieldDescriptors().iterator();
-                    while (fieldIter.hasNext()) {
-                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
-                        if (!(field instanceof CollectionDescriptor)) {
-                            colCount++;
-                        }
+                    LOG.info("Generating cached metadata for table " + tableName);
+                    DatabaseSchema.Fields allColumns = schema.getTableFields(tableMaster);
+                    int colCount = 1 + allColumns.getAttributes().size()
+                        + allColumns.getReferences().size();
+                    boolean isTruncated = schema.isTruncated(tableMaster);
+                    if (isTruncated) {
+                        colCount++;
                     }
                     colNames = new String[colCount];
                     fieldNames = new String[colCount];
-                    collections = new HashSet();
                     colNames[0] = "OBJECT";
                     int colNo = 1;
+                    if (isTruncated) {
+                        colNo = 2;
+                        colNames[1] = "class";
+                    }
+                    fieldIter = allColumns.getAttributes().iterator();
+                    while (fieldIter.hasNext()) {
+                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                        colNames[colNo] = DatabaseUtil.getColumnName(field);
+                        fieldNames[colNo] = field.getName();
+                        colNo++;
+                    }
+                    referencesFromInteger = new Integer(colNo);
+                    fieldIter = allColumns.getReferences().iterator();
+                    while (fieldIter.hasNext()) {
+                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                        colNames[colNo] = DatabaseUtil.getColumnName(field);
+                        fieldNames[colNo] = field.getName();
+                        colNo++;
+                    }
+                    tableToColNameArray.put(tableName, colNames);
+                    tableToFieldNameArray.put(tableName, fieldNames);
+                    tableToReferencesFrom.put(tableName, referencesFromInteger);
+                }
+                int referencesFrom = referencesFromInteger.intValue();
+                Set collections = (Set) tableToCollections.get(cld.getName());
+                if (collections == null) {
+                    LOG.info("Generating cached metadata for ClassDescriptor " + cld.getName());
+                    collections = new HashSet();
                     fieldIter = cld.getAllFieldDescriptors().iterator();
                     while (fieldIter.hasNext()) {
                         FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                         if (field instanceof CollectionDescriptor) {
                             collections.add(field);
-                        } else {
-                            colNames[colNo] = DatabaseUtil.getColumnName(field);
-                            fieldNames[colNo] = field.getName();
-                            colNo++;
                         }
                     }
-                    tableToColNameArray.put(tableName, colNames);
-                    tableToFieldNameArray.put(tableName, fieldNames);
-                    tableToCollections.put(tableName, collections);
+                    tableToCollections.put(cld.getName(), collections);
                 }
 
                 if (!os.missingTables.contains(tableName)) {
-                    if (doDeletes) {
-                        batch.deleteRow(c, tableName, "id", o.getId());
-                    }
                     Object values[] = new Object[colNames.length];
                     values[0] = xml;
+                    Set validFieldNames = TypeUtil.getFieldInfos(o.getClass()).keySet();
                     for (int colNo = 1; colNo < colNames.length; colNo++) {
-                        Object value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
-                        if (value instanceof Date) {
-                            value = new Long(((Date) value).getTime());
-                        } else if (value instanceof InterMineObject) {
-                            value = ((InterMineObject) value).getId();
+                        Object value = null;
+                        if ("class".equals(colNames[colNo])) {
+                            value = cld.getName();
+                        } else if (validFieldNames.contains(fieldNames[colNo])) {
+                            value = TypeUtil.getFieldProxy(o, fieldNames[colNo]);
+                            if (value instanceof Date) {
+                                value = new Long(((Date) value).getTime());
+                            }
+                            if ((value instanceof InterMineObject) && (colNo >= referencesFrom)) {
+                                value = ((InterMineObject) value).getId();
+                            } else if ((value instanceof InterMineObject)
+                                    || (colNo >= referencesFrom)) {
+                                value = null;
+                            }
                         }
                         values[colNo] = value;
                     }
@@ -406,9 +451,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             String outwardColumnName =
                                 DatabaseUtil.getOutwardIndirectionColumnName(collection);
                             boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
-                            String indirColNames[] = new String[2];
-                            indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
-                            indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
+                            String indirColNames[] = (String []) tableToColNameArray
+                                .get(indirectTableName);
+                            if (indirColNames == null) {
+                                indirColNames = new String[2];
+                                indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
+                                indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
+                                tableToColNameArray.put(indirectTableName, indirColNames);
+                            }
                             Iterator collIter = coll.iterator();
                             while (collIter.hasNext()) {
                                 InterMineObject inCollection = (InterMineObject)
@@ -526,7 +576,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                String tableName = DatabaseUtil.getTableName(cld);
+                ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!os.missingTables.contains(tableName)) {
                     batch.deleteRow(c, tableName, "id", o.getId());
                 }

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.intermine.codegen.InterMineTorqueModelOutput;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -84,25 +82,33 @@ public class SqlGenerator
     protected static final int ID_ONLY = 2;
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
 
-    protected static Map sqlCache = Collections.synchronizedMap(new WeakHashMap());
+    protected static Map sqlCache = new WeakHashMap();
 
     /**
      * Generates a query to retrieve a single object from the database, by id.
      *
      * @param id the id of the object to fetch
      * @param clazz a Class of the object - if unsure use InterMineObject
-     * @param model the model
+     * @param schema the DatabaseSchema
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if the given class is not in the model
      */
     public static String generateQueryForId(Integer id, Class clazz,
-            Model model) throws ObjectStoreException {
-        ClassDescriptor cld = model.getClassDescriptorByName(clazz.getName());
+            DatabaseSchema schema) throws ObjectStoreException {
+        ClassDescriptor cld = schema.getModel().getClassDescriptorByName(clazz.getName());
         if (cld == null) {
             throw new ObjectStoreException(clazz.toString() + " is not in the model");
         }
-        return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM " + DatabaseUtil.getTableName(cld)
-            + " AS a1_ WHERE a1_.id = " + id.toString() + " LIMIT 2";
+        ClassDescriptor tableMaster = schema.getTableMaster(cld);
+        if (schema.isTruncated(tableMaster)) {
+            return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM "
+                + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
+                + " AND a1_.class = '" + clazz.getName() + "' LIMIT 2";
+        } else {
+            return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM "
+                + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
+                + " LIMIT 2";
+        }
     }
 
     /**
@@ -111,16 +117,17 @@ public class SqlGenerator
      *
      * @param q the Query
      * @param start the offset
-     * @param model the Model to look up metadata in
+     * @param schema the DatabaseSchema in which to look up metadata
      * @param db the Database that the ObjectStore uses
      * @param value a value, such that adding a WHERE component first_order_field &gt; value with
      * OFFSET 0 is equivalent to the original query with OFFSET offset
      */
-    public static void registerOffset(Query q, int start, Model model, Database db,
+    public static void registerOffset(Query q, int start, DatabaseSchema schema, Database db,
             Object value) {
         try {
             synchronized (q) {
-                TreeMap cached = (TreeMap) sqlCache.get(q);
+                Map schemaCache = getCacheForSchema(schema);
+                TreeMap cached = (TreeMap) schemaCache.get(q);
                 if (cached != null) {
                     SortedMap headMap = cached.headMap(new Integer(start + 1));
                     Integer lastKey = null;
@@ -144,12 +151,12 @@ public class SqlGenerator
                 if (firstOrderBy instanceof QueryClass) {
                     firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                 }
-                String sql = generate(q, model, db, new SimpleConstraint((QueryEvaluable)
+                String sql = generate(q, schema, db, new SimpleConstraint((QueryEvaluable)
                             firstOrderBy, ConstraintOp.GREATER_THAN, new QueryValue(value)),
                         QUERY_NORMAL);
                 if (cached == null) {
                     cached = new TreeMap();
-                    sqlCache.put(q, cached);
+                    schemaCache.put(q, cached);
                 }
                 cached.put(new Integer(start), sql);
                 LOG.info("Created cache entry for offset " + start + " (cache contains "
@@ -167,15 +174,16 @@ public class SqlGenerator
      * @param q the Query to convert
      * @param start the number of the first row for the query to return, numbered from zero
      * @param limit the maximum number of rows for the query to return
-     * @param model the Model to look up metadata in
+     * @param schema the DatabaseSchema in which to look up metadata
      * @param db the Database that the ObjectStore uses
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    public static String generate(Query q, int start, int limit, Model model, Database db)
+    public static String generate(Query q, int start, int limit, DatabaseSchema schema, Database db)
             throws ObjectStoreException {
         synchronized (q) {
-            TreeMap cached = (TreeMap) sqlCache.get(q);
+            Map schemaCache = getCacheForSchema(schema);
+            TreeMap cached = (TreeMap) schemaCache.get(q);
             if (cached != null) {
                 SortedMap headMap = cached.headMap(new Integer(start + 1));
                 Integer lastKey = null;
@@ -190,10 +198,10 @@ public class SqlGenerator
                             + (start == offset ? "" : " OFFSET " + (start - offset)));
                 }
             }
-            String sql = generate(q, model, db, null, QUERY_NORMAL);
+            String sql = generate(q, schema, db, null, QUERY_NORMAL);
             if (cached == null) {
                 cached = new TreeMap();
-                sqlCache.put(q, cached);
+                schemaCache.put(q, cached);
             }
             cached.put(new Integer(0), sql);
             return sql + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
@@ -202,30 +210,47 @@ public class SqlGenerator
     }
 
     /**
+     * Returns a cache specific to a particular DatabaseSchema.
+     *
+     * @param schema the DatabaseSchema
+     * @return a Map
+     */
+    private static Map getCacheForSchema(DatabaseSchema schema) {
+        synchronized (sqlCache) {
+            Map retval = (Map) sqlCache.get(schema);
+            if (retval == null) {
+                retval = Collections.synchronizedMap(new WeakHashMap());
+                sqlCache.put(schema, retval);
+            }
+            return retval;
+        }
+    }
+
+    /**
      * Converts a Query object into an SQL String.
      *
      * @param q the Query to convert
-     * @param model the Model to look up metadata in
+     * @param schema the DatabaseSchema in which to look up metadata
      * @param db the Database that the ObjectStore uses
      * @param offsetCon an additional constraint for improving the speed of large offsets
      * @param kind Query type
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String generate(Query q, Model model, Database db, SimpleConstraint offsetCon,
-            int kind) throws ObjectStoreException {
+    protected static String generate(Query q, DatabaseSchema schema, Database db,
+            SimpleConstraint offsetCon, int kind) throws ObjectStoreException {
         State state = new State();
         state.setDb(db);
-        buildFromComponent(state, q, model);
-        buildWhereClause(state, q, q.getConstraint(), model);
-        buildWhereClause(state, q, offsetCon, model);
-        String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, model) : "");
+        buildFromComponent(state, q, schema);
+        buildWhereClause(state, q, q.getConstraint(), schema);
+        buildWhereClause(state, q, offsetCon, schema);
+        String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, schema) : "");
         StringBuffer retval = new StringBuffer("SELECT ")
             .append(q.isDistinct() ? "DISTINCT " : "")
-            .append(buildSelectComponent(state, q, model, kind))
+            .append(buildSelectComponent(state, q, schema, kind))
             .append(state.getFrom())
             .append(state.getWhere())
-            .append(buildGroupBy(q, model, state))
+            .append(buildGroupBy(q, schema, state))
             .append(orderBy);
         return retval.toString();
     }
@@ -235,10 +260,10 @@ public class SqlGenerator
      *
      * @param state the current Sql Query state
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void buildFromComponent(State state, Query q, Model model)
+    protected static void buildFromComponent(State state, Query q, DatabaseSchema schema)
             throws ObjectStoreException {
         Set fromElements = q.getFrom();
         Iterator fromIter = fromElements.iterator();
@@ -247,25 +272,31 @@ public class SqlGenerator
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
                 Set classes = DynamicUtil.decomposeClass(qc.getType());
-                Set clds = new HashSet();
                 Map aliases = new HashMap();
                 int sequence = 0;
                 String lastAlias = "";
                 Iterator classIter = classes.iterator();
                 while (classIter.hasNext()) {
                     Class cls = (Class) classIter.next();
-                    ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
+                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
                         throw new ObjectStoreException(cls.toString() + " is not in the model");
                     }
-                    clds.add(cld);
                     String baseAlias = (String) q.getAliases().get(qc);
+                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     if (sequence == 0) {
                         aliases.put(cld, baseAlias);
-                        state.addToFrom(DatabaseUtil.getTableName(cld) + " AS " + baseAlias);
+                        state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
+                                + baseAlias);
+                        if (schema.isTruncated(tableMaster)) {
+                            if (state.getWhereBuffer().length() > 0) {
+                                state.addToWhere(" AND ");
+                            }
+                            state.addToWhere(baseAlias + ".class = '" + cls.getName() + "'");
+                        }
                     } else {
                         aliases.put(cld, baseAlias + "_" + sequence);
-                        state.addToFrom(DatabaseUtil.getTableName(cld) + " AS " + baseAlias
+                        state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS " + baseAlias
                                 + "_" + sequence);
                         if (state.getWhereBuffer().length() > 0) {
                             state.addToWhere(" AND ");
@@ -273,10 +304,14 @@ public class SqlGenerator
                         state.addToWhere(baseAlias + lastAlias + ".id = " + baseAlias
                                 + "_" + sequence + ".id");
                         lastAlias = "_" + sequence;
+                        if (schema.isTruncated(tableMaster)) {
+                            state.addToWhere(" AND " + baseAlias + "_" + sequence + ".class = '"
+                                    + cls.getName() + "'");
+                        }
                     }
                     sequence++;
                 }
-                Map fields = model.getFieldDescriptorsForClass(qc.getType());
+                Map fields = schema.getModel().getFieldDescriptorsForClass(qc.getType());
                 Map fieldToAlias = state.getFieldToAlias(qc);
                 Iterator fieldIter = fields.entrySet().iterator();
                 while (fieldIter.hasNext()) {
@@ -294,7 +329,7 @@ public class SqlGenerator
                     }
                 }
             } else if (fromElement instanceof Query) {
-                state.addToFrom("(" + generate((Query) fromElement, model,
+                state.addToFrom("(" + generate((Query) fromElement, schema,
                                 state.getDb(), null, QUERY_SUBQUERY_FROM) + ") AS "
                         + ((String) q.getAliases().get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap(q.getAliases().get(fromElement)));
@@ -308,16 +343,16 @@ public class SqlGenerator
      * @param state the current Sql Query state
      * @param q the Query
      * @param c the Constraint
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void buildWhereClause(State state, Query q, Constraint c, Model model)
-            throws ObjectStoreException {
+    protected static void buildWhereClause(State state, Query q, Constraint c,
+            DatabaseSchema schema) throws ObjectStoreException {
         if (c != null) {
             if (state.getWhereBuffer().length() > 0) {
                 state.addToWhere(" AND ");
             }
-            constraintToString(state, c, q, model);
+            constraintToString(state, c, q, schema);
         }
     }
 
@@ -327,23 +362,23 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the Constraint object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void constraintToString(State state, Constraint c, Query q, Model model)
-            throws ObjectStoreException {
+    protected static void constraintToString(State state, Constraint c, Query q,
+            DatabaseSchema schema) throws ObjectStoreException {
         if (c instanceof ConstraintSet) {
-            constraintSetToString(state, (ConstraintSet) c, q, model);
+            constraintSetToString(state, (ConstraintSet) c, q, schema);
         } else if (c instanceof SimpleConstraint) {
-            simpleConstraintToString(state, (SimpleConstraint) c, q, model);
+            simpleConstraintToString(state, (SimpleConstraint) c, q, schema);
         } else if (c instanceof SubqueryConstraint) {
-            subqueryConstraintToString(state, (SubqueryConstraint) c, q, model);
+            subqueryConstraintToString(state, (SubqueryConstraint) c, q, schema);
         } else if (c instanceof ClassConstraint) {
-            classConstraintToString(state, (ClassConstraint) c, q, model);
+            classConstraintToString(state, (ClassConstraint) c, q, schema);
         } else if (c instanceof ContainsConstraint) {
-            containsConstraintToString(state, (ContainsConstraint) c, q, model);
+            containsConstraintToString(state, (ContainsConstraint) c, q, schema);
         } else if (c instanceof BagConstraint) {
-            bagConstraintToString(state, (BagConstraint) c, q, model);
+            bagConstraintToString(state, (BagConstraint) c, q, schema);
         } else {
             throw (new IllegalArgumentException("Unknown constraint type: " + c));
         }
@@ -355,11 +390,11 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the ConstraintSet object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void constraintSetToString(State state, ConstraintSet c, Query q, Model model)
-            throws ObjectStoreException {
+    protected static void constraintSetToString(State state, ConstraintSet c, Query q,
+            DatabaseSchema schema) throws ObjectStoreException {
         ConstraintOp op = c.getOp();
         boolean negate = (op == ConstraintOp.NAND) || (op == ConstraintOp.NOR);
         boolean disjunctive = (op == ConstraintOp.OR) || (op == ConstraintOp.NOR);
@@ -376,7 +411,7 @@ public class SqlGenerator
                     state.addToWhere(disjunctive ? " OR " : " AND ");
                 }
                 needComma = true;
-                constraintToString(state, subC, q, model);
+                constraintToString(state, subC, q, schema);
             }
             state.addToWhere(negate ? "))" : ")");
         }
@@ -388,11 +423,11 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the SimpleConstraint object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q,
-            Model model) throws ObjectStoreException {
+            DatabaseSchema schema) throws ObjectStoreException {
         queryEvaluableToString(state.getWhereBuffer(), c.getArg1(), q, state);
         state.addToWhere(" " + c.getOp().toString());
         if (c.getArg2() != null) {
@@ -407,21 +442,21 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the SubqueryConstraint object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void subqueryConstraintToString(State state, SubqueryConstraint c, Query q,
-            Model model) throws ObjectStoreException {
+            DatabaseSchema schema) throws ObjectStoreException {
         Query subQ = c.getQuery();
         QueryEvaluable qe = c.getQueryEvaluable();
         QueryClass cls = c.getQueryClass();
         if (qe != null) {
             queryEvaluableToString(state.getWhereBuffer(), qe, q, state);
         } else {
-            queryClassToString(state.getWhereBuffer(), cls, q, model, QUERY_SUBQUERY_CONSTRAINT,
+            queryClassToString(state.getWhereBuffer(), cls, q, schema, QUERY_SUBQUERY_CONSTRAINT,
                     state);
         }
-        state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, model,
+        state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, schema,
                         state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT) + ")");
     }
 
@@ -431,18 +466,18 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the ClassConstraint object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void classConstraintToString(State state, ClassConstraint c, Query q,
-            Model model) throws ObjectStoreException {
+            DatabaseSchema schema) throws ObjectStoreException {
         QueryClass arg1 = c.getArg1();
         QueryClass arg2QC = c.getArg2QueryClass();
         InterMineObject arg2O = c.getArg2Object();
-        queryClassToString(state.getWhereBuffer(), arg1, q, model, ID_ONLY, state);
+        queryClassToString(state.getWhereBuffer(), arg1, q, schema, ID_ONLY, state);
         state.addToWhere(" " + c.getOp().toString() + " ");
         if (arg2QC != null) {
-            queryClassToString(state.getWhereBuffer(), arg2QC, q, model, ID_ONLY, state);
+            queryClassToString(state.getWhereBuffer(), arg2QC, q, schema, ID_ONLY, state);
         } else if (arg2O.getId() != null) {
             objectToString(state.getWhereBuffer(), arg2O);
         } else {
@@ -457,16 +492,16 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the ContainsConstraint object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void containsConstraintToString(State state, ContainsConstraint c,
-            Query q, Model model) throws ObjectStoreException {
+            Query q, DatabaseSchema schema) throws ObjectStoreException {
         QueryReference arg1 = c.getReference();
         QueryClass arg2 = c.getQueryClass();
         InterMineObject arg2Obj = c.getObject();
-        Map fieldNameToFieldDescriptor = model.getFieldDescriptorsForClass(arg1.getQueryClass()
-                .getType());
+        Map fieldNameToFieldDescriptor = schema.getModel().getFieldDescriptorsForClass(arg1
+                .getQueryClass().getType());
         ReferenceDescriptor arg1Desc = (ReferenceDescriptor)
             fieldNameToFieldDescriptor.get(arg1.getFieldName());
         if (arg1Desc == null) {
@@ -486,14 +521,14 @@ public class SqlGenerator
                 if (arg2 == null) {
                     objectToString(state.getWhereBuffer(), arg2Obj);
                 } else {
-                    queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
+                    queryClassToString(state.getWhereBuffer(), arg2, q, schema, ID_ONLY, state);
                 }
             }
         } else if (arg1 instanceof QueryCollectionReference) {
             if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 String arg2Alias = (String) state.getFieldToAlias(arg2)
                     .get(arg1Desc.getReverseReferenceDescriptor().getName());
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY,
+                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema, ID_ONLY,
                         state);
                 state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ") + arg2Alias
                         + "."
@@ -504,13 +539,13 @@ public class SqlGenerator
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
                 state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? "(" : "( NOT (");
-                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, model, ID_ONLY,
+                queryClassToString(state.getWhereBuffer(), arg1.getQueryClass(), q, schema, ID_ONLY,
                         state);
                 state.addToWhere(" = " + indirectTableAlias + "."
                         + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc) + " AND "
                         + indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
-                queryClassToString(state.getWhereBuffer(), arg2, q, model, ID_ONLY, state);
+                queryClassToString(state.getWhereBuffer(), arg2, q, schema, ID_ONLY, state);
                 state.addToWhere(c.getOp().equals(ConstraintOp.CONTAINS) ? ")" : "))");
             }
         }
@@ -522,11 +557,11 @@ public class SqlGenerator
      * @param state the object to place text into
      * @param c the BagConstraint object
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void bagConstraintToString(State state, BagConstraint c, Query q,
-            Model model) throws ObjectStoreException {
+            DatabaseSchema schema) throws ObjectStoreException {
         Class type = c.getQueryNode().getType();
         String leftHandSide;
         if (c.getQueryNode() instanceof QueryEvaluable) {
@@ -535,7 +570,7 @@ public class SqlGenerator
             leftHandSide = lhsBuffer.toString() + " = ";
         } else {
             StringBuffer lhsBuffer = new StringBuffer();
-            queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, model, ID_ONLY, state);
+            queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, schema, ID_ONLY, state);
             leftHandSide = lhsBuffer.toString() + " = ";
         }
         SortedSet filteredBag = new TreeSet();
@@ -594,12 +629,12 @@ public class SqlGenerator
      * @param buffer the StringBuffer to add text to
      * @param qc the QueryClass to convert
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @param kind the type of the output requested
      * @param state a State object
      */
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
-            Model model, int kind, State state) {
+            DatabaseSchema schema, int kind, State state) {
         String alias = (String) q.getAliases().get(qc);
         if (kind == QUERY_SUBQUERY_CONSTRAINT) {
             buffer.append(alias)
@@ -612,7 +647,7 @@ public class SqlGenerator
                     .append(alias.equals(alias.toLowerCase()) ? alias : "\"" + alias + "\"");
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)) {
-                Set fields = model.getClassDescriptorByName(qc.getType().getName())
+                Set fields = schema.getModel().getClassDescriptorByName(qc.getType().getName())
                     .getAllFieldDescriptors();
                 Map fieldMap = new TreeMap();
                 Iterator fieldIter = fields.iterator();
@@ -777,13 +812,13 @@ public class SqlGenerator
      *
      * @param state the current Sql Query state
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @param kind the kind of output requested
      * @return a String
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildSelectComponent(State state, Query q, Model model, int kind)
-            throws ObjectStoreException {
+    protected static String buildSelectComponent(State state, Query q, DatabaseSchema schema,
+            int kind) throws ObjectStoreException {
         boolean needComma = false;
         StringBuffer retval = new StringBuffer();
         Iterator iter = q.getSelect().iterator();
@@ -794,7 +829,7 @@ public class SqlGenerator
             }
             needComma = true;
             if (node instanceof QueryClass) {
-                queryClassToString(retval, (QueryClass) node, q, model, kind, state);
+                queryClassToString(retval, (QueryClass) node, q, schema, kind, state);
             } else if (node instanceof QueryEvaluable) {
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                 String alias = (String) q.getAliases().get(node);
@@ -822,12 +857,12 @@ public class SqlGenerator
      * Builds a String representing the GROUP BY component of the Sql query.
      *
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @param state a State object
      * @return a String
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildGroupBy(Query q, Model model,
+    protected static String buildGroupBy(Query q, DatabaseSchema schema,
             State state) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
@@ -837,7 +872,7 @@ public class SqlGenerator
             retval.append(needComma ? ", " : " GROUP BY ");
             needComma = true;
             if (node instanceof QueryClass) {
-                queryClassToString(retval, (QueryClass) node, q, model, NO_ALIASES_ALL_FIELDS,
+                queryClassToString(retval, (QueryClass) node, q, schema, NO_ALIASES_ALL_FIELDS,
                         state);
             } else {
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
@@ -851,11 +886,11 @@ public class SqlGenerator
      *
      * @param state the current Sql Query state
      * @param q the Query
-     * @param model the Model
+     * @param schema the DatabaseSchema in which to look up metadata
      * @return a String
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildOrderBy(State state, Query q, Model model)
+    protected static String buildOrderBy(State state, Query q, DatabaseSchema schema)
             throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
@@ -868,7 +903,7 @@ public class SqlGenerator
                 retval.append(needComma ? ", " : " ORDER BY ");
                 needComma = true;
                 if (node instanceof QueryClass) {
-                    queryClassToString(retval, (QueryClass) node, q, model, ID_ONLY, state);
+                    queryClassToString(retval, (QueryClass) node, q, schema, ID_ONLY, state);
                 } else {
                     queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
                     if (!q.getSelect().contains(node)) {

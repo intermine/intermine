@@ -83,20 +83,32 @@ public class BatchWriterSimpleImpl implements BatchWriter
             Iterator insertIter = table.getIdsToInsert().entrySet().iterator();
             while (insertIter.hasNext()) {
                 Map.Entry insertEntry = (Map.Entry) insertIter.next();
-                Object values[] = (Object[]) insertEntry.getValue();
-                StringBuffer sqlBuffer = new StringBuffer((int) (TableBatch.sizeOfArray(values)
-                            * 1.01 + 1000)).append(preamble);
-                for (int i = 0; i < colNames.length; i++) {
-                    if (i > 0) {
-                        sqlBuffer.append(", ");
+                Object inserts = insertEntry.getValue();
+                if (inserts instanceof Object[]) {
+                    addToSimpleBatch(insertString(preamble, colNames.length, (Object[]) inserts));
+                } else {
+                    Iterator iter = ((List) inserts).iterator();
+                    while (iter.hasNext()) {
+                        Object values[] = (Object[]) iter.next();
+                        addToSimpleBatch(insertString(preamble, colNames.length, values));
                     }
-                    sqlBuffer.append(DatabaseUtil.objectToString(values[i]));
                 }
-                sqlBuffer.append(")");
-                addToSimpleBatch(sqlBuffer.toString());
             }
             table.getIdsToInsert().clear();
         }
+    }
+
+    private static String insertString(String preamble, int colCount, Object values[]) {
+        StringBuffer sqlBuffer = new StringBuffer((int) (TableBatch.sizeOfArray(values)
+                    * 1.01 + 1000)).append(preamble);
+        for (int i = 0; i < colCount; i++) {
+            if (i > 0) {
+                sqlBuffer.append(", ");
+            }
+            sqlBuffer.append(DatabaseUtil.objectToString(values[i]));
+        }
+        sqlBuffer.append(")");
+        return sqlBuffer.toString();
     }
 
     /**

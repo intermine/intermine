@@ -14,6 +14,7 @@ import junit.framework.Test;
 
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,7 +41,7 @@ import org.intermine.model.testmodel.*;
 
 public class SqlGeneratorTest extends SetupDataTestCase
 {
-    private static Database db;
+    protected static Database db;
 
     public SqlGeneratorTest(String arg) {
         super(arg);
@@ -148,10 +149,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
-        String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
+        String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db);
         Object expected = results.get(type);
         if (expected instanceof String) {
-            assertEquals(type + " has failed", results.get(type), generated);
+            assertEquals("", results.get(type), generated);
         } else if (expected instanceof Collection) {
             boolean hasEqual = false;
             Iterator expectedIter = ((Collection) expected).iterator();
@@ -159,11 +160,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
                 String expectedString = (String) expectedIter.next();
                 hasEqual = expectedString.equals(generated);
             }
-            assertTrue(type + " has failed: " + generated, hasEqual);
+            assertTrue(generated, hasEqual);
         }
 
         // TODO: extend sql so that it can represent these
-        if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type))) {
+        if (!("TypeCast".equals(type) || "IndexOf".equals(type) || "Substring".equals(type) || "Substring2".equals(type) || type.startsWith("Empty"))) {
             // And check that the SQL generated is high enough quality to be parsed by the optimiser.
             org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
         }
@@ -244,11 +245,14 @@ public class SqlGeneratorTest extends SetupDataTestCase
         q.addFrom(c1);
         q.addToSelect(c1);
         try {
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new Model("nothing", "http://www.intermine.org/model/testmodel",
-                                                                     new HashSet()), db);
+            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, new DatabaseSchema(new Model("nothing", "http://www.intermine.org/model/testmodel", new HashSet()), Collections.EMPTY_LIST), db);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
         }
+    }
+
+    protected DatabaseSchema getSchema() {
+        return new DatabaseSchema(model, Collections.EMPTY_LIST);
     }
 }
 
