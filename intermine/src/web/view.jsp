@@ -27,6 +27,8 @@
     </tr>
   </table>
   <br/>
+  <br/>
+  <tiles:get name="saveQuery"/>
   <%--     
     Need to improved the estimates:
     <c:if test="${RESULTS_TABLE == null}">
@@ -44,9 +46,6 @@
     </html:link>
   </div>
 </c:if>
-
-<br/>
-<tiles:get name="saveQuery"/>
 
 <%--     
   <hr/>

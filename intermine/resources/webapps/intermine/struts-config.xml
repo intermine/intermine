@@ -154,7 +154,8 @@
     <!-- Action to save the current query -->
     <action path="/saveQuery"
             type="org.intermine.web.SaveQueryAction"
-            name="saveQueryForm">
+            name="saveQueryForm"
+            input="query">
       <forward name="query" path="query.page"/>
     </action>
 

@@ -11,7 +11,12 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import java.util.Map;
+
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
@@ -41,6 +46,26 @@ public class SaveQueryForm extends ActionForm
      */
     public String getQueryName() {
         return queryName;
+    }
+
+    /**
+     * @see ActionForm#validate
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+
+        ActionErrors errors = null;
+        if (queryName.equals("")) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                       new ActionError("errors.savequery.blank", queryName));
+        } else if (savedQueries != null && savedQueries.containsKey(queryName)) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                       new ActionError("errors.savequery.existing", queryName));
+        }
+        return errors;
     }
 
     /**
