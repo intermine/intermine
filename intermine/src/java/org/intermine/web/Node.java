@@ -23,7 +23,7 @@ import org.intermine.util.TypeUtil;
  */
 public class Node
 {
-    String fieldName, path, prefix, type;
+    String fieldName, path, prefix, type, parentType;
     boolean attribute = false, reference = false, collection = false;
     int indentation;
 
@@ -48,6 +48,7 @@ public class Node
         this.fieldName = fieldName;
         prefix = parent.getPath();
         path = prefix + "." + fieldName;
+        parentType = parent.getType();
         ClassDescriptor cld = MainHelper.getClassDescriptor(parent.getType(), model);
         FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
         type = TypeUtil.unqualifiedName(fd.isAttribute()
@@ -60,6 +61,16 @@ public class Node
         indentation = path.split("[.]").length - 1;
     }
 
+    /**
+     * Type of parent node. Required for MainController to find field value
+     * enumerations with fieldName and parentType.
+     *
+     * @return  type of parent node
+     */
+    public String getParentType() {
+        return parentType;
+    }
+    
     /**
      * Gets the value of path
      *
