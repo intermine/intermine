@@ -68,11 +68,10 @@ public class CollatedResult extends Results
          if (index < 0) {
              throw new IllegalArgumentException("Cannot find qn in select part of q");
          }
-         Object result = row.get(index);
+         result = row.get(index);
          if (result == null) {
              throw new NullPointerException("result must not be null");
          }
-         this.result = result;
     }
 
     /**
