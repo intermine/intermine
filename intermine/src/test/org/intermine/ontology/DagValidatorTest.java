@@ -42,7 +42,7 @@ public class DagValidatorTest extends TestCase
             + "  %term2 ; id2\n"
             + "   %term3 ; id3\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
         assertTrue(root1.size() == 1);
         assertTrue(validator.duplicateNames(root1));
     }
@@ -54,7 +54,7 @@ public class DagValidatorTest extends TestCase
             + "  %term2 ; id2\n"
             + "   %term3 ; id1\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
         assertFalse(validator.duplicateNames(root1));
     }
 
@@ -66,7 +66,7 @@ public class DagValidatorTest extends TestCase
             + "  %term2 ; id2\n"
             + "   %term3 ; id3\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
         assertTrue(root1.size() == 1);
         assertTrue(validator.duplicateIds(root1));
     }
@@ -78,7 +78,7 @@ public class DagValidatorTest extends TestCase
             + "  %term2 ; id2\n"
             + "   %term1 ; id3\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
         assertFalse(validator.duplicateIds(root1));
     }
 
@@ -90,7 +90,7 @@ public class DagValidatorTest extends TestCase
             + "  %term2 ; id2\n"
             + "   %term3 ; id3\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
         assertTrue(root1.size() == 1);
         assertTrue(validator.synonymsAreTerms(root1));
     }
@@ -102,7 +102,7 @@ public class DagValidatorTest extends TestCase
             + "  %term2 ; id2\n"
             + "   %term3 ; id3\n";
 
-        Set root1 = parser.process(new BufferedReader(new StringReader(test1)));
+        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
         assertFalse(validator.synonymsAreTerms(root1));
     }
 
@@ -115,7 +115,7 @@ public class DagValidatorTest extends TestCase
 
 
         parser.readTerms(new BufferedReader(new StringReader(test1)));
-        Set root1 = parser.terms;
+        Set root1 = parser.rootTerms;
         assertTrue(validator.orphanPartOfs(root1));
     }
 
@@ -127,7 +127,7 @@ public class DagValidatorTest extends TestCase
             + "  %term3 ; id3\n";
 
         parser.readTerms(new BufferedReader(new StringReader(test1)));
-        Set root1 = parser.terms;
+        Set root1 = parser.rootTerms;
         assertFalse(validator.orphanPartOfs(root1));
     }
 
