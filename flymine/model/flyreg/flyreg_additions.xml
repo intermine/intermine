@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.BindingSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-  <attribute name="factor" type="java.lang.String"/>
-  <reference name="targetGene" referenced-type="org.flymine.model.genomic.Gene"/>
+  <reference name="factor" referenced-type="org.flymine.model.genomic.Gene"/>
 </class>
 </classes>
