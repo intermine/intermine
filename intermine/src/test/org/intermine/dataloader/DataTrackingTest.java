@@ -10,10 +10,13 @@ package org.intermine.dataloader;
  *
  */
 
+import java.sql.Connection;
+
 import org.intermine.model.datatracking.Source;
 import org.intermine.model.datatracking.Field;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 
 import org.intermine.model.testmodel.Department;
@@ -31,7 +34,15 @@ public class DataTrackingTest extends TestCase {
     }
 
     public void tearDown() throws Exception {
-        dt.close();
+        try {
+            dt.close();
+            Database db = DatabaseFactory.getDatabase("db.unittest");
+            Connection c = db.getConnection();
+            c.setAutoCommit(true);
+            c.createStatement().execute("DROP TABLE tracker");
+            c.close();
+        } catch (Exception e) {
+        }
     }
 
     public void testSetSourceNullIds() throws Exception {
