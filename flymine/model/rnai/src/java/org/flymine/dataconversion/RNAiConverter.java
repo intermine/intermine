@@ -217,6 +217,12 @@ public class RNAiConverter extends FileConverter
         writer.store(ItemHelper.convert(expt));
     }
 
+    /**
+     * Convenience method to create and store a new author Item
+     * @param pub the publication associated with the author
+     * @param name the author's name
+     * @throws ObjectStoreException if an error occurs in storing the Utem
+     */
     protected void addAuthor(Item pub, String name) throws ObjectStoreException {
         Item item = newItem("Author");
         item.addAttribute(new Attribute("name", name));
