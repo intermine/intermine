@@ -2699,7 +2699,7 @@
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
                 merge-uniprot-model, merge-protein_structure-model, merge-ucsc-model, 
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
-                merge-shortcuts">
+                merge-chado-model, merge-shortcuts">
   </target>
 
 
