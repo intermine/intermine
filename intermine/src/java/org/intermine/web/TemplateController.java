@@ -10,8 +10,6 @@ package org.intermine.web;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,9 +26,6 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.query.ConstraintOp;
-
-import org.intermine.objectstore.query.SimpleConstraint;
 
 /**
  * Controller for the template tile. This tile can be used for real template

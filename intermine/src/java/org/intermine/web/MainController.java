@@ -36,8 +36,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
