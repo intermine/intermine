@@ -53,6 +53,20 @@ public class MageDataTranslator extends DataTranslator
     protected Map featureToDesign = new HashMap();
     // hold on to ReporterLocation items until end
     protected Set reporterLocs = new HashSet();
+    protected Map gene2BioEntity = new HashMap();
+
+    //mage: Feature id -> flymine:MicroArrayExperimentResult id when processing BioAssayDatum
+    protected Map maer2Feature = new HashMap();
+    protected Map feature2Maer = new HashMap();
+    protected Set maerSet = new HashSet();
+    //flymine: BioEntity id -> mage:Feature id when processing Reporter
+    protected Map bioEntity2Feature = new HashMap();
+    //BioSequence ->BioEntity and extra Gene
+    //set bioEntity item -> MicroArrayExperimentalResult
+    protected Set bioEntitySet = new HashSet();
+    //    protected Set nuclearDNASet = new HashSet();
+    //    protected Set cDNACloneSet = new HashSet();
+    protected Set geneSet = new HashSet();
 
     /**
      * @see DataTranslator#DataTranslator
@@ -72,6 +86,17 @@ public class MageDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
+
+        i = processBioEntity2MAEResult().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
+        i = processGene2MAEResult().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
     }
 
     /**
@@ -121,6 +146,19 @@ public class MageDataTranslator extends DataTranslator
                     translateMicroArrayExperimentalResult(srcItem, tgtItem, normalised);
                 } else if (className.equals("DatabaseEntry")) {
                     tgtItem.addAttribute(new Attribute("type", "accession"));
+                } else if (className.equals("Reporter")) {
+                    setBioEntity2FeatureMap(srcItem, tgtItem);
+                } else if (className.equals("BioSequence")) {
+                    Item gene = new Item();
+                    gene = translateBioEntity(srcItem, tgtItem);
+                    result.add(gene);
+                    bioEntitySet.add(tgtItem);
+                    //                    if (tgtItem.className.equals("NuclearDNA")) {
+                    //  nuclearDNASet.add(tgtItem);
+                    //} else if (tgtItem.className.equals("CDNAClone")) {
+                    //    cDNACloneSet.add(tgtItem);
+                    //}
+                    geneSet.add(gene);
                 }
                 result.add(tgtItem);
             }
@@ -197,6 +235,52 @@ public class MageDataTranslator extends DataTranslator
         }
 
     }
+
+    protected Map createFeature2MaerMap(Map maer2FeatureMap, Set maerSet) {
+        // System.out.println("maer "+maer.toString());
+        for (Iterator i = maerSet.iterator(); i.hasNext(); ) {
+            String maer = (String)i.next();
+            String feature = (String)maer2FeatureMap.get(maer);
+            if (feature2Maer.containsKey(feature)) {
+                String multiMaer = ((String) feature2Maer.get(feature)).concat(" "+maer);
+                feature2Maer.put(feature, multiMaer);
+            } else {
+                feature2Maer.put(feature, maer);
+            }
+
+        }
+        System.out.println("feature2maer " + feature2Maer.toString());
+        return feature2Maer;
+
+    }
+
+    protected void setBioEntity2FeatureMap(Item srcItem, Item tgtItem)
+        throws ObjectStoreException {
+        ReferenceList featureReporterMaps = srcItem.getCollection("featureReporterMaps");
+        ReferenceList immobilizedChar = srcItem.getCollection("immobilizedCharacteristics");
+
+        StringBuffer sb = new StringBuffer();
+        if (featureReporterMaps != null && immobilizedChar != null) {
+            for (Iterator i = featureReporterMaps.getRefIds().iterator(); i.hasNext(); ) {
+                //FeatureReporterMap
+                Item frm = ItemHelper.convert(srcItemReader.getItemById((String)i.next()));
+                if ( frm.hasCollection("featureInformationSources")) {
+                    Iterator j = frm.getCollection("featureInformationSources").getRefIds().iterator();
+                    while (j.hasNext()) {
+                        Item fis = ItemHelper.convert(srcItemReader.getItemById((String)j.next()));
+                        if (fis.hasReference("feature")) {
+                            System.out.println("feature "+fis.getReference("feature").getRefId());
+                            sb.append(fis.getReference("feature").getRefId()+" ");
+                        }
+                    }
+                }
+            }
+            String id =  (String) immobilizedChar.getRefIds().get(0);
+            bioEntity2Feature.put(id, sb.toString());
+            System.out.println("bioEntity2Feature" + bioEntity2Feature.toString());
+        }
+    }
+
 
     /**
      * @param srcItem = mage:PhysicalArrayDesign
@@ -341,7 +425,7 @@ public class MageDataTranslator extends DataTranslator
                 Item msItem = ItemHelper.convert(srcItemReader.getItemById(
                                 qtItem.getReference("targetQuantitationType").getRefId()));
                 if (msItem.hasReference("scale")) {
-                    tgtItem.addAttribute(new Attribute("scale",
+                    tgtItem.addReference(new Reference("scale",
                                                        msItem.getReference("scale").getRefId()));
                 } else {
                     LOG.error("srcItem (" + msItem.getIdentifier()
@@ -357,8 +441,72 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
+        if (srcItem.hasReference("designElement")) {
+
+            maer2Feature.put(tgtItem.getIdentifier(),srcItem.getReference("designElement").getRefId());
+            maerSet.add(tgtItem.getIdentifier());
+        }
+        //System.out.println("maer2Feature " + maer2Feature.toString());
+
     }
 
+
+    protected Item translateBioEntity(Item srcItem, Item tgtItem)
+        throws ObjectStoreException {
+        Item gene = new Item();
+        String s = null;
+        if (srcItem.hasReference("type")) {
+            Item item = ItemHelper.convert(srcItemReader.getItemById(
+                               srcItem.getReference("type").getRefId()));
+            if (item.hasAttribute("value")) {
+                s = item.getAttribute("value").getValue();
+                System.out.println("bioentity: " +s);
+                if (s.equals("genomic_DNA")){
+                   tgtItem.setClassName(tgtNs + "NuclearDNA");
+                } else if (s.equals("cDNA_clone")) {
+                    tgtItem.setClassName(tgtNs + "CDNAClone");
+                }
+            }
+        }
+        if (srcItem.hasCollection("sequenceDatabases")) {
+            ReferenceList rl = srcItem.getCollection("sequenceDatabases");
+            if (rl != null) {
+                boolean emblFlag = false;
+                String identifier = null;
+                ReferenceList synonymGeneRl = new ReferenceList();
+                ReferenceList synonymEmblRl = new ReferenceList();
+
+                for (Iterator i = rl.getRefIds().iterator(); i.hasNext(); ) {
+                    Item dbEntryItem = ItemHelper.convert(srcItemReader.getItemById((String) i.next()));
+                    if (dbEntryItem.hasReference("database")) {
+                        identifier = dbEntryItem.getAttribute("accession").getValue();
+                        Item dbItem =  ItemHelper.convert(srcItemReader.getItemById((String) dbEntryItem.getReference("database").getRefId()));
+                        if (dbItem.hasAttribute("name")) {
+                            String dbName = dbItem.getAttribute("name").getValue();
+                            if (dbName.equals("flybase") && identifier != null) {
+                                gene = createGene(tgtNs + "Gene", "", identifier);
+                                synonymGeneRl.setName("synonym");
+                                synonymGeneRl.addRefId(dbItem.getIdentifier());
+
+                            } else if (dbName.equals("embl") && identifier != null) {
+                                if (emblFlag == false) {
+                                    tgtItem.addAttribute(new Attribute("identifier", identifier));
+                                    emblFlag = true;
+                                }
+                                synonymEmblRl.setName("synonym");
+                                synonymEmblRl.addRefId(dbEntryItem.getIdentifier());
+                            }
+                        }
+                    }
+                }
+                gene.addCollection(synonymGeneRl);
+                tgtItem.addCollection(synonymEmblRl);
+            }
+        }
+        gene2BioEntity.put(gene.getIdentifier(), srcItem.getIdentifier());
+        return gene;
+
+    }
 
     /**
      * set ReporterLocation.design reference, don't need to set
@@ -376,6 +524,67 @@ public class MageDataTranslator extends DataTranslator
             designRef.setRefId(designId);
             rl.addReference(designRef);
             results.add(rl);
+        }
+        return results;
+    }
+
+    protected Set processBioEntity2MAEResult() {
+        Set results = new HashSet();
+        feature2Maer = createFeature2MaerMap(maer2Feature, maerSet);
+        for (Iterator i = bioEntitySet.iterator(); i.hasNext();) {
+            Item bioEntity = (Item) i.next();
+            List maerIds = new ArrayList();
+            String s = (String) bioEntity2Feature.get((String) bioEntity.getIdentifier());
+            System.out.println("featureId "+s + " bioEntityId "+ bioEntity.getIdentifier());
+            if (s != null) {
+                StringTokenizer st = new StringTokenizer(s);
+                String multiMaer = null;
+                while (st.hasMoreTokens()) {
+                    multiMaer = (String) feature2Maer.get(st.nextToken());
+                    System.out.println("multiMaer " + multiMaer);
+                    if (multiMaer != null) {
+                        StringTokenizer token = new StringTokenizer(multiMaer);
+                        while (token.hasMoreTokens()) {
+                            maerIds.add(token.nextToken());
+                        }
+                    }
+                }
+                ReferenceList maerRl = new ReferenceList("microArrayExperimentalResult", maerIds);
+                bioEntity.addCollection(maerRl);
+                results.add(bioEntity);
+            }
+        }
+        return results;
+    }
+
+    protected Set processGene2MAEResult() {
+        Set results = new HashSet();
+        feature2Maer = createFeature2MaerMap(maer2Feature, maerSet);
+        for (Iterator i = geneSet.iterator(); i.hasNext();) {
+            Item gene = (Item) i.next();
+            List maerIds = new ArrayList();
+            String geneId = (String) gene.getIdentifier();
+            String bioEntityId = (String) gene2BioEntity.get(geneId);
+            String s = (String) bioEntity2Feature.get(bioEntityId);
+            System.out.println("featureId "+s + " bioEntityId "+ bioEntityId +" geneId "+ geneId);
+            if (s != null) {
+                StringTokenizer st = new StringTokenizer(s);
+                String multiMaer = null;
+                while (st.hasMoreTokens()) {
+                    multiMaer = (String) feature2Maer.get(st.nextToken());
+                    System.out.println("multiMaer " + multiMaer);
+                    if (multiMaer != null) {
+                        StringTokenizer token = new StringTokenizer(multiMaer);
+                        while (token.hasMoreTokens()) {
+                            maerIds.add(token.nextToken());
+                        }
+                    }
+                }
+
+                ReferenceList maerRl = new ReferenceList("microArrayExperimentalResult", maerIds);
+                gene.addCollection(maerRl);
+                results.add(gene);
+            }
         }
         return results;
     }
@@ -437,6 +646,13 @@ public class MageDataTranslator extends DataTranslator
      */
     private boolean isSingleElementCollection(ReferenceList col) {
         return (col.getRefIds().size() == 1);
+    }
+
+    private Item createGene(String className, String implementation, String identifier) {
+        Item gene = new Item();
+        gene = createItem(className, implementation);
+        gene.addAttribute(new Attribute("organismDbId", identifier));
+        return gene;
     }
 
 }
