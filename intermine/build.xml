@@ -739,6 +739,8 @@
        <fileset dir="${model}/uml/resources" includes="model*.properties"/>
     </copy>
 
+    <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
+
     <!-- this step is optional -->
     <antcall target="precompile-jsp"/>
 
@@ -769,8 +771,6 @@
     </delete>
 
     <loadfile property="generated.xml" srcFile="${build.tmp}/generated-web.xml"/>
-
-    <copy todir="${build.tmp}" file="${resources}/webapps/flymine/web.xml"/>
 
     <replace file="${build.tmp}/web.xml" value="${generated.xml}">
       <!-- can't use normal token as xml must be parseable before this replacement -->
