@@ -81,8 +81,7 @@ public class PersistenceBrokerFactoryFlyMineImpl extends PersistenceBrokerFactor
         }
         ((PersistenceBrokerFlyMine) pb).setDatabase(db);
 
-        LOG.info("PersistenceBrokerFactoryFlyMineImpl: " + activePersistenceBroker()
-                 + " active brokers");
+        LOG.debug(activePersistenceBroker() + " active brokers");
 
         return (PersistenceBrokerFlyMine) pb;
     }
