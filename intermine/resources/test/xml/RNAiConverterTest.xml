@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <items>
-  <item id="0_0" class="http://flymine.org/model/rnai#Organism">
+  <item id="0_0" class="http://www.flymine.org/model/rnai#Organism">
     <attribute name="name" value="Caenorhabdits elegans"/>
     <attribute name="shortName" value="C. elegans"/>
     <attribute name="taxonId" value="6239"/>
   </item>
-  <item id="1_1" class="http://flymine.org/model/rnai#Publication">
+  <item id="1_1" class="http://www.flymine.org/model/rnai#Publication">
     <attribute name="issue" value="6920"/>
     <attribute name="journal" value="Nature"/>
     <attribute name="pages" value="231-7"/>
@@ -14,10 +14,10 @@
     <attribute name="volume" value="16"/>
     <attribute name="year" value="2003"/>
   </item>
-  <item id="2_2" class="http://flymine.org/model/rnai#RNAiExperiment">
+  <item id="2_2" class="http://www.flymine.org/model/rnai#RNAiExperiment">
     <attribute name="publication" value="1_1"/>
   </item>
-  <item id="3_3" class="http://flymine.org/model/rnai#Gene">
+  <item id="3_3" class="http://www.flymine.org/model/rnai#Gene">
     <attribute name="identifier" value="AC7.1"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="phenotypes">
@@ -25,20 +25,20 @@
       <reference ref_id="4_5"/>
     </collection>
   </item>
-  <item id="3_6" class="http://flymine.org/model/rnai#Gene">
+  <item id="3_6" class="http://www.flymine.org/model/rnai#Gene">
     <attribute name="identifier" value="AC7.2a"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="phenotypes">
       <reference ref_id="4_7"/>
     </collection>
   </item>
-  <item id="4_4" class="http://flymine.org/model/rnai#Phenotype">
+  <item id="4_4" class="http://www.flymine.org/model/rnai#Phenotype">
     <attribute name="code" value="Sck"/>
   </item>
-  <item id="4_5" class="http://flymine.org/model/rnai#Phenotype">
+  <item id="4_5" class="http://www.flymine.org/model/rnai#Phenotype">
     <attribute name="code" value="Ste"/>
   </item>
-  <item id="4_7" class="http://flymine.org/model/rnai#Phenotype">
+  <item id="4_7" class="http://www.flymine.org/model/rnai#Phenotype">
     <attribute name="code" value="WT"/>
   </item>
 </items>
