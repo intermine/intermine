@@ -26,7 +26,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-import org.intermine.codegen.InterMineTorqueModelOutput;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -809,7 +808,7 @@ public class SqlGenerator
             buffer.append("(");
             queryEvaluableToString(buffer, ((QueryCast) node).getValue(), q, state);
             buffer.append(")::");
-            String torqueTypeName = InterMineTorqueModelOutput.generateJdbcType(node.getType()
+            String torqueTypeName = TorqueModelOutput.generateJdbcType(node.getType()
                     .getName());
             SchemaType torqueType = SchemaType.getEnum(torqueTypeName);
             Platform torquePlatform = PlatformFactory.getPlatformFor(state.getDb().getPlatform()
