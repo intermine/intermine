@@ -209,7 +209,7 @@
 
 :ComputationalResult__score a owl:DatatypeProperty ;
     rdfs:domain :ComputationalResult ;
-    rdfs:range xsd:float .
+    rdfs:range xsd:double .
 
 :ExperimentalResult a owl:Class ;
     rdfs:subClassOf :AnalysisResult .
