@@ -93,6 +93,40 @@ public class PostProcessUtil
         q.setConstraint(cs);
 
         Results res = new Results(q, os, os.getSequence());
+
+        return res.iterator();
+    }
+
+    /**
+     * Query ObjectStore for Genes and their Exons.
+     * @param os an ObjectStore to query
+     * @return an iterator over the results - (Gene, Exon) pairs
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Iterator findGeneExonRelations(ObjectStore os) throws ObjectStoreException {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+        QueryClass qcExon = new QueryClass(Exon.class);
+        q.addFrom(qcExon);
+        q.addToSelect(qcExon);
+        QueryClass qcTranscript = new QueryClass(Transcript.class);
+        q.addFrom(qcTranscript);
+        q.addToSelect(qcTranscript);
+        q.addToOrderBy(qcGene);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryObjectReference ref1 = new QueryObjectReference(qcTranscript, "gene");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcGene);
+        cs.addConstraint(cc1);
+        QueryCollectionReference ref2 = new QueryCollectionReference(qcTranscript, "exons");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcExon);
+        cs.addConstraint(cc2);
+        q.setConstraint(cs);
+
+        Results res = new Results(q, os, os.getSequence());
+
         return res.iterator();
     }
 
