@@ -16,14 +16,18 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
@@ -47,6 +51,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
     protected static Map instances = new HashMap();
     protected Database db;
     protected boolean everOptimise = true;
+    protected Set writers = new HashSet();
     
     /**
      * Constructs an ObjectStoreFlyMineImpl.
@@ -157,7 +162,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             }
 
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
-            List objResults = ResultsConverter.convert(sqlResults, q);
+            List objResults = ResultsConverter.convert(sqlResults, q, this);
             return objResults;
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);
@@ -213,6 +218,29 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
             throw new ObjectStoreException("Problem counting SQL statement \"" + sql + "\"", e);
         } finally {
             releaseConnection(c);
+        }
+    }
+
+    /**
+     * @see ObjectStoreAbstractImpl#flushObjectById
+     */
+    public void flushObjectById() {
+        flushObjectById((ObjectStoreWriter) null);
+    }
+
+    /**
+     * Does flushObjectById on itself and all ObjectStoreWriters attached to itself.
+     *
+     * @param except an ObjectStoreWriter to not call flush on
+     */
+    public void flushObjectById(ObjectStoreWriter except) {
+        super.flushObjectById();
+        Iterator writerIter = writers.iterator();
+        while (writerIter.hasNext()) {
+            ObjectStoreWriter writer = (ObjectStoreWriter) writerIter.next();
+            if ((writer != this) && (writer != except)) {
+                writer.flushObjectById();
+            }
         }
     }
 }

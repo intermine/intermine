@@ -13,18 +13,32 @@ package org.flymine.xml.lite;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.digester.*;
 
 import org.xml.sax.SAXException;
 
+import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.metadata.CollectionDescriptor;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.proxy.ProxyReference;
+import org.flymine.objectstore.query.ConstraintOp;
+import org.flymine.objectstore.query.ConstraintSet;
+import org.flymine.objectstore.query.ContainsConstraint;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryField;
+import org.flymine.objectstore.query.QueryCollectionReference;
+import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.DynamicBean;
 import org.flymine.util.StringUtil;
 import org.flymine.util.TypeUtil;
-import org.flymine.objectstore.proxy.LazyInitializer;
-import org.flymine.objectstore.query.Query;
 
 
 /**
@@ -38,12 +52,13 @@ public class LiteParser
      * Parse a FlyMine Lite XML file
      *
      * @param is the InputStream to parse
+     * @param os the ObjectStore with which to associate any new lazy objects
      * @return an object
      * @throws SAXException if there is an error in the XML file
      * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class cannot be found
      */
-    public static Object parse(InputStream is)
+    public static FlyMineBusinessObject parse(InputStream is, ObjectStore os)
         throws IOException, SAXException, ClassNotFoundException {
 
         if (is == null) {
@@ -69,7 +84,7 @@ public class LiteParser
         digester.addSetNext("object/field", "addField");
         digester.addSetNext("object/reference", "addReference");
 
-        return convertToObject(((Item) digester.parse(is)));
+        return convertToObject(((Item) digester.parse(is)), os);
 
    }
 
@@ -77,20 +92,40 @@ public class LiteParser
      * Convert Item to object
      *
      * @param item the Item to convert
+     * @param os the ObjectStore with which to associate any new lazy objects
      * @return the converted object
      * @throws ClassNotFoundException if a class cannot be found
      */
-    protected static Object convertToObject(Item item) throws ClassNotFoundException {
-        Class clazz = Class.forName(item.getClassName());
+    protected static FlyMineBusinessObject convertToObject(Item item, ObjectStore os)
+            throws ClassNotFoundException {
+        Class clazz = null;
+        if ((item.getClassName() != null) && (! "".equals(item.getClassName()))) {
+            clazz = Class.forName(item.getClassName());
+        }
         List interfaces = StringUtil.tokenize(item.getImplementations());
         Iterator intIter = interfaces.iterator();
         List intClasses = new ArrayList();
         while (intIter.hasNext()) {
-            intClasses.add(Class.forName((String) intIter.next()));
+            String className = (String) intIter.next();
+            if (! "net.sf.cglib.Factory".equals(className)) {
+                Class intClass = Class.forName(className);
+                if ((clazz == null) || (! intClass.isAssignableFrom(clazz))) {
+                    intClasses.add(Class.forName(className));
+                }
+            }
         }
 
-        Object obj = DynamicBean.create(clazz,
-                                        (Class []) intClasses.toArray(new Class [] {}));
+        FlyMineBusinessObject obj = null;
+        if (intClasses.isEmpty()) {
+            try {
+                obj = (FlyMineBusinessObject) clazz.newInstance();
+            } catch (Exception e) {
+                throw new ClassNotFoundException(e.getMessage());
+            }
+        } else {
+            obj = (FlyMineBusinessObject) DynamicBean.create(clazz,
+                    (Class []) intClasses.toArray(new Class [] {}));
+        }
 
         try {
             // Set the data for every given Field
@@ -110,9 +145,42 @@ public class LiteParser
                 Query query = new Query();
                 Integer id = new Integer(Integer.parseInt(field.getValue()));
                 TypeUtil.setFieldValue(obj, field.getName(),
-                                       LazyInitializer.getDynamicProxy(fieldClass, query, id));
+                                       new ProxyReference(os, id));
+            }
+
+            // Set the data for every given Collection
+            Set fields = os.getModel().getFieldDescriptorsForClass(obj.getClass());
+            Iterator collIter = fields.iterator();
+            while (collIter.hasNext()) {
+                Object maybeColl = collIter.next();
+                if (maybeColl instanceof CollectionDescriptor) {
+                    CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
+                    // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
+                    //                         AND this = <this>
+                    Query q = new Query();
+                    QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
+                    QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor().getType());
+                    q.addFrom(qc1);
+                    q.addFrom(qc2);
+                    q.addToSelect(qc2);
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
+                                    coll.getName()), ConstraintOp.CONTAINS, qc2));
+                    cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
+                                ConstraintOp.EQUALS, new QueryValue(obj.getId())));
+                    q.setConstraint(cs);
+                    Collection lazyColl = new SingletonResults(q, os);
+                    TypeUtil.setFieldValue(obj, coll.getName(), lazyColl);
+                }
             }
         } catch (IllegalAccessException e) {
+            IllegalArgumentException e2 = new IllegalArgumentException();
+            e2.initCause(e);
+            throw e2;
+        } catch (NoSuchFieldException e) {
+            IllegalArgumentException e2 = new IllegalArgumentException();
+            e2.initCause(e);
+            throw e2;
         }
 
         return obj;

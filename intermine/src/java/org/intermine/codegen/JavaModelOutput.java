@@ -202,9 +202,7 @@ public class JavaModelOutput extends ModelOutput
             sb.append(INDENT + "// Ref: " + ref.getClassDescriptor().getName() + "."
                     + ref.getName() + ENDL)
                 .append(INDENT)
-                .append("protected ")
-                .append(ref.getReferencedClassDescriptor().getName())
-                .append(" ")
+                .append("protected Object ")
                 .append(ref.getName())
                 .append(";" + ENDL);
         }
@@ -247,7 +245,8 @@ public class JavaModelOutput extends ModelOutput
      * @return string with generated java code
      */
     protected String generateGetSet(FieldDescriptor field, boolean fieldPresent) {
-        String name = field.getName(), type = getType(field);
+        String name = field.getName();
+        String type = getType(field);
 
         StringBuffer sb = new StringBuffer();
 
@@ -261,10 +260,26 @@ public class JavaModelOutput extends ModelOutput
         if (!fieldPresent) {
             sb.append(";" + ENDL);
         } else {
-            sb.append(" { ")
-                .append("return ")
-                .append(name)
-                .append("; }" + ENDL);
+            sb.append(" { ");
+            if ((field instanceof ReferenceDescriptor)
+                    && (! (field instanceof CollectionDescriptor))) {
+                // This is an object reference.
+                sb.append("if (")
+                    .append(name)
+                    .append(" instanceof org.flymine.objectstore.proxy.ProxyReference) { ")
+                    .append(name)
+                    .append(" = ((org.flymine.objectstore.proxy.ProxyReference) ")
+                    .append(name)
+                    .append(").getObject(); }; return (")
+                    .append(type)
+                    .append(") ")
+                    .append(name)
+                    .append("; }" + ENDL);
+            } else {
+                sb.append("return ")
+                    .append(name)
+                    .append("; }" + ENDL);
+            }
         }
 
         // Set method
@@ -286,6 +301,26 @@ public class JavaModelOutput extends ModelOutput
                 .append(" = ")
                 .append(name)
                 .append("; }" + ENDL);
+        }
+
+        if ((field instanceof ReferenceDescriptor)
+                && (! (field instanceof CollectionDescriptor))) {
+            // This is an object reference.
+            sb.append(INDENT)
+                .append("public void proxy")
+                .append(StringUtil.capitalise(name))
+                .append("(org.flymine.objectstore.proxy.ProxyReference ")
+                .append(name)
+                .append(")");
+            if (!fieldPresent) {
+                sb.append(";" + ENDL);
+            } else {
+                sb.append(" { this.")
+                    .append(name)
+                    .append(" = ")
+                    .append(name)
+                    .append("; }" + ENDL);
+            }
         }
 
         return sb.toString();
@@ -439,9 +474,9 @@ public class JavaModelOutput extends ModelOutput
             Iterator iter = keyFields.iterator();
             while (iter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) iter.next();
-                sb.append(field.getName());
+                sb.append("get" + StringUtil.capitalise(field.getName()) + "()");
                 if (iter.hasNext()) {
-                    sb.append("+\", \"+");
+                    sb.append(" + \", \" + ");
                 }
             }
             sb.append("; }" + ENDL);

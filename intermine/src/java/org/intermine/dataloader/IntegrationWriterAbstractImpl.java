@@ -178,6 +178,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
+     * @see org.flymine.objectstore.ObjectStore#pilferObjectById
+     */
+    public FlyMineBusinessObject pilferObjectById(Integer id) {
+        return osw.pilferObjectById(id);
+    }
+    
+    /**
      * @see org.flymine.objectstore.ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {

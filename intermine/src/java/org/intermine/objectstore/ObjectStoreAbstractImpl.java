@@ -17,11 +17,10 @@ import java.util.Properties;
 
 import org.flymine.metadata.Model;
 import org.flymine.model.FlyMineBusinessObject;
-import org.flymine.objectstore.proxy.LazyCollection;
-import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCreator;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.util.CacheMap;
 import org.flymine.util.PropertiesUtil;
@@ -131,12 +130,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                                                + "this primary key");
         }
         if (results.size() == 1) {
-            FlyMineBusinessObject o = (FlyMineBusinessObject) ((Object []) results.get(0))[0];
-            try {
-                promoteProxies(o);
-            } catch (Exception e) {
-                throw new ObjectStoreException("Problem promoting proxies", e);
-            }
+            FlyMineBusinessObject o = (FlyMineBusinessObject) ((ResultsRow) results.get(0)).get(0);
             return o;
         }
         return null;
@@ -183,6 +177,15 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
+     * @see ObjectStore#pilferObjectById
+     */
+    public FlyMineBusinessObject pilferObjectById(Integer id) {
+        synchronized(cache) {
+            return (FlyMineBusinessObject) cache.get(id);
+        }
+    }
+
+    /**
      * Checks the start and limit to see whether they are inside the
      * hard limits for this ObjectStore
      *
@@ -210,35 +213,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public Model getModel() {
         return model;
-    }
-
-    /**
-     * Takes an Object, and promotes all the proxies in it.
-     *
-     * @param obj an Object to process
-     * @throws ObjectStoreException if something goes wrong
-     */
-    protected void promoteProxies(Object obj) throws ObjectStoreException {
-        if (obj == null) {
-            return;
-        }
-        Class cls = obj.getClass();
-        Map infos = TypeUtil.getFieldInfos(cls);
-        Iterator iter = infos.keySet().iterator();
-        while (iter.hasNext()) {
-            String fieldName = (String) iter.next();
-            try {
-                Object fieldValue = TypeUtil.getFieldValue(obj, fieldName);
-                if (fieldValue instanceof LazyReference) {
-                    ((LazyReference) fieldValue).setObjectStore(this);
-                } else if (fieldValue instanceof LazyCollection) {
-                    Query query = ((LazyCollection) fieldValue).getQuery();
-                    TypeUtil.setFieldValue(obj, fieldName, new SingletonResults(query, this));
-                }
-            } catch (IllegalAccessException e) {
-                throw new ObjectStoreException(e);
-            }
-        }
     }
 
     /**

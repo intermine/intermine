@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.Query;
@@ -26,7 +25,10 @@ import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.objectstore.query.SimpleConstraint;
+import org.flymine.objectstore.query.fql.FqlQuery;
+import org.flymine.objectstore.query.fql.FqlQueryParser;
 
 import org.flymine.model.testmodel.*;
 
@@ -163,25 +165,25 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         r = new Object[][] { { data.get("ContractorA") },
                              { data.get("ContractorB") },
                              { data.get("EmployeeB1") },
-                             { data.get("EmployeeB2") },
-                             { data.get("EmployeeB3") },
                              { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
-                             { data.get("EmployeeA3") } };
+                             { data.get("EmployeeA3") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") } };
         results.put("SelectInterfaceAndSubClasses", toList(r));
 
         r = new Object[][] { { data.get("CompanyA") },
+                             { data.get("DepartmentA1") },
                              { data.get("CompanyB") },
                              { data.get("DepartmentB1") },
-                             { data.get("DepartmentB2") },
-                             { data.get("DepartmentA1") } };
+                             { data.get("DepartmentB2") } };
         results.put("SelectInterfaceAndSubClasses2", toList(r));
 
         r = new Object[][] { { data.get("ContractorA") },
                              { data.get("ContractorB") },
                              { data.get("EmployeeB1") },
-                             { data.get("EmployeeB3") },
-                             { data.get("EmployeeA1") } };
+                             { data.get("EmployeeA1") },
+                             { data.get("EmployeeB3") } };
         results.put("SelectInterfaceAndSubClasses3", toList(r));
 
         r = new Object[][] { { new Integer(5), "CompanyA" },
@@ -212,7 +214,14 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
 
         r = new Object[][] { { data.get("EmployeeA1") } };
         results.put("InterfaceField", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") } };
         results.put("InterfaceReference", toList(r));
+
+        r = new Object[][] { { data.get("CompanyA") },
+                             { data.get("CompanyB") } };
         results.put("InterfaceCollection", toList(r));
     }
 
@@ -267,18 +276,13 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         List r = os.execute((Query) queries.get("ContainsN1"));
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
         List e = d.getEmployees();
-        assertTrue(e instanceof Results);
+        assertTrue("Expected " + e.getClass() + " to be a SingletonResults object", e instanceof SingletonResults);
 
         List expected = new ArrayList();
         expected.add(data.get("EmployeeA1"));
         expected.add(data.get("EmployeeA2"));
         expected.add(data.get("EmployeeA3"));
         assertEquals(expected, e);
-
-        // navigate from a lazy collection to a field that is a lazy reference
-        Address a = ((Employee) e.get(0)).getAddress();
-        assertTrue(a instanceof LazyReference);
-        assertEquals(((Employee) data.get("EmployeeA1")).getAddress(), a);
     }
 
     public void testLazyCollectionMtoN() throws Exception {
@@ -295,93 +299,18 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         ResultsRow rr = (ResultsRow) r.get(0);
         Company c = (Company) rr.get(0);
         List contractors = c.getContractors();
-        assertTrue(contractors instanceof Results);
+        assertTrue("Expected " + contractors.getClass() + " to be a SingletonResults object", contractors instanceof SingletonResults);
         List expected1 = new ArrayList();
         expected1.add(data.get("ContractorA"));
         expected1.add(data.get("ContractorB"));
         assertEquals(expected1, contractors);
 
         List companies = ((Contractor) contractors.get(0)).getCompanys();
-        assertTrue(companies instanceof Results);
+        assertTrue("Expected " + companies.getClass() + " to be a SingletonResults object", companies instanceof SingletonResults);
         List expected2 = new ArrayList();
         expected2.add(data.get("CompanyA"));
         expected2.add(data.get("CompanyB"));
         assertEquals(expected2, companies);
-    }
-
-    public void testLazyReference() throws Exception {
-        // select department where department.name="DepartmentA1"
-        QueryClass qc1 = new QueryClass(Department.class);
-        Query q1 = new Query();
-        q1.addFrom(qc1);
-        q1.addToSelect(qc1);
-        QueryField f1 = new QueryField(qc1, "name");
-        QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
-        q1.setConstraint(sc1);
-        Results r  = os.execute(q1);
-        ResultsRow rr = (ResultsRow) r.get(0);
-        Department d = (Department) rr.get(0);
-        Company c1 = d.getCompany();
-        Company c2 = (Company) data.get("CompanyA");
-        assertTrue(c1 instanceof LazyReference);
-        assertTrue(c1.equals(c2));
-        assertTrue(c2.equals(c1));
-        assertEquals(c2.getId(), c1.getId());
-        assertEquals(c2.hashCode(), c1.hashCode());
-        assertFalse(((LazyReference) c1).isMaterialised());
-        assertEquals(c2.getName(), c1.getName());
-        assertTrue(((LazyReference) c1).isMaterialised());
-    }
-
-    public void testLazyCollectionRef() throws Exception {
-        QueryClass c1 = new QueryClass(Department.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
-        q1.setConstraint(sc1);
-        Results r  = os.execute(q1);
-        ResultsRow rr = (ResultsRow) r.get(0);
-        Department d = (Department) rr.get(0);
-        List e = d.getEmployees();
-        assertTrue(e instanceof Results);
-
-        List expected = new ArrayList();
-        expected.add(data.get("EmployeeA1"));
-        expected.add(data.get("EmployeeA2"));
-        expected.add(data.get("EmployeeA3"));
-
-        // test that we can navigate from member of lazy collection to one of its lazy references
-        assertEquals(expected, e);
-        Employee e1 = (Employee) e.get(0);
-        Address a = e1.getAddress();
-        assertTrue(a instanceof LazyReference);
-        assertEquals(((Employee) data.get("EmployeeA1")).getAddress(), a);
-    }
-
-    public void testLazyReferenceRef() throws Exception {
-        QueryClass c1 = new QueryClass(Department.class);
-        Query q1 = new Query();
-        q1.addFrom(c1);
-        q1.addToSelect(c1);
-        QueryField f1 = new QueryField(c1, "name");
-        QueryValue v1 = new QueryValue("DepartmentA1");
-        SimpleConstraint sc1 = new SimpleConstraint(f1, ConstraintOp.EQUALS, v1);
-        q1.setConstraint(sc1);
-        List r  = os.execute(q1);
-        Department d = (Department) ((ResultsRow) r.get(0)).get(0);
-
-        Company c = d.getCompany();
-        assertTrue(c instanceof LazyReference);
-        assertEquals(data.get("CompanyA"), c);
-
-        // navigate from a lazy reference to a field that is a lazy reference
-        Address a = c.getAddress();
-        assertTrue(a instanceof LazyReference);
-        assertEquals(((Company) data.get("CompanyA")).getAddress(), a);
     }
 
     // setDistinct tests
@@ -488,10 +417,21 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
     }
 
     public void testGetObjectById() throws Exception {
-        Employee e = (Employee) os.getObjectById(((Employee) data.get("EmployeeA1")).getId());
+        Integer id = ((Employee) data.get("EmployeeA1")).getId();
+        Employee e = (Employee) os.getObjectById(id);
         assertEquals(data.get("EmployeeA1"), e);
+        assertTrue(e == os.getObjectById(id));
     }
 
+    public void testGetObjectMultipleTimes() throws Exception {
+        Query q = FqlQueryParser.parse(new FqlQuery("select Secretary from Secretary where Secretary.name = 'Secretary1'", "org.flymine.model.testmodel"));
+        Secretary a = (Secretary) ((List) os.execute(q).get(0)).get(0);
+
+        Secretary b = (Secretary) os.getObjectById(a.getId());
+        assertEquals(a, b);
+        assertTrue(a == b);
+    }
+    
     // helper method
 
     protected static List toList(Object[][] o) {

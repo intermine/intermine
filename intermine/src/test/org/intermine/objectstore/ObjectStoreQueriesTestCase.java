@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import junit.framework.AssertionFailedError;
@@ -927,7 +928,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.alias(c1, "Company");
         q1.addFrom(c1);
         q1.addToSelect(c1);
-        HashSet set = new HashSet();
+        HashSet set = new LinkedHashSet();
         set.add("hello");
         set.add("goodbye");
         set.add("CompanyA");

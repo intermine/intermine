@@ -17,12 +17,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.flymine.model.FlyMineBusinessObject;
 import org.flymine.modelproduction.ModelParser;
 import org.flymine.modelproduction.xml.FlyMineModelParser;
 import org.flymine.util.TypeUtil;
@@ -41,6 +44,8 @@ public class Model
     private final URI nameSpace;
     private final Map cldMap = new LinkedHashMap();
     private final Map subMap = new LinkedHashMap();
+    private final Map classToClassDescriptorSet = new HashMap();
+    private final Map classToFieldDescriptorSet = new HashMap();
 
     /**
      * Return a Model for specified model name (loading Model if necessary)
@@ -246,5 +251,82 @@ public class Model
         }
         sb.append("</model>");
         return sb.toString();
+    }
+
+    /**
+     * Takes a Class, and generates a Set of all ClassDescriptors that are the Class
+     * or any of its parents. The Class may be a dynamic class - ie not in the model, although
+     * all its parents are in the model.
+     *
+     * @param a Class
+     * @return a Set of ClassDescriptor objects
+     */
+    public Set getClassDescriptorsForClass(Class c) {
+        if (! FlyMineBusinessObject.class.isAssignableFrom(c)) {
+            return Collections.EMPTY_SET;
+        }
+        synchronized(classToClassDescriptorSet) {
+            Set retval = (Set) classToClassDescriptorSet.get(c);
+            if (retval == null) {
+                retval = new HashSet();
+                Stack stack = new Stack();
+                Set done = new HashSet();
+                stack.push(c);
+                while (!stack.empty()) {
+                    Class toAdd = (Class) stack.pop();
+                    if (! done.contains(toAdd)) {
+                        ClassDescriptor cld = getClassDescriptorByName(toAdd.getName());
+                        if (cld != null) {
+                            retval.add(cld);
+                        }
+                        Class superClass = toAdd.getSuperclass();
+                        if ((superClass != null) && (FlyMineBusinessObject.class.isAssignableFrom(superClass))) {
+                            stack.push(superClass);
+                        }
+                        Class[] interfaces = toAdd.getInterfaces();
+                        for (int i = 0; i<interfaces.length; i++) {
+                            if (FlyMineBusinessObject.class.isAssignableFrom(interfaces[i])) {
+                                stack.push(interfaces[i]);
+                            }
+                        }
+                        done.add(toAdd);
+                    }
+                }
+                classToClassDescriptorSet.put(c, retval);
+            }
+            return retval;
+        }
+    }
+
+    /**
+     * Takes a Class, and generates a Set of all FieldDescriptors that are the class fields
+     * or any of its parents. The Class may be a dynamic class - ie not in the model, although
+     * all its parents are in the model.
+     *
+     * @param a Class
+     * @return a Set of FieldDescriptor objects
+     */
+    public Set getFieldDescriptorsForClass(Class c) {
+        if (! FlyMineBusinessObject.class.isAssignableFrom(c)) {
+            return Collections.EMPTY_SET;
+        }
+        synchronized(classToFieldDescriptorSet) {
+            Set retval = (Set) classToFieldDescriptorSet.get(c);
+            if (retval == null) {
+                retval = new HashSet();
+                Set clds = getClassDescriptorsForClass(c);
+                Iterator cldIter = clds.iterator();
+                while (cldIter.hasNext()) {
+                    ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                    Iterator fieldIter = cld.getFieldDescriptors().iterator();
+                    while (fieldIter.hasNext()) {
+                        FieldDescriptor fd = (FieldDescriptor) fieldIter.next();
+                        retval.add(fd);
+                    }
+                }
+                classToFieldDescriptorSet.put(c, retval);
+            }
+            return retval;
+        }
     }
 }

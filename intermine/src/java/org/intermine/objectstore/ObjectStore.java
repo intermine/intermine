@@ -105,6 +105,16 @@ public interface ObjectStore
     public void flushObjectById();
 
     /**
+     * Gets a object from the cache if it is present. If the object is not in the cache, then no
+     * attempt is made to retrieve it from the database, and null is returned. A trivial
+     * implementation may just return null always for this method.
+     *
+     * @param id the ID of the object
+     * @return the object, or null
+     */
+    public FlyMineBusinessObject pilferObjectById(Integer id);
+
+    /**
      * Explain a Query (give estimate for execution time and number of rows).
      *
      * @param q the query to estimate rows for

@@ -25,7 +25,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.wsdl.fromJava.Types;
 
-import org.flymine.objectstore.proxy.LazyReference;
+import org.flymine.objectstore.proxy.ProxyReference;
 import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.objectstore.query.fql.FqlQuery;
 
@@ -57,13 +57,15 @@ public class DefaultSerializer implements Serializer
             Object fieldValue = entry.getValue();
 
             //lazyreference
-            if (fieldValue instanceof LazyReference) {
-                LazyReference ref = (LazyReference) fieldValue;
+            if (fieldValue instanceof ProxyReference) {
+                ProxyReference ref = (ProxyReference) fieldValue;
+                /* TODO: 
                 if (!ref.isMaterialised()) {
-                    fieldValue = new ProxyBean(ref.getType().getName(),
-                                                                 ref.getFqlQuery(), 
-                                                                 ref.getId());
+                    fieldValue = new ProxyBean(null,
+                            null, 
+                            ref.getId());
                 }
+                */
             }
             
             //singletonresults

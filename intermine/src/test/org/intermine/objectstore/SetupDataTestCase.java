@@ -18,8 +18,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.io.FileWriter;
 import java.io.File;
 
@@ -94,9 +96,9 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         long start = new Date().getTime();
         try {
             writer.beginTransaction();
-            Iterator iter = data.keySet().iterator();
+            Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
-                writer.store((FlyMineBusinessObject) data.get(iter.next()));
+                writer.store((FlyMineBusinessObject) ((Map.Entry) iter.next()).getValue());
             }
             writer.commitTransaction();
         } catch (Exception e) {
@@ -138,6 +140,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
     public static void main(String[] args) throws Exception {
         XmlBinding binding = new XmlBinding(Model.getInstanceByName("testmodel"));
+        setUpDataObjects();
         Collection col = data.values();
         setIds(col);
         binding.marshal(col, new FileWriter(File.createTempFile("testmodel_data", "xml")));
@@ -266,15 +269,16 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         contractorA.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
 
         companyB.setAddress(address3);
-        companyA.setDepartments(Arrays.asList(new Department[] {departmentB1, departmentB2}));
-        companyA.setSecretarys(Arrays.asList(new Secretary[] {secretary1, secretary2}));
-        companyA.setContractors(Arrays.asList(new Contractor[] {contractorA, contractorB}));
-        companyA.setOldContracts(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyB.setDepartments(Arrays.asList(new Department[] {departmentB1, departmentB2}));
+        companyB.setSecretarys(Arrays.asList(new Secretary[] {secretary1, secretary2}));
+        companyB.setContractors(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyB.setOldContracts(Arrays.asList(new Contractor[] {contractorA, contractorB}));
+        companyB.setCEO(employeeB1);
 
-        contractorA.setPersonalAddress(address2);
-        contractorA.setBusinessAddress(address1);
-        contractorA.setCompanys(Arrays.asList(new Company[] {companyA, companyB}));
-        contractorA.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
+        contractorB.setPersonalAddress(address2);
+        contractorB.setBusinessAddress(address1);
+        contractorB.setCompanys(Arrays.asList(new Company[] {companyA, companyB}));
+        contractorB.setOldComs(Arrays.asList(new Company[] {companyA, companyB}));
 
         departmentB1.setCompany(companyB);
         departmentB1.setManager(employeeB1);
@@ -306,7 +310,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         employeeA3.setDepartment(departmentA1);
         employeeA3.setAddress(address8);
 
-        HashSet set = new HashSet();
+        Set set = new LinkedHashSet();
         set.add(companyA);
         set.add(companyB);
         set.add(contractorA);
@@ -333,7 +337,10 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         set.add(address8);
         set.add(types1);
 
+        System.out.println(set);
+
         map(set);
+        System.out.println(data);
     }
 
     private static void map(Collection c) throws Exception {
@@ -421,7 +428,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.alias(c1, "Company");
         q1.addFrom(c1);
         q1.addToSelect(c1);
-        HashSet set = new HashSet();
+        HashSet set = new LinkedHashSet();
         set.add("hello");
         set.add("goodbye");
         set.add("CompanyA");
@@ -443,7 +450,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addFrom(qc2);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "address"), ConstraintOp.CONTAINS, qc2));
-        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, (Address) data.get("Contractor Business Street, AVille")));
+        cs.addConstraint(new ClassConstraint(qc2, ConstraintOp.EQUALS, (Address) data.get("Employee Street, AVille")));
         q1.setConstraint(cs);
         return q1;
     }

@@ -25,8 +25,8 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import org.flymine.util.TypeUtil;
-import org.flymine.objectstore.proxy.LazyCollection;
-import org.flymine.objectstore.proxy.LazyInitializer;
+//import org.flymine.objectstore.proxy.LazyCollection;
+//import org.flymine.objectstore.proxy.LazyInitializer;
 
 /**
  * Deserializer for (bean-like) objects sent via SOAP (i.e.everything except Lists and Models)
@@ -123,10 +123,10 @@ public class DefaultDeserializer extends DeserializerImpl
                 ProxyBean pb = (ProxyBean) value;
                 Class cls = Class.forName(pb.getType());
                 if (List.class.isAssignableFrom(cls)) {
-                    value = new LazyCollection(pb.getFqlQuery().toQuery());
+                    //value = new LazyCollection(pb.getFqlQuery().toQuery());
                 } else {
-                    value = LazyInitializer.getDynamicProxy(cls, pb.getFqlQuery().toQuery(),
-                                                            pb.getId());
+                    //value = LazyInitializer.getDynamicProxy(cls, pb.getFqlQuery().toQuery(),
+                    //                                        pb.getId());
                 }
             }
             TypeUtil.setFieldValue(this.value, fieldName, value);

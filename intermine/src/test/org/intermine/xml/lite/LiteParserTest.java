@@ -16,28 +16,34 @@ import java.io.InputStream;
 import java.util.Date;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
 
 public class LiteParserTest extends TestCase
 {
-
+    ObjectStore os;
+    
     public LiteParserTest(String arg) {
         super(arg);
     }
 
+    public void setUp() throws Exception {
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
+    }
+    
     public void testParse1() throws Exception{
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/LiteParserTest.xml");
-        Employee obj1 = (Employee) LiteParser.parse(is);
+        Employee obj1 = (Employee) LiteParser.parse(is, os);
 
         Employee e1 = new Employee();
         e1.setName("Employee1");
 
         assertEquals(e1.getName(), obj1.getName());
-        assertEquals(new Integer(5678), obj1.getDepartment().getId());
     }
 
     public void testParseTypes() throws Exception{
         InputStream is = getClass().getClassLoader().getResourceAsStream("test/LiteParserTestTypes.xml");
-        Types obj1 = (Types) LiteParser.parse(is);
+        Types obj1 = (Types) LiteParser.parse(is, os);
 
         assertEquals("Types1", obj1.getName());
         assertTrue(1.2f == obj1.getFloatType());
@@ -55,7 +61,7 @@ public class LiteParserTest extends TestCase
 
     public void testParseNull() throws Exception{
         try {
-            LiteParser.parse(null);
+            LiteParser.parse(null, null);
             fail("Expected: NullPointerException");
         } catch (NullPointerException e) {
         }

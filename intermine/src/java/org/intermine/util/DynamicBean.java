@@ -14,12 +14,16 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 
 import org.apache.log4j.Logger;
 
 import net.sf.cglib.*;
+
+import org.flymine.model.FlyMineBusinessObject;
 
 /**
  * Class which represents a generic bean
@@ -67,14 +71,32 @@ public class DynamicBean implements MethodInterceptor
         throws Throwable {
         // java.lang.Object methods
         if (method.getName().equals("equals")) {
-            // Equals defined in the class
-            return proxy.invokeSuper(obj, args);
+            if (args[0] instanceof FlyMineBusinessObject) {
+                Integer otherId = ((FlyMineBusinessObject) args[0]).getId();
+                Integer thisId = (Integer) map.get("Id");
+                return new Boolean((otherId != null) && (thisId != null) && thisId.equals(otherId));
+            }
+            return Boolean.FALSE;
         }
         if (method.getName().equals("hashCode")) {
-            return proxy.invokeSuper(obj, args);
+            return map.get("Id");
         }
         if (method.getName().equals("finalize")) {
             return null;
+        }
+        if (method.getName().equals("toString")) {
+            StringBuffer className = new StringBuffer();
+            boolean needComma = false;
+            Set classes = DynamicUtil.decomposeClass(obj.getClass());
+            Iterator classIter = classes.iterator();
+            while (classIter.hasNext()) {
+                if (needComma) {
+                    className.append(",");
+                }
+                Class clazz = (Class) classIter.next();
+                className.append(TypeUtil.unqualifiedName(clazz.getName()));
+            }
+            return className.toString() + " [" + map.get("Id") + "]";
         }
         // Bean methods
         if (method.getName().startsWith("get")

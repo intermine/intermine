@@ -45,7 +45,7 @@ public class ClassDescriptor
     private final Set colDescriptors;
     private final Map fieldDescriptors = new HashMap();
     private final Set pkFields = new LinkedHashSet();
-    private Set allFieldDescriptors;
+    private LinkedHashSet allFieldDescriptors;
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
     private boolean modelSet = false;
@@ -121,6 +121,18 @@ public class ClassDescriptor
     }
 
     /**
+     * Returns the Class described by this ClassDescriptor.
+     * @return a Class
+     */
+    public Class getType() {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Can't find class for class descriptor", e);
+        }
+    }
+    
+    /**
      * Returns unqualified name of class described by this ClassDescriptor.
      * @return unqualified name of the described Class
      */
@@ -157,7 +169,7 @@ public class ClassDescriptor
      * Gets the FieldDescriptors for this class and all superclasses and interfaces.
      * @return set of FieldDescriptors
      */
-    public Set getAllFieldDescriptors() {
+    public LinkedHashSet getAllFieldDescriptors() {
         return allFieldDescriptors;
     }
 
@@ -165,8 +177,8 @@ public class ClassDescriptor
         allFieldDescriptors = findAllFieldDescriptors();
     }
 
-    private Set findAllFieldDescriptors() throws MetaDataException {
-        Set set = new LinkedHashSet(getFieldDescriptors());
+    private LinkedHashSet findAllFieldDescriptors() throws MetaDataException {
+        LinkedHashSet set = new LinkedHashSet(getFieldDescriptors());
         Map map = new HashMap();
         Iterator addIter = set.iterator();
         while (addIter.hasNext()) {
@@ -180,12 +192,12 @@ public class ClassDescriptor
             while (addIter.hasNext()) {
                 FieldDescriptor fd = (FieldDescriptor) addIter.next();
                 FieldDescriptor fdAlready = (FieldDescriptor) map.get(fd.getName());
-                if (fdAlready != null) {
+                if ((fdAlready != null) && (fd != fdAlready)) {
                     if ((fd instanceof AttributeDescriptor)
                             && (fdAlready instanceof AttributeDescriptor)
                             && (((AttributeDescriptor) fd).getType()
                                 .equals(((AttributeDescriptor) fdAlready).getType()))) {
-                        // Compatible
+                        // Compatible, but from different classes. Don't bother adding.
                     } else {
                         throw new MetaDataException("Incompatible similarly named fields inherited"
                                 + " from multiple superclasses and interfaces in " + getName());

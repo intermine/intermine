@@ -43,6 +43,13 @@ public interface ObjectStoreWriter extends ObjectStore
      * object. This object will be stored with references and collections using those IDs, however
      * those objects will not be stored themselves. Therefore, the objectstore will be inconsistent
      * until those objects are also stored.
+     * <br>
+     * If bidirectional relationships are not consistent in the objects being stored, then the
+     * behaviour of the store method is not defined. Specifically, one-to-one relationships must be
+     * stored on both sides. For example, if A has a relationship with B1 in the database, and we
+     * store a new A that has a relationship with B2, then we must also store B2 with a relationship
+     * back to A (to complete the relationship), and store B1 (to completely break the old
+     * relationship),
      *
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object

@@ -165,9 +165,6 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
                                                                      new Integer(limit)});
         for (int i = 0; i < results.size(); i++) {
             ResultsRow row = new ResultsRow((List) results.get(i));
-            for (Iterator colIter = row.iterator(); colIter.hasNext();) {
-                promoteProxies(colIter.next());
-            }
             results.set(i, row);
         }
         return results;
@@ -193,7 +190,6 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     public FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
         FlyMineBusinessObject object = (FlyMineBusinessObject)
             remoteMethod("getObjectByExample", new Object[] {id});
-        promoteProxies(object);
         return object;
     }
 

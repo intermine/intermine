@@ -172,9 +172,10 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public java.util.List getCod1() { return cod1; }" + ENDL
             + INDENT + "public void setCod1(java.util.List cod1) { this.cod1 = cod1; }" + ENDL + ENDL
             + INDENT + "// Ref: package.name.Class1.rfd1" + ENDL
-            + INDENT + "protected package.name.Class2 rfd1;" + ENDL
-            + INDENT + "public package.name.Class2 getRfd1() { return rfd1; }" + ENDL
-            + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL
+            + INDENT + "protected Object rfd1;" + ENDL
+            + INDENT + "public package.name.Class2 getRfd1() { if (rfd1 instanceof org.flymine.objectstore.proxy.ProxyReference) { rfd1 = ((org.flymine.objectstore.proxy.ProxyReference) rfd1).getObject(); }; return (package.name.Class2) rfd1; }" + ENDL
+            + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL
+            + INDENT + "public void proxyRfd1(org.flymine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL
             + INDENT + "// Attr: org.flymine.model.FlyMineBusinessObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
@@ -206,9 +207,10 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = INDENT + "// Ref: Class1.rfd1" + ENDL
-            + INDENT + "protected Class2 rfd1;" + ENDL
-            + INDENT + "public Class2 getRfd1() { return rfd1; }" + ENDL
-            + INDENT + "public void setRfd1(Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL;
+            + INDENT + "protected Object rfd1;" + ENDL
+            + INDENT + "public Class2 getRfd1() { if (rfd1 instanceof org.flymine.objectstore.proxy.ProxyReference) { rfd1 = ((org.flymine.objectstore.proxy.ProxyReference) rfd1).getObject(); }; return (Class2) rfd1; }" + ENDL
+            + INDENT + "public void setRfd1(Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL
+            + INDENT + "public void proxyRfd1(org.flymine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL + ENDL;
 
         assertEquals(expected, mo.generate(rfd1, true));
     }
@@ -352,7 +354,7 @@ public class JavaModelOutputTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", uri, new LinkedHashSet(Collections.singleton(cld1)));
 
-        String expected = INDENT + "public String toString() { return \"Class1 [\"+id+\"] \"+atd1+\", \"+atd2; }" + ENDL;
+        String expected = INDENT + "public String toString() { return \"Class1 [\"+id+\"] \"+getAtd1() + \", \" + getAtd2(); }" + ENDL;
 
         assertEquals(expected, mo.generateToString(cld1));
     }

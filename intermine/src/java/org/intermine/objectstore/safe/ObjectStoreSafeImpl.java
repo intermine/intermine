@@ -91,6 +91,13 @@ public class ObjectStoreSafeImpl implements ObjectStore
     }
 
     /**
+     * @see ObjectStore#pilferObjectById
+     */
+    public FlyMineBusinessObject pilferObjectById(Integer id) {
+        return os.pilferObjectById(id);
+    }
+
+    /**
      * @see ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {

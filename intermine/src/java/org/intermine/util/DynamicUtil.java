@@ -11,6 +11,7 @@ package org.flymine.util;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -129,5 +130,46 @@ public class DynamicUtil
         return (Class []) list.toArray(new Class [] {});
     }
 
-
+    /**
+     * Convert a dynamic Class into a Set of Class objects that comprise it.
+     *
+     * @param clazz the Class to decompose
+     * @return a Set of Class objects
+     */
+    public static Set decomposeClass(Class clazz) {
+        if (net.sf.cglib.Factory.class.isAssignableFrom(clazz)) {
+            // Decompose
+            Set retval = new HashSet();
+            retval.add(clazz.getSuperclass());
+            Class interfs[] = clazz.getInterfaces();
+            for (int i = 0; i < interfs.length; i++) {
+                Class inter = interfs[i];
+                if (net.sf.cglib.Factory.class != inter) {
+                    boolean notIn = true;
+                    Iterator inIter = retval.iterator();
+                    while (inIter.hasNext() && notIn) {
+                        Class in = (Class) inIter.next();
+                        if (in.isAssignableFrom(inter)) {
+                            // That means that the one already in the return value is more general
+                            // than the one we are about to put in, so we can get rid of the one
+                            // already in.
+                            inIter.remove();
+                        }
+                        if (inter.isAssignableFrom(in)) {
+                            // That means that the one already in the return value is more specific
+                            // than the one we would have added, so don't bother.
+                            notIn = false;
+                        }
+                    }
+                    if (notIn) {
+                        retval.add(inter);
+                    }
+                }
+            }
+            return retval;
+        } else {
+            // Normal class - return it.
+            return Collections.singleton(clazz);
+        }
+    }
 }

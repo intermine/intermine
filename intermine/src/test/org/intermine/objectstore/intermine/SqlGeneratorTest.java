@@ -68,7 +68,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("WhereNotClassClass", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Company AS a1_, Company AS a2_ WHERE a1_.id != a2_.id ORDER BY a1_.id, a2_.id");
         results.put("WhereNegClassClass", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Company AS a1_, Company AS a2_ WHERE a1_.id != a2_.id ORDER BY a1_.id, a2_.id");
         Integer id1 = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
-        results.put("WhereClassObject", "SELECT DISTINCT a1_.id AS a1_id, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE (a1_.id = " + id1 + ") ORDER BY a1_.id");
+        results.put("WhereClassObject", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE a1_.id = " + id1 + " ORDER BY a1_.id");
         results.put("Contains11", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Department AS a1_, Manager AS a2_ WHERE (a1_.managerId = a2_.id AND a1_.name = 'DepartmentA1') ORDER BY a1_.id, a2_.id");
         results.put("ContainsNot11", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Department AS a1_, Manager AS a2_ WHERE (a1_.managerId != a2_.id AND a1_.name = 'DepartmentA1') ORDER BY a1_.id, a2_.id");
         results.put("ContainsNeg11", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Department AS a1_, Manager AS a2_ WHERE (a1_.managerId != a2_.id AND a1_.name = 'DepartmentA1') ORDER BY a1_.id, a2_.id");
@@ -86,14 +86,14 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("OrderByAnomaly", "SELECT DISTINCT 5 AS a2_, a1_.name AS a3_ FROM Company AS a1_ ORDER BY a1_.name");
         Integer id2 = (Integer) TypeUtil.getFieldValue(data.get("CompanyA"), "id");
         Integer id3 = (Integer) TypeUtil.getFieldValue(data.get("DepartmentA1"), "id");
-        results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.id AS a1_id, a1_.addressId AS a1_addressId, a1_.cEOId AS a1_cEOId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_, Department AS a2_ WHERE ((a1_.id = " + id2 + ") AND (a1_.id = a2_.companyId) AND a2_.id IN (SELECT DISTINCT a1_.id AS a1_id FROM Department AS a1_ WHERE (a1_.id = " + id3 + "))) ORDER BY a1_.id");
+        results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_, Department AS a2_ WHERE (a1_.id = " + id2 + " AND a1_.id = a2_.companyId AND a2_.id IN (SELECT DISTINCT a1_.id FROM Department AS a1_ WHERE a1_.id = " + id3 + ")) ORDER BY a1_.id");
         results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE (a1_.name = 'CompanyA' AND (a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id)) ORDER BY a2_.id");
         results.put("EmptyAndConstraintSet", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE true ORDER BY a1_.id");
         results.put("EmptyOrConstraintSet", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE false ORDER BY a1_.id");
         results.put("EmptyNandConstraintSet", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE false ORDER BY a1_.id");
         results.put("EmptyNorConstraintSet", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE true ORDER BY a1_.id");
         results.put("BagConstraint", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.name = 'CompanyA' OR Company.name = 'goodbye' OR Company.name = 'hello') ORDER BY Company.id");
-        results.put("BagConstraint2", "SELECT DISTINCT Company.id AS \"Companyid\", Company.addressId AS \"CompanyaddressId\", Company.cEOId AS \"CompanycEOId\", Company.name AS \"Companyname\", Company.vatNumber AS \"CompanyvatNumber\" FROM Company AS Company WHERE (Company.id = " + id2 + ") ORDER BY Company.id");
+        results.put("BagConstraint2", "SELECT DISTINCT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE (Company.id = " + id2 + ") ORDER BY Company.id");
         results.put("InterfaceField", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employable AS a1_ WHERE a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results.put("InterfaceReference", NO_RESULT);
         results.put("InterfaceCollection", NO_RESULT);

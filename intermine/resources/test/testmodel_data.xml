@@ -1,162 +1,188 @@
-<?xml version="1.0"?>
 <items>
-  <object xml_id="1" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Contractor Business Street, AVille"/>
-  </object>
-  <object xml_id="2" class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
-    <field name="age" value="60"/>
-    <field name="fullTime" value="true"/>
-    <reference name="address" ref_id="15"/>
-    <field name="name" value="EmployeeB3"/>
-    <reference name="department" ref_id="10"/>
-  </object>
-  <object xml_id="3" class="" implements="http://www.flymine.org/model/testmodel#Company">
-    <reference name="address" ref_id="17"/>
-    <field name="vatNumber" value="5678"/>
-    <field name="name" value="CompanyB"/>
-  </object>
-  <object xml_id="4" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Contractor Personal Street, BVille"/>
-  </object>
-  <object xml_id="5" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
-    <collection name="employees">
-      <reference ref_id="14"/>
-      <reference ref_id="7"/>
-    </collection>
-    <reference name="manager" ref_id="14"/>
-    <field name="name" value="DepartmentB1"/>
-    <reference name="company" ref_id="3"/>
-  </object>
-  <object xml_id="6" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-    <field name="name" value="Secretary1"/>
-  </object>
-  <object xml_id="7" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
-    <field name="age" value="50"/>
-    <field name="fullTime" value="true"/>
-    <reference name="address" ref_id="15"/>
-    <field name="name" value="EmployeeB2"/>
-    <reference name="department" ref_id="5"/>
-  </object>
-  <object xml_id="8" class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
-    <field name="age" value="10"/>
-    <field name="fullTime" value="true"/>
-    <reference name="address" ref_id="9"/>
-    <field name="name" value="EmployeeA1"/>
-    <reference name="department" ref_id="22"/>
-  </object>
-  <object xml_id="9" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Employee Street, AVille"/>
-  </object>
-  <object xml_id="10" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
-    <collection name="employees">
-      <reference ref_id="2"/>
-    </collection>
-    <reference name="manager" ref_id="2"/>
-    <field name="name" value="DepartmentB2"/>
-    <reference name="company" ref_id="3"/>
-  </object>
-  <object xml_id="11" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
-    <field name="age" value="30"/>
-    <field name="fullTime" value="false"/>
-    <reference name="address" ref_id="9"/>
-    <field name="name" value="EmployeeA3"/>
-    <reference name="department" ref_id="22"/>
-  </object>
-  <object xml_id="12" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
-    <field name="name" value="ContractorB"/>
-  </object>
-  <object xml_id="13" class="http://www.flymine.org/model/testmodel#Types" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-    <field name="intObjType" value="369"/>
-    <field name="booleanObjType" value="true"/>
-    <field name="doubleType" value="0.88"/>
-    <field name="floatType" value="0.6"/>
-    <field name="floatObjType" value="1.6"/>
-    <field name="booleanType" value="true"/>
-    <field name="stringObjType" value="A test String"/>
-    <field name="doubleObjType" value="1.88"/>
-    <field name="intType" value="267"/>
-    <field name="name" value="Types1"/>
-    <field name="dateObjType" value="7777777"/>
-  </object>
-  <object xml_id="14" class="http://www.flymine.org/model/testmodel#CEO" implements="http://www.flymine.org/model/testmodel#HasSecretarys">
-    <field name="age" value="40"/>
-    <field name="title" value="Mr."/>
-    <field name="fullTime" value="true"/>
-    <reference name="address" ref_id="15"/>
-    <field name="name" value="EmployeeB1"/>
-    <reference name="department" ref_id="5"/>
-    <field name="salary" value="45000"/>
-  </object>
-  <object xml_id="15" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Employee Street, BVille"/>
-  </object>
-  <object xml_id="16" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-    <field name="name" value="Secretary2"/>
-  </object>
-  <object xml_id="17" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Company Street, BVille"/>
-  </object>
-  <object xml_id="18" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
-    <collection name="companys">
-      <reference ref_id="25"/>
-      <reference ref_id="3"/>
-    </collection>
-    <reference name="personalAddress" ref_id="4"/>
-    <collection name="oldComs">
-      <reference ref_id="25"/>
-      <reference ref_id="3"/>
-    </collection>
-    <reference name="businessAddress" ref_id="20"/>
-    <field name="name" value="ContractorA"/>
-  </object>
-  <object xml_id="19" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
-    <field name="name" value="Secretary3"/>
-  </object>
-  <object xml_id="20" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Contractor Business Street, BVille"/>
-  </object>
-  <object xml_id="21" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Company Street, AVille"/>
-  </object>
-  <object xml_id="22" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
-    <collection name="employees">
-      <reference ref_id="8"/>
-      <reference ref_id="24"/>
-      <reference ref_id="11"/>
-    </collection>
-    <reference name="manager" ref_id="8"/>
-    <field name="name" value="DepartmentA1"/>
-    <reference name="company" ref_id="25"/>
-  </object>
-  <object xml_id="23" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
-    <field name="address" value="Contractor Personal Street, AVille"/>
-  </object>
-  <object xml_id="24" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
-    <field name="age" value="20"/>
-    <field name="fullTime" value="true"/>
-    <reference name="address" ref_id="9"/>
-    <field name="name" value="EmployeeA2"/>
-    <reference name="department" ref_id="22"/>
-  </object>
-  <object xml_id="25" class="" implements="http://www.flymine.org/model/testmodel#Company">
-    <collection name="contractors">
-      <reference ref_id="18"/>
-      <reference ref_id="12"/>
-    </collection>
-    <reference name="address" ref_id="21"/>
-    <field name="vatNumber" value="1234"/>
-    <collection name="oldContracts">
-      <reference ref_id="18"/>
-      <reference ref_id="12"/>
-    </collection>
-    <collection name="departments">
-      <reference ref_id="5"/>
-      <reference ref_id="10"/>
-    </collection>
-    <field name="name" value="CompanyA"/>
-    <collection name="secretarys">
-      <reference ref_id="6"/>
-      <reference ref_id="16"/>
-    </collection>
-  </object>
+<object xml_id="1" class="" implements="http://www.flymine.org/model/testmodel#Company">
+<collection name="contractors">
+<reference ref_id="3"/>
+<reference ref_id="4"/>
+</collection>
+<reference name="address" ref_id="23"/>
+<field name="vatNumber" value="1234"/>
+<collection name="oldContracts">
+<reference ref_id="3"/>
+<reference ref_id="4"/>
+</collection>
+<collection name="departments">
+<reference ref_id="5"/>
+</collection>
+<field name="name" value="CompanyA"/>
+<collection name="secretarys">
+<reference ref_id="14"/>
+<reference ref_id="15"/>
+<reference ref_id="16"/>
+</collection>
+</object>
+<object xml_id="2" class="" implements="http://www.flymine.org/model/testmodel#Company">
+<collection name="contractors">
+<reference ref_id="3"/>
+<reference ref_id="4"/>
+</collection>
+<reference name="address" ref_id="19"/>
+<field name="vatNumber" value="5678"/>
+<collection name="oldContracts">
+<reference ref_id="3"/>
+<reference ref_id="4"/>
+</collection>
+<collection name="departments">
+<reference ref_id="6"/>
+<reference ref_id="7"/>
+</collection>
+<field name="name" value="CompanyB"/>
+<collection name="secretarys">
+<reference ref_id="14"/>
+<reference ref_id="15"/>
+</collection>
+<reference name="cEO" ref_id="11"/>
+</object>
+<object xml_id="3" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
+<collection name="companys">
+<reference ref_id="1"/>
+<reference ref_id="2"/>
+</collection>
+<reference name="personalAddress" ref_id="22"/>
+<collection name="oldComs">
+<reference ref_id="1"/>
+<reference ref_id="2"/>
+</collection>
+<reference name="businessAddress" ref_id="21"/>
+<field name="name" value="ContractorA"/>
+</object>
+<object xml_id="4" class="http://www.flymine.org/model/testmodel#Contractor" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#ImportantPerson">
+<collection name="companys">
+<reference ref_id="1"/>
+<reference ref_id="2"/>
+</collection>
+<reference name="personalAddress" ref_id="18"/>
+<collection name="oldComs">
+<reference ref_id="1"/>
+<reference ref_id="2"/>
+</collection>
+<reference name="businessAddress" ref_id="17"/>
+<field name="name" value="ContractorB"/>
+</object>
+<object xml_id="5" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
+<collection name="employees">
+<reference ref_id="8"/>
+<reference ref_id="9"/>
+<reference ref_id="10"/>
+</collection>
+<reference name="manager" ref_id="8"/>
+<field name="name" value="DepartmentA1"/>
+<reference name="company" ref_id="1"/>
+</object>
+<object xml_id="6" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
+<collection name="employees">
+<reference ref_id="11"/>
+<reference ref_id="12"/>
+</collection>
+<reference name="manager" ref_id="11"/>
+<field name="name" value="DepartmentB1"/>
+<reference name="company" ref_id="2"/>
+</object>
+<object xml_id="7" class="http://www.flymine.org/model/testmodel#Department" implements="http://www.flymine.org/model/testmodel#RandomInterface">
+<collection name="employees">
+<reference ref_id="13"/>
+</collection>
+<reference name="manager" ref_id="13"/>
+<field name="name" value="DepartmentB2"/>
+<reference name="company" ref_id="2"/>
+</object>
+<object xml_id="8" class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
+<field name="age" value="10"/>
+<field name="fullTime" value="true"/>
+<reference name="address" ref_id="24"/>
+<field name="name" value="EmployeeA1"/>
+<reference name="department" ref_id="5"/>
+</object>
+<object xml_id="9" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
+<field name="age" value="20"/>
+<field name="fullTime" value="true"/>
+<reference name="address" ref_id="24"/>
+<field name="name" value="EmployeeA2"/>
+<reference name="department" ref_id="5"/>
+</object>
+<object xml_id="10" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
+<field name="age" value="30"/>
+<field name="fullTime" value="false"/>
+<reference name="address" ref_id="24"/>
+<field name="name" value="EmployeeA3"/>
+<reference name="department" ref_id="5"/>
+</object>
+<object xml_id="11" class="http://www.flymine.org/model/testmodel#CEO" implements="http://www.flymine.org/model/testmodel#HasSecretarys">
+<field name="age" value="40"/>
+<field name="title" value="Mr."/>
+<field name="fullTime" value="true"/>
+<reference name="address" ref_id="20"/>
+<field name="name" value="EmployeeB1"/>
+<reference name="department" ref_id="6"/>
+<field name="salary" value="45000"/>
+</object>
+<object xml_id="12" class="http://www.flymine.org/model/testmodel#Employee" implements="http://www.flymine.org/model/testmodel#Employable http://www.flymine.org/model/testmodel#HasAddress">
+<field name="age" value="50"/>
+<field name="fullTime" value="true"/>
+<reference name="address" ref_id="20"/>
+<field name="name" value="EmployeeB2"/>
+<reference name="department" ref_id="6"/>
+</object>
+<object xml_id="13" class="http://www.flymine.org/model/testmodel#Manager" implements="http://www.flymine.org/model/testmodel#ImportantPerson">
+<field name="age" value="60"/>
+<field name="fullTime" value="true"/>
+<reference name="address" ref_id="20"/>
+<field name="name" value="EmployeeB3"/>
+<reference name="department" ref_id="7"/>
+</object>
+<object xml_id="14" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<field name="name" value="Secretary1"/>
+</object>
+<object xml_id="15" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<field name="name" value="Secretary2"/>
+</object>
+<object xml_id="16" class="http://www.flymine.org/model/testmodel#Secretary" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<field name="name" value="Secretary3"/>
+</object>
+<object xml_id="17" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Contractor Business Street, BVille"/>
+</object>
+<object xml_id="18" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Contractor Personal Street, BVille"/>
+</object>
+<object xml_id="19" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Company Street, BVille"/>
+</object>
+<object xml_id="20" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Employee Street, BVille"/>
+</object>
+<object xml_id="21" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Contractor Business Street, AVille"/>
+</object>
+<object xml_id="22" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Contractor Personal Street, AVille"/>
+</object>
+<object xml_id="23" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Company Street, AVille"/>
+</object>
+<object xml_id="24" class="http://www.flymine.org/model/testmodel#Address" implements="http://www.flymine.org/model/testmodel#Thing">
+<field name="address" value="Employee Street, AVille"/>
+</object>
+<object xml_id="25" class="http://www.flymine.org/model/testmodel#Types" implements="http://www.flymine.org/model/testmodel#FlyMineBusinessObject">
+<field name="intObjType" value="369"/>
+<field name="booleanObjType" value="true"/>
+<field name="doubleType" value="0.88"/>
+<field name="floatType" value="0.6"/>
+<field name="floatObjType" value="1.6"/>
+<field name="booleanType" value="true"/>
+<field name="stringObjType" value="A test String"/>
+<field name="doubleObjType" value="1.88"/>
+<field name="intType" value="267"/>
+<field name="name" value="Types1"/>
+<field name="dateObjType" value="7777777"/>
+</object>
 </items>

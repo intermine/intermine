@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.flymine.model.FlyMineBusinessObject;
+import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
@@ -46,11 +48,13 @@ public class ResultsConverter
      *
      * @param sqlResults the ResultSet
      * @param q the Query
+     * @param os the ObjectStore with which to associate any new lazy objects
      * @return a List of ResultsRow objects
      * @throws ObjectStoreException if the ResultSet does not match the Query in any way, or if a
      * SQL exception occurs
      */
-    public static List convert(ResultSet sqlResults, Query q) throws ObjectStoreException {
+    public static List convert(ResultSet sqlResults, Query q, ObjectStore os) throws ObjectStoreException {
+        Object currentColumn = null;
         try {
             ArrayList retval = new ArrayList();
             while (sqlResults.next()) {
@@ -60,26 +64,34 @@ public class ResultsConverter
                     QueryNode node = (QueryNode) selectIter.next();
                     String alias = (String) q.getAliases().get(node);
                     if (node instanceof QueryClass) {
-                        String objectField = sqlResults.getString(alias);
-                        row.add(LiteParser.parse(new ByteArrayInputStream(objectField.getBytes())));
+                        Integer idField = new Integer(sqlResults.getInt(alias + "id"));
+                        FlyMineBusinessObject obj = os.pilferObjectById(idField);
+                        if (obj == null) {
+                            String objectField = sqlResults.getString(alias);
+                            currentColumn = objectField;
+                            obj = LiteParser.parse(new ByteArrayInputStream(objectField.getBytes()), os);
+                            os.cacheObjectById(idField, obj);
+                        }
+                        row.add(obj);
                     } else {
-                        row.add(sqlResults.getObject(alias));
+                        currentColumn = sqlResults.getObject(alias);
+                        row.add(currentColumn);
                     }
                 }
                 retval.add(row);
             }
             return retval;
         } catch (SQLException e) {
-            throw new ObjectStoreException("Error converting results", e);
+            throw new ObjectStoreException("Error converting results: " + currentColumn, e);
         } catch (IOException e) {
             throw new ObjectStoreException("Impossible IO error reading from ByteArrayInputStream"
-                    + " while converting results", e);
+                    + " while converting results: " + currentColumn, e);
         } catch (SAXException e) {
             throw new ObjectStoreException("Illegal data in OBJECT field in database while"
-                    + " converting results", e);
+                    + " converting results: " + currentColumn, e);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
-                    + " while converting results", e);
+                    + " while converting results: " + currentColumn, e);
         }
     }
 }

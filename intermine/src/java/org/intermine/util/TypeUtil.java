@@ -24,6 +24,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.IntrospectionException;
 
+import org.flymine.objectstore.proxy.ProxyReference;
+
 /**
  * Provides utility methods for working with Java types and reflection
  *
@@ -106,7 +108,11 @@ public class TypeUtil
     public static void setFieldValue(Object o, String fieldName, Object fieldValue)
         throws IllegalAccessException {
         try {
-            getSetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
+            if (fieldValue instanceof ProxyReference) {
+                getProxySetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
+            } else {
+                getSetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
+            }
         } catch (Exception e) {
             String type = null;
             try {
@@ -153,6 +159,21 @@ public class TypeUtil
     }
 
     /**
+     * Returns the Method object that is the proxySetter for the field name
+     *
+     * @param c the Class
+     * @param fieldName the name of the relevant field
+     * @return the proxySetter, or null if it is not present or the field is not found
+     */
+    public static Method getProxySetter(Class c, String fieldName) {
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            return info.getProxySetter();
+        }
+        return null;
+    }
+
+    /**
      * Returns the Map from field name to TypeUtil.FieldInfo objects for all the fields in a
      * given class.
      *
@@ -179,15 +200,17 @@ public class TypeUtil
                     String getterName = (String) methodIter.next();
                     if (getterName.startsWith("get")) {
                         String setterName = "set" + getterName.substring(3);
+                        String proxySetterName = "proxy" + getterName.substring(3);
                         if (methods.containsKey(setterName)) {
                             Method getter = (Method) methods.get(getterName);
                             Method setter = (Method) methods.get(setterName);
+                            Method proxySetter = (Method) methods.get(proxySetterName);
                             String fieldname = (Character.isLowerCase(getterName.charAt(3))
                                     ? getterName.substring(3, 4).toUpperCase()
                                     : getterName.substring(3, 4).toLowerCase())
                                 + getterName.substring(4);
                             if (!getter.getName().equals("getClass")) {
-                                FieldInfo info = new FieldInfo(fieldname, getter, setter);
+                                FieldInfo info = new FieldInfo(fieldname, getter, setter, proxySetter);
                                 infos.put(fieldname, info);
                             }
                         }
@@ -365,6 +388,7 @@ public class TypeUtil
         private String name;
         private Method getter;
         private Method setter;
+        private Method proxySetter;
 
         /**
          * Construct a new FieldInfo object.
@@ -372,11 +396,13 @@ public class TypeUtil
          * @param name the field name
          * @param getter the getter Method to retrieve the value
          * @param setter the setter Method to alter the value
+         * @param proxySetter the setter Method to set the value to a ProxyReference
          */
-        public FieldInfo(String name, Method getter, Method setter) {
+        public FieldInfo(String name, Method getter, Method setter, Method proxySetter) {
             this.name = name;
             this.getter = getter;
             this.setter = setter;
+            this.proxySetter = proxySetter;
         }
 
         /**
@@ -404,6 +430,15 @@ public class TypeUtil
          */
         public Method getSetter() {
             return setter;
+        }
+
+        /**
+         * Returns the proxySetter Method.
+         *
+         * @return a proxySetter Method
+         */
+        public Method getProxySetter() {
+            return proxySetter;
         }
 
         /**

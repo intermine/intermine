@@ -20,6 +20,7 @@ import org.flymine.util.DynamicUtil;
 public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 {
     protected static ObjectStoreWriter writer;
+    protected static ObjectStore realOs;
 
     /*protected Address address1;
     protected Company company1, company2;
@@ -39,6 +40,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
     public static void oneTimeSetUp() throws Exception {
         os = writer;
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
+        realOs = writer.getObjectStore();
     }
 
     public void setUp() throws Exception {
@@ -439,7 +441,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             writer.store(address2);
 
             // Should be nothing in OS until we commit
-            Results res = os.execute(q);
+            Results res = realOs.execute(q);
             assertEquals(0, res.size());
 
             // However, they should be in the WRITER.
@@ -448,7 +450,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             
             writer.commitTransaction();
             assertFalse(writer.isInTransaction());
-            res = os.execute(q);
+            res = realOs.execute(q);
             assertEquals(2, res.size());
             assertEquals(address1, (Address) ((ResultsRow) res.get(0)).get(0));
             assertEquals(address2, (Address) ((ResultsRow) res.get(1)).get(0));
@@ -491,7 +493,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         assertFalse(writer.isInTransaction());
 
         // Should be nothing there until we commit
-        res = os.execute(q);
+        res = realOs.execute(q);
         assertEquals(0, res.size());
 
         res = writer.execute(q);

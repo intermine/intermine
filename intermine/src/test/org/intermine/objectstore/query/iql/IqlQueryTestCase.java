@@ -106,7 +106,7 @@ public abstract class FqlQueryTestCase extends SetupDataTestCase
         results.put("BagConstraint2", fq);
         results.put("InterfaceField", new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.Employable AS a1_ WHERE a1_.name = 'EmployeeA1'", null));
         fq = new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.HasAddress AS a1_, org.flymine.model.testmodel.Address AS a2_ WHERE (a1_.address CONTAINS a2_ AND a2_ = ?)", null);
-        fq.setParameters(Collections.singletonList(data.get("Contractor Business Street, AVille")));
+        fq.setParameters(Collections.singletonList(data.get("Employee Street, AVille")));
         results.put("InterfaceReference", fq);
         fq = new FqlQuery("SELECT DISTINCT a1_ FROM org.flymine.model.testmodel.HasSecretarys AS a1_, org.flymine.model.testmodel.Secretary AS a2_ WHERE (a1_.secretarys CONTAINS a2_ AND a2_ = ?)", null);
         fq.setParameters(Collections.singletonList(data.get("Secretary1")));
