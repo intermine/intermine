@@ -55,4 +55,21 @@ public class Constraint
     public String toString() {
         return op + " " + value;
     }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        return (o instanceof Constraint)
+            && op.equals(((Constraint) o).op)
+            && value.equals(((Constraint) o).value);
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 2 * op.hashCode()
+            + 3 * value.hashCode();
+    }
 }

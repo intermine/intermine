@@ -152,4 +152,23 @@ public class PathQuery
         }
         return newNode;
     }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        return (o instanceof PathQuery)
+            && model.equals(((PathQuery) o).model)
+            && nodes.equals(((PathQuery) o).nodes)
+            && view.equals(((PathQuery) o).view);
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 2 * model.hashCode()
+            + 3 * nodes.hashCode()
+            + 5 * view.hashCode();
+    }
 }

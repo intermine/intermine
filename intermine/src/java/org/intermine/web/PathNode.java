@@ -65,4 +65,21 @@ public class PathNode extends Node
     public String toString() {
         return super.toString() + " " + constraints;
     }
+
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        return super.equals(o)
+            && (o instanceof PathNode)
+            && constraints.equals(((PathNode) o).constraints);
+    }
+
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 2 * super.hashCode()
+            + 3 * constraints.hashCode();
+    }
 }

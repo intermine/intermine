@@ -147,4 +147,21 @@ public class Node
     public String toString() {
         return path + ":" + type;
     }
+    
+    /**
+     * @see Object#equals
+     */
+    public boolean equals(Object o) {
+        return (o instanceof Node)
+            && path.equals(((Node) o).path)
+            && type.equals(((Node) o).type);
+    }
+    
+    /**
+     * @see Object#hashCode
+     */
+    public int hashCode() {
+        return 2 * path.hashCode()
+            + 3 * type.hashCode();
+    }
 }
