@@ -35,6 +35,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.sql.writebatch.Batch;
@@ -327,7 +328,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     }
                 } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
                     Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
-                    if (!(coll instanceof Results)) {
+                    if (!(coll instanceof Lazy)) {
                         Iterator collIter = coll.iterator();
                         while (collIter.hasNext()) {
                             InterMineObject obj = (InterMineObject) collIter.next();
@@ -442,8 +443,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     Collection coll = (Collection) TypeUtil.getFieldValue(o, collection.getName());
                     boolean needToStoreCollection = true;
 
-                    if (coll instanceof Results) {
-                        ObjectStore testOS = ((Results) coll).getObjectStore();
+                    if (coll instanceof Lazy) {
+                        ObjectStore testOS = ((Lazy) coll).getObjectStore();
                         if (testOS instanceof ObjectStoreWriter) {
                             testOS = ((ObjectStoreWriter) testOS).getObjectStore();
                         }

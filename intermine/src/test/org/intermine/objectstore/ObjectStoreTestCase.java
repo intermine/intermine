@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 
+import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -357,7 +358,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void testLazyCollection() throws Exception {
         List r = os.execute((Query) queries.get("ContainsN1"));
         Department d = (Department) ((ResultsRow) r.get(0)).get(0);
-        assertTrue("Expected " + d.getEmployees().getClass() + " to be a SingletonResults object", d.getEmployees() instanceof SingletonResults);
+        assertTrue("Expected " + d.getEmployees().getClass() + " to be a Lazy object", d.getEmployees() instanceof Lazy);
 
         Set expected = new HashSet();
         expected.add(data.get("EmployeeA1"));
@@ -379,7 +380,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         Results r  = os.execute(q1);
         ResultsRow rr = (ResultsRow) r.get(0);
         Company c = (Company) rr.get(0);
-        assertTrue("Expected " + c.getContractors().getClass() + " to be a SingletonResults object", c.getContractors() instanceof SingletonResults);
+        assertTrue("Expected " + c.getContractors().getClass() + " to be a Lazy object", c.getContractors() instanceof Lazy);
         Set contractors = new HashSet(c.getContractors());
         Set expected1 = new HashSet();
         expected1.add(data.get("ContractorA"));
@@ -387,7 +388,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         assertEquals(expected1, contractors);
 
         Contractor contractor1 = (Contractor) contractors.iterator().next();
-        assertTrue("Expected " + contractor1.getCompanys().getClass() + " to be a SingletonResults object", contractor1.getCompanys() instanceof SingletonResults);
+        assertTrue("Expected " + contractor1.getCompanys().getClass() + " to be a Lazy object", contractor1.getCompanys() instanceof Lazy);
         Set expected2 = new HashSet();
         expected2.add(data.get("CompanyA"));
         expected2.add(data.get("CompanyB"));

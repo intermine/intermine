@@ -20,6 +20,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -106,35 +107,15 @@ public class NotXmlParser
                     //                         AND this = <this>
                     // Or if we have a one-to-many collection, then:
                     //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
-                    Query q = new Query();
+                    Collection lazyColl = null;
                     if (coll.relationType() == CollectionDescriptor.ONE_N_RELATION) {
-                        QueryClass qc1 = new QueryClass(coll.getReferencedClassDescriptor()
-                                .getType());
-                        q.addFrom(qc1);
-                        q.addToSelect(qc1);
-                        QueryObjectReference qor = new QueryObjectReference(qc1,
-                                coll.getReverseReferenceDescriptor().getName());
-                        ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS,
-                                retval);
-                        q.setConstraint(cc);
-                        q.addToOrderBy(qor);
-                        q.setDistinct(false);
+                        ReferenceDescriptor reverse = coll.getReverseReferenceDescriptor();
+                        lazyColl = new ProxyCollection(os, retval, reverse.getName(),
+                                reverse.getClassDescriptor().getType(), true);
                     } else {
-                        QueryClass qc1 = new QueryClass(coll.getClassDescriptor().getType());
-                        QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
-                            .getType());
-                        q.addFrom(qc1);
-                        q.addFrom(qc2);
-                        q.addToSelect(qc2);
-                        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1,
-                                        coll.getName()), ConstraintOp.CONTAINS, qc2));
-                        cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
-                                    ConstraintOp.EQUALS, new QueryValue(retval.getId())));
-                        q.setConstraint(cs);
-                        q.setDistinct(false);
+                        lazyColl = new ProxyCollection(os, retval, coll.getName(),
+                                coll.getReferencedClassDescriptor().getType(), false);
                     }
-                    Collection lazyColl = new SingletonResults(q, os, os.getSequence());
                     TypeUtil.setFieldValue(retval, coll.getName(), lazyColl);
                 }
             }

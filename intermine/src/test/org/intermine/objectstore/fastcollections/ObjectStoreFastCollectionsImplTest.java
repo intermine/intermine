@@ -21,6 +21,7 @@ import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -70,7 +71,7 @@ public class ObjectStoreFastCollectionsImplTest extends ObjectStoreAbstractImplT
         assertEquals(expected1, contractors);
 
         Contractor contractor1 = (Contractor) contractors.iterator().next();
-        assertTrue("Expected " + contractor1.getCompanys().getClass() + " to be a SingletonResults object", contractor1.getCompanys() instanceof SingletonResults);
+        assertTrue("Expected " + contractor1.getCompanys().getClass() + " to be a Lazy object", contractor1.getCompanys() instanceof Lazy);
         Set expected2 = new HashSet();
         expected2.add(data.get("CompanyA"));
         expected2.add(data.get("CompanyB"));
