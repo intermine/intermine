@@ -31,6 +31,7 @@ import org.flymine.metadata.AttributeDescriptor;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.metadata.ReferenceDescriptor;
+import org.flymine.metadata.CollectionDescriptor;
 
 import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.query.*;
@@ -135,17 +136,26 @@ public class QueryBuildController extends TilesAction
             }
             fieldOps.put(attr.getName(), opString);
         }
+
+        Map opString = new LinkedHashMap();
+        Iterator opIter = ContainsConstraint.validOps().iterator();
+        while (opIter.hasNext()) {
+            ConstraintOp op = (ConstraintOp) opIter.next();
+            opString.put(op.getIndex(), op.toString());
+        }
+
         iter = cld.getReferenceDescriptors().iterator();
         while (iter.hasNext()) {
             ReferenceDescriptor ref = (ReferenceDescriptor) iter.next();
-            Map opString = new LinkedHashMap();
-            Iterator opIter = ContainsConstraint.validOps().iterator();
-            while (opIter.hasNext()) {
-                ConstraintOp op = (ConstraintOp) opIter.next();
-                opString.put(op.getIndex(), op.toString());
-            }
             fieldOps.put(ref.getName(), opString);
         }
+
+        iter = cld.getCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            CollectionDescriptor ref = (CollectionDescriptor) iter.next();
+            fieldOps.put(ref.getName(), opString);
+        }
+
         return fieldOps;
     }
 
@@ -178,6 +188,26 @@ public class QueryBuildController extends TilesAction
             }
             fieldAliases.put(ref.getName(), aliases);
         }
+
+        iter = cld.getCollectionDescriptors().iterator();
+        while (iter.hasNext()) {
+            CollectionDescriptor cod = (CollectionDescriptor) iter.next();
+            String referencedType = cod.getReferencedClassDescriptor().getName();
+            List aliases = new ArrayList();
+            aliases.add("");
+            Iterator fromIter = query.getAliases().keySet().iterator();
+            while (fromIter.hasNext()) {
+                FromElement fromElem = (FromElement) fromIter.next();
+                if (fromElem instanceof QueryNode) { // could be a Query
+                    QueryNode qn = (QueryNode) fromElem;
+                    if (qn.getType().getName().equals(referencedType)) {
+                        aliases.add(query.getAliases().get(qn));
+                    }
+                }
+            }
+            fieldAliases.put(cod.getName(), aliases);
+        }
+
         return fieldAliases;
     }
 }

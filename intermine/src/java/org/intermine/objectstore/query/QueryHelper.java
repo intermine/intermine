@@ -101,7 +101,10 @@ public abstract class QueryHelper
                     QueryField qf = new QueryField(qc, field.getName());
                     QueryValue qv = createQueryValue(qf.getType(), fieldValue);
                     constraints.addConstraint(new SimpleConstraint(qf, op, qv));
-//                 } else if (field instanceof CollectionDescriptor) {
+                } else if (field instanceof CollectionDescriptor) {
+                    QueryReference qr = new QueryCollectionReference(qc, field.getName());
+                    QueryClass qc2 = (QueryClass) aliases.get(fieldValue);
+                    constraints.addConstraint(new ContainsConstraint(qr, op, qc2));
                 } else if (field instanceof ReferenceDescriptor) {
                     QueryReference qr = new QueryObjectReference(qc, field.getName());
                     QueryClass qc2 = (QueryClass) aliases.get(fieldValue);

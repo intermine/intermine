@@ -181,9 +181,33 @@ public class QueryHelperTest extends TestCase
 
         ConstraintSet cs = QueryHelper.generateConstraints(qc1, fields, ops, aliases, model);
         ContainsConstraint cc = (ContainsConstraint) cs.getConstraints().iterator().next();
+        assertTrue(cc.getReference() instanceof QueryObjectReference);
         assertEquals(qc1.getType(), cc.getReference().getQueryClass().getType());
         assertEquals(qc2.getType(), cc.getReference().getType());
         assertEquals("department", cc.getReference().getFieldName());
+        assertEquals(qc2.getType(), cc.getQueryClass().getType());
+    }
+
+    public void testGenerateConstraintsCollection() throws Exception {
+        Map fields = new HashMap();
+        fields.put("employees", "a1_");
+
+        Map ops = new HashMap();
+        ops.put("employees", ConstraintOp.CONTAINS.getIndex().toString());
+
+        QueryClass qc1 = new QueryClass(Department.class);
+        ClassDescriptor cld = model.getClassDescriptorByName("org.flymine.model.testmodel.Department");
+
+        Map aliases = new HashMap();
+        QueryClass qc2 = new QueryClass(Employee.class);
+        aliases.put("a1_", qc2);
+
+        ConstraintSet cs = QueryHelper.generateConstraints(qc1, fields, ops, aliases, model);
+        ContainsConstraint cc = (ContainsConstraint) cs.getConstraints().iterator().next();
+        assertTrue(cc.getReference() instanceof QueryCollectionReference);
+        assertEquals(qc1.getType(), cc.getReference().getQueryClass().getType());
+        //assertEquals(qc2.getType(), cc.getReference().getType());
+        assertEquals("employees", cc.getReference().getFieldName());
         assertEquals(qc2.getType(), cc.getQueryClass().getType());
     }
 
