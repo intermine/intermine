@@ -104,12 +104,13 @@ public class WriteGFFTask extends Task
      * turned into DNA symbols.
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      * @throws IOException if there is a problem while writing
-     
      */
     void writeGFF(ObjectStore os, File destinationDirectory)
         throws ObjectStoreException, IOException, IllegalSymbolException {
         Results results =
             PostProcessUtil.findLocations(os, Chromosome.class, BioEntity.class, false);
+
+        results.setBatchSize(2000);
 
         Iterator resIter = results.iterator();
 
@@ -156,20 +157,19 @@ public class WriteGFFTask extends Task
 
             }
 
-            if (feature instanceof Transcript) {
+            if (feature instanceof Transcript && !(feature instanceof TRNA)) {
+                // process Transcripts but not tRNAs
                 seenTranscripts.put(feature, loc);               
-                continue;
             }
         
             if (feature instanceof Exon) {
                 seenExons.put(feature, loc);
-                continue;
             }
 
             writeFeature(gffWriter, currentChr, feature, loc,
                          (Integer) objectCounts.get(feature.getClass()), null); 
             
-
+            
             incrementCount(objectCounts, feature);
         }
 
@@ -183,6 +183,7 @@ public class WriteGFFTask extends Task
         throws IOException {
         Iterator transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
+
             Transcript transcript = (Transcript) transcriptIter.next();
             Location transcriptLocation = (Location) seenTranscripts.get(transcript);
             Gene gene = transcript.getGene();
@@ -227,10 +228,10 @@ public class WriteGFFTask extends Task
 
         String featureName = null;
 
-        if (bioEntity instanceof Transcript) {
+        if (bioEntity instanceof Transcript && !(bioEntity instanceof TRNA) && parent != null) {
             featureName = "mRNA";
         } else {
-            if (bioEntity instanceof Exon) {
+            if (bioEntity instanceof Exon && parent != null) {
                 featureName = "CDS";
             } else {
                 Class bioEntityClass = bioEntity.getClass();
@@ -253,7 +254,8 @@ public class WriteGFFTask extends Task
             }
         }
  
-        if (bioEntity instanceof Transcript || bioEntity instanceof Exon) {
+        if ((bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)
+             || bioEntity instanceof Exon) && parent != null) {
             lineBuffer.append(featureName).append("\t");
         } else {
             String lcName = featureName.toLowerCase();
@@ -308,14 +310,16 @@ public class WriteGFFTask extends Task
             if (bioEntity.getIdentifier() == null) {
                 identifiers.add(featureName + "_" + index);
             } else {
-                if (bioEntity instanceof Exon) {
+                if (bioEntity instanceof Exon && parent != null) {
                     identifiers.add(parent.getIdentifier());
                 } else {
                     identifiers.add(bioEntity.getIdentifier());
                 }
             }
         }
-        if (bioEntity instanceof Transcript || bioEntity instanceof Exon) {
+
+        if ((bioEntity instanceof Transcript && !(bioEntity instanceof TRNA)
+             || bioEntity instanceof Exon) && parent != null) {
             attributes.put("mRNA", identifiers);
         } else {
             attributes.put(featureName, identifiers);
@@ -326,7 +330,7 @@ public class WriteGFFTask extends Task
         attributes.put("Alias", flyMineIDs);
         attributes.put("FlyMineInternalID", (List) flyMineIDs.clone());
 
-        if (bioEntity instanceof Transcript) {
+        if (bioEntity instanceof Transcript && !(bioEntity instanceof TRNA) && parent != null) {
             ArrayList geneNameList = new ArrayList();
             geneNameList.add(parent.getIdentifier());
             attributes.put("Gene", geneNameList);
@@ -347,9 +351,9 @@ public class WriteGFFTask extends Task
         throws IOException, IllegalArgumentException, IllegalSymbolException {
         FileOutputStream outputStream =
             new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
-        
+     
         FlyMineSequence sequence = FlyMineSequenceFactory.make(chr);
-        
+     
         if (sequence != null) {
             try {
                 sequence.getAnnotation().setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
@@ -357,7 +361,7 @@ public class WriteGFFTask extends Task
             } catch (ChangeVetoException e) {
                 throw new RuntimeException("failed to set a property", e);
             }
-            SeqIOTools.writeFasta(outputStream, sequence);
+           SeqIOTools.writeFasta(outputStream, sequence);
         }
 
         outputStream.close();
