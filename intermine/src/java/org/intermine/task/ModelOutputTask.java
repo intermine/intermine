@@ -16,7 +16,6 @@ import org.apache.tools.ant.BuildException;
 import java.io.File;
 
 import org.flymine.metadata.Model;
-import org.flymine.codegen.AxisModelOutput;
 import org.flymine.codegen.JavaModelOutput;
 import org.flymine.codegen.ModelOutput;
 import org.flymine.codegen.CastorModelOutput;
@@ -80,9 +79,7 @@ public class ModelOutputTask extends Task
         ModelOutput mo = null;
 
         try {
-            if (type.equals("wsdd")) {
-                mo = new AxisModelOutput(model, destDir);
-            } else if (type.equals("java")) {
+            if (type.equals("java")) {
                 mo = new JavaModelOutput(model, destDir);
             } else if (type.equals("castor")) {
                 mo = new CastorModelOutput(model, destDir);

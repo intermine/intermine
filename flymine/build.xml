@@ -1055,10 +1055,14 @@
       path="${webservice.path}"
       war="file://${dist.webapp}/webservice.war"/> 
     
-    <ant antfile="build-model.xml" target="generate-wsdd">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-    </ant>
+    <taskdef name="generate-wsdd" classname="org.flymine.task.GenerateWSDDTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+
+    <generate-wsdd destfile="${build.tmp}/deploy-ObjectStore.wsdd.fragment"/>
+    <loadfile srcFile="${build.tmp}/deploy-ObjectStore.wsdd.fragment" property="generated.wsdd"/>
+    <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
+    <copy todir="${build.tmp}" filtering="true" file="${resources}/webapps/webservice/deploy-ObjectStore.wsdd"/>
     
     <!-- This should probably be a waitfor task -->
     <java classname="org.apache.axis.client.AdminClient" fork="true">
