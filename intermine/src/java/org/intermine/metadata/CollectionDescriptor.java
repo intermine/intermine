@@ -89,8 +89,11 @@ public class CollectionDescriptor extends ReferenceDescriptor
      * @see Object#toString
      */
     public String toString() {
-        return "<collection name=\"" + name + "\" referenced-type=\"" + refName + "\" ordered=\""
-            + ordered + "\" reverseReference=\"" + reverseRefName + "\" primarykey=\""
-            + primaryKey + "\"/>";
+        StringBuffer sb = new StringBuffer();
+        sb.append("<collection name=\"" + name + "\" referenced-type=\"" + refName + "\"")
+            .append(" ordered=\"" + ordered + "\"")
+            .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
+            .append(" primary-key=\"" + primaryKey + "\"/>");
+        return sb.toString();
     }
 }
