@@ -40,7 +40,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         int oldOffset = osai.maxOffset;
         osai.maxOffset = 10;
         try {
-            osai.checkStartLimit(11,0);
+            osai.checkStartLimit(11,0,(Query) queries.get("SelectSimpleObject"));
             fail("Expected ObjectStoreLimitReachedException");
         } catch (ObjectStoreLimitReachedException e) {
         }
@@ -49,7 +49,7 @@ public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
         int oldLimit = osai.maxLimit;
         osai.maxLimit = 10;
         try {
-            osai.checkStartLimit(0,11);
+            osai.checkStartLimit(0,11,(Query) queries.get("SelectSimpleObject"));
             fail("Expected ObjectStoreLimitReachedException");
         } catch (ObjectStoreLimitReachedException e) {
         }
