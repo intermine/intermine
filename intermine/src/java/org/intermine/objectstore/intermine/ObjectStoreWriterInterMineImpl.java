@@ -119,7 +119,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             try {
                 Statement s = conn.createStatement();
                 s.execute("DROP TABLE " + missingTable);
-                LOG.error("Dropping table " + missingTable);
+                LOG.info("Dropping table " + missingTable);
             } catch (SQLException e2) {
             }
         }
@@ -533,7 +533,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             long nextSequence = r.getLong(1);
             sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
             long end = System.currentTimeMillis();
-            LOG.error("Got new set of serial numbers - took " + (end - start) + " ms");
+            LOG.info("Got new set of serial numbers - took " + (end - start) + " ms");
         }
         Integer retval = new Integer(sequenceBase + (sequenceOffset++));
         recentSequences.put(retval, retval);
