@@ -106,6 +106,8 @@ public class QueryOptimiser
             expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
             // Add optimised query to the cache here.
             LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
+            LOG.info("New cache line produced - expectedRows = " + expectedRows + ", limit = "
+                    + limitOffsetQuery.getLimit());
             cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
                     limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
             LOG.info("Optimising " + expectedTime + " ms query took "
