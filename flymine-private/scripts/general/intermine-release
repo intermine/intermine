@@ -64,7 +64,7 @@ then
     cd $tempdir/intermine-$version
     ant dist-javadoc
 
-    command="ssh $apiserver \"find $apidir | xargs rm -f\""
+    command="ssh $apiserver \"rm -rf $apidir/*\""
     eval $command
 
     command="scp -r dist/api/* $apiserver:$apidir/"
