@@ -79,4 +79,24 @@ public class ItemFactoryTest extends TestCase
         assertEquals("some_id_from_itemFactory4", item3FromItemFactory4.getIdentifier());
         assertEquals("prefix_3", item4FromItemFactory4.getIdentifier());
     }
+
+    public void testMakeItem2() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+
+        try {
+            Item item = itemFactory.makeItem("my_id1",
+                                             "http://www.intermine.org/model/testmodel#Foo", "");
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        
+        try {
+            Item item = itemFactory.makeItemForClass("http://www.intermine.org/model/testmodel#Foo");
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+
+    }
 }
