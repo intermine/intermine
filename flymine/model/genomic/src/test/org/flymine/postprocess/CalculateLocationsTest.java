@@ -82,9 +82,9 @@ public class CalculateLocationsTest extends TestCase {
     }
 
 
-    public void testSuperContigToChromosome() throws Exception {
+    public void testSupercontigToChromosome() throws Exception {
         Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome(), getChromosomeBand(), getBandOnChr()}));
-        SuperContig sc = (SuperContig) DynamicUtil.createObject(Collections.singleton(SuperContig.class));
+        Supercontig sc = (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
         sc.setId(new Integer(104));
         Location loc = createLocation(getChromosome(), sc, 0, 1200, 1600);
         toStore.add(sc);
@@ -102,15 +102,15 @@ public class CalculateLocationsTest extends TestCase {
         Location expected = createLocation(getChromosomeBand(), sc, 0, 200, 600);
         expected.setId(new Integer(0));
         Item expItem = FullRenderer.toItem(expected, model);
-        Location result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, SuperContig.class).next()).get(2);
+        Location result = (Location) ((ResultsRow) cl.findLocations(ChromosomeBand.class, Supercontig.class).next()).get(2);
         Item resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
         assertEquals(expItem, resItem);
     }
 
-    public void testContigToSuperContig() throws Exception {
+    public void testContigToSupercontig() throws Exception {
         Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome(), getChromosomeBand(), getBandOnChr()}));
-        SuperContig sc = (SuperContig) DynamicUtil.createObject(Collections.singleton(SuperContig.class));
+        Supercontig sc = (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
         Contig c = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         sc.setId(new Integer(104));
         c.setId(new Integer(105));
@@ -151,7 +151,7 @@ public class CalculateLocationsTest extends TestCase {
 
     public void testFeatureToContig() throws Exception {
         Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome(), getChromosomeBand(), getBandOnChr()}));
-        SuperContig sc = (SuperContig) DynamicUtil.createObject(Collections.singleton(SuperContig.class));
+        Supercontig sc = (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
         sc.setId(new Integer(104));
         Contig c = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         c.setId(new Integer(105));
@@ -183,11 +183,11 @@ public class CalculateLocationsTest extends TestCase {
         resItem.setIdentifier("0");
         assertEquals(expItem, resItem);
 
-        // test Exon location on SuperContig
+        // test Exon location on Supercontig
         expected = createLocation(sc, e, 0, 150, 250);
         expected.setId(new Integer(0));
         expItem = FullRenderer.toItem(expected, model);
-        result = (Location) ((ResultsRow) cl.findLocations(SuperContig.class, Exon.class).next()).get(2);
+        result = (Location) ((ResultsRow) cl.findLocations(Supercontig.class, Exon.class).next()).get(2);
         resItem = FullRenderer.toItem(result, model);
         resItem.setIdentifier("0");
         assertEquals(expItem, resItem);
@@ -293,12 +293,12 @@ public class CalculateLocationsTest extends TestCase {
         //            |
         //   ----------          child
         cl = new CalculateLocations(osw);
-        parentOnChr = cl.new SimpleLoc(parentId, childId, 100, 300, 0);
-        childOnChr = cl.new SimpleLoc(parentId, childId, 50, 150, 1);
+        parentOnChr = cl.new SimpleLoc(parentId, childId, 101, 300, 0);
+        childOnChr = cl.new SimpleLoc(parentId, childId, 51, 150, 1);
         res = cl.createLocation(parent, parentOnChr, child, childOnChr);
 
         PartialLocation exp2 = (PartialLocation) DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
-        exp2.setStart(new Integer(0));
+        exp2.setStart(new Integer(1));
         exp2.setEnd(new Integer(50));
         exp2.setStartIsPartial(Boolean.TRUE);
         exp2.setEndIsPartial(Boolean.FALSE);
