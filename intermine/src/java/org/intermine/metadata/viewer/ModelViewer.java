@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -196,18 +195,6 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
         //    public void run() {
         InterMineModelParser parser = new InterMineModelParser();
         Model model = parser.process(new FileReader(new File(fileName)));
-        StringBuffer sb = new StringBuffer();
-        Iterator iter = model.getClassDescriptors().iterator();
-        while (iter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
-            sb.append("null:" + TypeUtil.unqualifiedName(cld.getName())
-                      + " a owl:Class; owl:equivalentClass "
-                      + "mage:" + TypeUtil.unqualifiedName(cld.getName()) + ".\n");
-        }
-        FileWriter fw = new FileWriter(new File("tmpfile"));
-        fw.write(sb.toString());
-        fw.flush(); fw.close();
-
         createAndShowGUI(model);
                 //    }
                 //});
