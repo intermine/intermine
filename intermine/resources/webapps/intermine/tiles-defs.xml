@@ -7,58 +7,75 @@
 <tiles-definitions>
   <!--templates-->
   <definition name="layout.template" path="/layout.jsp">
+    <put name="pageDescription" value=""/>
     <put name="title" value="InterMine" />
     <put name="header" value="/header.jsp"/>
     <put name="menu" value="/menu.jsp"/>
     <put name="errorMessages" value="/errorMessages.jsp"/>
+    <put name="description" value="/description.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
   </definition>
   <!--pages-->
   <definition name="query.page" extends="layout.template">
     <put name="body" value="query.tile"/>
+    <put name="pageDescription" value="query.page.description"/>
   </definition>
   <definition name="iqlquery.page" extends="layout.template">
     <put name="body" value="iqlQuery.tile"/>
+    <put name="pageDescription" value="iqlquery.page.description"/>
   </definition>
   <definition name="history.page" extends="layout.template">
     <put name="body" value="history.tile"/>
+    <put name="pageDescription" value="history.page.description"/>
   </definition>
   <definition name="begin.page" extends="layout.template">
     <put name="body" value="begin.tile"/>
+    <put name="pageDescription" value="begin.page.description"/>
   </definition>
   <definition name="templates.page" extends="layout.template">
     <put name="body" value="templates.tile"/>
+    <put name="pageDescription" value="templates.page.description"/>
   </definition>
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.tile"/>
+    <put name="pageDescription" value="help.page.description"/>
   </definition>
   <definition name="export.page" extends="layout.template">
     <put name="body" value="export.tile"/>
+    <put name="pageDescription" value="export.page.description"/>
   </definition>
   <definition name="classChooser.page" extends="layout.template">
     <put name="body" value="classChooser.tile"/>
+    <put name="pageDescription" value="classChooser.page.description"/>
   </definition>
   <definition name="results.page" extends="layout.template">
     <put name="body" value="resultsView.tile"/>
+    <put name="pageDescription" value="results.page.description"/>
   </definition>
   <definition name="error.page" extends="layout.template">
     <put name="body" value="/error.jsp"/>
+    <put name="pageDescription" value="error.page.description"/>
   </definition>
   <definition name="objectDetails.page" extends="layout.template">
     <put name="body" value="objectDetailsPage.tile"/>
+    <put name="pageDescription" value="objectDetails.page.description"/>
   </definition>
   <definition name="collectionDetails.page" extends="layout.template">
     <put name="body" value="collectionDetailsPage.tile"/>
+    <put name="pageDescription" value="collectionDetails.page.description"/>
   </definition>
   <definition name="bagDetails.page" extends="layout.template">
     <put name="body" value="bagDetailsPage.tile"/>
+    <put name="pageDescription" value="bagDetails.page.description"/>
   </definition>
   <definition name="documentation.page" extends="layout.template">
     <put name="body" value="/docbook.jsp"/>
+    <put name="pageDescription" value="documentation.page.description"/>
   </definition>
   <definition name="tree.page" extends="layout.template">
     <put name="body" value="tree.tile"/>
+    <put name="pageDescription" value="tree.page.description"/>
   </definition>
   <!--tiles-->
   <definition name="query.tile" path="/query.jsp">

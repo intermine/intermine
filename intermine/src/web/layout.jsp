@@ -6,7 +6,9 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <html:html locale="true" xhtml="true">
-  
+  <%-- from the tiles config file for description.jsp --%>
+  <tiles:importAttribute name="pageDescription"/>
+
   <head>
     <html:base/>
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
@@ -21,6 +23,9 @@
       <tiles:get name="header"/>
       <tiles:get name="menu"/>
       <tiles:get name="errorMessages"/>
+      <tiles:insert attribute="description">
+        <tiles:put name="pageDescription" beanName="pageDescription" beanScope="tile"/>
+      </tiles:insert>
       <tiles:get name="body"/>
       <tiles:get name="footer"/>
     </div>
