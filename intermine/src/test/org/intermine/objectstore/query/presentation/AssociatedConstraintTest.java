@@ -132,8 +132,8 @@ public class AssociatedConstraintTest extends TestCase
     }
 
     public void testLeft() {
-        assertEquals("company1.name", ac1.getLeft());
-        assertEquals("department1.name", ac2.getLeft());
+        assertEquals("name", ac1.getLeft());
+        assertEquals("name", ac2.getLeft());
         assertEquals("department1", ac3.getLeft());
         assertEquals("department1", ac4.getLeft());
         assertEquals("departments", ac5.getLeft());

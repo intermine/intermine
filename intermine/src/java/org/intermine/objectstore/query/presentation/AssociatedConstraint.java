@@ -83,7 +83,11 @@ public class AssociatedConstraint extends PrintableConstraint
      */
     public String getLeft() {
         Object left = getLeftArgument();
-        if (left instanceof QueryNode) {
+        if (left instanceof QueryField) {
+            QueryField qf = (QueryField) left;
+            return qf.getFieldName() + (qf.getSecondFieldName() == null ? "" : "."
+                    + qf.getSecondFieldName());
+        } else if (left instanceof QueryNode) {
             return FqlQuery.nodeToString(query, (QueryNode) left);
         } else if (left instanceof QueryReference) {
             return ((QueryReference) left).getFieldName();
