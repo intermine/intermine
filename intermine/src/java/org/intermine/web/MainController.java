@@ -82,7 +82,7 @@ public class MainController extends TilesAction
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
         Map navigation = new LinkedHashMap();
-        if (prefix != null) {
+        if (prefix != null && prefix.indexOf(".") != -1) {
             for (StringTokenizer st = new StringTokenizer(prefix, "."); st.hasMoreTokens();) {
                 String token = st.nextToken();
                 current = (current == null ? token : current + "." + token);

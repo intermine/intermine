@@ -51,6 +51,17 @@ public class MainChange extends DispatchAction
             }
         }
 
+        String prefix;
+        if (path.indexOf(".") == -1) {
+            prefix = path;
+        } else {
+            prefix = path.substring(0, path.lastIndexOf("."));
+            path = ((Node) query.getNodes().get(prefix)).getType();
+        }
+        session.setAttribute("prefix", prefix);
+        session.setAttribute("path", path);
+
+
         return mapping.findForward("query");
     }
 
@@ -126,7 +137,7 @@ public class MainChange extends DispatchAction
         request.setAttribute("editingNode", node);
         //and change metadata view if relevant
         if (!node.isAttribute()) {
-            session.setAttribute("prefix", path.indexOf(".") == -1 ? null : path);
+            session.setAttribute("prefix", path);
             session.setAttribute("path", node.getType());
         }
         
@@ -153,9 +164,6 @@ public class MainChange extends DispatchAction
 
         session.setAttribute("path", path);
         if (prefix != null) {
-            if (prefix.indexOf(".") == -1) {
-                prefix = null;
-            }
             session.setAttribute("prefix", prefix);
         }
 
