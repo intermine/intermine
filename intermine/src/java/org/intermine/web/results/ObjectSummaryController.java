@@ -29,7 +29,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
