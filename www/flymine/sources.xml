@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<intermine-sources>
+  <sources version="1.0">
+    <source>
+      <description>
+        Genome Annotation for D. melanogaster and A. gambiae from
+        &lt;a href="http://www.ensembl.org/">Ensembl&lt;/a>
+      </description>
+      <version>1.0</version>
+    </source>
+   <source>
+      <description>
+        Orthologues between D. melanogaster and A. gambiae from
+        &lt;a href="http://www.ensembl.org/">Ensembl&lt;/a>
+      </description>
+      <version></version>
+    </source>
+    <source>
+      <description>
+        Orthologues and Paralogues between D. melanogaster and C. elegans
+        from &lt;a href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
+      </description>
+      <version></version>
+    </source>
+    <source>
+      <description>
+        2-hybrid protein-protein interactions for D. melanogaster:
+        Curagen set (Giot et al (2003) Science 302 1727-1736) and
+        &lt;a href="http://pim.hybrigenics.com/">Hybrigenics&lt;/a> set
+      </description>
+      <version></version>
+    </source>
+    <source>
+      <description>
+        2-hybrid protein-protein interactions for C. elegans (Li et al
+        (2004) Science 303 540-543)
+      </description>
+      <version></version>
+    </source>
+    <source>
+      <description>
+        RNAi phenotypes for C. elegans from
+        &lt;a href="http://www.wormbase.org">WormBase&lt;/a>
+      </description>
+      <version></version>
+    </source>
+    <source>
+      <description>
+        &lt;a href="http://www.geneontology.org/">The Gene Ontology&lt;/a>
+      </description>
+      <version></version>
+    </source>
+  </sources>
+</intermine-sources>
