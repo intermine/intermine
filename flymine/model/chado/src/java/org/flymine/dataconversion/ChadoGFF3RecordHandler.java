@@ -179,7 +179,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             || "TRNA".equals(clsName)) {
             Item gene = getItemFactory().makeItem(null, tgtNs + "Gene", "");
             gene.setReference("organism", getOrganism().getIdentifier());
-
+            gene.addCollection(new ReferenceList("evidence",
+                                                 Arrays.asList(new Object[] {getInfoSource.getIdentifier()})));
             Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
             while (fbIter.hasNext()) {
                 String organismDbId = (String) fbIter.next();
@@ -225,6 +226,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             Item translation = getItemFactory().makeItem(null, tgtNs + "Translation", "");
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
+            translation.addCollection(new ReferenceList("evidence",
+                                                 Arrays.asList(new Object[] {getInfoSource.getIdentifier()})));
 
             addItem(translation);
 
