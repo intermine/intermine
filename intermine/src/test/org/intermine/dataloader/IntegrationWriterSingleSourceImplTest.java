@@ -52,7 +52,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
 
-        iw = new IntegrationWriterSingleSourceImpl("test", os, writer);
+        iw = new IntegrationWriterSingleSourceImpl("test", writer);
     }
 
     // Not doing the Query tests here

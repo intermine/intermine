@@ -16,19 +16,16 @@ import org.flymine.objectstore.ObjectStoreException;
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
     protected String dataSource;
-    protected ObjectStore os;
     protected ObjectStoreWriter osw;
 
     /**
      * Constructs a new instance of an IntegrationWriter
      *
      * @param dataSource the name of the data source
-     * @param os an instance of an ObjectStore, which we can use to access the database
      * @param osw an instance of an ObjectStoreWriter, which we can use to access the database
      */
-    public IntegrationWriterAbstractImpl(String dataSource, ObjectStore os, ObjectStoreWriter osw) {
+    public IntegrationWriterAbstractImpl(String dataSource, ObjectStoreWriter osw) {
         this.dataSource = dataSource;
-        this.os = os;
         this.osw = osw;
     }
 
@@ -40,7 +37,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws ObjectStoreException if an error occurs retieving the object
      */
     public Object getObjectByExample(Object o) throws ObjectStoreException {
-        return os.getObjectByExample(o);
+        return osw.getObjectStore().getObjectByExample(o);
     }
 
     /**
@@ -121,5 +118,12 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void abortTransaction() throws ObjectStoreException {
         osw.abortTransaction();
+    }
+
+    /**
+     * @see ObjectStoreWriter.getObjectStore
+     */
+    public ObjectStore getObjectStore() {
+        return osw.getObjectStore();
     }
 }

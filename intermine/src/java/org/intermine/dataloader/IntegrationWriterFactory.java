@@ -82,10 +82,9 @@ public class IntegrationWriterFactory
             Constructor c = integrationWriterClass.getConstructor(
                                                                   new Class[] {
                                                                       String.class,
-                                                                      ObjectStore.class, 
                                                                       ObjectStoreWriter.class});
             iw = (IntegrationWriterAbstractImpl) c.newInstance(new Object[]
-                {dataSource, os, writer});
+                {dataSource, writer});
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified IntegrationWriter class '"
                                            + integrationWriterClassName
@@ -93,7 +92,7 @@ public class IntegrationWriterFactory
         } catch (NoSuchMethodException e) {
             throw new ObjectStoreException("Cannot find appropriate constructor for "
                                            + "IntegrationWriter: " + integrationWriterClassName 
-                                           + "(String, ObjectStore, ObjectStoreWriter)"
+                                           + "(String, ObjectStoreWriter)"
                                            + " - check properties file");
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate IntegrationWriter "

@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.util.TypeUtil;
@@ -28,12 +27,10 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * Constructs a new instance of IntegrationWriterSingleSourceImpl.
      *
      * @param dataSource the name of the data source. This value is ignored by this class
-     * @param os an instance of an ObjectStore, which we can use to access the database
      * @param osw an instance of an ObjectStoreWriter, which we can use to access the database
      */
-    public IntegrationWriterSingleSourceImpl(String dataSource, ObjectStore os,
-                                             ObjectStoreWriter osw) {
-        super(dataSource, os, osw);
+    public IntegrationWriterSingleSourceImpl(String dataSource, ObjectStoreWriter osw) {
+        super(dataSource, osw);
     }
 
     /**
@@ -45,7 +42,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @throws ObjectStoreException if error occurs finding object
      */
     public IntegrationDescriptor getByExample(Object obj) throws ObjectStoreException {
-        Object dbObj = os.getObjectByExample(obj);
+        Object dbObj = osw.getObjectStore().getObjectByExample(obj);
         IntegrationDescriptor retval = new IntegrationDescriptor();
 
         if (dbObj != null) {
