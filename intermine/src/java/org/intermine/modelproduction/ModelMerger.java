@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -218,8 +219,8 @@ public class ModelMerger
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
                 }
-                if (!merg.getReverseReferenceFieldName()
-                                .equals(orig.getReverseReferenceFieldName())) {
+                if (!StringUtils.equals(merg.getReverseReferenceFieldName(),
+                        orig.getReverseReferenceFieldName())) {
                     String fldName = original.getName() + "." + orig.getName();
                     throw new ModelMergerException("mismatch between reverse reference field name: "
                             + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
@@ -263,8 +264,8 @@ public class ModelMerger
                             + fldName + ":" + merg.getReferencedClassName() + " != "
                             + fldName + ":" + orig.getReferencedClassName());
                 }
-                if (!merg.getReverseReferenceFieldName()
-                                  .equals(orig.getReverseReferenceFieldName())) {
+                if (!StringUtils.equals(merg.getReverseReferenceFieldName(),
+                        orig.getReverseReferenceFieldName())) {
                     String fldName = original.getName() + "." + orig.getName();
                     throw new ModelMergerException("mismatch between reverse reference field name: "
                             + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
