@@ -279,6 +279,10 @@ span.collectionDescription {
 .templateDesc {
 }
 
+a.brokenTmplLink {
+  color: #d00;
+}
+
 .admin-msg {
   text-align: center;
 }
