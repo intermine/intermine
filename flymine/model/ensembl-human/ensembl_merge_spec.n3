@@ -430,13 +430,13 @@ null:analysis__gff_feature a owl:DatatypeProperty ;
 
 #  synonym, EnsemblTranslater will need to point this synonym at an InfoSource
 :Synonym a owl:Class ;
-    owl:equivalentClass e:exon_stable_id, e:gene_stable_id, e:translation_stable_id, e:transcript_stable_id, marker_synonym .
+    owl:equivalentClass e:exon_stable_id, e:gene_stable_id, e:translation_stable_id, e:transcript_stable_id, e:marker_synonym .
 
 :Synonym__value a owl:DatatypeProperty ;
-    owl:equivalentProperty e:exon_stable_id__stable_id, e:gene_stable_id__stable_id, e:translation_stable_id__stable_id, e:transcript_stable_id__stable_id, marker_synonym__name .
+    owl:equivalentProperty e:exon_stable_id__stable_id, e:gene_stable_id__stable_id, e:translation_stable_id__stable_id, e:transcript_stable_id__stable_id, e:marker_synonym__name .
 
 :Synonym__subject a owl:ObjectProperty ;
-    owl:equivalentProperty e:exon_stable_id__exon, e:gene_stable_id__gene, e:translation_stable_id__translation, e:transcript_stable_id__transcript,marker_synonym__marker  .
+    owl:equivalentProperty e:exon_stable_id__exon, e:gene_stable_id__gene, e:translation_stable_id__translation, e:transcript_stable_id__transcript, e:marker_synonym__marker  .
 
 null:exon_stable_id__version a owl:DatatypeProperty ;
     owl:equivalentProperty e:exon_stable_id__version .
