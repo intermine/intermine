@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Arrays;
 
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.xml.full.Item;
@@ -32,7 +33,8 @@ public class RNAiConverter extends FileConverter
     
     protected Map genes = new HashMap();
     protected Map phenotypes = new HashMap();
-    protected Item organism, pub, expt;
+    protected Map synonyms = new HashMap();
+    protected Item organism, expt, db;
     protected int id = 0;
 
     /**
@@ -56,18 +58,11 @@ public class RNAiConverter extends FileConverter
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                String[] array = line.split("\t");
-                Item gene = newGene(array[3]);
-                Item phenotype =  newPhenotype(array[4]);
-                ReferenceList refs = gene.getCollection("phenotypes");
-                if (refs == null) {
-                    refs = new ReferenceList();
-                    refs.setName("phenotypes");
-                    gene.addCollection(refs);
-                }
-                //make an attempt to ignore inexplicable duplicate lines in file
-                if (!refs.getRefIds().contains(phenotype.getIdentifier())) {
-                    refs.addRefId(phenotype.getIdentifier());
+                String[] array = line.split("\t", -1); //keep trailing empty Strings
+                Item gene = newGene(array[3], array[6]);
+                addPhenotype(gene, array[4]);
+                if (array.length > 13 && !array[13].trim().equals("")) {
+                    addSynonym(gene, array[13]);
                 }
             }
             
@@ -80,35 +75,100 @@ public class RNAiConverter extends FileConverter
     }
 
     /**
-     * Convenience method to create a new gene Item
-     * @param identifier the wormbase sequence id
-     * @return a new gene Item
+     * Add a synonym to a gene
+     * @param gene a gene Item
+     * @param syn the actual synonym for the gene
+     * @throws ObjectStoreException if an error occurs when storing the Item
      */
-    protected Item newGene(String identifier)  {
-        if (genes.containsKey(identifier)) {
-            return (Item) genes.get(identifier);
+    protected void addSynonym(Item gene, String syn) throws ObjectStoreException {
+        ReferenceList refs = gene.getCollection("synonyms");
+        if (refs == null) {
+            refs = new ReferenceList();
+            refs.setName("synonyms");
+            gene.addCollection(refs);
+        }
+        Item synonym = newSynonym(syn, gene);
+        if (!refs.getRefIds().contains(synonym.getIdentifier())) {
+            refs.addRefId(synonym.getIdentifier());
+        }
+    }
+
+    /**
+     * Add a phenotype to a gene
+     * @param gene a gene Item
+     * @param code the phenotype code
+     * @throws ObjectStoreException if an error occurs storing the Item
+     */
+    protected void addPhenotype(Item gene, String code) throws ObjectStoreException {
+        ReferenceList refs = gene.getCollection("phenotypes");
+        if (refs == null) {
+            refs = new ReferenceList();
+            refs.setName("phenotypes");
+            gene.addCollection(refs);
+        }
+        Item phenotype =  newPhenotype(code, gene);
+        if (!refs.getRefIds().contains(phenotype.getIdentifier())) {
+            refs.addRefId(phenotype.getIdentifier());
+        }
+    }
+
+    /**
+     * Convenience method to create a new gene Item
+     * @param sequenceName the WormBase sequence name
+     * @param commonName the CGC-Approved gene name
+     * @return a new gene Item
+     * @throws ObjectStoreException if an error occurs when storing the Item
+     */
+    protected Item newGene(String sequenceName, String commonName)  throws ObjectStoreException {
+        if (genes.containsKey(sequenceName)) {
+            return (Item) genes.get(sequenceName);
         }
         Item item = newItem("Gene");
-        item.addAttribute(new Attribute("identifier", identifier));
+        item.addAttribute(new Attribute("sequenceName", sequenceName));
+        item.addAttribute(new Attribute("commonName", commonName));
         item.addReference(new Reference("organism", organism.getIdentifier()));
-        genes.put(identifier, item);
+        genes.put(sequenceName, item);
         return item;
     }
 
     /**
      * Convenience method to create and store a new phenotype Item
      * @param code the phenotype code
+     * @param subject the phenotype's subject item
      * @return a new phenotype Item
      * @throws ObjectStoreException if an error occurs in storing the Utem
      */
-    protected Item newPhenotype(String code) throws ObjectStoreException {
+    protected Item newPhenotype(String code, Item subject) throws ObjectStoreException {
         if (phenotypes.containsKey(code)) {
             return (Item) phenotypes.get(code);
         }
         Item item = newItem("Phenotype");
         item.addAttribute(new Attribute("code", code));
+        item.addReference(new Reference("subject", subject.getIdentifier()));
+        item.addCollection(new ReferenceList("evidence",
+                                             Arrays.asList(new Object[] {expt.getIdentifier()})));
         writer.store(ItemHelper.convert(item));
         phenotypes.put(code, item);
+        return item;
+    }
+
+    /**
+     * Convenience method to create and store a new synonym Item
+     * @param synonym the actual synonym
+     * @param subject the synonym's subject item
+     * @return a new synonym Item
+     * @throws ObjectStoreException if an error occurs in storing the Utem
+     */
+    protected Item newSynonym(String synonym, Item subject) throws ObjectStoreException {
+        if (synonyms.containsKey(synonym)) {
+            return (Item) synonyms.get(synonym);
+        }
+        Item item = newItem("Synonym");
+        item.addAttribute(new Attribute("synonym", synonym));
+        item.addReference(new Reference("subject", subject.getIdentifier()));
+        item.addReference(new Reference("source", db.getIdentifier()));
+        writer.store(ItemHelper.convert(item));
+        synonyms.put(synonym, item);
         return item;
     }
 
@@ -123,7 +183,12 @@ public class RNAiConverter extends FileConverter
         organism.addAttribute(new Attribute("taxonId", "6239"));
         writer.store(ItemHelper.convert(organism));
 
-        pub = newItem("Publication");
+        db = newItem("Database");
+        db.addAttribute(new Attribute("title", "WormBase"));
+        db.addAttribute(new Attribute("url", "http://www.wormbase.org"));
+        writer.store(ItemHelper.convert(db));
+
+        Item pub = newItem("Publication");
         pub.addAttribute(new Attribute("title", "Systematic functional analysis of the "
                                        + "Caenorhabditis elegans genome using RNAi"));
         pub.addAttribute(new Attribute("journal", "Nature"));
