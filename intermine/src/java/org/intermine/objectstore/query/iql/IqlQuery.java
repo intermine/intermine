@@ -365,7 +365,8 @@ public class FqlQuery
      * @return a String version of the query
      */
     public String toString() {
-        StringBuffer ret = new StringBuffer(queryString);
+        StringBuffer ret = new StringBuffer();
+        ret.append(queryString);
         Iterator iter = parameters.iterator();
         int i = 0;
         while (iter.hasNext()) {
