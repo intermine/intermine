@@ -738,7 +738,7 @@
     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.anoph-test"/>
+      <property name="db.name" value="db.ensembl-anoph-test"/>
     </ant>
   </target>
 
