@@ -82,6 +82,21 @@
   </target>
 
 
+  <target name="generate-owl-model"
+          description="Generate FlyMine model from an OWL file">
+
+    <java classname="org.flymine.ontology.Owl2FlyMine" fork="true">
+      <classpath refid="class.path" />
+      <arg value="${build.model}/${model.name}/${model.name}.n3" />
+      <arg value="N3" />
+      <arg value="${build.model}/${model.name}/${model.name}_model.xml" />
+      <arg value="genomic" />
+      <arg value="org.flymine.model.${model.name}" />
+      <arg value="http://www.flymine.org/model/${model.name}#" />
+    </java>
+
+  </target>
+
   <target name="generate-acedb-model" depends="prepare"
           description="Generate a FlyMine model file from an AceDB model file">
     <taskdef
@@ -164,7 +179,10 @@
           description="Generate a FlyMine xml model from a xmi file">
   </target>
   
-
+  <target name="generate-model-from-owl" depends="generate-owl-model, copy-keydefs"
+          description="Generate a FlyMine xml model from an OWL file">
+  </target>
+  
   <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, copy-keydefs"
           description="Build a usable model from an AceDB .wrm file">
   </target>

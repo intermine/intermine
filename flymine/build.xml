@@ -514,7 +514,7 @@
   </target>
 
  <target name="translate-chado" depends="build-db-chado-target-items">
-    <java classname="org.flymine.dataconversion.DataTranslator" fork="true"
+    <java classname="org.flymine.dataconversion.ChadoDataTranslator" fork="true"
       maxmemory="800m" >
       <!-- <jvmarg value="-Xrunjmp" /> -->
       <classpath refid="models.class.path" />
@@ -524,7 +524,6 @@
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
     </java>
-
     <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -907,20 +906,9 @@
   <!-- create merged model from currently merged OWL ontologies 
        in build/genomic/genomic.n3  -->
   <target name="create-genomic-model" depends="prepare-genomic-model, compile-main">
-    <java classname="org.flymine.ontology.Owl2FlyMine" fork="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="N3" />
-      <arg value="${build.model}/genomic/genomic_model.xml" />
-      <arg value="genomic" />
-      <arg value="org.flymine.model.genomic" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-    </java>
-
-    <ant antfile="build-model.xml" target="copy-keydefs" inheritRefs="true">
+    <ant antfile="build-model.xml" target="generate-model-from-owl" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
-      <reference torefid="class.path" refid="project.class.path"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
