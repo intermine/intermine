@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import org.flymine.sql.query.*;
+import org.flymine.util.StringUtil;
 
 public class QueryOptimiserTest extends TestCase
 {
@@ -312,17 +313,26 @@ public class QueryOptimiserTest extends TestCase
         Set tableSet = new HashSet();
         tableSet.add(t1);
 
-        assertEquals(new Field("alias1", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v1, precomputedSqlTable, valueMap, tableSet, true));
-        assertEquals(new Field("alias1", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v1, precomputedSqlTable, valueMap, tableSet, false));
-        assertEquals(new Field("alias2", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v2, precomputedSqlTable, valueMap, tableSet, true));
-        assertEquals(new Field("alias2", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v2, precomputedSqlTable, valueMap, tableSet, false));
-        assertEquals(new Field("alias3", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v3, precomputedSqlTable, valueMap, tableSet, true));
-        assertEquals(new Field("alias3", precomputedSqlTable), QueryOptimiser.reconstructAbstractValue(v3, precomputedSqlTable, valueMap, tableSet, false));
-        assertEquals(v4, QueryOptimiser.reconstructAbstractValue(v4, precomputedSqlTable, valueMap, tableSet, true));
-        assertEquals(v4, QueryOptimiser.reconstructAbstractValue(v4, precomputedSqlTable, valueMap, tableSet, false));
+        AbstractValue ev1 = new Field("alias1", precomputedSqlTable);
+        AbstractValue ev2 = new Field("alias2", precomputedSqlTable);
+        AbstractValue ev3 = new Field("alias3", precomputedSqlTable);
+        AbstractValue ev4 = v4;
         Function ev6 = new Function(Function.MINUS);
         ev6.add(new Field("alias1", precomputedSqlTable));
         ev6.add(new Field("alias2", precomputedSqlTable));
+        Function ev7 = new Function(Function.MAX);
+        ev7.add(new Field("alias2", precomputedSqlTable));
+        AbstractValue ev8 = v8;
+        AbstractValue ev10 = v10;
+
+        assertEquals(ev1, QueryOptimiser.reconstructAbstractValue(v1, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(ev1, QueryOptimiser.reconstructAbstractValue(v1, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ev2, QueryOptimiser.reconstructAbstractValue(v2, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(ev2, QueryOptimiser.reconstructAbstractValue(v2, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ev3, QueryOptimiser.reconstructAbstractValue(v3, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(ev3, QueryOptimiser.reconstructAbstractValue(v3, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ev4, QueryOptimiser.reconstructAbstractValue(v4, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(ev4, QueryOptimiser.reconstructAbstractValue(v4, precomputedSqlTable, valueMap, tableSet, false));
         assertEquals(ev6, QueryOptimiser.reconstructAbstractValue(v6, precomputedSqlTable, valueMap, tableSet, true));
         assertEquals(ev6, QueryOptimiser.reconstructAbstractValue(v6, precomputedSqlTable, valueMap, tableSet, false));
         try {
@@ -330,15 +340,12 @@ public class QueryOptimiserTest extends TestCase
             fail("Expected QueryOptimiserException");
         } catch (QueryOptimiserException e) {
         }
-        Function ev7 = new Function(Function.MAX);
-        ev7.add(new Field("alias2", precomputedSqlTable));
         assertEquals(ev7, QueryOptimiser.reconstructAbstractValue(v7, precomputedSqlTable, valueMap, tableSet, false));
         try {
             QueryOptimiser.reconstructAbstractValue(v8, precomputedSqlTable, valueMap, tableSet, true);
             fail("Expected QueryOptimiserException");
         } catch (QueryOptimiserException e) {
         }
-        AbstractValue ev8 = new Function(Function.COUNT);
         assertEquals(ev8, QueryOptimiser.reconstructAbstractValue(v8, precomputedSqlTable, valueMap, tableSet, false));
         try {
             QueryOptimiser.reconstructAbstractValue(v9, precomputedSqlTable, valueMap, tableSet, true);
@@ -350,8 +357,8 @@ public class QueryOptimiserTest extends TestCase
             fail("Expected QueryOptimiserException");
         } catch (QueryOptimiserException e) {
         }
-        assertEquals(v10, QueryOptimiser.reconstructAbstractValue(v10, precomputedSqlTable, valueMap, tableSet, true));
-        assertEquals(v10, QueryOptimiser.reconstructAbstractValue(v10, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ev10, QueryOptimiser.reconstructAbstractValue(v10, precomputedSqlTable, valueMap, tableSet, true));
+        assertEquals(ev10, QueryOptimiser.reconstructAbstractValue(v10, precomputedSqlTable, valueMap, tableSet, false));
         try {
             QueryOptimiser.reconstructAbstractValue(v11, precomputedSqlTable, valueMap, tableSet, true);
             fail("Expected QueryOptimiserException");
@@ -362,6 +369,28 @@ public class QueryOptimiserTest extends TestCase
             fail("Expected QueryOptimiserException");
         } catch (QueryOptimiserException e) {
         }
+
+        List list = new ArrayList();
+        list.add(v1);
+        list.add(v2);
+        list.add(v3);
+        list.add(v4);
+        list.add(v6);
+        list.add(v7);
+        list.add(v8);
+        list.add(v10);
+        List elist = new ArrayList();
+        elist.add(ev1);
+        elist.add(ev2);
+        elist.add(ev3);
+        elist.add(ev4);
+        elist.add(ev6);
+        elist.add(ev7);
+        elist.add(ev8);
+        elist.add(ev10);
+        List newList = new ArrayList();
+        QueryOptimiser.reconstructAbstractValues(list, precomputedSqlTable, valueMap, tableSet, false, newList);
+        assertEquals(elist, newList);
     }
 
     public void testReconstructSelectValues() throws Exception {
@@ -400,5 +429,142 @@ public class QueryOptimiserTest extends TestCase
         expectedSelect.add(se4);
 
         assertEquals(expectedSelect, newQuery.getSelect());
+    }
+
+    public void testReconstructAbstractConstraint() throws Exception {
+        Table precomputedSqlTable = new Table("precomp1", "precomptablelias");
+        Table t1 = new Table("table1", "tableAlias1");
+        AbstractValue v1 = new Field("field1", t1);
+        AbstractValue v2 = new Field("field2", t1);
+        AbstractValue v3 = new Field("field3", t1);
+        AbstractValue v4 = new Field("field4", t1);
+        SelectValue s1 = new SelectValue(v1, "alias1");
+        SelectValue s2 = new SelectValue(v2, "alias2");
+        SelectValue s3 = new SelectValue(v3, "alias3");
+        SelectValue s4 = new SelectValue(v4, "alias4");
+        Map valueMap = new HashMap();
+        valueMap.put(v1, s1);
+        valueMap.put(v2, s2);
+        valueMap.put(v3, s3);
+        valueMap.put(v4, s4);
+        Set tableSet = new HashSet();
+        tableSet.add(t1);
+        AbstractValue ev1 = new Field("alias1", precomputedSqlTable);
+        AbstractValue ev2 = new Field("alias2", precomputedSqlTable);
+        AbstractValue ev3 = new Field("alias3", precomputedSqlTable);
+        AbstractValue ev4 = new Field("alias4", precomputedSqlTable);
+
+        Constraint c1 = new Constraint(v1, Constraint.EQ, v2);
+        NotConstraint c2 = new NotConstraint(c1);
+        Constraint c3 = new Constraint(v3, Constraint.LT, v4);
+        ConstraintSet c4 = new ConstraintSet();
+        c4.add(c1);
+        c4.add(c3);
+
+        Constraint ec1 = new Constraint(ev1, Constraint.EQ, ev2);
+        NotConstraint ec2 = new NotConstraint(ec1);
+        Constraint ec3 = new Constraint(ev3, Constraint.LT, ev4);
+        ConstraintSet ec4 = new ConstraintSet();
+        ec4.add(ec1);
+        ec4.add(ec3);
+
+        assertEquals(ec1, QueryOptimiser.reconstructAbstractConstraint(c1, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ec2, QueryOptimiser.reconstructAbstractConstraint(c2, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ec3, QueryOptimiser.reconstructAbstractConstraint(c3, precomputedSqlTable, valueMap, tableSet, false));
+        assertEquals(ec4, QueryOptimiser.reconstructAbstractConstraint(c4, precomputedSqlTable, valueMap, tableSet, false));
+
+        Set set = new HashSet();
+        set.add(c1);
+        set.add(c2);
+        set.add(c3);
+        set.add(c4);
+        Set eset = new HashSet();
+        eset.add(ec1);
+        eset.add(ec2);
+        eset.add(ec3);
+        eset.add(ec4);
+        Set newSet = new HashSet();
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet);
+        assertEquals(eset, newSet);
+    }
+
+    public void testMergeGroupByFits() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Query eq1 = new Query("SELECT P42_.sahjg AS t1_a, P42_.aytq AS t1_b, P42_.hksf AS stuff from precomp1 AS P42_ WHERE P42_.fdjsa = 'five' ORDER BY P42_.sahjg LIMIT 100 OFFSET 0");
+        Set eSet = new HashSet();
+        eSet.add(eq1);
+
+        StringUtil.setNextUniqueNumber(42);
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByWrongTables() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingdifferent as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByExtraSelect() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table1.e AS t1_e, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByDifferentWhere() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.b GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByDifferentGroupBy() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d, table1.e HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByWrongHaving() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d HAVING table3.b = 'five'");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
+    }
+
+    public void testMergeGroupByDifferentDistinct() throws Exception {
+        Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, count(*) as stuff from table as table1, somethingelse as table2 WHERE table1.c = table2.a GROUP BY table1.a, table1.b, table1.d HAVING table1.d = 'five' ORDER BY table1.a LIMIT 100 OFFSET 0");
+        Query pq1 = new Query("SELECT DISTINCT table3.a AS sahjg, table3.b AS aytq, count(*) AS hksf, table3.d AS fdjsa FROM table AS table3, somethingelse AS table4 WHERE table3.c = table4.a GROUP BY table3.a, table3.b, table3.d");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1");
+        Set eSet = new HashSet();
+
+        Set newSet = QueryOptimiser.mergeGroupBy(pt1, q1);
+
+        assertEquals(eSet, newSet);
     }
 }

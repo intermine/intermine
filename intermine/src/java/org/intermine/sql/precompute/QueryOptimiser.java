@@ -271,19 +271,30 @@ public class QueryOptimiser
                 
                 // Populate the FROM list - in this case it is only the precomputed table
                 newQuery.addFrom(precomputedSqlTable);
+
+                // Populate the WHERE clause of the new query with the contents of the HAVING clause
+                // of the original query.
+                reconstructAbstractConstraints(query.getHaving(), precomputedSqlTable, valueMap,
+                        precompQuery.getFrom(), true, newQuery.getWhere());
+
+                // Now populate the ORDER BY clause of the new query from the contents of the ORDER
+                // BY clause of the original query.
+                reconstructAbstractValues(query.getOrderBy(), precomputedSqlTable, valueMap,
+                        precompQuery.getFrom(), true, newQuery.getOrderBy());
+
+
+                // Now copy the EXPLAIN, DISTINCT, LIMIT, and OFFSET status to the new query:
+                newQuery.setDistinct(query.isDistinct());
+                newQuery.setExplain(query.isExplain());
+                newQuery.setLimitOffset(query.getLimit(), query.getOffset());
+
             } catch (QueryOptimiserException e) {
                 continue;
             }
-
+            retval.add(newQuery);
 
         }
-
-
-        Iterator precompTableIter = precompQuery.getFrom().iterator();
-        while (precompTableIter.hasNext()) {
-            AbstractTable precompTable = (AbstractTable) precompTableIter.next();
-        }
-        return null;
+        return retval;
     }
 
 
@@ -612,5 +623,33 @@ public class QueryOptimiser
             throw (new UnsupportedOperationException("Need to think about SubQueryConstraints."));
         }
         throw (new IllegalArgumentException("Unknown constraint type."));
+    }
+
+    /**
+     * Reconstructs a Collection of AbstractValue objects, calling reconstructAbstractValue on each
+     * one before adding it to another Collection. Reconstructed values will be added to the
+     * destination Collection in the same order as the iterator of the original Collection.
+     *
+     * @param oldValues the Collection of AbstractValue objects to reconstruct
+     * @param precomputedSqlTable the Table object that remapped AbstractValues should refer to
+     * @param valueMap a mapping from AbstractValue in the PrecomputedTable onto the SelectValue
+     * that contains it.
+     * @param tableSet a Set of all the tables that are being replaced - ie the Set of tables in the
+     * PrecomputedTable. We use this to work out which unrepresented AbstractValues are problems.
+     * @param groupBy true if the PrecomputedTable contains a GROUP BY clause
+     * @param newValues the Collection to put the reconstructed AbstractValues in
+     * @throws QueryOptimiserException if reconstructAbstractValue finds an AbstractValue that
+     * cannot be constructed, given the PrecomputedTable
+     */
+    public static void reconstructAbstractValues(Collection oldValues, Table precomputedSqlTable,
+            Map valueMap, Set tableSet, boolean groupBy, Collection newValues) throws
+                QueryOptimiserException {
+        Iterator valueIter = oldValues.iterator();
+        while (valueIter.hasNext()) {
+            AbstractValue value = (AbstractValue) valueIter.next();
+            value = reconstructAbstractValue(value, precomputedSqlTable, valueMap, tableSet,
+                    groupBy);
+            newValues.add(value);
+        }
     }
 }
