@@ -247,26 +247,7 @@ public class ClassDescriptor
         return this.model;
     }
 
-    /**
-     * Set the model for this ClassDescriptor, this is only be called once and will
-     * throw an Exception if called again.  Is called by Model when the ClassDescriptor
-     * is added to it during metadata creation.
-     * @param model the parent model for this ClassDescriptor
-     * @throws IllegalStateException if the model is already set
-     * @throws MetaDataException if references not found
-     */
-    protected void setModel(Model model) throws IllegalStateException, MetaDataException  {
-        if (modelSet) {
-            throw new IllegalStateException("Model has already been set and "
-                                            + "may not be changed.");
-        }
-        this.model = model;
-        findSuperclassDescriptor();
-        findInterfaceDescriptors();
-        configureReferenceDescriptors();
 
-        modelSet = true;
-    }
 
     /**
      * True if this class is an interface.
@@ -303,11 +284,31 @@ public class ClassDescriptor
         return new ArrayList();
     }
 
+    /**
+     * Set the model for this ClassDescriptor, this is only be called once and will
+     * throw an Exception if called again.  Is called by Model when the ClassDescriptor
+     * is added to it during metadata creation.
+     * @param model the parent model for this ClassDescriptor
+     * @throws IllegalStateException if the model is already set
+     * @throws MetaDataException if references not found
+     */
+    protected void setModel(Model model) throws IllegalStateException, MetaDataException  {
+        if (modelSet) {
+            throw new IllegalStateException("Model has already been set and "
+                                            + "may not be changed.");
+        }
+        this.model = model;
+        findSuperclassDescriptor();
+        findInterfaceDescriptors();
+        configureReferenceDescriptors();
+
+        modelSet = true;
+    }
 
     private void findSuperclassDescriptor() throws MetaDataException {
         // descriptor for super class
         if (superclassName != null && superclassName != "") {
-            this.superclassDescriptor = model.getDescriptorFor(superclassName);
+            this.superclassDescriptor = model.getDescriptorByName(superclassName);
             if (superclassDescriptor == null) {
                 throw new MetaDataException("No ClassDescripor for super class: "
                                             + superclassName + " found in model.");
@@ -333,7 +334,7 @@ public class ClassDescriptor
                     throw new MetaDataException("No ClassDescriptor for interface ( "
                                                 + iName + ") found in model.");
                 }
-                ClassDescriptor iDescriptor = model.getDescriptorFor(iName);
+                ClassDescriptor iDescriptor = model.getDescriptorByName(iName);
                 if (!iDescriptor.isInterface()) {
                     throw new MetaDataException("ClassDescriptor for ( " + iName
                                                 + ") does not describe and interface.");
@@ -359,7 +360,5 @@ public class ClassDescriptor
         }
 
     }
-
-
 
 }

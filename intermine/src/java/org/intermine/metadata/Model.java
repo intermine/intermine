@@ -57,7 +57,7 @@ public class Model
      * @param name name of ClassDescriptor requested
      * @return the requested ClassDescriptor
      */
-    public ClassDescriptor getDescriptorFor(String name) {
+    public ClassDescriptor getDescriptorByName(String name) {
         if (cldMap.containsKey(name)) {
             return (ClassDescriptor) cldMap.get(name);
         } else {
