@@ -6,9 +6,9 @@
 
 <!-- begin.jsp -->
 
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualStartingaquery.html"/>
 
 <%-- Build a query --%>
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/ch02s03.html"/>
 <im:box helpUrl="${helpUrl}"
         titleKey="begin.heading.build">
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -54,6 +54,7 @@
 
 
 <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualQuickStartBrowsing.html"/>
 <c:if test="${!empty browseTemplateName && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
   <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}"
@@ -84,6 +85,8 @@
   </div>
 </c:if>
 <%-- /Browse --%>
+
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/manualQuickStartTemplates.html"/>
 
 <c:if test="${!IS_SUPERUSER}">
   <im:vspacer height="12"/>
