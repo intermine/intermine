@@ -1,5 +1,8 @@
 package org.flymine.util;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.lang.reflect.Field;
 
 /**
@@ -32,6 +35,22 @@ public class TypeUtil
             }
         } while(c != null && !found);    
         return f;
+    }
+
+    /**
+     * Gets the Fields of a Class
+     *
+     * @param c the Class
+     * @return the fields in this class
+     */
+    public static Collection getFields(Class c) {
+        Collection fields = new HashSet();
+        do {
+            for (int i = 0; i < c.getDeclaredFields().length; i++) {
+                fields.addAll(Arrays.asList(c.getDeclaredFields()));
+            }
+        } while ((c = c.getSuperclass()) != null);
+        return fields;
     }
 
     /**
