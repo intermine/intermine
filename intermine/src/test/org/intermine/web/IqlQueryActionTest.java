@@ -29,59 +29,33 @@ public class IqlQueryActionTest extends MockStrutsTestCase {
     }
 
     public void testSubmitSuccessfulQuery() {
-        setRequestPathInfo("/iqlquery");
+        setRequestPathInfo("/iqlQueryAction");
         addRequestParameter("querystring","select a1_ from Company as a1_");
         addRequestParameter("action", "Run query");
         actionPerform();
-        verifyForward("runquery");
-        assertNotNull(getSession().getAttribute(Constants.QUERY));
+        verifyNoActionErrors();
+        verifyForward("results");
+        assertNotNull(getSession().getAttribute(Constants.RESULTS_TABLE));
         verifyNoActionErrors();
     }
 
     public void testSubmitEmptyQuery() {
-        setRequestPathInfo("/iqlquery");
+        setRequestPathInfo("/iqlQueryAction");
         addRequestParameter("querystring","");
         addRequestParameter("action", "Run query");
         actionPerform();
-        verifyForward("error");
-        assertNull(getSession().getAttribute(Constants.QUERY));
+        verifyActionErrors(new String[] {"errors.iqlquery.illegalargument"});
+        verifyForward("iqlQuery");
+        assertNull(getSession().getAttribute(Constants.RESULTS_TABLE));
     }
 
     public void testSubmitRubbishQuery() {
-        setRequestPathInfo("/iqlquery");
+        setRequestPathInfo("/iqlQueryAction");
         addRequestParameter("querystring","some rubbish");
         addRequestParameter("action", "Run query");
         actionPerform();
-        verifyForward("error");
-        assertNull(getSession().getAttribute(Constants.QUERY));
-    }
-
-    public void testViewSuccessfulQuery() {
-        setRequestPathInfo("/iqlquery");
-        addRequestParameter("querystring","select a1_ from Company as a1_");
-        addRequestParameter("action", "Query composer");
-        actionPerform();
-        verifyForward("buildquery");
-        assertEquals("SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_",
-                     ((Query) getSession().getAttribute(Constants.QUERY)).toString());
-        verifyNoActionErrors();
-    }
-
-    public void testViewEmptyQuery() {
-        setRequestPathInfo("/iqlquery");
-        addRequestParameter("querystring","");
-        addRequestParameter("action", "Query composer");
-        actionPerform();
-        verifyForward("error");
-        assertNull((String) getSession().getAttribute(Constants.QUERY));
-    }
-
-    public void testViewRubbishQuery() {
-        setRequestPathInfo("/iqlquery");
-        addRequestParameter("querystring","some rubbish");
-        addRequestParameter("action", "Query composer");
-        actionPerform();
-        verifyForward("error");
-        assertNull((String) getSession().getAttribute(Constants.QUERY));
+        verifyActionErrors(new String[] {"errors.iqlquery.illegalargument"});
+        verifyForward("iqlQuery");
+        assertNull(getSession().getAttribute(Constants.RESULTS_TABLE));
     }
 }
