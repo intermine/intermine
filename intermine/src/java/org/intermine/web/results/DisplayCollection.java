@@ -10,75 +10,27 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.proxy.LazyCollection;
 
 /**
  * Class to represent a collection field of an object for the webapp
  * @author Mark Woodbridge
  */
-public class DisplayCollection
+public class DisplayCollection extends DisplayField
 {
-    ClassDescriptor cld;
-    int size;
-    Map classes = new LinkedHashMap();
-    InlineResultsTable table;
-
     /**
-     * Constructor
+     * Construct a new DisplayCollection object
      * @param collection the actual collection
      * @param cld the type of this collection
+     * @param webconfigTypeMap the Type Map from the webconfig file
+     * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayCollection(LazyCollection collection, ClassDescriptor cld) throws Exception {
-        this.cld = cld;
-        table = new InlineResultsTable(collection, cld);
-        size = collection.getInfo().getRows();
-//         for (Iterator i = c.iterator(); i.hasNext();) {
-//             Set clds = ObjectViewController.getLeafClds(i.next().getClass(), cld.getModel());
-//             if (clds.size() == 1 && clds.iterator().next().equals(cld)) {
-//                 break;
-//             }
-//             if (classes.containsKey(clds)) {
-//                 classes.put(clds, new Integer(((Integer) classes.get(clds)).intValue() + 1));
-//             } else {
-//                 classes.put(clds, new Integer(1));
-//             }
-//         }
-    }
-
-    /**
-     * Get the inline results table for this collection
-     * @return the results table
-     */
-    public InlineResultsTable getTable() {
-        return table;
-    }
-    
-    /**
-     * Get the class descriptor for this collection
-     * @return the class descriptor
-     */
-    public ClassDescriptor getCld() {
-        return cld;
-    }
-
-    /**
-     * Get the size of this collection
-     * @return the size
-     */
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     * Get the map of type of objects in this collection
-     * @return the classes
-     */
-    public Map getClasses() {
-        return classes;
+    public DisplayCollection(List collection, ClassDescriptor cld,
+                             Map webconfigTypeMap, Map webProperties) throws Exception {
+        super(collection, cld, webconfigTypeMap, webProperties);
     }
 }
