@@ -183,97 +183,59 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * @see ObjectStoreInterMineImpl#getConnection
      */
-    public Connection getConnection() throws SQLException {
-        synchronized (this) {
-            int loops = 0;
-            while (connInUse || (conn == null)) {
-                if (conn == null) {
-                    throw new SQLException("This ObjectStoreWriter is closed");
-                }
-                /*Exception trace = new Exception();
-                trace.fillInStackTrace();
-                StringWriter message = new StringWriter();
-                PrintWriter pw = new PrintWriter(message);
-                trace.printStackTrace(pw);
-                pw.flush();
-                LOG.debug("Connection in use - entering wait - " + message.toString());*/
-                if (loops > 100) {
-                    LOG.error("Waited for connection for 100 seconds - probably a deadlock"
-                            + " - throwing exception");
-                    LOG.error("The connection was taken out by stack trace: " + connectionTakenBy);
-                    throw new SQLException("This ObjectStoreWriter appears to be dead due to"
-                            + " deadlock");
-                } else if (loops > 1) {
-                    LOG.info("Waited for connection for " + loops + " seconds - perhaps there's"
-                            + " a deadlock");
-                } else {
-                    LOG.debug("Connection in use - entering wait");
-                }
-                try {
-                    wait(1000L);
-                } catch (InterruptedException e) {
-                }
-                LOG.debug("Notified or timed out");
-                loops++;
+    public synchronized Connection getConnection() throws SQLException {
+        int loops = 0;
+        while (connInUse || (conn == null)) {
+            if (conn == null) {
+                throw new SQLException("This ObjectStoreWriter is closed");
             }
-            connInUse = true;
-            
-            Exception trace = new Exception();
+            /*Exception trace = new Exception();
             trace.fillInStackTrace();
             StringWriter message = new StringWriter();
             PrintWriter pw = new PrintWriter(message);
             trace.printStackTrace(pw);
-            pw.println("In Thread " + Thread.currentThread().getName());
             pw.flush();
-            connectionTakenBy = message.toString();
-            //LOG.debug("getConnection returning connection");
-            return conn;
+            LOG.debug("Connection in use - entering wait - " + message.toString());*/
+            if (loops > 100) {
+                LOG.error("Waited for connection for 100 seconds - probably a deadlock"
+                        + " - throwing exception");
+                LOG.error("The connection was taken out by stack trace: " + connectionTakenBy);
+                throw new SQLException("This ObjectStoreWriter appears to be dead due to"
+                        + " deadlock");
+            } else if (loops > 1) {
+                LOG.info("Waited for connection for " + loops + " seconds - perhaps there's"
+                        + " a deadlock");
+            } else {
+                LOG.debug("Connection in use - entering wait");
+            }
+            try {
+                wait(1000L);
+            } catch (InterruptedException e) {
+            }
+            LOG.debug("Notified or timed out");
+            loops++;
         }
+        connInUse = true;
+        
+        Exception trace = new Exception();
+        trace.fillInStackTrace();
+        StringWriter message = new StringWriter();
+        PrintWriter pw = new PrintWriter(message);
+        trace.printStackTrace(pw);
+        pw.println("In Thread " + Thread.currentThread().getName());
+        pw.flush();
+        connectionTakenBy = message.toString();
+        //LOG.debug("getConnection returning connection");
+        return conn;
     }
 
     /**
      * @see ObjectStoreInterMineImpl#releaseConnection
      */
-    public void releaseConnection(Connection c) {
-        if (conn == null) {
-            // Nothing happens
-        } else if (c == conn) {
-            synchronized (this) {
-                connInUse = false;
-                //LOG.debug("Released connection - notifying");
-                notify();
-            }
-        } else if (c != null) {
-            Exception trace = new Exception();
-            trace.fillInStackTrace();
-            StringWriter message = new StringWriter();
-            PrintWriter pw = new PrintWriter(message);
-            trace.printStackTrace(pw);
-            pw.flush();
-            LOG.warn("Attempt made to release the wrong connection - " + message.toString());
-        }
-    }
-
-    /**
-     * Overrides Object.finalize - release the connection back to the objectstore.
-     */
-    protected void finalize() {
-        if (conn != null) {
-            LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
-                    + sequence + " and Database " + os.getDatabase().getURL()
-                    + ", createSituation: " + createSituation);
-            close();
-        }
-    }
-
-    /**
-     * @see ObjectStoreWriter#close
-     */
-    public void close() {
-        LOG.info("Close called on ObjectStoreWriterInterMineImpl with sequence = " + sequence);
-        Connection c = null;
-        try {
-            c = getConnection();
+    public synchronized void releaseConnection(Connection c) {
+        if ((conn == null) && (c != null)) {
+            // In this situation, the writer has been closed while this operation was still
+            // happening. We should return the Connection back to the ObjectStore.
             try {
                 if (isInTransactionWithConnection(c)) {
                     abortTransactionWithConnection(c);
@@ -298,24 +260,87 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter - "
                         + message);
             }
-        } catch (Exception e) {
+            try {
+                os.releaseConnection(c);
+            } catch (Exception e) {
+            }
+        } else if (c == conn) {
+            connInUse = false;
+            //LOG.debug("Released connection - notifying");
+            notify();
+        } else if (c != null) {
+            Exception trace = new Exception();
+            trace.fillInStackTrace();
             StringWriter message = new StringWriter();
             PrintWriter pw = new PrintWriter(message);
-            e.printStackTrace(pw);
+            trace.printStackTrace(pw);
             pw.flush();
-            LOG.error("Exception caught when getting Connection while closing ObjectStoreWriter - "
-                    + message);
-        } finally {
-            synchronized (this) {
-                if (c != null) {
-                    try {
-                        os.releaseConnection(c);
-                    } catch (Exception f) {
-                    }
-                }
-                conn = null;
-                notifyAll();
+            LOG.warn("Attempt made to release the wrong connection - " + message.toString());
+        }
+    }
+
+    /**
+     * Overrides Object.finalize - release the connection back to the objectstore.
+     */
+    protected synchronized void finalize() {
+        if (conn != null) {
+            LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
+                    + sequence + " and Database " + os.getDatabase().getURL()
+                    + ", createSituation: " + createSituation);
+            try {
+                close();
+            } catch (ObjectStoreException e) {
+                LOG.error("Exception while garbage-collecting ObjectStoreWriterInterMineImpl: "
+                        + e);
             }
+        }
+    }
+
+    /**
+     * @see ObjectStoreWriter#close
+     */
+    public synchronized void close() throws ObjectStoreException {
+        if (conn == null) {
+            // This writer is already closed
+            throw new ObjectStoreException("This ObjectStoreWriter is already closed");
+        }
+        if (connInUse) {
+            conn = null;
+            throw new ObjectStoreException("Closed ObjectStoreWriter while it is being used. Note"
+                    + " this writer will be automatically closed when the current operation"
+                    + " finishes");
+        } else {
+            try {
+                if (isInTransactionWithConnection(conn)) {
+                    abortTransactionWithConnection(conn);
+                    LOG.error("ObjectStoreWriterInterMineImpl closed in unfinished transaction"
+                            + " - transaction aborted");
+                }
+            } catch (Exception e) {
+                StringWriter message = new StringWriter();
+                PrintWriter pw = new PrintWriter(message);
+                e.printStackTrace(pw);
+                pw.flush();
+                LOG.error("Exception caught when destroying transaction while closing"
+                        + " ObjectStoreWriter - " + message);
+            }
+            try {
+                batch.close(conn);
+            } catch (Exception e) {
+                StringWriter message = new StringWriter();
+                PrintWriter pw = new PrintWriter(message);
+                e.printStackTrace(pw);
+                pw.flush();
+                LOG.error("Exception caught when closing Batch while closing ObjectStoreWriter - "
+                        + message);
+            }
+            try {
+                os.releaseConnection(conn);
+            } catch (Exception e) {
+            }
+            conn = null;
+            connInUse = true;
+            notifyAll();
         }
     }
 
@@ -845,12 +870,17 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * Called by the StatsShutdownHook on shutdown
      */
-    public void shutdown() {
+    public synchronized void shutdown() {
         if (conn != null) {
             LOG.error("Shutting down open ObjectStoreWriterInterMineImpl with sequence = "
                     + sequence + " and Database " + os.getDatabase().getURL()
                     + ", createSituation = " + createSituation);
-            close();
+            try {
+                close();
+            } catch (ObjectStoreException e) {
+                LOG.error("Exception caught while shutting down ObjectStoreWriterInterMineImpl: "
+                        + e);
+            }
         }
     }
 

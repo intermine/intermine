@@ -534,14 +534,21 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         if (logTableName != null) {
             LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequence
                     + " and Database " + getDatabase().getURL());
-            close();
+            try {
+                close();
+            } catch (ObjectStoreException e) {
+                LOG.error("Exception while garbage-collecting ObjectStoreInterMineImpl: "
+                        + e);
+            }
         }
     }
 
     /**
      * Closes this ObjectStore's DB log connection.
+     *
+     * @throws ObjectStoreException in subclasses
      */
-    public void close() {
+    public void close() throws ObjectStoreException {
         LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequence);
         try {
             setLogTableName(null);
@@ -557,7 +564,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         if (logTableName != null) {
             LOG.error("Shutting down open ObjectStoreInterMineImpl with sequence = " + sequence
                     + " and Database " + getDatabase().getURL());
-            close();
+            try {
+                close();
+            } catch (ObjectStoreException e) {
+                LOG.error("Exception caught while shutting down ObjectStoreInterMineImpl: "
+                        + e);
+            }
         }
     }
 
