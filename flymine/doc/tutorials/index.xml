@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+
+    <sect1>
+       <title>Query Tutorials</title>
+        <para>The following tutorials will guide you through gradually more complex queries</para>
+
+
+
+        <para>
+          <orderedlist>
+             <listitem><ulink url="queryTutorial1.xml">Selecting all the objects in a particlular class</ulink></listitem>
+             <listitem><ulink url="queryTutorial2.xml">Constraining the objects of a particular class</ulink></listitem>
+             <listitem><ulink url="queryTutorial3.xml">Combining and constraining objects from 2 classes</ulink></listitem>
+             <listitem><ulink url="queryTutorial4.xml">Constraining a class to a subclass</ulink></listitem>
+          </orderedlist>
+        </para>
+
+     
+
+  
+
+</sect1>
+</article>

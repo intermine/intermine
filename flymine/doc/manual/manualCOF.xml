@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+   <section>
+        <heading>Classes, Objects and Fields - the basics</heading>
+        <item>Classes can be thought of as templates to describe information about a specific type of thing. Things which have similar properties belong to the same class.  For example in FlyMine there is a 'Gene' class.  The Gene class describes properties of genes.  The actual properties are known as fields.  The class is a holder for a set of fields that provide information about the 'thing'.  For example the Gene class has the fields name, seqLen (sequence length), residues etc.  An object is an actual member of a class (known as an 'instance' of that class). For example, the Notch gene is a member of the gene class. Every object of a class has the set of properties (fields) that describe that class, although some of these fields may be empty (ie. there may not be any data available for some fields).  The classes in the FlyMine data model form a hierachy with classes lower down the hierachy being specializations of classes higher up. For example, the transcript class forms more specialized subclasses such as primary transcript, processed transcript, tRNA etc. The top class in the model is called the InterMine object class.  Every class in FlyMine is therefore a specialization of the InterMine object class.</item>  
+        <item>Classes have relationships to each other. For example, The Transcript class has a relationship with the exon class as exons are part of a transcript. In the FlyMine model, a specific object within a class has a relationship with a specific object in another class.  For example, there is a relationship between the Gene class and the Transcript class. In practise this actually means that individual objects of the Gene class have a relationship with specific objects within the transcripts class.  ie. a particular gene object has particular transcripts. </item>
+       <item>Fields can be one of several different data types.  For example some fields simply contain one piece of information, such as a name.  In this case the field is the type 'string'.  Similarly, fields that contain just a number will be of the type, integer or ??????.  Fields that contain a list of objects are know as collections. Some fields are actually references (pointers) to other classes (explained in more detail below). (fields containing collections from other classes?????)</item> 
+        <item>(NOT NECESSARY??!!)An easier way to understand classes and objects is to think of a company database.  A company database can have classes that represent, for example, employees and departments.  The employees class could be further subdivided into more specialised sub-classes representing certain types of employee, eg director, manager. Each class is described by certain information.  For example, the employee class can be described by the fields, name, age and wage.  A particular employee, eg. Eric, is an object (or instance) of the employee class.  Classes can have relationships to each other.  For example, the employee class can have a relationship to the department class, as employees belong to departments.  A particular instance of the employee class has a relationship to a particular instance of the department class,  eg. Eric may be in the Genetics department.The department class will have a field that is actually a pointer (reference) to the employees class.  This field will contain a collection (list) of the employees in that department (?????)</item>
+     </section>
+ 
+
+
+	  <entry>
+	      <inlinegraphic fileref="classDiag3.gif" format="GIF"/>
+	  </entry>
+  
+
+	  <entry>
+	      <inlinegraphic fileref="objectDiag1.gif" format="GIF"/>
+	  </entry>
+  
+
+
+</index>
+
+</article>
+
+
+

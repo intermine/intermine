@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!-- -*- DocBook -*- -->
+
+<article>
+
+<index>
+
+
+   <section>
+       <heading>The FlyMine Data Model</heading>
+       <item>
+The FlyMine database is based upon an object model.  The object model
+has been created by merging existing ontologies and standards
+including the Sequence Ontology, MAGE, and PSI (blah blah). Additional
+FlyMine specific classes help link the ontologies and provide classes
+relating to the evidence for a particular piece of data (needs
+work!!).  To get the most out of querying FlyMine it is useful to
+understand a bit about the underlying data model.  First of all it is
+useful to understand the concepts of classes, objects and fields.
+</item>
+    </section>
+
+
+   <section>
+        <heading>Classes, Objects and Fields - the basics</heading>
+        <item>Classes can be thought of as templates to describe information about a specific type of thing. Things which have similar properties belong to the same class.  For example in FlyMine there is a 'Gene' class.  The Gene class describes properties of genes.  The actual properties are known as fields.  The class is a holder for a set of fields that provide information about the 'thing'.  For example the Gene class has the fields name, seqLen (sequence length), residues etc.  An object is an actual member of a class (known as an 'instance' of that class). For example, the Notch gene is a member of the gene class. Every object of a class has the set of properties (fields) that describe that class, although some of these fields may be empty (ie. there may not be any data available for some fields).  The classes in the FlyMine data model form a hierachy with classes lower down the hierachy being specializations of classes higher up. For example, the transcript class forms more specialized subclasses such as primary transcript, processed transcript, tRNA etc. The top class in the model is called the InterMine object class.  Every class in FlyMine is therefore a specialization of the InterMine object class.</item>  
+        <item>Classes have relationships to each other. For example, The Transcript class has a relationship with the exon class as exons are part of a transcript. In the FlyMine model, a specific object within a class has a relationship with a specific object in another class.  For example, there is a relationship between the Gene class and the Transcript class. In practise this actually means that individual objects of the Gene class have a relationship with specific objects within the transcripts class.  ie. a particular gene object has particular transcripts. </item>
+       <item>Fields can be one of several different data types.  For example some fields simply contain one piece of information, such as a name.  In this case the field is the type 'string'.  Similarly, fields that contain just a number will be of the type, integer or ??????.  Fields that contain a list of objects are know as collections. Some fields are actually references (pointers) to other classes (explained in more detail below). (fields containing collections from other classes?????)</item> 
+        <item>(NOT NECESSARY??!!)An easier way to understand classes and objects is to think of a company database.  A company database can have classes that represent, for example, employees and departments.  The employees class could be further subdivided into more specialised sub-classes representing certain types of employee, eg director, manager. Each class is described by certain information.  For example, the employee class can be described by the fields, name, age and wage.  A particular employee, eg. Eric, is an object (or instance) of the employee class.  Classes can have relationships to each other.  For example, the employee class can have a relationship to the department class, as employees belong to departments.  A particular instance of the employee class has a relationship to a particular instance of the department class,  eg. Eric may be in the Genetics department.The department class will have a field that is actually a pointer (reference) to the employees class.  This field will contain a collection (list) of the employees in that department (?????)</item>
+     </section>
+ 
+
+
+	  <entry>
+	      <inlinegraphic fileref="classDiag3.gif" format="GIF"/>
+	  </entry>
+  
+
+	  <entry>
+	      <inlinegraphic fileref="objectDiag1.gif" format="GIF"/>
+	  </entry>
+  
+
+
+
+
+
+<section>
+       <heading>Selecting data from classes</heading>
+         <item>You can think of the classes as boxes containing lots of individual items (objects).  To create a query you want certain items from certain boxes.  You therefore have to select the boxes that require the items you want and constrain the boxes so that you only select the subset of items in the boxes that you require.  To query FlyMine you therefore select the classes that hold the objects you require.  Constraints can be applied to the objects contained in a class, so that only a certain subset of those objects which have the required characteristics are selected.  For example the gene class contains a large number of genes (gene objects) from all the organisms represented in FlyMine.  However you may only be interested in data related to one specific gene.  You would therefore constrain the gene name field of the gene class to that of the required gene.  </item>  
+    </section>
+
+
+  
+	  <entry>
+	      <inlinegraphic fileref="constrainDiag2.gif" format="GIF"/>
+	  </entry>
+ 
+
+    <section>
+          <heading>Combining data from different classes</heading>
+           <item>Because of the relationships between the objects in the classes you may only need to constrain one class to retrieve a subset of items from another class.  eg if you want all the genes from Drosophila, you only need to constrain the organism class to Drosophila to retrieve that subset of genes from the gene class.   If you wish to know about the transcripts of a particular gene you would combine information from the Gene class and the Transcript class.  By constraining the 'name' field of the gene class to a particular gene, you will only retrieve information from the transcripts class that relates to that gene  (ie you do not need to apply the constraint to the transcripts class as well).  This is because that particular gene object has a relationship to particular objects (instances) of the transcript class  (ie those transcripts that are produced from that particular gene).</item>
+      </section>
+
+
+
+    
+	  <entry>
+	      <inlinegraphic fileref="constrainDiag1.gif" format="GIF"/>
+	  </entry>
+
+
+
+   <section>
+          <heading>Constraining to subclasses</heading>
+          <item>Some classes are subdivied in to more specialized subclasses.  For some queries you may only be interested in data relating to a particular subclass of a class.  For example, you may only be interested in the tRNA transcripts.  In these cases you need to constrain the class to the subclass that you require.  The difference between this and the examples above is that you are constraining the actual class, rather than a field of a class.</item>
+  </section>
+
+
+	  <entry>
+	      <inlinegraphic fileref="constrainDiag3.gif" format="GIF"/>
+	  </entry>
+
+
+
+   <section>
+      <heading>Starting a FlyMine query</heading>
+   </section>
+
+  <section>
+     <heading>The query builder page</heading>
+  </section>
+
+
+    <section>
+      <heading>The model browser</heading>
+          <item>The FlyMine model browser allows you to select the classes that contain the objects you require. Depending on the starting class you will be able to navigate to other classes as defined by the relationships between the classes.  In other words, to combine classes containing the objects you require, you find a path though the classes that link together the information you require. Within the model browser classes that can be accessed from a parent class (ie are linked to the parent class through a relationship) are shown as fields within that class (actually a reference field, as the field is a reference to that particular class).   For example, there is a relationship between the gene class and the Transcript class.  The Transcript class therefore appears as a field within the gene class. </item>
+           <item>For each class and field within the model browser there is a 'show' and a 'Constrain' (->) option.These are used to either select a field to show in the results output or to constrain in the constraints list.  These options are described in more detail below. 
+
+
+To select the subset of objects you want from a particular class you apply a constraint to the appropriate field.  For example if you want objects from the Gene class which have a particlar name, you constrain the gene name field.  If you want objects from the Gene class which have a certain sequence length or range of sequence length, you constrain the seqLen field. If you are constraining a class field you will be given the option to constrain that class to any of the subclasses of that class.  E.g. The transcript class can be constrained to a number of subclasses of Transcript (e.g. primary transcript, processed transcript, tRNA etc.).  </item>
+     </section>
+
+
+
+    <section>
+       <heading>The constraints list</heading>
+       <item>The constraints list is on the right hand side of the query builder page.  In this section you specify the constraints you wish to apply to particular classes and fields.</item>
+       <item>To apply a constraint to a field, navigate to the field in the model browser and click on the -> (constrain) next to it.  This will add the field to the constraints list and bring up a box in which you specify your constraint.  The type of constraint you can add will vary depending on the type of field you selected to constrain (see .....).xxxxxxxxxxx</item>     
+    </section>
+
+    <section>
+        <heading>The output fields list</heading>
+    </section>
+
+    
+     <section>
+         <heading>Performing Simple Queries</heading>
+     </section>
+
+
+     <section>
+        <heading>Selecting all the objects from a particular class</heading>
+
+
+
+
+
+     </section>
+
+
+     <section>
+        <heading>Constraning objects from one class</heading>
+     </section>
+
+
+     <section>
+        <heading>Selecting and constraining objects from 2 classes</heading>
+     </section>
+
+
+      <section>
+         <heading>Constraining a class to a subclass</heading>
+      </section>
+
+
+
+      <section>
+          <heading>Performing more complex queries</heading>
+      </section>
+
+
+
+   
+	  <entry>
+	      <inlinegraphic fileref="classes.gif" format="GIF"/>
+	  </entry>
+  
+
+
+
+
+
+</index>
+
+</article>
+
+
+
+
