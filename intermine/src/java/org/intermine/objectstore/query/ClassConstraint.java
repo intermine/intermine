@@ -10,6 +10,11 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.List;
+import java.util.Arrays;
+
+import org.flymine.util.Util;
+
 /**
  * Constrain whether a QueryClass is equal/not equal to another
  * QueryClass or an example of an object belonging to a
@@ -20,25 +25,11 @@ package org.flymine.objectstore.query;
  * @author Mark Woodbridge
  * @author Andrew Varley
  */
-
-public class ClassConstraint implements Constraint
+public class ClassConstraint extends Constraint
 {
-
-    /**
-     * Classes are equal to one another
-     */
-    public static final int EQUALS = 1;
-
-    /**
-     * Classes are not equal to one another
-     */
-    public static final int NOT_EQUALS = 2;
-
-    protected boolean negated;
-    protected QueryClass qc1;
-    protected QueryClass qc2;
+    protected QueryClass qc1, qc2;
+    protected QueryOp type;
     protected Object obj;
-    protected int type;
 
     /**
      * Construct ClassConstraint
@@ -47,7 +38,7 @@ public class ClassConstraint implements Constraint
      * @param type define EQUALS or NOT_EQUALS
      * @param qc2 second QueryClass for comparison
      */
-    public ClassConstraint(QueryClass qc1, int type, QueryClass qc2) {
+    public ClassConstraint(QueryClass qc1, QueryOp type, QueryClass qc2) {
         this(qc1, type, qc2, false);
     }
 
@@ -59,27 +50,35 @@ public class ClassConstraint implements Constraint
      * @param qc2 second QueryClass for comparison
      * @param negated reverse the constraint logic if true
      */
-    public ClassConstraint(QueryClass qc1, int type, QueryClass qc2, boolean negated) {
+    public ClassConstraint(QueryClass qc1, QueryOp type, QueryClass qc2, boolean negated) {
         if (qc1 == null) {
-            throw (new NullPointerException("qc1 cannot be null"));
-        }
-        if (qc2 == null) {
-            throw (new NullPointerException("qc2 cannot be null"));
+            throw new NullPointerException("qc1 cannot be null");
         }
 
-        if ((!(qc1.getType().isAssignableFrom(qc2.getType()))
-             && !(qc2.getType().isAssignableFrom(qc1.getType())))) {
-            throw (new IllegalArgumentException("Classes: " + qc1.getType() + " and "
-                                                + qc2.getType() + "cannot be compared"));
+        if (type == null) {
+            throw new NullPointerException("type cannot be null");
         }
+        
+        if (!validOps().contains(type)) {
+            throw new NullPointerException("type cannot be " + type);
+        }
+
+        if (qc2 == null) {
+            throw new NullPointerException("qc2 cannot be null");
+        }
+        
+        if (!(qc1.getType().isAssignableFrom(qc2.getType())
+              || qc2.getType().isAssignableFrom(qc1.getType()))) {
+            throw new IllegalArgumentException("Invalid constraint: "
+                                               + qc1.getType()
+                                               + " " + type
+                                               + " " + qc2.getType());
+        }
+        
         this.qc1 = qc1;
-        this.qc2 = qc2;
-        if ((type < 1) || (type > 2)) {
-            throw (new IllegalArgumentException("Invalid value for type: " + type));
-        }
         this.type = type;
+        this.qc2 = qc2;
         this.negated = negated;
-        this.obj = null;
     }
 
     /**
@@ -89,58 +88,47 @@ public class ClassConstraint implements Constraint
      * @param type define EQUALS or NOT_EQUALS
      * @param obj example object
      */
-    public ClassConstraint(QueryClass qc, int type, Object obj) {
+    public ClassConstraint(QueryClass qc, QueryOp type, Object obj) {
         this(qc, type, obj, false);
     }
 
     /**
      * Construct ClassConstraint
      *
-     * @param qc QueryClass for comparison
+     * @param qc1 QueryClass for comparison
      * @param type define EQUALS or NOT_EQUALS
      * @param obj example object
      * @param negated reverse the constraint logic if true
      */
-    public ClassConstraint(QueryClass qc, int type, Object obj, boolean negated) {
-        if (qc == null) {
-            throw (new NullPointerException("obj cannot be null"));
+    public ClassConstraint(QueryClass qc1, QueryOp type, Object obj, boolean negated) {
+        if (qc1 == null) {
+            throw new NullPointerException("obj cannot be null");
         }
+
+        if (type == null) {
+            throw new NullPointerException("type cannot be null");
+        }
+
+        if (!validOps().contains(type)) {
+            throw new NullPointerException("type cannot be " + type);
+        }
+
         if (obj == null) {
-            throw (new NullPointerException("obj cannot be null"));
+            throw new NullPointerException("obj cannot be null");
         }
 
-        if ((!(qc.getType().isAssignableFrom(obj.getClass()))
-             && !(obj.getClass().isAssignableFrom(qc.getType())))) {
-            throw (new IllegalArgumentException("Classes: " + qc.getType() + " and "
-                                                + obj.getClass() + "cannot be compared"));
+        if (!(qc1.getType().isAssignableFrom(obj.getClass())
+              || obj.getClass().isAssignableFrom(qc1.getType()))) {
+              throw new IllegalArgumentException("Invalid constraint: "
+                                               + qc1.getType()
+                                               + " " + type
+                                               + " " + obj.getClass());
         }
-        this.qc1 = qc;
-        this.obj = obj;
-        if ((type < 1) || (type > 2)) {
-            throw (new IllegalArgumentException("Invalid value for type: " + type));
-        }
+        
+        this.qc1 = qc1;
         this.type = type;
+        this.obj = obj;
         this.negated = negated;
-        this.qc2 = null;
-    }
-
-    /**
-     * Set whether constraint is negated.  Negated reverses the logic of the constraint
-     * i.e equals becomes not equals.
-     *
-     * @param negated true if constraint logic to be reversed
-     */
-    public void setNegated(boolean negated) {
-        this.negated = negated;
-    }
-
-    /**
-     * Test if constraint logic has been reversed
-     *
-     * @return true if constraint is negated
-     */
-    public boolean isNegated() {
-        return negated;
     }
 
     /**
@@ -148,7 +136,7 @@ public class ClassConstraint implements Constraint
      *
      * @return the operation type
      */
-    public int getType() {
+    public QueryOp getType() {
         return type;
     }
 
@@ -182,17 +170,17 @@ public class ClassConstraint implements Constraint
     /**
      * Tests whether two ClassConstraints are equal.
      *
-     * @param obj the object to compare with
+     * @param o the object to compare with
      * @return true if objects are equal
      */
-    public boolean equals(Object obj) {
-        if (obj instanceof ClassConstraint) {
-            ClassConstraint objCC = (ClassConstraint) obj;
-            return  (qc1.equals(objCC.qc1)
-                     && (type == objCC.type)
-                     && (negated == objCC.negated)
-                     && ((qc2 != null) ? qc2.equals(objCC.qc2) : (objCC.qc2 == null))
-                     && ((this.obj != null) ? this.obj.equals(objCC.obj) : (objCC.obj == null)));
+    public boolean equals(Object o) {
+        if (o instanceof ClassConstraint) {
+            ClassConstraint cc = (ClassConstraint) o;
+            return  qc1.equals(cc.qc1)
+                && type == cc.type
+                && negated == cc.negated
+                && Util.equals(cc.qc2, qc2)
+                && Util.equals(cc.obj, obj);
         }
         return false;
     }
@@ -203,10 +191,11 @@ public class ClassConstraint implements Constraint
      * @return the hashCode
      */
     public int hashCode() {
-        return qc1.hashCode() + (3 * type)
-            + (5 * ((qc2 != null) ? qc2.hashCode() : obj.hashCode()))
-            + (negated ? 29 : 0);
-
+        return qc1.hashCode()
+            + 3 * type.hashCode()
+            + 5 * Util.hashCode(qc2)
+            + 7 * Util.hashCode(obj)
+            + 11 * (negated ? 1 : 0);
     }
 
     /**
@@ -217,5 +206,27 @@ public class ClassConstraint implements Constraint
      */
     public boolean isNotEqual() {
         return (type == EQUALS ? negated : !negated);
+    }
+
+    //-------------------------------------------------------------------------
+    
+    /**
+     * Classes are equal to one another
+     */
+    public static final QueryOp EQUALS = QueryOp.EQUALS;
+    
+    /**
+     * Classes are not equal to one another
+     */
+    public static final QueryOp NOT_EQUALS = QueryOp.NOT_EQUALS;
+
+    protected static final QueryOp[] VALID_OPS = new QueryOp[] {EQUALS, NOT_EQUALS};
+
+    /**
+     * Return a list of the valid operations for constructing a constraint of this type
+     * @return a List of operation codes
+     */
+    public static List validOps() {
+        return Arrays.asList(VALID_OPS);
     }
 }

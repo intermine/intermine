@@ -18,26 +18,22 @@ import java.util.Set;
  * the relationship between them should be AND or OR
  *
  * @author Richard Smith
- * @author Mark Woddbridge
+ * @author Mark Woodbridge
  */
-
-public class ConstraintSet implements Constraint
+public class ConstraintSet extends Constraint
 {
-
     /**
      * All Constraints in set are ANDed together
      */
     public static final boolean AND = false;
 
     /**
-     * All Constrainsts in set are ORed together
+     * All Constraints in set are ORed together
      */
     public static final boolean OR = true;
 
     protected boolean disjunctive;
     protected LinkedHashSet constraints;
-    protected boolean negated;
-
 
     /**
      * Construct empty ConstraintSet setting disjunctive (true = OR)
@@ -79,7 +75,7 @@ public class ConstraintSet implements Constraint
      */
     public ConstraintSet removeConstraint(Constraint constraint) {
         if (!constraints.contains(constraint)) {
-            throw (new IllegalArgumentException("Constraint does not exist in set"));
+            throw new IllegalArgumentException("Constraint does not exist in set");
         }
         constraints.remove(constraint);
         return this;
@@ -101,20 +97,6 @@ public class ConstraintSet implements Constraint
      */
     public boolean getDisjunctive() {
         return disjunctive;
-    }
-
-    /**
-     * @see Constraint#setNegated
-     */
-    public void setNegated(boolean negated) {
-        this.negated = negated;
-    }
-
-    /**
-     * @see Constraint#isNegated
-     */
-    public boolean isNegated() {
-        return negated;
     }
 
     /**

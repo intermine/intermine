@@ -11,6 +11,9 @@ package org.flymine.objectstore.query;
  */
 
 import java.util.List;
+import java.util.Arrays;
+
+import org.flymine.util.Util;
 
 /**
  * Constrain a QueryClass or QueryEvaluable to be within the select list
@@ -19,26 +22,12 @@ import java.util.List;
  * @author Richard Smith
  * @author Mark Woodbridge
  */
-
-
-public class SubqueryConstraint implements Constraint
+public class SubqueryConstraint extends Constraint
 {
-    /**
-     * require that argument is contained within select of subquery
-     */
-    public static final int CONTAINS = 1;
-
-    /**
-     * require that argument is not contained in select of subquery
-     */
-    public static final int DOES_NOT_CONTAIN = 2;
-
-    protected boolean negated;
     protected Query subquery;
-    protected QueryClass cls;
+    protected QueryOp type;
     protected QueryEvaluable qe;
-    protected int type;
-
+    protected QueryClass cls;    
 
     /**
      * Construct a SubqueryConstraint with a QueryEvaluable
@@ -47,7 +36,7 @@ public class SubqueryConstraint implements Constraint
      * @param type required type of constraint
      * @param qe item to match against subquery select
      */
-    public SubqueryConstraint(Query query, int type, QueryEvaluable qe) {
+    public SubqueryConstraint(Query query, QueryOp type, QueryEvaluable qe) {
         this(query, type, qe, false);
     }
 
@@ -59,46 +48,53 @@ public class SubqueryConstraint implements Constraint
      * @param qe item to match against subquery select
      * @param negated reverse the constraint logic if true
      */
-    public SubqueryConstraint(Query query, int type, QueryEvaluable qe, boolean negated) {
+    public SubqueryConstraint(Query query, QueryOp type, QueryEvaluable qe, boolean negated) {
 
         if (query == null) {
-            throw (new NullPointerException("query cannot be null"));
+            throw new NullPointerException("query cannot be null");
         }
+  
+        if (type == null) {
+            throw new NullPointerException("type cannot be null");
+        }
+
+        if (!validOps().contains(type)) {
+            throw new NullPointerException("type cannot be " + type);
+        }
+
         if (qe == null) {
-            throw (new NullPointerException("qe cannot be null"));
-        }
-        if ((type < 1) || (type > 2)) {
-            throw (new IllegalArgumentException("Invalid type: " + type));
+            throw new NullPointerException("qe cannot be null");
         }
 
         // check that query only has one item in select list
         List select = query.getSelect();
         if (select.size() < 1) {
-            throw (new IllegalArgumentException("Query has no items in select list."));
+            throw new IllegalArgumentException("Query has no items in select list.");
         }
+
         if (select.size() > 1) {
-            throw (new IllegalArgumentException("Subquery must have only one select item."));
+            throw new IllegalArgumentException("Subquery must have only one select item.");
         }
 
         // check that the select node is a QueryEvaluable
         QueryNode selectNode = (QueryNode) select.get(0);
         if (!QueryEvaluable.class.isAssignableFrom(selectNode.getClass())) {
-            throw (new IllegalArgumentException("Subquery select item is not a QueryEvalubale"));
+            throw new IllegalArgumentException("Subquery select item is not a QueryEvaluable");
         }
 
         // check that java types of QueryEvaluables are comparable
-        if (!(selectNode.getType().isAssignableFrom(qe.getType()))
-            && !(qe.getType().isAssignableFrom(selectNode.getType()))) {
-            throw (new IllegalArgumentException("Type of select from subquery ("
+        if (!(selectNode.getType().isAssignableFrom(qe.getType())
+              || qe.getType().isAssignableFrom(selectNode.getType()))) {
+            throw new IllegalArgumentException("Type of select from subquery ("
                                                 + selectNode.getType()
                                                 + ") not comparable with type from argument ("
-                                                + qe.getType() + ")"));
+                                                + qe.getType() + ")");
         }
+
         this.subquery = query;
+        this.type = type;
         this.qe = qe;
         this.negated = negated;
-        this.cls = null;
-        this.type = type;
     }
 
     /**
@@ -108,7 +104,7 @@ public class SubqueryConstraint implements Constraint
      * @param type required type of constraint
      * @param cls item to match against subquery select
      */
-    public SubqueryConstraint(Query query, int type, QueryClass cls) {
+    public SubqueryConstraint(Query query, QueryOp type, QueryClass cls) {
         this(query, type, cls, false);
     }
 
@@ -120,71 +116,59 @@ public class SubqueryConstraint implements Constraint
      * @param cls item to match against subquery select
      * @param negated reverse the constraint logic if true
      */
-    public SubqueryConstraint(Query query, int type, QueryClass cls, boolean negated) {
+    public SubqueryConstraint(Query query, QueryOp type, QueryClass cls, boolean negated) {
         if (query == null) {
-            throw (new NullPointerException("query cannot be null"));
+            throw new NullPointerException("query cannot be null");
         }
+
+        if (type == null) {
+            throw new NullPointerException("type cannot be null");
+        }
+
+        if (!validOps().contains(type)) {
+            throw new NullPointerException("type cannot be " + type);
+        }
+
         if (cls == null) {
-            throw (new NullPointerException("cls cannot be null"));
-        }
-        if ((type < 1) || (type > 2)) {
-            throw (new IllegalArgumentException("Invalid type: " + type));
+            throw new NullPointerException("cls cannot be null");
         }
 
         // check that query only has one item in select list and it is a QueryClass
         List select = query.getSelect();
         if (select.size() < 1) {
-            throw (new IllegalArgumentException("Query has no items in select list."));
+            throw new IllegalArgumentException("Query has no items in select list.");
         }
+
         if (select.size() > 1) {
-            throw (new IllegalArgumentException("Subquery must have only one "
-                                                + "item in select list."));
+            throw new IllegalArgumentException("Subquery must have only one "
+                                                + "item in select list.");
         }
+
         QueryNode selectNode = (QueryNode) select.get(0);
         if (!QueryClass.class.isAssignableFrom(selectNode.getClass())) {
-            throw (new IllegalArgumentException("Select item of subquery is not a QueryClass"));
+            throw new IllegalArgumentException("Select item of subquery is not a QueryClass");
         }
-        if (!(selectNode.getType().isAssignableFrom(cls.getType()))
-            && !(cls.getType().isAssignableFrom(selectNode.getType()))) {
-            throw (new IllegalArgumentException("QueryClass select from subquery ("
+
+        if (!(selectNode.getType().isAssignableFrom(cls.getType())
+              || cls.getType().isAssignableFrom(selectNode.getType()))) {
+            throw new IllegalArgumentException("QueryClass select from subquery ("
                                                 + selectNode.getType()
                                                 + ") not comparable with QueryClass ("
-                                                + cls.getType() + ")"));
+                                                + cls.getType() + ")");
         }
 
         this.subquery = query;
+        this.type = type;
         this.cls = cls;
         this.negated = negated;
-        this.qe = null;
-        this.type = type;
     }
-
-    /**
-     * Set whether constraint is negated.  Negated reverses the logic of the constraint
-     * i.e equals becomes not equals.
-     *
-     * @param negated true if constraint logic to be reversed
-     */
-    public void setNegated(boolean negated) {
-        this.negated = negated;
-    }
-
-    /**
-     * Test if constraint logic has been reversed
-     *
-     * @return true if constraint is negated
-     */
-    public boolean isNegated() {
-        return negated;
-    }
-
 
     /**
      * Get type of operation (i.e. contains or does not contain)
      *
      * @return type of operation
      */
-    public int getType() {
+    public QueryOp getType() {
         return type;
     }
 
@@ -221,7 +205,7 @@ public class SubqueryConstraint implements Constraint
      * @return true if the query is NOT IN
      */
     public boolean isNotIn() {
-        return (type == 1 ? negated : !negated);
+        return (type == CONTAINS ? negated : !negated);
     }
 
     /**
@@ -233,22 +217,47 @@ public class SubqueryConstraint implements Constraint
     public boolean equals(Object obj) {
         if (obj instanceof SubqueryConstraint) {
             SubqueryConstraint sc = (SubqueryConstraint) obj;
-            return (subquery.equals(sc.subquery)
-                    && (type == sc.type)
-                    && (negated == sc.negated)
-                    && ((qe != null) ? (qe.equals(sc.qe)) : (sc.qe == null))
-                    && ((cls != null) ? (cls.equals(sc.cls)) : (sc.cls == null)));
+            return subquery.equals(sc.subquery)
+                && type == sc.type
+                && negated == sc.negated
+                && Util.equals(sc.qe, qe)
+                && Util.equals(sc.cls, cls);
         }
         return false;
     }
+
     /**
      * Get the hashCode for this object overrides Object.hashCode()
      *
      * @return the hashCode
      */
     public int hashCode() {
-        return subquery.hashCode() + (3 * type) + ((negated) ? 29 : 0)
-            + ((qe != null) ? (5 * qe.hashCode()) : 31)
-            + ((cls != null) ? (7 * cls.hashCode()) : 37);
+        return subquery.hashCode()
+            + 3 * type.hashCode()
+            + 5 * (negated ? 1 : 0)
+            + 7 * Util.hashCode(qe)
+            + 11 * Util.hashCode(cls);
+    }
+
+    //-------------------------------------------------------------------------
+    
+    /**
+     * require that argument is contained within select of subquery
+     */
+    public static final QueryOp CONTAINS = QueryOp.CONTAINS;
+
+    /**
+     * require that argument is not contained in select of subquery
+     */
+    public static final QueryOp DOES_NOT_CONTAIN = QueryOp.DOES_NOT_CONTAIN;
+
+    protected static final QueryOp[] VALID_OPS = new QueryOp[] {CONTAINS, DOES_NOT_CONTAIN};
+
+    /**
+     * Return a list of the valid operations for constructing a constraint of this type
+     * @return a List of operation codes
+     */
+    public static List validOps() {
+        return Arrays.asList(VALID_OPS);
     }
 }

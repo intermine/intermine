@@ -10,6 +10,9 @@ package org.flymine.objectstore.query;
  *
  */
 
+import java.util.List;
+import java.util.Arrays;
+
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.
  * QueryReference can refer to an object or a collection, test whether
@@ -18,13 +21,11 @@ package org.flymine.objectstore.query;
  * @author Richard Smith
  * @author Mark Woodbridge
  */
-
-public class ContainsConstraint implements Constraint
+public class ContainsConstraint extends Constraint
 {
-    protected boolean negated;
     protected QueryReference ref;
     protected QueryClass cls;
-    protected int type;
+    protected QueryOp type;
 
     /**
      * Constructor for ContainsConstraint.
@@ -33,7 +34,7 @@ public class ContainsConstraint implements Constraint
      * @param type specify CONTAINS or DOES_NOT_CONTAIN
      * @param cls the QueryClass to to be tested against reference
      */
-    public ContainsConstraint(QueryReference ref, int type, QueryClass cls) {
+    public ContainsConstraint(QueryReference ref, QueryOp type, QueryClass cls) {
         this(ref, type, cls, false);
     }
 
@@ -45,49 +46,34 @@ public class ContainsConstraint implements Constraint
      * @param cls the QueryClass to be tested
      * @param negated reverse the constraint logic if true
      */
-    public ContainsConstraint(QueryReference ref, int type, QueryClass cls, boolean negated) {
+    public ContainsConstraint(QueryReference ref, QueryOp type, QueryClass cls, boolean negated) {
         if (ref == null) {
-            throw (new NullPointerException("ref cannot be null"));
+            throw new NullPointerException("ref cannot be null");
         }
+
+        if (type == null) {
+            throw new NullPointerException("type cannot be null");
+        }
+
+        if (!validOps().contains(type)) {
+            throw new NullPointerException("type cannot be " + type);
+        }
+
         if (cls == null) {
-            throw (new NullPointerException("cls cannot be null"));
+            throw new NullPointerException("cls cannot be null");
         }
 
-        if (QueryObjectReference.class.isAssignableFrom(ref.getClass())) {
-            if (ref.getType() != cls.getType()) {
-                throw (new IllegalArgumentException("QueryObjectReference type(" + ref.getType()
-                                                    + ") not equal to QueryClass type("
-                                                    + cls.getType() + ")"));
-            }
+        if (ref instanceof QueryObjectReference && !ref.getType().equals(cls.getType())) {
+            throw new IllegalArgumentException("Invalid constraint: "
+                                               + ref.getType()
+                                               + " " + type
+                                               + " " + cls.getType());
         }
-
-        if ((type < 0) || (type > 1)) {
-            throw (new IllegalArgumentException("Invalid value for type: " + type));
-        }
-
+        
         this.ref = ref;
-        this.cls = cls;
         this.type = type;
+        this.cls = cls;
         this.negated = negated;
-    }
-
-    /**
-     * Set whether constraint is negated.  Negated reverses the logic of the constraint
-     * i.e equals becomes not equals.
-     *
-     * @param negated true if constraint logic to be reversed
-     */
-    public void setNegated(boolean negated) {
-        this.negated = negated;
-    }
-
-    /**
-     * Test if constraint logic has been reversed
-     *
-     * @return true if constraint is negated
-     */
-    public boolean isNegated() {
-        return negated;
     }
 
     /**
@@ -95,7 +81,7 @@ public class ContainsConstraint implements Constraint
      *
      * @return the operation type
      */
-    public int getType() {
+    public QueryOp getType() {
         return type;
     }
 
@@ -136,14 +122,13 @@ public class ContainsConstraint implements Constraint
     public boolean equals(Object obj) {
         if (obj instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) obj;
-            return (ref.equals(cc.ref)
-                    && (type == cc.type)
-                    && (negated == cc.negated)
-                    && cls.equals(cc.cls));
+            return ref.equals(cc.ref)
+                    && type == cc.type
+                    && negated == cc.negated
+                    && cls.equals(cc.cls);
         }
         return false;
     }
-
 
     /**
      * Get the hashCode for this object, overrides Object.hashCode()
@@ -151,42 +136,31 @@ public class ContainsConstraint implements Constraint
      * @return the hashCode
      */
     public int hashCode() {
-        return ref.hashCode() + (3 * type) + ((negated) ? 29 : 0)
-            + (5 * cls.hashCode());
+        return ref.hashCode()
+            + 3 * type.hashCode()
+            + 5 * (negated ? 1 : 0)
+            + 7 * cls.hashCode();
     }
-
 
     //-------------------------------------------------------------------------
     
     /**
      * QueryCollection does contain the specified QueryClass.
      */
-    public static final int CONTAINS = 0;
+    public static final QueryOp CONTAINS = QueryOp.CONTAINS;
 
     /**
      * QueryCollection does not contain the specified QueryClass.
      */
-    public static final int DOES_NOT_CONTAIN = 1;
+    public static final QueryOp DOES_NOT_CONTAIN = QueryOp.DOES_NOT_CONTAIN;
 
-    protected static final String[] OPERATIONS = {
-        "CONTAINS",
-        "DOES NOT CONTAIN"};
+    protected static final QueryOp[] VALID_OPS = new QueryOp[] {CONTAINS, DOES_NOT_CONTAIN};
 
     /**
-     * Returns the String representation of the operation.
-     *
-     * @param type the operator code
-     * @return String representation
+     * Return a list of the valid operations for constructing a constraint of this type
+     * @return a List of operation codes
      */
-    public static String getOpString(int type) {
-        return OPERATIONS[type];
-    }
-
-    /**
-     * Return the list of valid (binary) operator codes
-     * @return an array of character codes
-     */
-    public static int[] validOperators() {
-        return new int[] {CONTAINS, DOES_NOT_CONTAIN};
+    public static List validOps() {
+        return Arrays.asList(VALID_OPS);
     }
 }
