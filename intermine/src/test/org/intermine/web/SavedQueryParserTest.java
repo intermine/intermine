@@ -47,12 +47,9 @@ public class SavedQueryParserTest extends TestCase
         expected.put("allCompanies", allCompanies);
 
         //employeesNamesAndAges
-        PathQuery employeesNamesAndAges = new PathQuery(Model.getInstanceByName("testmodel"));
-        view = new ArrayList();
-        view.add("Employee.name");
-        view.add("Employee.age");
-        employeesNamesAndAges.setView(view);
-        expected.put("employeesNamesAndAges", employeesNamesAndAges);
+        PathQuery employee = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathNode emp = employee.addNode("Employee");
+        expected.put("employee", employee);
 
         //employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(Model.getInstanceByName("testmodel"));
@@ -65,6 +62,15 @@ public class SavedQueryParserTest extends TestCase
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10)));
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
+
+        //vatNumberInBag
+        PathQuery vatNumberInBag = new PathQuery(Model.getInstanceByName("testmodel"));
+        view = new ArrayList();
+        view.add("Company");
+        vatNumberInBag.setView(view);
+        PathNode vatNumber = vatNumberInBag.addNode("Company.vatNumber");
+        vatNumber.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
+        expected.put("vatNumberInBag", vatNumberInBag);
 
         assertEquals(expected, savedQueries);
     }

@@ -75,7 +75,9 @@ public class SavedQueryParser
                     throw new SAXException(e);
                 }
                 query = new PathQuery(model);
-                query.setView(StringUtil.tokenize(attrs.getValue("view")));
+                if (attrs.getValue("view") != null) {
+                    query.setView(StringUtil.tokenize(attrs.getValue("view")));
+                }
             }
             if (qName.equals("node")) {
                 node = query.addNode(attrs.getValue("path"));
