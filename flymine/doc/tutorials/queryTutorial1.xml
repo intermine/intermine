@@ -33,11 +33,19 @@ all the gene names of the genes in FlyMine.  The aim of this query tutorial is t
 
 
 	  <entry>
-	      <inlinegraphic fileref="classSelection1.gif" format="GIF"/>
+	      <inlinegraphic fileref="geneClass1.gif" format="GIF"/>
 	  </entry>
 
 
               <listitem>Press 'Show results' to display the name of the genes in FlyMine</listitem> 
+
+
+	  <entry>
+	      <inlinegraphic fileref="runQuery3.gif" format="GIF"/>
+	  </entry>
+
+
+
 
            </orderedlist>
       
