@@ -37,6 +37,8 @@ public class TemplateQuery
     protected List nodes = new ArrayList();
     /** Map from node to editable constraint list */
     protected Map constraints = new HashMap();
+    /** True if template is considered 'important' for a related class. */
+    protected boolean important = false;
 
     /**
      * Construct a new instance of TemplateQuery.
@@ -45,8 +47,9 @@ public class TemplateQuery
      * @param category name of category that this query falls under
      * @param description the template description
      * @param query the query itself
+     * @param important true if template is important
      */
-    public TemplateQuery(String name, String description, String category, PathQuery query) {
+    public TemplateQuery(String name, String description, String category, PathQuery query, boolean important) {
         if (description != null) {
             this.description = description;
         }
@@ -57,6 +60,7 @@ public class TemplateQuery
             this.name = name;
         }
         this.query = query;
+        this.important = important;
 
         // Find the editable constraints in the query.
         Iterator iter = query.getNodes().entrySet().iterator();
@@ -167,5 +171,12 @@ public class TemplateQuery
      */
     public String getCategory() {
         return category;
+    }
+    
+    /**
+     * @return true if template is important
+     */
+    public boolean isImportant() {
+        return important;
     }
 }
