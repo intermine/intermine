@@ -2,3 +2,21 @@
 @import "base.css";
 @import "branding.css";
 
+.whiteboxwithborder {
+  padding: 6px;
+}
+
+table td, table th {
+  padding: 6px;
+}
+
+* {
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+}
+
+#content {
+  padding: 15px;
+}
+
+
+
