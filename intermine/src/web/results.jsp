@@ -98,16 +98,6 @@
     <c:set var="prevrow" value="${row}" scope="page"/>
     </c:forEach>
   </c:if>
-
-
-    <%-- The footers --%>
-    <tr class="resultsFooter">
-      <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-        <td align="center">
-        </td>
-        <td></td>
-      </c:forEach>
-    </tr>
   </table>
 
   <%-- "Displaying xxx to xxx of xxx rows" messages --%>
