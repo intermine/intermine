@@ -53,6 +53,7 @@ host=`hostname`
 prepend PATH /usr/local/bin
 prepend PATH /software/noarch/bin
 prepend PATH /software/arch/bin
+prepend PATH /software/arch/postgresql/bin
 prepend PATH /software/noarch/local/bin
 prepend PATH /software/arch/local/bin
 
