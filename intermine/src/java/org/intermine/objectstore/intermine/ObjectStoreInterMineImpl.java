@@ -57,6 +57,7 @@ import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.query.ExplainResult;
+//import org.intermine.sql.query.PostgresExplainResult;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DatabaseUtil;
@@ -93,8 +94,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
 
-    private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise", "estimated",
-        "execute", "permitted", "convert", "iql", "sql"};
+    private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise",
+        "estimated", "execute", "permitted", "convert", "iql", "sql"};
 
     // see generateSql()
     protected Map queryBagTables = new CacheMap();
@@ -600,6 +601,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 sql = QueryOptimiser.optimise(sql, db);
             }
             long endOptimiseTime = System.currentTimeMillis();
+            sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
+            sql = sql.replaceAll(" ([^ ]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
                 //long time = (new Date()).getTime();
@@ -609,6 +612,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 //    LOG.debug(getModel().getName() + ": Executed SQL (time = "
                 //            + (now - time) + "): EXPLAIN " + sql);
                 //}
+
+                //System.out.println("Explain result for " + sql + "\n"
+                //        + ((PostgresExplainResult) explainResult).getExplainText());
 
                 estimatedTime = explainResult.getTime();
                 if (explainResult.getTime() > getMaxTime()) {
