@@ -3,8 +3,8 @@
 
 <!-- templates.jsp -->
 <c:forEach items="${templates}" var="templateQuery">
-  <c:out value="${templateQuery.cleanDescription}"/>
-  <html:link action="/template?name=${templateQuery.identifier}">
+  <c:out value="${templateQuery.description}"/>
+  <html:link action="/template?name=${templateQuery.name}">
     <img class="arrow" src="images/right-arrow.png" alt="->"/>
   </html:link>
   <br/>
