@@ -305,56 +305,7 @@
   </target>
 
 
-  <!-- ENSEMBL HUMAN  MODEL GENERATION -->
-
-  <!-- convert ensembl zargo to InterMine model -->
-  <target name="convert-ensembl-human" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
-      <property name="model.name" value="ensembl-human"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
-  <!-- convert ensembl model to OWL -->
-  <target name="ensembl-human-to-owl" depends="convert-ensembl-human">
-    <java classname="org.intermine.ontology.InterMine2Owl" fork="true" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/ensembl-human/ensembl-human_model.xml" />
-      <arg value="${build.model}/ensembl-human/ensembl.n3" />
-      <arg value="N3" />
-    </java>
-  </target>
-
-  <!-- merge the ensembl owl model with the current genomic model owl -->
-  <target name="merge-ensembl-human-model" depends="prepare-genomic-model, ensembl-human-to-owl">
-    <copy file="${model}/ensembl-human/ensembl_merge_spec.n3" todir="${build.model}/ensembl-human/"/>
-
-    <!-- combine the ensembl_merge_spec with current genomic model -->
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-          maxmemory="800m" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/ensembl-human/ensembl_merge_spec.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="N3" />
-      <arg value="n" />
-    </java>
-
-    <!-- merge ensembl model with target genomic model -->
-    <java classname="org.intermine.ontology.MergeOwl" fork="true"
-          maxmemory="800m" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="${build.model}/ensembl-human/ensembl.n3" />
-      <arg value="http://www.flymine.org/model/ensembl-human#" />
-      <arg value="N3" />
-      <arg value="y" />
-    </java>
-  </target>
-
-
+ 
   <!-- CHADO MODEL GENERATION -->
 
   <!-- convert chado zargo to InterMine model -->
@@ -753,7 +704,7 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
                 merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-                merge-ensembl-model, merge-ensembl-human-model, merge-phenotype-model,
+                merge-ensembl-model, merge-phenotype-model,
                 merge-go-model, merge-uniprot-model,
                 merge-protein_structure-model, merge-mage-model, merge-so-model">
     <antcall target="create-genomic-model"/>
@@ -782,23 +733,6 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
-
-  <!-- create java objects for the genomic human model
-  <target name="compile-human-model" depends="create-human-model">
-    <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
- <target name="create-human-model" depends="remove-genomic, prepare-build-model,
-       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
-       merge-ensembl-human-model,  merge-phenotype-model, merge-go-model,
-       merge-uniprot-model,
-       merge-protein_structure-model, merge-so-model">
-    <antcall target="create-genomic-model"/>
-  </target>
- -->
 
 
   <!-- if genomic.n3 not copied into build directory then copy it -->
@@ -958,79 +892,7 @@
     <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph"/>
   </target>
 
-  <!-- ENSEMBL HUMAN PIPELINE -->
-
-  <!-- build ensembl human src items database -->
-  <target name="build-db-ensembl-human-src-items" depends="prepare-build-model">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-human-src-items"/>
-      <property name="objectstore.name" value="os.ensembl-human-src-items-std"/>
-    </ant>
-  </target>
-
-  <!-- retrieve ensembl human data -->
-  <target name="retrieve-ensembl-human" depends="convert-ensembl-human, build-db-ensembl-human-src-items">
-    <taskdef name="retrieve-ensembl-human" classname="org.intermine.dataconversion.DBRetrieverTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <retrieve-ensembl-human database="db.ensembl-human" model="ensembl-human" osName="osw.ensembl-human-src-items"/>
-
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-human-src-items"/>
-    </ant>
-  </target>
-
-  <!-- build ensembl human tgt items database -->
-  <target name="build-db-ensembl-human-tgt-items" depends="convert-ensembl-human">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-human-tgt-items"/>
-      <property name="objectstore.name" value="os.ensembl-human-tgt-items-std"/>
-    </ant>
-  </target>
-
-
- <!-- translate ensembl human -->
- <target name="translate-ensembl-human" depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
-    <java classname="org.flymine.dataconversion.EnsemblHumanDataTranslator" fork="true"
-      maxmemory="800m"  failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="os.ensembl-human-src-items" />
-      <arg value="osw.ensembl-human-tgt-items" />
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="N3" />
-      <arg value="http://www.flymine.org/model/genomic#" />
-      <arg value="HS" />
-    </java>
-
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.ensembl-human-tgt-items"/>
-    </ant>
-
-    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.ensembl-human-tgt-items"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
-  <!-- Load data from ensembl-dros-tgt-items into production -->
-  <target name="load-ensembl-human" depends="prepare-build-model">
-    <taskdef name="load-human" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human"/>
-  </target>
-
-
+ 
   <!-- CHADO PIPELINE -->
 
   <!-- Build Chado src items database -->
@@ -1864,10 +1726,7 @@
   <!-- Translates and loads ensembl anopheles data -->
   <target name="build-ensembl-anopheles-production" depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
 
-  <!-- Translates and loads ensembl drosophila data -->
-  <target name="build-ensembl-human-production" depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
-
-  <!-- Retrieve and load orthologue data -->
+   <!-- Retrieve and load orthologue data -->
   <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid,retrieve-orthologues-ensembl,load-orthologues-ensembl"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
@@ -1966,6 +1825,180 @@
     <antcall target="create-indexes-production-attribute"/>
     <antcall target="analyse-db-production"/>
   </target>
+
+
+
+  <!-- =============== HUMAN TARGETS ================= -->
+
+ <!-- ENSEMBL HUMAN  MODEL GENERATION -->
+
+  <!-- convert ensembl human zargo to InterMine model -->
+  <target name="convert-ensembl-human" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
+      <property name="model.name" value="ensembl-human"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <!-- convert ensembl human model to OWL -->
+  <target name="ensembl-human-to-owl" depends="convert-ensembl-human">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/ensembl-human/ensembl-human_model.xml" />
+      <arg value="${build.model}/ensembl-human/ensembl.n3" />
+      <arg value="N3" />
+    </java>
+  </target>
+
+  <!-- merge the ensembl human owl model with the current genomic model owl -->
+  <target name="merge-ensembl-human-model" depends="prepare-genomic-model, ensembl-human-to-owl">
+    <copy file="${model}/ensembl-human/ensembl_merge_spec.n3" todir="${build.model}/ensembl-human/"/>
+
+    <!-- combine the ensembl_merge_spec with current genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+          maxmemory="800m" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/ensembl-human/ensembl_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="N3" />
+      <arg value="n" />
+    </java>
+
+    <!-- merge ensembl model with target genomic model -->
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
+          maxmemory="800m" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="${build.model}/ensembl-human/ensembl.n3" />
+      <arg value="http://www.flymine.org/model/ensembl-human#" />
+      <arg value="N3" />
+      <arg value="y" />
+    </java>
+  </target>
+
+<!-- MERGED GENOMIC HUMAN MODEL  -->
+
+ <!-- create merged model from all source OWL ontologies -->
+  <target name="create-human-production-model" depends="remove-genomic, prepare-build-model,
+                merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+                merge-ensembl-human-model, merge-phenotype-model,
+                merge-go-model, merge-uniprot-model,
+                merge-protein_structure-model, merge-so-model">
+    <antcall target="create-genomic-human-model"/>
+  </target>
+
+ <!-- create genomic InterMine model from currently merged OWL ontologies -->
+  <target name="create-genomic-human-model" depends="remove-genomic, prepare-build-model,
+       merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model,
+       merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
+       merge-uniprot-model, merge-protein_structure-model, merge-so-model">    
+  </target>
+  
+ <!-- create java objects for the genomic human model-->
+  <target name="compile-genomic-human-model" depends="create-genomic-human-model">
+    <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target> 
+
+  <target name="jar-genomic-human" depends="create-genomic-human-model"
+          description="create a jar of the genomic human model">
+    <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+ <!-- ENSEMBL HUMAN PIPELINE -->
+
+  <!-- build ensembl human src items database -->
+  <target name="build-db-ensembl-human-src-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-human-src-items"/>
+      <property name="objectstore.name" value="os.ensembl-human-src-items-std"/>
+    </ant>
+  </target>
+
+  <!-- build ensembl human tgt items database -->
+  <target name="build-db-ensembl-human-tgt-items" depends="convert-ensembl-human">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-human-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-human-tgt-items-std"/>
+    </ant>
+  </target>
+
+  <!-- retrieve ensembl human data -->
+  <target name="retrieve-ensembl-human" depends="convert-ensembl-human, build-db-ensembl-human-src-items">
+    <taskdef name="retrieve-ensembl-human" classname="org.intermine.dataconversion.DBRetrieverTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-ensembl-human database="db.ensembl-human" model="ensembl-human" osName="osw.ensembl-human-src-items"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-human-src-items"/>
+    </ant>
+  </target>
+  
+ <!-- translate ensembl human data -->
+ <target name="translate-ensembl-human" depends="compile-ensembl-human-java, build-db-ensembl-human-tgt-items">
+    <java classname="org.flymine.dataconversion.EnsemblHumanDataTranslator" fork="true"
+      maxmemory="1800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.ensembl-human-src-items" />
+      <arg value="osw.ensembl-human-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+      <arg value="HS" />
+    </java>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-human-tgt-items"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.ensembl-human-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <!-- Load data from ensembl-human-tgt-items into production -->
+  <target name="load-ensembl-human" depends="prepare-build-model">
+    <taskdef name="load-human" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human" /> <!--queryClass="org.flymine.model.genomic.TRNA"/-->
+  </target>
+
+ <!-- ensembl human production  -->
+  <target name="build-ensembl-human-production" depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
+
+ <!--POST PROCESSING -->
+ <target name="post-process-human">    
+    <antcall target="create-references"/>
+    <antcall target="analyse-db-production"/>
+    <antcall target="make-spanning-locations"/>
+    <antcall target="analyse-db-production"/>
+    <antcall target="transfer-sequences"/>
+    <antcall target="create-indexes-production-attribute"/>
+    <antcall target="analyse-db-production"/>
+  </target>
+
+
 
   <!-- ========== OBJECTSTORE EXPORT TARGETS ========== -->
   <target name="write-gff" depends="compile-genomic-java">
