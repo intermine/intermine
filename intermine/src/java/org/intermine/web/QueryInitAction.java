@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.Model;
+import org.flymine.metadata.presentation.DisplayModel;
 
 
 /**
@@ -40,7 +41,7 @@ public class QueryInitAction extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        request.getSession().setAttribute("model", Model.getInstanceByName("testmodel"));
+        request.getSession().setAttribute("model", new DisplayModel(Model.getInstanceByName("testmodel")));
         return null;
     }
 }

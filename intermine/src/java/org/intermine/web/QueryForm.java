@@ -23,26 +23,7 @@ import java.util.HashMap;
 public class QueryForm extends ActionForm
 {
 
-    protected String cldName;
     protected Map fields = new HashMap();
-
-    /**
-     * Set the class name
-     *
-     * @param cldName the class name
-     */
-    public void setCldName(String cldName) {
-        this.cldName = cldName;
-    }
-
-    /**
-     * Get the class name
-     *
-     * @return the query string
-     */
-    public String getCldName() {
-        return cldName;
-    }
 
     /**
      * Set the map field name/values for QueryClass

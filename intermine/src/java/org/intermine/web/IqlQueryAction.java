@@ -115,7 +115,7 @@ public class FqlQueryAction extends LookupDispatchAction
         try {
             Query q = new FqlQuery(queryform.getQuerystring(), "org.flymine.model.testmodel")
                 .toQuery();
-            request.setAttribute("query", q);
+            session.setAttribute("query", q);
         } catch (Throwable e) {
             e.printStackTrace(System.err);
             return (mapping.findForward("error"));

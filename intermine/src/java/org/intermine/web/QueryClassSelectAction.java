@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 
 import org.apache.struts.actions.LookupDispatchAction;
 import org.apache.struts.action.ActionForm;
@@ -24,12 +23,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.metadata.presentation.DisplayClassDescriptor;
-import org.flymine.objectstore.query.*;
-import org.flymine.objectstore.query.presentation.QueryCreator;
-
+import org.flymine.metadata.presentation.DisplayModel;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -37,7 +32,7 @@ import org.flymine.objectstore.query.presentation.QueryCreator;
  * @author Andrew Varley
  */
 
-public class QueryAction extends LookupDispatchAction
+public class QueryClassSelectAction extends LookupDispatchAction
 {
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -55,7 +50,7 @@ public class QueryAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward submit(ActionMapping mapping,
+    public ActionForward select(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -65,26 +60,24 @@ public class QueryAction extends LookupDispatchAction
         MessageResources messages = getResources(request);
         HttpSession session = request.getSession();
 
-        QueryForm queryForm = (QueryForm) form;
-        ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld")).getClassDescriptor();
-
-        Query query = (Query) session.getAttribute("query");
-        if (query == null) {
-            query = new Query();
-        }
+        QueryClassSelectForm queryClassSelectForm = (QueryClassSelectForm) form;
 
         try {
-            QueryCreator qc = new QueryCreator(query);
-            qc.generateConstraints(cld.getName(), queryForm.getFields());
-            session.setAttribute("query", query);
+            Model model = ((DisplayModel) session.getAttribute("model")).getModel();
+            String cldName = queryClassSelectForm.getCldName();
+            if (!model.hasClassDescriptor(cldName)) {
+                throw new Exception("ClassDescriptor (" + cldName + ") not found in model ("
+                                    + model.getName() + ")");
+            }
+            DisplayClassDescriptor cld = new DisplayClassDescriptor(model.getClassDescriptorByName(cldName));
+            session.setAttribute("cld", cld);
         } catch (Throwable e) {
             e.printStackTrace(System.err);
             request.setAttribute("exception", e);
             return (mapping.findForward("error"));
-        }
+            }
         return (mapping.findForward("buildquery"));
     }
-
 
     /**
      * Distributes the actions to the necessary methods, by providing a Map from action to
@@ -94,7 +87,7 @@ public class QueryAction extends LookupDispatchAction
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("button.submit", "submit");
+        map.put("button.select", "select");
         map.put("button.view", "view");
         return map;
     }

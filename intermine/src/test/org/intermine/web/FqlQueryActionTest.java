@@ -64,7 +64,7 @@ public class FqlQueryActionTest extends MockStrutsTestCase {
         addRequestParameter("action", "View");
         actionPerform();
         verifyForward("buildquery");
-        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getRequest().getAttribute("query")).toString());
+        assertEquals("SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_", ((Query) getSession().getAttribute("query")).toString());
         verifyNoActionErrors();
     }
 
