@@ -49,7 +49,7 @@ public class ChangeResultsAction extends DispatchAction
         int page = ((pt.getExactSize() - 1) / pt.getPageSize());
         pt.setPageAndPageSize(page, pt.getPageSize());
 
-        return makeResultsForward(mapping.findForward("results"), pt);
+        return makeResultsForward(mapping.findForward("results"), request, pt);
     }
 
     /**
@@ -70,7 +70,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         ((Column) pt.getColumns().get(index)).setVisible(false);
 
-        return makeResultsForward(mapping.findForward("results"), pt);
+        return makeResultsForward(mapping.findForward("results"), request, pt);
     }
 
     /**
@@ -91,7 +91,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         ((Column) pt.getColumns().get(index)).setVisible(true);
 
-        return makeResultsForward(mapping.findForward("results"), pt);
+        return makeResultsForward(mapping.findForward("results"), request, pt);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnLeft(index);
 
-        return makeResultsForward(mapping.findForward("results"), pt);
+        return makeResultsForward(mapping.findForward("results"), request, pt);
     }
 
     /**
@@ -133,7 +133,7 @@ public class ChangeResultsAction extends DispatchAction
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnRight(index);
 
-        return makeResultsForward(mapping.findForward("results"), pt);
+        return makeResultsForward(mapping.findForward("results"), request, pt);
     }
 
     /**
@@ -161,9 +161,14 @@ public class ChangeResultsAction extends DispatchAction
      * @param pt PagedTable
      * @return an ActionForward with parameters
      */
-    protected ActionForward makeResultsForward(ActionForward results, PagedTable pt) {
-        return new ForwardParameters(results)
+    protected ActionForward makeResultsForward(ActionForward results, HttpServletRequest request,
+                                                             PagedTable pt) {
+        ForwardParameters forward = new ForwardParameters(results)
                 .addParameter("page", "" + pt.getPage())
-                .addParameter("size", "" + pt.getPageSize()).forward();
+                .addParameter("size", "" + pt.getPageSize());
+        if (request.getParameter("trail") != null) {
+            forward.addParameter("trail", request.getParameter("trail"));
+        }
+        return forward.forward();
     }
 }
