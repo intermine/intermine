@@ -158,7 +158,7 @@
     <html:option value="100">100</html:option>
     <html:option value="200">200</html:option>
   </html:select>
-  <html:submit property="action">
+  <html:submit property="buttons(changePageSize)">
     <fmt:message key="button.change"/>
   </html:submit>
   <br/>
@@ -173,14 +173,14 @@
           <html:option value="${entry.key}"/>
         </c:forEach>
       </html:select>
-      <html:submit property="action">
+      <html:submit property="buttons(addToExistingBag)">
         <fmt:message key="bag.existing"/>
       </html:submit>
       <br/>
     </c:if>
 
     <html:text property="newBagName"/>
-    <html:submit property="action">
+    <html:submit property="buttons(saveNewBag)">
       <fmt:message key="bag.new"/>
     </html:submit>
     <br/>
