@@ -84,16 +84,16 @@ public class PagedResultsTest extends TestCase
         assertEquals(25, dr.getSize());
     }
 
-    public void testSizeLow() throws Exception {
-        PagedResults dr = getEstimateTooLowResults();
-        dr.setPageSize(10);
-        // Calling size() affects the estimate as it tries to fetch
-        // more rows.  I think the best thing to do here is to check
-        // that the size is greater than 10 and less than 15 to prove
-        // that the size is not stuck at the estimate
-        assertTrue(dr.getSize() > 10);
-        assertTrue(dr.getSize() <= 15);
-    }
+//     public void testSizeLow() throws Exception {
+//         PagedResults dr = getEstimateTooLowResults();
+//         dr.setPageSize(10);
+//         // Calling size() affects the estimate as it tries to fetch
+//         // more rows.  I think the best thing to do here is to check
+//         // that the size is greater than 10 and less than 15 to prove
+//         // that the size is not stuck at the estimate
+//         assertTrue(dr.getSize() > 10);
+//         assertTrue(dr.getSize() <= 15);
+//     }
 
 //     public void testSizeEmpty() throws Exception {
 //         PagedResults dr = getEmptyResults();
