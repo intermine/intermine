@@ -97,4 +97,18 @@ public class MainFormTest extends TestCase
         assertTrue(errors.isEmpty());
         assertEquals("%a%", value);
     }
+    
+    public void testWildcardConversion() throws Exception {
+        String value = MainForm.wildcardSqlToUser("%a%");
+        assertEquals("wildcardSqlToUser(%a%)", "a", value);
+        
+        value = MainForm.wildcardSqlToUser("a");
+        assertEquals("wildcardSqlToUser(a)", "a", value);
+        
+        value = MainForm.wildcardSqlToUser("a%");
+        assertEquals("wildcardSqlToUser(a%)", "a*", value);
+        
+        value = MainForm.wildcardSqlToUser("%a");
+        assertEquals("wildcardSqlToUser(%a)", "*a", value);
+    }
 }
