@@ -51,8 +51,8 @@
     </fileset>
   </copy>
   
-  <copy todir="${dist.www}/doc/">
-    <fileset dir="${build.www}/doc/">
+  <copy todir="${dist.www}">
+    <fileset dir="${build.www}">
       <include name="**/*.pdf"/>
       <include name="**/*.sxi"/>
       <include name="**/*.png"/>
