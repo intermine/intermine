@@ -54,11 +54,11 @@ public class UniprotFilterTask extends Task
     }
 
     /**
-     * A common separated list of organism names to include in the filter outpue.
+     * A space separated list of NCBI taxon ids to include in the filter output.
      * @param organismStr a comma separated list of organism names
      */
     public void setOrganisms(String organismStr) {
-        StringTokenizer st = new StringTokenizer(organismStr, ",");
+        StringTokenizer st = new StringTokenizer(organismStr, " ");
         while (st.hasMoreTokens()) {
             this.organisms.add(st.nextToken().trim());
         }

@@ -28,7 +28,7 @@ public class UniprotXmlFilterTest extends XMLTestCase
 
     public void testFilter() throws Exception {
         Set organisms = new HashSet();
-        organisms.add("Drosophila melanogaster");
+        organisms.add("7227");
         UniprotXmlFilter filter = new UniprotXmlFilter(organisms);
 
         BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader()

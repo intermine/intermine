@@ -61,11 +61,11 @@ public class UniprotXmlFilter
                 inOrganism = false;
             } else if (trimmed.startsWith("<organism")) {
                 inOrganism = true;
-            } else if (inOrganism && trimmed.startsWith("<name type=\"scientific\">")) {
+            } else if (inOrganism && trimmed.startsWith("<dbReference type=\"NCBI Taxonomy")) {
                 // ignores the possibility of a protein being linked to multiple organisms
-                int start = trimmed.indexOf('>');
-                String orgName = trimmed.substring(start + 1, trimmed.indexOf('<', start));
-                if (!(organisms.contains(orgName))) {
+                int start = trimmed.indexOf("id=\"") + 4;
+                String taxonId = trimmed.substring(start, trimmed.indexOf('"', start));
+                if (!(organisms.contains(taxonId))) {
                     keep = false;
                 }
             }
