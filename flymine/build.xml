@@ -114,6 +114,8 @@
     <pathelement location="${build.model}/ensembl"/>
     <pathelement location="${build.model}/rnai"/>
     <pathelement location="${build.model}/orthologue"/>
+    <pathelement location="${build.model}/phenotype"/>
+    <pathelement location="${build.model}/fulldata"/>
   </path>
 
 
@@ -129,6 +131,7 @@
     <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.resources.test}"/>
     <mkdir dir="${build.model}" />
+    <mkdir dir="${build.model}/fulldata" />
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
 
@@ -200,7 +203,7 @@
  
   <!-- convert ensembl model to OWL -->
   <target name="ensembl-to-owl" depends="convert-ensembl">
-    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true" failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/ensembl/ensembl_model.xml" />
       <arg value="${build.model}/ensembl/ensembl.n3" />
@@ -214,7 +217,7 @@
 
     <!-- combine the ensembl_merge_spec with current genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-       maxmemory="800m">
+       maxmemory="800m" failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -225,7 +228,7 @@
 
     <!-- merge ensembl model with target genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m">
+      maxmemory="800m" failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -249,7 +252,7 @@
 
    <!-- convert chado model to OWL -->
    <target name="chado-to-owl" depends="convert-chado">
-    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true" failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/chado/chado_model.xml" />
       <arg value="${build.model}/chado/chado.n3" />
@@ -263,7 +266,7 @@
 
     <!-- combine the chado merge_spec with current genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -274,7 +277,7 @@
 
     <!-- merge chado model with target genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -298,7 +301,7 @@
 
    <!-- convert MAGE-OM to OWL -->
    <target name="mage-to-owl" depends="convert-mage">
-    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true" failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/mage/mage_model.xml" />
       <arg value="${build.model}/mage/mage.n3" />
@@ -324,7 +327,7 @@
 
     <!-- combine the rnai merge_spec with current genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -335,7 +338,7 @@
 
     <!-- merge rnai model with target genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -351,7 +354,7 @@
   <target name="so-to-owl" depends="prepare-build-model">
     <mkdir dir="${build.model}/so" />
     <copy file="${model}/so/sofa.ontology" todir="${build.model}/so/"/>
-    <java classname="org.intermine.ontology.Dag2Owl" fork="true">
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/so/sofa.ontology" />
       <arg value="${build.model}/so/sofa.n3" />
@@ -365,7 +368,7 @@
 
     <!-- combine the so merge_spec with current genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -376,7 +379,7 @@
 
     <!-- merge so model with target genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -396,7 +399,7 @@
 
     <!-- combine the go merge_spec with current genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -415,7 +418,7 @@
 
     <!-- merge orthologue model with target genomic model -->
     <java classname="org.intermine.ontology.MergeOwl" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
@@ -426,10 +429,43 @@
 
   </target>
 
+  <!-- PHENOTYPE MODEL GENERATION -->
+  <target name="phenotype-to-owl" depends="prepare">
+    <mkdir dir="${build.model}/phenotype/"/>
+    <copy file="${model}/phenotype/phenotype.ontology" todir="${build.model}/phenotype/"/>
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="${build.model}/phenotype/phenotype.ontology" />
+      <arg value="${build.model}/phenotype/phenotype.n3" />
+      <arg value="http://www.flymine.org/model/phenotype#" />
+    </java>
+  </target>
+
+  <target name="merge-phenotype-model" depends="prepare-genomic-model, phenotype-to-owl">
+    <copy file="${model}/phenotype/phenotype_merge_spec.n3" todir="${build.model}/phenotype"/>
+    <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" failonerror="true">
+      <classpath refid="models.class.path"/>
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#"/>
+      <arg value="${build.model}/phenotype/phenotype_merge_spec.n3" />
+      <arg value="http://www.flymine.org/model/genomic#"/>
+      <arg value="N3"/>
+    </java>
+    <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" failonerror="true">
+      <classpath refid="models.class.path"/>
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="http://www.flymine.org/model/genomic#"/>
+      <arg value="${build.model}/phenotype/phenotype.n3" />
+      <arg value="http://www.flymine.org/model/phenotype#"/>
+      <arg value="N3"/>
+    </java>
+  </target>
+
 
   <!-- create merged model from all source OWL ontologies -->
-  <target name="create-production-model" depends="remove-genomic, prepare-build-model, merge-rnai-model,
-       merge-orthologue-model, merge-go-model, merge-ensembl-model, merge-chado-model, merge-so-model" >
+  <target name="create-production-model" depends="remove-genomic, prepare-build-model,
+       merge-orthologue-model, merge-go-model, merge-ensembl-model, merge-chado-model, merge-so-model,
+       merge-phenotype-model, merge-rnai-model">
     <antcall target="create-genomic-model"/>
   </target>
 
@@ -512,7 +548,7 @@
  <!-- translate ensembl drosophila -->
  <target name="translate-ensembl-drosophila" depends="compile-ensembl-java, build-db-ensembl-dros-tgt-items">
     <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="os.ensembl-dros-src-items" />
       <arg value="osw.ensembl-dros-tgt-items" />
@@ -583,7 +619,7 @@
   <!-- translate ensembl anopheles -->
   <target name="translate-ensembl-anopheles" depends="compile-ensembl-java, build-db-ensembl-anoph-tgt-items">
     <java classname="org.flymine.dataconversion.EnsemblDataTranslator" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <classpath refid="models.class.path" />
       <arg value="os.ensembl-anoph-src-items" />
       <arg value="osw.ensembl-anoph-tgt-items" />
@@ -654,7 +690,7 @@
   <!-- Translate Chado data -->
   <target name="translate-chado" depends="compile-chado-java, build-db-chado-target-items">
     <java classname="org.flymine.dataconversion.ChadoDataTranslator" fork="true"
-      maxmemory="800m" >
+      maxmemory="800m"  failonerror="true">
       <!-- <jvmarg value="-Xrunjmp" /> -->
       <classpath refid="models.class.path" />
       <arg value="os.chado-src-items" />
@@ -769,43 +805,139 @@
   <!-- RNAi PIPELINE -->
 
   <!-- Build RNAi src items database -->
-  <target name="build-db-rnai-src-items" depends="prepare-build-model">
+
+  <!-- retrieve rnai data into src items database -->
+  <target name="retrieve-rnai" depends="compile-rnai-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.rnai-src-items"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.rnai-src-items-std"/>
     </ant>
-  </target>
-
-  <!-- retrieve rnai data into src items database -->
-  <target name="retrieve-rnai" depends="build-db-rnai-src-items">
-    <taskdef name="retrieve-rnai" classname="org.intermine.dataconversion.FileConverterTask">
+    <taskdef name="retrieve-rnai" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-rnai file="/shared/data/RNAi/CE_RNAi.txt" source="rnai" osName="osw.rnai-src-items"/>
+    <retrieve-rnai file="/shared/data/RNAi/all.txt" clsName="org.flymine.dataconversion.RNAiConverter" osName="osw.rnai-src-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.rnai-src-items"/>
+      <property name="db.name" value="db.common-src-items"/>
     </ant>
   </target>
 
+ <target name="translate-rnai" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.rnai-tgt-items-std"/>
+    </ant>
+    <java classname="org.intermine.dataconversion.DataTranslator" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.rnai-src-items" />
+      <arg value="osw.rnai-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
 
-  <!-- LOAD STATIC ORGANISMS DATA -->
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+  </target>
+
+  <!-- Load data from rnai-tgt-items into production -->
+  <target name="load-rnai">
+    <taskdef name="load-rnai" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-rnai integrationWriter="integration.production" source="os.rnai-translated" sourceName="rnai"/>
+  </target>
+
+
+  <!-- PHENOTYPE PIPELINE -->
+
+  <!-- load phenotype data -->
+  <target name="retrieve-phenotype" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.phenotype-src-items-std"/>
+    </ant>
+    <taskdef name="retrieve-phenotype" classname="org.intermine.task.DagConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-phenotype file="${model}/phenotype/phenotype.ontology" osName="osw.phenotype-src-items" namespace="http://www.flymine.org/model/phenotype#"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+    </ant>
+  </target>
+
+ <target name="translate-phenotype" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.phenotype-tgt-items-std"/>
+    </ant>
+    <java classname="org.intermine.dataconversion.DataTranslator" fork="true"
+      maxmemory="800m"  failonerror="true">
+      <classpath refid="models.class.path" />
+      <arg value="os.phenotype-src-items" />
+      <arg value="osw.phenotype-tgt-items" />
+      <arg value="${build.model}/genomic/genomic.n3" />
+      <arg value="N3" />
+      <arg value="http://www.flymine.org/model/genomic#" />
+    </java>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+  </target>
+
+  <target name="load-phenotype">
+    <taskdef name="load-phenotype" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-phenotype integrationWriter="integration.production" source="os.phenotype-translated" sourceName="phenotype"/>
+  </target>
+
+
+
+  <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
-  <target name="load-organisms" depends="prepare-build-model">
+  <target name="load-static" depends="prepare-build-model">
     <taskdef
       name="load-xml-data"
       classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <copy file="/shared/data/organisms/organisms.xml" todir="${build.tmp}"/>
-
-    <load-xml-data integrationWriter="integration.production" xmlFile="${build.tmp}/organisms.xml" sourceName="organisms">
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/databases.xml" sourceName="static">
+      <classpath refid="models.class.path"/>
+    </load-xml-data>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/organisms.xml" sourceName="static">
+      <classpath refid="models.class.path"/>
+    </load-xml-data>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/publications.xml" sourceName="static">
+      <classpath refid="models.class.path"/>
+    </load-xml-data>
+    <load-xml-data integrationWriter="integration.production" xmlFile="/shared/data/static/rnai-codes.xml" sourceName="static">
       <classpath refid="models.class.path"/>
     </load-xml-data>
   </target>
@@ -819,6 +951,7 @@
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.production"/>
+      <property name="objectstore.name" value="os.production"/>
     </ant>
   </target>
 
@@ -849,7 +982,7 @@
                                            build-ensembl-drosophila-production,
                                            build-ensembl-anopheles-production,
                                            build-orthologues-production,
-                                           load-organisms">
+                                           load-static">
 
     <!-- analyse database -->
     <taskdef name="analyse-db" classname="org.intermine.task.AnalyseDbTask">
@@ -1134,7 +1267,9 @@
     <dot directory="${build.model}/ensembl" packagename="org.flymine.model.ensembl" file="ensembl.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
   </target>
 
-  <target name="dot-genomic" depends="compile-genomic-model">
+<!--  <target name="dot-genomic" depends="compile-genomic-model">
+  -->
+  <target name="dot-genomic">
     <dot directory="${build.model}/genomic" packagename="org.flymine.model.genomic" file="genomic.dot" omit="org.intermine.model.InterMineObject,java.lang.Object" boring=""/>
   </target>
 

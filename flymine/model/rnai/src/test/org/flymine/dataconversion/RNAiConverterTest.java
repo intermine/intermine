@@ -25,11 +25,13 @@ public class RNAiConverterTest extends TestCase
 {
     public void testProcess() throws Exception {
         String ENDL = "\n";
-        String input = ",,,Gene ID,Phenotype,,CGC-approved gene name,,,,,,,Other gene name 1" + ENDL
-            + ",,,AC7.1,Sck,,,,,,,," + ENDL
-            + ",,,AC7.1,Ste,,,,,,,," + ENDL
-            + ",,,AC7.2a,WT,,soc-2,,,,,,,sur-8," + ENDL
-            + ",,,AC7.2a,WT,,soc-2,,,,,,,sur-8," + ENDL;
+        String input = ",,Taxon ID,Gene ID,Phenotype,,CGC-approved gene name,PubMedId,,,,,,Other gene name 1,Other gene name2" + ENDL
+            + ",,6239,AC7.1,Sck,,,pmid:12529635,,,,," + ENDL
+            + ",,6239,AC7.1,Ste,,,pmid:12529635,,,,," + ENDL
+            + ",,6239,AC7.2a,WT,,soc-2,pmid:12529635,,,,,,sur-8," + ENDL
+            + ",,6239,AC7.2a,WT,,soc-2,pmid:12529635,,,,,,sur-8," + ENDL
+            + ",,6239,Flibble,WT,,,pmid:876,," + ENDL
+            + ",,6239,Flibble,WT,,,pmid:678,," + ENDL;
         input = input.replaceAll(",", "\t"); //just used commas for readibility
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());

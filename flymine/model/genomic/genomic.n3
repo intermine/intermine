@@ -28,9 +28,8 @@
     rdfs:domain :BioEntity ;
     rdfs:range :Synonym .
 
-:BioEntity__properties a owl:ObjectProperty ;
-    rdfs:domain :BioEntity ;
-    rdfs:range :BioProperty .
+:BioEntity__annotations a owl:ObjectProperty ;
+    owl:inverseOf :Annotation__subject .
 
 :BioEntity__evidence a owl:ObjectProperty;
     rdfs:domain :BioEntity;
@@ -46,14 +45,38 @@
 :BioEntity__objects a owl:ObjectProperty;
     owl:inverseOf :Relation__subject .
 
+# ------------ Annotation - a three-way cross between BioEntity, BioProperty, and Evidence ----------
+
+:Annotation a owl:Class ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Annotation__subject ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Annotation__property ] .
+
+:Annotation__subject a owl:ObjectProperty ;
+    rdfs:domain :Annotation ;
+    rdfs:range :BioEntity .
+
+:Annotation__evidence a owl:ObjectProperty ;
+    rdfs:domain :Annotation ;
+    rdfs:range :Evidence .
+
+:Annotation__property a owl:ObjectProperty ;
+    rdfs:domain :Annotation ;
+    rdfs:range :BioProperty .
+
 # ------------ BioProperty represents any property of a BioEntity ------------
 
 # any property applied to a BioEntity with associated evidence(s)
 
 :BioProperty a owl:Class.
 
-:BioProperty__subjects a owl:ObjectProperty ;
-    owl:inverseOf :BioEntity__properties .
+:BioProperty__annotations a owl:ObjectProperty ;
+    owl:inverseOf :Annotation__property .
 
 :BioProperty__evidence a owl:ObjectProperty ;
     rdfs:domain :BioProperty ;

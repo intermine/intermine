@@ -1,3 +1,4 @@
+# RNAI model - RNAIConverter produces this
 @prefix :     <http://www.flymine.org/model/rnai#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
@@ -24,13 +25,36 @@
     rdfs:domain :Gene;
     rdfs:range :Organism.
 
-:Gene__phenotypes a owl:ObjectProperty;
-    rdfs:domain :Gene;
-    rdfs:range :Phenotype.
+:Gene__annotations a owl:ObjectProperty;
+    owl:inverseOf :Annotation__subject .
 
 :Gene__synonyms a owl:ObjectProperty;
     rdfs:domain :Gene;
     rdfs:range :Synonym.
+
+# Annotation
+
+:Annotation a owl:Class ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Annotation__subject ] ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :Annotation__property ] .
+
+:Annotation__subject a owl:ObjectProperty ;
+    rdfs:domain :Annotation ;
+    rdfs:range :Gene .
+
+:Annotation__evidence a owl:ObjectProperty ;
+    rdfs:domain :Annotation ;
+    rdfs:range :ExperimentalResult .
+
+:Annotation__property a owl:ObjectProperty ;
+    rdfs:domain :Annotation ;
+    rdfs:range :Phenotype .
 
 #Synonym
 
@@ -63,12 +87,8 @@
     rdfs:domain :Phenotype;
     rdfs:range xsd:string.
 
-:Phenotype__subjects a owl:ObjectProperty;
-    owl:inverseOf :Gene__phenotypes.
-
-:Phenotype__evidence a owl:ObjectProperty;
-    rdfs:domain :Phenotype;
-    rdfs:range :RNAiExperiment.
+:Phenotype__annotations a owl:ObjectProperty;
+    owl:inverseOf :Annotation__property.
 
 #RNAiExperiment
 
@@ -154,6 +174,13 @@
     rdfs:domain :Database;
     rdfs:range xsd:string.
 
-:Database__url a owl:DatatypeProperty;
-    rdfs:domain :Database;
-    rdfs:range xsd:anyURI.
+# ExperimentalResult
+:ExperimentalResult a owl:Class ;
+    rdfs:subClassOf
+      [ a owl:Restriction ;
+        owl:maxCardinality "1" ;
+        owl:onProperty :ExperimentalResult__experiment ] .
+
+:ExperimentalResult__experiment a owl:ObjectProperty ;
+    rdfs:domain :ExperimentalResult ;
+    rdfs:range :RNAiExperiment .

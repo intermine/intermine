@@ -99,3 +99,51 @@ $phenotype ; null
  %tissue polarity ; FBbt:0010282
  %developmental rate defective ; FBbt:0010283
  %wound healing defective ; FBbt:0010284
+
+$phenotype qualifier ; null
+ %recessive ; FBbt:0010141
+ %dominant ; FBbt:0010142
+ %codominant ; FBbt:0010143
+ %semidominant ; FBbt:0010144
+ %maternal effect ; FBbt:0010145
+  %rescuable maternal effect ; FBbt:0010146
+  %non-rescuable maternal effect ; FBbt:0010147
+ %paternal effect ; FBbt:0010148
+ %sex limited ; FBbt:0010149
+  %male limited ; FBbt:0010150
+  %female limited ; FBbt:0010151
+ %conditional ; FBbt:0010152
+  %conditional ts ; FBbt:0010153
+  %conditional cs ; FBbt:0010154
+  %conditional RU486 ; FBbt:0010155
+  %conditional tetracycline ; FBbt:0010156
+ %homeotic ; FBbt:0010157
+ %embryonic ; FBbt:0010158
+  %gap ; FBbt:0010159
+  %terminal ; FBbt:0010160
+  %posterior ; FBbt:0010161
+  %pair rule ; FBbt:0010162
+  %segment polarity ; FBbt:0010163
+  %dorsal-ventral polarity ; FBbt:0010164
+  %neurogenic ; FBbt:0010165
+ %larval ; FBbt:0010166
+ %prepupal ; FBbt:0010167
+ %pupal ; FBbt:0010168
+ %pharate adult ; FBbt:0010169
+ %adult ; FBbt:0010170
+ %male ; FBbt:0010171
+ %female ; FBbt:0010172
+ %germ-line clone ; FBbt:0010173
+ %somatic clone ; FBbt:0010174
+ %polyphasic ; FBbt:0010175
+ %cell autonomous ; FBbt:0010176
+ %cell non-autonomous ; FBbt:0010177
+ %fully ; FBbt:0010178
+ %partially ; FBbt:0010179
+ %good ; FBbt:0010180
+ %poor ; FBbt:0010181
+ %reduced ; FBbt:0010182
+ %slow ; FBbt:0010183
+ %fast ; FBbt:0010184
+ %intermediate ; FBbt:0010185
+
