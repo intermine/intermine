@@ -335,9 +335,10 @@ a.webapplink , a.webapplink:link, a.webapplink:visited, a.webapplink:active, a.w
 .box .heading, .heading2 {
   border: 1px solid #888;
   background-color: #f5f5f5;
-  padding: 0px;
+  padding: 1px;
   padding-left: 5px;
   margin: 5px;
+  margin-bottom: -1px;
   font-size: 13px;
   color: black;
   white-space: nowrap;
@@ -353,9 +354,10 @@ a.webapplink , a.webapplink:link, a.webapplink:visited, a.webapplink:active, a.w
 }
 
 .box .body {
-  padding: 0px;
-  margin: 0px 10px 0px 10px;
   font-size: 12px;
+  margin: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .boxbody {
@@ -424,3 +426,10 @@ table.box th.title {
   padding-bottom: 9px;
 }
 
+.startbutton {
+  border: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+  padding: 3px 6px 4px 6px;
+  margin-top: 20px;
+  font-size: 15px;
+}
