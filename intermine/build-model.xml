@@ -323,8 +323,7 @@
     <taskdef name="create-indexes" classname="org.intermine.task.CreateIndexesTask">
       <classpath refid="class.path"/>
     </taskdef>
-    <create-indexes database="${db.name}" model="${model.name}" 
-                    attributeIndexes="${create.attribute.indexes}"/>
+    <create-indexes alias="${os.alias}" attributeIndexes="${create.attribute.indexes}"/>
   </target>
 
   <target name="precompute-queries" depends="compile-java, summarise-objectstore">
