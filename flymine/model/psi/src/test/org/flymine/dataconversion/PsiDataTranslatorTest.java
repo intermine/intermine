@@ -31,38 +31,35 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.dataconversion.DataTranslator;
-import org.intermine.dataconversion.DataConversionTestCase;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.XmlConverter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullRenderer;
 
-public class PsiDataTranslatorTest extends DataConversionTestCase {
+public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
     public void setUp() throws Exception {
         super.setUp();
-        expectedItems = getExpectedItems();
-        modelName = "genomic";
     }
 
     public void testTranslate() throws Exception {
         Collection srcItems = getSrcItems();
-        Map itemMap = writeItems(srcItems);
         // print out source items XML - result of running XmlConverter on PSI XML
         // FileWriter writer = new FileWriter(new File("src.xml"));
         // writer.write(FullRenderer.render(srcItems));
         // writer.flush(); writer.close();
-        DataTranslator translator = new PsiDataTranslator(new MockItemReader(itemMap),
+        DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
                                                               getOwlModel(), tgtNs);
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        assertEquals(new HashSet(expectedItems), tgtIw.getItems());
+        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
-    private Collection getSrcItems() throws Exception {
+    protected Collection getSrcItems() throws Exception {
         Model psiModel = Model.getInstanceByName("psi");
         Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/PsiDataTranslatorTest_src.xml")));
         MockItemWriter mockIw = new MockItemWriter(new HashMap());
@@ -84,5 +81,9 @@ public class PsiDataTranslatorTest extends DataConversionTestCase {
         OntModel ont = ModelFactory.createOntologyModel();
         ont.read(reader, null, "N3");
         return ont;
+    }
+
+    protected String getModelName() {
+        return "genomic";
     }
 }

@@ -23,17 +23,15 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import org.intermine.xml.full.FullParser;
-import org.intermine.dataconversion.DataConversionTestCase;
+import org.intermine.dataconversion.TargetItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 
-public class InparanoidConverterTest extends DataConversionTestCase
+public class InparanoidConverterTest extends TargetItemsTestCase
 {
     private String ENDL = System.getProperty("line.separator");
 
     public void setUp() throws Exception {
         super.setUp();
-        expectedItems = getExpectedItems();
-        modelName = "genomic";
     }
 
     public void testProcess() throws Exception {
@@ -52,19 +50,14 @@ public class InparanoidConverterTest extends DataConversionTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         new InparanoidConverter(new BufferedReader(new StringReader(input)), itemWriter).process();
 
-        assertEquals(new HashSet(expectedItems), itemWriter.getItems());
+        assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
     }
 
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/InparanoidConverterTest.xml"));
     }
 
-    protected OntModel getOwlModel() {
-        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("genomic.n3"));
-
-        OntModel ont = ModelFactory.createOntologyModel();
-        ont.read(reader, null, "N3");
-        return ont;
+    protected String getModelName() {
+        return "genomic";
     }
-
 }
