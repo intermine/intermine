@@ -90,7 +90,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Unable to find webconfig-model.xml");
         }
         try {
-            servletContext.setAttribute("webconfig", WebConfig.parse(is));
+            servletContext.setAttribute(Constants.WEBCONFIG, WebConfig.parse(is));
         } catch (Exception e) {
             throw new ServletException("Unable to parse webconfig-model.xml", e);
         }
@@ -186,7 +186,7 @@ public class InitialiserPlugin implements PlugIn
         throws Exception {
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
-        WebConfig wc = (WebConfig) servletContext.getAttribute("webconfig");
+        WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         Map displayersMap = new HashMap();
 
