@@ -143,6 +143,9 @@
     <action path="/contextHelp"
             forward="contextHelp.page"/>
     
+    <action path="/templateProblems"
+            forward="templateProblems.page"/>
+    
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
