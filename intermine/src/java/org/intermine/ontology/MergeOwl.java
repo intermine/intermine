@@ -45,6 +45,7 @@ public class MergeOwl
     private final String tgtNs;
     protected Map equiv;
     protected Map subMap;
+    protected boolean buildRestrictedSubclasses;
 
     private static final Logger LOG = Logger.getLogger(MergeOwl.class);
 
@@ -53,10 +54,13 @@ public class MergeOwl
      * a namespace URI for the target model.
      * @param mergeSpec a Reader pointing to and OWL file defining the OWL merge
      * @param tgtNs a String representing the URI of the target model namespace
+     * @param buildRestrictedSubclasses whether to bother with restricted subclasses
      * @throws IOException if problem with Reader occurs
      */
-    public MergeOwl(Reader mergeSpec, String tgtNs) throws IOException {
+    public MergeOwl(Reader mergeSpec, String tgtNs,
+            boolean buildRestrictedSubclasses) throws IOException {
         this.tgtNs = tgtNs;
+        this.buildRestrictedSubclasses = buildRestrictedSubclasses;
         MergeSpec2Owl m = new MergeSpec2Owl();
         tgtModel = m.process(mergeSpec);
     }
@@ -101,15 +105,17 @@ public class MergeOwl
         equiv = OntologyUtil.buildEquivalenceMap(tgtModel, srcNs);
 
         // build map from source class to restricted subclasses
-        LOG.info("building restricted subclass map");
         subMap = new HashMap();
-        Iterator clsIter = srcModel.listClasses();
-        while (clsIter.hasNext()) {
-            OntClass srcCls = (OntClass) clsIter.next();
-            if (!srcCls.isAnon()) {
-                OntClass tgtCls = tgtModel.getOntClass(srcCls.getURI());
-                if (tgtCls != null) {
-                    subMap.put(tgtCls, OntologyUtil.findRestrictedSubclasses(tgtModel, srcCls));
+        if (buildRestrictedSubclasses) {
+            LOG.info("building restricted subclass map");
+            Iterator clsIter = srcModel.listClasses();
+            while (clsIter.hasNext()) {
+                OntClass srcCls = (OntClass) clsIter.next();
+                if (!srcCls.isAnon()) {
+                    OntClass tgtCls = tgtModel.getOntClass(srcCls.getURI());
+                    if (tgtCls != null) {
+                        subMap.put(tgtCls, OntologyUtil.findRestrictedSubclasses(tgtModel, srcCls));
+                    }
                 }
             }
         }
@@ -237,9 +243,9 @@ public class MergeOwl
      * @throws Exception if anything goes wrong
      */
     public static void main(String[] args) throws Exception {
-        if (args.length != 5) {
+        if (args.length != 6) {
             throw new Exception("Usage: MergeOwl tgt_model.n3 tgt_namespace src_model "
-                                + "src_namespace src_format");
+                                + "src_namespace src_format do_subclasses(y|n)");
         }
 
         String tgtModelName = args[0];
@@ -248,8 +254,18 @@ public class MergeOwl
         String srcNs = args[3];
         String srcFormat = args[4];
 
+        boolean buildRestrictedSubclasses;
+        if ("y".equals(args[5])) {
+            buildRestrictedSubclasses = true;
+        } else if ("n".equals(args[5])) {
+            buildRestrictedSubclasses = false;
+        } else {
+            throw new Exception("Usage: MergeOwl tgt_model.n3 tgt_namespace src_model "
+                                + "src_namespace src_format do_subclasses(y|n)");
+        }
+
         File tgtModel = new File(tgtModelName);
-        MergeOwl merger = new MergeOwl(new FileReader(tgtModel), tgtNs);
+        MergeOwl merger = new MergeOwl(new FileReader(tgtModel), tgtNs, buildRestrictedSubclasses);
         merger.addToTargetOwl(new FileReader(new File(srcModelName)), srcNs, srcFormat);
         OntModel ont = merger.getTargetModel();
         ont.write(new FileWriter(tgtModel), "N3");

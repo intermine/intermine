@@ -14,16 +14,18 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -38,7 +40,22 @@ public class Dag2Owl
 {
     protected String namespace;
     protected OntModel ontModel;
-    protected Map nameToTerm = new HashMap();
+    protected Map nameToResource = new HashMap();
+    protected List statements = new ArrayList();
+
+    protected static final String OWL_NS = "http://www.w3.org/2002/07/owl#";
+    protected static final String RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    protected static final String RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
+
+    protected Resource owlClass;
+    protected Property owlInverseOf;
+    protected Resource owlObjectProperty;
+    protected Property rdfType;
+    protected Property rdfsComment;
+    protected Property rdfsDomain;
+    protected Property rdfsLabel;
+    protected Property rdfsRange;
+    protected Property rdfsSubClassOf;
 
     /**
      * Constructor
@@ -47,6 +64,15 @@ public class Dag2Owl
     public Dag2Owl(String namespace) {
         this.namespace = OntologyUtil.correctNamespace(namespace);
         ontModel = ModelFactory.createOntologyModel();
+        owlClass = ontModel.createResource(OWL_NS + "Class");
+        owlInverseOf = ontModel.createProperty(OWL_NS + "inverseOf");
+        owlObjectProperty = ontModel.createResource(OWL_NS + "ObjectProperty");
+        rdfType = ontModel.createProperty(RDF_NS + "type");
+        rdfsComment = ontModel.createProperty(RDFS_NS + "comment");
+        rdfsDomain = ontModel.createProperty(RDFS_NS + "domain");
+        rdfsLabel = ontModel.createProperty(RDFS_NS + "label");
+        rdfsRange = ontModel.createProperty(RDFS_NS + "range");
+        rdfsSubClassOf = ontModel.createProperty(RDFS_NS + "subClassOf");
     }
 
     /**
@@ -65,45 +91,51 @@ public class Dag2Owl
         for (Iterator i = rootTerms.iterator(); i.hasNext(); ) {
             process((DagTerm) i.next());
         }
+        ontModel.add(statements);
     }
 
     /**
-     * Convert a (root) DagTerm to a OntClass, recursing through children
+     * Convert a (root) DagTerm to a Resource, recursing through children
      * @param term a DagTerm
      * @return the corresponding OntClass
      */
-    public OntClass process(DagTerm term) {
+    public Resource process(DagTerm term) {
         System.out.print("Processing term " + term.getName() + ": ");
-        OntClass cls = (OntClass) nameToTerm.get(term.getName());
-        //OntClass cls = ontModel.getOntClass(generateClassName(term));
+        Resource cls = (Resource) nameToResource.get(term.getName());
         if (cls == null) {
             long start = System.currentTimeMillis();
-            cls = ontModel.createClass(generateClassName(term));
+            cls = ontModel.createResource(generateClassName(term));
             System .out.println("createClass: " + (System.currentTimeMillis() - start) + " ms");
-            cls.setLabel(term.getName(), null);
+            statements.add(ontModel.createStatement(cls, rdfType, owlClass));
+            statements.add(ontModel.createStatement(cls, rdfsLabel, term.getName()));
             // set synonyms
             if (term.getSynonyms().size() > 0) {
-                cls.addComment("synonyms=" + StringUtil.join(term.getSynonyms(), ", "), null);
+                statements.add(ontModel.createStatement(cls, rdfsComment,
+                            "synonyms=" + StringUtil.join(term.getSynonyms(), ", ")));
             }
             // create partof property
             for (Iterator i = term.getComponents().iterator(); i.hasNext(); ) {
                 DagTerm component = (DagTerm) i.next();
-                ObjectProperty prop = ontModel.createObjectProperty(
-                                                generatePropertyName(term, component));
-                prop.setDomain(cls);
-                prop.setRange(process(component));
-                ObjectProperty revRef = ontModel.createObjectProperty(
-                                                generatePropertyName(component, term));
-                revRef.addInverseOf(prop);
+                Resource range = process(component);
+                Resource prop = ontModel.createResource(generatePropertyName(term, component));
+                statements.add(ontModel.createStatement(prop, rdfType, owlObjectProperty));
+                statements.add(ontModel.createStatement(prop, rdfsDomain, cls));
+                statements.add(ontModel.createStatement(prop, rdfsRange, range));
+
+                Resource revProp = ontModel.createResource(generatePropertyName(component, term));
+                statements.add(ontModel.createStatement(revProp, rdfType, owlObjectProperty));
+                statements.add(ontModel.createStatement(revProp, owlInverseOf, prop));
             }
             // set subclasses
             for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
-                cls.addSubClass(process((DagTerm) i.next()));
+                DagTerm subTerm = (DagTerm) i.next();
+                Resource subCls = process(subTerm);
+                statements.add(ontModel.createStatement(subCls, rdfsSubClassOf, cls));
             }
+            nameToResource.put(term.getName(), cls);
         } else {
             System .out.println("already present");
         }
-        nameToTerm.put(term.getName(), cls);
         return cls;
     }
 

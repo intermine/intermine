@@ -149,7 +149,7 @@ public class DefinitiveOwlTest extends XMLTestCase
         OntModel testMergeSpec = ModelFactory.createOntologyModel();
         testMergeSpec.read(new StringReader(mergeSpec), null, "N3");
 
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNs);
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNs, true);
         merger.addToTargetOwl(new StringReader(src2), src2Ns, "N3");
         merger.addToTargetOwl(new StringReader(src1), src1Ns, "N3");
 

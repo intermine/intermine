@@ -33,7 +33,7 @@ public class MergeOwlTest extends TestCase
     }
 
     public void testConstruct() throws Exception {
-        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace, true);
 
         assertNotNull(merger.tgtModel);
         assertNotNull(merger.tgtModel.getOntClass(tgtNamespace + "Company"));
@@ -41,7 +41,7 @@ public class MergeOwlTest extends TestCase
     }
 
     public void testAddToTargetOwl() throws Exception {
-        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace, true);
 
         // add multiple sources
         merger.addToTargetOwl(new StringReader(getSrc1()), src1Namespace, "N3");
@@ -57,7 +57,7 @@ public class MergeOwlTest extends TestCase
 
 
     public void testAddToTargetOwlFormat() throws Exception {
-        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace, true);
         try {
             merger.addToTargetOwl(new StringReader(getSrc1()), src1Namespace, "wrong");
             fail("Expected IllegalArgumentException");
@@ -66,7 +66,7 @@ public class MergeOwlTest extends TestCase
     }
 
     public void testMergeByEquivalenceRdfType() throws Exception {
-        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace, true);
 
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(getSrc1()), null, "N3");
@@ -119,7 +119,7 @@ public class MergeOwlTest extends TestCase
             + "             rdfs:domain :Company ;" + ENDL
             + "             rdfs:range :CEO ." + ENDL;
 
-        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(getMergeSpec()), tgtNamespace, true);
 
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(owl), null, "N3");
@@ -145,7 +145,7 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":Test a owl:Class ." + ENDL;
 
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace, true);
 
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(src1Str), null, "N3");
@@ -174,7 +174,7 @@ public class MergeOwlTest extends TestCase
             + ENDL
             + ":Test a owl:Class ." + ENDL;
 
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace, true);
         merger.equiv = new HashMap();
 
         OntModel src1 = ModelFactory.createOntologyModel();
@@ -205,7 +205,7 @@ public class MergeOwlTest extends TestCase
             + "      rdfs:range rdfs:Literal ." + ENDL
             + ":TestIndividual a owl:Individual ." + ENDL;
 
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace, true);
         OntModel src1 = ModelFactory.createOntologyModel();
         src1.read(new StringReader(src1Str), null, "N3");
 
@@ -306,7 +306,7 @@ public class MergeOwlTest extends TestCase
             + ":Organisation__name a owl:DatatypeProperty ;" + ENDL
             + "        owl:equivalentProperty src:organisationName ." + ENDL;
 
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace, true);
         OntModel src = ModelFactory.createOntologyModel();
         src.read(new StringReader(srcStr), null, "N3");
 
@@ -408,7 +408,7 @@ public class MergeOwlTest extends TestCase
             + "            ] ." + ENDL;
 
 
-        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace);
+        MergeOwl merger = new MergeOwl(new StringReader(mergeSpec), tgtNamespace, true);
         OntModel src = ModelFactory.createOntologyModel();
         src.read(new StringReader(srcStr), null, "N3");
 
