@@ -593,7 +593,7 @@
   <!-- create merged model from all source OWL ontologies -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
        merge-shortcuts, merge-orthologue-model, merge-psi-model, merge-rnai-model, merge-ensembl-model, 
-       merge-phenotype-model, merge-go-model, merge-mage-model">
+       merge-phenotype-model, merge-go-model, merge-so-model">
     <antcall target="create-genomic-model"/>
   </target>
 
