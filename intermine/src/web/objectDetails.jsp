@@ -128,6 +128,7 @@ Attributes:<br/>
           <td>
             <c:set var="object_bak" value="${object}"/>
             <c:set var="object" value="${object.object}" scope="request"/>
+            <c:set var="cld" value="${cld}" scope="request"/>
             <tiles:insert beanName="displayer" beanProperty="src"/><br/>
             <c:set var="object" value="${object_bak}"/>
           </td>
