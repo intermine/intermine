@@ -13,11 +13,13 @@ package org.intermine.web;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
@@ -25,6 +27,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.struts.upload.FormFile;
 
 /**
  * An action that makes a bag from text.
@@ -52,37 +55,50 @@ public class BuildBagAction extends LookupDispatchAction
                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
         InterMineBag bag = new InterMineBag();
         String trimmedText = buildBagForm.getText().trim();
 
         if (trimmedText.length() == 0) {
-
+            FormFile formFile = buildBagForm.getFormFile();
+            if (formFile.getFileName() == null || formFile.getFileName().length() == 0) {
+                ActionMessages actionMessages = new ActionMessages();
+                actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                                   new ActionError("bagBuild.noBagToSave"));
+                saveMessages(request, actionMessages);
+                return mapping.findForward("buildBag");
+            } else {
+                BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(formFile.getInputStream()));
+                
+                StringBuffer buffer = new StringBuffer();
+                String thisLine;
+                while ((thisLine = reader.readLine()) != null) {
+                    StringTokenizer st = new StringTokenizer(thisLine, " \t");
+                    while (st.hasMoreTokens()) {
+                        String token = st.nextToken();
+                        bag.add(token);
+                    }
+                }
+            }
         } else {
-            for (StringTokenizer st = new StringTokenizer(trimmedText, " \t");
-                 st.hasMoreTokens();) {
+            StringTokenizer st = new StringTokenizer(trimmedText, " \t");
+            while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-
                 bag.add(token);
             }
         }
 
-        String newBagName = "new_bag";
-
-        if (savedBags == null) {
-            savedBags = new LinkedHashMap();
-            session.setAttribute(Constants.SAVED_BAGS, savedBags);
-        }
-
+        String newBagName = buildBagForm.getBagName();
+        Map savedBags = BagHelper.getSavedBags(session);
         BagHelper.saveBag(bag, newBagName, savedBags);
 
         String forwardPath = mapping.findForward("bagDetails").getPath() + "?bagName=" + newBagName;
 
         ActionMessages actionMessages = new ActionMessages();
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                           new ActionError("bagBuilder.saved", newBagName));
+                           new ActionError("bagBuild.saved", newBagName));
         saveMessages(request, actionMessages);
 
         return new ActionForward(forwardPath);
@@ -96,7 +112,7 @@ public class BuildBagAction extends LookupDispatchAction
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("bagBuilder.makeStringBag", "makeStringBag");
+        map.put("bagBuild.makeStringBag", "makeStringBag");
         return map;
     }
 }
