@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 
 import org.flymine.FlyMineException;
 import org.flymine.util.TypeUtil;
+import org.flymine.modelproduction.acedb.AceModelParser;
 
 /**
  * DataLoader for AceDB data
@@ -70,7 +71,9 @@ public class AceDataLoader extends DataLoader
                 String clazzName = (String) clazzIter.next();
                 packageName = TypeUtil.packageName(clazzName);
 
-                AceURL objURL = source.relativeURL(TypeUtil.unqualifiedName(clazzName));
+                String aceClazzName = AceModelParser
+                    .unformatAceName(TypeUtil.unqualifiedName(clazzName));
+                AceURL objURL = source.relativeURL(TypeUtil.unqualifiedName(aceClazzName));
                 AceSet fetchedAceObjects = (AceSet) Ace.fetch(objURL);
                 if (fetchedAceObjects != null) {
                     Collection objects = processAceObjects(fetchedAceObjects);
@@ -129,7 +132,8 @@ public class AceDataLoader extends DataLoader
         }
         Object currentObject = null;
         try {
-            String clazzName = ((AceObject) aceObject).getClassName();
+            String clazzName = AceModelParser.formatAceName(((AceObject) aceObject)
+                                                            .getClassName());
             if (iw != null) {
                 clazzName = this.packageName + "." + clazzName;
             }
