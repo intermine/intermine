@@ -11,10 +11,12 @@
     
     <xsl:for-each select="$items/item">
       <div class="news-item">
-        <xsl:if test="title">
-          <div class="news-title"><xsl:value-of select="title"/></div>
-        </xsl:if>
-        <div class="news-date"><xsl:value-of select="pubDate"/></div>
+        <div class="news-item-header">
+          <xsl:if test="title">
+            <div class="news-title"><xsl:value-of select="title"/></div>
+          </xsl:if>
+          <div class="news-date"><xsl:value-of select="pubDate"/></div>
+        </div>
         <p><xsl:value-of select="description" disable-output-escaping="yes"/></p>
       </div>
     </xsl:for-each>
