@@ -1,6 +1,7 @@
 package org.flymine.objectstore;
 
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.Results;
 
 /**
  * Gets the Results of a Query from an underlying store.
