@@ -27,6 +27,7 @@ import org.intermine.model.fulldata.Reference;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -41,6 +42,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheHoldingArrayList;
 import org.intermine.util.CacheMap;
+import org.intermine.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
@@ -52,6 +54,18 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
 {
+    /**
+     * This String should be used to construct item path rules that refer to the Item identifier
+     * field, rather than the object field called "identifier". The test used to determine
+     * whether a path rule refers to this String is by Object reference equality (==).
+     */
+    public static final String IDENTIFIER = "some random string";
+    /**
+     * This String should be used to construct item path rules that refer to the Item className
+     * field, rather than the object field called "className". The test used to determine
+     * whether a path rule refers to this String is by Object reference equality (==).
+     */
+    public static final String CLASSNAME = "another random string";
     private static final Logger LOG = Logger.getLogger(ObjectStoreItemPathFollowingImpl.class);
 
     Map descriptiveCache = Collections.synchronizedMap(new CacheMap(
@@ -141,9 +155,19 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
             Iterator descrIter = description.iterator();
             while (descrIter.hasNext()) {
                 FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
-                if ((f.getFieldName().equals("identifier") || f.getFieldName().equals("className"))
+                if (f.isReference() && (f.getFieldName() == IDENTIFIER)) {
+                    QueryField qf = new QueryField(item, "identifier");
+                    String[] refids = StringUtil.split(f.getValue(), " ");
+                    List refidList = new ArrayList();
+                    for (int i = 0; i < refids.length; i++) {
+                        refidList.add(refids[i]);
+                    }
+                    BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, refidList);
+                    cs.addConstraint(bc);
+                } else if (((f.getFieldName() == IDENTIFIER) || (f.getFieldName() == CLASSNAME))
                         && (!f.isReference())) {
-                    QueryField qf = new QueryField(item, f.getFieldName());
+                    QueryField qf = new QueryField(item, (f.getFieldName() == IDENTIFIER
+                                ? "identifier" : "className"));
                     SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS,
                             new QueryValue(f.getValue()));
                     cs.addConstraint(c);
@@ -166,8 +190,8 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 }
             }
             q.setConstraint(cs);
-            //LOG.debug("Fetching Items by description: " + description + ", query = "
-            //        + q.toString());
+            LOG.debug("Fetching Items by description: " + description + ", query = "
+                    + q.toString());
             retval = new SingletonResults(q, os, os.getSequence());
             descriptiveCache.put(description, retval);
             if (misses % 1000 == 0) {
@@ -207,8 +231,17 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                         constraints.add(constraint);
                     } catch (IllegalArgumentException e) {
                         // Alright - the item didn't match the prefetch info. It's only a hint.
+                        /*StringWriter sw = new StringWriter();
+                        try {
+                            PrintWriter pw = new PrintWriter(sw);
+                            e.printStackTrace(pw);
+                            pw.close();
+                            sw.close();
+                        } catch (IOException e2) {
+                            LOG.error("IOException while creating stack trace");
+                        }
                         LOG.warn("IllegalArgumentException while finding constraint for " + desc
-                                + " applied to " + item);
+                                + " applied to " + item + " - Exception: " + sw.toString());*/
                     }
                 }
             }
@@ -273,9 +306,17 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                         afterExecute = (new Date()).getTime();
                     }
                     Item item = (Item) resIter.next();
-                    Set constraint = dac.descriptor.getConstraintFromTarget(item);
-                    List conResults = (List) constraintToList.get(constraint);
-                    conResults.add(item);
+                    Set constraints = dac.descriptor.getConstraintFromTarget(item);
+                    Iterator constraintIter = constraints.iterator();
+                    while (constraintIter.hasNext()) {
+                        Set constraint = (Set) constraintIter.next();
+                        List conResults = (List) constraintToList.get(constraint);
+                        if (conResults == null) {
+                            LOG.error("conResults is null. constraintToList = \"" + constraintToList
+                                    + "\", constraint = \"" + constraint);
+                        }
+                        conResults.add(item);
+                    }
                 }
 
                 conIter = constraintToList.entrySet().iterator();
@@ -300,8 +341,18 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                             Set constraint = descriptor.getConstraint(item);
                             constraints.add(constraint);
                         } catch (IllegalArgumentException e) {
+                            /*StringWriter sw = new StringWriter();
+                            try {
+                                PrintWriter pw = new PrintWriter(sw);
+                                e.printStackTrace(pw);
+                                pw.close();
+                                sw.close();
+                            } catch (IOException e2) {
+                                LOG.error("IOException while creating stack trace");
+                            }
                             LOG.warn("IllegalArgumentException while finding constraint for "
-                                    + descriptor + " applied to " + item);
+                                    + descriptor + " applied to " + item + " - Exception: "
+                                    + sw.toString());*/
                         }
                     }
                     queue.add(new DescriptorAndConstraints(descriptor, constraints));
@@ -333,30 +384,43 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
         while (descrIter.hasNext()) {
             FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
             if (f.isReference()) {
-                QueryClass reference = new QueryClass(Reference.class);
-                q.addFrom(reference);
-                QueryCollectionReference r = new QueryCollectionReference(itemClass,
-                        "references");
-                ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
-                        reference);
-                mainCs.addConstraint(cc);
-                QueryField qf = new QueryField(reference, "name");
-                mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                            new QueryValue(f.getFieldName())));
-                if (dac.descriptor.isStatic(f)) {
-                    qf = new QueryField(reference, "refId");
-                    mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                new QueryValue(f.getValue())));
+                if (f.getFieldName() == IDENTIFIER) {
+                    if (dac.descriptor.isStatic(f)) {
+                        String[] refids = StringUtil.split(f.getValue(), " ");
+                        List refidList = new ArrayList();
+                        for (int i = 0; i < refids.length; i++) {
+                            refidList.add(refids[i]);
+                        }
+                        BagConstraint bc = new BagConstraint(identifier,
+                                ConstraintOp.IN, refidList);
+                        mainCs.addConstraint(bc);
+                    }
                 } else {
-                    references.put(f.getFieldName(), reference);
+                    QueryClass reference = new QueryClass(Reference.class);
+                    q.addFrom(reference);
+                    QueryCollectionReference r = new QueryCollectionReference(itemClass,
+                            "references");
+                    ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS,
+                            reference);
+                    mainCs.addConstraint(cc);
+                    QueryField qf = new QueryField(reference, "name");
+                    mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                new QueryValue(f.getFieldName())));
+                    if (dac.descriptor.isStatic(f)) {
+                        qf = new QueryField(reference, "refId");
+                        mainCs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                    new QueryValue(f.getValue())));
+                    } else {
+                        references.put(f.getFieldName(), reference);
+                    }
                 }
             } else {
-                if (f.getFieldName().equals("identifier")) {
+                if (f.getFieldName() == IDENTIFIER) {
                     if (dac.descriptor.isStatic(f)) {
                         mainCs.addConstraint(new SimpleConstraint(identifier,
                                     ConstraintOp.EQUALS, new QueryValue(f.getValue())));
                     }
-                } else if (f.getFieldName().equals("className")) {
+                } else if (f.getFieldName() == CLASSNAME) {
                     if (dac.descriptor.isStatic(f)) {
                         mainCs.addConstraint(new SimpleConstraint(className,
                                     ConstraintOp.EQUALS, new QueryValue(f.getValue())));
@@ -397,15 +461,26 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
                 FieldNameAndValue f = (FieldNameAndValue) descrIter.next();
                 if (!dac.descriptor.isStatic(f)) {
                     if (f.isReference()) {
-                        QueryClass reference = (QueryClass) references.get(f.getFieldName());
-                        QueryField qf = new QueryField(reference, "refId");
-                        cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                    new QueryValue(f.getValue())));
+                        if (f.getFieldName() == IDENTIFIER) {
+                            String[] refids = StringUtil.split(f.getValue(), " ");
+                            List refidList = new ArrayList();
+                            for (int i = 0; i < refids.length; i++) {
+                                refidList.add(refids[i]);
+                            }
+                            BagConstraint bc = new BagConstraint(identifier, ConstraintOp.IN,
+                                    refidList);
+                            cs.addConstraint(bc);
+                        } else {
+                            QueryClass reference = (QueryClass) references.get(f.getFieldName());
+                            QueryField qf = new QueryField(reference, "refId");
+                            cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                        new QueryValue(f.getValue())));
+                        }
                     } else {
-                        if (f.getFieldName().equals("identifier")) {
+                        if (f.getFieldName() == IDENTIFIER) {
                             cs.addConstraint(new SimpleConstraint(identifier,
                                         ConstraintOp.EQUALS, new QueryValue(f.getValue())));
-                        } else if (f.getFieldName().equals("className")) {
+                        } else if (f.getFieldName() == CLASSNAME) {
                             cs.addConstraint(new SimpleConstraint(className,
                                         ConstraintOp.EQUALS, new QueryValue(f.getValue())));
                         } else {
