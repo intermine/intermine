@@ -10,8 +10,8 @@
   <c:set var="key" value="${cld.name} ${fieldDescriptor.name}"/>
 
   <c:choose>
-    <c:when test="${!empty DISPLAYERS[key].longDisplayers}">
-      <c:forEach items="${DISPLAYERS[key].longDisplayers}" var="displayer">
+    <c:when test="${!empty WEBCONFIG.types[key].longDisplayers}">
+      <c:forEach items="${WEBCONFIG.types[key].longDisplayers}" var="displayer">
         <c:set var="cld" value="${cld}" scope="request"/>
         <tiles:insert beanName="displayer" beanProperty="src"/>
       </c:forEach>
