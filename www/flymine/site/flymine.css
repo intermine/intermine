@@ -69,3 +69,15 @@ a:hover {color: #220077;
 .resultsFooter {
     background: #880088;
 }
+.resultsCellTitle {
+    font-size: small;
+    font-style: italic;
+    font-weight: normal;
+}
+.resultsCellName {
+    font-size: small;
+    font-weight: bold;
+}
+.resultsCellValue {
+    font-size: small;
+}
