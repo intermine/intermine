@@ -110,6 +110,15 @@ public class Item
     }
 
     /**
+     * Remove a attribute of the specified name if it exists
+     *
+     * @param attName name of the attribute to remove
+     */
+    public void removeAttribute(String attName) {
+        attributes.remove(attName);
+    }
+
+    /**
      * Get all the attributes
      *
      * @return all the attributes
@@ -148,6 +157,15 @@ public class Item
     }
 
     /**
+     * Remove a reference of the specified name if it exists
+     *
+     * @param refName name of the reference to remove
+     */
+    public void removeReference(String refName) {
+        references.remove(refName);
+    }
+
+    /**
      * Get all the references
      *
      * @return all the references
@@ -183,6 +201,15 @@ public class Item
      */
     public void addCollection(ReferenceList collection) {
         collections.put(collection.getName(), collection);
+    }
+
+    /**
+     * Remove a collection of the specified name if it exists
+     *
+     * @param colName name of the collection to remove
+     */
+    public void removeCollection(String colName) {
+        collections.remove(colName);
     }
 
     /**
