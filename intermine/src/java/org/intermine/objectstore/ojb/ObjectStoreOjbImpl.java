@@ -1,7 +1,6 @@
 package org.flymine.objectstore.ojb;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -21,7 +20,7 @@ import org.flymine.objectstore.query.Results;
 public class ObjectStoreOjbImpl implements ObjectStore
 {
     protected static Map instances = new HashMap();
-    protected PersistenceBroker pb = null;
+    protected PersistenceBrokerFlyMineImpl pb = null;
 
     /**
      * No argument constructor for testing purposes
@@ -43,6 +42,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
             throw new NullPointerException("db cannot be null");
         }
 
+        PersistenceBroker pbTemp;
         ConnectionRepository cr = MetadataManager.getInstance().connectionRepository();
         JdbcConnectionDescriptor jcd = new JdbcConnectionDescriptor();
 
@@ -59,19 +59,26 @@ public class ObjectStoreOjbImpl implements ObjectStore
 
         cr.addDescriptor(jcd);
         PBKey key = new PBKey("ObjectStoreOjbImpl", db.getUser(), db.getPassword());
-        pb = PersistenceBrokerFactory.createPersistenceBroker(key);
+        pbTemp = PersistenceBrokerFactory.createPersistenceBroker(key);
 
+        if (pbTemp instanceof PersistenceBrokerFlyMineImpl) {
+            pb = (PersistenceBrokerFlyMineImpl) pbTemp;
+        } else {
+            throw new IllegalArgumentException("ObjectStoreOjbImpl requires a "
+                                               + "PersistenceBrokerFlyMineImpl to be "
+                                               + "returned from PersistenceBrokerFactory");
+        }
     }
 
     /**
-     * Gets the PersistenceBroker used by this ObjectStoreOjbImpl
+     * Gets the PersistenceBroker used by this
+     * ObjectStoreOjbImpl. Probably only useful for testing purposes.
      *
      * @return the PersistenceBroker this object is using
      */
     protected PersistenceBroker getPersistenceBroker() {
         return pb;
     }
-
 
     /**
      * Gets a ObjectStoreOjbImpl instance for the given underlying repository
@@ -90,7 +97,6 @@ public class ObjectStoreOjbImpl implements ObjectStore
         return (ObjectStoreOjbImpl) instances.get(db);
     }
 
-
     /**
      * Execute a Query on this ObjectStore
      *
@@ -104,7 +110,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
 
     /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
-     * This will usually only be called by the Results object returned from
+     * This will usually only be called by the Results object returned from execute().
      * <code>execute(Query q)</code>.
      *
      * @param q the Query to execute
@@ -114,7 +120,7 @@ public class ObjectStoreOjbImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int end) throws ObjectStoreException {
-        return new ArrayList();
+        return execute(q, start, end);
     }
 
 }
