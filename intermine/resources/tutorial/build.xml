@@ -5,6 +5,7 @@
   <property name="model" location="model"/>
   <property name="build" location="build"/>
   <property name="build.java" location="${build}/java"/>
+  <property name="build.tmp" location="${build}/tmp"/>
   <property name="build.model" location="${build}/model"/>
   <property name="build.resources" location="${build}/resources"/>
   <property name="lib" location="lib"/>
@@ -35,6 +36,7 @@
     <mkdir dir="${dist}"/>
     <mkdir dir="${build}"/>
     <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.tmp}"/>
     <mkdir dir="${build.model}"/>
     <mkdir dir="${build.model}/tutorial"/>
     <mkdir dir="${build.resources}"/>
@@ -72,7 +74,7 @@
 
   <!--
   <target name="build-model" depends="prepare" >
-    <ant antfile="build-model.xml" target="build-model-from-zargo">
+    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
       <property name="model.name" value="tutorial"/>
       <property name="model.src" value="/path/to/directory/containing/zargo/file"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
