@@ -115,6 +115,8 @@ public class OntologyUtil
             return OntologyUtil.XSD_NAMESPACE + "anyURI";
         } else if (javaType.equals("java.util.Date")) {
             return (OntologyUtil.XSD_NAMESPACE + "dateTime");
+        } else if (javaType.equals("java.math.BigDecimal")) {
+            return (OntologyUtil.XSD_NAMESPACE + "bigDecimal");
         } else {
             throw new IllegalArgumentException("Unrecognised Java type: " + javaType);
         }
@@ -152,6 +154,8 @@ public class OntologyUtil
             return "java.net.URI";
         } else if (xmlType.equals("dateTime")) {
             return "java.util.Date";
+        } else if (xmlType.equals("bigDecimal")) {
+            return "java.math.BigDecimal";
         } else {
             throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
         }

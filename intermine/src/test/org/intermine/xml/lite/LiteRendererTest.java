@@ -13,6 +13,7 @@ package org.flymine.xml.lite;
 import junit.framework.*;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.flymine.util.TypeUtil;
@@ -51,30 +52,40 @@ public class LiteRendererTest extends TestCase
         Types t = new Types();
         t.setId(new Integer(1234));
         t.setName("Types1");
+        t.setBooleanType(true);
         t.setFloatType(1.2f);
         t.setDoubleType(1.3d);
+        t.setShortType((short) 231);
         t.setIntType(2);
-        t.setBooleanType(true);
+        t.setLongType(327641237623423l);
         t.setBooleanObjType(Boolean.TRUE);
-        t.setIntObjType(new Integer(4));
         t.setFloatObjType(new Float(2.2f));
         t.setDoubleObjType(new Double(2.3d));
+        t.setShortObjType(new Short((short) 786));
+        t.setIntObjType(new Integer(4));
+        t.setLongObjType(new Long(876328471234l));
+        t.setBigDecimalObjType(new BigDecimal("9872876349183274123432.876128716235487621432"));
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
         String expected = "<object class=\"org.flymine.model.testmodel.Types\" implements=\"org.flymine.model.FlyMineBusinessObject\">"
-            + "<field name=\"intObjType\" value=\"4\"/>"
             + "<field name=\"booleanObjType\" value=\"true\"/>"
             + "<field name=\"doubleType\" value=\"1.3\"/>"
             + "<field name=\"floatType\" value=\"1.2\"/>"
-            + "<field name=\"floatObjType\" value=\"2.2\"/>"
+            + "<field name=\"longObjType\" value=\"876328471234\"/>"
             + "<field name=\"booleanType\" value=\"true\"/>"
             + "<field name=\"stringObjType\" value=\"A String\"/>"
-            + "<field name=\"doubleObjType\" value=\"2.3\"/>"
             + "<field name=\"intType\" value=\"2\"/>"
-            + "<field name=\"name\" value=\"Types1\"/>"
+            + "<field name=\"doubleObjType\" value=\"2.3\"/>"
             + "<field name=\"id\" value=\"1234\"/>"
             + "<field name=\"dateObjType\" value=\"7777777777\"/>"
+            + "<field name=\"intObjType\" value=\"4\"/>"
+            + "<field name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>"
+            + "<field name=\"floatObjType\" value=\"2.2\"/>"
+            + "<field name=\"longType\" value=\"327641237623423\"/>"
+            + "<field name=\"shortObjType\" value=\"786\"/>"
+            + "<field name=\"shortType\" value=\"231\"/>"
+            + "<field name=\"name\" value=\"Types1\"/>"
             + "</object>";
 
         assertEquals(expected, LiteRenderer.render(t, model));

@@ -11,6 +11,7 @@ package org.flymine.objectstore;
  */
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -252,14 +253,19 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
         Types types1 = new Types();
         types1.setName("Types1");
-        types1.setIntType(267);
         types1.setBooleanType(true);
         types1.setFloatType(0.6F);
         types1.setDoubleType(0.88D);
-        types1.setIntObjType(new Integer(369));
+        types1.setShortType((short) 675);
+        types1.setIntType(267);
+        types1.setLongType(98729353495843l);
         types1.setBooleanObjType(Boolean.TRUE);
         types1.setFloatObjType(new Float(1.6F));
         types1.setDoubleObjType(new Double(1.88D));
+        types1.setShortObjType(new Short((short) 1982));
+        types1.setIntObjType(new Integer(369));
+        types1.setLongObjType(new Long(38762874323212l));
+        types1.setBigDecimalObjType(new BigDecimal("876323428764587621764532432.8768173432887324123645"));
         types1.setStringObjType("A test String");
         types1.setDateObjType(new Date(7777777l));
 

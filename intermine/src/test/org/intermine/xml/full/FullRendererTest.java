@@ -12,13 +12,14 @@ package org.flymine.xml.full;
 
 import junit.framework.*;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 
 import org.flymine.util.TypeUtil;
 import org.flymine.util.DynamicUtil;
@@ -167,29 +168,39 @@ public class FullRendererTest extends XMLTestCase
         Types t = new Types();
         t.setId(new Integer(1234));
         t.setName("Types1");
+        t.setBooleanType(true);
         t.setFloatType(1.2f);
         t.setDoubleType(1.3d);
+        t.setShortType((short) 231);
         t.setIntType(2);
-        t.setBooleanType(true);
+        t.setLongType(327641237623423l);
         t.setBooleanObjType(Boolean.TRUE);
-        t.setIntObjType(new Integer(4));
         t.setFloatObjType(new Float(2.2f));
         t.setDoubleObjType(new Double(2.3d));
+        t.setShortObjType(new Short((short) 786));
+        t.setIntObjType(new Integer(4));
+        t.setLongObjType(new Long(876328471234l));
+        t.setBigDecimalObjType(new BigDecimal("9872876349183274123432.876128716235487621432"));
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
         String expected = "<object xml_id=\"1234\" class=\"http://www.flymine.org/model/testmodel#Types\" implements=\"http://www.flymine.org/model/testmodel#FlyMineBusinessObject\">" + ENDL
-            + "<field name=\"intObjType\" value=\"4\"/>" + ENDL
             + "<field name=\"booleanObjType\" value=\"true\"/>" + ENDL
             + "<field name=\"doubleType\" value=\"1.3\"/>" + ENDL
             + "<field name=\"floatType\" value=\"1.2\"/>" + ENDL
-            + "<field name=\"floatObjType\" value=\"2.2\"/>" + ENDL
+            + "<field name=\"longObjType\" value=\"876328471234\"/>" + ENDL
             + "<field name=\"booleanType\" value=\"true\"/>" + ENDL
             + "<field name=\"stringObjType\" value=\"A String\"/>" + ENDL
-            + "<field name=\"doubleObjType\" value=\"2.3\"/>" + ENDL
             + "<field name=\"intType\" value=\"2\"/>" + ENDL
-            + "<field name=\"name\" value=\"Types1\"/>" + ENDL
+            + "<field name=\"doubleObjType\" value=\"2.3\"/>" + ENDL
             + "<field name=\"dateObjType\" value=\"7777777777\"/>" + ENDL
+            + "<field name=\"intObjType\" value=\"4\"/>" + ENDL
+            + "<field name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>" + ENDL
+            + "<field name=\"floatObjType\" value=\"2.2\"/>" + ENDL
+            + "<field name=\"longType\" value=\"327641237623423\"/>" + ENDL
+            + "<field name=\"shortObjType\" value=\"786\"/>" + ENDL
+            + "<field name=\"shortType\" value=\"231\"/>" + ENDL
+            + "<field name=\"name\" value=\"Types1\"/>" + ENDL
             + "</object>" + ENDL;
 
         assertEquals(expected, FullRenderer.render(t, model));

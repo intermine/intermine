@@ -10,6 +10,11 @@ package org.flymine.util;
  *
  */
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.beans.IntrospectionException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,10 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Date;
-import java.lang.reflect.Method;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.beans.IntrospectionException;
 
 import org.flymine.objectstore.proxy.ProxyReference;
 
@@ -374,6 +375,9 @@ public class TypeUtil
         }
         if (clazz.equals(Date.class)) {
             return new Date(Long.parseLong(value));
+        }
+        if (clazz.equals(BigDecimal.class)) {
+            return new BigDecimal(value);
         }
         return value;
     }

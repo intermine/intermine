@@ -207,23 +207,24 @@ public class FlyMineTorqueModelOutput extends ModelOutput
      * @return torque compatible name
      */
     protected static String generateJdbcType(String type) {
-        if (type.equals("int") || type.equals("java.lang.Integer")) {
+        if (type.equals("short") || type.equals("java.lang.Short")) {
+            return "SMALLINT";
+        } else if (type.equals("int") || type.equals("java.lang.Integer")) {
             return "INTEGER";
-        }
-        if (type.equals("java.lang.String")) {
+        } else if (type.equals("long") || type.equals("java.lang.Long")) {
+            return "BIGINT";
+        } else if (type.equals("java.lang.String")) {
             return "LONGVARCHAR";
-        }
-        if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
+        } else if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
             return "BIT";
-        }
-        if (type.equals("float") || type.equals("java.lang.Float")) {
+        } else if (type.equals("float") || type.equals("java.lang.Float")) {
             return "REAL";
-        }
-        if (type.equals("double") || type.equals("java.lang.Double")) {
+        } else if (type.equals("double") || type.equals("java.lang.Double")) {
             return "DOUBLE";
-        }
-        if (type.equals("java.util.Date")) {
+        } else if (type.equals("java.util.Date")) {
             return "DATE";
+        } else if (type.equals("java.math.BigDecimal")) {
+            return "NUMERIC";
         }
         return type;
     }

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -401,10 +402,23 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         q.addFrom(c);
         q.addToSelect(c);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatType"), ConstraintOp.EQUALS, new QueryValue(new Float(0.6))));
-        cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleType"), ConstraintOp.EQUALS, new QueryValue(new Double(0.88))));
-        cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatObjType"), ConstraintOp.EQUALS, new QueryValue(new Float(1.6))));
-        cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleObjType"), ConstraintOp.EQUALS, new QueryValue(new Double(1.88))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "name"), ConstraintOp.EQUALS, new QueryValue("Types1")));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "booleanType"), ConstraintOp.EQUALS, new QueryValue(Boolean.TRUE)));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatType"), ConstraintOp.EQUALS, new QueryValue(new Float(0.6F))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleType"), ConstraintOp.EQUALS, new QueryValue(new Double(0.88D))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "shortType"), ConstraintOp.EQUALS, new QueryValue(new Short((short) 675))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "intType"), ConstraintOp.EQUALS, new QueryValue(new Integer(267))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "longType"), ConstraintOp.EQUALS, new QueryValue(new Long(98729353495843l))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "booleanObjType"), ConstraintOp.EQUALS, new QueryValue(Boolean.TRUE)));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "floatObjType"), ConstraintOp.EQUALS, new QueryValue(new Float(1.6F))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "doubleObjType"), ConstraintOp.EQUALS, new QueryValue(new Double(1.88D))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "shortObjType"), ConstraintOp.EQUALS, new QueryValue(new Short((short) 1982))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "intObjType"), ConstraintOp.EQUALS, new QueryValue(new Integer(369))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "longObjType"), ConstraintOp.EQUALS, new QueryValue(new Long(38762874323212l))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "bigDecimalObjType"), ConstraintOp.EQUALS, new QueryValue(new BigDecimal("876323428764587621764532432.8768173432887324123645"))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "stringObjType"), ConstraintOp.EQUALS, new QueryValue("A test String")));
+        cs.addConstraint(new SimpleConstraint(new QueryField(c, "dateObjType"), ConstraintOp.EQUALS, new QueryValue(new Date(7777777l))));
+        
         q.setConstraint(cs);
         Results res = os.execute(q);
         Types d = (Types) ((List) res.get(0)).get(0);
@@ -412,14 +426,20 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         //Types d = (Types) (os.getObjectByExample(d2));
 
         // Go through each attribute to check that it has been set correctly
-        assertEquals(d1.getIntType(), d.getIntType());
+        assertEquals(d1.getName(), d.getName());
+        assertEquals(d1.getBooleanType(), d.getBooleanType());
         assertEquals(d1.getFloatType(), d.getFloatType(), 0.0);
         assertEquals(d1.getDoubleType(), d.getDoubleType(), 0.0);
-        assertEquals(d1.getBooleanType(), d.getBooleanType());
-        assertEquals(d1.getIntObjType(), d.getIntObjType());
+        assertEquals(d1.getShortType(), d.getShortType());
+        assertEquals(d1.getIntType(), d.getIntType());
+        assertEquals(d1.getLongType(), d.getLongType());
+        assertEquals(d1.getBooleanObjType(), d.getBooleanObjType());
         assertEquals(d1.getFloatObjType(), d.getFloatObjType());
         assertEquals(d1.getDoubleObjType(), d.getDoubleObjType());
-        assertEquals(d1.getBooleanObjType(), d.getBooleanObjType());
+        assertEquals(d1.getShortObjType(), d.getShortObjType());
+        assertEquals(d1.getIntObjType(), d.getIntObjType());
+        assertEquals(d1.getLongObjType(), d.getLongObjType());
+        assertEquals(d1.getBigDecimalObjType(), d.getBigDecimalObjType());
         assertEquals(d1.getStringObjType(), d.getStringObjType());
         assertEquals(d1.getDateObjType(), d.getDateObjType());
     }
