@@ -223,6 +223,52 @@
             type="org.intermine.web.CollapseAction">
     </action>
     
+    <!-- wait for a custom build query to run -->
+    <action path="/pollQuery"
+            type="org.intermine.web.PollQueryAction">
+      <!-- some kind of error in the action to do with session state or the request -->
+      <forward name="error" path="/begin.do" redirect="true"/>
+      <!-- problem running query -->
+      <forward name="failure" path="/query.do" redirect="true"/>
+      <!-- implicitly cancelled by user -->
+      <forward name="cancelled" path="/query.do" redirect="true"/>
+      <!-- forward to results page -->
+      <forward name="results" path="/results.do" redirect="true"/>
+      <!-- continue waiting -->
+      <forward name="waiting" path="waiting.page"/>
+    </action>
+    
+    <!-- wait for a template query to run -->
+    <action path="/pollTemplateQuery"
+            type="org.intermine.web.PollQueryAction"
+            parameter="followSingleResult">
+      <!-- some kind of error in the action to do with session state or the request -->
+      <forward name="error" path="/begin.do" redirect="true"/>
+      <!-- problem running query -->
+      <forward name="failure" path="template.page"/>
+      <!-- implicitly cancelled by user -->
+      <forward name="cancelled" path="/query.do" redirect="true"/>
+      <!-- forward to results page -->
+      <forward name="results" path="/results.do" redirect="true"/>
+      <!-- continue waiting -->
+      <forward name="waiting" path="waiting.page"/>
+    </action>
+    
+    <!-- wait for a browse query to run -->
+    <action path="/pollBrowseQuery"
+            type="org.intermine.web.PollQueryAction"
+            parameter="followSingleResult">
+      <!-- some kind of error in the action to do with session state or the request -->
+      <forward name="error" path="/begin.do" redirect="true"/>
+      <!-- problem running query -->
+      <forward name="failure" path="/begin.do" redirect="true"/>
+      <!-- implicitly cancelled by user -->
+      <forward name="cancelled" path="/begin.do" redirect="true"/>
+      <!-- forward to results page -->
+      <forward name="results" path="/results.do" redirect="true"/>
+      <!-- continue waiting -->
+      <forward name="waiting" path="waiting.page"/>
+    </action>
 
     <!-- Actions invoked using buttons - no other form input -->
     <action path="/viewAction"
@@ -230,6 +276,7 @@
             name="emptyForm">
       <forward name="results" path="/results.do" redirect="true" />
       <forward name="query" path="/query.do" redirect="true" />
+      <forward name="waiting" path="/pollQuery.do" redirect="true" />
     </action>
 
     <!-- Actions invoked using buttons - not validating form -->
@@ -252,10 +299,8 @@
             name="templateForm"
             parameter="action"
             input="template">
-      <forward name="template" path="template.page"/>
-      <forward name="failure" path="template.page"/>
+      <forward name="waiting" path="/pollTemplateQuery.do" redirect="true"/>
       <forward name="query" path="query.page"/>
-      <forward name="results" path="results.page"/>
     </action>
     
     <action path="/importTemplates"
@@ -271,9 +316,7 @@
             type="org.intermine.web.TemplateAction"
             name="browseForm"
             input="begin">
-      <forward name="begin" path="begin.page"/>
-      <forward name="results" path="results.page"/>
-      <forward name="failure" path="begin.page"/>
+      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
     </action>
     
     <action path="/feedbackAction"
@@ -378,11 +421,9 @@
     <!-- Other actions -->
     
     <action path="/portal"
-            type="org.intermine.web.PortalQuery">
-      <forward name="failure" path="begin.page"/>
-      <forward name="results" path="results.page"/>
+            type="org.intermine.web.PortalQueryAction">
+      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
     </action>
-    
 
     <!-- Controllers -->
     <action path="/initMain"
