@@ -19,6 +19,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import org.intermine.web.results.ChangeResultsForm;
+
 /**
  * Implementation of Action that views a collection from an object
  *
@@ -37,7 +39,12 @@ public class ViewCollectionAction extends Action
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.removeAttribute("changeResultsForm"); 
+        ChangeResultsForm resultsForm =
+            (ChangeResultsForm) session.getAttribute("changeResultsForm");
+
+        if (resultsForm != null) {
+            resultsForm.reset(mapping, request);
+        }
         
         return mapping.findForward("details");
     }
