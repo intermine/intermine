@@ -124,8 +124,8 @@ public class XmlDataLoaderTest extends TestCase
         InputStream is = new FileInputStream(file);
 
         XmlDataLoader dl = new XmlDataLoader(iw);
-        Source source = iw.getMainSource("test");
-        Source skelSource = iw.getSkeletonSource("test");
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
         dl.processXml(is, source, skelSource);
 
         // check address was stored
