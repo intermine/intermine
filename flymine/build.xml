@@ -8,19 +8,20 @@
   <property file="${build.properties.local}"/>
   <property file="build.properties"/>
 
-  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
+  <property name="runtime.properties.local" value="${user.home}/intermine.properties" />
+
+  <!-- used by build-model.xml -->
+  <property name="namespace" value="http://www.flymine.org/model"/>
+
+  <!-- used by build-model.xml -->
+  <property name="packagename" value="org.flymine.model"/>
+
+  <property name="intermine.dist.path" location="../intermine/dist"/>
+  <property name="intermine.jar.path" location="${intermine.dist.path}/intermine.jar"/>
 
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
   <property name="bin" location="bin"/>
-
-  <!-- source directories -->
-  <property name="src" location="src"/>
-  <property name="src.java" location="${src}/java"/>
-  <property name="src.test" location="${src}/test"/>
-  <property name="src.www" location="doc"/>
-  <property name="src.www-internal" location="../flymine-private/doc"/>
-  <property name="src.webapp" location="${src}/web"/>
 
   <!-- resources directory -->
   <property name="resources" location="resources"/>
@@ -30,21 +31,12 @@
 
   <!-- build directories -->
   <property name="build" location="build"/>
-  <property name="build.java" location="${build}/java"/>
   <property name="build.resources" location="${build}/resources"/>
   <property name="build.resources.test" location="${build}/resources/test"/>
-  <property name="build.test" location="${build}/test"/>
   <property name="build.model" location="${build}/model" />
-  <property name="build.src.java" location="${build}/javasrc"/>
-  <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
-  <property name="build.www" location="${build}/www"/>
-  <property name="build.www-internal" location="${build}/www/internal"/>
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
-
-  <!-- tutorial directory -->
-  <property name="tutorial" location="${build}/tutorial"/>
 
   <!-- results directories -->
   <property name="results"  location="results"/>
@@ -108,14 +100,6 @@
     <include name="biojava*.jar" />
   </patternset>
 
-  <!-- Libraries relevant to testing webapps -->
-  <patternset id="lib.webapptest">
-    <include name="cactus*.jar" />
-    <include name="commons-httpclient*.jar" />
-    <include name="httpunit*.jar" />
-    <include name="struts-test*.jar" />
-  </patternset>
-
   <!-- Antlr library -->
   <patternset id="lib.antlr">
     <include name="antlr*.jar"/>
@@ -144,16 +128,6 @@
     <include name="struts*.jar" />
   </patternset>
 
-  <!-- Libraries that the webservice uses -->
-  <patternset id="lib.webapp.webservice">
-    <include name="axis*.jar" />
-    <include name="commons-discovery*.jar" />
-    <include name="saaj*.jar" />
-    <include name="jaxrpc*.jar" />
-    <include name="wsdl*.jar" />
-  </patternset>
-
-
   <!-- set the classpath for the build - basically everything in lib -->
   <path id="base.class.path">
     <pathelement path="${build.java}"/>
@@ -162,10 +136,12 @@
       <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
       <patternset refid="lib.webapp.flymine"/>
-      <patternset refid="lib.webapp.webservice"/>
       <patternset refid="lib.jasper"/>
       <patternset refid="lib.acedb"/>
       <patternset refid="lib.uml"/>
+    </fileset>
+    <fileset dir="${intermine.dist.path}">
+      <include name="intermine*.jar" />
     </fileset>
   </path>
 
@@ -184,16 +160,6 @@
     </fileset>
   </path>
 
-  <path id="test.class.path">
-    <path refid="project.class.path"/>
-    <pathelement path="${build.resources.test}"/>
-    <pathelement location="${build.test}"/>
-    <pathelement location="${build.model}/testmodel"/>
-    <pathelement location="${build.model}/acedbtest"/>
-    <pathelement location="${build.model}/xmitest"/>
-    <pathelement location="${build.model}/genomic"/>
-  </path>
-
   <path id="models.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${build.model}/mage"/>
@@ -205,34 +171,10 @@
     <pathelement location="${build.model}/orthologue"/>
   </path>
 
-
-  <path id="acedbtest.class.path">
-    <path refid="project.class.path"/>
-    <pathelement location="${build.model}/acedbtest"/>
-  </path>
-
   <path id="acedb.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${build.model}/acedb"/>
   </path>
-
-  <path id="webapptest.class.path">
-    <path refid="test.class.path"/>
-    <fileset dir="${lib}">
-      <patternset refid="lib.webapptest"/>
-    </fileset>
-    <fileset dir="${dist.webapp}">
-      <include name="flymine.war"/>
-    </fileset>
-  </path>
-
-  <path id="webservice.class.path">
-    <path refid="project.class.path"/>
-    <fileset dir="${lib}">
-      <patternset refid="lib.webapp.webservice"/>
-    </fileset>
-  </path>
-
 
   <!-- Initialisation targets -->
 
@@ -241,18 +183,12 @@
       <format property="YEAR" pattern="yyyy"/>
       <format property="DTSTAMP" pattern="yyyyMMddHHmm"/>
     </tstamp>
-    
+
     <mkdir dir="${build}"/>
-    <mkdir dir="${build.java}"/>
     <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.resources.test}"/>
-    <mkdir dir="${build.test}"/>
     <mkdir dir="${build.model}" />
-    <mkdir dir="${build.src.java}"/>
-    <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
-    <mkdir dir="${build.www}"/>
-    <mkdir dir="${build.www-internal}"/>
     <mkdir dir="${build.tmp}"/>
 
     <mkdir dir="${results}"/>
@@ -260,32 +196,14 @@
     <mkdir dir="${results.checkstyle}"/>
     <mkdir dir="${results.antdoc}"/>
 
-    <mkdir dir="${tutorial}"/>
-    <mkdir dir="${tutorial}/lib"/>
-    <mkdir dir="${tutorial}/model"/>
-    <mkdir dir="${tutorial}/model/tutorial"/>
-    <mkdir dir="${tutorial}/model/tutorial/resources"/>
-    <mkdir dir="${tutorial}/resources"/>
-    <mkdir dir="${tutorial}/src/java/org/flymine/tutorial"/>
-
-    <copy file="${runtime.properties.local}" tofile="${build.resources}/flymine.properties"/>
+    <copy file="${runtime.properties.local}" tofile="${build.resources}/intermine.properties"/>
     <copy todir="${build.resources}">
       <fileset dir="${resources}/runtime" />
-    </copy>
-    <copy todir="${build.resources.test}" flatten="true" includeEmptyDirs="false">
-      <fileset dir="${model}">
-        <include name="testmodel/resources/**"/>
-        <include name="chado/resources/**"/>
-      </fileset>
-      <fileset dir="${resources}/test/">
-        <include name="**/*"/>
-      </fileset>
     </copy>
   </target>
 
   <target name="prepare-dist">
     <mkdir dir="${dist}"/>
-    <mkdir dir="${dist.www}"/>
     <mkdir dir="${dist.webapp}"/>
     <mkdir dir="${dist.javadoc}"/>
   </target>
@@ -295,87 +213,26 @@
     <echo message=""/>
     <echo message="FlyMine build file - available targets are:"/>
     <echo message=""/>
-    <echo message="compile-main           --> compiles the source code"/>
-    <echo message="build-testmodel        --> generate testmodel class and mapping files"/>
-    <echo message="build-db-testmodel     --> create the testmodel database tables"/>
-    <echo message="insert-data-testmodel  --> store testmodel test data"/>
-    <echo message="test-main              --> runs the unit tests"/>
     <echo message="clean                  --> cleans up the directory"/>
-    <echo message="jar                    --> builds the FlyMine jar"/>
     <echo message=""/>
     <echo message="See 'ant -projecthelp' for full target list"/>
   </target>
 
-
-
   <!-- Compilation targets -->
-
-  <!-- main java source -->
-  <target name="precompile-main" depends="prepare">
-    <copy todir="${build.src.java}">
-      <fileset dir="${src.java}">
-        <include name="**/*.java"/>
-        <exclude name="**/tutorial/*"/>
-      </fileset>
-    </copy>
-    <antlr target="${src.java}/org/flymine/sql/query/flymine_sql.g"
-        outputdirectory="${build.src.java}/org/flymine/sql/query">
-      <classpath refid="project.class.path"/>
-    </antlr>
-    <antlr target="${src.java}/org/flymine/objectstore/query/fql/flymine_fql.g"
-        outputdirectory="${build.src.java}/org/flymine/objectstore/query/fql">
-      <classpath refid="project.class.path"/>
-    </antlr>
-    <depend srcdir="${build.src.java}" destdir="${build.java}" closure="yes" dump="yes"/>
-    <javac destdir="${build.java}" listfiles="yes">
-      <classpath refid="project.class.path"/>
-      <src path="${build.src.java}"/>
-      <!-- this will include all dependent files of these tasks -->
-      <include name="org/flymine/codegen/ModelOutputTask.java"/>
-      <include name="org/flymine/modelproduction/ModelGenerationTask.java"/>
-    </javac>
-  </target>
-
-  <target name="compile-datatracking" depends="precompile-main">
-    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
-      <property name="model.name" value="datatracking"/>
-      <property name="model.src" value="${model}/datatracking"/>
-      <reference torefid="class.path" refid="project.class.path"/>
-    </ant>
-  </target>
-
-  <target name="compile-fulldata" depends="precompile-main">
-    <copy todir="${build.model}/fulldata" file="${model}/fulldata/fulldata_keyDefs.properties"/>
-    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <property name="model.src" value="${model}/fulldata"/>
-      <reference torefid="class.path" refid="project.class.path"/>
-    </ant>
-  </target>
-
-  <target name="compile-main" depends="compile-datatracking, compile-fulldata"
-    description="compile the java source">
-    <javac destdir="${build.java}" listfiles="yes">
-      <classpath refid="project.class.path"/>
-      <src path="${build.src.java}"/>
-    </javac>
-  </target>
-
 
   <!-- Models to build -->
 
-  <!-- Fulldata -->
-   <target name="build-db-fulldatatest" depends="compile-main">
-     <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
-       <property name="model.name" value="fulldata"/>
-       <reference torefid="class.path" refid="test.class.path"/>
-       <property name="db.name" value="db.unittest"/>
-     </ant>
-   </target>
+  <target name="prepare-build-model" depends="prepare">
+    <unzip src="${intermine.jar.path}" dest="${build}">
+      <patternset>
+        <include name="build-model.xml"/>
+      </patternset>
+    </unzip>
+  </target>
 
   <!-- Ensembl anopheles src items -->
-    <target name="build-db-ensembl-anoph-src-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <target name="build-db-ensembl-anoph-src-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-src-items"/>
@@ -383,8 +240,8 @@
   </target>
 
   <!-- Ensembl drosophila src items -->
-    <target name="build-db-ensembl-dros-src-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <target name="build-db-ensembl-dros-src-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-src-items"/>
@@ -392,8 +249,8 @@
   </target>
 
   <!-- Orthologue items -->
-  <target name="build-db-orthologue-tgt-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+  <target name="build-db-orthologue-tgt-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.orthologue-tgt-items"/>
@@ -401,8 +258,8 @@
   </target>
 
   <!-- RNAi items -->
-  <target name="build-db-rnai-src-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+  <target name="build-db-rnai-src-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.rnai-src-items"/>
@@ -410,8 +267,8 @@
   </target>
 
   <!-- Chado items -->
-  <target name="build-db-chado-src-items" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+  <target name="build-db-chado-src-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-src-items"/>
@@ -419,64 +276,17 @@
   </target>
 
   <!-- Chado main -->
-  <target name="build-db-chado-test" depends="compile-main, build-chado">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="chado"/>
+  <target name="build-db-chado-test" depends="prepare-build-model, create-genomic-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-test"/>
     </ant>
   </target>
 
   <!-- Chado model -->
-  <target name="build-chado" depends="compile-main, convert-chado">
-    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
-      <property name="model.name" value="chado"/>
-      <property name="model.src" value="${build.model}/chado"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
-  <!-- Testmodel -->
-  <target name="build-testmodel" depends="compile-main" >
-    <ant antfile="build-model.xml" target="build-model-from-xml" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${model}/testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-    </ant>
-  </target>
-
-  <target name="build-db-testmodel" depends="build-testmodel">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.unittest"/>
-    </ant>
-  </target>
-  
-  <!-- insert the testmodel data into the database -->
-  <target name="insert-data-testmodel" depends="build-db-testmodel">
-    <taskdef
-      name="insert-xml-data"
-      classname="org.flymine.dataloader.InsertXmlDataTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <insert-xml-data integrationWriter="integration.unittestsingle" file="${build.resources.test}/testmodel_data.xml">
-      <classpath refid="test.class.path"/>
-    </insert-xml-data>
-  </target>
-
-  <!-- index the testmodel database -->
-  <target name="create-indexes-testmodel" depends="build-db-testmodel">
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="db.name" value="db.unittest"/>
-    </ant>
-  </target>
-
   <target name="create-indexes-chado-test" depends="build-db-chado-test">
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="chado"/>
       <property name="model.src" value="${model}/chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -485,7 +295,7 @@
   </target>
 
   <target name="create-indexes-dros-test" depends="build-db-dros-test">
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -494,7 +304,7 @@
   </target>
 
   <target name="create-indexes-anoph-test" depends="build-db-anoph-test">
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -506,7 +316,7 @@
 
   <!-- Build Chado target items database -->
   <target name="build-db-chado-target-items" depends="convert-chado">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-tgt-items"/>
@@ -524,17 +334,17 @@
       <arg value="N3" />
       <arg value="http://www.flymine.org/model/genomic#" />
     </java>
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-tgt-items"/>
     </ant>
-    
+
   </target>
 
   <!-- Build ensembl-anoph-tgt-items database -->
   <target name="build-db-ensembl-anoph-tgt-items" depends="convert-ensembl">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
@@ -556,7 +366,7 @@
       <arg value="7165" />
     </java>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
@@ -566,7 +376,7 @@
 
   <!-- Build ensembl-dros-tgt-items database -->
   <target name="build-db-ensembl-dros-tgt-items" depends="convert-ensembl">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-tgt-items"/>
@@ -587,56 +397,86 @@
       <arg value="7227" />
     </java>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-tgt-items"/>
     </ant>
   </target>
 
-  <!-- Acedb test build targets -->
-  
-  <!-- generate acedbtest model from .wrm file -->
-  <target name="build-acedbtest" depends="compile-main" >
-    <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
-      <property name="model.name" value="acedbtest"/>
-      <property name="model.src" value="${model}/acedbtest/"/>
-      <reference torefid="class.path" refid="acedbtest.class.path"/>
+  <!-- model tests -->
+
+  <target name="chado-test" depends="convert-chado">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="chado"/>
+      <property name="model.src" value="${model}/chado"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
-  <!-- copy original .wrm file to model directory for acedataloadertest -->
-  <target name="copy-model-acedbtest" depends="build-acedbtest">
-    <copy todir="${build.model}/acedbtest" file="${model}/acedbtest/acedbtest.wrm"/>
+<!--
+  <target name="rnai-test" depends="build-rnai">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="rnai"/>
+      <property name="model.src" value="${model}/rnai"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
   </target>
 
-  <!-- copy original .xmi file to model directory for XmiParserFunctionalTest -->
-  <target name="copy-model-xmitest">
-    <copy todir="${build.model}/xmitest" file="${model}/xmitest/xmitest.xmi"/>
-    <copy todir="${build.model}/xmitest" file="${model}/xmitest/xmitest.xml"/>
+  <target name="orthologue-test" depends="build-orthologue">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="orthologue"/>
+      <property name="model.src" value="${model}/orthologue"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+-->
+  <target name="mage-test" depends="convert-mage">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="mage"/>
+      <property name="model.src" value="${model}/mage"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
   </target>
 
+  <target name="ensembl-test" depends="convert-ensembl">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="ensembl"/>
+      <property name="model.src" value="${model}/ensembl"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="test-models-inc"
+          depends="chado-test, mage-test, ensembl-test">
+    <antcall target="test-report"/>
+  </target>
+
+  <target name="test-models-full"
+          depends="create-production-model, chado-test, mage-test, ensembl-test">
+    <antcall target="test-report"/>
+  </target>
 
   <!-- Stress build targets (currently uses ace model) -->
-  
+
   <!-- generate acedb model from acemodel file -->
-  <target name="build-acedb" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-model-from-ace" inheritRefs="true">
+  <target name="build-acedb" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedb"/>
       <property name="model.src" value="${model}/acedb/"/>
       <reference torefid="class.path" refid="acedb.class.path"/>
     </ant>
-  </target> 
+  </target>
 
 
   <target name="build-db-acedb" depends="build-acedb">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="acedb"/>
       <reference torefid="class.path" refid="acedb.class.path"/>
       <property name="db.name" value="db.acedb"/>
     </ant>
   </target>
-  
+
   <!-- insert the ace data into the database -->
    <target name="insert-data-acedb" depends="build-db-acedb">
     <taskdef
@@ -663,53 +503,12 @@
     </insert-ace-data>
   </target>
 
-  <!-- build acedb system -->
-  <target name="build-stresstest" depends ="insert-data-acedb"
-          description="build the production FlyMine system with acedb model" >
-  </target>
-
 
   <!-- Production build targets (currently uses testmodel) -->
-  
-  <!-- generate production model -->
-  <target name="build-productionmodel" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-model-from-zargo" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <property name="model.src" value="${model}/testmodel"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target> 
-
-
-  <target name="build-db-productionmodel" depends="build-productionmodel">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.production"/>
-    </ant>
-  </target>
-  
-  <!-- insert the production data into the database -->
-   <target name="insert-data-productionmodel" depends="build-db-productionmodel">
-    <taskdef
-      name="insert-xml-data"
-      classname="org.flymine.dataloader.InsertXmlDataTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <insert-xml-data integrationWriter="integration.production" file="${build.resources.test}/testmodel_data.xml">
-      <classpath refid="test.class.path"/>
-    </insert-xml-data>
-  </target>
-
-  <!-- build production system -->
-  <target name="build-production" depends ="insert-data-productionmodel"
-          description="build the production FlyMine system with acedb model" >
-  </target>
 
   <!-- convert chado zargo to FlyMine model -->
-  <target name="convert-chado" depends="compile-main">
-    <ant antfile="build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
+  <target name="convert-chado" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
       <property name="model.src" value="${model}/chado"/>
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -721,10 +520,10 @@
     <taskdef name="retrieve-chado" classname="org.flymine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    
+
     <retrieve-chado database="db.chado" model="chado" osName="osw.chado-src-items"/>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.chado-src-items"/>
@@ -732,7 +531,7 @@
   </target>
 
   <!-- Load data from chado-items into chado-test -->
-  <target name="load-chado" depends="compile-main, convert-chado">
+  <target name="load-chado" depends="prepare-build-model, convert-chado">
     <taskdef name="load-chado" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -743,7 +542,7 @@
 
   <!-- Build temporary flymine database to hold ensembl anopheles data -->
   <target name="build-db-anoph-test">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-test"/>
@@ -751,7 +550,7 @@
   </target>
 
   <!-- Load data from ensembl-anoph-tmp-items into anoph-test -->
-  <target name="load-ensembl-anopheles" depends="compile-main, build-db-anoph-test, create-indexes-anoph-test">
+  <target name="load-ensembl-anopheles" depends="prepare-build-model, build-db-anoph-test, create-indexes-anoph-test">
     <taskdef name="load-anoph" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -760,7 +559,7 @@
   </target>
 
   <!-- Load data from ensembl-dros-tgt-items into anoph-test -->
-  <target name="load-ensembl-drosophila" depends="compile-main, build-db-dros-test, create-indexes-dros-test">
+  <target name="load-ensembl-drosophila" depends="prepare-build-model, build-db-dros-test, create-indexes-dros-test">
     <taskdef name="load-dros" classname="org.flymine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -770,7 +569,7 @@
 
   <!-- Build temporary flymine database to hold ensembl anopheles data -->
   <target name="build-db-dros-test" depends="create-genomic-model">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-test"/>
@@ -778,8 +577,8 @@
   </target>
 
   <!-- convert ensembl zargo to FlyMine model -->
-  <target name="convert-ensembl" depends="compile-main">
-    <ant antfile="build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
+  <target name="convert-ensembl" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
       <property name="model.src" value="${model}/ensembl"/>
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -791,10 +590,10 @@
     <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    
+
     <retrieve-ensembl database="db.ensembl" model="ensembl" osName="osw.ensembl-anoph-src-items"/>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-src-items"/>
@@ -806,10 +605,10 @@
     <taskdef name="retrieve-ensembl" classname="org.flymine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    
+
     <retrieve-ensembl database="db.ensembl-dros" model="ensembl" osName="osw.ensembl-dros-src-items"/>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-dros-src-items"/>
@@ -821,7 +620,7 @@
     <taskdef name="retrieve-orthologue" classname="org.flymine.dataconversion.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    
+
     <concat destfile="${build.tmp}/orthologues">
       <path>
         <fileset dir="/shared/data/orthologues" includes="orthologues.*"/>
@@ -830,7 +629,7 @@
 
     <retrieve-orthologue file="${build.tmp}/orthologues" source="orthologue" osName="osw.orthologue-tgt-items"/>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.orthologue-tgt-items"/>
@@ -845,7 +644,7 @@
 
     <retrieve-rnai file="/shared/data/RNAi/CE_RNAi.txt" source="rnai" osName="osw.rnai-src-items"/>
 
-    <ant antfile="build-model.xml" target="create-indexes" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.rnai-src-items"/>
@@ -853,8 +652,8 @@
   </target>
 
   <!-- convert MAGE-OM xmi to FlyMine model -->
-  <target name="convert-mage" depends="compile-main">
-    <ant antfile="build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
+  <target name="convert-mage" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
       <property name="model.src" value="${model}/mage"/>
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -863,7 +662,7 @@
 
   <!-- test out creating java objects from mage model -->
   <target name="compile-mage" depends="convert-mage">
-    <ant antfile="build-model.xml" target="compile-java" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
@@ -871,7 +670,7 @@
 
    <!-- convert MAGE-OM to OWL -->
    <target name="mage-to-owl" depends="convert-mage">
-    <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/mage/mage_model.xml" />
       <arg value="${build.model}/mage/mage.n3" />
@@ -882,7 +681,7 @@
 
    <!-- convert chado model to OWL -->
    <target name="chado-to-owl" depends="convert-chado">
-    <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/chado/chado_model.xml" />
       <arg value="${build.model}/chado/chado.n3" />
@@ -892,10 +691,10 @@
 
 
   <!-- convert Sequence Ontology (SO) to OWL -->
-  <target name="so-to-owl" depends="compile-main">
+  <target name="so-to-owl" depends="prepare-build-model">
     <mkdir dir="${build.model}/so" />
     <copy file="${model}/so/sofa.ontology" todir="${build.model}/so/"/>
-    <java classname="org.flymine.ontology.Dag2Owl" fork="true">
+    <java classname="org.intermine.ontology.Dag2Owl" fork="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/so/sofa.ontology" />
       <arg value="${build.model}/so/sofa.n3" />
@@ -903,17 +702,17 @@
     </java>
   </target>
 
-  <!-- create merged model from currently merged OWL ontologies 
+  <!-- create merged model from currently merged OWL ontologies
        in build/genomic/genomic.n3  -->
-  <target name="create-genomic-model" depends="prepare-genomic-model, compile-main">
-    <ant antfile="build-model.xml" target="generate-model-from-owl" inheritRefs="true">
+  <target name="create-genomic-model" depends="prepare-genomic-model, prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="generate-model-from-owl" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
   <!-- create merged model from all source OWL ontologies -->
-  <target name="create-production-model" depends="remove-genomic, compile-main, merge-rnai-model, 
+  <target name="create-production-model" depends="remove-genomic, prepare-build-model, merge-rnai-model,
        merge-orthologue-model, merge-go-model, merge-ensembl-model, merge-chado-model, merge-so-model" >
     <antcall target="create-genomic-model"/>
   </target>
@@ -921,15 +720,15 @@
 
   <target name="jar-genomic" depends="prepare-dist, create-genomic-model"
           description="create a jar of the genomic model">
-    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.src" value="${model}/genomic"/>
-    </ant>    
+    </ant>
   </target>
 
   <!-- if genomic.n3 not copied into build directory then copy it -->
-  <target name="prepare-genomic-model" depends="prepare">        
+  <target name="prepare-genomic-model" depends="prepare">
     <copy file="${model}/genomic/genomic.n3" todir="${build.model}/genomic/"/>
   </target>
 
@@ -944,7 +743,7 @@
     <copy file="${model}/chado/chado_merge_spec.n3" todir="${build.model}/chado/"/>
 
     <!-- combine the chado merge_spec with current genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -952,10 +751,10 @@
       <arg value="${build.model}/chado/chado_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
-    </java> 
+    </java>
 
     <!-- merge chado model with target genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -973,7 +772,7 @@
     <copy file="${model}/so/so_merge_spec.n3" todir="${build.model}/so/"/>
 
     <!-- combine the so merge_spec with current genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -981,10 +780,10 @@
       <arg value="${build.model}/so/so_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
-    </java> 
+    </java>
 
     <!-- merge so model with target genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1003,7 +802,7 @@
     <copy file="${model}/rnai/rnai.n3" todir="${build.model}/rnai/"/>
 
     <!-- combine the rnai merge_spec with current genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1011,10 +810,10 @@
       <arg value="${build.model}/rnai/rnai_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
-    </java> 
+    </java>
 
     <!-- merge rnai model with target genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1031,7 +830,7 @@
     <copy file="${model}/go/go_merge_spec.n3" todir="${build.model}/go/"/>
 
     <!-- combine the go merge_spec with current genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1039,7 +838,7 @@
       <arg value="${build.model}/go/go_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
-    </java> 
+    </java>
   </target>
 
 
@@ -1047,7 +846,7 @@
 
    <!-- convert ensembl model to OWL -->
    <target name="ensembl-to-owl" depends="convert-ensembl">
-    <java classname="org.flymine.ontology.FlyMine2Owl" fork="true">
+    <java classname="org.intermine.ontology.InterMine2Owl" fork="true">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/ensembl/ensembl_model.xml" />
       <arg value="${build.model}/ensembl/ensembl.n3" />
@@ -1061,7 +860,7 @@
     <copy file="${model}/ensembl/ensembl_merge_spec.n3" todir="${build.model}/ensembl/"/>
 
     <!-- combine the ensembl_merge_spec with current genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
        maxmemory="800m">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1069,10 +868,10 @@
       <arg value="${build.model}/ensembl/ensembl_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#" />
       <arg value="N3" />
-    </java> 
+    </java>
 
     <!-- merge ensembl model with target genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m">
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1088,7 +887,7 @@
     <copy file="${model}/orthologue/orthologue.n3" todir="${build.model}/orthologue/"/>
 
     <!-- merge orthologue model with target genomic model -->
-    <java classname="org.flymine.ontology.MergeOwl" fork="true"
+    <java classname="org.intermine.ontology.MergeOwl" fork="true"
       maxmemory="800m" >
       <classpath refid="models.class.path" />
       <arg value="${build.model}/genomic/genomic.n3" />
@@ -1100,131 +899,18 @@
 
   </target>
 
-  <!-- Unit test targets -->
-
-  <!-- compile the tests -->
-  <target name="compile-test" depends="build-testmodel, build-acedbtest"
-          description="compile the java test source" >
-    <copy todir="${build.src.test}">
-      <fileset dir="${src.test}">
-        <include name="**/*.java"/>
-      </fileset>
-    </copy>
-    <depend srcdir="${build.src.test}" destdir="${build.test}" closure="yes" dump="yes">
-      <classpath>
-        <pathelement path="${build.java}"/>
-      </classpath>
-    </depend>
-    <javac destdir="${build.test}" listfiles="yes">
-      <classpath refid="test.class.path"/>
-      <src path="${build.src.test}" />
-    </javac>
-  </target>
-
-  <!-- run the tests -->
-  <target name="test-main" depends="compile-test, build-db-testmodel, build-db-fulldatatest, copy-model-acedbtest, copy-model-xmitest"
-          description="perform JUnit tests on main source code" >
-
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
-      <classpath refid="test.class.path"/>
-      <formatter type="xml" />
-      <batchtest fork="no" todir="${results.junit}">
-        <fileset dir="${build.test}" includes="**/*Test.class">
-          <depend targetdir="${results.junit}">
-            <mapper type="package" from="*.class" to="TEST-*.xml" />
-          </depend>
-          <exclude name="org/flymine/web/**" />
-          <exclude name="org/flymine/objectstore/webservice/**" />
-          <exclude name="org/flymine/dataloader/XmlDataLoaderTest.class" />
-          <exclude name="org/flymine/dataconversion/*TranslatorTest.class" />
-          <exclude name="org/flymine/dataconversion/ItemToObject*" />
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <antcall target="test-report"/>
-  </target>
-
- 
-  <target name="build-db-production" depends="compile-main">
-    <ant antfile="build-model.xml" target="build-db" inheritRefs="true">
+  <target name="build-db-production" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.production"/>
     </ant>
   </target>
 
-
-  <target name="test-translation" depends="compile-test, build-db-fulldatatest">
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
-      <classpath refid="test.class.path"/>
-      <formatter type="xml" />
-      <batchtest fork="no" todir="${results.junit}">
-        <fileset dir="${build.test}">
-          <depend targetdir="${results.junit}">
-            <mapper type="package" from="*.class" to="TEST-*.xml" />
-          </depend>
-          <include name="org/flymine/dataconversion/EnsemblDataTranslatorTest.class" />
-        </fileset>
-      </batchtest>
-    </junit>
-    <antcall target="test-report"/>
-  </target>
-
-
-  <target name="test-webapp" depends="compile-test, build-testable-webapp"
-          description="perform JUnit tests on web application" >
-
-    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
-      <classpath refid="webapptest.class.path"/>
-      <formatter type="xml" />
-      <batchtest fork="no" todir="${results.junit}">
-        <fileset dir="${build.test}">
-          <include name="org/flymine/web/**/*Test.class" />
-          <depend targetdir="${results.junit}">
-            <mapper type="package" from="*.class" to="TEST-*.xml" />
-          </depend>
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <antcall target="test-report"/>
-  </target>
-
-  <target name="test-webservice" depends="compile-test, build-db-testmodel, build-testable-webservice, release-webservice"
-          description="perform JUnit tests on web service" >
-   <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
-      <classpath refid="webapptest.class.path"/>
-      <formatter type="xml" />
-      <batchtest fork="no" todir="${results.junit}">
-        <fileset dir="${build.test}">
-          <include name="org/flymine/objectstore/webservice/**/*Test.class" />
-          <depend targetdir="${results.junit}">
-            <mapper type="package" from="*.class" to="TEST-*.xml" />
-          </depend>
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <antcall target="remove-webservice"/>
-    <antcall target="test-report"/>
-  </target>
-
-  <!-- force all the unit tests to be redone -->
   <target name="junit-clean" depends="prepare">
     <delete>
       <fileset dir="${results.junit}" includes="TEST-*.xml"/>
     </delete>
-  </target>
-  
-  <target name="inctest" depends="prepare,test-main,test-webapp,test-webservice,test-tutorial,checkstyle"
-          description="do an incremental test and fail if there are any errors">
-    <fail message="Some unit tests have failed" if="junit.failure"/>
-    <fail message="Some files violate FlyMine coding standards" if="checkstyle.failure"/>
-  </target>
-
-  <target name="fulltest" depends="prepare,junit-clean,clean-code,inctest"
-          description="do a full test and fail if there are any errors">
   </target>
 
   <target name="test-report" depends="prepare"
@@ -1237,13 +923,7 @@
     </junitreport>
   </target>
 
-
-  <!-- Functional tests -->
-
-  <!-- System tests -->
-
   <!-- Java checkstyle targets -->
-
   <target name="checkstyle" depends="prepare"
           description="checks the coding style of all the java files in the project">
     <taskdef resource="checkstyletask.properties">
@@ -1382,7 +1062,7 @@
 
   <!-- Webapp targets -->
 
-  <target name="prepare-webapp" depends="prepare,prepare-dist,jar">
+  <target name="prepare-webapp" depends="prepare,prepare-dist">
     <mkdir dir="${build.webapp}/flymine"/>
     <mkdir dir="${build.webapp}/flymine/images"/>
     <mkdir dir="${build.webapp}/flymine/model"/>
@@ -1434,7 +1114,7 @@
     </war>
 
   </target>
-  
+
   <target name="precompile-jsp">
     <jspc srcdir="${build.webapp}/flymine"
       destdir="${build.webapp}/flymine/WEB-INF/src"
@@ -1470,27 +1150,9 @@
     <delete dir="${build.webapp}/flymine/WEB-INF/src"/>
   </target>
 
-  <target name="build-testable-webapp" depends="prepare-webapp, jar-testmodel"
-    description="Build a FlyMine webapp including the test classes and libraries">
-    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="model.src" value="${model}/testmodel"/>
-    </ant>
-
-    <antcall target="build-webapp"/>
-
-    <war destfile="${dist.webapp}/flymine.war" update="true">
-      <lib dir="${lib}">
-        <patternset refid="lib.webapptest"/>
-      </lib>
-      <fileset dir="${resources}/webapps/flymine" includes="FlyMineWebApp*.properties"/>
-    </war>
-  </target>
-
   <target name="build-production-webapp" depends="prepare-webapp, jar-genomic"
     description="Build a FlyMine webapp including the test classes and libraries">
-    <ant antfile="build-model.xml" target="add-model-to-webapp" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="model.src" value="${model}/genomic"/>
@@ -1498,50 +1160,6 @@
 
     <antcall target="build-webapp"/>
   </target>
-
-  <!-- Webservice targets -->
-  <target name="build-webservice" depends="prepare,prepare-dist,jar"
-    description="Build the FlyMine webservice">
-    <mkdir dir="${build.webapp}/webservice"/>
-    <mkdir dir="${build.webapp}/webservice/META-INF"/>
-    <mkdir dir="${build.webapp}/webservice/WEB-INF"/>
-    <mkdir dir="${build.webapp}/webservice/WEB-INF/lib"/>
-    <copy todir="${build.webapp}/webservice/WEB-INF">
-      <fileset dir="${resources}/webapps/webservice">
-        <exclude name="web.xml"/>
-        <exclude name="deploy-ObjectStore.wsdd"/>
-        <exclude name="undeploy-ObjectStore.wsdd"/>
-      </fileset>
-    </copy>
-    <copy todir="${build.webapp}/webservice/WEB-INF/lib">
-      <fileset dir="${lib}">
-        <patternset refid="lib.common"/>
-        <patternset refid="lib.antlr"/>
-        <patternset refid="lib.webapp.webservice"/>
-      </fileset>
-      <fileset dir="${dist}" includes="webservice*.jar"/>
-      <fileset dir="${dist}" includes="flymine*.jar"/>
-    </copy>
-    
-    <copy todir="${build.webapp}/webservice/META-INF" file="${resources}/webapps/webservice/context.xml"/>
-
-    <replace file="${build.webapp}/webservice/META-INF/context.xml" token="@@@REPLACE_PATH@@@" value="${webservice.path}"/>
-
-    <war destfile="${dist.webapp}/webservice.war" webxml="${resources}/webapps/webservice/web.xml">
-      <fileset dir="${build.webapp}/webservice"/>
-    </war>
-  </target>
-
-  <target name="build-testable-webservice" depends="build-webservice,jar-testmodel"
-    description="Build the FlyMine webservice including the test classes and libraries">
-    <war destfile="${dist.webapp}/webservice.war" update="true">
-      <lib dir="${lib}">
-        <patternset refid="lib.webapptest" />
-      </lib>
-      <lib dir="${dist}" includes="flymine-testmodel.jar" />
-    </war>
-  </target>
-
 
   <!-- Packaging/distribution targets -->
 
@@ -1559,198 +1177,8 @@
       <fileset dir="${build.javadoc}">
       </fileset>
     </copy>
-  </target>   
-
-
-  <target name="jar" depends="prepare-dist, compile-main"
-    description="Makes a JAR file of all the classes and configuration files">
-    <condition property="version" value="${DTSTAMP}">
-      <not>
-        <isset property="version" />
-      </not>
-    </condition>
-
-    <echo message="Creating jar file version ${version}" />
-    <manifest file="${build.tmp}/MANIFEST.MF">
-      <attribute name="Built-By" value="${user.name}"/>
-      <attribute name="Specification-Title" value="FlyMine"/>
-      <attribute name="Specification-Version" value="${version}"/>
-      <attribute name="Specification-Vendor" value="FlyMine"/>
-      <attribute name="Implementation-Title" value="FlyMine"/>
-      <attribute name="Implementation-Version" value="${version}"/> 
-      <attribute name="Implementation-Vendor" value="FlyMine"/>
-    </manifest>
-
-    <jar destfile="${dist}/flymine.jar" manifest="${build.tmp}/MANIFEST.MF">
-      <fileset dir="${build.java}"/>
-      <fileset dir="${build.model}/fulldata"/>
-      <fileset dir="${build.model}/datatracking"/>
-      <fileset file="${build.resources}/flymine.properties"/>
-      <fileset file="${build.resources}/log4j.properties"/>
-    </jar>
-
   </target>
 
-  <target name="jar-testmodel" depends="prepare-dist, build-testmodel"
-          description="create a jar of the testmodel">
-    <ant antfile="build-model.xml" target="jar" inheritRefs="true">
-      <property name="model.name" value="testmodel"/>
-      <reference torefid="class.path" refid="test.class.path"/>
-      <property name="model.src" value="${model}/testmodel"/>
-    </ant>    
-  </target>
-
-  <target name="build-tutorial" depends="jar"
-          description="build the tutorial tree">
-    <!-- root dir -->
-    <copy todir="${tutorial}">
-      <fileset dir="${resources}/tutorial">
-        <include name="build.xml"/>
-        <include name="flymine.properties"/>
-      </fileset>
-      <fileset dir="." includes="build-model.xml"/>
-    </copy>
-    <!-- lib dir -->
-    <copy todir="${tutorial}/lib">
-      <fileset dir="${lib}">
-        <patternset refid="lib.common"/>
-        <patternset refid="lib.antlr"/>
-        <patternset refid="lib.uml"/>
-      </fileset>
-      <fileset dir="${dist}" includes="flymine.jar"/>
-    </copy>
-    <!-- model dir -->
-    <copy todir="${tutorial}/model" file="${resources}/tutorial/tutorial_model.xml"/>
-    <!-- resources dir -->
-    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_data.xml"/>
-    <!-- src dir -->
-    <copy todir="${tutorial}/src/java/org/flymine/tutorial">
-      <fileset dir="${src.java}/org/flymine/tutorial"/>
-    </copy>
-  </target>
-
-  <target name="compile-tutorial" depends="build-tutorial">
-    <ant dir="${tutorial}" target="compile" inheritAll="false" inheritRefs="true">
-    </ant>        
-  </target>
-
-  <target name="test-tutorial" depends="compile-tutorial">
-    <!-- Currently the only test for the tutorial is that it compiles. -->
-    <!-- This may change at a later date. -->
-  </target>
-
-  <!-- Releasing targets -->
-
-  <!-- website -->
-  <target name="release-www" depends="dist-www, dist-javadoc"
-    description="releases the static website to the webserver">
-    <chmod perm="a+r" type="file">
-      <fileset dir="${dist.www}">
-        <include name="**/**" />
-      </fileset>
-    </chmod>
-    <chmod perm="a+rx" type="dir">
-      <fileset dir="${dist.www}">
-        <include name="**/**" />
-      </fileset>
-    </chmod>
-    <exec executable="rsync">
-      <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
-    </exec>
-  </target>
-
-  <!-- webapp -->
-  <target name="release-webapp" depends=""
-    description="releases the FlyMine web application to the server">
- 
-    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-
-    <tomcat-deploy 
-      url="${webapp.baseurl}/manager"
-      username="${webapp.manager}" 
-      password="${webapp.password}"
-      path="${webapp.path}" 
-      war="file://${dist.webapp}/flymine.war"/> 
-  </target>
-
-  <target name="remove-webapp"
-    description="remove the web application from the server">
-    <taskdef name="tomcat-undeploy" 
-      classname="org.apache.catalina.ant.UndeployTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    <tomcat-undeploy
-      url="${webapp.baseurl}/manager"
-      username="${webapp.manager}" 
-      password="${webapp.password}"
-      path="${webapp.path}"/>
-  </target>
-  
-  <!-- webservice -->
-  <target name="release-webservice" depends="build-webservice"
-    description="releases the webservice application to the webserver">
-    
-    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    
-    <tomcat-deploy
-      url="${webservice.baseurl}/manager" 
-      username="${webservice.manager}"
-      password="${webservice.password}" 
-      path="${webservice.path}"
-      war="file://${dist.webapp}/webservice.war"/> 
-    
-    <taskdef name="generate-wsdd"
-      classname="org.flymine.objectstore.webservice.ser.GenerateWSDDTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-
-    <generate-wsdd destfile="${build.tmp}/deploy-ObjectStore.wsdd.fragment"/>
-    <loadfile srcFile="${build.tmp}/deploy-ObjectStore.wsdd.fragment" property="generated.wsdd"/>
-    <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
-    <copy todir="${build.tmp}" filtering="true" overwrite="true" file="${resources}/webapps/webservice/deploy-ObjectStore.wsdd"/>
-    
-    <!-- This should probably be a waitfor task -->
-    <java classname="org.apache.axis.client.AdminClient" fork="true">
-      <classpath refid="webservice.class.path" />
-      <arg value="-l ${webservice.baseurl}/${webservice.path}/servlet/AxisServlet" />
-      <arg value="${build.tmp}/deploy-ObjectStore.wsdd" />
-    </java>
-  </target>
-  
-  <target name="remove-webservice"
-    description="remove the webservice application from the server">
-    <taskdef name="tomcat-undeploy" 
-      classname="org.apache.catalina.ant.UndeployTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    <tomcat-undeploy
-      url="${webservice.baseurl}/manager"
-      username="${webservice.manager}"
-      password="${webservice.password}"
-      path="${webservice.path}"/>
-  </target>
- 
-  <target name="dot-main" depends="compile-main">
-    <taskdef
-      name="dot"
-      classname="org.flymine.task.InheritanceDotTask">
-      <classpath refid="project.class.path"/>
-    </taskdef>
-    <dot directory="${src.java}" packageName="org.flymine" file="main.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
-  </target>
-
-  <target name="dot-test" depends="compile-test">
-    <taskdef
-      name="dot"
-      classname="org.flymine.task.InheritanceDotTask">
-      <classpath refid="test.class.path"/>
-    </taskdef>
-    <dot directory="${src.test}" packageName="org.flymine" file="test.dot" omit="java.io.Serializable" boring="junit.framework.TestCase"/>
-  </target>
 
   <!-- Cleaning-up targets -->
 
@@ -1769,10 +1197,6 @@
 
   <target name="clean-code"
           description="clean up all generated and compiled code">
-    <delete dir="${build.java}"/>
-    <delete dir="${build.src.java}"/>
-    <delete dir="${build.test}"/>
-    <delete dir="${build.src.test}"/>
     <delete dir="${build.resources}"/>
     <delete>
     <fileset dir=".">
@@ -1782,19 +1206,19 @@
     </delete>
     <antcall target="prepare" />
   </target>
-  
+
   <target name="distclean" depends="clean"
           description="clean up all distribution files">
     <delete dir="${dist}"/>
   </target>
 
   <!-- AntDoc target -->
-  
+
   <taskdef name="AntDoc" classname="org.ed.pack.ant.AntDoc">
     <classpath refid="project.class.path"/>
   </taskdef>
 
-   <target name="ant-doc"> 
+   <target name="ant-doc">
      <AntDoc destination="${results.antdoc}" buildfile="${ant.file}"/>
    </target>
 </project>
