@@ -16,13 +16,6 @@
   <c:forEach items="${QUERY_CLASSES}" var="entry" varStatus="classStatus">
     <c:set var="alias" value="${entry.key}"/>
     <c:set var="queryClass" value="${entry.value}"/>
-    <font class="queryViewFromItemTitle">
-      <c:forTokens items="${queryClass.type}" delims="." var="token" varStatus="status">
-        <c:if test="${status.last}">
-          <c:out value="${token}"/>
-        </c:if>
-      </c:forTokens>
-    </font>
     <c:choose>
       <c:when test="${alias == EDITING_ALIAS}">
         <html:text property="newClassName"/>
@@ -33,6 +26,13 @@
         </font>
       </c:otherwise>
     </c:choose>
+    <font class="queryViewFromItemTitle">
+      <c:forTokens items="${queryClass.type}" delims="." var="token" varStatus="status">
+        <c:if test="${status.last}">
+          [<c:out value="${token}"/>]
+        </c:if>
+      </c:forTokens>
+    </font>
     <c:if test="${EDITING_ALIAS == null}">
       <html:submit property="buttons(editClass${alias})">
         <fmt:message key="button.edit"/>
