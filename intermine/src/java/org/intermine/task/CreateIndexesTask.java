@@ -27,6 +27,7 @@ import org.intermine.dataloader.DataLoaderHelper;
 import org.intermine.dataloader.PrimaryKey;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -48,6 +49,7 @@ public class CreateIndexesTask extends Task
 {
     protected String database, model;
     protected Connection c;
+    protected boolean attributeIndexes = false;
 
     /**
      * Set the database alias
@@ -66,8 +68,16 @@ public class CreateIndexesTask extends Task
     }
 
     /**
-       * @see Task#execute
-       */
+     * Set the attributeIndexes flag.  Index the attributes that are not part of the
+     * primary key if and only if the flag is set.
+     */
+    public void setAttributeIndexes(boolean attributeIndexes) {
+        this.attributeIndexes = attributeIndexes;
+    }
+
+    /**
+     * @see Task#execute
+     */
     public void execute() throws BuildException {
         if (database == null) {
             throw new BuildException("database attribute is not set");
@@ -75,13 +85,20 @@ public class CreateIndexesTask extends Task
         if (model == null) {
             throw new BuildException("model attribute is not set");
         }
+        
+        org.intermine.web.LogMe.log("i", "attributeIndexes: " + attributeIndexes);
+
         try {
             c = DatabaseFactory.getDatabase(database).getConnection();
             c.setAutoCommit(true);
             Model m = Model.getInstanceByName(model);
             for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) i.next();
-                processClassDescriptor(cld);
+                if (attributeIndexes) {
+                    createAttributeIndexes(cld);
+                } else {
+                    createStandardIndexes(cld);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace(System.out);
@@ -97,12 +114,13 @@ public class CreateIndexesTask extends Task
     }
 
     /**
-     * Add indexes to the relevant tables for a given ClassDescriptor
+     * Add indexes for primary keys, indirection tables and 1-N relations to the relevant tables for
+     * a given ClassDescriptor
      * @param cld the ClassDescriptor
      * @throws SQLException if an error occurs
      * @throws MetaDataException if a field os not found in model
      */
-    protected void processClassDescriptor(ClassDescriptor cld)
+    protected void createStandardIndexes(ClassDescriptor cld)
         throws SQLException, MetaDataException {
         // Set of fieldnames that already are the first element of an index.
         Set doneFieldNames = new HashSet();
@@ -168,11 +186,66 @@ public class CreateIndexesTask extends Task
     }
 
     /**
+     * Add indexes for all fields to the relevant tables for a given ClassDescriptor.  Skip those
+     * fields that have indexes created by createStandardIndexes().
+     * @param cld the ClassDescriptor
+     * @throws SQLException if an error occurs
+     * @throws MetaDataException if a field os not found in model
+     */
+    protected void createAttributeIndexes(ClassDescriptor cld)
+        throws SQLException, MetaDataException {
+
+        org.intermine.web.LogMe.log("i", "examining: " + cld);
+        org.intermine.web.LogMe.log("i", "examining: " + cld.getName());
+        
+        Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
+        String tableName = DatabaseUtil.getTableName(cld);
+        
+      ATTRIBUTE: for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
+                      attributeIter.hasNext();) {
+            AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
+            
+            org.intermine.web.LogMe.log("i", " got att: " + att);
+
+            if (att.getName().equals("id")) {
+                org.intermine.web.LogMe.log("i", " -skipping id");
+                continue;
+            }
+            
+            String fieldName = DatabaseUtil.getColumnName(att);
+
+            org.intermine.web.LogMe.log("i", " fieldName: " + fieldName);
+
+            for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
+                 primaryKeyIter.hasNext();) {
+                Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
+                String keyName = (String) primaryKeyEntry.getKey();
+                PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
+                
+                org.intermine.web.LogMe.log("i", "  entry: " + primaryKeyEntry);
+
+                String firstKeyField = (String) ((Set) key.getFieldNames()).iterator().next();
+
+                org.intermine.web.LogMe.log("i", "  firstKeyField: " + firstKeyField);
+
+                if (firstKeyField.equals(att.getName())) {
+                    org.intermine.web.LogMe.log("i", "   -skipping: " + att.getName());
+                    continue ATTRIBUTE;
+                }
+            }
+
+            dropIndex(tableName + "__"  + att.getName());
+            createIndex(tableName + "__"  + att.getName(), tableName, fieldName + ", id");
+        }
+    }
+
+    /**
      * Drop an index by name, ignoring errors
      * @param indexName the index name
      */
     protected void dropIndex(String indexName) {
         try {
+            org.intermine.web.LogMe.log("i", "    dropping: " + indexName);
             execute("drop index " + indexName);
         } catch (SQLException e) {
         }
@@ -186,6 +259,9 @@ public class CreateIndexesTask extends Task
      */
     protected void createIndex(String indexName, String tableName, String columnNames) {
         try {
+            org.intermine.web.LogMe.log("i", "    creating: create index " + indexName
+                                        + " on " + tableName + "(" + columnNames + ")");
+                
             execute("create index " + indexName + " on " + tableName + "(" + columnNames + ")");
         } catch (SQLException e) {
             System.err .println("Failed to create index: " + e);
@@ -198,7 +274,7 @@ public class CreateIndexesTask extends Task
      * @throws SQLException if an error occurs
      */
     protected void execute(String sql) throws SQLException {
-        System .out.println(sql);
+        System.out.println("executing: " + sql);
         c.createStatement().execute(sql);
     }
 }
