@@ -182,11 +182,10 @@ public abstract class QueryHelper
             throw new NullPointerException("QueryClass qc parameter is null");
         }
 
+        removeConstraints(q, qc, true);
         q.deleteFromSelect(qc);
         q.deleteFrom(qc);
-        removeConstraints(q, qc, true);
     }
-
 
     /**
      * Remove all constraints associated with or related to a given QueryClass.
@@ -209,6 +208,7 @@ public abstract class QueryHelper
         if (!(c instanceof ConstraintSet)) {
             cs = new ConstraintSet(ConstraintOp.AND);
             cs.addConstraint(c);
+            q.setConstraint(cs);
         } else {
             cs = (ConstraintSet) c;
         }

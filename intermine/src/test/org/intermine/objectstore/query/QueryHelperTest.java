@@ -466,4 +466,19 @@ public class QueryHelperTest extends TestCase
         QueryHelper.removeConstraints(q, qc2, true);
         assertEquals(0, ((ConstraintSet) q.getConstraint()).getConstraints().size());
     }
+
+    public void testRemoveConstraintsSimple() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q.addToSelect(qc);
+        q.addFrom(qc);
+        
+        SimpleConstraint sc = new SimpleConstraint(new QueryField(qc, "name"),
+                                                   ConstraintOp.EQUALS,
+                                                   new QueryValue("Dave"));
+        q.setConstraint(sc);
+        
+        QueryHelper.removeFromQuery(q, qc);
+        assertEquals(0, ((ConstraintSet) q.getConstraint()).getConstraints().size());
+    }
 }
