@@ -25,6 +25,7 @@ public class PathNode extends Node
     
     /**
      * Constructor for a root node
+     * Constucting a PathNode is not usually necessary - use PathQuery#addNode
      * @param type the root type of this tree
      */
     public PathNode(String type) {
@@ -33,6 +34,7 @@ public class PathNode extends Node
 
     /**
      * Constructor for a non-root node
+     * Constucting a PathNode is not usually necessary - use PathQuery#addNode
      * @param parent the parent node of this node
      * @param fieldName the name of the field that this node represents
      * @param model the model used to resolve paths
