@@ -176,8 +176,8 @@ public class SqlGenerator
                     schemaCache.put(q, cacheEntry);
                 }
                 cacheEntry.getCached().put(new Integer(start), sql);
-                LOG.info("Created cache entry for offset " + start + " (cache contains "
-                        + cacheEntry.getCached().keySet() + ") for query " + q + ", sql = " + sql);
+                //LOG.info("Created cache entry for offset " + start + " (cache contains "
+                //    + cacheEntry.getCached().keySet() + ") for query " + q + ", sql = " + sql);
             }
         } catch (ObjectStoreException e) {
             LOG.error("Error while registering offset for query " + q + ": " + e);
