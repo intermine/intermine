@@ -70,6 +70,15 @@ public class OptimiserCache
     }
 
     /**
+     * Removes all entries from the cache.
+     */
+    public synchronized void flush() {
+        cacheLines.clear();
+        evictionQueue.clear();
+        untilNextExpiration = EXPIRE_INTERVAL;
+    }
+
+    /**
      * Adds a new OptimiserCacheLine object to the cache.
      *
      * @param original the original SQL string (stripped of LIMIT and OFFSET)

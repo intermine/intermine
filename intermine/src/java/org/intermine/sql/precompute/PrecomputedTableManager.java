@@ -220,7 +220,7 @@ public class PrecomputedTableManager
             if (!con.getAutoCommit()) {
                 con.commit();
             }
-            LOG.error("Finished creating precomputed table " + pt.getName());
+            LOG.info("Finished creating precomputed table " + pt.getName());
         } finally {
             if ((con != null) && (conn == null)) {
                 con.close();
@@ -235,6 +235,8 @@ public class PrecomputedTableManager
      * @throws SQLException if an error occurs in the underlying database
      */
     protected void deleteTableFromDatabase(String name) throws SQLException {
+        OptimiserCache oc = OptimiserCache.getInstance(database);
+        oc.flush();
         Connection con = null;
         try {
             con = (conn == null ? database.getConnection() : conn);
@@ -250,6 +252,7 @@ public class PrecomputedTableManager
             if (!con.getAutoCommit()) {
                 con.commit();
             }
+            LOG.info("Dropped precomputed table " + name);
         } finally {
             if ((con != null) && (conn == null)) {
                 con.close();
