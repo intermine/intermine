@@ -9,16 +9,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.flymine.sql.Database;
-import org.flymine.sql.DatabaseFactory;
-
+import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.ObjectStoreFactory;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.Results;
 
 /**
  * Implementation of <strong>Action</strong> that runs a Query
@@ -57,27 +51,14 @@ public class QueryAction extends Action
 
         QueryForm queryform = (QueryForm) form;
 
-        Connection con = null;
         try {
-            Database db = DatabaseFactory.getDatabase("db.unittest");
-            con = db.getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet res = stmt.executeQuery(queryform.getQuerystring());
-            List results = new ArrayList();
-            while (res.next()) {
-                List row = new ArrayList();
-                for (int i = 1; i <= res.getMetaData().getColumnCount(); i++) {
-                    row.add(res.getObject(i));
-                }
-                results.add(row);
-            }
+            ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+
+            Results results = os.execute(new Query(queryform.getQuerystring(),
+                                                   "org.flymine.model.testmodel"));
             request.setAttribute("results", results);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             return (mapping.findForward("error"));
-        } finally {
-            if (con != null) {
-                con.close();
-            }
         }
 
         return (mapping.findForward("results"));

@@ -20,7 +20,7 @@ public class QueryActionTest extends MockStrutsTestCase {
 
     public void testSuccessfulQuery() {
        setRequestPathInfo("/query");
-       addRequestParameter("querystring","select * from OJB_HL_SEQ");
+       addRequestParameter("querystring","select a1_ from Company as a1_");
        actionPerform();
        verifyForward("results");
        assertNotNull((List) getRequest().getAttribute("results"));
