@@ -110,8 +110,10 @@ public class Dag2Owl
      * @return the generated property name
      */
     public String generatePropertyName(DagTerm domain, DagTerm range) {
-        String str = filter(range.getName()) + "s";  // pluralise
-        String propName = str.substring(0, 1).toLowerCase() + str.substring(1);
+        String propName = filter(range.getName()) + "s";  // pluralise
+        if (Character.isLowerCase(propName.charAt(1))) {
+            propName = StringUtil.decapitalise(propName);
+        }
         return OntologyUtil.generatePropertyName(namespace, filter(domain.getName()), propName);
     }
 

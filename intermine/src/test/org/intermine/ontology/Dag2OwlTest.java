@@ -69,19 +69,19 @@ public class Dag2OwlTest extends TestCase{
 
     public void testProcessComponent() {
         OntModel model = ModelFactory.createOntologyModel();
-        OntClass clsA = model.createClass(namespace + "A");
-        OntClass clsB = model.createClass(namespace + "B");
+        OntClass clsA = model.createClass(namespace + "AA");
+        OntClass clsB = model.createClass(namespace + "Bb");
 
         Dag2Owl owler = new  Dag2Owl(namespace);
-        DagTerm a = new DagTerm("", "A");
-        DagTerm b = new DagTerm("", "B");
+        DagTerm a = new DagTerm("", "AA");
+        DagTerm b = new DagTerm("", "Bb");
         a.getComponents().add(b);
         owler.process(a);
 
-        assertNotNull(owler.getOntModel().getOntProperty(namespace + "A__bs"));
-        assertNotNull(owler.getOntModel().getOntProperty(namespace + "B__as"));
-        OntProperty abs = owler.getOntModel().getOntProperty(namespace + "A__bs");
-        OntProperty bas = owler.getOntModel().getOntProperty(namespace + "B__as");
+        assertNotNull(owler.getOntModel().getOntProperty(namespace + "AA__bbs"));
+        assertNotNull(owler.getOntModel().getOntProperty(namespace + "Bb__AAs"));
+        OntProperty abs = owler.getOntModel().getOntProperty(namespace + "AA__bbs");
+        OntProperty bas = owler.getOntModel().getOntProperty(namespace + "Bb__AAs");
         assertTrue(abs.hasDomain(clsA));
         assertTrue(abs.hasRange(clsB));
         assertTrue(bas.isInverseOf(abs));
