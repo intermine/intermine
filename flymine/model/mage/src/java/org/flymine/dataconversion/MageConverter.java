@@ -77,7 +77,7 @@ public class MageConverter extends FileConverter
         seenMap = new LinkedHashMap();
         dataItems = new LinkedHashSet();
         id = 0;
-        File f = new File("build/tmp/mageconvert.xml");
+        File f = new File("build/tmp/mage/mageconvert.xml");
         try {
             Writer fileWriter = new FileWriter(f);
             int c;
