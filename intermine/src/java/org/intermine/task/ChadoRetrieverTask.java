@@ -45,7 +45,7 @@ public class ChadoRetrieverTask extends Task
      * Set the database name
      * @param database the database name
      */
-    public void setDbName(String database) {
+    public void setDatabase(String database) {
         this.database = database;
     }
 
@@ -53,7 +53,7 @@ public class ChadoRetrieverTask extends Task
      * Set the model name
      * @param model the model name
      */
-    public void setModelName(String model) {
+    public void setModel(String model) {
         this.model = model;
     }
 
