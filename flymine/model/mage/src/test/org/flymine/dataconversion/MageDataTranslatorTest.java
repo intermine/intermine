@@ -250,16 +250,44 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item srcItem2= createItem(ns+"BioDataTuples", "58_739", "");
         srcItem2.addCollection(new ReferenceList("bioAssayTupleData", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744", "58_755"}))));
 
-        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2}));
+        Item srcItem10 = createItem(ns+"Experiment", "61_748", "");
+        srcItem10.addCollection(new ReferenceList("bioAssays", new ArrayList(Arrays.asList(new Object[]{"33_603", "57_709", "43_654"}))));
+
+        Item srcItem11= createItem(ns+"MeasuredBioAssay", "33_603", "");
+        srcItem11.addReference(new Reference("featureExtraction", "4_2"));
+
+        Item srcItem13= createItem(ns+"PhysicalBioAssay", "43_654", "");
+        srcItem13.addReference(new Reference("bioAssayCreation", "50_735"));
+
+        Item srcItem14= createItem(ns+"Hybridization", "50_735", "");
+        srcItem14.addCollection(new ReferenceList("sourceBioMaterialMeasurements", new ArrayList(Arrays.asList(new Object[]{"26_736", "26_737"}))));
+
+        Item srcItem15= createItem(ns+"BioMaterialMeasurement", "26_736", "");
+        srcItem15.addReference(new Reference("bioMaterial", "23_78"));
+
+        Item srcItem16= createItem(ns+"BioMaterialMeasurement", "26_737", "");
+        srcItem16.addReference(new Reference("bioMaterial", "23_146"));
+
+
+        Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2,srcItem10, srcItem11, srcItem13, srcItem14, srcItem15, srcItem16 }));
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
 
         Item expectedItem = createItem(tgtNs+"MicroArrayAssay", "57_709", "");
         //expectedItem.addCollection(new ReferenceList("results", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744", "58_755"}))));
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
+        expectedItem.addCollection(new ReferenceList("tissues", new ArrayList(Arrays.asList(new Object[]{"23_78", "23_146"}))));
 
-        assertEquals(expected, translator.translateItem(srcItem));
+        Item expectedItem2 =createItem(tgtNs+"MicroArrayExperiment", "61_748", "");
+        expectedItem2.addCollection(new ReferenceList("assays", new ArrayList(Arrays.asList(new Object[]{"57_709"}))));
+
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2}));
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        assertEquals(expected, tgtIw.getItems());
+
     }
 
     public void testMicroArrayExperimentalResult() throws Exception {
@@ -283,7 +311,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Set src = new HashSet(Arrays.asList(new Object[]{srcItem, srcItem1, srcItem2, srcItem3}));
         Map srcMap = writeItems(src);
 
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap), getOwlModel(), tgtNs);
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                       getOwlModel(), tgtNs);
 
         Item expectedItem = createItem(tgtNs+"MicroArrayExperimentalResult", "58_762", "");
         expectedItem.addAttribute(new Attribute("normalised","true"));
@@ -292,10 +321,16 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expectedItem.addAttribute(new Attribute("isBackground","false"));
         expectedItem.addReference(new Reference("analysis","-1_1"));
 
+        Item expectedItem2 = createItem(tgtNs+"DagTerm", "1_611", "");
+        expectedItem2.addAttribute(new Attribute("name","linear_scale"));
 
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedItem2}));
 
-        assertEquals(expected, translator.translateItem(srcItem));
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        assertEquals(expected, tgtIw.getItems());
+
     }
 
     public void testBioEntity() throws Exception {
