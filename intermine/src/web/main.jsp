@@ -134,19 +134,19 @@
           <html:hidden property="path" value="${editingNode.path}"/>
           <c:choose>
             <c:when test="${editingNode.attribute}">
-              <html:select property="constraintOp">
+              <html:select property="attributeOp">
                 <c:forEach items="${validOps}" var="validOp">
                   <html:option value="${validOp.key}">
                     <c:out value="${validOp.value}"/>
                   </html:option>
                 </c:forEach>
               </html:select>
-              <html:text property="constraintValue"/>
+              <html:text property="attributeValue"/>
             </c:when>
             <c:otherwise>
               <c:if test="${editingNode.indentation != 0}">
                 <fmt:message key="query.subclassConstraint"/>
-                <html:select property="subclass">
+                <html:select property="subclassValue">
                   <c:forEach items="${subclasses}" var="subclass">
                     <html:option value="${subclass}">
                       <c:out value="${subclass}"/>
@@ -157,14 +157,14 @@
               <c:if test="${!empty SAVED_BAGS}">
                 <br/>
                 <fmt:message key="query.bagConstraint"/>
-                <html:select property="constraintOp">
+                <html:select property="bagOp">
                   <c:forEach items="${validOps}" var="validOp">
                     <html:option value="${validOp.key}">
                       <c:out value="${validOp.value}"/>
                     </html:option>
                   </c:forEach>
                 </html:select>
-                <html:select property="constraintValue">
+                <html:select property="bagValue">
                   <html:option value=""/>
                   <c:forEach items="${SAVED_BAGS}" var="bag">
                     <html:option value="${bag.key}">

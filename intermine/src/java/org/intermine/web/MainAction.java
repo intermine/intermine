@@ -54,16 +54,23 @@ public class MainAction extends Action
 
         RightNode node = (RightNode) qNodes.get(mf.getPath());
 
-        if (mf.getParsedConstraintValue() != null) {
+        if (mf.getAttributeValue() != null) {
             ConstraintOp constraintOp = ConstraintOp.
-                getOpForIndex(Integer.valueOf(mf.getConstraintOp()));
-            Object constraintValue = mf.getParsedConstraintValue();
+                getOpForIndex(Integer.valueOf(mf.getAttributeOp()));
+            Object constraintValue = mf.getParsedAttributeValue();
             node.getConstraints().add(new Constraint(constraintOp, constraintValue));
         }
 
-        if (mf.getSubclass() != null && !mf.getSubclass().equals("")) {
-            ((Node) qNodes.get(mf.getPath())).setType(mf.getSubclass());
-            session.setAttribute("path", mf.getSubclass());
+        if (mf.getBagValue() != null && !mf.getBagValue().equals("")) {
+            ConstraintOp constraintOp = ConstraintOp.
+                getOpForIndex(Integer.valueOf(mf.getBagOp()));
+            Object constraintValue = mf.getBagValue();
+            node.getConstraints().add(new Constraint(constraintOp, constraintValue));
+        }
+
+        if (mf.getSubclassValue() != null && !mf.getSubclassValue().equals("")) {
+            node.setType(mf.getSubclassValue());
+            session.setAttribute("path", mf.getSubclassValue());
         }
 
         mf.reset(mapping, request);

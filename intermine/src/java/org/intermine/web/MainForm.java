@@ -36,60 +36,101 @@ import org.intermine.util.TypeUtil;
  */
 public class MainForm extends ActionForm
 {
-    protected String constraintOp, constraintValue, path, subclass;
-    Object parsedConstraintValue;
+    protected String bagOp, bagValue;
+    protected String attributeOp, attributeValue;
+    protected String subclassValue;
+    protected String path;
+
+    protected Object parsedAttributeValue;
 
     /**
-     * Gets the value of subclass
+     * Gets the value of bagOp
      *
-     * @return the value of subclass
+     * @return the value of bagOp
      */
-    public String getSubclass()  {
-        return subclass;
+    public String getBagOp()  {
+        return bagOp;
     }
 
     /**
-     * Sets the value of subclass
+     * Sets the value of bagOp
      *
-     * @param subclass Value to assign to subclass
+     * @param bagOp Value to assign to bagOp
      */
-    public void setSubclass(String subclass) {
-        this.subclass = subclass;
-    }
-    /**
-     * Gets the value of constraintOp
-     *
-     * @return the value of constraintOp
-     */
-    public String getConstraintOp()  {
-        return constraintOp;
+    public void setBagOp(String bagOp) {
+        this.bagOp = bagOp;
     }
 
     /**
-     * Sets the value of constraintOp
+     * Gets the value of bagValue
      *
-     * @param constraintOp Value to assign to constraintOp
+     * @return the value of bagValue
      */
-    public void setConstraintOp(String constraintOp) {
-        this.constraintOp = constraintOp;
+    public String getBagValue()  {
+        return bagValue;
     }
 
     /**
-     * Gets the value of constraintValue
+     * Sets the value of bagValue
      *
-     * @return the value of constraintValue
+     * @param bagValue value to assign to bagValue
      */
-    public String getConstraintValue()  {
-        return constraintValue;
+    public void setBagValue(String bagValue) {
+        this.bagValue = bagValue;
     }
 
     /**
-     * Sets the value of constraintValue
+     * Gets the value of attributeOp
      *
-     * @param constraintValue Value to assign to constraintValue
+     * @return the value of attributeOp
      */
-    public void setConstraintValue(String constraintValue) {
-        this.constraintValue = constraintValue;
+    public String getAttributeOp()  {
+        return attributeOp;
+    }
+
+    /**
+     * Sets the value of attributeOp
+     *
+     * @param attributeOp value to assign to attributeOp
+     */
+    public void setAttributeOp(String attributeOp) {
+        this.attributeOp = attributeOp;
+    }
+
+    /**
+     * Gets the value of attributeValue
+     *
+     * @return the value of attributeValue
+     */
+    public String getAttributeValue()  {
+        return attributeValue;
+    }
+
+    /**
+     * Sets the value of attributeValue
+     *
+     * @param attributeValue value to assign to attributeValue
+     */
+    public void setAttributeValue(String attributeValue) {
+        this.attributeValue = attributeValue;
+    }
+
+    /**
+     * Gets the value of subclassValue
+     *
+     * @return the value of subclassValue
+     */
+    public String getSubclassValue()  {
+        return subclassValue;
+    }
+
+    /**
+     * Sets the value of subclassValue
+     *
+     * @param subclassValue value to assign to subclassValue
+     */
+    public void setSubclassValue(String subclassValue) {
+        this.subclassValue = subclassValue;
     }
 
     /**
@@ -104,20 +145,30 @@ public class MainForm extends ActionForm
     /**
      * Sets the value of path
      *
-     * @param path Value to assign to path
+     * @param path value to assign to path
      */
     public void setPath(String path) {
         this.path = path;
     }
-    
+
     /**
-     * Gets the value of parsedConstraintValue
+     * Gets the value of parsedAttributeValue
      *
-     * @return the value of parsedConstraintValue
+     * @return the value of parsedAttributeValue
      */
-    public Object getParsedConstraintValue() {
-        return parsedConstraintValue;
+    public Object getParsedAttributeValue()  {
+        return parsedAttributeValue;
     }
+
+    /**
+     * Sets the value of parsedAttributeValue
+     *
+     * @param parsedAttributeValue value to assign to parsedAttributeValue
+     */
+    public void setParsedAttributeValue(Object parsedAttributeValue) {
+        this.parsedAttributeValue = parsedAttributeValue;
+    }
+
 
     /**
      * @see ActionForm#validate
@@ -128,14 +179,9 @@ public class MainForm extends ActionForm
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
 
-        if (constraintValue == null) {
-            return null;
-        }
-
         ActionErrors errors = new ActionErrors();
 
-        if (path.indexOf(".") == -1
-            && MainHelper.getFieldDescriptor(path, model) instanceof AttributeDescriptor) {
+        if (attributeValue != null) {
             AttributeDescriptor attr = (AttributeDescriptor)
                 MainHelper.getFieldDescriptor(path, model);
             Class fieldClass = TypeUtil.instantiate(attr.getType());
@@ -143,27 +189,25 @@ public class MainForm extends ActionForm
                 DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT,
                                                             locale);
                 try {
-                    parsedConstraintValue = df.parse(constraintValue);
+                    parsedAttributeValue = df.parse(attributeValue);
                 } catch (ParseException e) {
                     errors.add(ActionErrors.GLOBAL_ERROR,
                                new ActionError("errors.date",
-                                               constraintValue,
+                                               attributeValue,
                                                df.format(new Date())));
                 }
             } else {
                 try {
-                    parsedConstraintValue = TypeUtil.stringToObject(fieldClass, constraintValue);
+                    parsedAttributeValue = TypeUtil.stringToObject(fieldClass, attributeValue);
                 } catch (NumberFormatException e) {
                     String shortName = TypeUtil.unqualifiedName(fieldClass.getName()).toLowerCase();
                     errors.add(ActionErrors.GLOBAL_ERROR,
                                new ActionError("errors." + shortName,
-                                               constraintValue));
+                                               attributeValue));
                 }
             }
-        } else {
-            parsedConstraintValue = constraintValue;
         }
-        
+
         if (errors.size() > 0) {
             request.setAttribute("editingNode",
                                  ((Map) session.getAttribute(Constants.QUERY)).get(path));
@@ -175,10 +219,11 @@ public class MainForm extends ActionForm
      * @see ActionForm#reset
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-        constraintOp = null;
-        constraintValue = null;
-        parsedConstraintValue = null;
+        bagOp = null;
+        bagValue = null;
+        attributeOp = null;
+        attributeValue = null;
+        subclassValue = null;
         path = null;
-        subclass = null;
     }
 }
