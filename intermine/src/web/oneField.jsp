@@ -7,27 +7,27 @@
 <div class="oneField">
   <c:choose>
     
-    <c:when test="${field.attribute}">
-      <c:if test="${field.name != 'id'}">
-        <c:out value="${field.name}: ${object[field.name]}"/>
+    <c:when test="${fieldDescriptor.attribute}">
+      <c:if test="${fieldDescriptor.name != 'id'}">
+        <c:out value="${fieldDescriptor.name}: ${object[fieldDescriptor.name]}"/>
         <br/>
       </c:if>
     </c:when>
     
-    <c:when test="${field.reference}">
-      <c:if test="${object[field.name] != null}">
-        <c:out value="${field.name}:"/>
-        <html:link action="/details?id=${object.id}&field=${field.name}">
-          <c:out value="${field.referencedClassDescriptor.unqualifiedName}"/>
+    <c:when test="${fieldDescriptor.reference}">
+      <c:if test="${object[fieldDescriptor.name] != null}">
+        <c:out value="${fieldDescriptor.name}:"/>
+        <html:link action="/details?id=${object.id}&field=${fieldDescriptor.name}">
+          <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}"/>
         </html:link>
         <br/>
       </c:if>
     </c:when>
     
-    <c:when test="${field.collection}">
-      <bean:size collection="${object[field.name]}" id="listSize"/>
+    <c:when test="${fieldDescriptor.collection}">
+      <bean:size collection="${object[fieldDescriptor.name]}" id="listSize"/>
       <c:if test="${listSize > 0}">
-        <c:out value="${field.name}: ${field.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
+        <c:out value="${fieldDescriptor.name}: ${fieldDescriptor.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
       <br/>
       </c:if>
     </c:when>
