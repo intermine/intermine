@@ -10,6 +10,10 @@ table td, table th {
   padding: 6px;
 }
 
+table td, table th, .whiteboxwithborder {
+  font-size: 13px;
+}
+
 * {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
 }
