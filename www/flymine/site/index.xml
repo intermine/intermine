@@ -50,14 +50,14 @@
         FlyMine <ulink url="doc/manual/manualQuickstart.xml">quick start guide</ulink>
       </item>
       <item>
-        <ulink url="doc/tutorials/tutorialIndex.xml">Tutorials</ulink> - step-by-step guide to queries
+        <ulink url="doc/tutorials/index.xml">Tutorials</ulink> - step-by-step guide to queries
       </item>
       <item>
         <ulink url="examples.do">Query examples</ulink>
       </item>
       <item>
-        <ulink url="doc/manual/manualIndex.xml">User Manual</ulink>
-      </item>
+        <ulink url="doc/manual/index.xml">User Manual</ulink>
+      /item>
     </section>
 
 
