@@ -307,7 +307,7 @@
     <antcall target="test-report"/>
   </target>
 
-  <target name="test-webapp" depends="compile-test, build-webapp, build-db-testmodel"
+  <target name="test-webapp" depends="compile-test, build-db-testmodel, build-testable-webapp, release-webapp"
           description="perform JUnit tests on web application" >
    <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="webapptest.class.path"/>
@@ -320,6 +320,8 @@
     </junit>
 
     <antcall target="test-report"/>
+    <antcall target="remove-webapp"/>
+
   </target>
 
 
@@ -514,6 +516,24 @@
 
   </target>
 
+  <target name="build-testable-webapp" depends="prepare,compile-test,jar-testmodel,build-webapp"
+          description="Build a FlyMine webapp including the test classes and libraries">
+    <!-- Copy the test classes -->
+    <copy todir="${build.webapp}/WEB-INF/classes">
+      <fileset dir="${build.test}"/>
+    </copy>
+    <!-- Collect all the necessary jars together in the WEB-INF/lib directory -->
+    <copy todir="${build.webapp}/WEB-INF/lib">
+      <!-- The building/testing jars -->
+      <fileset dir="${buildlib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+
+
   <!-- Packaging/distribution targets -->
 
   <target name="dist-www" depends="prepare-dist,build-www"
@@ -589,11 +609,14 @@
       <fileset dir="${build.resources}"/>
     </jar>
 
-    <chmod perm="a+r" type="file">
-      <fileset dir="${dist}">
-        <include name="*.jar" />
-      </fileset>
-    </chmod>
+  </target>
+
+  <target name="jar-testmodel" depends="prepare-dist, compile-testmodel, generate-repository-testmodel, generate-castor-xml-mapping"
+          description="create a jar of the testmodel">
+    <jar destfile="${dist}/flymine-testmodel.jar">
+      <fileset dir="${build.test}" />
+      <fileset dir="${build.resources.testxml}" />
+    </jar>
   </target>
 
 
@@ -611,6 +634,24 @@
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --delete ${dist.webapp}/ ${webapp.serverlocation}/" />
     </exec>
+    <taskdef name="tomcat-install"
+        classname="org.apache.catalina.ant.InstallTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+
+    <tomcat-install url="${webapp.managerurl}" username="${webapp.manager}" 
+                  password="${webapp.password}" path="${webapp.path}" 
+                  war="file:${webapp.filelocation}"/> 
+  </target>
+
+  <target name="remove-webapp"
+          description="remove (undeploy) the web application from the server">
+    <taskdef name="tomcat-remove" 
+        classname="org.apache.catalina.ant.RemoveTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <tomcat-remove url="${webapp.managerurl}" username="${webapp.manager}" 
+            password="${webapp.password}" path="${webapp.path}"/>
   </target>
 
   <!-- Cleaning-up targets -->
