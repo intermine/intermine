@@ -13,6 +13,8 @@ import java.util.Date;
 public class QueryLogger
 {
 
+    protected static Object lock = new Object();
+
     /**
      * Allows a Query to be logged
      *
@@ -21,7 +23,9 @@ public class QueryLogger
      * @throws IOException if unable to log correctly
      */
     public static void log(Query q, Writer w) throws IOException {
-        w.write(new Date().toString() + "\t" + q.getSQLString());
+        synchronized (lock) {
+            w.write(new Date().toString() + "\t" + q.getSQLString());
+        }
     }
 
 }
