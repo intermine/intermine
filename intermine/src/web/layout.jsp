@@ -12,6 +12,7 @@
   <head>
     <html:base/>
     <link rel="stylesheet" type="text/css" href="intermine.css"/>
+    <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
