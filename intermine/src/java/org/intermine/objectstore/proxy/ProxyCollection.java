@@ -27,7 +27,10 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
+
+import org.apache.log4j.Logger;
 
 /**
  * Class which holds a reference to a collection in the database
@@ -36,12 +39,19 @@ import org.intermine.objectstore.query.SingletonResults;
  */
 public class ProxyCollection extends AbstractList implements Set, Lazy
 {
+    private static final Logger LOG = Logger.getLogger(ProxyCollection.class);
+
     private ObjectStore os;
     private InterMineObject o;
     private String fieldName;
     private Class clazz;
-    private boolean useReverseRelation;
+    private int flags; // 1 = useReverseRelation, 2 = noOptimise, 4 = noExplain
     private SoftReference collectionRef = null;
+    private int batchSize = 0;
+
+    private static int createdCount = 0;
+    private static int usedCount = 0;
+    private static int evaluateCount = 0;
 
     /**
      * Construct a ProxyCollection object.
@@ -51,6 +61,7 @@ public class ProxyCollection extends AbstractList implements Set, Lazy
      * @param fieldName the name of the collection, or if useReverseRelation is true, the name of
      * the reverse field
      * @param clazz the Class of the objects in the collection
+     * @param useReverseRelation if the collection query should use the reverse relationship
      */
     public ProxyCollection(ObjectStore os, InterMineObject o, String fieldName, Class clazz,
             boolean useReverseRelation) {
@@ -58,7 +69,9 @@ public class ProxyCollection extends AbstractList implements Set, Lazy
         this.o = o;
         this.fieldName = fieldName;
         this.clazz = clazz;
-        this.useReverseRelation = useReverseRelation;
+        this.flags = (useReverseRelation ? 1 : 0);
+        createdCount++;
+        maybeLog();
     }
 
     /**
@@ -111,21 +124,75 @@ public class ProxyCollection extends AbstractList implements Set, Lazy
     }
 
     /**
+     * @see LazyCollection#getQuery
+     */
+    public Query getQuery() {
+        return getCollection().getQuery();
+    }
+
+    /**
+     * @see LazyCollection#getInfo
+     */
+    public ResultsInfo getInfo() throws ObjectStoreException {
+        return getCollection().getInfo();
+    }
+
+    /**
+     * @see LazyCollection#setNoOptimise
+     */
+    public void setNoOptimise() {
+        flags = flags | 2;
+        if (collectionRef != null) {
+            SingletonResults collection = (SingletonResults) collectionRef.get();
+            if (collection != null) {
+                collection.setNoOptimise();
+            }
+        }
+    }
+
+    /**
+     * @see LazyCollection#setNoExplain
+     */
+    public void setNoExplain() {
+        flags = flags | 4;
+        if (collectionRef != null) {
+            SingletonResults collection = (SingletonResults) collectionRef.get();
+            if (collection != null) {
+                collection.setNoExplain();
+            }
+        }
+    }
+
+    /**
+     * @see LazyCollection#setBatchSize
+     */
+    public void setBatchSize(int size) {
+        batchSize = size;
+        collectionRef = new SoftReference(null);
+    }
+
+    /**
      * Gets (or creates) a SingletonResults object to which requests are delegated.
      *
      * @return a SingletonResults object
      */
-    public SingletonResults getCollection() {
+    private SingletonResults getCollection() {
         SingletonResults collection = null;
+        if (collectionRef == null) {
+            usedCount++;
+            maybeLog();
+        }
         // WARNING - read this following line very carefully.
         if ((collectionRef == null)
                 || ((collection = ((SingletonResults) collectionRef.get())) == null)) {
+            evaluateCount++;
+            maybeLog();
             // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
             //                         AND this = <this>
             // Or if we have a one-to-many collection, then:
             //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
             Query q = new Query();
-            if (useReverseRelation) {
+            if ((flags % 2) == 1) {
                 QueryClass qc1 = new QueryClass(clazz);
                 q.addFrom(qc1);
                 q.addToSelect(qc1);
@@ -148,8 +215,27 @@ public class ProxyCollection extends AbstractList implements Set, Lazy
                 q.setDistinct(false);
             }
             collection = new SingletonResults(q, os, os.getSequence());
+            if (batchSize != 0) {
+                collection.setBatchSize(batchSize);
+            }
+            if (((flags / 2) % 2) == 1) {
+                collection.setNoOptimise();
+            }
+            if ((flags / 4) == 1) {
+                collection.setNoExplain();
+            }
             collectionRef = new SoftReference(collection);
         }
         return collection;
+    }
+
+    private static void maybeLog() {
+        if ((createdCount + usedCount + evaluateCount) % 10000 == 0) {
+            LOG.info("Created: " + createdCount + ", Used: " + usedCount + ", Evaluated: "
+                    + evaluateCount);
+        } else if ((createdCount + usedCount + evaluateCount) % 100 == 0) {
+            LOG.debug("Created: " + createdCount + ", Used: " + usedCount + ", Evaluated: "
+                    + evaluateCount);
+        }
     }
 }

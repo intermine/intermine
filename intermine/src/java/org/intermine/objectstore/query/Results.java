@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.proxy.Lazy;
+import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.util.CacheMap;
 
 /**
@@ -35,7 +35,7 @@ import org.intermine.util.CacheMap;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class Results extends AbstractList implements Lazy
+public class Results extends AbstractList implements LazyCollection
 {
     private static final Logger LOG = Logger.getLogger(Results.class);
 
