@@ -94,7 +94,8 @@ fi
 # Aliases for working with the public CVS tree
 
 if [ "${FLYMINE:+set}" = "set" ]; then
-    alias fly='cd $FLYMINE/src/org/flymine'
+    alias fly='cd $FLYMINE'
+    alias flysrc='cd $FLYMINE/src/org/flymine'
     alias flydoc='cd $FLYMINE/doc'
 fi
 
