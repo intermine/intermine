@@ -28,6 +28,12 @@ public interface Constants
     public static final String EXAMPLE_QUERIES = "EXAMPLE_QUERIES";
 
     /**
+     * ServletContext attribute used to store the Map of class names to Displayer objects and
+     * className+"."+fieldName to Displayer objects.
+     */
+    public static final String DISPLAYERS = "DISPLAYERS";
+
+    /**
      * ServletContext attribute used to store the ObjectStore
      */
     public static final String OBJECTSTORE = "OBJECTSTORE";
