@@ -15,10 +15,7 @@ import org.flymine.sql.query.ExplainResult;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
-import org.flymine.objectstore.query.QueryHelper;
-import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
-import org.flymine.util.PropertiesUtil;
 import org.flymine.metadata.Model;
 
 /**
@@ -31,20 +28,7 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
 {
     protected static Map instances = new HashMap();
     protected Database db;
-    protected Model model;
     protected PersistenceBrokerFactoryFlyMineImpl pbf = null;
-
-    /**
-     * No argument constructor
-     *
-     */
-    protected ObjectStoreOjbImpl() {
-        Properties props = PropertiesUtil.getPropertiesStartingWith("os.query");
-        props = PropertiesUtil.stripStart("os.query", props);
-        maxTime = Long.parseLong((String) props.get("max-time"));
-        maxLimit = Integer.parseInt((String) props.get("max-limit"));
-        maxOffset = Integer.parseInt((String) props.get("max-offset"));
-    }
 
     /**
      * Constructs an ObjectStoreOjbImpl interfacing with an OJB instance
@@ -56,9 +40,8 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @throws IllegalArgumentException if repository is invalid
      */
     protected ObjectStoreOjbImpl(Database db, Model model) {
-        this();
+        super(model);
         this.db = db;
-        this.model = model;
         //should the factory be created for a given model?
         pbf = (PersistenceBrokerFactoryFlyMineImpl) PersistenceBrokerFactoryFactory.instance();
     }
@@ -106,17 +89,6 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * Execute a Query on this ObjectStore
-     *
-     * @param q the Query to execute
-     * @return the results of the Query
-     * @throws ObjectStoreException if an error occurs during the running of the Query
-     */
-    public Results execute(Query q) throws ObjectStoreException {
-        return new Results(q, this);
-    }
-
-    /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
      * This will usually only be called by the Results object returned from execute().
      * <code>execute(Query q)</code>.
@@ -148,34 +120,6 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
-     */
-    public Object getObjectByExample(Object obj) throws ObjectStoreException {
-        Results res = execute(QueryHelper.createQueryForExampleObject(obj, model));
-        
-        if (res.size() > 1) {
-            throw new IllegalArgumentException("More than one object in the database has "
-                                               + "this primary key");
-        }
-        if (res.size() == 1) {
-            Object ret = ((ResultsRow) res.get(0)).get(0);
-            return ret;
-        }
-        return null;
-    }
-
-    /**
-     * Runs an EXPLAIN on the query without and LIMIT or OFFSET.
-     *
-     * @param q the query to estimate rows for
-     * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explining the query
-     */
-    public ExplainResult estimate(Query q) throws ObjectStoreException {
-        return explain(q, 0, Integer.MAX_VALUE - 1);
-    }
-
-    /**
      * Runs an EXPLAIN for the given query with specified start and limit parameters.  This
      * gives estimated time for a single 'page' of the query.
      *
@@ -186,10 +130,6 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
      * @throws ObjectStoreException if an error occurs explining the query
      */
     public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException {
-        return explain(q, start, limit);
-    }
-
-    private ExplainResult explain(Query q, int start, int limit) throws ObjectStoreException {
         PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
         ExplainResult result = pb.explain(q, start, limit);
         pb.close();
@@ -207,13 +147,6 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
         int count = pb.count(q);
         pb.close();
         return count;
-    }
-
-    /**
-     * @see ObjectStore#getModel
-     */
-    public Model getModel() {
-        return model;
     }
 }
 
