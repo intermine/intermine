@@ -11,6 +11,8 @@ package org.intermine.objectstore;
  */
 
 import java.util.Properties;
+import java.util.Arrays;
+import java.io.InputStream;
 
 import junit.framework.*;
 
@@ -40,9 +42,25 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
     public void testGetCount() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         assertNotNull(os);
-//        ObjectStoreSummary oss = new ObjectStoreSummary(new Properties());
-//        assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
-        // do it again to check the cache
-//        assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
+        Properties objectStoreSummaryProperties = new Properties();
+        ClassLoader classLoader = ObjectStoreSummaryTest.class.getClassLoader();
+        InputStream objectStoreSummaryPropertiesStream =
+            classLoader.getResourceAsStream("objectstoresummary.properties");
+        objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
+        ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
+        assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
+    }
+
+    public void testGetFieldValues() throws Exception {
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        assertNotNull(os);
+        Properties objectStoreSummaryProperties = new Properties();
+        ClassLoader classLoader = ObjectStoreSummaryTest.class.getClassLoader();
+        InputStream objectStoreSummaryPropertiesStream =
+            classLoader.getResourceAsStream("objectstoresummary.properties");
+        objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
+        ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
+        assertEquals(Arrays.asList(new Object [] {"10", "20", "30", "40", "50", "60"}),
+                     oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
     }
 }
