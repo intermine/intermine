@@ -76,7 +76,7 @@ public class ConstraintHelper
             Iterator iter = ((ConstraintSet) c).getConstraints().iterator();
             while (iter.hasNext()) {
                 Constraint childConstraint = (Constraint) iter.next();
-                walkConstraints(childConstraint, ca);
+                traverseConstraints(childConstraint, ca);
             }
         }
     }
