@@ -18,11 +18,14 @@ import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStore;
 
+import org.intermine.sql.Database;
+
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.*;
@@ -73,14 +76,35 @@ public class CreateReferences
         insertReferences(Chromosome.class, "exons", Exon.class, "transcripts",
                          Transcript.class, "chromosome");
 
+        ObjectStore os = osw.getObjectStore();
+        if (os instanceof ObjectStoreInterMineImpl) {
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            DatabaseUtil.analyse(db, false);
+        }
+
         insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
         insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
         insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
 
+        if (os instanceof ObjectStoreInterMineImpl) {
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            DatabaseUtil.analyse(db, false);
+        }
+
         insertGeneAnnotationReferences();
+
+        if (os instanceof ObjectStoreInterMineImpl) {
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            DatabaseUtil.analyse(db, false);
+        }
 
         insertReferences(Gene.class, GOTerm.class, "GOTerms");
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
+
+        if (os instanceof ObjectStoreInterMineImpl) {
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            DatabaseUtil.analyse(db, false);
+        }
     }
 
     /**
