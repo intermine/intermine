@@ -14,15 +14,21 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
 import java.util.Properties;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.TreeSet;
 import java.io.InputStream;
 
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
 
+import org.intermine.util.TypeUtil;
 import org.intermine.metadata.Model;
 import org.intermine.web.config.WebConfig;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
@@ -56,6 +62,8 @@ public class InitialiserPlugin implements PlugIn
             ObjectStore os = ObjectStoreFactory.getObjectStore();
             Model model = os.getModel();
 
+            ObjectStoreSummary oss = new ObjectStoreSummary(os);
+
             servletContext.setAttribute(Constants.OBJECTSTORE, os);
             servletContext.setAttribute(Constants.MODEL, model);
             servletContext.setAttribute("webconfig", wc);
@@ -73,6 +81,17 @@ public class InitialiserPlugin implements PlugIn
             webProperties.load(modelPropertiesStream);
 
             servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
+
+            Map classes = new LinkedHashMap();
+            Map classCounts = new LinkedHashMap();
+            for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
+                String className = (String) i.next();
+                classes.put(className, TypeUtil.unqualifiedName(className));
+                classCounts.put(className, new Integer(oss.getClassCount(className)));
+            }
+
+            servletContext.setAttribute("classes", classes);
+            servletContext.setAttribute("classCounts", classCounts);
         } catch (Exception e) {
             throw new ServletException("there was a problem while initialising", e);
         }
