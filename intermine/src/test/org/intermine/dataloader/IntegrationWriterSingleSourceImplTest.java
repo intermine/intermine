@@ -21,7 +21,6 @@ import org.flymine.sql.DatabaseFactory;
 import org.flymine.model.testmodel.*;
 import org.flymine.util.TypeUtil;
 
-
 public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 {
     public IntegrationWriterSingleSourceImplTest(String arg) {
@@ -53,7 +52,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
 
-        iw = new IntegrationWriterSingleSourceImpl("test", writer);
+        iw = new IntegrationWriterSingleSourceImpl("test", os, writer);
     }
 
     // Not doing the Query tests here
@@ -65,7 +64,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         Address a = new Address();
         a.setAddress("Company Street, AVille");
 
-        Address a2 = (Address) writer.getObjectByExample(a);
+        Address a2 = (Address) os.getObjectByExample(a);
         assertNotNull("address from db should not be null", a2);
         c.setAddress(a2);
         c.setName("CompanyC");
@@ -74,7 +73,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 
         iw.store(c);  // method we are testing
 
-        Company example = (Company) writer.getObjectByExample(c);
+        Company example = (Company) os.getObjectByExample(c);
         assertNotNull("example from db should not be null", example);
 
         assertEquals(c.getAddress(), example.getAddress());
@@ -86,7 +85,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testObjectNotStoredByIntegrationWriter() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) writer.getObjectByExample(address);
+        Address a2 = (Address) os.getObjectByExample(address);
 
         assertNotNull("address from db should not be null", a2);
 
@@ -118,7 +117,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testStoredObjectAsSkeleton() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) writer.getObjectByExample(address);
+        Address a2 = (Address) os.getObjectByExample(address);
 
         Company company = new Company();
         company.setAddress(a2);
@@ -129,7 +128,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
         iw.store(company, true); // store as skeleton
 
         // check object stored correctly
-        Company example = (Company) writer.getObjectByExample(company);
+        Company example = (Company) os.getObjectByExample(company);
         assertNotNull("Expected to retrieve object by example", example);
 
         // this object has not been stored as a skeleton, we should be able to write over everything
@@ -153,7 +152,7 @@ public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
     public void testStoredObjectAsNonSkeleton() throws Exception {
         Address address = new Address();
         address.setAddress("Company Street, AVille");
-        Address a2 = (Address) writer.getObjectByExample(address);
+        Address a2 = (Address) os.getObjectByExample(address);
 
         Company company = new Company();
         company.setAddress(a2);

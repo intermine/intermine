@@ -1,12 +1,8 @@
 package org.flymine.dataloader;
 
-import java.util.Properties;
-import java.lang.reflect.Constructor;
-
-import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreWriter;
-import org.flymine.util.PropertiesUtil;
+import org.flymine.objectstore.ObjectStoreException;
 
 /**
  * Abstract implementation of ObjectStoreIntegrationWriter.  To retain
@@ -19,81 +15,33 @@ import org.flymine.util.PropertiesUtil;
 
 public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
-
-    protected ObjectStoreWriter osw;
     protected String dataSource;
+    protected ObjectStore os;
+    protected ObjectStoreWriter osw;
 
     /**
+     * Constructs a new instance of an IntegrationWriter
      *
-     * @param dataSource name of data source being loaded
-     * @param os the ObjectStore being written to
-     * @param alias identifier for properties defining integration/writer parameters
-     * @return instance of a concrete IntegrationWriter according to property
-     * @throws ObjectStoreException if anything goes wrong
+     * @param dataSource the name of the data source
+     * @param os an instance of an ObjectStore, which we can use to access the database
+     * @param osw an instance of an ObjectStoreWriter, which we can use to access the database
      */
-    public static IntegrationWriterAbstractImpl getInstance(String dataSource,
-                                                            ObjectStore os, String alias)
-        throws ObjectStoreException {
-
-        Properties props = PropertiesUtil.getPropertiesStartingWith(alias);
-        if (0 == props.size()) {
-            throw new ObjectStoreException("No ObjectStore properties were found for '"
-                                           + alias + "'");
-        }
-        props = PropertiesUtil.stripStart(alias, props);
-        String integrationName = props.getProperty("integration");
-
-        String osw = props.getProperty("osw");
-        Properties oswProps = PropertiesUtil.getPropertiesStartingWith(osw);
-        String writerName = oswProps.getProperty(osw + ".class");
-
-        ObjectStoreWriter writer;
-        Class writerCls = null;
-        try {
-            writerCls = Class.forName(writerName);
-            Constructor c = writerCls.getConstructor(new Class[] {ObjectStore.class});
-            writer = (ObjectStoreWriter) c.newInstance(new Object[] {os});
-        } catch (ClassNotFoundException e) {
-            throw new ObjectStoreException("Cannot find specified ObjectStore class '"
-                                           + writerName + "' for " + alias
-                                           + " (check properties file) " + e.getMessage());
-        } catch (NoSuchMethodException e) {
-            throw new ObjectStoreException("Cannot find appropriate constructor for "
-                                           + "ObjectStoreWriter: " + writerCls
-                                           + "(ObjectStore.class)"
-                                           + "- check properties file, " + e.getMessage());
-        } catch (Exception e) {
-            throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
-                                           + writerName + ", " + e.toString());
-        }
-
-        // now build IntegrationWriter with datasource name and ObjectStoreWriter
-
-        Class integrationCls = null;
-        IntegrationWriterAbstractImpl iWriter = null;
-        try {
-            integrationCls = Class.forName(integrationName);
-            Constructor c;
-            c = integrationCls.getConstructor(new Class[] {String.class, ObjectStoreWriter.class});
-            iWriter = (IntegrationWriterAbstractImpl) c.newInstance(new Object[]
-                {dataSource, writer});
-        } catch (ClassNotFoundException e) {
-            throw new ObjectStoreException("Cannot find specified ObjectStore class '"
-                                           + integrationName
-                                           + "' for " + alias + " (check properties file)");
-        } catch (NoSuchMethodException e) {
-            throw new ObjectStoreException("Cannot find appropriate constructor for "
-                                           + "IntegrationWriter: " + integrationCls
-                                           + "(String.class, ObjectStoreWriter.class)"
-                                           + "- check properties file");
-        } catch (Exception e) {
-            throw new ObjectStoreException("Failed to instantiate IntegrationWriterAbstractImpl "
-                                           + "class: " + integrationCls);
-        }
-
-        return iWriter;
+    public IntegrationWriterAbstractImpl(String dataSource, ObjectStore os, ObjectStoreWriter osw) {
+        this.dataSource = dataSource;
+        this.os = os;
+        this.osw = osw;
     }
 
+    /**
+     * Search database for object matching the given example object (i.e. primary key search)
+     *
+     * @param o the example object
+     * @return the retieved object
+     * @throws ObjectStoreException if an error occurs retieving the object
+     */
+    public Object getObjectByExample(Object o) throws ObjectStoreException {
+        return os.getObjectByExample(o);
+    }
 
     /**
      * Given a new object from a data source find whether corresponding object exists in
@@ -123,19 +71,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public void store(Object o) throws ObjectStoreException {
         osw.store(o);
     }
-
-
-    /**
-     * Search database for object matching the given example object (i.e. primary key search)
-     *
-     * @param o the example object
-     * @return the retieved object
-     * @throws ObjectStoreException if an error occurs retieving the object
-     */
-    public Object getObjectByExample(Object o) throws ObjectStoreException {
-        return osw.getObjectByExample(o);
-    }
-
 
     /**
      * Delete an object from this ObjectStore, delegate to internal ObjectStoreWriter.
