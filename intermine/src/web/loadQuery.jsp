@@ -4,10 +4,10 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- loadQuery.jsp -->
-<c:if test="${!empty savedQueries}">
+<c:if test="${!empty SAVED_QUERIES}">
   <html:form action="/loadQuery">
     <html:select property="queryName">
-      <c:forEach items="${savedQueries}" var="entry">
+      <c:forEach items="${SAVED_QUERIES}" var="entry">
         <html:option value="${entry.key}"/>
       </c:forEach>
     </html:select>

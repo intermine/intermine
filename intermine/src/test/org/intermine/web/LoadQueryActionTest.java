@@ -57,7 +57,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         HttpSession session = getSession();
         addRequestParameter("action", "Load from saved queries");
 
-        session.setAttribute("savedQueries", savedQueries);
+        session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
 
         LoadQueryForm form = new LoadQueryForm();
         form.setQueryName("query1");
@@ -82,7 +82,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         HttpSession session = getSession();
         addRequestParameter("action", "Load from saved queries");
 
-        session.setAttribute("savedQueries", savedQueries);
+        session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
         session.setAttribute("query", new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("constraints", "constraints");

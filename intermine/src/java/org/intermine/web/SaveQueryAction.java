@@ -56,9 +56,9 @@ public class SaveQueryAction extends Action
 
         HttpSession session = request.getSession();
 
-        Map savedQueries = (Map) session.getAttribute(SaveQueryController.SAVEDQUERIES_NAME);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         Map savedQueriesInverse =
-            (Map) session.getAttribute(SaveQueryController.SAVEDQUERIESINVERSE_NAME);
+            (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
 
         Query query = (Query) session.getAttribute("query");
 

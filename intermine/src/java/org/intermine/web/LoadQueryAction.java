@@ -58,7 +58,7 @@ public class LoadQueryAction extends Action
         LoadQueryForm rqForm = (LoadQueryForm) form;
         String queryName = rqForm.getQueryName();
 
-        Map savedQueries = (Map) session.getAttribute("savedQueries");
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
 
         if ((savedQueries != null) && savedQueries.containsKey(queryName)) {
             session.setAttribute("query", savedQueries.get(queryName));

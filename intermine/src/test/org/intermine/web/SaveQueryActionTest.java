@@ -61,8 +61,8 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         HttpSession session = getRequest().getSession();
         addRequestParameter("action", "Save a query");
 
-        session.setAttribute(SaveQueryController.SAVEDQUERIES_NAME, new HashMap());
-        session.setAttribute(SaveQueryController.SAVEDQUERIESINVERSE_NAME, new IdentityHashMap());
+        session.setAttribute(Constants.SAVED_QUERIES, new HashMap());
+        session.setAttribute(Constants.SAVED_QUERIES_INVERSE, new IdentityHashMap());
         session.setAttribute("query", new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
         session.setAttribute("constraints", "constraints");
@@ -79,7 +79,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         assertNull(session.getAttribute("queryClass"));
         assertNull(session.getAttribute("constraints"));
         assertNull(session.getAttribute("ops"));
-        assertEquals(1, ((Map)session.getAttribute(SaveQueryController.SAVEDQUERIES_NAME)).size());
+        assertEquals(1, ((Map)session.getAttribute(Constants.SAVED_QUERIES)).size());
     }
 
     /**
@@ -90,9 +90,9 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         HttpSession session = getRequest().getSession();
         addRequestParameter("action", "Save a query");
 
-        session.setAttribute(SaveQueryController.SAVEDQUERIES_NAME,
+        session.setAttribute(Constants.SAVED_QUERIES,
                              new HashMap(savedQueries));
-        session.setAttribute(SaveQueryController.SAVEDQUERIESINVERSE_NAME,
+        session.setAttribute(Constants.SAVED_QUERIES_INVERSE,
                              new IdentityHashMap(savedQueriesInverse));
         session.setAttribute("query", new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
@@ -111,7 +111,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         assertNull(session.getAttribute("constraints"));
         assertNull(session.getAttribute("ops"));
         Map savedQueriesFromSession =
-            (Map)session.getAttribute(SaveQueryController.SAVEDQUERIES_NAME);
+            (Map)session.getAttribute(Constants.SAVED_QUERIES);
         assertEquals(3, savedQueriesFromSession.size());
         assertNotNull(savedQueriesFromSession.get("query1"));
         assertNotNull(savedQueriesFromSession.get("query2"));
@@ -127,9 +127,9 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         HttpSession session = getRequest().getSession();
         addRequestParameter("action", "Save a query");
 
-        session.setAttribute(SaveQueryController.SAVEDQUERIES_NAME,
+        session.setAttribute(Constants.SAVED_QUERIES,
                              new HashMap(savedQueries));
-        session.setAttribute(SaveQueryController.SAVEDQUERIESINVERSE_NAME,
+        session.setAttribute(Constants.SAVED_QUERIES_INVERSE,
                              new IdentityHashMap(savedQueriesInverse));
         session.setAttribute("query", new Query());
         session.setAttribute("queryClass", new QueryClass(Employee.class));
@@ -148,7 +148,7 @@ public class SaveQueryActionTest extends MockStrutsTestCase
         assertNull(session.getAttribute("constraints"));
         assertNull(session.getAttribute("ops"));
         Map savedQueriesFromSession =
-            (Map)session.getAttribute(SaveQueryController.SAVEDQUERIES_NAME);
+            (Map)session.getAttribute(Constants.SAVED_QUERIES);
         assertEquals(2, savedQueries.size ());
         assertEquals(2, savedQueriesFromSession.size());
         assertNotNull(savedQueriesFromSession.get("query1"));

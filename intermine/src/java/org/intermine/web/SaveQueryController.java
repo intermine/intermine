@@ -34,9 +34,6 @@ import java.util.IdentityHashMap;
 
 public class SaveQueryController extends TilesAction
 {
-    static final String SAVEDQUERIES_NAME = "savedQueries";
-    static final String SAVEDQUERIESINVERSE_NAME = "savedQueriesInverse";
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -57,16 +54,16 @@ public class SaveQueryController extends TilesAction
                                  HttpServletResponse response) throws ServletException {
         HttpSession session = request.getSession();
 
-        Map savedQueries = (Map) session.getAttribute(SAVEDQUERIES_NAME);
+        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
         if (savedQueries == null) {
             savedQueries = new HashMap();
-            session.setAttribute(SAVEDQUERIES_NAME, savedQueries);
+            session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
         }
 
-        Map savedQueriesInverse = (Map) session.getAttribute("SAVEDQUERIESINVERSE_NAME");
+        Map savedQueriesInverse = (Map) session.getAttribute(Constants.SAVED_QUERIES_INVERSE);
         if (savedQueriesInverse == null) {
             savedQueriesInverse = new IdentityHashMap();
-            session.setAttribute(SAVEDQUERIESINVERSE_NAME, savedQueriesInverse);
+            session.setAttribute(Constants.SAVED_QUERIES_INVERSE, savedQueriesInverse);
         }
 
         return null;
