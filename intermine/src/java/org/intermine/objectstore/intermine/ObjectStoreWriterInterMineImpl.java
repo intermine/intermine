@@ -531,25 +531,28 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
     }
 
     private int logOps = 0;
-    private int logBatch = 1;
+    private int logBatch = 0;
+    private boolean emptyBatch = true;
 
     private synchronized void logAddBatch() {
         logOps++;
+        emptyBatch = false;
         if ((logOps % 5000) == 0) {
             outputLog();
         }
     }
 
     private synchronized void logFlushBatch() {
-        if ((logOps % 5000) == 0) {
-            outputLog();
-        }
         logBatch++;
+        emptyBatch = true;
     }
 
     private synchronized void outputLog() {
-        LOG.error(getModel().getName() + ": Performed " + logOps + " write statements so far in "
-                + logBatch + " batches. Average batch size: " + (logOps / logBatch));
+        int batches = logBatch + (emptyBatch ? 0 : 1);
+        if (batches > 0) {
+            LOG.error(getModel().getName() + ": Performed " + logOps + " write statements in "
+                    + logBatch + " batches. Average batch size: " + (logOps / logBatch));
+        }
     }
 
     /**
