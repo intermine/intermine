@@ -2,7 +2,7 @@
   <section>
     <heading>System documentation</heading>
     <item><ulink url="overview">Technical overview</ulink></item>
-    <item><!--ulink url="tutorial"-->Getting started - a tutorial<!--/ulink--> (coming soon)</item>
+    <item><ulink url="tutorial">Getting started - a tutorial</ulink></item>
     <item><ulink url="FlyMineApplication.zargo">Class diagram (ArgoUML format)</ulink></item>
     <item><ulink url="FlyMineArchitecture">System architecture</ulink></item>
   </section>

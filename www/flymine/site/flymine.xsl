@@ -110,6 +110,10 @@ version="1.0">
 <ul><xsl:apply-templates/></ul>
 </xsl:template>
 
+<xsl:template match="orderedlist">
+<ol><xsl:apply-templates/></ol>
+</xsl:template>
+
 <xsl:template match="listitem">
 <li><xsl:apply-templates/></li>
 </xsl:template>
