@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.List;
+import java.util.Date;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -93,7 +94,12 @@ public class ExportAction extends DispatchAction
                     float objectAsFloat = ((Number) thisObject).floatValue();
                     excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
                 } else {
-                    excelRow.createCell(outputColumnIndex).setCellValue(thisObject.toString());
+                    if (thisObject instanceof Date) {
+                        Date objectAsDate = (Date) thisObject;
+                        excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
+                    } else {
+                        excelRow.createCell(outputColumnIndex).setCellValue(thisObject.toString());
+                    }
                 }
 
             }
