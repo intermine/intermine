@@ -58,36 +58,36 @@ public interface ObjectStore
     public Object getObjectByExample(Object obj) throws ObjectStoreException ;
 
     /**
-     * Runs an EXPLAIN on the query without ant LIMIT or OFFSET.
+     * Explain a Query (give estimate for execution time and number of rows).
      *
      * @param q the query to estimate rows for
      * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explining the query
+     * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(Query q) throws ObjectStoreException;
 
     /**
-     * Runs an EXPLAIN for the given query with specified start and limit parameters.  This
-     * gives estimated time for a single 'page' of the query.
+     * Explain a Query with specified start and limit parameters.
+     * This gives estimated time for a single 'page' of the query.
      *
      * @param q the query to explain
      * @param start first row required, numbered from zero
      * @param limit the maximum number og rows to return
      * @return parsed results of EXPLAIN
-     * @throws ObjectStoreException if an error occurs explining the query
+     * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ExplainResult estimate(Query q, int start, int limit) throws ObjectStoreException;
 
     /**
-     * Execute a COUNT(*) on a query, returns the number of row the query will produce
+     * Counts the number of rows the query will produce
      *
-     * @param q Flymine Query on which to run COUNT(*)
-     * @return the number of row to be produced by query
+     * @param q Flymine Query on which to count rows
+     * @return the number of rows that will be produced by query
      */
     public int count(Query q);
 
     /**
-     * Return the metadata associated with this objectstore
+     * Return the metadata associated with this ObjectStore
      *
      * @return the Model
      */
