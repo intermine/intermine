@@ -50,7 +50,7 @@ public class SingletonResultsTest extends TestCase
     }
 
     public void testConstructMultiColumnQuery() throws Exception {
-        Query q = new Query();
+        q = new Query();
         QueryClass qc1 = new QueryClass(Department.class);
         QueryClass qc2 = new QueryClass(Employee.class);
 
@@ -67,7 +67,7 @@ public class SingletonResultsTest extends TestCase
     }
 
     public void testConstructNonQueryClassQuery() throws Exception {
-        Query q = new Query();
+        q = new Query();
         QueryClass qc1 = new QueryClass(Department.class);
         QueryField qf1 = new QueryField(qc1, "name");
 

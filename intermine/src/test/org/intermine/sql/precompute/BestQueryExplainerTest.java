@@ -95,7 +95,7 @@ public class BestQueryExplainerTest extends TestCase
         System.gc();
         BestQueryExplainer bq = new BestQueryExplainer();
         bq.add(q1); // Takes 600 milliseconds
-        Thread.currentThread().sleep(700);
+        Thread.sleep(700);
         try {
             bq.add(q2);
             fail("Expected: BestQueryException");

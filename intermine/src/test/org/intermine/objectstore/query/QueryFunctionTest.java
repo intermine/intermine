@@ -16,8 +16,6 @@ import org.intermine.model.testmodel.*;
 
 public class QueryFunctionTest extends TestCase
 {
-    private QueryFunction function;
-
     public QueryFunctionTest(String arg1) {
         super(arg1);
     }

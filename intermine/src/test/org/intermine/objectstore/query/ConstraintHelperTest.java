@@ -117,7 +117,7 @@ public class ConstraintHelperTest extends TestCase
 
     public void testCreateListNoConstraints() throws Exception {
         IqlQuery fq = new IqlQuery("select a from Company as a", "org.intermine.model.testmodel");
-        Query q = IqlQueryParser.parse(fq);
+        q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         List got = ConstraintHelper.createList(q);
 
@@ -126,7 +126,7 @@ public class ConstraintHelperTest extends TestCase
 
     public void testCreateListSingleConstraint() throws Exception {
         IqlQuery fq = new IqlQuery("select a from Company as a where a.vatNumber = 5", "org.intermine.model.testmodel");
-        Query q = IqlQueryParser.parse(fq);
+        q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(q.getConstraint());
         List got = ConstraintHelper.createList(q);
@@ -136,7 +136,7 @@ public class ConstraintHelperTest extends TestCase
 
     public void testCreateListAnd() throws Exception {
         IqlQuery fq = new IqlQuery("select a from Company as a where a.vatNumber = 5 and a.name = 'hello'", "org.intermine.model.testmodel");
-        Query q = IqlQueryParser.parse(fq);
+        q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         Iterator conIter = ((ConstraintSet) q.getConstraint()).getConstraints().iterator();
         while (conIter.hasNext()) {
@@ -149,7 +149,7 @@ public class ConstraintHelperTest extends TestCase
 
     public void testCreateListOr() throws Exception {
         IqlQuery fq = new IqlQuery("select a from Company as a where a.vatNumber = 5 or a.name = 'hello'", "org.intermine.model.testmodel");
-        Query q = IqlQueryParser.parse(fq);
+        q = IqlQueryParser.parse(fq);
         List expected = new ArrayList();
         expected.add(q.getConstraint());
         List got = ConstraintHelper.createList(q);
@@ -158,9 +158,9 @@ public class ConstraintHelperTest extends TestCase
     }
 
     public void testFilterQueryClass() throws Exception {
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(Department.class);
+        q = new Query();
+        qc1 = new QueryClass(Company.class);
+        qc2 = new QueryClass(Department.class);
         q.addFrom(qc1);
         q.addFrom(qc2);
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
@@ -190,9 +190,9 @@ public class ConstraintHelperTest extends TestCase
 
 
     public void testCreateListQueryClass() throws Exception {
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(Department.class);
+        q = new Query();
+        qc1 = new QueryClass(Company.class);
+        qc2 = new QueryClass(Department.class);
         q.addFrom(qc1);
         q.addFrom(qc2);
         SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "name"),
@@ -320,7 +320,7 @@ public class ConstraintHelperTest extends TestCase
         subQ.addFrom(subQC);
         subQ.addToSelect(subQC);
 
-        Query q = new Query();
+        q = new Query();
         QueryClass qcA = new QueryClass(Company.class);
         QueryClass qcB = new QueryClass(Department.class);
         q.alias(qcA, "a");
@@ -387,8 +387,8 @@ public class ConstraintHelperTest extends TestCase
 
 
     public void testIsCrossReference() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
-        QueryClass qc2 = new QueryClass(CEO.class);
+        qc1 = new QueryClass(Company.class);
+        qc2 = new QueryClass(CEO.class);
         QueryField qf1 = new QueryField(qc1, "vatNumber");
         QueryField qf2 = new QueryField(qc2, "salary");
         QueryExpression expr1 = new QueryExpression(qf1, QueryExpression.ADD, qf2);
@@ -417,7 +417,7 @@ public class ConstraintHelperTest extends TestCase
 
 
     public void testGetQueryFields() throws Exception {
-        QueryClass qc1 = new QueryClass(Company.class);
+        qc1 = new QueryClass(Company.class);
         QueryField qf1 = new QueryField(qc1, "vatNumber");
         QueryField qf2 = new QueryField(qc1, "vatNumber");
         QueryField qf3 = new QueryField(qc1, "vatNumber");

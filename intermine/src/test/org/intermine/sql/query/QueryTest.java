@@ -76,7 +76,7 @@ public class QueryTest extends TestCase
 
     public void testConstructNullString() throws Exception {
         try {
-            Query q1 = new Query((String) null);
+            Query q = new Query((String) null);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -85,7 +85,7 @@ public class QueryTest extends TestCase
 
     public void testConstructEmptyString() throws Exception {
         try {
-            Query q1 = new Query("");
+            Query q = new Query("");
             fail("Expected: IllegalArgumentException");
         }
         catch (IllegalArgumentException e) {
@@ -94,7 +94,7 @@ public class QueryTest extends TestCase
 
     public void testConstructIllegalString() throws Exception {
         try {
-            Query q1 = new Query("A load of rubbish");
+            Query q = new Query("A load of rubbish");
             fail("Expected: IllegalArgumentException");
         }
         catch (IllegalArgumentException e) {
@@ -102,8 +102,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectNoAlias() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -113,9 +113,9 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectTableAlias() throws Exception {
-        Query q1 = new Query("select t1.field1 from table1 as t1");
+        q1 = new Query("select t1.field1 from table1 as t1");
         Query q1_alt = new Query("select t1.field1 from table1 t1");
-        Query q2 = new Query();
+        q2 = new Query();
         Table t1 = new Table("table1", "t1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -126,8 +126,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectFieldAlias() throws Exception {
-        Query q1 = new Query("select table1.field1 as alias1 from table1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 as alias1 from table1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, "alias1");
@@ -137,8 +137,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectFunctionAlias() throws Exception {
-        Query q1 = new Query("select max(table1.field1) as alias1 from table1");
-        Query q2 = new Query();
+        q1 = new Query("select max(table1.field1) as alias1 from table1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Function func1 = new Function(Function.MAX);
@@ -150,8 +150,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectPlusFunctionAlias() throws Exception {
-        Query q1 = new Query("select table1.field1 + table1.field2 as alias1 from table1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 + table1.field2 as alias1 from table1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -165,8 +165,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectTwoSameTables() throws Exception {
-        Query q1 = new Query("select t1.field1 from table1 t1, table1 t2");
-        Query q2 = new Query();
+        q1 = new Query("select t1.field1 from table1 t1, table1 t2");
+        q2 = new Query();
         Table t1 = new Table("table1", "t1");
         Table t2 = new Table("table1", "t2");
         Field f1 = new Field("field1", t1);
@@ -178,8 +178,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectTwoDifferentTables() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1, table2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1, table2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Table t2 = new Table("table2");
         Field f1 = new Field("field1", t1);
@@ -191,8 +191,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectTwoDifferentTablesWithAliases() throws Exception {
-        Query q1 = new Query("select t1.field1 from table1 t1, table2 t2");
-        Query q2 = new Query();
+        q1 = new Query("select t1.field1 from table1 t1, table2 t2");
+        q2 = new Query();
         Table t1 = new Table("table1", "t1");
         Table t2 = new Table("table2", "t2");
         Field f1 = new Field("field1", t1);
@@ -204,8 +204,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectFromSubQuery() throws Exception {
-        Query q1 = new Query("select t1.field1 from (select table2.field2 from table2) as t1");
-        Query q2 = new Query();
+        q1 = new Query("select t1.field1 from (select table2.field2 from table2) as t1");
+        q2 = new Query();
         SubQuery sq1 = new SubQuery(new Query("select table2.field2 from table2"), "t1");
         Field f1 = new Field("field1", sq1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -216,8 +216,8 @@ public class QueryTest extends TestCase
     }
 
     public void testWhereOneEqualConstraint() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where table1.field1 = 1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 where table1.field1 = 1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Constant c = new Constant("1");
@@ -229,8 +229,8 @@ public class QueryTest extends TestCase
     }
 
     public void testWhereTwoEqualConstraints() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where table1.field1 = 1 and table1.field2 = 2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 where table1.field1 = 1 and table1.field2 = 2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -474,8 +474,8 @@ public class QueryTest extends TestCase
     }
 
     public void testWhereFieldLessThanField() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where table1.field1 < table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 where table1.field1 < table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -488,8 +488,8 @@ public class QueryTest extends TestCase
 
 
     public void testWhereNottedFieldLessThanField() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where not table1.field1 < table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 where not table1.field1 < table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -502,8 +502,8 @@ public class QueryTest extends TestCase
 
 
     public void testWhereFieldLessThanFunction() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where table1.field1 < avg(table1.field2)");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 where table1.field1 < avg(table1.field2)");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -518,8 +518,8 @@ public class QueryTest extends TestCase
 
 
     public void testWhereFieldLessThanPlusFunction() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where table1.field1 < table1.field2 + table1.field3");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 where table1.field1 < table1.field2 + table1.field3");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -536,9 +536,9 @@ public class QueryTest extends TestCase
 
 
     public void testWhereFieldInSubQuery() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where table1.field1 in (select table2.field2 from table2)");
-        Query q2 = new Query();
-        Query q3 = new Query();
+        q1 = new Query("select table1.field1 from table1 where table1.field1 in (select table2.field2 from table2)");
+        q2 = new Query();
+        q3 = new Query();
         Table t1 = new Table("table1");
         Table t2 = new Table("table2");
         Field f1 = new Field("field1", t1);
@@ -552,10 +552,10 @@ public class QueryTest extends TestCase
         q2.addWhere(new SubQueryConstraint(f1, q3));
         assertEquals(q2, q1);
     }
-
-     public void testWhereConstraintSet() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
-        Query q2 = new Query();
+    
+    public void testWhereConstraintSet() throws Exception {
+        q1 = new Query("select table1.field1 from table1 where (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -569,10 +569,10 @@ public class QueryTest extends TestCase
         q2.addWhere(cs1);
         assertEquals(q2, q1);
     }
-
-     public void testWhereNottedConstraintSet() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 where not (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
-        Query q2 = new Query();
+    
+    public void testWhereNottedConstraintSet() throws Exception {
+        q1 = new Query("select table1.field1 from table1 where not (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -586,8 +586,8 @@ public class QueryTest extends TestCase
     }
 
     public void testOrderBySingleField() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 order by table1.field1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 order by table1.field1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -598,8 +598,8 @@ public class QueryTest extends TestCase
     }
 
     public void testOrderByTwoFields() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 order by table1.field1, table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 order by table1.field1, table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -612,8 +612,8 @@ public class QueryTest extends TestCase
     }
 
     public void testOrderByFunction() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 order by table1.field1 + table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 order by table1.field1 + table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -628,8 +628,8 @@ public class QueryTest extends TestCase
     }
 
     public void testGroupBySingleField() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -640,8 +640,8 @@ public class QueryTest extends TestCase
     }
 
     public void testGroupByTwoFields() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1, table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1, table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -654,8 +654,8 @@ public class QueryTest extends TestCase
     }
 
     public void testGroupByFunction() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 + table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 + table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -670,8 +670,8 @@ public class QueryTest extends TestCase
     }
 
     public void testHavingOneLessThanConstraint() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < 1");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < 1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Constant c = new Constant("1");
@@ -684,8 +684,8 @@ public class QueryTest extends TestCase
     }
 
     public void testHavingTwoEqualConstraints() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 = 1 and table1.field2 = 2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 = 1 and table1.field2 = 2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -701,8 +701,8 @@ public class QueryTest extends TestCase
     }
 
     public void testHavingFieldLessThanField() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -716,8 +716,8 @@ public class QueryTest extends TestCase
 
 
     public void testHavingNottedFieldLessThanField() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having not table1.field1 < table1.field2");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having not table1.field1 < table1.field2");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -731,8 +731,8 @@ public class QueryTest extends TestCase
 
 
     public void testHavingFieldLessThanFunction() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < avg(table1.field2)");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < avg(table1.field2)");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -748,8 +748,8 @@ public class QueryTest extends TestCase
 
 
     public void testHavingFieldLessThanPlusFunction() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < table1.field2 + table1.field3");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 < table1.field2 + table1.field3");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -767,9 +767,9 @@ public class QueryTest extends TestCase
 
 
     public void testHavingFieldInSubQuery() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 in (select table2.field2 from table2)");
-        Query q2 = new Query();
-        Query q3 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having table1.field1 in (select table2.field2 from table2)");
+        q2 = new Query();
+        q3 = new Query();
         Table t1 = new Table("table1");
         Table t2 = new Table("table2");
         Field f1 = new Field("field1", t1);
@@ -786,8 +786,8 @@ public class QueryTest extends TestCase
     }
 
      public void testHavingConstraintSet() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -804,8 +804,8 @@ public class QueryTest extends TestCase
     }
 
      public void testHavingNottedConstraintSet() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 group by table1.field1 having not (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 group by table1.field1 having not (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         Field f2 = new Field("field2", t1);
@@ -820,8 +820,8 @@ public class QueryTest extends TestCase
     }
 
     public void testSelectDistinct() throws Exception {
-        Query q1 = new Query("select distinct table1.field1 from table1");
-        Query q2 = new Query();
+        q1 = new Query("select distinct table1.field1 from table1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -832,8 +832,8 @@ public class QueryTest extends TestCase
     }
 
     public void testExplain() throws Exception {
-        Query q1 = new Query("explain select table1.field1 from table1");
-        Query q2 = new Query();
+        q1 = new Query("explain select table1.field1 from table1");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -844,8 +844,8 @@ public class QueryTest extends TestCase
     }
 
     public void testQuiteComplexQuery() throws Exception {
-        Query q1 = new Query("select t1.field1 as first, table2.field1, count(*) as c, max(t1.field2) as mx from table1 t1, table2, (select table3.field2 as f1 from table3) as t3 where t1.field3 = table2.field1 and t3.f1 = table2.field3 and (t1.field4 = table2.field2 or t1.field4 = table2.field3) group by t1.field1, table2.field1 having (t1.field1 = table2.field2 or t1.field1 = table2.field3) order by t1.field1, table2.field1 limit 100 offset 10");
-        Query q2 = new Query();
+        q1 = new Query("select t1.field1 as first, table2.field1, count(*) as c, max(t1.field2) as mx from table1 t1, table2, (select table3.field2 as f1 from table3) as t3 where t1.field3 = table2.field1 and t3.f1 = table2.field3 and (t1.field4 = table2.field2 or t1.field4 = table2.field3) group by t1.field1, table2.field1 having (t1.field1 = table2.field2 or t1.field1 = table2.field3) order by t1.field1, table2.field1 limit 100 offset 10");
+        q2 = new Query();
         Table t1 = new Table("table1", "t1");
         Table t2 = new Table("table2");
         Table t3 = new Table("table3");
@@ -858,7 +858,7 @@ public class QueryTest extends TestCase
         Field t2f3 = new Field("field3", t2);
         Field t3f2 = new Field("field2", t3);
 
-        Query q3 = new Query();
+        q3 = new Query();
 
         q3.addSelect(new SelectValue(t3f2, "f1"));
         q3.addFrom(t3);
@@ -908,8 +908,8 @@ public class QueryTest extends TestCase
     }
 
     public void testLimitOffset() throws Exception {
-        Query q1 = new Query("select table1.field1 from table1 limit 100 offset 10");
-        Query q2 = new Query();
+        q1 = new Query("select table1.field1 from table1 limit 100 offset 10");
+        q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
         SelectValue sv1 = new SelectValue(f1, null);
@@ -920,14 +920,14 @@ public class QueryTest extends TestCase
     }
 
     public void testSubQueryScope() throws Exception {
-        Query q1 = new Query("select t1.f1 as v1, t2.f1 as v2 from t1, (select t3.f1 as v3 from t3 where t3.f1 = t1.f2) as t2");
-        Query q2 = new Query();
+        q1 = new Query("select t1.f1 as v1, t2.f1 as v2 from t1, (select t3.f1 as v3 from t3 where t3.f1 = t1.f2) as t2");
+        q2 = new Query();
         Table t1 = new Table("t1");
         Field t1f1 = new Field("f1", t1);
         Table t3 = new Table("t3");
         Field t3f1 = new Field("f1", t3);
         Field t1f2 = new Field("f2", t1);
-        Query q3 = new Query();
+        q3 = new Query();
         SelectValue sv1 = new SelectValue(t1f1, "v1");
         SelectValue sv3 = new SelectValue(t3f1, "v3");
         q3.addSelect(sv3);
@@ -946,10 +946,10 @@ public class QueryTest extends TestCase
     }
 
     public void testSubQueryWhereScope() throws Exception {
-        Query q1 = new Query("select t1.f1 as v1 from t1 where t1.f1 in (select t3.f1 as v3 from t3 where t3.f1 = t1.f2)");
+        q1 = new Query("select t1.f1 as v1 from t1 where t1.f1 in (select t3.f1 as v3 from t3 where t3.f1 = t1.f2)");
         Table t3 = new Table("t3");
         Field t3f1 = new Field("f1", t3);
-        Query q3 = new Query();
+        q3 = new Query();
         SelectValue sv3 = new SelectValue(t3f1, "v3");
         q3.addSelect(sv3);
         q3.addFrom(t3);
@@ -958,7 +958,7 @@ public class QueryTest extends TestCase
         Constraint c1 = new Constraint(t3f1, Constraint.EQ, t1f2);
         q3.addWhere(c1);
 
-        Query q2 = new Query();
+        q2 = new Query();
         Field t1f1 = new Field("f1", t1);
         SelectValue sv1 = new SelectValue(t1f1, "v1");
         SubQueryConstraint c2 = new SubQueryConstraint(t1f1, q3);
@@ -969,13 +969,13 @@ public class QueryTest extends TestCase
     }
 
     public void testExpressionWhereBracketsAreImportant() throws Exception {
-        Query q1 = new Query("select (5 - (6 + 7)) as a from t");
+        q1 = new Query("select (5 - (6 + 7)) as a from t");
         assertEquals("SELECT (5 - (6 + 7)) AS a FROM t", q1.getSQLString());
     }
 
     public void testAnonymousTableFields() throws Exception {
-        Query q1 = new Query("select field from table");
-        Query q2 = new Query();
+        q1 = new Query("select field from table");
+        q2 = new Query();
         Table t1 = new Table("table");
         Field f1 = new Field("field", t1);
         q2.addSelect(new SelectValue(f1, null));
@@ -985,9 +985,9 @@ public class QueryTest extends TestCase
     }
 
     public void testUnion() throws Exception {
-        Query q1 = new Query("select table.field from table union select table2.field2 from table2");
-        Query q2 = new Query();
-        Query q3 = new Query();
+        q1 = new Query("select table.field from table union select table2.field2 from table2");
+        q2 = new Query();
+        q3 = new Query();
         Table t1 = new Table("table");
         Table t2 = new Table("table2");
         Field f1 = new Field("field", t1);
@@ -1015,9 +1015,9 @@ public class QueryTest extends TestCase
     }
 
     public void testNotSubqueryConstraint() throws Exception {
-        Query q1 = new Query("select table.field from table where table.field not in (select table2.field2 from table2)");
-        Query q2 = new Query();
-        Query q3 = new Query();
+        q1 = new Query("select table.field from table where table.field not in (select table2.field2 from table2)");
+        q2 = new Query();
+        q3 = new Query();
         Table t1 = new Table("table");
         Table t2 = new Table("table2");
         Field f1 = new Field("field", t1);
@@ -1032,9 +1032,9 @@ public class QueryTest extends TestCase
     }
 
     public void testNullStuff() throws Exception {
-        Query q1 = new Query("select t.a from t where t.b is null");
-        Query q2 = new Query("select t.a from t where not t.b is not null");
-        Query q3 = new Query();
+        q1 = new Query("select t.a from t where t.b is null");
+        q2 = new Query("select t.a from t where not t.b is not null");
+        q3 = new Query();
         Table t1 = new Table("t");
         Field f1 = new Field("a", t1);
         Field f2 = new Field("b", t1);
@@ -1050,9 +1050,9 @@ public class QueryTest extends TestCase
     }
 
     public void testNotNullStuff() throws Exception {
-        Query q1 = new Query("select t.a from t where t.b is not null");
-        Query q2 = new Query("select t.a from t where not t.b is null");
-        Query q3 = new Query();
+        q1 = new Query("select t.a from t where t.b is not null");
+        q2 = new Query("select t.a from t where not t.b is null");
+        q3 = new Query();
         Table t1 = new Table("t");
         Field f1 = new Field("a", t1);
         Field f2 = new Field("b", t1);

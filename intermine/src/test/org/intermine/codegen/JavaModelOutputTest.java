@@ -24,7 +24,6 @@ public class JavaModelOutputTest extends TestCase
 
     private String INDENT = ModelOutput.INDENT;
     private String ENDL = ModelOutput.ENDL;
-    private Model model;
     private File file;
     private JavaModelOutput mo;
     private String uri = "http://www.intermine.org/model/testmodel";
@@ -34,20 +33,20 @@ public class JavaModelOutputTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        model = new Model("model", uri, new HashSet());
         file = new File("temp.xml");
-        mo = new JavaModelOutput(model, file);
+        Model emptyModel = new Model("model", uri, new HashSet());
+        mo = new JavaModelOutput(emptyModel, file);
     }
 
     public void testProcess() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
+        Model processModel = new Model("model", uri, new HashSet(Collections.singleton(cld1)));
 
-        new JavaModelOutput(model, new File("./")).process();
+        new JavaModelOutput(processModel, new File("./")).process();
 
-        File file = new File("./Class1.java");
+        File processFile = new File("./Class1.java");
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new FileReader(processFile));
             StringBuffer buffer = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -65,12 +64,13 @@ public class JavaModelOutputTest extends TestCase
                 + "}" + ENDL;
             assertEquals(expected, buffer.toString());
         } finally {
-            file.delete();
+            processFile.delete();
         }
     }
 
     public void testGenerateModel() throws Exception {
-        assertNull(mo.generate(model));
+        Model emptyModel = new Model("model", uri, new HashSet());
+        assertNull(mo.generate(emptyModel));
     }
 
     public void testGenerateClassDescriptorIsClass() throws Exception {

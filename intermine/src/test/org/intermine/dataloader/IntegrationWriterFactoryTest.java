@@ -16,8 +16,6 @@ import org.intermine.objectstore.ObjectStoreException;
 
 public class IntegrationWriterFactoryTest extends TestCase
 {
-    protected IntegrationWriter iw;
-
     public IntegrationWriterFactoryTest(String args) {
         super(args);
     }

@@ -23,10 +23,10 @@ import java.io.*;
 public class MergeOwlTest extends TestCase
 {
     public static final String ENDL = System.getProperty("line.separator");
-    private final String tgtNamespace = "http://www.intermine.org/target#";
-    private final String src1Namespace = "http://www.intermine.org/source1#";
-    private final String src2Namespace = "http://www.intermine.org/source2#";
-    private final String nullNamespace = "http://www.intermine.org/null#";
+    private final static String tgtNamespace = "http://www.intermine.org/target#";
+    private final static String src1Namespace = "http://www.intermine.org/source1#";
+    private final static String src2Namespace = "http://www.intermine.org/source2#";
+    private final static String nullNamespace = "http://www.intermine.org/null#";
 
     public MergeOwlTest(String arg) {
         super(arg);

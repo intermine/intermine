@@ -53,7 +53,7 @@ public class DatabaseWriterTest extends TestCase
     }
 
     public void testSQLStatement() throws Exception {
-        DatabaseWriter writer = new DatabaseWriter();
+        writer = new DatabaseWriter();
 
         assertEquals("INSERT INTO table VALUES(?)", writer.createSQLStatement("table", "value1"));
         assertEquals("INSERT INTO table VALUES(?, ?)", writer.createSQLStatement("table", "value1\tvalue2"));
@@ -61,7 +61,7 @@ public class DatabaseWriterTest extends TestCase
     }
 
     public void testSQLStatementWithNullTable() throws Exception {
-        DatabaseWriter writer = new DatabaseWriter();
+        writer = new DatabaseWriter();
         try {
             writer.createSQLStatement(null, "value1");
             fail("Expected: NullPointerException");
@@ -71,7 +71,7 @@ public class DatabaseWriterTest extends TestCase
     }
 
     public void testSQLStatementWithNullRow() throws Exception {
-        DatabaseWriter writer = new DatabaseWriter();
+        writer = new DatabaseWriter();
         try {
             writer.createSQLStatement("table", null);
             fail("Expected: NullPointerException");

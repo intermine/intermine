@@ -18,7 +18,7 @@ import org.intermine.model.testmodel.*;
 
 public class QueryTest extends TestCase
 {
-    private Query query, q1, q2, q3;
+    private Query query, clearQuery;
 
     public QueryTest(String arg) {
         super(arg);
@@ -36,26 +36,12 @@ public class QueryTest extends TestCase
         QueryValue qv1 = new QueryValue("CompanyA");
         SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.NOT_EQUALS, qv1);
 
-        q1 = new Query();
-        q1.addToSelect(qc1);
-        q1.addToSelect(f1);
-        q1.setConstraint(sc1);
-        q1.addToGroupBy(qc1);
-        q1.addToOrderBy(qf1);
-
-        q2 = new Query();
-        q2.addToSelect(qc1);
-        q2.addToSelect(f1);
-        q2.setConstraint(sc1);
-        q2.addToGroupBy(qc1);
-        q2.addToOrderBy(qf1);
-
-        q3 = new Query();
-        q3.addToSelect(qc1);
-        q3.addToSelect(qc1);
-        q3.setConstraint(sc1);
-        q3.addToGroupBy(qc1);
-        q3.addToOrderBy(qf1);
+        clearQuery = new Query();
+        clearQuery.addToSelect(qc1);
+        clearQuery.addToSelect(f1);
+        clearQuery.setConstraint(sc1);
+        clearQuery.addToGroupBy(qc1);
+        clearQuery.addToOrderBy(qf1);
     }
 
     public  void testAddClass() {
@@ -201,13 +187,13 @@ public class QueryTest extends TestCase
 
 
     public void testClearSelect() {
-        q1.clearSelect();
-        assertEquals(0, q1.getSelect().size());
+        clearQuery.clearSelect();
+        assertEquals(0, clearQuery.getSelect().size());
     }
 
     public void testClearOrderBy() {
-        q1.clearOrderBy();
-        assertEquals(0, q1.getOrderBy().size());
+        clearQuery.clearOrderBy();
+        assertEquals(0, clearQuery.getOrderBy().size());
     }
 
 }

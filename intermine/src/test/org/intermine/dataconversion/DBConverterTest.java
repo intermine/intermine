@@ -63,7 +63,6 @@ public class DBConverterTest extends TestCase {
         List rows = rowify(
                           new String[] {"Department_id", "name", "company_id", "manager_id"},
                           new Object[] {new Integer(12), "DepartmentA1", null, null});
-        List blank = new ArrayList();
 
         map.put("SELECT * FROM Department", rows);
 
@@ -374,11 +373,11 @@ public class DBConverterTest extends TestCase {
     }
 
     protected List rowify(String[] names, Object[] values) {
-        Map map = new HashMap();
+        Map rowifyMap = new HashMap();
         for (int i=0; i < names.length; i++) {
-            map.put(names[i], values[i]);
+            rowifyMap.put(names[i], values[i]);
         }
-        return Collections.singletonList(map);
+        return Collections.singletonList(rowifyMap);
     }
 
     protected List rowify(String[] names, Object[][] values) {
