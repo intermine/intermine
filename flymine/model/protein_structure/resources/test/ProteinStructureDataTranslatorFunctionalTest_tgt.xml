@@ -1,0 +1,41 @@
+<items>
+  <item id="-1_8" class="http://www.flymine.org/model/genomic#Annotation">
+    <reference name="property" ref_id="-1_7"/>
+    <reference name="subject" ref_id="-1_2"/>
+    <collection name="evidence">
+      <reference ref_id="-1_1"/>
+    </collection>
+  </item>
+  <item id="-1_6" class="http://www.flymine.org/model/genomic#Annotation">
+    <reference name="property" ref_id="-1_5"/>
+    <reference name="subject" ref_id="-1_2"/>
+  </item>
+  <item id="-1_4" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="193"/>
+    <attribute name="start" value="140"/>
+    <reference name="object" ref_id="-1_3"/>
+    <reference name="subject" ref_id="-1_2"/>
+    <collection name="evidence">
+      <reference ref_id="-1_1"/>
+    </collection>
+  </item>
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#ProteinRegion">
+    <reference name="protein" ref_id="-1_3"/>
+    <reference name="sequenceFamily" ref_id="-1_7"/>
+  </item>
+  <item id="-1_5" class="http://www.flymine.org/model/genomic#ModelledProteinStructure">
+    <attribute name="QScore" value="-0.49"/>
+    <attribute name="ZScore" value="-1.96"/>
+    <attribute name="atm" value=""/>
+    <reference name="region" ref_id="-1_2"/>
+  </item>
+  <item id="-1_3" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="O01367"/>
+  </item>
+  <item id="-1_7" class="http://www.flymine.org/model/genomic#ProteinSequenceFamily">
+    <attribute name="name" value="PF00013"/>
+  </item>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
+    <attribute name="title" value="Pfam"/>
+  </item>
+</items>

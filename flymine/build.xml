@@ -709,8 +709,10 @@
   </target>
 
   <!-- create java objects for the genomic model -->
-  <target name="compile-genomic-model" depends="create-production-model">
-  <!--<target name="compile-genomic-model">-->
+  <target name="compile-genomic-model" depends="create-production-model, compile-production-model"/>
+
+  <!-- badly named target to compile a partially built genomic model -->
+  <target name="compile-production-model" depends="create-genomic-model">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1797,7 +1799,7 @@
   <target name="build-db-fulldatatest" depends="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
       <property name="db.name" value="db.fulldatatest"/>
       <property name="objectstore.name" value="os.fulldatatest"/>
     </ant>
@@ -1813,7 +1815,7 @@
   <target name="ensembl-test" depends="prepare-test, convert-ensembl, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1827,7 +1829,7 @@
   <target name="chado-test" depends="prepare-build-model, convert-chado">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="chado"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1841,7 +1843,7 @@
   <target name="rnai-test" depends="prepare-build-model, prepare-test, convert-rnai">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1855,7 +1857,7 @@
   <target name="orthologue-test" depends="prepare-build-model, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1869,7 +1871,7 @@
   <target name="go-test" depends ="prepare-build-model, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="go"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1884,7 +1886,7 @@
     <mkdir dir="${build.tmp}/mage"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1902,12 +1904,18 @@
     </ant>
   </target>
 
+  <target name="protein_structure-test" depends="prepare-test, merge-protein_structure-model, compile-production-model, build-db-fulldatatest">
+    <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+      <property name="model.name" value="protein_structure"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target>
 
   <target name="psi-test" depends="prepare-test, prepare-build-model, build-db-fulldatatest">
     <copy file="${model}/psi/psi.xsd" toDir="${build.model}/psi"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="psi"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1921,7 +1929,7 @@
   <target name="taxonomy-test" depends="prepare-build-model, compile-taxonomy-java, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="taxonomy"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1936,7 +1944,7 @@
     <copy file="${model}/uniprot/uniprot.xsd" toDir="${build.model}/uniprot"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="uniprot"/>
-      <reference torefid="class.path" refid="models.class.path"/>
+      <reference torefid="class.path" refid="test.class.path"/>
     </ant>
   </target>
 
@@ -1956,7 +1964,7 @@
   </target>
 
   <target name="test-models-inc"
-          depends="mage-test, ensembl-test, rnai-test, psi-test, orthologue-test, go-test, taxonomy-test, uniprot-test">
+          depends="mage-test, ensembl-test, rnai-test, psi-test, orthologue-test, go-test, taxonomy-test, uniprot-test, protein_structure-test">
     <antcall target="test-report"/>
   </target>
 
