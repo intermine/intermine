@@ -208,7 +208,7 @@ public class IqlShell
                 out.print(", ");
             }
             needComma = true;
-            out.print(o.toString());
+            out.print(o);
         }
         out.println("");
     }
