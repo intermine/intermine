@@ -112,9 +112,7 @@ public abstract class QueryHelper
             if (!"".equals(fieldValue)) {
                 String fieldName = (String) fieldEntry.getKey();
                 Integer opCode = Integer.valueOf((String) fieldOps.get(fieldName));
-                if (fieldName.indexOf("#") != -1) {
-                    fieldName = fieldName.substring(0, fieldName.indexOf("#"));
-                }
+                fieldName = fieldName.substring(0, fieldName.indexOf("_"));
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 ConstraintOp op = ConstraintOp.getOpForIndex(opCode);
                 if (field instanceof AttributeDescriptor) {
@@ -141,7 +139,7 @@ public abstract class QueryHelper
      * @param q the query in question
      * @param constraints the new constraints
      */
-    protected static void addConstraint(Query q, ConstraintSet constraints) {
+    public static void addConstraint(Query q, ConstraintSet constraints) {
         if (q == null) {
             throw new NullPointerException("q cannot be null");
         }

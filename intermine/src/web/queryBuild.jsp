@@ -5,6 +5,7 @@
 
 <c:if test="${cld != null}">
   <html:form action="/query">
+
     <c:choose>
       <c:when test="${!empty aliasStr}">
         <c:set var="startStr" value="Edit"/>
@@ -17,110 +18,45 @@
     </c:choose>
 
     <c:out value="${startStr}"/> 
-    <font class="queryViewFromItemTitle"> <c:out value="${cld.unqualifiedName}"/> </font> 
-    <font class="queryViewFromItemAlias"> <c:out value="${endStr}"/></font>              
+    <font class="queryViewFromItemTitle"><c:out value="${cld.unqualifiedName}"/></font> 
+    <font class="queryViewFromItemAlias"><c:out value="${endStr}"/></font>
 
-    <table border="0">        
-      <c:forEach var="field" items="${cld.allAttributeDescriptors}">
-        <c:forEach var="fieldNum" varStatus="status" items="${fields[field.name]}">
-          <tr>
-            <td>
-              <c:if test="${status.first}">
-                <c:out value="${field.name}"/>
-              </c:if>
-            </td>
-            <td>
-              <html:select property="fieldOp(${fieldNum})">
-                <c:forEach items="${ops[field.name]}" var="entry">
-                  <html:option value="${entry.key}"><c:out value="${entry.value}"/></html:option>
-                </c:forEach>
-              </html:select>
-            </td>
-            <td>
-              <html:text property="fieldValue(${fieldNum})"/>
-            </td>
-            <td>
-              <%-- <c:if test="${status.last}">
-                <html:submit property="action" onclick="document.forms[1].addField.value='${field.name}'">
-                  <bean:message key="queryclass.addfield"/>
-                </html:submit>
-              </c:if> --%>
-            </td>
-          </tr>
-        </c:forEach>
+    <table border="0">
+      <c:forEach items="${constraints}" var="constraint">
+        <tr>
+          <td>
+            <c:out value="${constraint.value}"/>
+          </td>
+          <td>
+            <html:select property="fieldOp(${constraint.key})">
+              <c:forEach items="${ops[constraint.value]}" var="op">
+                <html:option value="${op.key}"><c:out value="${op.value}"/></html:option>
+              </c:forEach>
+            </html:select>
+          </td>
+          <td>
+            <html:text property="fieldValue(${constraint.key})"/>
+          </td>
+          <td>
+            <html:link action="/changequery?method=removeConstraint&constraintName=${constraint.key}">
+            <bean:message key="queryclass.removeConstraint"/>
+            </html:link>
+          </td>
+        </tr>
       </c:forEach>
+    </table>
 
-        
-      <c:forEach var="field" items="${cld.referenceDescriptors}">
-        <c:forEach var="fieldNum" varStatus="status" items="${fields[field.name]}">
-          <tr>
-            <td>
-              <c:if test="${status.first}">
-                <c:out value="${field.name}"/>
-              </c:if>
-            </td>
-            <td>
-              <html:select property="fieldOp(${fieldNum})">
-                <c:forEach items="${ops[field.name]}" var="entry">
-                  <html:option value="${entry.key}"><c:out value="${entry.value}"/></html:option>
-                </c:forEach>
-              </html:select>
-            </td>
-            <td>
-              <html:select property="fieldValue(${fieldNum})">
-                <c:forEach items="${aliases[field.name]}" var="alias">
-                  <html:option value="${alias}"><c:out value="${alias}"/></html:option>
-                </c:forEach>
-              </html:select>
-            </td>
-            <td>
-              <%-- <c:if test="${status.last}">
-                <html:submit property="action" onclick="document.forms[1].addField.value='${field.name}'">
-                  <bean:message key="queryclass.addfield"/>
-                </html:submit>
-              </c:if> --%>
-            </td>
-          </tr>
+    <table border="0">
+      <tr><td>
+      <html:select property="newFieldName">
+        <c:forEach var="field" items="${cld.allFieldDescriptors}">
+          <html:option value="${field.name}"><c:out value="${field.name}"/></html:option>
         </c:forEach>
-      </c:forEach>
-    
-        
-      <c:forEach var="field" items="${cld.collectionDescriptors}">
-        <c:forEach var="fieldNum" varStatus="status" items="${fields[field.name]}">
-          <tr>
-            <td>
-              <c:if test="${status.first}">
-                <c:out value="${field.name}"/>
-              </c:if>
-            </td>
-            <td>
-              <html:select property="fieldOp(${fieldNum})">
-                <c:forEach items="${ops[field.name]}" var="entry">
-                  <html:option value="${entry.key}"><c:out value="${entry.value}"/></html:option>
-                </c:forEach>
-              </html:select>
-            </td>
-            <td>              
-              <html:select property="fieldValue(${fieldNum})">
-                <c:forEach items="${aliases[field.name]}" var="alias">
-                  <html:option value="${alias}"><c:out value="${alias}"/></html:option>
-                </c:forEach>
-              </html:select>
-            </td>
-            <td>
-              <%-- <c:if test="${status.last}">
-                <html:submit property="action" onclick="document.forms[1].addField.value='${field.name}'">
-                  <bean:message key="queryclass.addfield"/>
-                </html:submit>
-              </c:if> --%>
-            </td>
-          </tr>
-        </c:forEach>
-      </c:forEach>
-    
-
-
-
+      </html:select>
+      <html:submit property="action">
+        <bean:message key="queryclass.addConstraint"/>
+      </html:submit>
+      </td></tr>
     </table>
 
     <table border="0">
@@ -136,7 +72,7 @@
               <bean:message key="queryclass.remove"/>
             </html:submit>
           </td>
-         </c:if>
+        </c:if>
       </tr>
     </table>    
 

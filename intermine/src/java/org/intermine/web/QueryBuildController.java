@@ -10,23 +10,24 @@ package org.flymine.web;
  *
  */
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.actions.TilesAction;
 
 import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.AttributeDescriptor;
@@ -35,16 +36,11 @@ import org.flymine.metadata.Model;
 import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.metadata.ReferenceDescriptor;
 import org.flymine.metadata.CollectionDescriptor;
-
-import org.flymine.util.TypeUtil;
 import org.flymine.objectstore.query.*;
-
-import org.flymine.objectstore.query.ConstraintHelper;
+import org.flymine.util.TypeUtil;
 
 /**
- * Perform initialisation steps for query editing tile prior to calling
- * query.jsp.
- *
+ * Perform initialisation steps for query editing tile prior to calling query.jsp
  * @author Mark Woodbridge
  * @author Richard Smith
  */
@@ -58,145 +54,144 @@ public class QueryBuildController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
+        // this method sets up things used by queryBuild.jsp to render the query.
+        // these include constraint names, valid ops for each type of
+        // constraint, queryclass aliases and the cld (metadata for the active queryclass)
         HttpSession session = request.getSession();
 
         QueryClass qc = (QueryClass) session.getAttribute("queryClass");
         if (qc != null) {
             Model model = ((DisplayModel) session.getAttribute("model")).getModel();
-            if (!model.hasClassDescriptor(qc.getType().getName())) {
+            ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
+            if (cld == null) {
                 throw new Exception("ClassDescriptor (" + qc.getType().getName()
                                     + ") not found in model (" + model.getName() + ")");
             }
-            ClassDescriptor cld = model.getClassDescriptorByName(qc.getType().getName());
 
-            // find valid constraint operations for each field
-            request.getSession().setAttribute("ops", getOps(cld));
-            request.setAttribute("cld", cld);
-
-            // if editing a QueryClass already on query need to populate form
-            Map aliasMap = new HashMap();
-            List constraints = new ArrayList();
+            Map savedBagsInverse = (Map) session.getAttribute("savedBagsInverse");
+            Map constraints = (Map) session.getAttribute("constraints");
             Query q = (Query) session.getAttribute("query");
             if (q != null) {
-                request.setAttribute("aliases", getAliases(cld, q));
-                aliasMap = q.getAliases();
-                constraints = ConstraintHelper.createList(q, qc);
-
-                String alias = (String) q.getAliases().get(qc);
-                if (alias != null) {
-                    request.setAttribute("aliasStr", alias);
+                if (constraints == null) {
+                    constraints = buildConstraintMap((QueryBuildForm) form,
+                                                     ConstraintHelper.createList(q, qc),
+                                                     q.getAliases(), savedBagsInverse);
                 }
-
+                request.setAttribute("aliases", getAliases(cld, q));
+                request.setAttribute("aliasStr", q.getAliases().get(qc));
             }
-
-            Map fields = populateQueryBuildForm((QueryBuildForm) form, cld, constraints, aliasMap);
-            request.setAttribute("fields", fields);
-
+            
+            session.setAttribute("constraints", constraints != null ? constraints : new HashMap());
+            request.setAttribute("ops", getOps(cld, savedBagsInverse != null
+                                               && savedBagsInverse.size() > 0));
+            request.setAttribute("cld", cld);
         }
+
         return null;
     }
 
     /**
-     * Editing a QueryClass already on query so need to fill in form from
-     * constraints already on query.  Returns a map of fieldname vs a list
-     * of fieldname#number for the number of times that field shouls be drawn.
+     * Iterate through a List of Constraints, basically finding out how many constraints there are
+     * for each field. This is encoded in the resultant Map.
      *
-     * @param form the QueryBuildForm to populate
-     * @param cld the class to be displayed
-     * @param constraints a list of contraints applied to this class
-     * @param aliasMap map of QueryClass/alias for the query
-     * @return a map of fieldname/list of fieldname#number
-     * @throws Exception if anything goes wrong
+     * @param form the ActionForm used in building the query
+     * @param constraints a List of Contraints on this QueryClass
+     * @param aliasMap Map of QueryClass to alias in the query
+     * @param savedBagsInverse an identity Map from bag to bag name
+     * @return a Map from constraint name (fieldName_constraintNumber) to fieldName
      */
-    protected Map populateQueryBuildForm(QueryBuildForm form, ClassDescriptor cld, List constraints,
-                                         Map aliasMap) throws Exception {
-
-        // all fields need at least one entry in fieldMap, track how many
-        Map fieldMap = new HashMap();
+    protected Map buildConstraintMap(QueryBuildForm form, List constraints, Map aliasMap,
+                                     Map savedBagsInverse) {
+        // map from constraint name to fieldName
+        Map constraintNames = new HashMap();
+        //map from fieldName to number of constraints on that field so far
         Map fieldNums = new HashMap();
-        for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext(); ) {
-            String fieldName = ((FieldDescriptor) iter.next()).getName();
-            fieldNums.put(fieldName, new Integer(0));
-            String fieldNameNum = fieldName + "#0";
-            fieldMap.put(fieldName, new HashSet(Collections.singleton(fieldNameNum)));
-        }
 
-        // insert data into form where fieldnames are fieldname#number
-        Map fieldValues = new HashMap();
-        Iterator conIter = constraints.iterator();
-        while (conIter.hasNext()) {
-            Constraint c = (Constraint) conIter.next();
+        for (Iterator iter = constraints.iterator(); iter.hasNext();) {
+            Constraint c = (Constraint) iter.next();
+            Integer fieldOp = c.getOp().getIndex();
+            String fieldName = null;
+            Object fieldValue = null;
             if (c instanceof SimpleConstraint) {
                 SimpleConstraint sc = (SimpleConstraint) c;
                 if ((sc.getArg1() instanceof QueryField)  && (sc.getArg2() instanceof QueryValue)) {
-                    String fieldName = ((QueryField) sc.getArg1()).getFieldName();
-                    int num = ((Integer) fieldNums.get(fieldName)).intValue();
-                    fieldNums.put(fieldName, new Integer(num + 1));
-                    String fieldNameNum = fieldName + "#" + Integer.toString(num);
-                    ((HashSet) fieldMap.get(fieldName)).add(fieldNameNum);
-
-                    form.setFieldValue(fieldNameNum, ((QueryValue) sc.getArg2()).getValue());
-                    form.setFieldOp(fieldNameNum, sc.getOp().getIndex());
+                    fieldName = ((QueryField) sc.getArg1()).getFieldName();
+                    fieldValue = ((QueryValue) sc.getArg2()).getValue();
                 }
-            } else if (c instanceof ContainsConstraint) {
-                ContainsConstraint cc = (ContainsConstraint) c;
-                String fieldName = cc.getReference().getFieldName();
-                int num = ((Integer) fieldNums.get(fieldName)).intValue();
-                fieldNums.put(fieldName, new Integer(num + 1));
-                String fieldNameNum = fieldName + "#" + Integer.toString(num);
-                ((HashSet) fieldMap.get(fieldName)).add(fieldNameNum);
-
-                form.setFieldValue(fieldNameNum, (String) aliasMap.get(cc.getQueryClass()));
-                form.setFieldOp(fieldNameNum, cc.getOp().getIndex());
+             } else if (c instanceof ContainsConstraint) {
+                 ContainsConstraint cc = (ContainsConstraint) c;
+                 fieldName = cc.getReference().getFieldName();
+                 fieldValue = aliasMap.get(cc.getQueryClass());
+             } else if (c instanceof BagConstraint) {
+                 BagConstraint bc = (BagConstraint) c;
+                 if (bc.getQueryNode() instanceof QueryField) {
+                     fieldName = ((QueryField) bc.getQueryNode()).getFieldName();
+                     fieldValue = savedBagsInverse.get(bc.getBag());
+                 }
+            }
+            if (fieldName != null) {
+                Integer num = (Integer) fieldNums.get(fieldName);
+                if (num == null) {
+                    num = new Integer(0);
+                }
+                fieldNums.put(fieldName, new Integer(num.intValue() + 1));
+                String constraintName = fieldName + "_" + num;
+                constraintNames.put(constraintName, fieldName);
+                form.setFieldOp(constraintName, fieldOp);
+                form.setFieldValue(constraintName, fieldValue);
             }
         }
-        return fieldMap;
-    }
 
+        return constraintNames;
+    }
 
     /**
      * This method returns a map from field names to a map of operation codes to operation strings
      * For example 'name' -> 0 -> 'EQUALS'
      * @param cld the ClassDescriptor to be inspected
+     * @param bagsPresent true if there are bags in the session, meaning extra valid ConstraintOps
      * @return the map
      */
-    protected Map getOps(ClassDescriptor cld) {
+    protected Map getOps(ClassDescriptor cld, boolean bagsPresent) {
         Map fieldOps = new HashMap();
-        Iterator iter = cld.getAllAttributeDescriptors().iterator();
-        while (iter.hasNext()) {
+
+        //attributes
+        for (Iterator iter = cld.getAllAttributeDescriptors().iterator(); iter.hasNext();) {
             AttributeDescriptor attr = (AttributeDescriptor) iter.next();
-            Map opString = new LinkedHashMap();
-            Iterator opIter = SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType()))
-                .iterator();
-            while (opIter.hasNext()) {
-                ConstraintOp op = (ConstraintOp) opIter.next();
-                opString.put(op.getIndex(), op.toString());
+            List validOps = SimpleConstraint.validOps(TypeUtil.instantiate(attr.getType()));
+            Set ops = new LinkedHashSet(validOps);
+            if (bagsPresent) {
+                ops.addAll(BagConstraint.VALID_OPS);
             }
-            fieldOps.put(attr.getName(), opString);
+            fieldOps.put(attr.getName(), mapOps(ops));
         }
 
-        Map opString = new LinkedHashMap();
-        Iterator opIter = ContainsConstraint.VALID_OPS.iterator();
-        while (opIter.hasNext()) {
-            ConstraintOp op = (ConstraintOp) opIter.next();
-            opString.put(op.getIndex(), op.toString());
-        }
-
-        iter = cld.getReferenceDescriptors().iterator();
-        while (iter.hasNext()) {
-            ReferenceDescriptor ref = (ReferenceDescriptor) iter.next();
-            fieldOps.put(ref.getName(), opString);
-        }
-
-        iter = cld.getCollectionDescriptors().iterator();
-        while (iter.hasNext()) {
-            CollectionDescriptor ref = (CollectionDescriptor) iter.next();
-            fieldOps.put(ref.getName(), opString);
+        //references and collections
+        Map opString = mapOps(ContainsConstraint.VALID_OPS);
+        for (Iterator iter = cld.getAllFieldDescriptors().iterator(); iter.hasNext();) {
+            FieldDescriptor fd = (FieldDescriptor) iter.next();
+            if (fd.isReference() || fd.isCollection()) {
+                fieldOps.put(fd.getName(), opString);
+            }
         }
 
         return fieldOps;
     }
+
+    /**
+     * Take a Collection of ConstraintOps and builds a map from ConstraintOp.getIndex() to
+     * ConstraintOp.toString() for each
+     * @param ops a Collection of ConstraintOps
+     * @return the Map from index to string
+     */
+    protected Map mapOps(Collection ops) {
+        Map opString = new LinkedHashMap();
+        for (Iterator iter = ops.iterator(); iter.hasNext();) {
+            ConstraintOp op = (ConstraintOp) iter.next();
+            opString.put(op.getIndex(), op.toString());
+        }
+        return opString;
+    } 
 
     /**
      * This method returns a map from field names (for fields that are references) to a list of

@@ -24,25 +24,67 @@ import org.apache.struts.action.ActionMapping;
  */
 public class QueryBuildForm extends ActionForm
 {
-    protected Map fieldValues = new HashMap();
+    // field to which a constraint is to be added
+    protected String newFieldName;
+    // map from constraint 'name' (fieldname#index) to field name
+    protected Map fieldNames = new HashMap();
+    // map from constraint name to constaintOp index
     protected Map fieldOps = new HashMap();
+    // map from constraint name to constraint value (a string)
+    protected Map fieldValues = new HashMap();
 
     /**
-     * Set the map field name/values for QueryClass
-     *
-     * @param fieldValues a map of fieldname/value
+     * Set newFieldName
+     * @param newFieldName the new field name
      */
-    public void setFieldValues(Map fieldValues) {
-        this.fieldValues = fieldValues;
+    public void setNewFieldName(String newFieldName) {
+        this.newFieldName = newFieldName;
     }
 
     /**
-     * Get the map of field values
-     *
-     * @return the map of field values
+     * Get newFieldName
+     * @return the new field name
      */
-    public Map getFieldValues() {
-        return this.fieldValues;
+    public String getNewFieldName() {
+        return newFieldName;
+    }
+
+    /**
+     * Set the fieldNames map
+     *
+     * @param fieldNames the map
+     */
+    public void setFieldNames(Map fieldNames) {
+        this.fieldNames = fieldNames;
+    }
+
+    /**
+     * Get the fieldNames map
+     *
+     * @return the fieldNames map
+     */
+    public Map getFieldNames() {
+        return fieldNames;
+    }
+
+    /**
+     * Set a value in the fieldNames map
+     *
+     * @param key the constraint name
+     * @param value value to set
+     */
+    public void setFieldName(String key, Object value) {
+        fieldNames.put(key, value);
+    }
+
+    /**
+     * Get the value from the fieldNames map
+     *
+     * @param key the constraint name
+     * @return the field value
+     */
+    public Object getFieldName(String key) {
+        return fieldNames.get(key);
     }
 
     /**
@@ -69,25 +111,6 @@ public class QueryBuildForm extends ActionForm
      * @param key the field name
      * @param value value to set
      */
-    public void setFieldValue(String key, Object value) {
-        fieldValues.put(key, value);
-    }
-
-    /**
-     * Get the value for the given field
-     *
-     * @param key the field name
-     * @return the field value
-     */
-    public Object getFieldValue(String key) {
-        return fieldValues.get(key);
-    }
-    /**
-     * Set a value for the given field of QueryClass
-     *
-     * @param key the field name
-     * @param value value to set
-     */
     public void setFieldOp(String key, Object value) {
         fieldOps.put(key, value);
     }
@@ -101,6 +124,45 @@ public class QueryBuildForm extends ActionForm
     public Object getFieldOp(String key) {
         return fieldOps.get(key);
     }
+
+    /**
+     * Set the map field name/values for QueryClass
+     *
+     * @param fieldValues a map of fieldname/value
+     */
+    public void setFieldValues(Map fieldValues) {
+        this.fieldValues = fieldValues;
+    }
+
+    /**
+     * Get the map of field values
+     *
+     * @return the map of field values
+     */
+    public Map getFieldValues() {
+        return this.fieldValues;
+    }
+
+    /**
+     * Set a value for the given field of QueryClass
+     *
+     * @param key the field name
+     * @param value value to set
+     */
+    public void setFieldValue(String key, Object value) {
+        fieldValues.put(key, value);
+    }
+
+    /**
+     * Get the value for the given field
+     *
+     * @param key the field name
+     * @return the field value
+     */
+    public Object getFieldValue(String key) {
+        return fieldValues.get(key);
+    }
+
     /**
      * @see ActionForm#reset
      */
