@@ -55,7 +55,7 @@ public class CalculateLocations
     private int i, j, k;
 
     /**
-     * Consctruct with an ObjectStoreWriter
+     * Create a new CalculateLocations object from an ObjectStoreWriter
      * @param osw writer on genomic ObjectStore
      */
     public CalculateLocations(ObjectStoreWriter osw) {
