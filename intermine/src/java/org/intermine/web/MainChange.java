@@ -55,16 +55,21 @@ public class MainChange extends DispatchAction
 
         // ensure removal of any view nodes that depend on a type constraint
         // eg. Department.employees.salary where salary is only defined in a subclass of Employee
-        ClassDescriptor cld = MainHelper.getClassDescriptorForPath(path, model);
-        for (Iterator i = query.getView().iterator(); i.hasNext();) {
-            String viewPath = (String) i.next();
-            if (viewPath.startsWith(path) && !viewPath.equals(path)) {
-                String fieldName = viewPath.substring(path.length() + 1);
-                if (fieldName.indexOf(".") != -1) {
-                    fieldName = fieldName.substring(0, fieldName.indexOf("."));
-                }
-                if (cld.getFieldDescriptorByName(fieldName) == null) {
-                    i.remove();
+        // note that we first have to find out what type Department thinks the employees field is
+        // and then check if any of the view nodes assume the field is constrained to a subclass
+        String parentType = ((PathNode) query.getNodes().get(path)).getParentType();
+        if (parentType != null) {
+            ClassDescriptor cld = MainHelper.getClassDescriptor(parentType, model);
+            for (Iterator i = query.getView().iterator(); i.hasNext();) {
+                String viewPath = (String) i.next();
+                if (viewPath.startsWith(path) && !viewPath.equals(path)) {
+                    String fieldName = viewPath.substring(path.length() + 1);
+                    if (fieldName.indexOf(".") != -1) {
+                        fieldName = fieldName.substring(0, fieldName.indexOf("."));
+                    }
+                    if (cld.getFieldDescriptorByName(fieldName) == null) {
+                        i.remove();
+                    }
                 }
             }
         }
