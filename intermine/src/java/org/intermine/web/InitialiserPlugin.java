@@ -233,19 +233,25 @@ public class InitialiserPlugin implements PlugIn
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         if (superuser == null) {
-            LOG.warn("no superuser account specified");
+            LOG.warn("No superuser account specified");
             return;
         }
+        Profile profile = null;
         if (!pm.hasProfile(superuser)) {
-            LOG.warn("no profile for superuser " + superuser);
-            return;
-        }
-        Profile profile = pm.getProfile(superuser, pm.getPassword(superuser));
-        if (profile != null && profile.getSavedTemplates().size() == 0) {
-            Iterator iter = templateQueries.values().iterator();
-            while (iter.hasNext()) {
-                TemplateQuery template = (TemplateQuery) iter.next();
-                profile.saveTemplate(template.getName(), template);
+            LOG.info("Creating profile for superuser " + superuser);
+            profile = new Profile(pm, superuser, new HashMap(), new HashMap(), new HashMap());
+            String password = RequestPasswordAction.generatePassword();
+            Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+            if (RequestPasswordAction.email(profile.getUsername(), password, webProperties)) {
+                pm.saveProfile(profile);
+                pm.setPassword(superuser, password);
+                Iterator iter = templateQueries.values().iterator();
+                while (iter.hasNext()) {
+                    TemplateQuery template = (TemplateQuery) iter.next();
+                    profile.saveTemplate(template.getName(), template);
+                }
+            } else {
+                LOG.warn("Failed to send password notification email to superuser " + superuser);
             }
         }
     }
