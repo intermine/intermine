@@ -97,7 +97,7 @@ public class ReferenceDescriptorTest extends TestCase {
             fail("Should have returned a ClassDescriptor");
         }
     }
-    /****
+
     public void testRevereseReferenceValid() throws Exception {
         // rfd1 in Class1 points to Class2, rfd2 in Class2 points to Class1
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", "rfd2");
@@ -110,7 +110,7 @@ public class ReferenceDescriptorTest extends TestCase {
         try {
             ReferenceDescriptor rfdReverse = rfd1.getReverseReference();
             assertEquals(rfd2, rfdReverse);
-            assertEquals(cld1, rfdReverse.getClassDescriptor());
+            assertEquals(cld1, rfdReverse.getReferencedClassDescriptor());
 
         } catch (IllegalStateException e) {
             fail("Should have returned reverse ReferenceDescriptor");
@@ -118,7 +118,19 @@ public class ReferenceDescriptorTest extends TestCase {
     }
 
     public void testRevereseReferenceInvalid() throws Exception {
+        // rfd1 points to Class2 but has reverse reference (rfdDummy) that is not a field of Class1
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", false, "Class2", "rfdDummy");
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", false, "Class1", "rfd1");
+        List refs1 = Arrays.asList(new Object[] {rfd1});
+        List refs2 = Arrays.asList(new Object[] {rfd2});
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, null, false, new ArrayList(), refs1, new ArrayList());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, null, false, new ArrayList(), refs2, new ArrayList());
 
+        try {
+            Model model = new Model("model", Arrays.asList(new Object[] {cld1, cld2}));
+            fail("Expected a MetaDataException to be thrown");
+        } catch (MetaDataException e) {
+        }
     }
-    ****/
+
 }
