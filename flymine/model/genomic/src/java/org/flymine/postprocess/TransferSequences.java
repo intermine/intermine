@@ -64,7 +64,7 @@ public class TransferSequences
 
         Results results = PostProcessUtil.findLocations(os, Chromosome.class, Contig.class, false);
         // could try reducing further if still OutOfMemeory problems
-        results.setBatchSize(50);
+        results.setBatchSize(20);
 
         Iterator resIter = results.iterator();
 
