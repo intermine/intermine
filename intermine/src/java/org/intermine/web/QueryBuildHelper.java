@@ -13,7 +13,17 @@ package org.flymine.web;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 
+import org.flymine.metadata.Model;
+import org.flymine.metadata.FieldDescriptor;
+import org.flymine.metadata.ClassDescriptor;
+import org.flymine.metadata.AttributeDescriptor;
+import org.flymine.objectstore.query.ConstraintOp;
+import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryHelper;
+import org.flymine.objectstore.query.QueryValue;
 import org.flymine.util.TypeUtil;
 
 /**
@@ -76,5 +86,46 @@ public class QueryBuildHelper
 
         String alias = aliasClass(queryClasses.keySet(), className);
         queryClasses.put(alias, d);
+    }
+    
+    /**
+     * Create a Query from a Collection of DisplayQueryClasses
+     * @param queryClasses the DisplayQueryClasses
+     * @param model the relevant metadata
+     * @param savedBags the savedBags on the session
+     * @return the Query
+     * @throws Exception if an error occurs in constructing the Query
+     */
+    protected static Query createQuery(Map queryClasses, Model model, Map savedBags)
+        throws Exception {
+        Query q = new Query();
+        Map mapping = new HashMap();
+        for (Iterator i = queryClasses.keySet().iterator(); i.hasNext();) {
+            String alias = (String) i.next();
+            DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(alias);
+            QueryClass qc = new QueryClass(Class.forName(d.getType()));
+            q.alias(qc, alias);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            mapping.put(d, qc);
+        }
+        
+        for (Iterator i = queryClasses.keySet().iterator(); i.hasNext();) {
+            String alias = (String) i.next();
+            DisplayQueryClass d = (DisplayQueryClass) queryClasses.get(alias);
+            QueryClass qc = (QueryClass) mapping.get(d);
+            ClassDescriptor cld = model.getClassDescriptorByName(d.getType());
+            for (Iterator j = d.getConstraintNames().iterator(); j.hasNext();) {
+                String constraintName = (String) j.next();
+                String fieldName = (String) d.getFieldName(constraintName);
+                FieldDescriptor fd = (FieldDescriptor) cld.getFieldDescriptorByName(fieldName);
+                if (fd instanceof AttributeDescriptor) {
+                    QueryHelper.addConstraint(q, fieldName, qc,
+                                              (ConstraintOp) d.getFieldOp(constraintName),
+                                              new QueryValue(d.getFieldValue(constraintName)));
+                }
+            }
+        }
+        return q;
     }
 }
