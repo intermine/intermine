@@ -254,7 +254,7 @@ public class OJBModelOutput extends ModelOutput
                     .append(getPackagePath(ae2.getType()))
                     .append(".")
                     .append(generateClassifierRef(ae2.getType()) + "\"")
-                    //.append(" auto-update=\"false\"")
+                    .append(" auto-delete=\"true\"")
                     .append(">\n" + INDENT + INDENT + INDENT + "<foreignkey field-ref=\"")
                     .append(generateNoncapitalName(name2) + "Id")
                     .append("\" />\n" + INDENT + INDENT + "</reference-descriptor>\n");
@@ -268,8 +268,8 @@ public class OJBModelOutput extends ModelOutput
                 .append(getPackagePath(ae2.getType()))
                 .append(".")
                 .append(generateClassifierRef(ae2.getType()) + "\"")
-                //.append(" auto-update=\"true\"")
-                .append(">\n"+INDENT + INDENT + INDENT + "<inverse-foreignkey field-ref=\"")
+                .append(" auto-delete=\"true\"")
+                .append(">\n" + INDENT + INDENT + INDENT + "<inverse-foreignkey field-ref=\"")
                 .append(generateNoncapitalName(name1) + "Id")
                 .append("\"/>\n")
                 .append(INDENT + INDENT + "</collection-descriptor>\n");
@@ -288,7 +288,7 @@ public class OJBModelOutput extends ModelOutput
                 .append(getPackagePath(ae2.getType()))
                 .append(".")
                 .append(generateClassifierRef(ae2.getType()) + "\"")
-                //.append(" auto-update=\"true\"")
+                .append(" auto-delete=\"true\"")
                 .append(" indirection-table=\"")
                 .append(joiningTableName)
                 .append("\">\n")
