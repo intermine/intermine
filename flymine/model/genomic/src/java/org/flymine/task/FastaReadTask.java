@@ -67,7 +67,7 @@ public class FastaReadTask extends Task
     
     /**
      * Set the class name.  New Sequence objects will be created for objects of this class that have
-     * an identifier attribute that matches the identifier of a sequence in the fasta file.  The
+     * an identifier attribute that matches the identifier of a sequence in the FASTA file.  The
      * class must be a sub-class of LocatedSequenceFeature.
      * @param className the class of object to create sequences for
      */
@@ -77,7 +77,7 @@ public class FastaReadTask extends Task
 
     /**
      * Set the organism abbreviation.  Only objects that have a reference to this organism will have
-     * thier sequences set.
+     * their sequences set.
      * @param organismAbbreviation the organism of the objects to set
      */
     public void setOrganismAbbreviation(String organismAbbreviation) {
@@ -129,11 +129,10 @@ public class FastaReadTask extends Task
             throw new BuildException("cannot find class for: " + fullClassName);
         }
         QueryClass qcObj = new QueryClass(c);
-        QueryField qfObjId = new QueryField(qcObj, "id");
         QueryField qfObjIdentifier = new QueryField(qcObj, "identifier");
         q.addFrom(qcObj);
-        q.addToSelect(qfObjId);
         q.addToSelect(qfObjIdentifier);
+        q.addToSelect(qcObj);
 
         QueryClass qcOrg = new QueryClass(Organism.class);
 
@@ -160,7 +159,9 @@ public class FastaReadTask extends Task
         while (iter.hasNext()) {
             List row = (List) iter.next();
 
-            idMap.put(row.get(1), row.get(0));
+            // we queried for the InterMineObject but we just store the ID
+            // we hope that the ObjectStore will cache the objects
+            idMap.put(row.get(0), ((InterMineObject) row.get(1)).getId());
         }
     }
     
