@@ -27,6 +27,17 @@
     <!-- Add new news at the top here -->
     
     <item>
+      <title>FlyMine is hiring</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        See &lt;a href="http://www.flymine.org/project/jobs.html"&gt;
+        http://www.flymine.org/project/jobs.html&lt;/a&gt; for more information.
+      </description>
+      <pubDate>Fri Mar 18 11:03:55 GMT 2005</pubDate>
+    </item>
+
+
+    <item>
       <title>FlyMine 1.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
