@@ -44,12 +44,13 @@ import org.intermine.util.XmlUtil;
 public class ProteinStructureDataTranslator extends DataTranslator
 {
     protected static final String ENDL = System.getProperty("line.separator");
-    proected String dataLocation;
+    protected String dataLocation;
 
     /**
      * @see DataTranslator#DataTranslator
      */
-    public ProteinStructureDataTranslator(ItemReader srcItemReader, OntModel model, String ns, String dataLocation) {
+    public ProteinStructureDataTranslator(ItemReader srcItemReader, OntModel model, String ns,
+                                          String dataLocation) {
         super(srcItemReader, model, ns);
         this.dataLocation = dataLocation;
     }
@@ -69,7 +70,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             Item modelledRegion = getReferencedItem(srcItem, "modelled_region");
             Item proteinRegion = createItem(tgtNs + "ProteinRegion", "");
             Item protein = createItem(tgtNs + "Protein", "");
-            protein.addAttribute(new Attribute("primaryAccession", modelledRegiom
+            protein.addAttribute(new Attribute("primaryAccession", modelledRegion
                                                .getAttribute("uniprot_id").getValue()));
             Item location = createItem(tgtNs + "Location", "");
             location.addAttribute(new Attribute("start", modelledRegion
@@ -144,6 +145,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
         String modelName = args[2];
         String format = args[3];
         String namespace = args[4];
+        String dataLocation = args[5];
 
         ObjectStore osSrc = ObjectStoreFactory.getObjectStore(srcOsName);
         ObjectStoreWriter oswTgt = ObjectStoreWriterFactory.getObjectStoreWriter(tgtOswName);
@@ -152,7 +154,8 @@ public class ProteinStructureDataTranslator extends DataTranslator
         OntModel model = ModelFactory.createOntologyModel();
         model.read(new FileReader(new File(modelName)), null, format);
         ProteinStructureDataTranslator dt =
-            new ProteinStructureDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace, dataLocation);
+            new ProteinStructureDataTranslator(new ObjectStoreItemReader(osSrc), model, namespace,
+                                               dataLocation);
         model = null;
         dt.translate(tgtItemWriter);
         tgtItemWriter.close();
