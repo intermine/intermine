@@ -116,11 +116,11 @@ public class SessionMethods
                 }
                 
                 // debug pause
-                try {
+                /*try {
                     Thread.currentThread().sleep(2000);
                 } catch (Exception _) {
                     
-                }
+                }*/
             }
         };
         Thread thread = null;
