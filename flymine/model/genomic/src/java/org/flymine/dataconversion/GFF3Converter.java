@@ -27,8 +27,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -41,37 +39,37 @@ import org.apache.log4j.Logger;
 public class GFF3Converter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
-    protected static final String NAMESPACE = "http://www.flymine.org/model/genomic#";
+
 
     private Item organism;
     private Reference orgRef;
-    protected OntModel model;
     protected GFF3Parser parser;
     protected ItemWriter writer;
     private String seqClsName;
     private String orgAbbrev;
     private String infoSourceTitle;
+    private String targetNameSpace;
     private int itemid = 0;
 
 
     /**
      * Constructor
-     * @param model ontologyModel
      * @param parser GFF3Parser;
      * @param writer ItemWriter
      * @param seqClsName sequenceClassName
      * @param orgAbbrev organismAbbreviation. HS this case
      * @param infoSourceTitle title for infoSource
-     * @param itemid counter used as item identifier
+     * @param targetNameSpace target namesace
      */
-    public GFF3Converter(OntModel model, GFF3Parser parser, ItemWriter writer,
-           String seqClsName, String orgAbbrev, String infoSourceTitle) {
-        this.model = model;
+    public GFF3Converter(GFF3Parser parser, ItemWriter writer,
+           String seqClsName, String orgAbbrev, String infoSourceTitle, String targetNameSpace) {
+
         this.parser = parser;
         this.writer = writer;
         this.seqClsName = seqClsName;
         this.orgAbbrev = orgAbbrev;
         this.infoSourceTitle = infoSourceTitle;
+        this.targetNameSpace = targetNameSpace;
     }
 
     /**
@@ -83,6 +81,14 @@ public class GFF3Converter
         List list = new ArrayList();
         GFF3Record record;
         list = parser.parse(bReader);
+        try {
+            organism = getOrganism();
+            writer.store(ItemHelper.convert(organism));
+        } catch (ObjectStoreException e) {
+            LOG.error("Problem writing organism to the itemwriter");
+                //throw e;
+        }
+
         for (int i = 0; i < list.size(); i++) {
             record = (GFF3Record) list.get(i);
             process(record);
@@ -94,16 +100,16 @@ public class GFF3Converter
      * @param record GFF3Record
      */
     public void process(GFF3Record record) {
-        Item infoSource = createItem(NAMESPACE + "InfoSource", "", itemid++);
+        Item infoSource = createItem(targetNameSpace + "InfoSource", "", itemid++);
         infoSource.addAttribute(new Attribute("title", infoSourceTitle));
 
-        Item seq = createItem(NAMESPACE + seqClsName, "", itemid++);
+        Item seq = createItem(targetNameSpace + seqClsName, "", itemid++);
         seq.addAttribute(new Attribute("identifier", record.getSequenceID()));
         seq.addReference(getOrgRef());
 
         String term = record.getType();
         String className = TypeUtil.javaiseClassName(term);
-        Item feature = createItem(NAMESPACE + className, "", itemid++);
+        Item feature = createItem(targetNameSpace + className, "", itemid++);
         if (record.getId() != null) {
             feature.addAttribute(new Attribute("identifier", record.getId()));
         }
@@ -112,7 +118,7 @@ public class GFF3Converter
         }
         feature.addReference(getOrgRef());
 
-        Item location = createItem(NAMESPACE + "Location", "", itemid++);
+        Item location = createItem(targetNameSpace + "Location", "", itemid++);
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
         if (record.getStrand().equals("+")) {
@@ -131,11 +137,12 @@ public class GFF3Converter
         Item computationalAnalysis = new Item();
         Item computationalResult = new Item();
         if (String.valueOf(record.getScore()) != null) {
-            computationalAnalysis = createItem(NAMESPACE + "ComputationalAnalysis", "", itemid++);
+            computationalAnalysis = createItem(targetNameSpace + "ComputationalAnalysis", "",
+                            itemid++);
             computationalAnalysis.addAttribute(new Attribute("algorithm",
                                                              record.getSource()));
 
-            computationalResult = createItem(NAMESPACE + "ComputationalResult", "", itemid++);
+            computationalResult = createItem(targetNameSpace + "ComputationalResult", "", itemid++);
             computationalResult.addAttribute(new Attribute("score",
                                     String.valueOf(record.getScore())));
             computationalResult.addReference(new Reference("analysis",
@@ -148,7 +155,6 @@ public class GFF3Converter
         try {
             writer.store(ItemHelper.convert(infoSource));
             writer.store(ItemHelper.convert(seq));
-            writer.store(ItemHelper.convert(organism));
             writer.store(ItemHelper.convert(location));
             writer.store(ItemHelper.convert(feature));
             writer.store(ItemHelper.convert(computationalAnalysis));
@@ -172,7 +178,7 @@ public class GFF3Converter
      */
     private Item getOrganism() {
         if (organism == null) {
-            organism = createItem(NAMESPACE + "Organism", "", -1);
+            organism = createItem(targetNameSpace + "Organism", "", -1);
             organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
         }
         return organism;
