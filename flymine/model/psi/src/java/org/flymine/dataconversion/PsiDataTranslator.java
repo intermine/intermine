@@ -36,8 +36,6 @@ import org.intermine.dataconversion.DataTranslator;
 
 public class PsiDataTranslator extends DataTranslator
 {
-     protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
-
     private Item db = null;
     private Item swissProt = null;
 
