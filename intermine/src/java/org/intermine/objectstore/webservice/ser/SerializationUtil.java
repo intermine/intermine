@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Calendar;
 import javax.xml.namespace.QName;
 
 import org.intermine.util.TypeUtil;
@@ -148,6 +149,11 @@ public class SerializationUtil
                 l.add(collectionToObjects((Collection) o, os));
             } else if (o instanceof InterMineString) {
                 l.add(stringToObject((InterMineString) o, os));
+            } else if (o instanceof Calendar) {
+                //axis sends dates as calendars to provide timezone context
+                //because not all platforms represent dates as milliseconds since 1970 or whenever
+                //we don't handle calendars as fields so it's safe to convert back indiscriminantly
+                l.add(((Calendar) o).getTime());
             } else {
                 l.add(o);
             }
