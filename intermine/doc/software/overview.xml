@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<article>
+  
+  <artheader>
+    <date>2003-06-26</date>
+    <title>Technical overview</title>
+  </artheader>
+  
+  <para>At the software level, FlyMine is an general-purpose database that supports the storage and retrieval of Java objects. It is designed to support high quantities of data, possibly from different  sources of varying reliability.  The resultant complexity in data integration and efficient querying is handled by the provision of well-defined <ulink url="FlyMineArchitecture">components</ulink> which can be flexibly configured. An understanding of these is useful preparation both for using the software and <ulink url="contributing">contributing</ulink> to the project by suggesting enhancements or writing code.</para>
+  
+  <para>The organisation of the FlyMine codebase reflects the structure of its components - the most fundamental of which are the Model and the ObjectStore. The purpose of these and the other principal elements are described below; for more API information and implementation details please consult the JavaDoc. Class names link to the relevant JavaDoc, which can be read in conjunction with the system <ulink url="FlyMineApplication.zargo">class diagram</ulink> (ArgoUML format). A basic <!--ulink url="tutorial"-->tutorial<!--/ulink--> (coming soon) that describes how to get started with the ObjectStore using a simple XML model is also available.</para>
+  
+  <sect1>
+    <title>Model</title>
+    <para>The <ulink url="../api/org/flymine/metadata/Model"><classname>Model</classname></ulink> (<classname>metadata</classname> package) is a metadata representation that holds details on the types of objects that are stored in the database and information on how these types are related by inheritance and composition.  This includes, but is not limited to, the the information represented by the Java classes for these objects. This is reflected by the fact that a Model is constructed using a list of object descriptors; one for each object type to be stored.</para>
+    <para>The metadata that describes a model is usually specified in an XML file conforming to metadata.dtd. It is a list of classes which have attributes, references and collections. However, models can also be usually specified in the XMI UML format. The "production" of a Model from XML or XMI is handled by subclasses of <ulink url="../api/org/flymine/modelproduction/ModelParser"><classname>ModelParser</classname></ulink> (<classname>modelproduction</classname> package) which parse a metadata InputStream. The generation of actual Java classes and model-specific mapping and configuration files is handled by subclasses of ModelOutput (<classname>codegen</classname> package). An introduction to using your own model with FlyMine is available <!--ulink url="models/creating"-->here<!--/ulink--> (coming soon).</para>
+  </sect1>
+  
+  <sect1>
+    <title>ObjectStore</title>
+    <para>The <ulink url="../api/org/flymine/objectstore/ObjectStore"><classname>ObjectStore</classname></ulink> (<classname>objectstore</classname> package) is pivotal to FlyMine. It is the basis for object storage and retrieval, and abstracts away from the underlying persistence mechanism. It supports "store" and "query" primitives through an interface that is common to caching, networked or <ulink url="objectstore/ojb/OJB-details">object-relational mapping</ulink> implementations. This allows ObjectStores to be "layered" in a <ulink url="objectstore/FlyMineArchObjectStore">scalable architecture</ulink>. In practice, FlyMine is designed to be read-only in production environments for query efficiency and control over data consistency. To this end the ObjectStore interface specifies read-only operations, whilst the ObjectStoreWriter interface adds storage primitives.</para>
+    <para>An ObjectStore accepts queries and returns results (or an <ulink url="objectstore/query_explain">estimate</ulink> of how long it would take to obtain results). A <ulink url="../api/org/flymine/objectstore/query/Query"><classname>Query</classname></ulink> object is a powerful object query specification, understanding of which is aided by familiarity with the metadata structure of the data to be queried. Constraints are specified between classes, attributes, references and collections to build an expressive and well-defined request for objects from the underlying database.</para>
+    <para>The <ulink url="../api/org/flymine/objectstore/query/Results"><classname>Results</classname></ulink> are returned using as a collection of Objects which supports paging, <ulink url="objectstore/results_prefetch">prefetching</ulink> and <ulink url="objectstore/proxies">proxied references</ulink>. This ensures that the system is efficient and scalable to multiple clients.</para>
+    <para>The primary ObjectStore implementation is an object-relational mapping that relies on a modified version of the Apache OJB Project and the PostgreSQL database. This ObjectStoreOjbImpl uses the FlyMine Query object, customised <ulink url="objectstore/ojb/sql_gen_notes">SQL generation</ulink> and a stand-alone <ulink url="sql_optimisation/using-query-optimiser">SQL optimizer</ulink> (<classname>sql</classname> package) to provide significant performance improvements.</para>
+  </sect1>
+  
+  <sect1>
+    <title>DataLoader</title>
+    <para>The various <ulink url="../api/org/flymine/dataloader/DataLoader"><classname>Dataloader</classname></ulink> (<classname>dataloader</classname> package) classes translate external data in a specific format (flat text, Java objects, XML) to java business objects conforming to the corresponding Model and then <ulink url="dataloader/">store</ulink> these these objects. This is performed using an <ulink url="../api/org/flymine/dataloader/IntegrationWriter"><classname>IntegrationWriter</classname></ulink> which handles cascaded storage and data merging based on the metadata and data source prioritisation information. An IntegrationWriter makes use of the ObjectStore primitives to perform a query to see if the object to be stored is in the database already (in some form) and then merges the new information if necessary.</para>
+  </sect1>
+  </article>
+  
