@@ -582,18 +582,7 @@
   </target>
 
   <!-- PHENOTYPE MODEL GENERATION -->
-  <target name="phenotype-to-owl" depends="prepare">
-    <mkdir dir="${build.model}/phenotype/"/>
-    <copy file="${model}/phenotype/phenotype.ontology" todir="${build.model}/phenotype/"/>
-    <java classname="org.intermine.ontology.Dag2Owl" fork="true" failonerror="true">
-      <classpath refid="models.class.path" />
-      <arg value="${build.model}/phenotype/phenotype.ontology" />
-      <arg value="${build.model}/phenotype/phenotype.n3" />
-      <arg value="http://www.flymine.org/model/phenotype#" />
-    </java>
-  </target>
-
-  <target name="merge-phenotype-model" depends="prepare-genomic-model, phenotype-to-owl">
+  <target name="merge-phenotype-model" depends="prepare-genomic-model">
     <copy file="${model}/phenotype/phenotype_merge_spec.n3" todir="${build.model}/phenotype"/>
     <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" failonerror="true">
       <classpath refid="models.class.path"/>
@@ -601,15 +590,6 @@
       <arg value="http://www.flymine.org/model/genomic#"/>
       <arg value="${build.model}/phenotype/phenotype_merge_spec.n3" />
       <arg value="http://www.flymine.org/model/genomic#"/>
-      <arg value="N3"/>
-      <arg value="n" />
-    </java>
-    <java classname="org.intermine.ontology.MergeOwl" fork="true" maxmemory="800m" failonerror="true">
-      <classpath refid="models.class.path"/>
-      <arg value="${build.model}/genomic/genomic.n3" />
-      <arg value="http://www.flymine.org/model/genomic#"/>
-      <arg value="${build.model}/phenotype/phenotype.n3" />
-      <arg value="http://www.flymine.org/model/phenotype#"/>
       <arg value="N3"/>
       <arg value="n" />
     </java>
