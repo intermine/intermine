@@ -60,6 +60,10 @@ public class TemplateAction extends Action
         LoadQueryAction.loadQuery(template.getQuery(), request.getSession());
 
         if (request.getParameter("skipBuilder") != null) {
+            // If the form wants to skip the query builder we need to execute the query
+            if (!SessionMethods.runQuery (session, request)) {
+                return mapping.findForward("failure");
+            }
             return mapping.findForward("results");
         }
         
