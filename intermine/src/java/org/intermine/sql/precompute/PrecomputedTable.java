@@ -1,7 +1,7 @@
 package org.flymine.sql.precompute;
 
 import org.flymine.sql.query.Query;
-import org.flymine.sql.query.SQLStringable;;
+import org.flymine.sql.query.SQLStringable;
 
 /**
  * Represents a Precomputed table in a database. A precomputed table is a materialised SQL query.
