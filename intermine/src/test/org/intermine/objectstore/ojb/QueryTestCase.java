@@ -924,11 +924,13 @@ public abstract class QueryTestCase extends TestCase
         a1.setAddress("Company Street, BVille");
         Address a2 = new Address();
         a2.setAddress("Employee Street, BVille");
-        Employee e1 = new Manager();
+        CEO e1 = new CEO();
         e1.setName("EmployeeB1");
         e1.setFullTime(true);
         e1.setAddress(a2);
         e1.setAge(40);
+        e1.setTitle("Mr.");
+        e1.setSalary(45000);
         Employee e2 = new Employee();
         e2.setName("EmployeeB2");
         e2.setFullTime(true);
@@ -941,7 +943,7 @@ public abstract class QueryTestCase extends TestCase
         e3.setAge(60);
         Department d1 = new Department();
         d1.setName("DepartmentB1");
-        d1.setManager((Manager) e1);
+        d1.setManager(e1);
         d1.setEmployees(Arrays.asList(new Object[] { e1, e2 }));
          Department d2 = new Department();
         d2.setName("DepartmentB2");

@@ -10,6 +10,10 @@ import java.math.BigDecimal;
 import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.ResultsRow;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryField;
+import org.flymine.objectstore.query.QueryValue;
+import org.flymine.objectstore.query.SimpleConstraint;
 
 import org.flymine.model.testmodel.*;
 
@@ -167,4 +171,24 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         }
         return rows;
     }
+
+
+    public void testCEOWhenSearchingForManager() throws Exception {
+        QueryClass c1 = new QueryClass(Manager.class);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("EmployeeB1");
+        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        q1.setConstraint(sc1);
+        List l1 = os.execute(q1, 0, 10);
+        //System.out.println(l1.toString());
+        //System.out.println(l1.get(0).getClass());
+        //System.out.println(((ResultsRow) l1.get(0)).get(0).getClass());
+        CEO ceo = (CEO) (((ResultsRow) l1.get(0)).get(0));
+        //System.out.println(ceo.getSalary());
+        assertEquals(45000, ceo.getSalary());
+    }
+
 }
