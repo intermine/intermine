@@ -1722,6 +1722,14 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <mappings operation="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
+
+    <taskdef
+      name="load-xml-data"
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-xml-data integrationWriter="integration.production" xmlFile="${build.tmp}/publications.xml" sourceName="pubmed"/>
   </target>
 
  <target name="add-licences" depends="compile-genomic-java-from-db">
