@@ -15,15 +15,16 @@
     <html:link action="/collapseElement" name="linkParams">
   	<c:choose>
       <c:when test="${COLLAPSED[id]}">
-        <img border="0" src="images/plus.gif" alt="+"/>
+        <img border="0" src="images/undisclosed.gif" alt="+"/>
       </c:when>
       <c:otherwise>
-        <img border="0" src="images/minus.gif" alt="-"/>
+        <img border="0" src="images/disclosed.gif" alt="-"/>
       </c:otherwise>
     </c:choose>
+    <jsp:doBody/>
     </html:link>
   </c:if>
-  <jsp:doBody/>
+  <c:if test="${empty id}"><jsp:doBody/></c:if>
   </nobr>
 </div>
 
