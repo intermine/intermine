@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +53,7 @@ public abstract class QueryTestCase extends TestCase
         PersistenceBroker broker = os.getPersistenceBroker();
         dr = broker.getDescriptorRepository();
         queries = new HashMap();
-        results = new HashMap();
+        results = new LinkedHashMap();
         setUpQueries();
         setUpResults();
     }
@@ -63,6 +64,7 @@ public abstract class QueryTestCase extends TestCase
      * @throws Exception if an error occurs
      */
     public void setUpQueries() throws Exception {
+        queries.put("SelectSimpleObject", selectSimpleObject());
         queries.put("SubQuery", subQuery());
         queries.put("WhereSimpleEquals", whereSimpleEquals());
         queries.put("WhereSimpleNotEquals", whereSimpleNotEquals());
@@ -163,6 +165,18 @@ public abstract class QueryTestCase extends TestCase
                 throw new Throwable("Failed on " + type, t);
             }
         }
+    }
+
+    /*
+      select company
+      from Company
+    */
+    public Query selectSimpleObject() throws Exception {
+        QueryClass c1 = new QueryClass(Company.class);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        return q1;
     }
 
     /*
@@ -717,10 +731,8 @@ public abstract class QueryTestCase extends TestCase
                 name = o.getClass().getMethod("getName", new Class[] {});
             } catch (Exception e) {}
             if(name!=null) {
-                System.err.println("putting "+(String)name.invoke(o, new Object[] {})+ " "+o);
                 data.put((String)name.invoke(o, new Object[] {}), o);
             } else {
-                System.err.println("putting "+o.hashCode()+ " "+o);
                 data.put(new Integer(o.hashCode()), o);
             }
         }
