@@ -292,12 +292,8 @@
 
   <!-- main java source -->
   <target name="precompile-main" depends="prepare">
-    <copy todir="${build.src.java}">
-      <fileset dir="${src.java}">
-        <include name="**/*.java"/>
-        <exclude name="**/tutorial/*"/>
-      </fileset>
-    </copy>
+    <mkdir dir="${build.src.java}/org/intermine/sql/query"/>
+    <mkdir dir="${build.src.java}/org/intermine/objectstore/query/iql"/>
     <antlr target="${src.java}/org/intermine/sql/query/intermine_sql.g"
            outputdirectory="${build.src.java}/org/intermine/sql/query">
       <classpath refid="project.class.path"/>
@@ -310,6 +306,7 @@
     <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
+      <src path="${src.java}"/>
       <!-- this will include all dependent files of these tasks -->
       <include name="org/intermine/codegen/ModelOutputTask.java"/>
       <include name="org/intermine/modelproduction/ModelGenerationTask.java"/>
@@ -336,7 +333,9 @@
     <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="project.class.path"/>
       <src path="${build.src.java}"/>
+      <src path="${src.java}"/>
       <exclude name="org/intermine/web/**"/> 
+      <exclude name="org/intermine/tutorial/**"/> 
     </javac>
   </target>
   
@@ -853,7 +852,7 @@
   <target name="compile-webapp" depends="compile-userprofile, compile-main">
     <javac destdir="${build.java}" listfiles="yes" debuglevel="lines,vars,source" debug="on">
       <classpath refid="project.class.path"/>
-      <src path="${build.src.java}"/>
+      <src path="${src.java}"/>
       <include name="org/intermine/web/**"/>
     </javac>
   </target>
