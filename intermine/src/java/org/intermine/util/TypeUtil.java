@@ -93,7 +93,7 @@ public class TypeUtil
             } catch (Exception e3) {
             }
             IllegalArgumentException e2 = new IllegalArgumentException("Couldn't get field \""
-                    + o.getClass().getName() + "." + fieldName + "\""
+                    + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""
                     + (type == null ? "" : " (a " + type + ")"));
             e2.initCause(e);
             throw e2;
@@ -437,7 +437,7 @@ public class TypeUtil
         }
         return value;
     }
-    
+
     /**
      * Returns a String for a given object
      *
