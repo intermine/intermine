@@ -120,7 +120,7 @@ public class PathQuery
      */
     public PathNode addNode(String path) {
         PathNode node;
-        if (path.lastIndexOf(".") == -1) {
+        if (path.indexOf(".") == -1) {
             node = new PathNode(path);
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
