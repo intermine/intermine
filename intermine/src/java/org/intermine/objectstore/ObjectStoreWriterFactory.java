@@ -11,6 +11,7 @@ package org.flymine.objectstore;
  */
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import org.flymine.util.PropertiesUtil;
@@ -75,6 +76,10 @@ public class ObjectStoreWriterFactory
                                            + "ObjectStoreWriter: " + clsName
                                            + " (ObjectStore.class)"
                                            + " - check properties file, " + e.getMessage());
+        } catch (InvocationTargetException e) {
+            throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
+                                           + clsName + ", " + e.getCause().toString());
+
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate ObjectStoreWriter class: "
                                            + clsName + ", " + e.toString());
