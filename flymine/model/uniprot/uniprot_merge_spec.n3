@@ -34,6 +34,10 @@
     rdfs:domain :Protein;
     rdfs:range :Gene.
 
+:Protein__comments a owl:ObjectProperty;
+    rdfs:domain :Protein;
+    rdfs:range :Comment.
+
 :Gene__proteins a owl:ObjectProperty;
     owl:inverseOf :Protein__genes.
 
