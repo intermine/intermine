@@ -36,7 +36,6 @@ public class AceDataLoaderTest extends TestCase {
         testObj.identifier = "AceTestObject1";
         testObj.stringValue = "A string";
 
-
         AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
 
         assertEquals(testObj.identifier, ret.identifier);
@@ -140,6 +139,55 @@ public class AceDataLoaderTest extends TestCase {
         assertEquals(testObj.identifier, ret.identifier);
         assertEquals(testObj.onOrOff, ret.onOrOff);
 
+    }
+
+    public void testReference() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceNode node1 = new StaticAceNode("reference", obj);
+        obj.addNode(node1);
+        Reference ref1 = new StaticReference("AceTestObject2", node1,
+                                             new AceURL("acedb://user:password@server:1234/" + AceTestObject.class.getName()));
+        node1.addNode(ref1);
+
+        AceTestObject testObj1 = new AceTestObject();
+        AceTestObject testObj2 = new AceTestObject();
+        testObj1.identifier = "AceTestObject1";
+        testObj2.identifier = "AceTestObject2";
+
+        testObj1.reference = testObj2;
+
+        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+
+        assertEquals(testObj1.identifier, ret.identifier);
+        assertEquals(testObj1.reference.identifier, ret.reference.identifier);
+    }
+
+
+    public void testReferences() throws Exception {
+        StaticAceObject obj = new StaticAceObject("AceTestObject1", null, AceTestObject.class.getName());
+        StaticAceNode node1 = new StaticAceNode("references", obj);
+        obj.addNode(node1);
+        Reference ref1 = new StaticReference("AceTestObject2", node1,
+                                             new AceURL("acedb://user:password@server:1234/" + AceTestObject.class.getName()));
+        node1.addNode(ref1);
+        Reference ref2 = new StaticReference("AceTestObject3", node1,
+                                             new AceURL("acedb://user:password@server:1234/" + AceTestObject.class.getName()));
+        node1.addNode(ref2);
+
+        AceTestObject testObj1 = new AceTestObject();
+        AceTestObject testObj2 = new AceTestObject();
+        AceTestObject testObj3 = new AceTestObject();
+        testObj1.identifier = "AceTestObject1";
+        testObj2.identifier = "AceTestObject2";
+        testObj3.identifier = "AceTestObject3";
+
+        testObj1.references.add(testObj2);
+        testObj1.references.add(testObj3);
+
+        AceTestObject ret = (AceTestObject) AceDataLoader.processAceObject(obj, null);
+
+        assertEquals(testObj1.identifier, ret.identifier);
+        assertEquals(testObj1.references.size(), ret.references.size());
     }
 
 
