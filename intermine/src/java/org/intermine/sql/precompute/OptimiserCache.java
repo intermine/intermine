@@ -31,6 +31,8 @@ public class OptimiserCache
 
     /** Maximum number of cache linesets in the cache. */
     public static final int MAX_LINESETS = 1000;
+    /** Number of events to happen before an expiration run. */
+    public static final int EXPIRE_INTERVAL = 100;
 
     // Caches need to be per-database, so we will provide a static method to retrieve a cache object
     // given a database. We need to be careful about synchronisation in this whole class.
@@ -57,6 +59,7 @@ public class OptimiserCache
     private Map cacheLines;
     private TreeMap evictionQueue;
     private int sequence = 0;
+    private int untilNextExpiration = EXPIRE_INTERVAL;
     
     /**
      * Private constructor for this object - should only be called by getInstance().
@@ -143,20 +146,24 @@ public class OptimiserCache
      * Removes expired entries from the OptimiserCache, by looking at the evictionQueue.
      */
     private void expire() {
-        while (cacheLines.size() > MAX_LINESETS) {
-            LOG.info("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = "
-                    + evictionQueue.size());
-            DateAndSequence d = (DateAndSequence) evictionQueue.firstKey();
-            OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(d);
-            expire(line);
-        }
-        Date now = new Date();
-        DateAndSequence nextD = (evictionQueue.isEmpty() ? null
-                : (DateAndSequence) evictionQueue.firstKey());
-        while ((nextD != null) && nextD.getDate().before(now)) {
-            OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(nextD);
-            expire(line);
-            nextD = (evictionQueue.isEmpty() ? null : (DateAndSequence) evictionQueue.firstKey());
+        if ((--untilNextExpiration) <= 0) {
+            untilNextExpiration = EXPIRE_INTERVAL;
+            while (cacheLines.size() > MAX_LINESETS) {
+                LOG.info("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = "
+                        + evictionQueue.size());
+                DateAndSequence d = (DateAndSequence) evictionQueue.firstKey();
+                OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(d);
+                expire(line);
+            }
+            Date now = new Date();
+            DateAndSequence nextD = (evictionQueue.isEmpty() ? null
+                    : (DateAndSequence) evictionQueue.firstKey());
+            while ((nextD != null) && nextD.getDate().before(now)) {
+                OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(nextD);
+                expire(line);
+                nextD = (evictionQueue.isEmpty() ? null
+                        : (DateAndSequence) evictionQueue.firstKey());
+            }
         }
     }
 

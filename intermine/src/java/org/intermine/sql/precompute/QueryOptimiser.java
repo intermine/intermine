@@ -52,8 +52,10 @@ import java.sql.SQLException;
 public class QueryOptimiser
 {
     protected static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
+    private static final int REPORT_INTERVAL = 100;
 
     private static final String ALIAS_PREFIX = "P";
+    private static int callCount = 0;
 
     /**
      * Runs the optimiser through the query represented in the String, given the database. If
@@ -65,6 +67,10 @@ public class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     public static String optimise(String query, Database database) throws SQLException {
+        callCount++;
+        if (callCount % REPORT_INTERVAL == 0) {
+            LOG.error("Optimiser called " + callCount + " times");
+        }
         long start = new Date().getTime();
         long parseTime = 0;
         // If we want to do any query caching, here is where we should do it.
