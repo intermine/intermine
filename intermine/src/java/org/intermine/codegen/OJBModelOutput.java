@@ -92,7 +92,7 @@ public class OJBModelOutput extends ModelOutput
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
             .append("<!DOCTYPE descriptor-repository SYSTEM \"repository.dtd\" [\n")
             .append("<!ENTITY internal SYSTEM \"repository_internal.xml\">\n]>\n\n")
-            .append("<descriptor-repository version=\"0.9.9\""
+            .append("<descriptor-repository version=\"1.0\""
                     + " isolation-level=\"read-uncommitted\">\n");
         return sb.toString();
     }
