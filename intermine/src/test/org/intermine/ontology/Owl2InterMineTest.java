@@ -27,9 +27,9 @@ import org.intermine.metadata.*;
 
 public class Owl2InterMineTest extends TestCase
 {
-    private final String ns = "http://www.intermine.org/target#";
+    private static final String ns = "http://www.intermine.org/target#";
     private Owl2InterMine generator;
-    private final String ENDL = "\n";
+    private static final String ENDL = "\n";
     private OntModel ont;
 
     public Owl2InterMineTest(String arg) {

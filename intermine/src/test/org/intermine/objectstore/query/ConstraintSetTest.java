@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 
 public class ConstraintSetTest extends TestCase {
 
-    private ConstraintSet set;
     private SimpleConstraint sc1;
     private SimpleConstraint sc2;
 
@@ -60,7 +59,7 @@ public class ConstraintSetTest extends TestCase {
 
     public void testRemoveNotExists() throws Exception {
         try {
-            set = new ConstraintSet(ConstraintOp.OR);
+            ConstraintSet set = new ConstraintSet(ConstraintOp.OR);
             set.addConstraint(sc1);
             set.removeConstraint(sc2);
             fail("Expected IllegalArgumentExcepion");

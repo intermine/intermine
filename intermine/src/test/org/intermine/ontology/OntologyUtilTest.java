@@ -38,8 +38,8 @@ import org.intermine.metadata.*;
 public class OntologyUtilTest extends TestCase
 {
 
-    private final String ns = "http://www.intermine.org/target#";
-    private final String ENDL = "\n";
+    private final static String ns = "http://www.intermine.org/target#";
+    private final static String ENDL = "\n";
 
     public void testGeneratePropertyName() throws Exception {
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");

@@ -43,10 +43,10 @@ import org.custommonkey.xmlunit.XMLUnit;
 public class DefinitiveOwlTest extends XMLTestCase
 {
     private String ENDL = System.getProperty("line.separator");
-    private final String tgtNs = "http://www.intermine.org/model/test#";
-    private final String src1Ns = "http://www.intermine.org/model/source1#";
-    private final String src2Ns = "http://www.intermine.org/model/source2#";
-    private final String nullNs = "http://www.intermine.org/model/null#";
+    private final static String tgtNs = "http://www.intermine.org/model/test#";
+    private final static String src1Ns = "http://www.intermine.org/model/source1#";
+    private final static String src2Ns = "http://www.intermine.org/model/source2#";
+    private final static String nullNs = "http://www.intermine.org/model/null#";
     protected Map itemMap;
 
     public void setUp() throws Exception {

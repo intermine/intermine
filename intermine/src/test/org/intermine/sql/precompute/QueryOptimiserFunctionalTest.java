@@ -190,8 +190,8 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         Query q = new Query(queryString);
 
         BestQueryStorer bestQuery = new BestQueryStorer();
-        Set precomps = PrecomputedTableManager.getInstance(getDatabase()).getPrecomputedTables();
-        QueryOptimiser.recursiveOptimise(precomps, q, bestQuery, q);
+        Set precompsSet = PrecomputedTableManager.getInstance(getDatabase()).getPrecomputedTables();
+        QueryOptimiser.recursiveOptimise(precompsSet, q, bestQuery, q);
 
         Set optimisedQueries = bestQuery.getQueries();
         // optimisedQueries now contains the set of queries we need to see all give the same results

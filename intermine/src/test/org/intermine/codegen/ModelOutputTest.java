@@ -41,7 +41,7 @@ public class ModelOutputTest extends TestCase
     public void testOutputToFile() throws Exception {
         File f = File.createTempFile("model_output_test", "tmp");
         String testString = "testing...";
-        mo.outputToFile(f, testString);
+        ModelOutput.outputToFile(f, testString);
         FileReader reader = new FileReader(f);
         char[] text = new char[1024];
         reader.read(text);
