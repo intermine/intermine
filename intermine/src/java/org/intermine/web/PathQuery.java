@@ -122,7 +122,15 @@ public class PathQuery
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
             if (nodes.containsKey(prefix)) {
-                previousNodePath = prefix;
+                Iterator pathsIter = nodes.keySet().iterator();
+
+                while (pathsIter.hasNext()) {
+                    String pathFromMap = (String) pathsIter.next(); 
+                    if (pathFromMap.startsWith(prefix)) {
+                        previousNodePath = pathFromMap;
+                    }
+                }
+
                 PathNode parent = (PathNode) nodes.get(prefix);
                 String fieldName = path.substring(path.lastIndexOf(".") + 1);
                 node = new PathNode(parent, fieldName, model);
