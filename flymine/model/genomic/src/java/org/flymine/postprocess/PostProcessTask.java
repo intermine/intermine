@@ -16,6 +16,10 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Transcript;
+import org.flymine.model.genomic.Exon;
+
 /**
  * Run operations on genomic model database after DataLoading
  *
@@ -60,6 +64,8 @@ public class PostProcessTask extends Task
                 CalculateLocations cl = new CalculateLocations(osw);
                 cl.fixPartials();
                 cl.createLocations();
+                cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
+                cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
             } else if ("create-references".equals(type)) {
                 CreateReferences cr = new CreateReferences(osw);
                 cr.insertReferences();
