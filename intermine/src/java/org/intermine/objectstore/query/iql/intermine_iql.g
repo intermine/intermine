@@ -161,6 +161,8 @@ safe_function:
             | "avg" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value (COMMA! abstract_value)? CLOSE_PAREN!
             | "indexof" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "lower" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "upper" OPEN_PAREN! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;

@@ -83,10 +83,18 @@ public class Function extends AbstractValue
      * COALESCE operator - used by the precomputed tables' orderby fields.
      */
     public static final int COALESCE = 15;
+    /**
+     * LOWER operator - takes one operand
+     */
+    public static final int LOWER = 16;
+    /**
+     * UPPER operator - takes one operand
+     */
+    public static final int UPPER = 17;
     
     private static final String REPRESENTATIONS[] = {"", "COUNT(*)", "MAX(", "MIN(",
         "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % ", "::", "STRPOS(", "SUBSTR(",
-        "COALESCE("};
+        "COALESCE(", "LOWER(", "UPPER("};
     
     /**
      * Constructor for this Function object.
@@ -95,7 +103,7 @@ public class Function extends AbstractValue
      * @throws IllegalArgumentException if operation is not valid
      */
     public Function(int operation) {
-        if ((operation < 1) || (operation > 15)) {
+        if ((operation < 1) || (operation > 17)) {
             throw (new IllegalArgumentException("operation is not valid"));
         }
         this.operation = operation;
@@ -116,6 +124,8 @@ public class Function extends AbstractValue
             case MIN:
             case SUM:
             case AVG:
+            case LOWER:
+            case UPPER:
                 if (operands.size() >= 1) {
                     throw (new IllegalArgumentException("This function may only take one operand"));
                 }
@@ -158,6 +168,8 @@ public class Function extends AbstractValue
             case MIN:
             case SUM:
             case AVG:
+            case LOWER:
+            case UPPER:
                 if (operands.size() < 1) {
                     throw (new IllegalStateException("This function needs an operand"));
                 }

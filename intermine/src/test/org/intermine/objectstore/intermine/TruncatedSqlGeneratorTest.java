@@ -206,6 +206,12 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("NegativeNumbers", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.age > -51 ORDER BY a1_.id");
         results2.put("NegativeNumbers", Collections.singleton("InterMineObject"));
+
+        results.put("Lower", "SELECT LOWER(a1_.name) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY LOWER(a1_.name)");
+        results2.put("Lower", Collections.singleton("InterMineObject"));
+
+        results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY UPPER(a1_.name)");
+        results2.put("Upper", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

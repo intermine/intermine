@@ -1003,6 +1003,18 @@ public class Query implements SQLStringable
                         gotType = true;
                     }
                     break;
+                case SqlTokenTypes.LITERAL_lower:
+                    if (!gotType) {
+                        retval = new Function(Function.LOWER);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_upper:
+                    if (!gotType) {
+                        retval = new Function(Function.UPPER);
+                        gotType = true;
+                    }
+                    break;
                 case SqlTokenTypes.LITERAL_substr:
                     if (!gotType) {
                         retval = new Function(Function.SUBSTR);

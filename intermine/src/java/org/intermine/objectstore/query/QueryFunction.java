@@ -39,6 +39,14 @@ public class QueryFunction implements QueryEvaluable
      * Count over a number of QueryClasses
      */
     public static final int COUNT = 4;
+    /**
+     * Lower case version of the given string
+     */
+    public static final int LOWER = 5;
+    /**
+     * Upper case version of the given string
+     */
+    public static final int UPPER = 6;
 
     private QueryEvaluable obj;
     private int op;
@@ -110,11 +118,12 @@ public class QueryFunction implements QueryEvaluable
     }
 
     private void constructNonCount(QueryEvaluable qe, int op) throws IllegalArgumentException {
-        if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX)) {
+        if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == LOWER || op == UPPER)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");
         }
         if (!(Number.class.isAssignableFrom(qe.getType())
-                    || qe.getType().equals(UnknownTypeValue.class))) {
+              || qe.getType().equals(UnknownTypeValue.class))
+            && !((op == LOWER || op == UPPER) && qe.getType().equals(String.class))) {
             throw new IllegalArgumentException("Invalid argument type for specified operation");
         }
         obj = qe;

@@ -232,6 +232,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
         results.put("NegativeNumbers", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > -51 ORDER BY a1_.id");
         results2.put("NegativeNumbers", Collections.singleton("Employee"));
+
+        results.put("Lower", "SELECT LOWER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY LOWER(a1_.name)");
+        results2.put("Lower", Collections.singleton("Employee"));
+
+        results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY UPPER(a1_.name)");
+        results2.put("Upper", Collections.singleton("Employee"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
