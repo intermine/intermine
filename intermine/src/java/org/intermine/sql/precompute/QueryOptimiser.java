@@ -105,7 +105,7 @@ public class QueryOptimiser
             return optimisedQuery;
         } catch (RuntimeException e) {
             // Query was not acceptable.
-            LOG.info("Exception: " + e.toString());
+            LOG.warn("Exception: " + e.toString());
         }
         LOG.info("Optimising query took " + ((new Date()).getTime() - start)
                 + " ms - unparsable query: " + query);
