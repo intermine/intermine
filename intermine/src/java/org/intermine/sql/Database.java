@@ -12,7 +12,7 @@ package org.intermine.sql;
 
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
-//import java.lang.ref.WeakReference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.sql.DataSource;
 
-//import org.intermine.util.ShutdownHook;
+import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.StringUtil;
 
@@ -72,7 +72,7 @@ public class Database implements Shutdownable
             LOG.info("Creating new invalid Database with ClassLoader "
                     + getClass().getClassLoader());
         }
-        //ShutdownHook.registerObject(new WeakReference(this));
+        ShutdownHook.registerObject(new WeakReference(this));
     }
 
     /**
@@ -111,7 +111,7 @@ public class Database implements Shutdownable
      * Logs stuff
      */
     public void shutdown() {
-        int totalConnections = 0;
+        /*int totalConnections = 0;
         int activeConnections = 0;
         Iterator iter = createSituations.entrySet().iterator();
         while (iter.hasNext()) {
@@ -127,7 +127,39 @@ public class Database implements Shutdownable
             totalConnections++;
         }
         LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
-                + " connections, of which " + activeConnections + " are active");
+                + " connections, of which " + activeConnections + " are active");*/
+        if (datasource instanceof org.postgresql.jdbc3.Jdbc3PoolingDataSource) {
+            LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((org.postgresql.jdbc3.Jdbc3PoolingDataSource) datasource).close();
+        } else if (datasource instanceof org.postgresql.jdbc2.optional.PoolingDataSource) {
+            LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((org.postgresql.jdbc2.optional.PoolingDataSource) datasource).close();
+        } else {
+            LOG.warn("Shutdown - Could not close datasource for Database " + getURL() + "("
+                    + toString() + ") with ClassLoader " + getClass().getClassLoader() + " - "
+                    + datasource.getClass().toString());
+        }
+    }
+
+    /**
+     * @see Object#finalize
+     */
+    public void finalize() {
+        if (datasource instanceof org.postgresql.jdbc3.Jdbc3PoolingDataSource) {
+            LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((org.postgresql.jdbc3.Jdbc3PoolingDataSource) datasource).close();
+        } else if (datasource instanceof org.postgresql.jdbc2.optional.PoolingDataSource) {
+            LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((org.postgresql.jdbc2.optional.PoolingDataSource) datasource).close();
+        } else {
+            LOG.warn("Finalise - Could not close datasource for Database " + getURL() + "("
+                    + toString() + ") with ClassLoader " + getClass().getClassLoader() + " - "
+                    + datasource.getClass().toString());
+        }
     }
 
     /**

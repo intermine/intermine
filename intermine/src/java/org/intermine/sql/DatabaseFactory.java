@@ -14,10 +14,10 @@ package org.intermine.sql;
 //import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Properties;
 
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.WeakReferenceHashMap;
 
 
 /**
@@ -29,7 +29,7 @@ import org.intermine.util.PropertiesUtil;
 public class DatabaseFactory
 {
 
-    protected static Map databases = new HashMap();
+    protected static Map databases = new WeakReferenceHashMap();
 
     /**
      * Returns a connection to the named database
