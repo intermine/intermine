@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- saveQuery.jsp -->
+<html:xhtml/>
 <c:if test="${!empty QUERY}">
   <html:form action="/saveQuery">
     <html:text property="queryName"/>

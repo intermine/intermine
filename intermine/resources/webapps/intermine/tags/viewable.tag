@@ -20,10 +20,10 @@
 
 <c:if test="${viewPaths[path] && (empty test || test)}">
   <span class="showing" id="${idPrefix}${fn:replace(path,".","")}"
-          onMouseOver="enterPath('${fn:replace(path,".","")}')"
-          onMouseOut="exitPath('${fn:replace(path,".","")}')">
+          onmouseover="enterPath('${fn:replace(path,".","")}')"
+          onmouseout="exitPath('${fn:replace(path,".","")}')">
 </c:if>
 <jsp:doBody/>
-<c:if test="${viewPaths[path]}">
+<c:if test="${viewPaths[path] && (empty test || test)}">
   </span>
 </c:if>

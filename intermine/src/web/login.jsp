@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- login.jsp -->
-
+<html:xhtml/>
 <div class="body">
   <html:form action="/loginAction">
     <fmt:message key="login.haspassword"/><br/><br/>

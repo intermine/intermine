@@ -6,6 +6,7 @@
 <tiles:importAttribute/>
 
 <!-- queryClassSelect.jsp -->
+<html:xhtml/>
 <div class="body">
   <html:form action="/queryClassSelect">
     <html:select property="className" size="20">

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <!-- feedback.jsp -->
+<html:xhtml/>
 
 <div class="body">
   <html:form action="/feedbackAction">
@@ -12,7 +13,6 @@
       <html:text property="name" size="40"/>
     </td>
   </tr>
-  <tr>
   <tr>
     <td align="right"><fmt:message key="feedback.email"/></td>
     <td>

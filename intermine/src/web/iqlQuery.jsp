@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- iqlQuery.jsp -->
+<html:xhtml/>
 <div class="iqlQueryForm">
   <html:form action="/iqlQueryAction">
     <fmt:message key="iqlquery.prompt"/>:

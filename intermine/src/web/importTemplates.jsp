@@ -6,6 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- importTemplates.jsp -->
+<html:xhtml/>
 <im:body>
   <fmt:message key="importTemplates.message"/><p>
   <html:form action="/importTemplates">

@@ -12,4 +12,4 @@
 <c:if test="${empty height}">
   <c:set var="height" value="1"/>
 </c:if>
-<img src="images/blank.gif" border="0" height="${height}" width="${width}"/></br>
+<img src="images/blank.gif" border="0" height="${height}" width="${width}" alt=" "/><br/>

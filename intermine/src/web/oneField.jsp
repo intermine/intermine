@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- oneField.jsp -->
+<html:xhtml/>
 <div class="oneField">
   <c:set var="key" value="${cld.name} ${fieldDescriptor.name}"/>
 
@@ -34,7 +35,7 @@
           <c:if test="${object[fieldDescriptor.name] != null}">
             <div>
               <span class="referenceField"><c:out value="${fieldDescriptor.name}"/></span>:
-              <html:link action="/objectDetails?id=${object.id}&field=${fieldDescriptor.name}">
+              <html:link action="/objectDetails?id=${object.id}&amp;field=${fieldDescriptor.name}">
                 <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}"/>
               </html:link>
             </div>
@@ -46,7 +47,7 @@
           <c:if test="${listSize > 0}">
             <div>
               <span class="fieldName"><c:out value="${fieldDescriptor.name}"/></span>:
-              <html:link action="/collectionDetails?id=${object.id}&field=${fieldDescriptor.name}">
+              <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldDescriptor.name}">
                 <c:out value="${fieldDescriptor.referencedClassDescriptor.unqualifiedName}[${listSize}]"/>
               </html:link>
             </div>

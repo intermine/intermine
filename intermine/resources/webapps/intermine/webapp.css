@@ -122,8 +122,9 @@ table.noborder, table.noborder td, table.noborder th {
   line-height: 25px;
 }
 /* move away from plus/minus image on left */
-#browser .showing {
+.browserline .showing {
   margin-left: 0px;
+  white-space: nowrap;
 }
 /* surrounds view paths */
 div.view {

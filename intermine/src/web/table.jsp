@@ -7,6 +7,9 @@
 <tiles:importAttribute/>
 
 <!-- table.jsp -->
+
+<html:xhtml/>
+<!-- table.jsp -->
 <script type="text/javascript">
   <!--//<![CDATA[
     function selectColumnCheckboxes(column) {
@@ -38,7 +41,7 @@
       <div class="body">
         <%-- Page size controls --%>
         <fmt:message key="results.changepagesize"/>
-        <html:select property="pageSize" onchange="document.location.href='${requestScope['javax.servlet.include.context_path']}/changeResultsSize.do?changePageSize=1&pageSize='+document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value">
+        <html:select property="pageSize" onchange="document.location.href='${requestScope['javax.servlet.include.context_path']}/changeResultsSize.do?changePageSize=1&amp;pageSize='+document.changeResultsSizeForm.pageSize.options[document.changeResultsSizeForm.pageSize.selectedIndex].value">
           <html:option value="10">10</html:option>
           <html:option value="25">25</html:option>
           <html:option value="50">50</html:option>
@@ -68,65 +71,61 @@
             </th>
 
             <th align="center">
-              <div>
-                <nobr>
-                  <c:out value="${column.name}"/>
-                </nobr>
+              <div style="white-space:nowrap">
+                <c:out value="${column.name}"/>
               </div>
-              <div>
-                <nobr>
-                  <%-- right/left --%>
-                  <c:if test="${not status.first}">
-                    <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
-                      <fmt:param value="${column.name}"/>
-                    </fmt:message>
-                    [
-                    <html:link action="/changeResults?method=moveColumnLeft&index=${status.index}"
-                               title="${moveLeftTitle}">
-                      <fmt:message key="view.moveLeftSymbol"/>
-                    </html:link>
-                    ]
-                  </c:if>
-                  <c:if test="${not status.last}">
-                    <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-                      <fmt:param value="${column.name}"/>
-                    </fmt:message>
-                    [
-                    <html:link action="/changeResults?method=moveColumnRight&index=${status.index}"
-                               title="${moveRightTitle}">
-                      <fmt:message key="view.moveRightSymbol"/>
-                    </html:link>
-                    ]
-                  </c:if>
+              <div style="white-space:nowrap">
+                <%-- right/left --%>
+                <c:if test="${not status.first}">
+                  <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
+                    <fmt:param value="${column.name}"/>
+                  </fmt:message>
+                  [
+                  <html:link action="/changeResults?method=moveColumnLeft&amp;index=${status.index}"
+                             title="${moveLeftTitle}">
+                    <fmt:message key="view.moveLeftSymbol"/>
+                  </html:link>
+                  ]
+                </c:if>
+                <c:if test="${not status.last}">
+                  <fmt:message key="results.moveRightHelp" var="moveRightTitle">
+                    <fmt:param value="${column.name}"/>
+                  </fmt:message>
+                  [
+                  <html:link action="/changeResults?method=moveColumnRight&amp;index=${status.index}"
+                             title="${moveRightTitle}">
+                    <fmt:message key="view.moveRightSymbol"/>
+                  </html:link>
+                  ]
+                </c:if>
 
-                  <%-- show/hide --%>
-                  <c:choose>
-                    <c:when test="${column.visible}">
-                      <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
-                        <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
-                          <fmt:param value="${column.name}"/>
-                        </fmt:message>
-                        [
-                        <html:link action="/changeResults?method=hideColumn&index=${status.index}"
-                                   title="${hideColumnTitle}">
-                          <fmt:message key="results.hideColumn"/>
-                        </html:link>
-                        ]
-                      </c:if>
-                    </c:when>
-                    <c:otherwise>
-                      <fmt:message key="results.showColumnHelp" var="showColumnTitle">
+                <%-- show/hide --%>
+                <c:choose>
+                  <c:when test="${column.visible}">
+                    <c:if test="${RESULTS_TABLE.visibleColumnCount > 1}">
+                      <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
                         <fmt:param value="${column.name}"/>
                       </fmt:message>
                       [
-                      <html:link action="/changeResults?method=showColumn&index=${status.index}"
-                                 title="${showColumnTitle}">
-                        <fmt:message key="results.showColumn"/>
+                      <html:link action="/changeResults?method=hideColumn&amp;index=${status.index}"
+                                 title="${hideColumnTitle}">
+                        <fmt:message key="results.hideColumn"/>
                       </html:link>
                       ]
-                    </c:otherwise>
-                  </c:choose>
-                </nobr>
+                    </c:if>
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="results.showColumnHelp" var="showColumnTitle">
+                      <fmt:param value="${column.name}"/>
+                    </fmt:message>
+                    [
+                    <html:link action="/changeResults?method=showColumn&amp;index=${status.index}"
+                               title="${showColumnTitle}">
+                      <fmt:message key="results.showColumn"/>
+                    </html:link>
+                    ]
+                  </c:otherwise>
+                </c:choose>
               </div>
             </th>
           </c:forEach>
@@ -227,7 +226,7 @@
 
       <%-- Return to main results link --%>
       <c:if test="${RESULTS_TABLE.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null && empty bagName}">
-        <br>
+        <br/>
         <html:link action="/changeResults?method=reset">
           <fmt:message key="results.return"/>
         </html:link>

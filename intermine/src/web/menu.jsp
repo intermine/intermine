@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- menu.jsp -->
+<html:xhtml/>
 <div class="links">
   <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">

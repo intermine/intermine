@@ -3,8 +3,10 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- bagBuild.jsp -->
+<html:xhtml/>
+
 <div class="body bagBuild">
-  <html:form action="/buildBag" focus="text" method="POST" enctype="multipart/form-data">
+  <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
     <fmt:message key="bagBuild.bagFromText1"/>
     <br/>
     <fmt:message key="bagBuild.bagFromText2"/>
