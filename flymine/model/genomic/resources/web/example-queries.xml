@@ -1,0 +1,4 @@
+<query-list>
+   <query name="allGenes" model="genomic" view="Gene">
+   </query>
+</query-list>
