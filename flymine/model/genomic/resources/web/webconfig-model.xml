@@ -2,49 +2,34 @@
   <class name="org.flymine.model.genomic.Database">
     <shortdisplayers>
       <displayer src="/model/database.jsp"/>
+      <displayer src="/objectFields.jsp"/>
     </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/database.jsp"/>
+      <displayer src="/objectFields.jsp"/>
     </longdisplayers>
   </class>
   <class name="org.flymine.model.genomic.Organism">
     <shortdisplayers>
       <displayer src="/model/organism.jsp"/>
+      <displayer src="/objectFields.jsp"/>
     </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/organism.jsp"/>
+      <displayer src="/objectFields.jsp"/>
     </longdisplayers>
   </class>
   <class name="org.flymine.model.genomic.Gene">
     <shortdisplayers>
       <displayer src="/model/geneShort.jsp"/>
+      <displayer src="/objectFields.jsp"/>
     </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/geneLong.jsp"/>
+      <displayer src="/objectFields.jsp"/>
     </longdisplayers>
   </class>
-<!--
-  - ignored until oneField.jsp can handle the fieldName parameter
-  <class name="org.flymine.model.genomic.Gene">
-    <shortdisplayers>
-      <displayer src="/oneField.jsp">
-        <param name="fieldName" value="uniquename"/>
-      </displayer>
-      <displayer src="/oneField.jsp">
-        <param name="fieldName" value="name"/>
-      </displayer>
-    </shortdisplayers>
-    <longdisplayers>
-      <displayer src="/oneField.jsp">
-        <param name="fieldName" value="uniquename"/>
-      </displayer>
-      <displayer src="/oneField.jsp">
-        <param name="fieldName" value="name"/>
-      </displayer>
-      <displayer src="/oneField.jsp">
-        <param name="fieldName" value="seqlen"/>
-      </displayer>
-    </longdisplayers>
-  </class>
--->
+
+  <exporter id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
+            className="org.flymine.web.SequenceExporter"/>
 </webconfig>
