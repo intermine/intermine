@@ -45,7 +45,7 @@ Summary for selected
 </table>
 <br/>
 
-Full details:<br/><br/>
+Full details<br/><br/>
 
 <c:if test="${!empty object.attributes}">
   <div style="margin-left: 20px">
