@@ -3,11 +3,9 @@ package org.flymine.util;
 import java.util.Collection;
 import java.util.StringTokenizer;
 //import java.util.Iterator;
-//import java.util.ArrayList;
 //import java.util.Set;
 import java.util.HashSet;
 //import java.util.Map;
-//import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 
 /**
@@ -79,19 +77,18 @@ public class ModelUtil
     }
     
     /**
-     * Returns a Collection of Strings which is a list of the primary key fields of this object
+     * Returns a Collection of Strings which is a list of the primary key fields of this Class
      *
-     * @param o the Object
+     * @param c the Class
      * @return the list of keys
      */
-    public static Collection getKey(Object o) {
-        Class c = o.getClass();
+    public static Collection getKey(Class c) {
         Collection col = new HashSet();
         try {
             do {
                 Field f = TypeUtil.getField(c, "key");
                 f.setAccessible(true);
-                StringTokenizer st = new StringTokenizer((String) f.get(o), ", ");
+                StringTokenizer st = new StringTokenizer((String) f.get(null), ", ");
                 while (st.hasMoreTokens()) {
                     col.add(st.nextToken());
                 }
@@ -100,4 +97,71 @@ public class ModelUtil
         }
         return col;
     }
+
+//     public static void makeMap(Object o, Map m) throws Exception {
+//         if (o == null) {
+//             return;
+//         }
+
+//         Class c = o.getClass();
+//         if (m.keySet().contains(c)) {
+//             ((Set) m.get(c)).add(o);
+//         } else {
+//             Set s = new HashSet();
+//             s.add(o);
+//             m.put(c, s);
+//         }
+        
+//         Iterator fields = getKey(c).iterator();
+//         while (fields.hasNext()) {
+//             String field = (String) fields.next();
+//             int fieldType = getFieldType(c, field);
+//             Object fieldValue = TypeUtil.getFieldValue(o, field);
+//             if (COLLECTION == fieldType) {
+//                 Iterator iter = ((Collection) fieldValue).iterator();
+//                 while (iter.hasNext()) {
+//                         makeMap(iter.next(), m);
+//                 }
+//             } else if (REFERENCE == fieldType) {
+//                 makeMap(fieldValue, m);
+//             }
+//         }
+//     }
+
+//     public static void match(Collection c1, Collection c2) throws Exception {
+//         Iterator i1 = c1.iterator();
+//         while (i1.hasNext()) {
+//             Object o1 = i1.next();
+//             Iterator i2 = c2.iterator();
+//             while (i2.hasNext()) {
+//                 Object o2 = i2.next();
+//                 if (equal(o1, o2)) {
+//                     TypeUtil.setFieldValue(o2, "id", TypeUtil.getFieldValue(o1, "id"));
+//                     i2.remove();
+//                     break;
+//                 }
+//             }
+//         }
+//     }
+
+//      public static boolean equal(Object o1, Object o2) {
+//         Class c = o1.getClass();
+//         if (!c.equals(o2.getClass())) {
+//             return false;
+//         }
+//         try {
+//             Iterator iter = getKey(c).iterator();
+//             while (iter.hasNext()) {
+//                 String field = (String) iter.next();
+//                 String o1FieldValue = (String) TypeUtil.getFieldValue(o1, field);
+//                 String o2FieldValue = (String) TypeUtil.getFieldValue(o2, field);
+//             if (!o1FieldValue.equals(o2FieldValue)) {
+//                 return false;
+//             }
+//             }
+//         } catch (Exception e) {
+//             return false;
+//         }
+//         return true;
+//     }
 }
