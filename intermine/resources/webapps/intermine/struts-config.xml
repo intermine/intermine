@@ -84,7 +84,7 @@
             forward="documentation.page">
     </action>
 
-    <action path="/initQuery" type="org.flymine.web.QueryInitAction"> 
+    <action path="/initQuery" type="org.flymine.web.QueryController"> 
     </action>
 
     <action path="/initQueryView" type="org.flymine.web.QueryViewController"/>
