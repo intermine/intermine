@@ -1729,7 +1729,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="${build.tmp}/publications.xml" sourceName="pubmed"/>
+    <load-xml-data integrationWriter="integration.production" xmlFile="${build.tmp}/publications.xml" sourceName="pubmed" ignoreDuplicates="true"/>
   </target>
 
  <target name="add-licences" depends="compile-genomic-java-from-db">
