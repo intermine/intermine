@@ -1725,7 +1725,7 @@
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings alias="osw.production" type="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
+    <mappings type="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
   </target>
 
  <target name="add-licences" depends="compile-genomic-java-from-db">
