@@ -35,7 +35,7 @@ public class InterMineDispatchAction extends DispatchAction
      * @param request the HTTP request we are processing
      */
     public void recordMessage(ActionMessage actionMessage, HttpServletRequest request) {
-        ActionMessages actionMessages = new ActionMessages();
+        ActionMessages actionMessages = getMessages(request);
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
         saveMessages(request, actionMessages);
     }
@@ -69,7 +69,7 @@ public class InterMineDispatchAction extends DispatchAction
      */
     public void recordError(ActionMessage actionMessage, HttpServletRequest request,
                             Exception exception, Logger logger) {
-        ActionMessages actionMessages = new ActionMessages();
+        ActionMessages actionMessages = getErrors(request);
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
         saveErrors(request, actionMessages);
 

@@ -35,7 +35,7 @@ public class InterMineAction extends Action
      * @param request the HTTP request we are processing
      */
     public void recordMessage(ActionMessage actionMessage, HttpServletRequest request) {
-        ActionMessages actionMessages = new ActionMessages();
+        ActionMessages actionMessages = getMessages(request);
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
         saveMessages(request, actionMessages);
     }
@@ -64,12 +64,12 @@ public class InterMineAction extends Action
      * Add the given ActionMessage as an error for this Action and log the error
      * @param actionMessage the message to save
      * @param request the HTTP request we are processing
-     * @param e the Exception that caused this error
+     * @param exception the Exception that caused this error
      * @param logger the Logger to write the error message to
      */
     public void recordError(ActionMessage actionMessage, HttpServletRequest request,
                             Exception exception, Logger logger) {
-        ActionMessages actionMessages = new ActionMessages();
+        ActionMessages actionMessages = getErrors(request);
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
         saveErrors(request, actionMessages);
 
