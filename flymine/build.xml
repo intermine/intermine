@@ -21,6 +21,7 @@
   <property name="intermine.dist.path" location="../intermine/dist"/>
   <property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/>
   <property name="intermine.war.path" location="${intermine.dist.path}/webapp/intermine.war"/>
+  <property name="webservice.war.path" location="${intermine.dist.path}/webapp/webservice.war"/>
   <property name="webservice-client.jar.path" location="${intermine.dist.path}/webservice-client.jar"/>
 
   <!-- libraries and binaries -->
@@ -1777,7 +1778,7 @@
 
   <target name="remove-webapp">
     <taskdef name="tomcat-undeploy"
-      classname="org.apache.catalina.ant.UndeployTask">
+             classname="org.apache.catalina.ant.UndeployTask">
       <classpath refid="base.class.path"/>
     </taskdef>
     <tomcat-undeploy url="${webapp.baseurl}/manager"
@@ -1802,6 +1803,16 @@
       <fileset dir="${resources}/webservice-client" includes="default.intermine.properties"/>
       <fileset dir="${build.model}/genomic"/>
     </jar>
+  </target>
+
+  <target name="build-production-webservice" depends="jar-genomic">
+    <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
+    <copy file="${webservice.war.path}" todir="${dist.webapp}"/>
+    <war destfile="${dist.webapp}/webservice.war" update="true">
+      <lib dir="${dist}" includes="intermine-genomic.jar" />
+      <classes file="${resources}/webapp/default.intermine.properties"/>
+      <classes file="${build.tmp}/WEB-INF/intermine.properties"/>
+    </war>
   </target>
 
   <!-- MODEL COMPILATION TARGETS -->
