@@ -46,6 +46,7 @@ public class BuildDbTask extends Task
         try {
             this.database = DatabaseFactory.getDatabase(database);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -77,7 +78,7 @@ public class BuildDbTask extends Task
             throw new BuildException("fileset attribute is not set");
         }
         if (database == null) {
-            throw new BuildException("database attribute is not set");
+            throw new BuildException("database attribute is not set or database is not present");
         }
        
         SQL sql = new SQL();
