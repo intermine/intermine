@@ -1,48 +1,49 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.Author" is-interface="true">
-    <attribute name="surname" type="java.lang.String"/>
-    <attribute name="givennames" type="java.lang.String"/>
-  </class>
-  <class name="org.flymine.model.genomic.ProcessedTranscript" is-interface="true"/>
-  <class name="org.flymine.model.genomic.NcRNA" is-interface="true"/>
-  <class name="org.flymine.model.genomic.ChromosomeBand" is-interface="true"/>
-  <class name="org.flymine.model.genomic.MRNA" is-interface="true"/>
-  <class name="org.flymine.model.genomic.GoldenPath" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Match" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Exon" is-interface="true"/>
-  <class name="org.flymine.model.genomic.BAC" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Publication" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
-    <attribute name="title" type="java.lang.String"/>
-    <attribute name="pyear" type="java.lang.String"/>
-  </class>
-  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Database" extends="org.flymine.model.genomic.InfoSource" is-interface="true">
-    <attribute name="title" type="java.lang.String"/>
-  </class>
-  <class name="org.flymine.model.genomic.Oligo" is-interface="true"/>
-  <class name="org.flymine.model.genomic.TransposableElement" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Pseudogene" is-interface="true"/>
-  <class name="org.flymine.model.genomic.ComputationalAnalysis" extends="org.flymine.model.genomic.Analysis" is-interface="true">
-    <attribute name="sourceuri" type="java.lang.String"/>
-  </class>
-  <class name="org.flymine.model.genomic.ChromosomeArm" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Gene" is-interface="true"/>
-  <class name="org.flymine.model.genomic.EST" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Protein" is-interface="true"/>
-  <class name="org.flymine.model.genomic.LocatedSequenceFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <attribute name="uniquename" type="java.lang.String"/>
+  <class name="org.flymine.model.genomic.CDS" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <attribute name="seqlen" type="java.lang.Integer"/>
-    <attribute name="residues" type="java.lang.String"/>
-    <collection name="pubs" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
-    <collection name="feature_dbxrefs" referenced-type="org.flymine.model.genomic.Synonym" ordered="true"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
   </class>
-  <class name="org.flymine.model.genomic.SnoRNA" is-interface="true"/>
-  <class name="org.flymine.model.genomic.CDNAClone" is-interface="true"/>
-  <class name="org.flymine.model.genomic.TranscriptionStartSite" is-interface="true"/>
-  <class name="org.flymine.model.genomic.SnRNA" is-interface="true"/>
-  <class name="org.flymine.model.genomic.Synonym" is-interface="true">
-    <attribute name="isCurrent" type="java.lang.Boolean"/>
+  <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.MRNA" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.Exon" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.Intron" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.PointMutation" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.FivePrimeUTR" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.Enhancer" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.ProteinBindingSite" extends="org.flymine.model.genomic.BindingSite" is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.Gene" is-interface="true">
   </class>
 </classes>
