@@ -10,6 +10,9 @@ package org.flymine.web.results;
  *
  */
 
+import java.util.List;
+import java.util.LinkedList;
+
 import junit.framework.TestCase;
 
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
@@ -28,7 +31,7 @@ public class DisplayableResultsTest extends TestCase
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        fq = new FqlQuery("select c, d from Company as c, Department as d", "org.flymine.model.testmodel");
+        fq = new FqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.flymine.model.testmodel");
     }
 
     private DisplayableResults getExactResults() throws Exception {
@@ -55,7 +58,7 @@ public class DisplayableResultsTest extends TestCase
 
     public void testConstructor() throws Exception {
         DisplayableResults dr = getExactResults();
-        assertEquals(2, dr.getColumns().size());
+        assertEquals(4, dr.getColumns().size());
     }
 
     public void testSizeExact() throws Exception {
@@ -193,5 +196,204 @@ public class DisplayableResultsTest extends TestCase
 
     }
 
+    public void testMoveColumnUp1() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnUp("c1");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnUp2() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnUp("c2");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnUp3() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnUp("d1");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnUp4() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+
+        dr.moveColumnUp("d2");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnUp5() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnUp("d3");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnDown1() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnDown("c1");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnDown2() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnDown("c2");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnDown3() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+
+        dr.moveColumnDown("d1");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnDown4() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnDown("d2");
+        assertEquals(columns, dr.getColumns());
+    }
+
+    public void testMoveColumnDown5() throws Exception {
+        DisplayableResults dr = getExactResults();
+        List columns = new LinkedList();
+        Column col = new Column();
+        col.setAlias("c1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("c2");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d1");
+        columns.add(col);
+        col = new Column();
+        col.setAlias("d2");
+        columns.add(col);
+
+        dr.moveColumnDown("d3");
+        assertEquals(columns, dr.getColumns());
+    }
 
 }
