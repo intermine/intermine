@@ -89,8 +89,19 @@
 
 # ------------ DAG Terms and relationships ---------------
 
+:Ontology a owl:Class;
+    rdfs:subClassOf :InfoSource.
+
+:Ontology__url a owl:DatatypeProperty;
+    rdfs:domain :Ontology;
+    rdfs:range xsd:string.
+
 :OntologyTerm a owl:Class ;
-    rdfs:subClassOf :BioProperty .
+    rdfs:subClassOf :BioProperty;
+    rdfs:subClassOf
+      [ a owl:Restriction;
+        owl:maxCardinality "1";
+        owl:onProperty :OntologyTerm__ontology ].
 
 :OntologyTerm__identifier a owl:DatatypeProperty ;
     rdfs:domain :OntologyTerm ;
@@ -107,6 +118,10 @@
 :OntologyTerm__childRelations a owl:ObjectProperty ;
     rdfs:domain :OntologyTerm ;
     rdfs:range :OntologyRelation .
+
+:OntologyTerm__ontology a owl:ObjectProperty;
+    rdfs:domain :OntologyTerm;
+    rdfs:range :Ontology.
 
 :OntologyRelation a owl:Class ;
     rdfs:subClassOf
@@ -258,11 +273,7 @@
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :Comment__source ] ;
-    rdfs:subClassOf
-      [ a owl:Restriction ;
-        owl:maxCardinality "1" ;
-        owl:onProperty :Comment__subject ] .
+        owl:onProperty :Comment__source ] .
 
 :Comment__type a owl:DatatypeProperty;
     rdfs:domain :Comment;
@@ -271,11 +282,6 @@
 :Comment__text a owl:DatatypeProperty;
     rdfs:domain :Comment;
     rdfs:range xsd:string.
-
-# This subject field needs to point to a BioEntity object. This will need to be performed in code in the translator.
-:Comment__subject a owl:ObjectProperty;
-    rdfs:domain :Comment;
-    rdfs:range :BioEntity.
 
 :Comment__source a owl:ObjectProperty;
     rdfs:domain :Comment;

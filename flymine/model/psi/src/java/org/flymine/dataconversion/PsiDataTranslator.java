@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -47,8 +46,7 @@ import org.intermine.util.XmlUtil;
  */
 public class PsiDataTranslator extends DataTranslator
 {
-    private Item db = null;
-    private Item swissProt = null;
+    private Item db, swissProt, psiMi;
     private Map pubs = new HashMap();
 
     /**
@@ -63,54 +61,64 @@ public class PsiDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
-        tgtItemWriter.store(ItemHelper.convert(getSwissProt()));
+        swissProt = createItem("Database");
+        swissProt.addAttribute(new Attribute("title", "Swiss-Prot"));
+        psiMi = createItem("Ontology");
+        psiMi.addAttribute(new Attribute("title", "PSI-MI"));
+        db = createItem("Database");
+
+        tgtItemWriter.store(ItemHelper.convert(swissProt));
+        tgtItemWriter.store(ItemHelper.convert(psiMi));
+
         super.translate(tgtItemWriter);
     }
 
-   /**
+    /**
      * @see DataTranslator#translateItem
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
         Collection result = new HashSet();
-        String srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
         String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
-                boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
-                String tgtClassName =  XmlUtil.getFragmentFromURI(tgtItem.getClassName());
                 if ("ExperimentType".equals(className)) {
                     Item pub = getPub(srcItem);
                     if (pub != null) {
                         tgtItem.addReference(new Reference("publication", pub.getIdentifier()));
                         result.add(pub);
                     }
-                    // no confidence values in current data set
+                    Item attributeList = getReference(srcItem, "attributeList");
+                    if (attributeList != null) {
+                        for (Iterator j = getCollection(attributeList, "attributes");
+                             j.hasNext();) {
+                            Item attribute = (Item) j.next();
+                            Item comment = createItem("Comment");
+                            comment.addAttribute(new Attribute("type",
+                                                               attribute.getAttribute("name")
+                                                               .getValue()));
+                            comment.addAttribute(new Attribute("text",
+                                                               attribute.getAttribute("attribute")
+                                                               .getValue()));
+                            comment.addReference(new Reference("source",
+                                                               db.getIdentifier()));
+                            result.add(comment);
+                            addToCollection(tgtItem, "comments", comment);
+                        }
+                    }
                 } else if ("InteractionElementType".equals(className)) {
-                    // create ProteinInteraction relation
-                    Item interaction = createProteinInteraction(srcItem, tgtItem);
-                    addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
-
-                    // reference source database
-                    addReferencedItem(tgtItem, getDb(), "source", false, "", false);
-
-                    // ExperimentalResult need to reference ProteinInteractionExperiment
-                    Item experimentList = ItemHelper.convert(srcItemReader
-                             .getItemById(srcItem.getReference("experimentList").getRefId()));
-                    String exptId = getFirstId(experimentList.getCollection("experimentRefs"));
-                    Item exptType = ItemHelper.convert(srcItemReader.getItemById(exptId));
+                    addReferencedItem(tgtItem, db, "source", false, "", false);
+                    
+                    Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
+                                                         "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
-
                     // set confidence from attributeList
                     if (srcItem.getReference("attributeList") != null) {
-                        Iterator iter = ItemHelper.convert(srcItemReader.getItemById(srcItem
-                                                         .getReference("attributeList").getRefId()))
-                            .getCollection("attributes").getRefIds().iterator();
-                        while (iter.hasNext()) {
-                            Item attribute = ItemHelper.convert(srcItemReader
-                                                                .getItemById((String) iter.next()));
+                        for (Iterator j = getCollection(getReference(srcItem, "attributeList"),
+                                                        "attributes"); j.hasNext();) {
+                            Item attribute = (Item) j.next();
                             String value = attribute.getAttribute("attribute").getValue().trim();
                             String name = attribute.getAttribute("name").getValue().trim();
                             if (Character.isDigit(value.charAt(0))
@@ -119,90 +127,68 @@ public class PsiDataTranslator extends DataTranslator
                             }
                         }
                     }
+                    Item interaction = createProteinInteraction(srcItem);
+                    addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
                     // protein needs swissprot id set and synonym to swissprot
-                    Item xref = ItemHelper.convert(srcItemReader
-                                  .getItemById(srcItem.getReference("xref").getRefId()));
-                    Item dbXref = ItemHelper.convert(srcItemReader
-                                    .getItemById(xref.getReference("primaryRef").getRefId()));
+                    Item xref = getReference(srcItem, "xref");
+                    Item dbXref = getReference(xref, "primaryRef");
                     if (dbXref.getAttribute("db").getValue().equals("uniprot")) {
                         String value = dbXref.getAttribute("id").getValue();
                         tgtItem.addAttribute(new Attribute("primaryAccession", value));
-                        Item synonym = createItem(tgtNs + "Synonym", "");
-                        addReferencedItem(synonym, getSwissProt(), "source", false, "", false);
+                        Item synonym = createItem("Synonym");
+                        addReferencedItem(synonym, swissProt, "source", false, "", false);
                         synonym.addAttribute(new Attribute("value", value));
                         synonym.addAttribute(new Attribute("type", "accession"));
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
                     }
                     if (srcItem.getAttribute("sequence") != null) {
-                        result.add(createSequence(srcItem, tgtItem));
+                        Item seq = createItem("Sequence");
+                        seq.addAttribute(new Attribute("residues", srcItem.getAttribute("sequence")
+                                                       .getValue()));
+                        tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
+                        result.add(seq);
                     }
                 } else if ("Source_Entry_EntrySet".equals(className)) {
-                    tgtItem.setIdentifier(getDb().getIdentifier());
-                    tgtItem.addAttribute(new Attribute("title",
-                            ItemHelper.convert(srcItemReader
-                                 .getItemById(srcItem.getReference("names").getRefId()))
-                                                 .getAttribute("shortLabel").getValue()));
-                } else if ("ProteinInteractionTerm".equals(tgtClassName)) {
-                    Item xref = ItemHelper.convert(srcItemReader
-                                                   .getItemById(srcItem.getReference("xref")
-                                                                .getRefId()));
-                    Item dbXref = ItemHelper.convert(srcItemReader
-                                                     .getItemById(xref.getReference("primaryRef")
-                                                                  .getRefId()));
-                    tgtItem.addAttribute(new Attribute("identifier",
-                                                       dbXref.getAttribute("id").getValue()));
+                    tgtItem.setIdentifier(db.getIdentifier());
+                    tgtItem.addAttribute(new Attribute("title", getReference(srcItem, "names")
+                                                       .getAttribute("shortLabel").getValue()));
+                } else if ("CvType".equals(className)) {
+                    Item xref = getReference(srcItem, "xref");
+                    Item primaryRef = getReference(xref, "primaryRef");
+                    if (primaryRef.getAttribute("db").getValue().equalsIgnoreCase("psi-mi")) {
+                        tgtItem.addAttribute(new Attribute("identifier",
+                                                           primaryRef.getAttribute("id")
+                                                           .getValue()));
+                        tgtItem.addReference(new Reference("ontology", psiMi.getIdentifier()));
+                    }
                 }
-                if (storeTgtItem) {
-                    result.add(tgtItem);
-                }
+                result.add(tgtItem);
             }
         }
         return result;
     }
-
-    private Item createProteinInteraction(Item intElType, Item tgtItem)
-        throws ObjectStoreException {
-        Item interaction = createItem(tgtNs + "ProteinInteraction", "");
-
-        Item experimentList = ItemHelper.convert(srcItemReader
-                                 .getItemById(intElType.getReference("experimentList").getRefId()));
-        String experimentId = getFirstId(experimentList.getCollection("experimentRefs"));
-        Item exptType = ItemHelper.convert(srcItemReader.getItemById(experimentId));
-        Item pub = getPub(exptType);
-        if (pub != null) {
-            addReferencedItem(interaction, pub, "evidence", true, "", false);
-        }
-        Item participants = ItemHelper.convert(srcItemReader
-                              .getItemById(intElType.getReference("participantList").getRefId()));
-        Iterator iter = participants.getCollection("proteinParticipants").getRefIds().iterator();
-        while (iter.hasNext()) {
+    
+    private Item createProteinInteraction(Item intElType) throws ObjectStoreException {
+        Item interaction = createItem("ProteinInteraction");
+        Item participants = getReference(intElType, "participantList");
+        for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             // protein has role attribute which is either prey or bait
-            Item protein = ItemHelper.convert(srcItemReader.getItemById((String) iter.next()));
+            Item protein = (Item) i.next();
             interaction.addReference(new Reference(protein.getAttribute("role").getValue(),
-                                     protein.getReference("proteinInteractorRef").getRefId()));
+                                                   protein.getReference("proteinInteractorRef")
+                                                   .getRefId()));
         }
         // object = prey, subject = bait
         interaction.addReference(new Reference("object",
                                                interaction.getReference("prey").getRefId()));
         interaction.addReference(new Reference("subject",
                                                interaction.getReference("bait").getRefId()));
-
-        addReferencedItem(interaction, getDb(), "evidence", true, "", false);
         return interaction;
     }
-
-    // srcItem = ProteinInteractorType
-    // tgtItem = Protein
-    private Item createSequence(Item srcItem, Item tgtItem) {
-        Item seq = createItem(tgtNs + "Sequence", "");
-        seq.addAttribute(new Attribute("residues", srcItem.getAttribute("sequence").getValue()));
-        tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
-        return seq;
-    }
-
+    
     // Return the publication for a given experiment, creating it if necessary
     // Note that experiments known not to have a publication are stored in the map with a null pub
     private Item getPub(Item exptType) throws ObjectStoreException {
@@ -211,21 +197,17 @@ public class PsiDataTranslator extends DataTranslator
         if (pubs.containsKey(exptId)) {
             pub = (Item) pubs.get(exptId);
         } else {
-            //Item pub = null;
-            Item bibRefType = ItemHelper.convert(srcItemReader
-                  .getItemById(exptType.getReference("bibref").getRefId()));
+            Item bibRefType = getReference(exptType, "bibref");
             if (bibRefType != null) {
-                Item xRefType = ItemHelper.convert(srcItemReader
-                  .getItemById(bibRefType.getReference("xref").getRefId()));
+                Item xRefType = getReference(bibRefType, "xref");
                 if (xRefType != null) {
-                    Item dbReferenceType = ItemHelper.convert(srcItemReader
-                      .getItemById(xRefType.getReference("primaryRef").getRefId()));
+                    Item dbReferenceType = getReference(xRefType, "primaryRef");
                     if (dbReferenceType != null) {
                         Attribute dbAttr = dbReferenceType.getAttribute("db");
                         if (dbAttr != null && dbAttr.getValue().equalsIgnoreCase("pubmed")) {
                             Attribute idAttr = dbReferenceType.getAttribute("id");
                             if (idAttr != null) {
-                                pub = createItem(tgtNs + "Publication", "");
+                                pub = createItem("Publication");
                                 String pubmedId = idAttr.getValue();
                                 pub.addAttribute(new Attribute("pubMedId", idAttr.getValue()));
                             }
@@ -236,21 +218,6 @@ public class PsiDataTranslator extends DataTranslator
             pubs.put(exptId, pub);
         }
         return pub;
-    }
-
-    private Item getDb() {
-        if (db == null) {
-            db = createItem(tgtNs + "Database", "");
-        }
-        return db;
-    }
-
-    private Item getSwissProt() {
-        if (swissProt == null) {
-            swissProt = createItem(tgtNs + "Database", "");
-            swissProt.addAttribute(new Attribute("title", "Swiss-Prot"));
-        }
-        return swissProt;
     }
 
     /**

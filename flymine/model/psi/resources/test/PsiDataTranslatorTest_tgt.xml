@@ -1,24 +1,100 @@
 <items>
-  <item id="0_6" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
-    <reference name="hostOrganism" ref_id="0_11"/>
-    <reference name="interactionDetection" ref_id="0_13"/>
-    <reference name="participantDetection" ref_id="0_17"/>
-    <reference name="publication" ref_id="-1_6"/>
+  <item id="0_13" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0018"/>
+    <reference name="ontology" ref_id="-1_2"/>
+  </item>
+  <item id="-1_3" class="http://www.flymine.org/model/genomic#Database">
+    <attribute name="title" value="IntAct"/>
+  </item>
+  <item id="0_39" class="http://www.flymine.org/model/genomic#ExperimentalResult">
+    <attribute name="confidence" value="0.06"/>
+    <reference name="analysis" ref_id="0_6"/>
+    <reference name="source" ref_id="-1_3"/>
+    <collection name="relations">
+      <reference ref_id="-1_6"/>
+    </collection>
+  </item>
+  <item id="-1_10" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="Preys used for Y2H screens: 1)cDNA libraries made from embryo and adult fly (Clontech) and 2)using predicted ORF from BDGP (Berkeley Drosophila Genome Project) release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly to obtain 10306 validated preys."/>
+    <attribute name="type" value="comment"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
   <item id="0_30" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="0_13" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-    <attribute name="identifier" value="MI:0018"/>
+  <item id="-1_5" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="residues" value="TAGCAT"/>
   </item>
-  <item id="-1_6" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="14605208"/>
+  <item id="0_17" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0078"/>
+    <reference name="ontology" ref_id="-1_2"/>
+  </item>
+  <item id="-1_8" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="residues" value="CATTAG"/>
   </item>
   <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="value" value="Q9VI89"/>
     <attribute name="type" value="accession"/>
+    <attribute name="value" value="Q9VI89"/>
     <reference name="source" ref_id="-1_1"/>
     <reference name="subject" ref_id="0_32"/>
+  </item>
+  <item id="0_36" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="0_11" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="4932"/>
+  </item>
+  <item id="0_45" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0018"/>
+    <reference name="ontology" ref_id="-1_2"/>
+  </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
+    <reference name="hostOrganism" ref_id="0_11"/>
+    <reference name="interactionDetection" ref_id="0_13"/>
+    <reference name="participantDetection" ref_id="0_17"/>
+    <reference name="publication" ref_id="-1_9"/>
+    <collection name="comments">
+      <reference ref_id="-1_10"/>
+      <reference ref_id="-1_11"/>
+      <reference ref_id="-1_12"/>
+    </collection>
+  </item>
+  <item id="-1_4" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="P14734"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_26"/>
+  </item>
+  <item id="-1_11" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="11159 validated baits were obtained using predicted ORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly."/>
+    <attribute name="type" value="comment"/>
+    <reference name="source" ref_id="-1_3"/>
+  </item>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
+    <attribute name="title" value="Swiss-Prot"/>
+  </item>
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#Ontology">
+    <attribute name="title" value="PSI-MI"/>
+  </item>
+  <item id="-1_9" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="14605208"/>
+  </item>
+  <item id="0_26" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="P14734"/>
+    <reference name="organism" ref_id="0_30"/>
+    <reference name="sequence" ref_id="-1_5"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_4"/>
+    </collection>
+  </item>
+  <item id="-1_6" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+    <reference name="bait" ref_id="0_26"/>
+    <reference name="object" ref_id="0_32"/>
+    <reference name="prey" ref_id="0_32"/>
+    <reference name="subject" ref_id="0_26"/>
+    <collection name="evidence">
+      <reference ref_id="0_39"/>
+    </collection>
   </item>
   <item id="0_32" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="Q9VI89"/>
@@ -28,61 +104,9 @@
       <reference ref_id="-1_7"/>
     </collection>
   </item>
-  <item id="-1_8" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="residues" value="CATTAG"/>
-  </item>
-  <item id="0_36" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="7227"/>
-  </item>
-  <item id="0_26" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="primaryAccession" value="P14734"/>
-    <reference name="organism" ref_id="0_30"/>
-    <reference name="sequence" ref_id="-1_3"/>
-    <collection name="synonyms">
-      <reference ref_id="-1_2"/>
-    </collection>
-  </item>
-  <item id="-1_3" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="residues" value="TAGCAT"/>
-  </item>
-  <item id="0_11" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="4932"/>
-  </item>
-  <item id="-1_2" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="value" value="P14734"/>
-    <attribute name="type" value="accession"/>
-    <reference name="source" ref_id="-1_1"/>
-    <reference name="subject" ref_id="0_26"/>
-  </item>
-  <item id="0_39" class="http://www.flymine.org/model/genomic#ExperimentalResult">
-    <attribute name="confidence" value="0.06"/>
-    <reference name="analysis" ref_id="0_6"/>
-    <reference name="source" ref_id="-1_4"/>
-    <collection name="relations">
-      <reference ref_id="-1_5"/>
-    </collection>
-  </item>
-  <item id="0_17" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-    <attribute name="identifier" value="MI:0078"/>
-  </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#Database">
-    <attribute name="title" value="Swiss-Prot"/>
-  </item>
-  <item id="0_45" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-    <attribute name="identifier" value="MI:0018"/>
-  </item>
-  <item id="-1_4" class="http://www.flymine.org/model/genomic#Database">
-    <attribute name="title" value="IntAct"/>
-  </item>
-  <item id="-1_5" class="http://www.flymine.org/model/genomic#ProteinInteraction">
-    <reference name="bait" ref_id="0_26"/>
-    <reference name="object" ref_id="0_32"/>
-    <reference name="prey" ref_id="0_32"/>
-    <reference name="subject" ref_id="0_26"/>
-    <collection name="evidence">
-      <reference ref_id="-1_6"/>
-      <reference ref_id="-1_4"/>
-      <reference ref_id="0_39"/>
-    </collection>
+  <item id="-1_12" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="The authors assign a numerical confidence value between 0 and 1 to each interaction. Interactions with a confidence of 0.5 or higher are considered as high confidence interactions. All others are considered as low confidence interactions. For simplified extraction of subsets, the &quot;high&quot; and &quot;low&quot; classification has been added in IntAct."/>
+    <attribute name="type" value="confidence-mapping"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
 </items>

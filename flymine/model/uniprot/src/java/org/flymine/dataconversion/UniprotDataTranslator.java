@@ -180,7 +180,6 @@ public class UniprotDataTranslator extends DataTranslator
                         Item comment = createItem(tgtNs + "Comment", "");
                         comment.addAttribute(new Attribute("type", srcCommentType));
                         comment.addAttribute(new Attribute("text", srcCommentText));
-                        comment.addReference(new Reference("subject", protein.getIdentifier()));
                         comment.addReference(new Reference("source", getDatabaseId()));
                         retval.add(comment);
                     }

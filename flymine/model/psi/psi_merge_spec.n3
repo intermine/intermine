@@ -92,11 +92,14 @@ null:Confidence_InteractionElementType a owl:Class;
 null:ExperimentType__identifier a owl:DatatypeProperty;
     owl:equivalentProperty psi:ExperimentType__identifier.
 
-:ProteinInteractionExperiment__confidence a owl:DatatypeProperty;
+:ProteinInteractionExperiment__name a owl:DatatypeProperty;
     rdfs:domain :ProteinInteractionExperiment;
-    rdfs:range xsd:float.
+    rdfs:range xsd:string.
 
-# ExperimentType__attributeList - contains comments anout data
+:ProteinInteractionExperiment__comments a owl:ObjectProperty;
+    rdfs:domain :ProteinInteractionExperiment;
+    rdfs:range :Comment.
+
 null:ExperimentType__attributeLlist a owl:ObjectProperty;
     owl:equivalentProperty psi:ExperimentType__attributeList.
 
@@ -187,7 +190,7 @@ null:BioSourceType a owl:Class;
     owl:equivalentClass psi:BioSourceType.
 
 :ProteinInteractionTerm a owl:Class;
-    rdfs:subClassOf :OntologyTerm ;
+    rdfs:subClassOf :OntologyTerm;
     owl:equivalentClass psi:CvType.
 
 null:CvType__names a owl:ObjectProperty;
