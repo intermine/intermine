@@ -1,6 +1,7 @@
 package org.flymine.metadata;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -19,8 +20,10 @@ import java.util.HashSet;
 public class Model
 {
 
-    private final Map cldMap = new HashMap();
     private String name;
+    private final Map cldMap = new HashMap();
+    private final Map subclassMap = new HashMap();
+    private final Map implementorsMap = new HashMap();
 
     /**
      * Construct a Model with a name and list of ClassDescriptors.  The model will be
@@ -36,20 +39,61 @@ public class Model
         this.name = name;  // check for valid package name??
         Iterator cldIter = clds.iterator();
 
-        // first put all ClassDescriptors in model
+        // 1. Put all ClassDescriptors in model.
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-            //cld.setModel(this);
             cldMap.put(cld.getClassName(), cld);
+
+            // create maps of ClassDescriptor to empty lists for subclasses and implementors
+            subclassMap.put(cld, new ArrayList());
+            implementorsMap.put(cld, new ArrayList());
         }
 
-        // now set up relationships for each
+        // 2. Now set model in each ClassDescriptor, this sets up superclass, interface,
+        //    etc descriptors.  Set ClassDescriptors and reverse refs in ReferenceDescriptors.
         cldIter = clds.iterator();
         while (cldIter.hasNext()) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             cld.setModel(this);
+
+            // add this to list of subclasses if a superclass exists
+            ClassDescriptor superCld = cld.getSuperclassDescriptor();
+            if (superCld != null) {
+                List sub = (List) subclassMap.get(superCld);
+                sub.add(cld);
+            }
+
+            // add this class to implementors lists for any interfaces
+            List interfaces = cld.getInterfaceDescriptors();
+            if (interfaces.size() > 0) {
+                Iterator iter = interfaces.iterator();
+                while (iter.hasNext()) {
+                    ClassDescriptor iCld = (ClassDescriptor) iter.next();
+                    List implementors = (List) implementorsMap.get(iCld);
+                    implementors.add(cld);
+                }
+            }
+
         }
 
+        // 3. Finally, set completed lists of subclasses and implementors in
+        //    each ClassDescriptor.
+        cldIter = clds.iterator();
+        while (cldIter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+
+            List sub = (List) subclassMap.get(cld);
+            if (sub.size() > 0) {
+                cld.setSubclassDescriptors(sub);
+            }
+
+            if (cld.isInterface()) {
+                List implementors = (List) implementorsMap.get(cld);
+                if (implementors.size() > 0) {
+                    cld.setImplementorDescriptors(implementors);
+                }
+            }
+        }
     }
 
     /**

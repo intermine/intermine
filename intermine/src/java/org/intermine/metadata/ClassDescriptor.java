@@ -39,7 +39,10 @@ public class ClassDescriptor
     private List pkFields = new ArrayList();
     private Model model;  // set when ClassDesriptor added to DescriptorRespository
     private boolean modelSet = false;
-
+    private List subclassDescriptors;
+    private boolean subSet = false;
+    private List implementorDescriptors;
+    private boolean implSet = false;
 
     /**
      * Construct a ClassDescriptor.
@@ -275,18 +278,27 @@ public class ClassDescriptor
     /**
      * Return a List of ClassDescriptors for all classes that extend this class
      * @return list of subclass ClassDescriptors
+     * @throws IllegalStateException if the list of subclasses has not been set
      */
-    public List getSubclassDescriptors() {
-        return new ArrayList();
+    public List getSubclassDescriptors() throws IllegalStateException {
+        if (!subSet) {
+            throw new IllegalStateException("This ClassDescriptor has not yet had subclass"
+                                            + "Descriptors set.");
+        }
+        return this.subclassDescriptors;
     }
 
    /**
      * Return a List of ClassDescriptors for all classes that implement this interface
      * @return list of class that implement this class
+     * @throws IllegalStateException if implementor descriptors have not been set
      */
-    public List getImplementorDescriptors() {
-        // check if this is an interface
-        return new ArrayList();
+    public List getImplementorDescriptors() throws IllegalStateException {
+        if (!implSet) {
+            throw new IllegalStateException("This ClassDescriptor has not yet had implementor "
+                                            + "Descriptors set.");
+        }
+        return this.implementorDescriptors;
     }
 
     /**
@@ -352,6 +364,30 @@ public class ClassDescriptor
 
         modelSet = true;
     }
+
+    /**
+     * Set list of ClassDescriptors that are direct subclasses of this class.
+     * Called once during Model creation.
+     * @param sub list of direct subclass descriptors
+     */
+    protected void setSubclassDescriptors(List sub) {
+        this.subclassDescriptors = sub;
+        subSet = true;
+    }
+
+
+    /**
+     * Set list of ClassDescriptors for classes that are direct implemetations
+     * of this class, i.e. not subclasses of implentations.
+     * @param impl list of direct implementations
+     */
+    protected void setImplementorDescriptors(List impl) {
+        if (this.isInterface()) {
+            this.implementorDescriptors = impl;
+        }
+        implSet = true;
+    }
+
 
     private void findSuperclassDescriptor() throws MetaDataException {
         // descriptor for super class
