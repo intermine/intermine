@@ -172,23 +172,23 @@
     rdfs:subClassOf :AnalysisResult .
 
 
-:Analysis a owl:Class .
-
-:ComputationalAnalysis a owl:Class ;
-    rdfs:subClassOf :Analysis ;
+:Analysis a owl:Class ;
     rdfs:subClassOf
       [ a owl:Restriction ;
         owl:maxCardinality "1" ;
-        owl:onProperty :ComputationalAnalysis__publication ] .
+        owl:onProperty :Analysis__publication ] .
+
+:Analysis__publication a owl:ObjectProperty;
+    rdfs:domain :Analysis;
+    rdfs:range :Publication.
+
+
+:ComputationalAnalysis a owl:Class ;
+    rdfs:subClassOf :Analysis .
 
 :ComputationalAnalysis__algorithm a owl:DatatypeProperty;
     rdfs:domain :ComputationalAnalysis;
     rdfs:range xsd:string.
-
-:ComputationalAnalysis__publication a owl:ObjectProperty;
-    rdfs:domain :ComputationalAnalysis;
-    rdfs:range :Publication.
-
 
 
 :Experiment a owl:Class ;
