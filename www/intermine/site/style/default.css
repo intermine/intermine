@@ -220,7 +220,7 @@ p
 .inlinegraphic
 {
     display: block;
-    padding: 0;
+    padding: 5px;
     background: white;
     border: solid black 1px;
     margin: 20px 20px;
@@ -229,7 +229,7 @@ p
 .inlinegraphic-center
 {
     display: block;
-    padding: 0;
+    padding: 5px;
     background: white;
     border: solid black 1px;
     text-align: center;
