@@ -178,6 +178,7 @@ public class BuildDbTask extends Task
             c.createStatement().execute("CREATE SEQUENCE "
                                         + ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
         } catch (SQLException e) {
+            LOG.error("Failed to create SEQUENCE: " + e);
         } finally {
             if (c != null) {
                 try {
