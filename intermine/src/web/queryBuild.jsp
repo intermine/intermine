@@ -13,7 +13,7 @@
       <fmt:message key="query.current"/>
     </c:otherwise>
   </c:choose>
-  <br/>
+  <br/><br/>
   <div class="queryBuildCurrentQuery">
   <c:forEach items="${QUERY_CLASSES}" var="entry" varStatus="classStatus">
     <c:set var="alias" value="${entry.key}"/>

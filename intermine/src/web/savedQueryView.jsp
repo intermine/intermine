@@ -4,7 +4,7 @@
 
 <div class="savedView">
   <c:if test="${!empty SAVED_QUERIES}">
-    <p><span class="title"><fmt:message key="query.savedqueriesheader"/></span></p>
+    <span class="title"><fmt:message key="query.savedqueriesheader"/></span>
     <ul>
       <c:forEach items="${SAVED_QUERIES}" var="queryName">
         <li>

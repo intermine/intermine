@@ -19,7 +19,7 @@
       </table>
     </td>
     <td align="right" width="10%">
-      <table>
+      <table cellpadding="10">
         <tr>
           <td>
             FlyMine<br/>Department of Genetics<br/>Downing Street<br/>Cambridge, CB2 3EH, UK

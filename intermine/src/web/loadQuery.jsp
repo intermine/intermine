@@ -14,7 +14,6 @@
     <html:submit property="action">
       <fmt:message key="query.load"/>
     </html:submit>
-    <br/>
   </html:form>
 </c:if>
 <!-- /loadQuery.jsp -->

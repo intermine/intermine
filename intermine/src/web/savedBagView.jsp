@@ -4,7 +4,7 @@
 
 <div class="savedView">
   <c:if test="${!empty SAVED_BAGS}">
-    <p><span class="title"><fmt:message key="query.savedbagsheader"/></span></p>
+    <span class="title"><fmt:message key="query.savedbagsheader"/></span>
     <ul>
       <c:forEach items="${SAVED_BAGS}" var="bagName">
         <li>

@@ -3,12 +3,12 @@
 <!-- queryMain.jsp -->
 <table width="100%">
   <tr>
-    <td valign="top" width="20%">
+    <td valign="top">
 <tiles:get name="queryClassSelect"/>
 <tiles:get name="savedBagView"/>
 <tiles:get name="savedQueryView"/>
     </td>
-    <td valign="top" width="80%">
+    <td valign="top" width="100%">
 <tiles:get name="queryErrorMessage"/>
 <tiles:get name="queryBuild"/>
 <tiles:get name="loadQuery"/>
