@@ -9,5 +9,5 @@
   <fmt:message key="intermine.subtitle"/>
 </font>
 <br/>
-<hr/>
+<br/>
 <!-- /header.jsp -->
