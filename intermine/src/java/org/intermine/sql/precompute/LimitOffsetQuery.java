@@ -184,5 +184,16 @@ public class LimitOffsetQuery
     public int getOffset() {
         return offset;
     }
+
+    /**
+     * Reconstruct a SQL string, given this alternative SQL query-part.
+     *
+     * @param in the new SQL query minus the LIMIT and OFFSET
+     * @return in plus the LIMIT and OFFSET
+     */
+    public String reconstruct(String in) {
+        return in + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+            + (offset == 0 ? "" : " OFFSET " + offset);
+    }
 }
 
