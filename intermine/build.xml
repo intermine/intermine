@@ -92,17 +92,21 @@
   <!-- Ant tasks and unit testing stuff -->
   <patternset id="lib.build">
     <include name="AntDoc*.jar" />
-    <include name="catalina-ant*.jar" />
     <include name="junit*.jar" />
     <include name="mockobjects*.jar" />
     <include name="nsuml*.jar" />
     <include name="xmlunit*.jar" />
   </patternset>
 
+  <patternset id="lib.catalina">
+    <include name="catalina-ant*.jar" />
+   </patternset>
+
   <!-- Libraries relevant to building from UML models -->
   <patternset id="lib.uml">
     <include name="nsuml*.jar" />
   </patternset>
+  
 
   <!-- Libraries relevant to building from AceDB models and data -->
   <patternset id="lib.acedb">
@@ -164,6 +168,7 @@
     <fileset dir="${lib}">
       <patternset refid="lib.common"/>
       <patternset refid="lib.build"/>
+      <patternset refid="lib.catalina"/>
       <patternset refid="lib.webapp.intermine"/>
       <patternset refid="lib.webapp.webservice"/>
       <patternset refid="lib.acedb"/>
@@ -848,6 +853,7 @@
     <copy todir="${tutorial}/lib">
       <fileset dir="${lib}">
         <patternset refid="lib.common"/>
+        <patternset refid="lib.catalina"/>
         <patternset refid="lib.webapp.intermine"/>
         <patternset refid="lib.antlr"/>
         <patternset refid="lib.uml"/>

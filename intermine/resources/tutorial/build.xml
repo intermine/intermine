@@ -162,7 +162,7 @@
     </ant>
   </target>
 
-  <target name="release-webapp" depends="build-webapp">
+  <target name="release-webapp" depends="build-webapp, insert-data">
    <ant antfile="build-webapp.xml" target="release-webapp" inheritRefs="true">
       <property name="war" value="${build.webapp}/intermine.war"/>
       <reference torefid="class.path" refid="tutorial.class.path"/>
