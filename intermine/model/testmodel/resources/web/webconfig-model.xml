@@ -1,8 +1,8 @@
 <webconfig>
   <class className="org.intermine.model.testmodel.Company">
     <fields>
-      <fieldconfig fieldName="name"/>
-      <fieldconfig fieldName="vatNumber"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="vatNumber"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/companiesHouse.jsp"/>
@@ -11,19 +11,20 @@
 
   <class className="org.intermine.model.testmodel.Employee">
     <fields>
-      <fieldconfig fieldName="age"/>
-      <fieldconfig fieldName="end"/>
-      <fieldconfig fieldName="name"/>
-      <fieldconfig fieldName="department.name"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="department.name"/>
+      <fieldconfig fieldExpr="department.company.name"/>
+      <fieldconfig fieldExpr="age"/>
     </fields>
   </class>
 
-  <class className="org.intermine.model.testmodel.Broke" fieldName="debt">
+  <class className="org.intermine.model.testmodel.Broke" fieldExpr="debt">
     <longdisplayers>
       <displayer src="/model/debtField.jsp"/>
     </longdisplayers>
   </class>
-  <class className="org.intermine.model.testmodel.HasAddress" fieldName="address">
+
+  <class className="org.intermine.model.testmodel.HasAddress" fieldExpr="address">
     <longdisplayers>
       <displayer src="/model/addressField.jsp"/>
     </longdisplayers>
