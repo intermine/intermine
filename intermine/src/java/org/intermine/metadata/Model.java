@@ -124,21 +124,27 @@ public class Model
             }
 
         }
+    }
+    
+    /**
+     * Get the ClassDescriptors for the subclasses of a class
+     * @param cld the parent ClassDescriptor
+     * @return the ClassDescriptors of its children
+     */
+    public Set getSubclasses(ClassDescriptor cld) {
+        return (Set) subclassMap.get(cld);
+    }
 
-        // 3. Finally, set completed sets of subclasses and implementors in
-        //    each ClassDescriptor.
-        cldIter = orderedClds.iterator();
-        while (cldIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-
-            Set sub = (Set) subclassMap.get(cld);
-            cld.setSubclassDescriptors(sub);
-
-            if (cld.isInterface()) {
-                Set implementors = (Set) implementorsMap.get(cld);
-                cld.setImplementorDescriptors(implementors);
-            }
+    /**
+     * Get the ClassDescriptors for the classes that implement an interface
+     * @param cld the ClassDescriptor of the interface
+     * @return the ClassDescriptors of its implementors
+     */
+    public Set getImplementors(ClassDescriptor cld) {
+        if (!cld.isInterface()) {
+            throw new IllegalArgumentException("getImplementors is only valid for an interface");
         }
+        return (Set) implementorsMap.get(cld);
     }
 
     /**

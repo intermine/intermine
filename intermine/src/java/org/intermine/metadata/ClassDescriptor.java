@@ -40,9 +40,6 @@ public class ClassDescriptor
     private final Set interfaceNames = new LinkedHashSet();
     private final Set interfaceDescriptors = new LinkedHashSet();
 
-    private ClassDescriptor ultimateSuperclassDesc;
-    private boolean ultimateSuperSet = false;
-
     private final boolean isInterface;
     private final Set attDescriptors;
     private final Set refDescriptors;
@@ -52,12 +49,6 @@ public class ClassDescriptor
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
     private boolean modelSet = false;
-
-    private Set subclassDescriptors;
-    private boolean subSet = false;
-
-    private Set implementorDescriptors;
-    private boolean implSet = false;
 
     /**
      * Construct a ClassDescriptor.
@@ -366,49 +357,13 @@ public class ClassDescriptor
     }
 
     /**
-     * Set set of ClassDescriptors that are direct subclasses of this class.
-     * Called once during Model creation.
-     * @param sub set of direct subclass descriptors
-     * @throws IllegalStateException if subclasses already set
-     */
-    protected void setSubclassDescriptors(Set sub) {
-        if (subSet) {
-            throw new IllegalStateException("subclasses have already been set for this "
-                                            + "ClassDescriptor (" + name + ").");
-        }
-        subclassDescriptors = new LinkedHashSet(sub);
-        subSet = true;
-    }
-
-    /**
      * Return a Set of ClassDescriptors for all classes that extend this class
      * @return set of subclass ClassDescriptors
      * @throws IllegalStateException if the set of subclasses has not been set
      */
     public Set getSubclassDescriptors() throws IllegalStateException {
-        if (!subSet) {
-            throw new IllegalStateException("This ClassDescriptor has not yet had subclass"
-                                            + "Descriptors set.");
-        }
-        return subclassDescriptors;
-    }
-
-    /**
-     * Set set of ClassDescriptors for classes that are direct implemetations
-     * of this class, i.e. not subclasses of implentations.
-     * @param impl set of direct implementations
-     * @throws IllegalStateException if implementors already set
-     */
-    protected void setImplementorDescriptors(Set impl) {
-        if (implSet) {
-            throw new IllegalStateException("implementors have already been set for this "
-                                            + "ClassDescriptor (" + name + ").");
-        }
-
-        if (isInterface()) {
-            implementorDescriptors = impl;
-        }
-        implSet = true;
+        checkModel();
+        return model.getSubclasses(this);
     }
 
    /**
@@ -417,11 +372,8 @@ public class ClassDescriptor
      * @throws IllegalStateException if implementor descriptors have not been set
      */
     public Set getImplementorDescriptors() throws IllegalStateException {
-        if (!implSet) {
-            throw new IllegalStateException("This ClassDescriptor (" + getName() 
-                                            + ") has not yet had implementor Descriptors set.");
-        }
-        return implementorDescriptors;
+        checkModel();
+        return model.getImplementors(this);
     }
 
     /**
