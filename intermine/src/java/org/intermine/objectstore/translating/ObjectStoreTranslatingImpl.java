@@ -11,11 +11,14 @@ package org.flymine.objectstore.translating;
  */
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.flymine.metadata.Model;
 import org.flymine.objectstore.ObjectStore;
@@ -36,6 +39,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
 {
     private ObjectStore os;
     private Translator translator;
+    private Map queryCache = Collections.synchronizedMap(new WeakHashMap());
     
     /**
      * Constructor
@@ -97,7 +101,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
-        Query q2 = translator.translateQuery(q);
+        Query q2 = translateQuery(q);
         List results = new ArrayList();
         Iterator resIter = os.execute(q2, start, limit, optimise, explain, sequence).iterator();
         while (resIter.hasNext()) {
@@ -124,16 +128,25 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      * @see ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
-        return os.estimate(translator.translateQuery(q));
+        return os.estimate(translateQuery(q));
     }
     
     /**
      * @see ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
-        return os.count(translator.translateQuery(q), sequence);
+        return os.count(translateQuery(q), sequence);
     }
     
+    private Query translateQuery(Query q) throws ObjectStoreException {
+        Query retval = (Query) queryCache.get(q);
+        if (retval == null) {
+            retval = translator.translateQuery(q);
+            queryCache.put(q, retval);
+        }
+        return retval;
+    }
+
     /**
      * @see ObjectStore#getObjectByExample
      */

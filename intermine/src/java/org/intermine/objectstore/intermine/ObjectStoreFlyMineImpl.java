@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -32,6 +33,9 @@ import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryField;
+import org.flymine.objectstore.query.QueryNode;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.sql.Database;
 import org.flymine.sql.DatabaseFactory;
@@ -178,6 +182,29 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
                         + (now - time) + "): " + sql);
             }
             List objResults = ResultsConverter.convert(sqlResults, q, this);
+            QueryNode firstOrderBy = null;
+            try {
+                firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
+            } catch (NoSuchElementException e) {
+                firstOrderBy = (QueryNode) q.getSelect().iterator().next();
+            }
+            if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
+                int colNo = q.getSelect().indexOf(firstOrderBy);
+                int rowNo = objResults.size() - 1;
+                Object lastObj = ((List) objResults.get(rowNo)).get(colNo);
+                rowNo--;
+                boolean done = false;
+                while ((!done) && (rowNo >= 0)) {
+                    Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
+                    if (!lastObj.equals(thisObj)) {
+                        done = true;
+                        SqlGenerator.registerOffset(q, start + rowNo + 1, model, db,
+                                (thisObj instanceof FlyMineBusinessObject ?
+                                    ((FlyMineBusinessObject) thisObj).getId() : thisObj));
+                    }
+                    rowNo--;
+                }
+            }
             return objResults;
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);

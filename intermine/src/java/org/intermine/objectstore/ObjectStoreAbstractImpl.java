@@ -127,6 +127,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected FlyMineBusinessObject internalGetObjectById(Integer id) throws ObjectStoreException {
         Results results = execute(QueryCreator.createQueryForId(id));
         results.setNoOptimise();
+        results.setNoExplain();
 
         if (results.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "

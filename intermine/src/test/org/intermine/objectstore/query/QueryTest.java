@@ -146,18 +146,6 @@ public class QueryTest extends TestCase
         assertEquals("a3_", (String) query.getAliases().get(qf2));
     }
 
-    public void testEquals() throws Exception {
-        assertEquals(q1, q1);
-        assertEquals(q1, q2);
-        assertTrue("Expected q1 to not equal q3", !q1.equals(q3));
-    }
-
-    public void testHashCode() throws Exception {
-        assertEquals(q1.hashCode(), q1.hashCode());
-        assertEquals(q1.hashCode(), q2.hashCode());
-        assertTrue("Expected q1 hashcode not to equal q3 hashcode", q1.hashCode() != q3.hashCode());
-    }
-
     public void testAlias1() throws Exception {
         Query q = new Query();
         String s1 = "one";

@@ -178,6 +178,7 @@ public class DataTracker
         // write-back cache. This guarantees that we won't lose data by forgetting to write it to
         // the database.
         cache.put(id, desc);
+        maybePoke();
     }
 
     /**
@@ -433,6 +434,7 @@ public class DataTracker
                 try {
                     doWrite();
                 } catch (Exception e) {
+                    LOG.error("CacheStorer received exception: " + e);
                 }
             }
         }

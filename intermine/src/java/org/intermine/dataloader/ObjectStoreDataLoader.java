@@ -65,6 +65,8 @@ public class ObjectStoreDataLoader extends DataLoader
         long time = (new Date()).getTime();
         iw.beginTransaction();
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        res.setNoOptimise();
+        res.setNoExplain();
         res.setBatchSize(1000);
         Iterator iter = res.iterator();
         //for (int i = 0; i < 35000; i++) {

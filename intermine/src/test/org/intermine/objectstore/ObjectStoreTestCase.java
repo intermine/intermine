@@ -23,6 +23,7 @@ import org.flymine.objectstore.query.ConstraintOp;
 import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.QueryCloner;
 import org.flymine.objectstore.query.QueryField;
 import org.flymine.objectstore.query.QueryValue;
 import org.flymine.objectstore.query.Results;
@@ -385,7 +386,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     // setDistinct tests
 
     public void testCountNoGroupByNotDistinct() throws Exception {
-        Query q = (Query) queries.get("ContainsDuplicatesMN");
+        Query q = QueryCloner.cloneQuery((Query) queries.get("ContainsDuplicatesMN"));
         q.setDistinct(false);
         int count = os.count(q, os.getSequence());
         assertEquals(8, count);
@@ -393,13 +394,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
     public void testCountNoGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
-        q.setDistinct(true);
         int count = os.count(q, os.getSequence());
         assertEquals(4, os.execute(q).size());
     }
 
    public void testCountGroupByNotDistinct() throws Exception {
-        Query q = (Query) queries.get("SimpleGroupBy");
+        Query q = QueryCloner.cloneQuery((Query) queries.get("SimpleGroupBy"));
         q.setDistinct(false);
         int count = os.count(q, os.getSequence());
         assertEquals(2, count);
@@ -408,7 +408,6 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void testCountGroupByDistinct() throws Exception {
     // distinct doesn't actually do anything to group by reuslt
         Query q = (Query) queries.get("SimpleGroupBy");
-        q.setDistinct(true);
         int count = os.count(q, os.getSequence());
         assertEquals(2, count);
     }

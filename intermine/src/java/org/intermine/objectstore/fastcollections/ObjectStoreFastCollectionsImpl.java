@@ -162,6 +162,12 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                         qc2));
                             subQ.setConstraint(cs);
                             Results l = new Results(subQ, os, os.getSequence());
+                            if (!optimise) {
+                                l.setNoOptimise();
+                            }
+                            if (!explain) {
+                                l.setNoExplain();
+                            }
                             l.setBatchSize(limit * 2);
                             Iterator lIter = l.iterator();
                             while (lIter.hasNext()) {

@@ -11,16 +11,20 @@ package org.flymine.objectstore.flymine;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 
 import org.flymine.codegen.FlyMineTorqueModelOutput;
 import org.flymine.metadata.ClassDescriptor;
@@ -79,6 +83,8 @@ public class SqlGenerator
     protected static final int ID_ONLY = 2;
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
 
+    protected static Map sqlCache = Collections.synchronizedMap(new WeakHashMap());
+
     /**
      * Generates a query to retrieve a single object from the database, by id.
      *
@@ -88,6 +94,55 @@ public class SqlGenerator
     public static String generateQueryForId(Integer id) {
         return "SELECT DISTINCT a1_.OBJECT AS a1_ FROM FlyMineBusinessObject AS a1_ WHERE a1_.id"
             + " = " + id.toString() + " LIMIT 2";
+    }
+
+    /**
+     * Registers an offset for a given query. This is used later on to speed up queries that use
+     * big offsets.
+     *
+     * @param q the Query
+     * @param start the offset
+     * @param value a value, such that adding a WHERE component first_order_field &gt; value with
+     * OFFSET 0 is equivalent to the original query with OFFSET offset
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public static void registerOffset(Query q, int start, Model model, Database db,
+            Object value) throws ObjectStoreException {
+        synchronized (q) {
+            TreeMap cached = (TreeMap) sqlCache.get(q);
+            if (cached != null) {
+                SortedMap headMap = cached.headMap(new Integer(start + 1));
+                Integer lastKey = null;
+                try {
+                    lastKey = (Integer) headMap.lastKey();
+                } catch (NoSuchElementException e) {
+                }
+                if (lastKey != null) {
+                    int offset = lastKey.intValue();
+                    if (start - offset < 100000) {
+                        return;
+                    }
+                }
+            }
+            QueryNode firstOrderBy = null;
+            try {
+                firstOrderBy = (QueryNode) q.getOrderBy().iterator().next();
+            } catch (NoSuchElementException e) {
+                firstOrderBy = (QueryNode) q.getSelect().iterator().next();
+            }
+            if (firstOrderBy instanceof QueryClass) {
+                firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
+            }
+            String sql = generate(q, model, db, new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                        ConstraintOp.GREATER_THAN, new QueryValue(value)), QUERY_NORMAL);
+            if (cached == null) {
+                cached = new TreeMap();
+                sqlCache.put(q, cached);
+            }
+            cached.put(new Integer(start), sql);
+            LOG.error("Created cache entry for offset " + start + " (cache contains "
+                    + cached.keySet() + ") for query " + q + ", sql = " + sql);
+        }
     }
 
     /**
@@ -104,34 +159,59 @@ public class SqlGenerator
      */
     public static String generate(Query q, int start, int limit, Model model, Database db)
             throws ObjectStoreException {
-        return generate(q, start, limit, model, db, QUERY_NORMAL);
+        synchronized (q) {
+            TreeMap cached = (TreeMap) sqlCache.get(q);
+            if (cached != null) {
+                SortedMap headMap = cached.headMap(new Integer(start + 1));
+                Integer lastKey = null;
+                try {
+                    lastKey = (Integer) headMap.lastKey();
+                } catch (NoSuchElementException e) {
+                }
+                if (lastKey != null) {
+                    int offset = lastKey.intValue();
+                    return cached.get(lastKey) + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                            + (start == offset ? "" : " OFFSET " + (start - offset)));
+                }
+            }
+            String sql = generate(q, model, db, null, QUERY_NORMAL);
+            if (cached == null) {
+                cached = new TreeMap();
+                sqlCache.put(q, cached);
+            }
+            cached.put(new Integer(0), sql);
+            return sql + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                        + (start == 0 ? "" : " OFFSET " + start));
+        }
     }
 
     /**
-     * Converts a Query object into an SQL String. To produce an SQL query that does not have
-     * OFFSET and LIMIT clauses, set start to 0, and limit to Integer.MAX_VALUE.
+     * Converts a Query object into an SQL String.
      *
      * @param q the Query to convert
-     * @param start the number of the first row for the query to return, numbered from zero
-     * @param limit the maximum number of rows for the query to return
      * @param model the Model to look up metadata in
      * @param db the Database that the ObjectStore uses
+     * @param offsetCon an additional constraint for improving the speed of large offsets
      * @param kind Query type
      * @return a String suitable for passing to an SQL server
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String generate(Query q, int start, int limit, Model model, Database db,
+    protected static String generate(Query q, Model model, Database db, SimpleConstraint offsetCon,
             int kind) throws ObjectStoreException {
         State state = new State();
         state.setDb(db);
         buildFromComponent(state, q, model);
-        buildWhereClause(state, q, model);
+        buildWhereClause(state, q, q.getConstraint(), model);
+        buildWhereClause(state, q, offsetCon, model);
         String orderBy = (kind == QUERY_NORMAL ? buildOrderBy(state, q, model) : "");
-        return "SELECT " + (q.isDistinct() ? "DISTINCT " : "")
-            + buildSelectComponent(state, q, model, kind) + state.getFrom() + state.getWhere()
-            + buildGroupBy(q, model, state) + orderBy
-            + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
-            + (start == 0 ? "" : " OFFSET " + start);
+        StringBuffer retval = new StringBuffer("SELECT ")
+            .append(q.isDistinct() ? "DISTINCT " : "")
+            .append(buildSelectComponent(state, q, model, kind))
+            .append(state.getFrom())
+            .append(state.getWhere())
+            .append(buildGroupBy(q, model, state))
+            .append(orderBy);
+        return retval.toString();
     }
 
     /**
@@ -198,8 +278,8 @@ public class SqlGenerator
                     }
                 }
             } else if (fromElement instanceof Query) {
-                state.addToFrom("(" + generate((Query) fromElement, 0, Integer.MAX_VALUE,
-                                model, state.getDb(), QUERY_SUBQUERY_FROM) + ") AS "
+                state.addToFrom("(" + generate((Query) fromElement, model,
+                                state.getDb(), null, QUERY_SUBQUERY_FROM) + ") AS "
                         + ((String) q.getAliases().get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap(q.getAliases().get(fromElement)));
             }
@@ -211,12 +291,12 @@ public class SqlGenerator
      *
      * @param state the current Sql Query state
      * @param q the Query
+     * @param c the Constraint
      * @param model the Model
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void buildWhereClause(State state, Query q, Model model)
+    protected static void buildWhereClause(State state, Query q, Constraint c, Model model)
             throws ObjectStoreException {
-        Constraint c = q.getConstraint();
         if (c != null) {
             if (state.getWhereBuffer().length() > 0) {
                 state.addToWhere(" AND ");
@@ -325,8 +405,8 @@ public class SqlGenerator
             queryClassToString(state.getWhereBuffer(), cls, q, model, QUERY_SUBQUERY_CONSTRAINT,
                     state);
         }
-        state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, 0, Integer.MAX_VALUE,
-                        model, state.getDb(), QUERY_SUBQUERY_CONSTRAINT) + ")");
+        state.addToWhere(" " + c.getOp().toString() + " (" + generate(subQ, model,
+                        state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT) + ")");
     }
 
     /**
