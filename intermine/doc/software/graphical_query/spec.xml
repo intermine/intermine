@@ -25,11 +25,15 @@
 <title>Initial description</title>
 
 <para>
-	<graphic fileref="Test" format="PNG" align="Right" />
+	<graphic fileref="Gene" format="PNG" align="Right" />
 	Our database stores separate collections of data, where each collection stores data all of the same type.
 	These collections can be compared to tables in SQL or object classes in an Object Oriented DB.
 	A query will retrieve data from one or more of these collections - so the graphical representation of a query consists of an arrangement of objects on the screen, each of which represent one of these collections.
 	The figure on the right is an example of such an object, which represents the collection of Genes in the database.
+	The object type "Gene" is represented as a box, with a title at the top declaring its type, and a list of fields in the object below it.
+	(Note that these aren't necessarily the fields of a Gene object - it is just an example picture.)
+	The picture shown on the right is a complete query.
+	It 
 </para>
 
 <para>
