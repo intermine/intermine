@@ -55,6 +55,7 @@ public class BeginAction extends Action
             session.removeAttribute(Constants.QUERY);
             session.removeAttribute(Constants.VIEW);
             session.removeAttribute("path");
+            session.removeAttribute("prefix");
         }
 
         return mapping.findForward("beginpage");
