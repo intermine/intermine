@@ -243,3 +243,15 @@ address
 {
     margin-left: 6em;
 }
+
+**************************************/
+/** "InterMine test model" message **/
+#status {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 3px;
+  background:#fff;
+  width: 10em;
+  border: solid 1px grey;
+}
