@@ -40,6 +40,14 @@ public class FullRenderer
     private FullRenderer() {
     }
 
+    public static String getHeader() {
+        return "<items>";
+    }
+
+    public static String getFooter() {
+        return "</items>";
+    }
+
     /**
      * Render a collection of objects as XML in FlyMine Full format.
      *
@@ -50,12 +58,12 @@ public class FullRenderer
     public static String render(Collection objects, Model model) {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("<items>" + ENDL);
+        sb.append(getHeader() + ENDL);
         Iterator iter = objects.iterator();
         while (iter.hasNext()) {
-            sb.append(renderObject((FlyMineBusinessObject) iter.next(), model));
+            sb.append(render((FlyMineBusinessObject) iter.next(), model));
         }
-        sb.append("</items>" + ENDL);
+        sb.append(getFooter() + ENDL);
 
         return sb.toString();
     }
@@ -68,12 +76,12 @@ public class FullRenderer
      */
     public static String render(Collection items) {
         StringBuffer sb = new StringBuffer();
-        sb.append("<items>" + ENDL);
+        sb.append(getHeader() + ENDL);
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
-            sb.append(iter.next().toString());
+            sb.append(render((Item) iter.next()));
         }
-        sb.append("</items>" + ENDL);
+        sb.append(getFooter() + ENDL);
 
         return sb.toString();
     }
@@ -84,7 +92,7 @@ public class FullRenderer
      * @param model the parent model
      * @return an XML representation of the object
      */
-    protected static String renderObject(FlyMineBusinessObject obj, Model model) {
+    protected static String render(FlyMineBusinessObject obj, Model model) {
         if (obj.getId() == null) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
@@ -103,6 +111,14 @@ public class FullRenderer
         return sb.toString();
     }
 
+    /**
+     * Render the given Item as XML
+     * @param item the Item to render
+     * @return an XML representation of the Item
+     */
+    public static String render(Item item) {
+        return item.toString();
+    }
 
     /**
      * Get all interfaces that an object implements.
