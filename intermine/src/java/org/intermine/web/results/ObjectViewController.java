@@ -89,18 +89,17 @@ public class ObjectViewController extends TilesAction
         Set leafClds = null;
 
         if (o instanceof InterMineObject) {
-            leafClds = getLeafClds(o.getClass(), model);
-
             if ("summary".equals((String) request.getAttribute("viewType"))) {
                 Map primaryKeyFields = new LinkedHashMap();
-                Class c = o.getClass();
-                for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, c).iterator();
+                for (Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model,
+                                                                     o.getClass()).iterator();
                      i.hasNext();) {
                     FieldDescriptor fd = (FieldDescriptor) i.next();
                     primaryKeyFields.put(fd.getName(), fd.getName());
                     context.putAttribute("primaryKeyFields", primaryKeyFields);
                 }
             }
+            leafClds = getLeafClds(o.getClass(), model);
         } else {
             leafClds = new HashSet();
         }
