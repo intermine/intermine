@@ -5,7 +5,7 @@
 
 
       <sect1>
-       <title>Tutorial1: <span class="tutorial">show all the gene names of the genes in FlyMine"</span></title>
+       <title>Tutorial1: <span class="tutorial">show all the gene names of the genes in FlyMine</span></title>
         <para>This page will guide you through the query: show
 all the gene names of the genes in FlyMine.  The aim of this query tutorial is to illustrate how to show a particular field for all the objects in a particular class.  This query involves:
 </para>
