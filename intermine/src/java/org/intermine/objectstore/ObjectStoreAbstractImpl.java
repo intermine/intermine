@@ -11,14 +11,20 @@ package org.flymine.objectstore;
  */
 
 import java.util.Properties;
+import java.util.Iterator;
+import java.lang.reflect.Field;
 
 import org.flymine.metadata.Model;
+import org.flymine.objectstore.proxy.LazyCollection;
+import org.flymine.objectstore.proxy.LazyReference;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCreator;
 import org.flymine.objectstore.query.Results;
+import org.flymine.objectstore.query.SingletonResults;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.util.CacheMap;
 import org.flymine.util.PropertiesUtil;
+import org.flymine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -202,4 +208,32 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public Model getModel() {
         return model;
     }
+
+    /**
+     * Takes an Object, and promotes all the proxies in it.
+     *
+     * @param obj an Object to process
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected void promoteProxies(Object obj) throws ObjectStoreException {
+        if (obj == null) {
+            return;
+        }
+        Class cls = obj.getClass();
+        for (Iterator fieldIter = TypeUtil.getFields(cls).iterator(); fieldIter.hasNext();) {
+            String fieldName = ((Field) fieldIter.next()).getName();
+            try {
+                Object fieldValue = TypeUtil.getFieldValue(obj, fieldName);
+                if (fieldValue instanceof LazyReference) {
+                    ((LazyReference) fieldValue).setObjectStore(this);
+                } else if (fieldValue instanceof LazyCollection) {
+                    Query query = ((LazyCollection) fieldValue).getQuery();
+                    TypeUtil.setFieldValue(obj, fieldName, new SingletonResults(query, this));
+                }
+            } catch (IllegalAccessException e) {
+                throw new ObjectStoreException(e);
+            }
+        }
+    }
 }
+

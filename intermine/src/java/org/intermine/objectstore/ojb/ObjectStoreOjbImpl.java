@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.Iterator;
 
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.ta.PersistenceBrokerFactoryFactory;
@@ -26,7 +27,6 @@ import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryCreator;
-import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.metadata.Model;
@@ -128,7 +128,11 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
 
         List res = pb.execute(q, start, limit, optimise);
         for (int i = 0; i < res.size(); i++) {
-            res.set(i, new ResultsRow(Arrays.asList((Object[]) res.get(i))));
+            ResultsRow row = new ResultsRow(Arrays.asList((Object[]) res.get(i)));
+            for (Iterator colIter = row.iterator(); colIter.hasNext(); ) {
+                promoteProxies(colIter.next());
+            }
+            res.set(i, row);
         }
         pb.close();
         return res;
@@ -178,19 +182,18 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
                                                    + "this primary key");
             }
             if (results.size() == 1) {
-                Object ret = ((Object []) results.get(0))[0];
+                Object o = ((Object []) results.get(0))[0];
                 try {
-                    Results.promoteProxiesInObject(ret, this);
+                    promoteProxies(o);
                 } catch (Exception e) {
                     throw new ObjectStoreException("Problem promoting proxies", e);
                 }
-                return ret;
+                return o;
             }
         } finally {
             pb.close();
         }
         return null;
     }
-
 }
 
