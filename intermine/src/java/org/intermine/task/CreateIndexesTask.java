@@ -151,9 +151,14 @@ public class CreateIndexesTask extends Task
             String keyName = (String) entry.getKey();
             PrimaryKey key = (PrimaryKey) entry.getValue();
             List fieldNames = new ArrayList();
+            boolean firstOne = true;
+            boolean doNulls = false;
             for (Iterator j = key.getFieldNames().iterator(); j.hasNext();) {
                 String fieldName = (String) j.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+                if (firstOne && (fd instanceof AttributeDescriptor)) {
+                    doNulls = !((AttributeDescriptor) fd).isPrimitive();
+                }
                 if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
                                                 + cld.getName() + ".");
@@ -170,6 +175,11 @@ public class CreateIndexesTask extends Task
                 dropIndex(tableName + "__" + keyName);
                 createIndex(tableName + "__" + keyName, tableName,
                             StringUtil.join(fieldNames, ", ") + ", id");
+                if (doNulls) {
+                    dropIndex(tableName + "__" + keyName + "__nulls");
+                    createIndex(tableName + "__" + keyName + "__nulls", tableName, "("
+                            + fieldNames.get(0) + " IS NULL)");
+                }
                 doneFieldNames.add(fieldNames.get(0));
             }
         }

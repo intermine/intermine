@@ -217,4 +217,10 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     public String getRegisterOffset2() {
         return "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND ";
     }
+    public String getRegisterOffset3() {
+        return "InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee'";
+    }
+    public String getRegisterOffset4() {
+        return "AND";
+    }
 }

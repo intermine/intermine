@@ -402,6 +402,27 @@ public class SqlGeneratorTest extends SetupDataTestCase
         assertEquals(getRegisterOffset2() + "a1_.id > 40 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 101005, Integer.MAX_VALUE, schema, db, new HashMap()));
     }
 
+    public void testRegisterOffset2() throws Exception {
+        DatabaseSchema schema = getSchema();
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        q.addToSelect(f);
+        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " ORDER BY a1_.name", SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+        SqlGenerator.registerOffset(q, 5, schema, db, "flibble", Collections.EMPTY_MAP);
+        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " (a1_.name > 'flibble' OR a1_.name IS NULL) ORDER BY a1_.name OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+
+        q = new Query();
+        qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        f = new QueryField(qc, "age");
+        q.addToSelect(f);
+        assertEquals("SELECT DISTINCT a1_.age AS a2_ FROM " + getRegisterOffset3() + " ORDER BY a1_.age", SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+        SqlGenerator.registerOffset(q, 5, schema, db, new Integer(34), Collections.EMPTY_MAP);
+        assertEquals("SELECT DISTINCT a1_.age AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.age > 34 ORDER BY a1_.age OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+    }
+
     protected DatabaseSchema getSchema() {
         return new DatabaseSchema(model, Collections.EMPTY_LIST);
     }
@@ -411,5 +432,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
     public String getRegisterOffset2() {
         return "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE ";
     }
+    public String getRegisterOffset3() {
+        return "Employee AS a1_";
+    }
+    public String getRegisterOffset4() {
+        return "WHERE";
+    }
 }
-
