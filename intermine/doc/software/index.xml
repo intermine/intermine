@@ -1,6 +1,7 @@
 <menu>
 	<section>
 		<heading>System Documentation</heading>
-		<item><ulink url="query_spec/spec">Query Specification</ulink></item>
+		<item><ulink url="query_spec/spec">Query specification</ulink></item>
+		<item><ulink url="architecture/">System architecture</ulink></item>
 	</section>
 </menu>
