@@ -26,32 +26,35 @@ public class WebConfigTest extends TestCase
         WebConfig wc1 = WebConfig.parse(is);
 
         Displayer disp1 = new Displayer();
-        disp1.setSrc("page1.jsp");
-        Displayer disp2 = new Displayer();
-        disp2.setSrc("tile1.tile");
-        Displayer disp3 = new Displayer();
-        disp3.setSrc("/model/page2.jsp");
+        disp1.setSrc("/model/page2.jsp");
         Type type1 = new Type();
         type1.setClassName("Class1");
-        type1.addShortDisplayer(disp1);
-        type1.addShortDisplayer(disp2);
-        type1.addLongDisplayer(disp3);
+        type1.addLongDisplayer(disp1);
+        FieldConfig df1 = new FieldConfig();
+        df1.setFieldExpr("class1field1");
+        type1.addFieldConfig(df1);
+        FieldConfig df2 = new FieldConfig();
+        df2.setFieldExpr("class1field2.field");
+        type1.addFieldConfig(df2);
 
-        Displayer disp4 = new Displayer();
-        disp4.setSrc("page3.jsp");
-        Displayer disp5 = new Displayer();
-        disp5.setSrc("/model/page4.jsp");
-        Displayer disp6 = new Displayer();
-        disp6.setSrc("tile2.tile");
+        Displayer disp2 = new Displayer();
+        disp2.setSrc("/model/page4.jsp");
+        Displayer disp3 = new Displayer();
+        disp3.setSrc("tile2.tile");
         Type type2 = new Type();
         type2.setClassName("Class2");
-        type2.addShortDisplayer(disp4);
-        type2.addLongDisplayer(disp5);
-        type2.addLongDisplayer(disp6);
+        type2.addLongDisplayer(disp2);
+        type2.addLongDisplayer(disp3);
+
+        Exporter exporter = new Exporter();
+        exporter.setId("myExporter");
+        exporter.setActionPath("/somePath");
+        exporter.setClassName("java.lang.String");
 
         WebConfig wc2 = new WebConfig();
         wc2.addType(type1);
         wc2.addType(type2);
+        wc2.addExporter(exporter);
 
         assertEquals(wc2, wc1);
     }

@@ -1,20 +1,18 @@
 <webconfig>
   <class className="Class1">
-    <shortdisplayers>
-      <displayer src="page1.jsp"/>
-      <displayer src="tile1.tile"/>
-    </shortdisplayers>
+    <fields>
+      <fieldconfig fieldExpr="class1field1"/>
+      <fieldconfig fieldExpr="class1field2.field"/>
+    </fields>
     <longdisplayers>
       <displayer src="/model/page2.jsp"/>
     </longdisplayers>
   </class>
   <class className="Class2">
-    <shortdisplayers>
-      <displayer src="page3.jsp"/>
-    </shortdisplayers>
     <longdisplayers>
       <displayer src="/model/page4.jsp"/>
       <displayer src="tile2.tile"/>
     </longdisplayers>
   </class>
+  <exporter id="myExporter" actionPath="/somePath" className="java.lang.String"/>
 </webconfig>
