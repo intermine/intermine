@@ -297,9 +297,9 @@ public class GFF3Record
      * Return the first value of the Dbxref field from the attributes of this record.
      * @return the Dbxref from the attributes of this record or null of there isn't a value
      */
-    public String getDbxref () {
+    public List getDbxrefs () {
         if (getAttributes().containsKey("Dbxref")) {
-            return (String) ((List) getAttributes().get("Dbxref")).get(0);
+            return (List) getAttributes().get("Dbxref");
         } else {
             return null;
         }
