@@ -43,7 +43,6 @@ public class MapResultSet implements ResultSet
      * @see ResultSet#close
      */    
     public void close() throws SQLException {
-        unsupported();
     }
 
     /**
@@ -1212,5 +1211,13 @@ public class MapResultSet implements ResultSet
     
     private void unsupported() throws SQLException {
         throw new SQLException("Operation not supported");
+    }
+
+    /**
+     * Returns the String representation of the map that backs this ResultSet
+     * @return a String reprentation of the map
+     */
+    public String toString() {
+        return row.toString();
     }
 }
