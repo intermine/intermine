@@ -115,6 +115,9 @@ public class XmlSchemaParser implements ModelParser
     protected XmlMetaData xmlInfo;
 
     protected Set namedTypesAlreadyDone = new HashSet();
+    
+    /** Map from class name to Set of key field names. */
+    protected Map keyFieldSets = new HashMap();
 
     /**
      * Constructor that takes the modelName and pkgName
@@ -230,47 +233,49 @@ public class XmlSchemaParser implements ModelParser
 
         String clsName = null;
         String path = eDecl.getName();
+        boolean generatedName = false;
         if (!paths.empty()) {
             path = (String) paths.peek() + "/" + path;
         }
-        if (!xmlInfo.isReference(path)) {
-            XMLType xmlType = eDecl.getType();
-            if (xmlType != null && xmlType.isComplexType()) {
-                if (xmlType.getName() == null) {
-                    // 1. named complex type -> create class name
-                    if (!clsStack.empty()) {
-                        clsName = StringUtil.capitalise(uniqueClassName(eDecl.getName(),
-                                                         (String) clsStack.peek()));
-                    } else {
-                        clsName = StringUtil.capitalise(eDecl.getName());
-                    }
-                    //clsName = xmlInfo.getClsNameFromXPath(path);
-                    LOG.debug("processElementDecl pushing " + clsName + " onto clsStack "
-                            + clsStack);
-                    clsStack.push(clsName);
+        
+        XMLType xmlType = eDecl.getType();
+        
+        if (xmlType != null && xmlType.isComplexType()) {
+            
+            // check whether this element is actually a reference
+            if (xmlInfo.isReferenceElement(path)) {
+                //String field = xmlInfo.getReferenceElementField(path);
+                //String key = xmlInfo.getReferencingKeyName(path, field);
+                //String clsPath = xmlInfo.getKeyPath(key);
+                clsName = (String) xmlInfo.getClsNameFromXPath(path);
+                LOG.debug("found reference element at: " + path + " referencing class: " + clsName);
+                return clsName;
+                
+            } else if (xmlType.getName() == null) {
+                if (!clsStack.empty()) {
+                    clsName = StringUtil.capitalise(uniqueClassName(eDecl.getName(),
+                                                     (String) clsStack.peek()));
+                } else {
+                    clsName = StringUtil.capitalise(eDecl.getName());
                 }
-                // 1 & 2 add path to stack, process complex type, pop paths stack
-                LOG.debug("pushing " + path + " onto paths " + paths);
-                paths.push(path);
-                processComplexType((ComplexType) xmlType);
-                path = (String) paths.pop();
-                LOG.debug("popped path: " + path);
-                if (clsName != null) {
-                    clsName = (String) clsStack.pop();
-                    LOG.debug("Popped clsName " + clsName + " from clsStack " + clsStack);
-                }
-
-                clsName = xmlInfo.getClsNameFromXPath(path);
-                LOG.debug("clsName = " + clsName);
-            } else {
-                // not a complex type -> return null
+                LOG.debug("(no name) processElementDecl pushing " + clsName + " onto clsStack "
+                                                                + clsStack);
+                clsStack.push(clsName);
+                generatedName = true;
             }
-        } else {
-            // 3. a reference (from keyrefs) -> work out target class name
-            String tmp = xmlInfo.getIdPath(path);
-            clsName = (String) xmlInfo.getClsNameFromXPath(tmp);
-            LOG.debug("changed path from: " + path + " to: " + tmp);
+            
+            LOG.debug("pushing " + path + " onto paths " + paths);
+            paths.push(path);
+            clsName = processComplexType((ComplexType) xmlType);
+            path = (String) paths.pop();
+            LOG.debug("popped path: " + path);
+            
+            if (generatedName) {
+                clsName = (String) clsStack.pop();
+                LOG.debug("(no name) Popped clsName " + clsName + " from clsStack " + clsStack);
+            }
         }
+
         return clsName;
     }
 
@@ -304,11 +309,12 @@ public class XmlSchemaParser implements ModelParser
      * deal with attributes and nested groups (possible recursion) then
      * create a new ClassDescriptor.
      * @param complexType complex type to process
+     * @return the class name of the complex type or null
      */
-    protected void processComplexType(ComplexType complexType) {
+    protected String processComplexType(ComplexType complexType) {
         if (complexType == null) {
             LOG.debug("Entering and leaving processComplexType(null)");
-            return;
+            return null;
         }
 
         LOG.debug("Entering processComplexType(" + complexType.getName() + ")");
@@ -328,7 +334,7 @@ public class XmlSchemaParser implements ModelParser
             if (namedTypesAlreadyDone.contains(clsName)) {
                 LOG.debug("Leaving processComplexType(" + complexType.getName() + ") - clsName "
                         + clsName + " has aleady been processed.");
-                return;
+                return clsName;
             }
             namedTypesAlreadyDone.add(clsName);
             clsStack.push(clsName);
@@ -337,9 +343,9 @@ public class XmlSchemaParser implements ModelParser
         if (complexType.isSimpleContent() && complexType.getAttributeDecls().hasMoreElements()) {
             String path = (String) paths.peek();
             String attrName = path.substring(path.lastIndexOf('/') + 1);
-
+            String typeName = simpleTypeToBuiltInTypeName((SimpleType) complexType.getBaseType());
             AttributeDescriptor atd = new AttributeDescriptor(attrName,
-                                        XmlUtil.xmlToJavaType(complexType.getBaseType().getName()));
+                                        XmlUtil.xmlToJavaType(typeName));
             Set atds = getFieldSetForClass(attributes, (String) clsStack.peek());
             atds.add(atd);
         }
@@ -377,8 +383,17 @@ public class XmlSchemaParser implements ModelParser
                                                       getFieldSetForClass(collections, clsName));
             classes.add(cld);
             processed.add(clsName);
+            // Record primary keys
+            Set keys = (Set) keyFieldSets.get(clsName);
+            if (keys == null) {
+                keys = new HashSet();
+                keyFieldSets.put(clsName, keys);
+            }
+            keys.addAll(xmlInfo.getKeyFields((String) paths.peek()));
         }
         LOG.debug("Leaving processComplexType(" + complexType.getName() + ") normally");
+        
+        return clsName;
     }
 
 
@@ -394,24 +409,35 @@ public class XmlSchemaParser implements ModelParser
         }
         LOG.debug("Entering processAttributes(" + complexType.getName() + ")");
 
+        String path = (String) paths.peek();
         Enumeration declEnum = complexType.getAttributeDecls();
         while (declEnum.hasMoreElements()) {
             AttributeDecl attribute = (AttributeDecl) declEnum.nextElement();
             String clsName = (String) clsStack.peek();
-            LOG.debug("creating atd (" + attribute.getName() + ","
+            String fieldName = attribute.getName();
+            // Check for references
+            if (xmlInfo.isReferenceField(path, fieldName)) {
+                // Need to determine the type using the keyref and key
+                String key = xmlInfo.getReferencingKeyName(path, fieldName);
+                String clsPath = xmlInfo.getKeyPath(key);
+                String refType = (String) xmlInfo.getClsNameFromXPath(clsPath);
+                fieldName = StringUtil.decapitalise(fieldName);
+                LOG.debug("creating reference attribute at: " + path + " field:" + fieldName
+                      + " referencing: " + clsPath);
+                ReferenceDescriptor rfd = new ReferenceDescriptor(fieldName,
+                                                          this.pkgName + "." + refType, null);
+                HashSet rfds = getFieldSetForClass(references, clsName);
+                rfds.add(rfd);
+            } else {
+                LOG.debug("creating atd (" + fieldName + ","
                       + attribute.getSimpleType().getName() + ")" + " for class: " + clsName);
-            String attributeTypeName = attribute.getSimpleType().getName();
-            if (attributeTypeName == null) {
-                LOG.error("Null simple type name " + attribute.getName());
-                attributeTypeName = "string";
+                String attributeTypeName = simpleTypeToBuiltInTypeName(attribute.getSimpleType());
+                AttributeDescriptor atd
+                      = new AttributeDescriptor(generateJavaName(attribute.getName()),
+                                                XmlUtil.xmlToJavaType(attributeTypeName));
+                Set atds = getFieldSetForClass(attributes, clsName);
+                atds.add(atd);
             }
-            if (attributeTypeName.equals("timeStampType")) {
-                attributeTypeName = "string";
-            }
-            AttributeDescriptor atd = new AttributeDescriptor(generateJavaName(attribute.getName()),
-                                        XmlUtil.xmlToJavaType(attributeTypeName));
-            Set atds = getFieldSetForClass(attributes, clsName);
-            atds.add(atd);
         }
         LOG.debug("Leaving processAttributes(" + complexType.getName() + ") normally");
     }
@@ -467,18 +493,19 @@ public class XmlSchemaParser implements ModelParser
                 String fieldName = null;
                 if (xmlType.isComplexType()) {
                     refType = processElementDecl(eDecl);
+                    if (refType == null) {
+                        LOG.debug("processElementDecl returned null for clsName:" + clsName
+                            + " element name:" + eDecl.getName());
+                        continue;
+                    }
                 }
                 boolean declIsCollection = isCollection || (eDecl.getMaxOccurs() < 0)
                     || (eDecl.getMaxOccurs() > 1);
                 if (xmlType.isComplexType()) {
                     if (declIsCollection) {
                         // collection
-                        if (xmlType.getName() == null) {
-                            fieldName = StringUtil.decapitalise(
+                        fieldName = StringUtil.decapitalise(
                                      StringUtil.pluralise(generateJavaName(eDecl.getName())));
-                        } else {
-                            fieldName = StringUtil.pluralise(generateJavaName(eDecl.getName()));
-                        }
                         LOG.debug("creating collection (" + fieldName + "," + refType
                                 + ") for class: " + clsName);
                         CollectionDescriptor cod
@@ -492,7 +519,7 @@ public class XmlSchemaParser implements ModelParser
                         LOG.debug("creating reference (" + fieldName + "," + refType
                                 + ") for class: " + clsName);
                         ReferenceDescriptor rfd = new ReferenceDescriptor(
-                                                          fieldName,
+                                                          StringUtil.decapitalise(fieldName),
                                                           this.pkgName + "." + refType, null);
                         HashSet rfds = getFieldSetForClass(references, clsName);
                         rfds.add(rfd);
@@ -503,7 +530,7 @@ public class XmlSchemaParser implements ModelParser
                     if (simpleType.hasFacet(Facet.ENUMERATION)) {
                         type = simpleType.getBaseType().getName();
                     } else {
-                        type = simpleType.getName();
+                        type = simpleTypeToBuiltInTypeName(simpleType);
                     }
                     fieldName = generateJavaName(eDecl.getName());
                     if (declIsCollection) {
@@ -513,8 +540,8 @@ public class XmlSchemaParser implements ModelParser
                         String subClassName = uniqueClassName(StringUtil.capitalise(fieldName),
                                 clsName);
                         CollectionDescriptor cod = new CollectionDescriptor(
-                                StringUtil.pluralise(fieldName), this.pkgName
-                                + "." + subClassName, null, true);
+                                StringUtil.decapitalise(StringUtil.pluralise(fieldName)),
+                                this.pkgName + "." + subClassName, null, true);
                         AttributeDescriptor atd = new AttributeDescriptor(fieldName,
                                 XmlUtil.xmlToJavaType(type));
                         ClassDescriptor cld = new ClassDescriptor(this.pkgName + "." + subClassName,
@@ -578,5 +605,31 @@ public class XmlSchemaParser implements ModelParser
             return "identifier";
         }
         return name;
+    }
+    
+    private String simpleTypeToBuiltInTypeName(SimpleType type) {
+        String typeName = null;
+        if (!type.isBuiltInType() && type.getBuiltInBaseType() != null) {
+            typeName = type.getBuiltInBaseType().getName();
+        } else {
+            typeName = type.getName();
+        }
+        if (typeName == null) {
+            LOG.error("Null simple type " + type);
+            typeName = "string";
+        }
+        if (typeName.equals("timeStampType")) {
+            typeName = "string";
+        }
+        return typeName;
+    }
+    
+    /**
+     * Given a model class name, return a Set of key field names.
+     * @param clsName model class name
+     * @return set of field names
+     */
+    public Set getKeyFieldsForClass(String clsName) {
+        return (Set) keyFieldSets.get(clsName);
     }
 }
