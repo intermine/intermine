@@ -2,16 +2,16 @@
   <section>
         <heading>FlyMine Database Documentation</heading>
         <item>
-          FlyMine <ulink url="../manual/manualQuickstart.xml">quick start guide</ulink>
+          FlyMine <ulink url="manual/manualQuickstart.xml">quick start guide</ulink>
         </item>
         <item>
-          <ulink url="../tutorials/tutorialIndex.xml">Tutorials</ulink> - step-by-step guide to queries
+          <ulink url="tutorials/index.xml">Tutorials</ulink> - step-by-step guide to queries
         </item>
         <item>
           <ulink url="/examples.do">Query examples</ulink>
         </item>
         <item>
-          <ulink url="../manual/manualIndex.xml">User Manual</ulink>
+          <ulink url="manual/index.xml">User Manual</ulink>
         </item>
         <item><ulink url="presentations/index.xml">Presentations, slides, posters...</ulink></item>
         <item><ulink url="usage_scenarios/index.xml">Usage scenarios</ulink></item>
