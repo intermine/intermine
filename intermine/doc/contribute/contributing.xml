@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<article>
+
+<artheader>
+<date>2003-06-20</date>
+<title>Contributing code to FlyMine</title>
+</artheader>
+
+<sect1>
+<title>Contributing code to the FlyMine project</title>
+
+<para>We warmly welcome contributions to the project, however big or
+small. If you would like to get involved, the best thing to do is talk
+to existing developers via the flymine-dev mailing list, to prevent
+unnecessary duplication of work.</para>
+
+<para>We prefer to accept patches against the current CVS
+repository. All code must adhere to the <ulink
+url="coding-standards">FlyMine coding standards</ulink> (note
+specifically that every metod of every class must have comprehensive
+unit tests), and not cause any existing unit tests to fail.</para>
+
+</sect1>
+</article>
