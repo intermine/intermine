@@ -64,7 +64,7 @@ public class DataTranslator
     protected Map clsPropMap;     // map src -> tgt property URI for each restricted subclass URI
     protected Map impMap;         // map class URI -> implementation string
     protected String tgtNs;
-    protected int newItemId = -1;
+    protected int newItemId = 1;
 
 
     protected static final Logger LOG = Logger.getLogger(DataTranslator.class);
@@ -162,17 +162,19 @@ public class DataTranslator
         //attributes
         for (Iterator i = srcItem.getAttributes().iterator(); i.hasNext();) {
             Attribute att = (Attribute) i.next();
-            String attSrcURI = srcItem.getClassName() + "__" + att.getName();
-            String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
-            if (attTgtURI == null) {
-                throw new FlyMineException("no target attribute found for " + attSrcURI
-                                           + " in class " + tgtClsName);
-            }
-            if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
-                Attribute newAtt = new Attribute();
-                newAtt.setName(attTgtURI.split("__")[1]);
-                newAtt.setValue(StringUtil.duplicateQuotes(att.getValue()));
-                tgtItem.addAttribute(newAtt);
+            if (!att.getName().equals("nonUniqueId")) {
+                String attSrcURI = srcItem.getClassName() + "__" + att.getName();
+                String attTgtURI = getTargetFieldURI(tgtClsName, attSrcURI);
+                if (attTgtURI == null) {
+                    throw new FlyMineException("no target attribute found for " + attSrcURI
+                                               + " in class " + tgtClsName);
+                }
+                if (OntologyUtil.getNamespaceFromURI(attTgtURI).equals(tgtNs)) {
+                    Attribute newAtt = new Attribute();
+                    newAtt.setName(attTgtURI.split("__")[1]);
+                    newAtt.setValue(StringUtil.duplicateQuotes(att.getValue()));
+                    tgtItem.addAttribute(newAtt);
+                }
             }
         }
 
@@ -313,7 +315,7 @@ public class DataTranslator
      */
     protected Item createItem(String className, String implementations) {
         Item item = new Item();
-        item.setIdentifier("" + (newItemId--));
+        item.setIdentifier("-1_" + (newItemId++));
         item.setClassName(className);
         item.setImplementations(implementations);
         return item;
