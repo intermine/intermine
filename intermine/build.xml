@@ -436,25 +436,21 @@
   <target name="test-main" depends="compile-test, build-db-testmodel"
           description="perform JUnit tests on main source code" >
 
-    <!-- Specify that the tests depend on the java files in the main directories -->
+    <!-- this will cause every test to be re-run if any java file changes -->
     <dependset>
-      <srcfileset dir="${src.java}" includes="**/*.java" />
+      <srcfileset dir="${build.java}" includes="**/*.class" />
       <targetfileset dir="${results.junit}" includes="TEST-*.xml" />
     </dependset>
-
-    <!-- Check if the tests have been run after the Java file last updated -->
-    <uptodate property="test-main.uptodate">
-      <srcfiles dir="${src.test}" includes="**/*.java"/>
-      <mapper type="package" from="*.java" to="${results.junit}/TEST-*.xml" />
-    </uptodate>
 
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
       <classpath refid="test.class.path"/>
       <formatter type="xml" />
-      <batchtest fork="no" todir="${results.junit}" unless="test-main.uptodate">
-        <fileset dir="${build.test}">
-         <include name="**/*Test.class" />
-         <exclude name="org/flymine/web/*" />
+      <batchtest fork="no" todir="${results.junit}">
+        <fileset dir="${build.test}" includes="**/*Test.class">
+          <depend targetdir="${results.junit}">
+            <mapper type="package" from="*.class" to="TEST-*.xml" />
+          </depend>
+          <exclude name="org/flymine/web/*" />
         </fileset>
       </batchtest>
     </junit>
@@ -551,7 +547,7 @@
       <classpath refid="project.class.path"/>
       <fileset dir="${src.java}" defaultexcludes="yes" />
       <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} University of Cambridge. All Rights Reserved.</i>]]></bottom>
+      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} FlyMine. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
 
