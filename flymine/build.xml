@@ -250,7 +250,6 @@
   <!-- convert ensembl zargo to InterMine model -->
   <target name="convert-ensembl" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
-      <property name="model.src" value="${model}/ensembl"/>
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
@@ -301,7 +300,6 @@
   <!-- convert chado zargo to InterMine model -->
   <target name="convert-chado" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-zargo" inheritRefs="true">
-      <property name="model.src" value="${model}/chado"/>
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
@@ -352,7 +350,6 @@
   <!-- convert MAGE-OM xmi to InterMine model -->
   <target name="convert-mage" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="generate-model-from-xmi" inheritRefs="true">
-      <property name="model.src" value="${model}/mage"/>
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
@@ -532,7 +529,6 @@
     <ant antfile="${build}/build-model.xml" target="generate-model-from-xmlschema" inheritRefs="true">
       <property name="model.name" value="psi"/>
       <property name="pkg" value="org.flymine.model.psi"/>
-      <property name="model.src" value="${model}/psi"/>
       <property name="build.model.dir" value="${build.model}/psi"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>    
@@ -627,7 +623,6 @@
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="model.src" value="${model}/genomic"/>
     </ant>
   </target>
 
@@ -636,7 +631,6 @@
     <ant antfile="${build}/build-model.xml" target="jar" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="model.src" value="${model}/genomic"/>
     </ant>
   </target>
 
@@ -1365,7 +1359,6 @@
   <target name="create-indexes-production">
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.production"/>
       <property name="objectstore.name" value="os.production"/>
@@ -1453,7 +1446,6 @@
   <target name="compile-ensembl-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
-      <property name="model.src" value="${model}/ensembl"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1461,7 +1453,6 @@
   <target name="ensembl-test" depends="prepare-test, convert-ensembl, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
-      <property name="model.src" value="${model}/ensembl"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1469,7 +1460,6 @@
   <target name="compile-chado-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="chado"/>
-      <property name="model.src" value="${model}/chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1477,7 +1467,6 @@
   <target name="chado-test" depends="prepare-build-model, convert-chado">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="chado"/>
-      <property name="model.src" value="${model}/chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1485,7 +1474,6 @@
   <target name="compile-rnai-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
-      <property name="model.src" value="${model}/rnai"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1493,7 +1481,6 @@
   <target name="rnai-test" depends="prepare-build-model, prepare-test, convert-rnai">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="rnai"/>
-      <property name="model.src" value="${model}/rnai"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1501,7 +1488,6 @@
   <target name="compile-orthologue-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
-      <property name="model.src" value="${model}/orthologue"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1509,7 +1495,6 @@
   <target name="orthologue-test" depends ="prepare-build-model, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="orthologue"/>
-      <property name="model.src" value="${model}/orthologue"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1517,7 +1502,6 @@
   <target name="compile-go-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="go"/>
-      <property name="model.src" value="${model}/go"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1525,7 +1509,6 @@
   <target name="go-test" depends ="prepare-build-model, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="go"/>
-      <property name="model.src" value="${model}/go"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1533,7 +1516,6 @@
   <target name="compile-mage-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
-      <property name="model.src" value="${model}/mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1541,7 +1523,6 @@
   <target name="mage-test" depends="prepare-build-model, prepare-test, convert-mage">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
-      <property name="model.src" value="${model}/mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1549,7 +1530,6 @@
   <target name="compile-psi-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="psi"/>
-      <property name="model.src" value="${model}/psi"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1558,7 +1538,6 @@
     <copy file="${model}/psi/psi.xsd" toDir="${build.model}/psi"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="psi"/>
-      <property name="model.src" value="${model}/psi"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1566,7 +1545,6 @@
   <target name="compile-taxonomy-java">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="taxonomy"/>
-      <property name="model.src" value="${model}/taxonomy"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -1574,22 +1552,20 @@
   <target name="taxonomy-test" depends="prepare-build-model, compile-taxonomy-java, prepare-test, build-db-fulldatatest">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="taxonomy"/>
-      <property name="model.src" value="${model}/taxonomy"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
 
   <target name="compile-genomic-java" depends="jar-genomic">
-    <!--ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="webapp.class.path"/>
-    </ant-->
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
   </target>
 
   <target name="genomic-test" depends ="prepare-build-model, prepare-test">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
-      <property name="model.src" value="${model}/genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
     <antcall target="test-report"/>
@@ -1661,7 +1637,6 @@
       <property name="war" value="${dist.webapp}/flymine.war"/> 
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="webapp.class.path"/>
-      <property name="model.src" value="${model}/genomic"/>
     </ant>
 
     <copy todir="${build.tmp}"
@@ -1762,7 +1737,6 @@
     <ant antfile="${build}/build-model.xml" target="build-model-from-ace" inheritRefs="true">
       <property name="model.name" value="acedb"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="model.src" value="${model}/acedb"/>
     </ant>
   </target>
 
@@ -1770,7 +1744,6 @@
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="chado"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="model.src" value="${model}/chado"/>
     </ant>
   </target>
 
@@ -1778,7 +1751,6 @@
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="model.src" value="${model}/ensembl"/>
     </ant>
   </target>
 
@@ -1786,7 +1758,6 @@
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="mage"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="model.src" value="${model}/mage"/>
     </ant>
   </target>
 
