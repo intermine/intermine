@@ -64,7 +64,7 @@ public class ConverterTask extends Task
                 Statement s = c.createStatement();
                 System.err .println("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
                 s.execute("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
-                String filename = model + "_src_items.sql";
+                String filename = "resources/" + model + "_src_items.sql";
                 InputStream is = ConverterTask.class.getClassLoader().getResourceAsStream(filename);
                 if (is == null) {
                     throw new IllegalArgumentException("Model '" + model + "' does not have an"
