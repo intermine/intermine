@@ -34,7 +34,7 @@
     <put name="body" value="tree.tile"/>
   </definition>
   
-  <definition name="queryMain.tile" path="/queryMain.jsp" controllerUrl="/initQuery.do">
+  <definition name="queryMain.tile" path="/queryMain.jsp">
     <put name="savedBagView" value="savedBagView.jsp"/>
     <put name="savedQueryView" value="savedQueryView.jsp"/>
     <put name="queryErrorMessage" value="queryErrorMessage.jsp"/>

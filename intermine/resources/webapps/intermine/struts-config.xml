@@ -160,9 +160,6 @@
 
     <!-- Controllers -->
 
-    <action path="/initQuery"
-            type="org.flymine.web.QueryController"/> 
-
     <action path="/initQueryBuild"
             validate="false"
             type="org.flymine.web.QueryBuildController"
