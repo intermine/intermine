@@ -77,8 +77,6 @@ public class ModelOutputTask extends Task
         try {
             if (type.equals("java")) {
                 mo = new JavaModelOutput(model, destDir);
-            } else if (type.equals("castor")) {
-                mo = new CastorModelOutput(model, destDir);
             } else if (type.equals("flyminetorque")) {
                 mo = new FlyMineTorqueModelOutput(model, destDir);
             } else {

@@ -64,7 +64,6 @@
   <patternset id="lib.common">
     <include name="jasper*.jar"/>
     <include name="ant*.jar"/>
-    <include name="castor*xml*.jar" />
     <include name="cglib*.jar" />
     <include name="commons-collections*.jar" />
     <include name="commons-dbcp*.jar" />
@@ -72,7 +71,6 @@
     <include name="commons-pool*.jar" />
     <include name="commons-digester*.jar" />
     <include name="commons-beanutils*.jar" />
-    <include name="db-ojb*.jar" />
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
     <include name="postgresql*.jar" />
@@ -998,15 +996,7 @@
     <!-- model dir -->
     <copy todir="${tutorial}/model" file="${resources}/tutorial/tutorial_model.xml"/>
     <!-- resources dir -->
-    <copy todir="${tutorial}/resources">
-      <fileset dir="${resources}/runtime">
-        <include name="repository.xml"/>
-        <include name="repository_internal.xml"/>
-        <include name="castor_xml_include.xml"/>
-        <include name="ojbcore-schema.xml"/>
-      </fileset>
-      <fileset dir="${resources}/tutorial" includes="tutorial_data.xml"/>
-    </copy>
+    <copy todir="${tutorial}/resources" file="${resources}/tutorial/tutorial_data.xml"/>
     <!-- src dir -->
     <copy todir="${tutorial}/src/java/org/flymine/tutorial">
       <fileset dir="${src.java}/org/flymine/tutorial"/>

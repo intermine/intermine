@@ -98,21 +98,6 @@
     <model-output type="java" model="${model.name}" destdir="${build.model}/${model.name}"/>
   </target>
 
-  <target name="generate-xml-mapping"
-          description="Generate Castor (XML) mapping files from a FlyMine model file">
-    <taskdef name="model-output" classname="org.flymine.codegen.ModelOutputTask">
-      <classpath refid="class.path" />
-    </taskdef>
-
-    <model-output type="castor" model="${model.name}" destdir="${build.model}/${model.name}"/>
-
-    <copy todir="${build.model}/${model.name}" flatten="true">
-      <fileset dir="${resources}">
-        <include name="**/castor*.xml"/>
-      </fileset>
-    </copy>
-  </target>
-
   <target name="generate-torque"
           description="Generate Torque schema description from a FlyMine model file">
     <taskdef name="model-output" classname="org.flymine.codegen.ModelOutputTask">
@@ -120,11 +105,6 @@
     </taskdef>
 
     <model-output type="flyminetorque" model="${model.name}" destdir="${build.model}/${model.name}"/>
-    <copy todir="${build.model}/${model.name}" flatten="true">
-      <fileset dir="${resources}">
-        <include name="**/*-schema.xml"/>
-      </fileset>
-    </copy>
   </target>
 
   <!-- compile java source -->
@@ -153,11 +133,11 @@
   </target>
 
   <!-- Targets that could be called from another build script -->
-  <target name="build-model-from-xml" depends="copy-xml-model, compile-java, generate-xml-mapping, generate-torque"
+  <target name="build-model-from-xml" depends="copy-xml-model, compile-java, generate-torque"
           description="Build a usable model from a FlyMine model XML file">
   </target>
 
-  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java, generate-xml-mapping, generate-torque"
+  <target name="build-model-from-zargo" depends="unpack-xmi-model, generate-xmi-model, compile-java, generate-torque"
           description="Build a usable model from a .zargo file">
   </target>
 
@@ -174,11 +154,11 @@
   </target>
   
 
-  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, generate-xml-mapping, generate-torque"
+  <target name="build-model-from-ace" depends="generate-acedb-model, compile-java, generate-torque"
           description="Build a usable model from an AceDB .wrm file">
   </target>
 
-  <target name="jar" depends="compile-java, generate-xml-mapping, generate-torque"
+  <target name="jar" depends="compile-java, generate-torque"
           description="create a jar of a model">
     <jar destfile="${dist}/flymine-${model.name}.jar">
       <fileset dir="${build.model}/${model.name}" >

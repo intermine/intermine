@@ -13,10 +13,6 @@ package org.flymine.objectstore.query;
 import java.util.Collections;
 import junit.framework.Test;
 
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.metadata.DescriptorRepository;
-
-import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.flymine.testing.OneTimeTestCase;
 import org.flymine.util.DynamicUtil;

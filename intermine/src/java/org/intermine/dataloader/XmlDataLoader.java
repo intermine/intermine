@@ -21,7 +21,7 @@ import org.flymine.util.XmlBinding;
 
 /**
  * Provides a method for unmarshalling XML given source  into java
- * business objects then calls store on each.  Uses Castor to handle XML binding.
+ * business objects then calls store on each.
  * store() is AbstractDataLoader.store().
  *
  * @author Richard Smith
