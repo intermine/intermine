@@ -12,27 +12,29 @@ package org.flymine.util;
 
 
 import java.util.Iterator;
+import java.io.File;
 import java.io.Writer;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 
 /**
- * Common operations for post processing.
+ * Create file to send to FlyBase to link in to each FBGN... identifier
+ * available in FlyMine.
  *
  * @author Richard Smith
  */
 public class CreateFlyBaseLinkIns
 {
     private static final String DBID = "FlyMine";
-    private static final String BURL = "http://www.flymine.org/query/portal.do?origin=flybase&class=Gene&externalid=";
+    private static final String BURL
+        = "http://www.flymine.org/query/portal.do?origin=flybase&class=Gene&externalid=";
     private static final String NAM = "FlyMine - integrated genomics and proteomics";
     private static final String ICO = "";
     private static final String LKNA = "FlyMine";
@@ -40,13 +42,21 @@ public class CreateFlyBaseLinkIns
         + " - integrated Drosophila and Anopheles genomics and proteomics data.";
     private static final String ENDL = System.getProperty("line.separator");
 
-    private ObjectStore os;
 
-    public CreateFlyBaseLinkIns(String alias) throws Exception {
-        this.os = ObjectStoreFactory.getObjectStore(alias);
+    /**
+     * Create link-in file.
+     * @param os ObjectStore to find Genes in
+     * @param outputFile file to write to
+     * @throws Exception if anything goes wrong
+     */
+    public static void createLinkInFile(ObjectStore os, File outputFile) throws Exception {
+        FileWriter writer = new FileWriter(outputFile);
+        writeFile(os, writer);
+        writer.flush();
+        writer.close();
     }
 
-    private String createHeader() {
+    private static String createHeader() {
         StringBuffer sb = new StringBuffer();
         sb.append("<OPVR>" + ENDL)
             .append("<DBID>" + DBID + "</DBID>" + ENDL)
@@ -60,23 +70,22 @@ public class CreateFlyBaseLinkIns
         return sb.toString();
     }
 
-    private void writeFile(Writer writer) throws ObjectStoreException, IOException {
+    private static void writeFile(ObjectStore os, Writer writer) throws ObjectStoreException,
+                                                                        IOException {
         writer.write(createHeader());
         writer.write("#FlybaseID" + "\t" + "DbName" + "\t" + "DbID" + "\t"
                       + "DbUrl (relative to base DBurl)" + ENDL);
 
-        Iterator iter = getFlyBaseIds();
+        Iterator iter = getFlyBaseIds(os);
         while (iter.hasNext()) {
             String fbgn = ((Gene) iter.next()).getOrganismDbId();
             if (fbgn.startsWith("FBgn") && (fbgn.indexOf("flymine") == -1)) {
                 writer.write(fbgn + "\t" + DBID + "\t" + fbgn + "\t" + fbgn + ENDL);
-                System.out.println("written something");
             }
         }
     }
 
-
-    public Iterator getFlyBaseIds() throws ObjectStoreException {
+    private static Iterator getFlyBaseIds(ObjectStore os) throws ObjectStoreException {
         Query q = new Query();
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryField qf = new QueryField(qcGene, "organismDbId");
@@ -84,28 +93,19 @@ public class CreateFlyBaseLinkIns
         q.addFrom(qcGene);
         QueryClass qcOrg = new QueryClass(Organism.class);
         q.addFrom(qcOrg);
+        QueryField qfOrgTaxon = new QueryField(qcOrg, "taxonId");
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        SimpleConstraint sc1 = new SimpleConstraint(qfOrgTaxon, ConstraintOp.EQUALS,
+                                                    new QueryValue(new Integer(7227)));
+        cs.addConstraint(sc1);
         QueryObjectReference ref1 = new QueryObjectReference(qcGene, "organism");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcOrg);
-        q.setConstraint(cc1);
+        cs.addConstraint(cc1);
+        q.setConstraint(cs);
         q.addToOrderBy(qf);
+        q.setDistinct(true);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         res.setBatchSize(10000);
         return res.iterator();
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.out.println("Usage: CreateFlyBaseLinkIns objectstore_alias filename");
-        }
-
-        String alias = args[0];
-        String filename = args[1];
-
-        CreateFlyBaseLinkIns m = new CreateFlyBaseLinkIns(alias);
-        FileWriter writer = new FileWriter(filename);
-        m.writeFile(writer);
-        writer.flush();
-        writer.close();
     }
 }

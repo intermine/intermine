@@ -1756,6 +1756,13 @@
     <mappings operation="update-orthologues" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="create-flybase-linkins" depends="compile-genomic-java-from-db">
+    <taskdef name="link-ins" classname="org.flymine.util.LinkInTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <link-ins objectStore="os.production" outputFile="FlyBaseToFlyMine" database="flybase"/>
+  </target>
+
   <target name="post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
