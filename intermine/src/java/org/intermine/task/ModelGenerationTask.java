@@ -93,7 +93,7 @@ public class ModelGenerationTask extends Task
         ModelParser parser = null;
 
         if (type.equals("xmi")) {
-            parser = new XmiParser();
+            parser = new XmiParser(modelName);
         } else if (type.equals("acedb")) {
             parser = new AceModelParser(modelName);
         } else {
