@@ -23,12 +23,13 @@ import org.flymine.sql.query.ExplainResult;
 import org.flymine.objectstore.query.*;
 import org.flymine.model.testmodel.*;
 
+
 /**
  * TestCase for all ObjectStores
  *
  */
 
-public abstract class ObjectStoreTestCase extends ObjectStoreQueriesTestCase
+public abstract class ObjectStoreTestCase extends SetupDataTestCase
 {
     protected ObjectStoreAbstractImpl os;
 
@@ -58,7 +59,7 @@ public abstract class ObjectStoreTestCase extends ObjectStoreQueriesTestCase
      *
      * @throws Exception if an error occurs
      */
-    public void setUpResults() throws Exception {
+    public static void setUpResults() throws Exception {
         Object[][] r;
 
         r = new Object[][] { { data.get("CompanyA") },
@@ -181,7 +182,7 @@ public abstract class ObjectStoreTestCase extends ObjectStoreQueriesTestCase
         results.put("SelectInterfaceAndSubClasses3", toList(r));
     }
 
-    protected List toList(Object[][] o) {
+    protected static List toList(Object[][] o) {
         List rows = new ArrayList();
         for(int i=0;i<o.length;i++) {
             rows.add(new ResultsRow(Arrays.asList((Object[])o[i])));
