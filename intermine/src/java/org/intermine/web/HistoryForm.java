@@ -13,7 +13,7 @@ package org.intermine.web;
 import org.apache.struts.action.ActionForm;
 
 /**
- * Form bean to represent the inputs needs to create a new Query from the history page.
+ * Form bean to represent the inputs needed to create a new Query from the history page.
  *
  * @author Kim Rutherford
  */
