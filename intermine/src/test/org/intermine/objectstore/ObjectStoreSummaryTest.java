@@ -64,11 +64,11 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         assertEquals(Arrays.asList(new Object [] {"10", "20", "30", "40", "50", "60"}),
                      oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
 
-        // null because Department.name isn't in the objectstoresummary.config.properties file
-        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Department", "name"));
+        // null because Bank.name isn't in the objectstoresummary.config.properties file
+        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Bank", "name"));
 
         // null because max.field.values exceeded
         assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
-        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
+        assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
     }
 }
