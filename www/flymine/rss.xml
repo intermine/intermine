@@ -13,7 +13,7 @@
       
       <item>
         <title>Star City</title>
-        <link>http://www.flymine.org</link>
+        <link>http://www.flymine.org/</link>
         <description>
           How do Americans get ready to work with Russians aboard the
           International Space Station? They take a crash course in culture,
@@ -22,6 +22,18 @@
         <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
       </item>
     
-    -->   
+    -->
+    
+    <item>
+      <title>FlyMine 1.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        FlyMine 1.0 is now publically available at <a
+        href="http://www.flymine.org/release-1.0/">
+        http://www.flymine.org/release-1.0/</a>.
+      </description>
+      <pubDate>Mon, 01 Nov 2004 11:39:21 GMT</pubDate>
+    </item>
+    
   </channel>
 </rss>
