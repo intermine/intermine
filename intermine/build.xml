@@ -25,7 +25,6 @@
   <property name="src.java" location="${src}/java"/>
   <property name="src.test" location="${src}/test"/>
   <property name="src.www" location="doc"/>
-  <property name="src.www-internal" location="../flymine-private/doc"/>
   <property name="src.webapp" location="${src}/web"/>
 
   <!-- resources directory -->
@@ -45,7 +44,6 @@
   <property name="build.src.test" location="${build}/testsrc"/>
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.www" location="${build}/www"/>
-  <property name="build.www-internal" location="${build}/www/internal"/>
   <property name="build.webapp" location="${build}/webapp"/>
   <property name="build.tmp" location="${build}/tmp"/>
 
@@ -239,7 +237,6 @@
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.www}"/>
-    <mkdir dir="${build.www-internal}"/>
     <mkdir dir="${build.tmp}"/>
 
     <mkdir dir="${results}"/>
@@ -602,19 +599,8 @@
 
 
   <!-- Web targets -->
-
-  <target name="build-www" depends="prepare"
-          description="build the static website" >
-
-    <available file="${src.www-internal}" type="dir" property="www-internal.present"/>
-
-    <antcall target="www-external" />
-    <antcall target="www-internal" />
-
-  </target>
-
-    <!-- main web site -->
-  <target name="www-external" depends="prepare">
+  <!-- main web site -->
+  <target name="build-www" depends="prepare">
 
     <!-- make sure files dependent on sidebar are handled correctly -->
     <dependset>
@@ -664,43 +650,6 @@
       <targetfile />
     </apply>
   </target>
-
-    <!-- internal web site -->
-  <target name="www-internal" depends="prepare"
-          if="www-internal.present" >
-    <copy todir="${build.www-internal}">
-      <fileset dir="${src.www-internal}">
-        <exclude name="**/*.xml" />
-        <exclude name="**/*.xsl" />
-        <exclude name="**/*.dia" />
-      </fileset>
-    </copy>
-
-    <style basedir="${src.www-internal}" destdir="${build.www-internal}" extension=".html"
-      style="${src.www}/flymine.xsl" includes="**/*.xml">
-      <classpath refid="project.class.path"/>
-      <param name="basedir" expression="${www.location}" />
-    </style>
-
-    <apply executable="bin/buildpngfromdia" parallel="false" dest="${build.www-internal}">
-      <fileset dir="${src.www-internal}">
-        <include name="**/*.dia" />
-      </fileset>
-      <mapper type="glob" from="*.dia" to="*.png" />
-      <srcfile />
-      <targetfile />
-    </apply>
-    <apply executable="bin/buildgiffrompng" parallel="false" dest="${build.www-internal}">
-      <fileset dir="${build.www-internal}">
-        <include name="**/*.png" />
-      </fileset>
-      <mapper type="glob" from="*.png" to="*.gif" />
-      <srcfile />
-      <targetfile />
-    </apply>
-
-  </target>
-
 
   <!-- Webapp targets -->
 
