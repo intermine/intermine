@@ -15,6 +15,7 @@ public class ObjectStoreDummyImpl implements ObjectStore
 {
     private List rows = new ArrayList();
     private int resultsSize = 0;
+    private int executeCalls = 0;
 
     /**
      * Construct an ObjectStoreDummyImpl
@@ -57,6 +58,7 @@ public class ObjectStoreDummyImpl implements ObjectStore
                 results.add(getRow(q));
             }
         }
+        executeCalls++;
         return results;
 
     }
@@ -77,6 +79,15 @@ public class ObjectStoreDummyImpl implements ObjectStore
      */
     public void setResultsSize(int size) {
         this.resultsSize = size;
+    }
+
+    /**
+     * Gets the number of execute calls made to this ObjectStore
+     *
+     * @return the number of execute calls made (not including the initial no-argument call)
+     */
+    public int getExecuteCalls() {
+        return executeCalls;
     }
 
     /**
