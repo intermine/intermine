@@ -105,9 +105,6 @@ public class StringUtil
 
         List l = new ArrayList();
         
-        // add list sentinel to avoid the special case for the first token
-        l.add(new Integer(-delim.length()));
-              
         int nextStartIndex = 0;
 
         while (true) {
@@ -122,12 +119,16 @@ public class StringUtil
         // add list sentinel to avoid the special case for the last token
         l.add(new Integer(str.length()));
 
-        String [] returnArray = new String[l.size() - 1];
+        String [] returnArray = new String[l.size()];
 
-        for (int i = 0; i < returnArray.length; i++) {
-            int thisDelimStart = ((Integer) l.get(i)).intValue();
-            int nextDelimStart = ((Integer) l.get(i + 1)).intValue();
-            returnArray[i] = str.substring(thisDelimStart + delim.length(), nextDelimStart);
+        int i = 0;
+        int lastDelimStart = -delim.length();
+        Iterator iter = l.iterator();
+        while (iter.hasNext()) {
+            int thisDelimStart = ((Integer) iter.next()).intValue();
+            returnArray[i] = str.substring(lastDelimStart + delim.length(), thisDelimStart);
+            lastDelimStart = thisDelimStart;
+            i++;
         }
 
         return returnArray;
