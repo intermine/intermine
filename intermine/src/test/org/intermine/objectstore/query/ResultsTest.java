@@ -410,10 +410,6 @@ public class ResultsTest extends TestCase
         assertEquals(1, i.getRows());
         assertEquals(ResultsInfo.ESTIMATE, i.getStatus());
 
-        i = res.getInfo();
-        assertEquals(1, i.getRows());
-        assertEquals(ResultsInfo.ESTIMATE, i.getStatus());
-
         res.get(0);
 
         i = res.getInfo();
@@ -428,6 +424,32 @@ public class ResultsTest extends TestCase
 
         res.get(30);
 
+        i = res.getInfo();
+        assertEquals(50, i.getRows());
+        assertEquals(ResultsInfo.SIZE, i.getStatus());
+    }
+
+    public void testResultsInfo2() throws Exception {
+        Query q = new Query();
+        q.addFrom(new QueryClass(Department.class));
+        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
+        os2.setResultsSize(50);
+        os2.setEstimatedResultsSize(1);
+
+        Results res = os2.execute(q);
+        res.setBatchSize(30);
+
+        ResultsInfo i = res.getInfo();
+        assertEquals(1, i.getRows());
+        assertEquals(ResultsInfo.ESTIMATE, i.getStatus());
+
+        res.get(0);
+
+        i = res.getInfo();
+        assertEquals(30, i.getRows());
+        assertEquals(ResultsInfo.AT_LEAST, i.getStatus());
+
+        assertEquals(50, res.size());
         i = res.getInfo();
         assertEquals(50, i.getRows());
         assertEquals(ResultsInfo.SIZE, i.getStatus());
