@@ -304,7 +304,7 @@ public class QueryOptimiser
             return mergeGroupBy(precomputedTable, query);
         }
         Set retval = new HashSet();
-        
+
         // Find the possible mappings from tables in the
         // PrecomputedTable query to tables in the Query
         Set mappings = new ConsistentSet();
@@ -352,7 +352,7 @@ public class QueryOptimiser
         // Now, we can pass the trimmed mappings Set into MappingUtil.findMultipleCombinations. For
         // each multiple combination, produce a new Query.
         Set multipleMappings = MappingUtil.findMultipleCombinations(mappings);
-        
+
         Iterator multipleMappingsIter = multipleMappings.iterator();
         while (multipleMappingsIter.hasNext()) {
             Set multipleMapping = (Set) multipleMappingsIter.next();
@@ -370,7 +370,7 @@ public class QueryOptimiser
                     //
                     // Okay, trying the original query table list instead. Watch this space...
                     remapAliases(mapping, originalQuery.getFrom());
-         
+
                     // Compare the WHERE constraints.
                     Set whereConstraintEqualsSet = new HashSet();
                     // NOTE: this if line has a side-effect... Careful.
@@ -378,17 +378,17 @@ public class QueryOptimiser
                                 whereConstraintEqualsSet);
                     // So now whereConstraintEqualsSet contains all the constraints that can be
                     // left out of the WHERE clause
-              
+
                     Table precomputedSqlTable = new Table(precomputedTable.getName(),
                             ALIAS_PREFIX + StringUtil.uniqueString());
                     Query newQuery = new Query();
-                
+
                     // Populate the SELECT list of the new Query. This method will throw an
                     // exception if any of the AbstractValues required are not present in the
                     // precomputed table.
                     reconstructSelectValues(currentQuery.getSelect(), precomputedSqlTable, valueMap,
                             precompQuery.getFrom(), false, newQuery);
-                    
+
                     // Populate the FROM list - first the precomputed table
                     newQuery.addFrom(precomputedSqlTable);
                     // And also the non-covered tables.
@@ -475,7 +475,6 @@ public class QueryOptimiser
                             newQuery.addSelect(new SelectValue(orderByField, "orderby_field"));
                         }
                     }
-
                     // Now populate the GROUP BY clause of newQuery from the contents of the GROUP
                     // BY clause of currentQuery.
                     reconstructAbstractValues(currentQuery.getGroupBy(), precomputedSqlTable,
@@ -561,7 +560,7 @@ public class QueryOptimiser
             // compareConstraints(precompWhere, queryWhere)
             //      && compareConstraints(queryWhere, precompWhere)
             // This will catch the case where the precompWhere and the QueryWhere are actually
-            // equal, but expressed in different terms (such as a = 5, compared to 
+            // equal, but expressed in different terms (such as a = 5, compared to
             // a <= 5 and a >= 5, although I don't think the algorithm is quite clever enough to
             // spot this particular example).
             if (!precompQuery.getWhere().equals(query.getWhere())) {
@@ -593,13 +592,13 @@ public class QueryOptimiser
             Table precomputedSqlTable = new Table(precomputedTable.getName(),
                     ALIAS_PREFIX + StringUtil.uniqueString());
             Query newQuery = new Query();
-            
+
             try {
                 // Populate the SELECT list of the new Query. This method will throw an exception
                 // if any of the AbstractValues required are not present in the precomputed table.
                 reconstructSelectValues(query.getSelect(), precomputedSqlTable, valueMap,
                         precompQuery.getFrom(), true, newQuery);
-                
+
                 // Populate the FROM list - in this case it is only the precomputed table
                 newQuery.addFrom(precomputedSqlTable);
 
@@ -887,7 +886,7 @@ public class QueryOptimiser
      * cannot be constructed, given the PrecomputedTable
      */
     protected static void reconstructAbstractConstraints(Set oldConstraints,
-            Table precomputedSqlTable, Map valueMap, Set tableSet, boolean groupBy, 
+            Table precomputedSqlTable, Map valueMap, Set tableSet, boolean groupBy,
             Set newConstraints, Set constraintEqualsSet, Field firstPrecompOrderBy,
             int precompOrderBySize, Field orderByField) throws QueryOptimiserException {
         Iterator constraintIter = oldConstraints.iterator();

@@ -84,7 +84,7 @@ public class ChangeResultsSizeAction extends InterMineAction
         HttpSession session = request.getSession();
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         ChangeResultsForm changeResultsForm = (ChangeResultsForm) form;
-        
+
         pt.setPageSize(Integer.parseInt(changeResultsForm.getPageSize()));
 
         return mapping.findForward("results");
@@ -101,7 +101,7 @@ public class ChangeResultsSizeAction extends InterMineAction
      */
     public ActionForward saveBag(ActionMapping mapping,
                                  ActionForm form,
-                                 HttpServletRequest request, 
+                                 HttpServletRequest request,
                                  HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
@@ -111,9 +111,9 @@ public class ChangeResultsSizeAction extends InterMineAction
 
         InterMineBag bag = new InterMineBag();
 
-        int DEFAULT_MAX = 100000;
+        int defaultMax = 100000;
 
-        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", DEFAULT_MAX);
+        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
         // Go through the selected items and add to the set
         for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
@@ -170,7 +170,7 @@ public class ChangeResultsSizeAction extends InterMineAction
             return mapping.findForward("results");
         }
         profile.saveBag(bagName, bag);
-    
+
         recordMessage(new ActionMessage("bag.saved", bagName), request);
 
         return mapping.findForward("results");
