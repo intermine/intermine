@@ -71,6 +71,13 @@ public class Daml2Owl extends URL2Model
             line = line.replaceAll("daml:UnambiguousProperty", "owl:InverseFunctionalProperty");
             line = line.replaceAll("daml:UniqueProperty", "owl:FunctionalProperty");
             line = line.replaceAll("daml:", "owl:");
+
+            if (line.startsWith("<rdf:Description", line.indexOf('<'))) {
+                String fragment = OntologyUtil
+                    .validResourceName(line.substring(line.indexOf('#') + 1,
+                                                      line.lastIndexOf('"')));
+                line = line.substring(0, line.indexOf('#')) + fragment + "\">";
+            }
             if (!line.startsWith("<oiled:creationDate>", line.indexOf('<'))
                 && !line.startsWith("<oiled:creator>", line.indexOf('<'))) {
                 sb.append(line + ENDL);
@@ -104,9 +111,9 @@ public class Daml2Owl extends URL2Model
             Daml2Owl owler = new Daml2Owl();
             BufferedWriter out = new BufferedWriter(new FileWriter(new File(owlFilename)));
             if (baseURI.equals("")) {
-                owler.process(new FileReader(new File(damlFilename))).write(out);
+                owler.process(new FileReader(new File(damlFilename))).write(out, "N3");
             } else {
-                owler.process(new FileReader(new File(damlFilename)), baseURI).write(out);
+                owler.process(new FileReader(new File(damlFilename)), baseURI).write(out, "N3");
             }
 
         } catch (Exception e) {
