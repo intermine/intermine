@@ -15,7 +15,7 @@ public class PrecomputedTable
     /**
      * Construct a new PrecomputedTable
      *
-     * @param q the Query that this PrecomputedTable stores
+     * @param q the Query that this PrecomputedTable materialises
      * @param name the name of this PrecomputedTable
      */
     public PrecomputedTable(Query q, String name) {
@@ -32,7 +32,7 @@ public class PrecomputedTable
     /**
      * Gets the Query that is materialised in this PrecomputedTable
      *
-     * @return the Query that is this PrecomputedTable materialises
+     * @return the Query that this PrecomputedTable materialises
      */
     public Query getQuery() {
         return q;
