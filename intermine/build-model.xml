@@ -173,7 +173,7 @@
     </javac>
   </target>
 
-  <target name="compile-java" depends="prepare,compile-model-java">
+  <target name="compile-java" depends="prepare">
     <javac destdir="${build.model.dir}" listfiles="yes">
       <classpath refid="compile.class.path"/>
       <src path="${model.src}/src/java"/>
