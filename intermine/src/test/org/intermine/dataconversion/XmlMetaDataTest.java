@@ -26,28 +26,41 @@ import junit.framework.TestCase;
 
 public class XmlMetaDataTest extends TestCase
 {
+    XmlMetaData xmlInfo;
 
     public XmlMetaDataTest(String arg) {
         super(arg);
     }
 
-    public void testProcess() throws Exception {
+    public void setUp() throws Exception {
         Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("xmlschematest.xsd"));
-        XmlMetaData xmlInfo = new XmlMetaData(xsdReader);
-
-        System.out.println("idFields: " + xmlInfo.idFields);
-        System.out.println("refFields: " + xmlInfo.refFields);
-
-        assertTrue(xmlInfo.isReference("company/department/employee/businessAddress"));
-        assertTrue(xmlInfo.isReference("company/department/manager/businessAddress"));
-        assertTrue(xmlInfo.isReference("company/addressBook/address"));
-        assertTrue(xmlInfo.isId("company/address"));
-        assertEquals("ref", xmlInfo.getReferenceField("company/department/employee/businessAddress"));
-        assertEquals("ref", xmlInfo.getReferenceField("company/department/manager/businessAddress"));
-        assertEquals("ref", xmlInfo.getReferenceField("company/addressBook/address"));
-        assertEquals("id", xmlInfo.getIdField("company/address"));
-        assertEquals("company/address", xmlInfo.getIdPath("company/department/employee/businessAddress"));
-
+        xmlInfo = new XmlMetaData(xsdReader);
+    }
+    
+    public void testReferenceElements() throws Exception {
+        assertTrue(xmlInfo.isReferenceElement("company/department/employee/businessAddress"));
+        assertTrue(xmlInfo.isReferenceElement("company/department/manager/businessAddress"));
+        assertTrue(xmlInfo.isReferenceElement("company/addressBook/address"));
+        
+        assertEquals("ref", xmlInfo.getReferenceElementField("company/department/employee/businessAddress"));
+        assertEquals("ref", xmlInfo.getReferenceElementField("company/department/manager/businessAddress"));
+        assertEquals("ref", xmlInfo.getReferenceElementField("company/addressBook/address"));
+    }
+    
+    public void testKeyRef() throws Exception { 
+        assertEquals("addressKey", xmlInfo.getReferencingKeyName("company/department/employee/businessAddress", "ref"));
+    }
+    
+    public void testKey() throws Exception {
+        assertEquals("company/address", xmlInfo.getKeyPath("addressKey"));
+        assertEquals("id", xmlInfo.getKeyField("addressKey"));
+    }
+    
+    public void testKeyFields() throws Exception {
+        assertTrue(xmlInfo.getKeyFields("company/address").contains("id"));
+    }
+    
+    public void testClassNames() throws Exception {
         // check correct class names returned for all paths
         assertEquals("Company", xmlInfo.getClsNameFromXPath("company"));
         assertEquals("Department_Company", xmlInfo.getClsNameFromXPath("company/department"));
