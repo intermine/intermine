@@ -2,14 +2,16 @@ package org.flymine.sql.query;
 
 import junit.framework.*;
 
+import org.flymine.sql.ConnectionFactory;
+
 public class PostgresExplainResultTest extends TestCase
 {
     private PostgresExplainResult er;
-    
+
     public PostgresExplainResultTest(String arg1) {
         super(arg1);
     }
-    
+
     public void setUp() {
         er = new PostgresExplainResult();
     }
@@ -22,6 +24,24 @@ public class PostgresExplainResultTest extends TestCase
         assertEquals(315, er.getComplete());
         assertEquals(4, er.getWidth());
         assertEquals(2, er.getEstimatedRows());
+    }
+
+    public void testConstructNullQuery() throws Exception {
+        try {
+            er = new PostgresExplainResult(null, ConnectionFactory.getConnection("db.unittest"));
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
+    }
+
+    public void testConstructNullConnection() throws Exception {
+        try {
+            er = new PostgresExplainResult(new Query(), null);
+            fail("Expected: NullPointerException");
+        }
+        catch (NullPointerException e) {
+        }
     }
 
     public void testParseNullString() throws Exception {
