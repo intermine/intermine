@@ -104,8 +104,14 @@ public class FqlQuery
                         + classAlias);
             }
         }
-        retval += (q.getConstraint() == null ? "" : " WHERE "
-                   + constraintToString(q, q.getConstraint(), parameters));
+        if (q.getConstraint() != null) {
+            if (q.getConstraint() instanceof ConstraintSet) {
+                retval += (((ConstraintSet) q.getConstraint()).getConstraints().isEmpty() ? ""
+                           : " WHERE " + constraintToString(q, q.getConstraint(), parameters));
+            } else {
+                retval += " WHERE " + constraintToString(q, q.getConstraint(), parameters);
+            }
+        }
         if (!q.getGroupBy().isEmpty()) {
             retval += " GROUP BY ";
             Iterator groupIter = q.getGroupBy().iterator();
@@ -264,19 +270,22 @@ public class FqlQuery
                 + (c.isNotContains() ? " DOES NOT CONTAIN " : " CONTAINS ")
                 + q.getAliases().get(c.getQueryClass());
         } else if (cc instanceof ConstraintSet) {
-            ConstraintSet c = (ConstraintSet) cc;
-            boolean needComma = false;
-            String retval = (c.isNegated() ? "( NOT (" : "(");
-            Iterator conIter = c.getConstraints().iterator();
-            while (conIter.hasNext()) {
-                Constraint subC = (Constraint) conIter.next();
-                if (needComma) {
-                    retval += (c.getDisjunctive() ? " OR " : " AND ");
+            if (!((ConstraintSet) cc).getConstraints().isEmpty()) {
+                ConstraintSet c = (ConstraintSet) cc;
+                boolean needComma = false;
+                String retval = (c.isNegated() ? "( NOT (" : "(");
+                Iterator conIter = c.getConstraints().iterator();
+                while (conIter.hasNext()) {
+                    Constraint subC = (Constraint) conIter.next();
+                    if (needComma) {
+                        retval += (c.getDisjunctive() ? " OR " : " AND ");
+                    }
+                    needComma = true;
+                    retval += constraintToString(q, subC, parameters);
                 }
-                needComma = true;
-                retval += constraintToString(q, subC, parameters);
+                return retval + (c.isNegated() ? "))" : ")");
             }
-            return retval + (c.isNegated() ? "))" : ")");
+            return "";
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }

@@ -17,7 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryClass;
+import org.flymine.objectstore.query.ConstraintSet;
 import org.flymine.testing.OneTimeTestCase;
+
+import org.flymine.model.testmodel.Company;
 
 public class FqlQueryTest extends FqlQueryTestCase
 {
@@ -70,6 +74,17 @@ public class FqlQueryTest extends FqlQueryTestCase
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    public void testEmptyConstraintSet() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new ConstraintSet(ConstraintSet.AND));
+        String expected = "SELECT a1_ FROM org.flymine.model.testmodel.Company AS a1_";
+        FqlQuery fq = new FqlQuery(q);
+        assertEquals(expected, fq.toString());
     }
 
 }
