@@ -2,13 +2,17 @@
 <!-- -*- DocBook -*- -->
 
 <article>
+
 <para>The FlyMine project is building an integrated database of
 genomic, expression and protein data for
 <firstterm>Drosophila</firstterm> and <firstterm>Anopheles</firstterm>
 and making this available to the worldwide research community via web
-and bioinformatics interfaces. The FlyMine project is based at the <ulink
-url="http://www.gen.cam.ac.uk">Department of Genetics</ulink>, <ulink
-url="http://www.cam.ac.uk">University of Cambridge</ulink>.</para>
+and bioinformatics interfaces. The FlyMine project is based at the
+<ulink url="http://www.gen.cam.ac.uk">Department of Genetics</ulink>,
+<ulink url="http://www.cam.ac.uk">University of Cambridge</ulink> and
+is a collaboration between the Genetics and <ulink
+url="http://www.bioc.cam.ac.uk">Biochemistry</ulink> departments of
+the University of Cambridge.</para>
 
 
 <sect1>
