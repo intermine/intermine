@@ -176,9 +176,9 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     }
 
     public void testCount() throws Exception {
-        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
-        os.setResultsSize(12);
+        ObjectStoreDummyImpl objectStore = new ObjectStoreDummyImpl();
+        objectStore.setResultsSize(12);
         Query q = new Query();
-        assertEquals(os.count(q, 0), 12);
+        assertEquals(objectStore.count(q, 0), 12);
     }
 }

@@ -249,11 +249,11 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = '"
                 + name.toLowerCase() + "'");
         if (r.next()) {
-            int retval = (int) r.getFloat(1);
+            int returnValue = (int) r.getFloat(1);
             if (r.next()) {
                 throw new SQLException("Too many results");
             }
-            return retval;
+            return returnValue;
         } else {
             throw new SQLException("No results");
         }
