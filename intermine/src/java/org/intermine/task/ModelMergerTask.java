@@ -69,9 +69,7 @@ public class ModelMergerTask extends Task
             Model model = parser.process(reader);
             reader.close();
             Set additionClds = parser.generateClassDescriptors(new FileReader(additionsFile));
-            long startTime = System.currentTimeMillis();
             Model merged = ModelMerger.mergeModel(model, additionClds);
-            System.out.println("" + (System.currentTimeMillis() - startTime));
             FileWriter writer = new FileWriter(outputModelFile);
             writer.write(merged.toString());
             writer.close();
