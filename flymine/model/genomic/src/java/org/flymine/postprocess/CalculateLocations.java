@@ -21,7 +21,6 @@ import java.util.Collections;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -92,7 +91,7 @@ public class CalculateLocations
      * Fix the Locations that connect objectCls and subjectCls objects.
      */
     private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
-        Iterator resIter = findLocations(os, objectCls, subjectCls);
+        Iterator resIter = CalculateLocationsUtil.findLocations(os, objectCls, subjectCls, true);
 
         Set batch = new HashSet();
 
@@ -266,7 +265,8 @@ public class CalculateLocations
         makeContigLocations();
 
         // 4. For all BioEntities located on Contigs compute other offsets on all parents
-        Iterator resIter = findLocations(os, Contig.class, BioEntity.class);
+        Iterator resIter =
+            CalculateLocationsUtil.findLocations(os, Contig.class, BioEntity.class, true);
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -716,7 +716,8 @@ public class CalculateLocations
      * Find and hold locations of ChromosomeBands on Chromsomes
      */
     private void makeChromosomeBandLocations() throws Exception {
-        Iterator resIter = findLocations(os, Chromosome.class, ChromosomeBand.class);
+        Iterator resIter =
+            CalculateLocationsUtil.findLocations(os, Chromosome.class, ChromosomeBand.class, true);
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
@@ -737,7 +738,8 @@ public class CalculateLocations
      * Create locations of Supercontigs on ChromosomeBands
      */
     private void makeSupercontigLocations() throws Exception {
-        Iterator resIter = findLocations(os, Chromosome.class, Supercontig.class);
+        Iterator resIter =
+            CalculateLocationsUtil.findLocations(os, Chromosome.class, Supercontig.class, true);
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -788,7 +790,8 @@ public class CalculateLocations
      * create locations Contig->ChromosomeBand, Contig->Chromosome
      */
     private void makeContigLocations() throws Exception {
-        Iterator resIter = findLocations(os, Supercontig.class, Contig.class);
+        Iterator resIter =
+            CalculateLocationsUtil.findLocations(os, Supercontig.class, Contig.class, true);
 
         // create map ChromsomeBands to avoid calling getObjectById
         // need to keep running query after each commit transaction
@@ -930,49 +933,6 @@ public class CalculateLocations
         }
         return false;
     }
-
-
-    /**
-     * Query ObjectStore for all Location object between given object and
-     * subject classes.  Return an iterator over the results ordered by subject.
-     * @param os the ObjectStore to find the Locations in
-     * @param objectCls object type of the Location
-     * @param subjectCls subject type of the Location
-     * @return an iterator over the results: object.id, location, subject
-     * @throws ObjectStoreException if problem reading ObjectStore
-     */
-    protected static Iterator findLocations(ObjectStore os, Class objectCls, Class subjectCls)
-        throws ObjectStoreException {
-        // TODO check objectCls and subjectCls assignable to BioEntity
-
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(objectCls);
-        QueryField qfObj = new QueryField(qcObj, "id");
-        q.addFrom(qcObj);
-        q.addToSelect(qfObj);
-        QueryClass qcSub = new QueryClass(subjectCls);
-        q.addFrom(qcSub);
-        q.addToSelect(qcSub);
-        q.addToOrderBy(qcSub);
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-        q.addToSelect(qcLoc);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
-        cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
-        cs.addConstraint(cc2);
-        q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl)os).precompute(q);
-        Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(2000);
-
-        return res.iterator();
-    }
-
 
     /**
      * Create a clone of given InterMineObject including the id
