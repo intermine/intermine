@@ -39,23 +39,13 @@ mkdir $tempdir
 cd $tempdir
 now=`date +"%d %b %Y %H:%M"`
 echo "Date is $now"
-command="cvs export -D \"$now\" flymine"
+command="cvs export -D \"$now\" -d flymine-$version flymine"
 eval $command
-mv flymine flymine-$version
 
 
 ## Create the tarred source files from the clean checkout
 tar czvf flymine-src-$version.tar.gz flymine-$version
 zip -r flymine-src-$version.zip flymine-$version
-
-### Build the tutorial
-cd $tempdir/flymine-$version
-ant build-tutorial
-
-cd $tempdir
-mv flymine-$version/build/tutorial flymine-tutorial-$version
-tar czvf flymine-tutorial-$version.tar.gz flymine-tutorial-$version
-zip -r flymine-tutorial-$version.zip flymine-tutorial-$version
 
 ### Remove releases older than 7 days
 if [ $1 == "nightly" ]
