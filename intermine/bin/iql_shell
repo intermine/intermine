@@ -26,5 +26,5 @@ fi
 echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-java -cp $CP $ANT_OPTS org.intermine.objectstore.query.fql.FqlShell $*
+java -cp $CP $ANT_OPTS org.intermine.objectstore.query.iql.IqlShell $*
 
