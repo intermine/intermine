@@ -34,9 +34,16 @@ public class SimpleQuery
      */
     public static void main(String[] args) throws Exception {
         SimpleQuery sq = new SimpleQuery();
-        System.out.println(sq.exampleQuery());
+        PrintStream out = System.out;
+        out.println(sq.exampleQuery());
     }
 
+    /**
+     * Run an example query
+     *
+     * @return the ouput from the query as a String
+     * @throws Exception if any error occurs
+     */
     public String exampleQuery() throws Exception {
 
         // Get an ObjectStore from the ObjectStoreFactory
