@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 public class WebConfig
 {
     private Map types = new HashMap();
+    private Map exporters = new HashMap();
 
     /**
      * Parse a WebConfig XML file
@@ -69,6 +70,13 @@ public class WebConfig
         digester.addCallParam("webconfig/class/shortdisplayers/displayer/param", 1, "value");
 
         digester.addSetNext("webconfig/class", "addType");
+        
+        digester.addObjectCreate("webconfig/exporter", Exporter.class);
+        digester.addSetProperties("webconfig/exporter", "id", "id");
+        digester.addSetProperties("webconfig/exporter", "actionPath", "actionPath");
+        digester.addSetProperties("webconfig/exporter", "className", "className");
+
+        digester.addSetNext("webconfig/exporter", "addExporter");
 
         return (WebConfig) digester.parse(is);
 
@@ -95,6 +103,20 @@ public class WebConfig
      */
     public Map getTypes() {
         return this.types;
+    }
+
+    /**
+     *
+     */
+    public void addExporter(Exporter exporter) {
+        exporters.put(exporter.getId(), exporter);
+    }
+
+    /**
+     *
+     */
+    public Map getExporters() {
+        return exporters;
     }
 
     /**
@@ -128,9 +150,13 @@ public class WebConfig
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<webconfig>");
-        Iterator iter = types.values().iterator();
-        while (iter.hasNext()) {
-            sb.append(iter.next().toString());
+        Iterator typesIter = types.values().iterator();
+        while (typesIter.hasNext()) {
+            sb.append(typesIter.next().toString());
+        }
+        Iterator exporterIter = exporters.values().iterator();
+        while (exporterIter.hasNext()) {
+            sb.append(exporterIter.next().toString());
         }
         sb.append("</webconfig>");
         return sb.toString();
