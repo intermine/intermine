@@ -19,6 +19,7 @@ public class Column
 {
     protected boolean visible = true;
     protected String alias = "";
+    protected int index;
 
     /**
      * Is the column visible
@@ -54,6 +55,25 @@ public class Column
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    /**
+     * Get the index of the column. This is the index that we use in a
+     * call to the get() method of a ResultsRow.
+     *
+     * @return the index of the column
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * Set the index of the column
+     *
+     * @param index the index for the column
+     */
+    public void setIndex(int index) {
+        this.index = index;
     }
 
 }
