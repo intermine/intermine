@@ -22,7 +22,7 @@ given at ISMB 2002.</para>
 
 <sect1>
 <title>MOBY</title>
-<ulink url="www.biomoby.org">
+<ulink url="http://www.biomoby.org" />
 
 <para>The Moby project is an open-source initiative, based in Canada,
 that is aiming to provide a central registry of servers that serve up
@@ -56,7 +56,7 @@ keep up to date with the development of Moby.</para>
 
 <sect1>
 <title>MAGEstk</title>
-<ulink url="mged.sourceforge.net">
+<ulink url="http://mged.sourceforge.net" />
 
 
 <para>Reads an XMI model and outputs Java, Perl, C++ objects and (I
@@ -77,6 +77,8 @@ with him a few weeks ago.</para>
 is not sufficient for our needs, and is certainly not the only
 solution out there.</para>
 
+</sect1>
+
 <sect1><title>IBM</title>
 
 <para>IBM are "incorporating XML into DB2/DiscoveryLink". What this
@@ -94,8 +96,8 @@ performance!!</para>
 
 
 <sect1><title>GUS and derivatives (allgenes.org etc.)</title>
-<ulink url="www.gusdev.org">
-<ulink url="www.cbil.upenn.edu">
+<ulink url="http://www.gusdev.org" />
+<ulink url="http://www.cbil.upenn.edu" />
 
 <para>A general schema and object model. Used as the basis of websites
 such as allgenes.org. Also contains a pipeline, and the schema
@@ -117,6 +119,8 @@ developing what we want to.</para>
 <para>Paul Mooney at Sanger Centre (pjm@sanger.ac.uk) is going to use
 the GUS schema to set up some database. I spoke with him and he would
 be willing to meet up to discuss.</para>
+
+</sect1>
 
 <sect1><title>GIMS</title>
 
@@ -159,8 +163,10 @@ tied to DAS and Moby. Don't think that dynamic queries are supported,
 and pretty sure it is more geared to browsing rather than
 querying.</para>
 
+</sect1>
+
 <sect1><title>caBIO</title>
-<ulink url="ncicb.nci.nih.gov/core">
+<ulink url="http://ncicb.nci.nih.gov/core" />
 
 <para>An object model covering genome and cancer concepts. Did not
 manage to speak to anyone on this project. Worth investigating
