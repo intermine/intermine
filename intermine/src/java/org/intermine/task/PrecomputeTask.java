@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.io.InputStream;
@@ -27,10 +29,12 @@ import org.apache.tools.ant.Task;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.ObjectStore;
@@ -38,10 +42,11 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.MetaDataException;
+
+import org.apache.log4j.Logger;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -52,14 +57,16 @@ import org.intermine.metadata.MetaDataException;
 
 public class PrecomputeTask extends Task
 {
-    String alias;
-    String modelName;
-    boolean testMode;
-    int minRows;
-    // read by readProperties()
-    Properties precomputeProperties = null;
-    // set by setModel()
-    Model model = null;
+    private static final Logger LOG = Logger.getLogger(PrecomputeTask.class);
+
+    protected String alias;
+    protected String summaryPropertiesFile;
+    protected boolean testMode;
+    protected int minRows = -1;
+    // set by readProperties()
+    protected Properties precomputeProperties = null;
+    protected ObjectStoreSummary oss = null;
+    protected ObjectStore os = null;
 
     /**
      * Set the ObjectStore alias
@@ -70,20 +77,20 @@ public class PrecomputeTask extends Task
     }
 
     /**
-     * Set the model name - used to create the name of the properties file to search for.
-     * @param modelName the properties file
-     */
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-
-    /**
      * Set the mode of operation - if true run and time a set of test queries after each
      * call to precompute().
      * @param testMode set test mode on if and only if this is true
      */
     public void setTestMode(Boolean testMode) {
         this.testMode = testMode.booleanValue();
+    }
+
+    /**
+     * Set the name of the ObjectStore summary properties file.
+     * @param summaryPropertiesFile the new summaryPropertiesFile
+     */
+    public void setSummaryPropertiesFile(String summaryPropertiesFile) {
+        this.summaryPropertiesFile = summaryPropertiesFile;
     }
 
     /**
@@ -103,30 +110,52 @@ public class PrecomputeTask extends Task
             throw new BuildException("alias attribute is not set");
         }
 
-        if (modelName == null) {
-            throw new BuildException("modelName attribute is not set");
+        if (summaryPropertiesFile == null) {
+            throw new BuildException("summaryPropertiesFile attribute is not set");
         }
 
-        setModel();
-        readProperties();
+        if (minRows == -1) {
+            throw new BuildException("minRows attribute is not set");
+        }
 
-        ObjectStore os = null;
+        ObjectStore objectStore;
 
         try {
-            os = ObjectStoreFactory.getObjectStore(alias);
+            objectStore = ObjectStoreFactory.getObjectStore(alias);
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
 
-        if (!(os instanceof ObjectStoreInterMineImpl)) {
+        if (!(objectStore instanceof ObjectStoreInterMineImpl)) {
             throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
         }
 
+        oss = createObjectStoreSummary();
+
+        precomputeAll(objectStore, oss);
+    }
+
+    /**
+     * Create precomputed tables for the given ObjectStore.  This method is also called from
+     * PrecomputeTaskTest.
+     * @param os the ObjectStore to precompute in
+     * @param oss the ObjectStoreSummary for os
+     */
+    protected void precomputeAll(ObjectStore os, ObjectStoreSummary oss) {
+        this.oss = oss;
+        this.os = os;
+
+        readProperties();
+
         if (testMode) {
             PrintStream outputStream = System.out;
+            outputStream.println("Starting tests");
+            // run and ignore so that the results are cached for the next test
+            runTestQueries();
+
             long start = System.currentTimeMillis();
-            outputStream.println("Running tests before precomputing:");
-            runTestQueries(os);
+            outputStream.println("Running tests before precomputing");
+            runTestQueries();
             outputStream.println("tests took: " + (System.currentTimeMillis() - start) / 1000
                                  + " seconds");
         }
@@ -153,21 +182,34 @@ public class PrecomputeTask extends Task
                 }
 
                 if (resultsInfo.getRows() >= minRows) {
+                    LOG.info("precomputing " + key);
                     precompute(os, query);
-                }
 
-                if (testMode) {
-                    PrintStream outputStream = System.out;
-                    long start = System.currentTimeMillis();
-                    outputStream.println("Running tests after precomputing " + key + ":");
-                    runTestQueries(os);
-                    outputStream.println("tests took: "
-                                         + (System.currentTimeMillis() - start) / 1000
-                                         + " seconds");
+                    if (testMode) {
+                        PrintStream outputStream = System.out;
+                        long start = System.currentTimeMillis();
+                        outputStream.println("Running tests after precomputing " + key + ": "
+                                             + query);
+                        runTestQueries();
+                        outputStream.println("tests took: "
+                                             + (System.currentTimeMillis() - start) / 1000
+                                             + " seconds");
+                    }
                 }
             }
         }
+
+        if (testMode) {
+            PrintStream outputStream = System.out;
+            long start = System.currentTimeMillis();
+            outputStream.println("Running tests after all precomputes");
+            runTestQueries();
+            outputStream.println("tests took: "
+                                 + (System.currentTimeMillis() - start) / 1000
+                                 + " seconds");
+        }
     }
+
 
     private static final String TEST_QUERY_PREFIX = "test.query.";
 
@@ -178,11 +220,17 @@ public class PrecomputeTask extends Task
      * @throws BuildException if the query cannot be precomputed.
      */
     protected void precompute(ObjectStore os, Query query) throws BuildException {
+        long start = System.currentTimeMillis();
+
         try {
             ((ObjectStoreInterMineImpl) os).precompute(query);
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query, e);
         }
+
+        LOG.info("precompute() of took "
+                 + (System.currentTimeMillis() - start) / 1000
+                 + " seconds for: " + query);
     }
 
     /**
@@ -194,22 +242,23 @@ public class PrecomputeTask extends Task
     protected Map getPrecomputeQueries() throws BuildException {
         Map returnMap = new TreeMap();
 
-        Iterator iter = precomputeProperties.entrySet().iterator();
+        Iterator iter = new TreeSet(precomputeProperties.keySet()).iterator();
 
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
+            String precomputeKey = (String) iter.next();
 
-            String precomputeKey = (String) entry.getKey();
+            String value = (String) precomputeProperties.get(precomputeKey);
 
             if (precomputeKey.startsWith("precompute.query")) {
-                String iqlQueryString = (String) entry.getValue();
+                String iqlQueryString = value;
                 Query query = parseQuery(iqlQueryString, precomputeKey);
                 List list = new ArrayList();
                 list.add(query);
                 returnMap.put(precomputeKey, list);
             } else {
                 if (precomputeKey.startsWith("precompute.constructquery")) {
-                    String[] queryBits = ((String) entry.getValue()).split("[ \t]");
+                    String[] queryBits = value.split("[ \t]");
+
                     if (queryBits.length == 3) {
                         String objectClassName = queryBits[0];
                         String connectingField = queryBits[1];
@@ -220,8 +269,24 @@ public class PrecomputeTask extends Task
 
                         returnMap.put(precomputeKey, constructedQueries);
                     } else {
-                        throw new BuildException(precomputeKey + " should have three fields "
-                                                 + "(ie. class fieldname class)");
+                        if (queryBits.length == 5) {
+                            String object1ClassName = queryBits[0];
+                            String connectingField1 = queryBits[1];
+                            String object2ClassName = queryBits[2];
+                            String connectingField2 = queryBits[3];
+                            String object3ClassName = queryBits[4];
+
+                            List constructedQueries =
+                                constructQueries(object1ClassName, connectingField1,
+                                                 object2ClassName, connectingField2,
+                                                 object3ClassName);
+
+
+                            returnMap.put(precomputeKey, constructedQueries);
+                        } else {
+                            throw new BuildException(precomputeKey + " should have three or five "
+                                                     + "fields (ie. class fieldname class)");
+                        }
                     }
                 } else {
                     if (!precomputeKey.startsWith(TEST_QUERY_PREFIX)) {
@@ -255,32 +320,9 @@ public class PrecomputeTask extends Task
                                     String connectingFieldname,
                                     String subjectClassName)
         throws BuildException {
-        if (objectClassName.indexOf(".") == -1) {
-            objectClassName = model.getPackageName() + "." + objectClassName;
-        }
-        if (subjectClassName.indexOf(".") == -1) {
-            subjectClassName = model.getPackageName() + "." + subjectClassName;
-        }
 
-        ClassDescriptor objectClassDesc = model.getClassDescriptorByName(objectClassName);
-        if (objectClassDesc == null) {
-            throw new BuildException("cannot find ClassDescriptor for " + objectClassName
-                                     + " (read name from "
-                                     + getPropertiesFileName() + ")");
-        }
-
-        ClassDescriptor subjectClassDesc = model.getClassDescriptorByName(subjectClassName);
-        if (subjectClassDesc == null) {
-            throw new BuildException("cannot find ClassDescriptor for " + subjectClassName
-                                     + " (read name from "
-                                     + getPropertiesFileName() + ")");
-        }
-
-        Set allObjectCDs = model.getAllSubs(objectClassDesc);
-        allObjectCDs.add(objectClassDesc);
-
-        Set allSubjectCDs = model.getAllSubs(subjectClassDesc);
-        allSubjectCDs.add(subjectClassDesc);
+        Set allObjectCDs = getClassDecriptors(objectClassName);
+        Set allSubjectCDs = getClassDecriptors(subjectClassName);
 
         List queryList = new ArrayList();
 
@@ -289,13 +331,23 @@ public class PrecomputeTask extends Task
         while (allObjectCDsIter.hasNext()) {
             ClassDescriptor thisObjectCD = (ClassDescriptor) allObjectCDsIter.next();
 
+            if (oss.getClassCount(thisObjectCD.getName()) == 0) {
+                continue;
+            }
+
             Iterator allSubjectCDsIter = allSubjectCDs.iterator();
 
             while (allSubjectCDsIter.hasNext()) {
                 ClassDescriptor thisSubjectCD = (ClassDescriptor) allSubjectCDsIter.next();
 
+                if (oss.getClassCount(thisSubjectCD.getName()) == 0) {
+                    continue;
+                }
+
                 queryList.add(constructQuery(thisObjectCD.getType(), connectingFieldname,
-                                             thisSubjectCD.getType()));
+                                             thisSubjectCD.getType(), true));
+                queryList.add(constructQuery(thisObjectCD.getType(), connectingFieldname,
+                                             thisSubjectCD.getType(), false));
             }
         }
 
@@ -303,17 +355,128 @@ public class PrecomputeTask extends Task
     }
 
     /**
+     * Take three class names and two connecting collection or reference field names and create a
+     * new Query.  Eg. for
+     * "Company", "departments", "Department", "employees", "Employee" create:
+     *   SELECT DISTINCT a1_, a2_, a3_ FROM org.intermine.model.testmodel.Company AS a1_,
+     *   org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS
+     *   a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_)
+     * Queries will also be created for all combinations of sub-classes of objectClassName and
+     * subjectClassName if they are tagged with a "+" as the first character.
+     * @param object1ClassName the name of the first object class
+     * @param connectingFieldname1 the field name to use to reference the Class for object 2
+     * @param object2ClassName the name of the second object class
+     * @param connectingFieldname2 the field name to use to reference the Class for object 3
+     * @param object3ClassName the name of the third object class
+     * @return a List of Query objects
+     * @throws BuildException if a query cannot be constructed (for example when a class or the
+     * collection doesn't exist)
+     */
+    protected List constructQueries(String object1ClassName,
+                                    String connectingFieldname1,
+                                    String object2ClassName,
+                                    String connectingFieldname2,
+                                    String object3ClassName)
+        throws BuildException {
+
+        Set allObject1CDs = getClassDecriptors(object1ClassName);
+        Set allObject2CDs = getClassDecriptors(object2ClassName);
+        Set allObject3CDs = getClassDecriptors(object3ClassName);
+
+        List queryList = new ArrayList();
+
+        Iterator allObject1CDsIter = allObject1CDs.iterator();
+
+        while (allObject1CDsIter.hasNext()) {
+            ClassDescriptor thisObject1CD = (ClassDescriptor) allObject1CDsIter.next();
+
+            if (oss.getClassCount(thisObject1CD.getName()) == 0) {
+                continue;
+            }
+
+            Iterator allObject2CDsIter = allObject2CDs.iterator();
+
+            while (allObject2CDsIter.hasNext()) {
+                ClassDescriptor thisObject2CD = (ClassDescriptor) allObject2CDsIter.next();
+
+                if (oss.getClassCount(thisObject2CD.getName()) == 0) {
+                    continue;
+                }
+
+                Iterator allObject3CDsIter = allObject3CDs.iterator();
+
+                while (allObject3CDsIter.hasNext()) {
+                    ClassDescriptor thisObject3CD = (ClassDescriptor) allObject3CDsIter.next();
+
+                    if (oss.getClassCount(thisObject3CD.getName()) == 0) {
+                        continue;
+                    }
+
+                    queryList.add(constructQuery(thisObject1CD.getType(), connectingFieldname1,
+                                                 thisObject2CD.getType(), connectingFieldname2,
+                                                 thisObject3CD.getType(), true));
+
+                    queryList.add(constructQuery(thisObject1CD.getType(), connectingFieldname1,
+                                                 thisObject2CD.getType(), connectingFieldname2,
+                                                 thisObject3CD.getType(), false));
+                }
+            }
+        }
+
+        return queryList;
+    }
+
+    /**
+     * Return a Set of ClassDescriptors for the given className.  If className is a simple class
+     * name (with or without the full package), then return it's ClassDescriptor.  If className
+     * begins with a "+", remove the "+" and return Set containing the ClassDescriptor for the class
+     * and ClassDescriptors for all subclasses.
+     * @param className the class name
+     * @return a Set of ClassDescriptors for the given className.
+     */
+    protected Set getClassDecriptors(String className) {
+        boolean useSubClasses = false;
+        if (className.startsWith("+")) {
+            className = className.substring(1);
+            useSubClasses = true;
+        }
+        if (className.indexOf(".") == -1) {
+            className = os.getModel().getPackageName() + "." + className;
+        }
+        ClassDescriptor classDesc = os.getModel().getClassDescriptorByName(className);
+        if (classDesc == null) {
+            throw new BuildException("cannot find ClassDescriptor for " + className
+                                     + " (read name from "
+                                     + getPropertiesFileName() + ")");
+        }
+
+        Set returnList;
+
+        if (useSubClasses) {
+            returnList = os.getModel().getAllSubs(classDesc);
+        } else {
+            returnList = new HashSet();
+        }
+
+        returnList.add(classDesc);
+
+        return returnList;
+    }
+
+    /**
      * Take two class object and a connecting collection or reference field name and create a new
-     * Query.  Eg. for
+     * Query with objectClass.connectingFieldname = subjectClass
      * @param objectClass the object class
      * @param connectingFieldname the field name to use to reference the subject class
      * @param subjectClass the subject class
+     * @param selectAllFields if true add all of the fields of objectClass and subjectClass to the
+     * select list of the Query to precompute()
      * @return the new Query
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist)
      */
     protected Query constructQuery(Class objectClass, String connectingFieldname,
-                                   Class subjectClass)
+                                   Class subjectClass, boolean selectAllFields)
         throws BuildException {
         Query q = new Query();
         q.setDistinct(true);
@@ -322,12 +485,23 @@ public class PrecomputeTask extends Task
         q.addFrom(qcObj);
         q.addToSelect(qcObj);
 
+        if (selectAllFields) {
+            List fieldNames = getAttributeFieldNames(objectClass);
+            addFieldsToQuery(q, qcObj, fieldNames);
+        }
+
         QueryClass qcSub = new QueryClass(subjectClass);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
         q.addToOrderBy(qcObj);
 
-        ClassDescriptor objectClassDesc = model.getClassDescriptorByName(objectClass.getName());
+        if (selectAllFields) {
+            List fieldNames = getAttributeFieldNames(subjectClass);
+            addFieldsToQuery(q, qcSub, fieldNames);
+        }
+
+        ClassDescriptor objectClassDesc =
+            os.getModel().getClassDescriptorByName(objectClass.getName());
         FieldDescriptor fd = objectClassDesc.getFieldDescriptorByName(connectingFieldname);
         if (fd == null) {
             throw new BuildException("cannot find FieldDescriptor for " + connectingFieldname
@@ -348,6 +522,133 @@ public class PrecomputeTask extends Task
         return q;
     }
 
+    /**
+     * Take three class objects and two connecting collection or reference field name and create a
+     * new Query.  Eg. for
+     * @param object1Class an object class
+     * @param connectingFieldname1 the field name to use to reference objectClass2 from objectClass1
+     * @param object2Class an object class
+     * @param connectingFieldname2 the field name to use to reference objectClass3 from objectClass2
+     * @param object3Class an object class
+     * @param selectAllFields if true add all of the fields of objectClass and subjectClass to the
+     * select list of the Query to precompute()
+     * @return the new Query
+     * @throws BuildException if the query cannot be constructed (for example when a class or the
+     * collection doesn't exist)
+     */
+    protected Query constructQuery(Class object1Class, String connectingFieldname1,
+                                   Class object2Class, String connectingFieldname2,
+                                   Class object3Class, boolean selectAllFields)
+        throws BuildException {
+        Query q = new Query();
+        q.setDistinct(true);
+
+        QueryClass qcObj1 = new QueryClass(object1Class);
+        q.addFrom(qcObj1);
+        q.addToSelect(qcObj1);
+
+        if (selectAllFields) {
+            List fieldNames = getAttributeFieldNames(object1Class);
+            addFieldsToQuery(q, qcObj1, fieldNames);
+        }
+
+        QueryClass qcObj2 = new QueryClass(object2Class);
+        q.addFrom(qcObj2);
+        q.addToSelect(qcObj2);
+
+        if (selectAllFields) {
+            List fieldNames = getAttributeFieldNames(object2Class);
+            addFieldsToQuery(q, qcObj2, fieldNames);
+        }
+
+        QueryClass qcObj3 = new QueryClass(object3Class);
+        q.addFrom(qcObj3);
+        q.addToSelect(qcObj3);
+
+        q.addToOrderBy(qcObj1);
+        q.addToOrderBy(qcObj2);
+        q.addToOrderBy(qcObj3);
+
+        if (selectAllFields) {
+            List fieldNames = getAttributeFieldNames(object3Class);
+            addFieldsToQuery(q, qcObj3, fieldNames);
+        }
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        ClassDescriptor object1ClassDesc =
+            os.getModel().getClassDescriptorByName(object1Class.getName());
+        FieldDescriptor fd1 = object1ClassDesc.getFieldDescriptorByName(connectingFieldname1);
+        if (fd1 == null) {
+            throw new BuildException("cannot find FieldDescriptor for " + connectingFieldname1
+                                     + " in " + object1Class.getName());
+        }
+
+        QueryReference ref1;
+        if (fd1.isReference()) {
+            ref1 = new QueryObjectReference(qcObj1, connectingFieldname1);
+        } else {
+            ref1 = new QueryCollectionReference(qcObj1, connectingFieldname1);
+        }
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj2);
+        cs.addConstraint(cc1);
+
+        ClassDescriptor object2ClassDesc =
+            os.getModel().getClassDescriptorByName(object2Class.getName());
+        FieldDescriptor fd2 = object2ClassDesc.getFieldDescriptorByName(connectingFieldname2);
+        if (fd2 == null) {
+            throw new BuildException("cannot find FieldDescriptor for " + connectingFieldname2
+                                     + " in " + object2Class.getName());
+        }
+
+        QueryReference ref2;
+        if (fd2.isReference()) {
+            ref2 = new QueryObjectReference(qcObj2, connectingFieldname2);
+        } else {
+            ref2 = new QueryCollectionReference(qcObj2, connectingFieldname2);
+        }
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcObj3);
+        cs.addConstraint(cc2);
+
+        q.setConstraint(cs);
+        return q;
+    }
+
+    /**
+     * Return the names of the attribute fields of a class.
+     * @param c the Class
+     * @return the names of the attribute fields of a class.
+     */
+    protected List getAttributeFieldNames(Class c) {
+        List returnList = new ArrayList();
+
+        ClassDescriptor classDesc = os.getModel().getClassDescriptorByName(c.getName());
+        Set attributeFDs = classDesc.getAllAttributeDescriptors();
+        Iterator attributeFDIter = attributeFDs.iterator();
+
+        while (attributeFDIter.hasNext()) {
+            FieldDescriptor fd = (FieldDescriptor) attributeFDIter.next();
+            returnList.add(fd.getName());
+        }
+
+        return returnList;
+    }
+
+    /**
+     * Add QueryFields for each of the field names in fieldNames to the given Query.
+     * @param q the Query to add to
+     * @param qc the QueryClass that the QueryFields should be created for
+     * @param fieldNames the field names to create QueryFields for
+     */
+    protected void addFieldsToQuery(Query q, QueryClass qc, List fieldNames) {
+        Iterator fieldNameIter = fieldNames.iterator();
+
+        while (fieldNameIter.hasNext()) {
+            String fieldName = (String) fieldNameIter.next();
+            QueryField qf = new QueryField(qc, fieldName);
+            q.addToSelect(qf);
+        }
+    }
 
     /**
      * For a given IQL query, return a Query object.
@@ -357,7 +658,7 @@ public class PrecomputeTask extends Task
      * @throws BuildException if the IQL String cannot be parsed.
      */
     protected Query parseQuery(String iqlQueryString, String key) throws BuildException {
-        IqlQuery iqlQuery = new IqlQuery(iqlQueryString, model.getPackageName());
+        IqlQuery iqlQuery = new IqlQuery(iqlQueryString, os.getModel().getPackageName());
 
         try {
             return iqlQuery.toQuery();
@@ -369,10 +670,9 @@ public class PrecomputeTask extends Task
 
     /**
      * Run all the test queries specified in precomputeProperties.
-     * @param os the ObjectStore to run the queries against.
      * @throws BuildException if there is an error while running the queries.
      */
-    protected void runTestQueries(ObjectStore os) throws BuildException {
+    protected void runTestQueries() throws BuildException {
         TreeMap sortedPrecomputeProperties = new TreeMap(precomputeProperties);
         Iterator iter = sortedPrecomputeProperties.entrySet().iterator();
 
@@ -397,27 +697,18 @@ public class PrecomputeTask extends Task
                 outputStream.println("  got size " + resultsSize + " in "
                                      + (System.currentTimeMillis() - start) / 1000 + " seconds");
                 if (resultsSize > 0) {
+                    start = System.currentTimeMillis();
                     List resultsRow1 = (List) results.get(0);
                     outputStream.println("  first row in "
                                          + (System.currentTimeMillis() - start) / 1000
                                          + " seconds");
+                    start = System.currentTimeMillis();
                     List resultsRow2 = (List) results.get(resultsSize - 1);
                     outputStream.println("  last row in "
                                          + (System.currentTimeMillis() - start) / 1000
                                          + " seconds");
                 }
             }
-        }
-    }
-
-    /**
-     * Set model using modelName.
-     */
-    protected void setModel() {
-        try {
-            model = Model.getInstanceByName(modelName);
-        } catch (MetaDataException e) {
-            throw new BuildException("Failed to find model for " + modelName, e);
         }
     }
 
@@ -440,8 +731,31 @@ public class PrecomputeTask extends Task
             precomputeProperties = new Properties();
             precomputeProperties.load(is);
         } catch (IOException e) {
-            throw new BuildException("Exception while creating reading properties from "
+            throw new BuildException("Exception while reading properties from "
                                      + propertiesFileName , e);
+        }
+    }
+
+    /**
+     * Create a ObjectStoreSummary from the summaryPropertiesFile.
+     * @return a new ObjectStoreSummary
+     */
+    protected ObjectStoreSummary createObjectStoreSummary() {
+        try {
+            InputStream summaryPropertiesStream =
+                PrecomputeTask.class.getClassLoader().getResourceAsStream(summaryPropertiesFile);
+
+            if (summaryPropertiesStream == null) {
+                throw new BuildException("Cannot find " + summaryPropertiesFile);
+            }
+
+            Properties summaryProperties = new Properties();
+            summaryProperties.load(summaryPropertiesStream);
+
+            return new ObjectStoreSummary(summaryProperties);
+        } catch (IOException e) {
+            throw new BuildException("Exception while reading properties from "
+                                     + summaryPropertiesFile , e);
         }
     }
 
@@ -450,6 +764,6 @@ public class PrecomputeTask extends Task
      * @return the name of the properties file that passed to the constructor.
      */
     protected String getPropertiesFileName() {
-        return modelName + "_precompute.properties";
+        return os.getModel().getName() + "_precompute.properties";
     }
 }
