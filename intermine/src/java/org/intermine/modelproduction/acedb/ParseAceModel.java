@@ -127,19 +127,20 @@ public class ParseAceModel
                 indents.push(mn);
                 mn.setAnnotation(ModelNode.ANN_CLASS);
             } else {
+                ModelNode lastPopped = null;
                 while (((ModelNode) indents.peek()).getIndent() > mn.getIndent()) {
-                    indents.pop();
+                    lastPopped = (ModelNode) indents.pop();
                 }
                 ModelNode parent = null;
                 if (((ModelNode) indents.peek()).getIndent() < mn.getIndent()) {
+                    if ((lastPopped != null) && (lastPopped.getIndent() != mn.getIndent())) {
+                        throw new IllegalArgumentException("Unmatched indentation");
+                    }
                     parent = (ModelNode) indents.peek();
                     parent.setChild(mn);
                     indents.push(mn);
                 } else {
                     ModelNode sibling = (ModelNode) indents.pop();
-                    if (sibling.getIndent() != mn.getIndent()) {
-                        throw new IllegalArgumentException("Unmatched indentation");
-                    }
                     parent = (ModelNode) indents.peek();
                     sibling.setSibling(mn);
                     indents.push(mn);
@@ -335,7 +336,9 @@ public class ParseAceModel
             } else if ((nextNode.getAnnotation() == ModelNode.ANN_KEYWORD)
                     && "UNIQUE".equals(nextNode.getName())) {
                 nextNode = nextNode.getChild();
-                if ((nextNode != null) && (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE)) {
+                if (nextNode == null) {
+                    throw new IllegalArgumentException("UNIQUE cannot be a leaf node");
+                } else if (nextNode.getAnnotation() == ModelNode.ANN_REFERENCE) {
                     nodeRefToLists(nextNode, parent, collection, number + 1, atts, refs, cols);
                 } else {
                     throw new IllegalArgumentException("Invalid node type after a reference and"
