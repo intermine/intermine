@@ -270,5 +270,9 @@ xmlns="http://www.w3.org/1999/xhtml">
 -->
 
 <xsl:template match="nbsp">&#160;</xsl:template>
+
+<xsl:template match="span"><span class="{@class}"><xsl:apply-templates/></span></xsl:template>
+
+
 </xsl:stylesheet>
 

@@ -5,17 +5,17 @@
 
 
     <sect1>
-       <title>Tutorial2:  <span class="tutorial">Show all the genes for the organism </span><span class = "oraganism">Drosophila melanogaster</span>.</title>
+       <title>Tutorial2:  <span class="tutorial">Show all the genes for the organism <span class = "organism">Drosophila melanogaster</span></span>.</title>
 
 
-       <para>This page will guide you through the query: Show all the genes for the organism Drosophila melanogaster.  The aim of this query tutorial is to show you how to combine and constrain objects from two different classes.  By constraining the objects from the organism class you will also constrain the objects returned from the Gene class. This query involves: 
+       <para>This page will guide you through the query: Show all the genes for the organism <span class="organism">Drosophila melanogaster</span>.  The aim of this query tutorial is to show you how to combine and constrain objects from two different classes.  By constraining the objects from the organism class you will also constrain the objects returned from the Gene class. This query involves: 
 </para>
 
     
         <para>
           <orderedlist>
              <listitem>Selecting the Gene class</listitem>
-             <listitem>Constraining the Organism name field from Gene class to <span class = "oraganism">Drosophila melanogaster</span>.</listitem>
+             <listitem>Constraining the Organism name field from Gene class to <span class = "organism">Drosophila melanogaster</span>.</listitem>
              <listitem>Selecting the gene name field and organism name field to show in the output</listitem>
           </orderedlist>
         </para>

@@ -5,7 +5,7 @@
 
 
     <sect1>
-       <title>Tutorial3: Show all the orthologues between <span class="organism">Drosophila melanogaster</span> and <span class="organism">Anopheles gambiae</span> and the method used to determine them.</title>
+       <title>Tutorial3: <span class="tutorial">Show all the orthologues between <span class="organism">Drosophila melanogaster</span> and <span class="organism">Anopheles gambiae</span> and the method used to determine them.</span></title>
 
 
        <para>This page will guide you through the query: Show all the
