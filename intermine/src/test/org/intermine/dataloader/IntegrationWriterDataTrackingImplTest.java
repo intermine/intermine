@@ -895,4 +895,16 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
     }
 
+    public void testGetEquivalentObjects() throws Exception {
+
+        Bank b = (Bank) DynamicUtil.createObject(Collections.singleton(Bank.class));
+        b.setName("bank1");
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+        Set objects = iw.getEquivalentObjects(b, source);
+        System.out.println(objects);
+        assertTrue(objects.isEmpty());
+    }
+
 }
