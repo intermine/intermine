@@ -23,7 +23,7 @@
     <script src="${WEB_PROPERTIES['project.sitePrefix']}/style/footer.js" type="text/javascript">;</script>
     <title>
       <fmt:message key="${pageName}.title" var="pageTitle"/>
-      <c:out value="${WEB_PROPERTIES['project.title']} - ${pageTitle}" escapeXml="false"/>
+      <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
     </title>
   </head>
   
