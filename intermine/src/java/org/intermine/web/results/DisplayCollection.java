@@ -36,7 +36,7 @@ public class DisplayCollection
      */
     public DisplayCollection(LazyCollection collection, ClassDescriptor cld) throws Exception {
         this.cld = cld;
-        table = new InlineResultsTable(collection);
+        table = new InlineResultsTable(collection, cld);
         size = collection.getInfo().getRows();
 //         for (Iterator i = c.iterator(); i.hasNext();) {
 //             Set clds = ObjectViewController.getLeafClds(i.next().getClass(), cld.getModel());
