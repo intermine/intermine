@@ -2,14 +2,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- historyBagView.jsp -->
 <c:if test="${!empty PROFILE.savedBags}">
   <html:form action="/modifyBag">
-    <div class="heading">
+    <im:heading id="bagHistory">
       <fmt:message key="query.savedbags.header"/>
-    </div>
-    <div class="body">
+    </im:heading>
+    <im:body id="bagHistory">
     <table class="results" cellspacing="0">
       <tr>
         <th>
@@ -52,7 +53,8 @@
         <fmt:message key="history.intersect"/>
       </html:submit>
     </c:if>
-  </div>
+  </im:body>
   </html:form>
+  <br/>
 </c:if>
 <!-- /historyBagView.jsp -->

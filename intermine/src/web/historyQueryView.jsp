@@ -1,14 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- historyQueryView.jsp -->
 <c:if test="${!empty PROFILE.savedQueries}">
   <html:form action="/modifyQuery">
-    <div class="heading">
+    <im:heading id="queryHistory">
       <fmt:message key="query.savedqueries.header"/>
-    </div>
-    <div class="body">
+    </im:heading>
+    <im:body id="queryHistory">
     <table class="results" cellspacing="0">
       <tr>
         <th>
@@ -45,7 +46,8 @@
     <html:submit property="delete">
       <fmt:message key="history.delete"/>
     </html:submit>
-    </div>
+    </im:body>
   </html:form>
+  <br/>
 </c:if>
 <!-- /historyQueryView.jsp -->

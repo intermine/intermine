@@ -7,6 +7,7 @@
 <div class="body">
   <fmt:message key="history.intro"/>
 </div>
+<br/>
 <c:choose>
   <c:when test="${empty PROFILE.savedBags && empty PROFILE.savedQueries}">
     <div class="body altmessage">
@@ -15,7 +16,6 @@
   </c:when>
   <c:otherwise>
     <tiles:get name="historyBagView"/>
-    <br/>
     <tiles:get name="historyQueryView"/>
   </c:otherwise>
 </c:choose>
