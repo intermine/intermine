@@ -60,7 +60,7 @@
 
 <%-- /Build a query --%>
 
-<c:if test="${!empty WEB_PROPERTIES['begin.browse.template']}">
+<c:if test="${!empty WEB_PROPERTIES['begin.browse.template'] && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
   <p>
 
   <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
@@ -81,8 +81,9 @@
         <html:form action="/browseAction">
           <fmt:message key="begin.input.browse"/>
           <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
-          <!-- tell action to skip query builder -->
           <html:text property="attributeValues(1)"/>
+          <input type="hidden" name="templateType" value="global"/>
+          <input type="hidden" name="queryName" value="${browseTemplateName}"/>
           <html:submit property="skipBuilder"><fmt:message key="begin.input.submit"/></html:submit>
           <br/>
           <span class="smallnote">${WEB_PROPERTIES["begin.browse.prompt"]}</span>
