@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 
 import org.intermine.dataloader.DataLoaderHelper;
 import org.intermine.dataloader.PrimaryKey;
@@ -145,13 +146,13 @@ public class CreateIndexesTask extends Task
 
         //add an index for each primary key
         Map primaryKeys = DataLoaderHelper.getPrimaryKeys(cld);
-        for (Iterator j = primaryKeys.entrySet().iterator(); j.hasNext();) {
-            Map.Entry entry = (Map.Entry) j.next();
+        for (Iterator i = primaryKeys.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
             String keyName = (String) entry.getKey();
             PrimaryKey key = (PrimaryKey) entry.getValue();
             List fieldNames = new ArrayList();
-            for (Iterator k = key.getFieldNames().iterator(); k.hasNext();) {
-                String fieldName = (String) k.next();
+            for (Iterator j = key.getFieldNames().iterator(); j.hasNext();) {
+                String fieldName = (String) j.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
                 if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
@@ -159,17 +160,24 @@ public class CreateIndexesTask extends Task
                 }
                 fieldNames.add(DatabaseUtil.getColumnName(fd));
             }
-            String tableName = DatabaseUtil.getTableName(cld);
-            dropIndex(tableName + "__" + keyName);
-            createIndex(tableName + "__" + keyName, tableName,
-                        StringUtil.join(fieldNames, ", ") + ", id");
-            doneFieldNames.add(fieldNames.get(0));
+
+            // create indexes on this class and on all subclasses
+            Set clds = new HashSet(Collections.singleton(cld));
+            clds.addAll(cld.getModel().getAllSubs(cld));
+            for (Iterator k = clds.iterator(); k.hasNext();) {
+                ClassDescriptor nextCld = (ClassDescriptor) k.next();
+                String tableName = DatabaseUtil.getTableName(nextCld);
+                dropIndex(tableName + "__" + keyName);
+                createIndex(tableName + "__" + keyName, tableName,
+                            StringUtil.join(fieldNames, ", ") + ", id");
+                doneFieldNames.add(fieldNames.get(0));
+            }
         }
 
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
-        for (Iterator j = cld.getAllReferenceDescriptors().iterator(); j.hasNext();) {
-            ReferenceDescriptor ref = (ReferenceDescriptor) j.next();
+        for (Iterator i = cld.getAllReferenceDescriptors().iterator(); i.hasNext();) {
+            ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
             if ((FieldDescriptor.N_ONE_RELATION == ref.relationType())
                     && (ref.getReverseReferenceDescriptor() != null)) {
                 String tableName = DatabaseUtil.getTableName(cld);
@@ -183,9 +191,9 @@ public class CreateIndexesTask extends Task
         }
 
         //finally add an index to all M-to-N indirection table columns
-        //for (Iterator j = cld.getAllCollectionDescriptors().iterator(); j.hasNext();) {
-        for (Iterator j = cld.getCollectionDescriptors().iterator(); j.hasNext();) {
-            CollectionDescriptor col = (CollectionDescriptor) j.next();
+        //for (Iterator i = cld.getAllCollectionDescriptors().iterator(); i.hasNext();) {
+        for (Iterator i = cld.getCollectionDescriptors().iterator(); i.hasNext();) {
+            CollectionDescriptor col = (CollectionDescriptor) i.next();
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 String tableName = DatabaseUtil.getIndirectionTableName(col);
                 String columnName = DatabaseUtil.getInwardIndirectionColumnName(col);

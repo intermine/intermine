@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.intermine.metadata.Model;
 
@@ -25,7 +26,7 @@ public class CreateIndexesTaskTest extends TestCase
     public void setUp() throws Exception {
         m = Model.getInstanceByName("testmodel");
     }
-    
+
     //test defined keys and N-1 keys
     public void testCreateStandardIndexes1() throws Exception {
         List expected = new ArrayList();
@@ -57,7 +58,27 @@ public class CreateIndexesTaskTest extends TestCase
         task = new DummyCreateIndexesTask();
         task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.Secretary"));
         assertEquals(expected, task.sqlStatements);
-    } 
+    }
+
+    // test that primary key indexes are created on subclasses
+    public void testCreateIndexesSubclasses() throws Exception {
+        List expected = new ArrayList();
+        expected.add("drop index ImportantPerson__key");
+        expected.add("create index ImportantPerson__key on ImportantPerson(seniority, id)");
+        expected.add("drop index Contractor__key");
+        expected.add("create index Contractor__key on Contractor(seniority, id)");
+        expected.add("drop index Manager__key");
+        expected.add("create index Manager__key on Manager(seniority, id)");
+        expected.add("drop index CEO__key");
+        expected.add("create index CEO__key on CEO(seniority, id)");
+
+        DummyCreateIndexesTask task = new DummyCreateIndexesTask();
+        task.createStandardIndexes(m.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson"));
+        //assertEquals(expected, task.sqlStatements);
+
+        assertEquals(new HashSet(expected), new HashSet(task.sqlStatements));
+    }
+
 
     public void testCreateAttributeIndexes() throws Exception {
         List expected = new ArrayList();
