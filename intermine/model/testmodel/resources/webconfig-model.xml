@@ -1,0 +1,8 @@
+<webconfig>
+  <class name="org.flymine.model.testmodel.Company">
+    <shortdisplayers>
+      <displayer src="/pkFields.jsp"/>
+      <displayer src="/model/CompaniesHouseIcon.jsp"/>
+    </shortdisplayers>
+  </class>
+</webconfig>
