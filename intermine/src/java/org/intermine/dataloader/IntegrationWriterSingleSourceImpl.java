@@ -1,13 +1,13 @@
 package org.flymine.dataloader;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Map;
-import java.util.Iterator;
 import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStoreException;
