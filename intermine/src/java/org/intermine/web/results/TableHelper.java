@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 
