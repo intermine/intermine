@@ -1301,6 +1301,7 @@
   <target name="build-webapp" depends="prepare,prepare-dist,jar"
     description="Build the FlyMine web application">
     <mkdir dir="${build.webapp}/flymine"/>
+    <mkdir dir="${build.webapp}/flymine/images"/>
     <mkdir dir="${build.webapp}/flymine/model"/>
     <mkdir dir="${build.webapp}/flymine/META-INF"/>
     <mkdir dir="${build.webapp}/flymine/WEB-INF"/>
@@ -1310,6 +1311,9 @@
     <copy todir="${build.webapp}/flymine">
       <fileset dir="${src.webapp}"/>
       <fileset dir="${src.www}" includes="flymine.css"/>
+    </copy>
+    <copy todir="${build.webapp}/flymine/images">
+      <fileset dir="${resources}/webapps/flymine/images"/>
     </copy>
     <copy todir="${build.webapp}/flymine/WEB-INF">
       <fileset dir="${resources}/webapps/flymine" excludes="*.properties"/>
