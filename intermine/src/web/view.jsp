@@ -34,7 +34,7 @@
           <div class="viewpath" id="showing${fn:replace(path,".","")}"
                           onmouseover="enterPath('${fn:replace(path,".","")}')"
                           onmouseout="exitPath('${fn:replace(path,".","")}')">
-            <div style="white-space:nowrap">
+            <div>
               ${fn:replace(path, ".", " > ")}
             </div>
             <div>
