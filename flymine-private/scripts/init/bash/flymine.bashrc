@@ -41,7 +41,7 @@ SunOS)
     ;;
 esac
 
-LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
+#LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
 EDITOR=emacs; export EDITOR
 VISUAL="emacs -nw"; export VISUAL
 XTERMMOUSE=no; export XTERMMOUSE
