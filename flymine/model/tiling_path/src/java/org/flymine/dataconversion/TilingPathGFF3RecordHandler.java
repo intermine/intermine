@@ -50,14 +50,10 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) {
-
         Item feature = getFeature();
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
         if (clsName.equals("PCRProduct")) {
-
-            System.err.println ("record: " + record);
-
             List promoters = (List) record.getAttributes().get("promotor");
             
             if (promoters.get(0).equals("1")) {
