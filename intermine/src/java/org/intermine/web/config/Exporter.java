@@ -69,6 +69,31 @@ public class Exporter
     }
 
     /**
+     * @see Object#equals
+     *
+     * @param obj the Object to compare with
+     * @return true if this is equal to obj
+     */
+    public boolean equals (Object obj) {
+        if (obj instanceof Exporter) {
+            Exporter exporterObj = (Exporter) obj;
+            return exporterObj.id.equals(id) && exporterObj.actionPath.equals(actionPath) 
+                && exporterObj.className.equals(className);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @see Object#hashCode
+     *
+     * @return the hashCode for this Exporter object
+     */
+    public int hashCode() {
+        return id.hashCode() * 5 + actionPath.hashCode() + 3 * className.hashCode();
+    }
+
+    /**
      * @see java.lang.String#toString
      */
     public String toString() {
