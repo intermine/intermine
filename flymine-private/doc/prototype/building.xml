@@ -31,7 +31,7 @@
 may be as simple as installing a package on your computer.</listitem>
 
 <listitem>Obtain an up to date copy of the FlyMine source code from
-the <ulink url="/developer/cvs">CVS server</ulink>.</listitem>
+the <ulink url="/doc/software/cvs-user.xml">CVS server</ulink>.</listitem>
 
 <listitem>Have access to <ulink url="http://java.sun.com">Java
 1.4</ulink> (if running in flymine.org network, this should be the
