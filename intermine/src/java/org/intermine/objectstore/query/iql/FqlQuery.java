@@ -233,10 +233,10 @@ public class FqlQuery
             SimpleConstraint c = (SimpleConstraint) cc;
             if ((c.getType() == SimpleConstraint.IS_NULL)
                     || (c.getType() == SimpleConstraint.IS_NOT_NULL)) {
-                return nodeToString(q, c.getArg1()) + c.getOpString();
+                return nodeToString(q, c.getArg1()) + " " + c.getOpString();
             } else {
-                return nodeToString(q, c.getArg1()) + c.getOpString()
-                    + nodeToString(q, c.getArg2());
+                return nodeToString(q, c.getArg1()) + " " + c.getOpString()
+                    + " " + nodeToString(q, c.getArg2());
             }
         } else if (cc instanceof SubqueryConstraint) {
             SubqueryConstraint c = (SubqueryConstraint) cc;
@@ -360,7 +360,7 @@ public class FqlQuery
             && Util.equals(f.packageName, packageName)
             && Util.equals(f.parameters, parameters);
     }
-    
+
     /**
      * @see Object#hashCode
      */
