@@ -28,27 +28,36 @@ public abstract class FlyMineSequenceFactory
     /**
      * Create a new FlyMineSequence from a LocatedSequenceFeature
      * @param feature the LocatedSequenceFeature
-     * @return a new FlyMineSequence object
+     * @return a new FlyMineSequence object or null if the LocatedSequenceFeature doesn't have a
+     * Sequence 
      * @throws IllegalSymbolException if any of the residues of the LocatedSequenceFeature can't be
      * turned into DNA symbols.
      */
     public static FlyMineSequence make(LocatedSequenceFeature feature)
         throws IllegalSymbolException {
-        return new FlyMineSequence(DNATools.createDNA(feature.getSequence().getResidues()),
-                                   feature);
+        if (feature.getSequence() == null) {
+            return null;
+        } else {
+            String residues = feature.getSequence().getResidues();
+            return new FlyMineSequence(DNATools.createDNA(residues), feature);
+        }
     }
 
     /**
      * Create a new FlyMineSequence from a Protein
      * @param protein the Protein
-     * @return a new FlyMineSequence object
+     * @return a new FlyMineSequence object or null if the Protein doesn't have a Sequence
      * @throws IllegalSymbolException if any of the residues of the Protein can't be
      * turned into DNA symbols.
      */
     public static FlyMineSequence make(Protein protein)
         throws IllegalSymbolException {
-        return new FlyMineSequence(ProteinTools.createProtein(protein.getSequence()
-                                                              .getResidues()), protein);
+        if (protein.getSequence() == null) {
+            return null;
+        } else {
+            String residues = protein.getSequence().getResidues();
+            return new FlyMineSequence(ProteinTools.createProtein(residues), protein);
+        }
     }
 
 }
