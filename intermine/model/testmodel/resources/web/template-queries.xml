@@ -5,10 +5,10 @@
             category="People">
     <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee">
       <node path="Employee.department.company.name">
-        <constraint op="=" value="CompanyA" editable="true" description="Company name"/>
+        <constraint op="=" value="CompanyA" editable="true" description=""/>
       </node>
       <node path="Employee.department.name">
-        <constraint op="LIKE" value="Department%" editable="true" description="Department name"/>
+        <constraint op="LIKE" value="Department%" editable="true" description=""/>
       </node>
     </query>
   </template>
@@ -18,8 +18,8 @@
             category="People">
     <query name="employeesOfACertainAge" model="testmodel" view="Employee">
       <node path="Employee.age">
-        <constraint op=">" value="35" editable="true" description=""/>
-        <constraint op="!=" value="55" editable="true" description=""/>
+        <constraint op=">" value="35" editable="true" description="First age constraint"/>
+        <constraint op="!=" value="55" editable="true" description="Second age constraint"/>
       </node>
     </query>
   </template>
@@ -29,7 +29,7 @@
             category="People">
     <query name="employeeByName" model="testmodel" view="Employee">
       <node path="Employee.name">
-        <constraint op="=" value="" editable="true" description="Employee name"/>
+        <constraint op="=" value="" editable="true" description=""/>
       </node>
     </query>
   </template>
