@@ -13,6 +13,7 @@
   <!-- libraries and binaries -->
   <property name="lib" location="lib"/>
   <property name="buildlib" location="buildlib"/>
+  <property name="weblib" location="weblib"/>
   <property name="bin" location="bin"/>
 
   <!-- source directories -->
@@ -22,6 +23,7 @@
   <property name="src.schema" location="${src}/schema" />
   <property name="src.www" location="doc"/>
   <property name="src.www-internal" location="../flymine-private/doc"/>
+  <property name="src.webapp" location="webapp"/>
 
   <!-- resources directory -->
   <property name="resources" location="resources"/>
@@ -37,6 +39,7 @@
   <property name="build.javadoc" location="${build}/api"/>
   <property name="build.www" location="${build}/www"/>
   <property name="build.www-internal" location="${build}/www/internal"/>
+  <property name="build.webapp" location="${build}/webapp"/>
 
   <!-- results directories -->
   <property name="results"  location="results"/>
@@ -46,6 +49,7 @@
   <!-- distributable directories -->
   <property name="dist"  location="dist"/>
   <property name="dist.www"  location="${dist}/www"/>
+  <property name="dist.webapp"  location="${dist}/webapp"/>
   <property name="dist.javadoc"  location="${dist.www}/internal/api"/>
 
   <!-- set the classpath for the build - basically everything in lib -->
@@ -91,6 +95,7 @@
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.www}"/>
     <mkdir dir="${build.www-internal}"/>
+    <mkdir dir="${build.webapp}"/>
 
     <mkdir dir="${results}"/>
     <mkdir dir="${results.junit}"/>
@@ -105,6 +110,7 @@
   <target name="prepare-dist">
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist.www}"/>
+    <mkdir dir="${dist.webapp}"/>
     <mkdir dir="${dist.javadoc}"/>
   </target>
     
@@ -434,6 +440,31 @@
   </target>
 
 
+  <!-- Webapp targets -->
+  <target name="build-webapp" depends="prepare,jar"
+          description="Build the FlyMine web application">
+    <!-- Copy all the webapp files that do not need compiling -->
+    <copy todir="${build.webapp}">
+      <fileset dir="${src.webapp}" />
+    </copy>
+    <!-- Collect all the necessary jars together in the WEB-INF/lib directory -->
+    <copy todir="${build.webapp}/WEB-INF/lib">
+      <!-- The FlyMine jars -->
+      <fileset dir="${dist}">
+        <include name="*.jar"/>
+      </fileset>
+      <!-- The webapp-specific jars -->
+      <fileset dir="${weblib}">
+        <include name="**/*.jar"/>
+      </fileset>
+      <!-- The main runtime jars -->
+      <fileset dir="${lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </copy>
+
+  </target>
+
   <!-- Packaging/distribution targets -->
 
   <target name="dist-www" depends="prepare-dist,build-www"
@@ -453,6 +484,27 @@
         <include name="**/**" />
       </fileset>
     </chmod>
+  </target>
+
+  <target name="dist-webapp" depends="prepare-dist,build-webapp"
+          description="makes the web application available for distribution">
+
+    <copy todir="${dist.webapp}">
+      <fileset dir="${build.webapp}">
+      </fileset>
+    </copy>
+
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist.webapp}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <chmod perm="a+rx" type="dir">
+      <fileset dir="${dist.webapp}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+
   </target>
 
   <target name="dist-javadoc" depends="prepare-dist,javadoc"
@@ -485,6 +537,13 @@
     description="releases the static website to the webserver">
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --delete ${dist.www}/ ${www.serverlocation}/" />
+    </exec>
+  </target>
+
+  <target name="release-webapp" depends="dist-webapp"
+    description="releases the web application to the webserver">
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz --delete ${dist.webapp}/ ${webapp.serverlocation}/" />
     </exec>
   </target>
 
