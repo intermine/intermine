@@ -823,7 +823,7 @@ public class Query implements SQLStringable
     }
 
     /**
-     * Processes an AST node that describes an unsafe function.
+     * Processes an AST node that describes a safe function.
      *
      * @param ast an AST node to process
      * @return a Function object corresponding to the input
