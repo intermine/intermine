@@ -74,7 +74,7 @@ public class ObjectSummaryController extends TilesAction
             }
             context.putAttribute("leafClds", leafClds);
         } else {
-            context.putAttribute("leafClds", null);
+            context.putAttribute("leafClds", new ArrayList());
         }
 
         return null;
