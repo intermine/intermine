@@ -27,6 +27,8 @@ import org.apache.struts.Globals;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 
+import org.intermine.web.results.ChangeResultsForm;
+
 /**
  * Action to handle links on view tile
  * @author Mark Woodbridge
@@ -124,7 +126,12 @@ public class ViewChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        session.removeAttribute("changeResultsForm"); 
+        ChangeResultsForm resultsForm =
+            (ChangeResultsForm) session.getAttribute("changeResultsForm");
+
+        if (resultsForm != null) {
+            resultsForm.reset(mapping, request);
+        }
 
         try {
             session.setAttribute(Constants.RESULTS_TABLE, ViewHelper.runQuery(request));
