@@ -16,7 +16,6 @@
         <c:when test="${!empty webconfig.types[cld.name].longDisplayers}">
           <c:forEach items="${webconfig.types[cld.name].longDisplayers}" var="displayer">
             <c:set var="cld" value="${cld}" scope="request"/>
-            <c:set var="field" value="${displayer.params['field']}" scope="page"/>
             <tiles:insert beanName="displayer" beanProperty="src"/>
           </c:forEach>
         </c:when>
