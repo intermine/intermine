@@ -10,11 +10,9 @@ package org.flymine.web;
  *
  */
 
-import java.util.List;
+import org.flymine.objectstore.query.Query;
 
 import servletunit.struts.MockStrutsTestCase;
-
-import org.flymine.objectstore.query.Query;
 
 public class FqlQueryActionTest extends MockStrutsTestCase {
 

@@ -12,7 +12,6 @@ package org.flymine.web;
 
 import servletunit.struts.MockStrutsTestCase;
 
-import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.fql.FqlQuery;
 
 public class RunQueryActionTest extends MockStrutsTestCase

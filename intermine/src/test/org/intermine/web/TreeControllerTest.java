@@ -15,9 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.flymine.metadata.Model;
-import org.flymine.metadata.presentation.DisplayModel;
-
 import servletunit.struts.MockStrutsTestCase;
 
 public class TreeControllerTest extends MockStrutsTestCase

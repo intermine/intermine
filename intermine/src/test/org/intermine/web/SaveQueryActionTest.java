@@ -19,13 +19,8 @@ import java.util.IdentityHashMap;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Employee;
-import org.flymine.web.SaveQueryController;
 
 public class SaveQueryActionTest extends MockStrutsTestCase
 {

@@ -10,21 +10,16 @@ package org.flymine.web;
  *
  */
 
-import servletunit.struts.MockStrutsTestCase;
-
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.HashMap;
+import javax.servlet.http.HttpSession;
 
 import org.flymine.objectstore.query.Query;
 import org.flymine.objectstore.query.QueryClass;
-import org.flymine.objectstore.query.ConstraintOp;
-import org.flymine.metadata.Model;
-import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayModel;
 import org.flymine.model.testmodel.Company;
 import org.flymine.model.testmodel.Employee;
 
+import servletunit.struts.MockStrutsTestCase;
 
 public class LoadQueryActionTest extends MockStrutsTestCase
 {
