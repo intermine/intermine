@@ -193,9 +193,16 @@ public class Owl2FlyMine
         Iterator s = prop.listSuperProperties();
         while (s.hasNext()) {
             OntProperty superProp = (OntProperty) s.next();
-            if (superProp != null && domain.canAs(OntClass.class)) {
-                if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superProp.getDomain(),
-                                                                         true)) {
+            if (superProp != null && !superProp.getURI().equals(prop.getURI())
+                && domain.canAs(OntClass.class)) {
+                OntClass superDomain = null;
+                if (superProp.getInverseOf() != null) {
+                    superDomain = (OntClass) superProp.getInverseOf().getRange().as(OntClass.class);
+                } else {
+                    superDomain = (OntClass) superProp.getDomain().as(OntClass.class);
+                }
+                if (((OntClass) domain.as(OntClass.class)).hasSuperClass(superDomain,
+                                                                         false)) {
                     return;
                 }
             }
