@@ -27,12 +27,11 @@ import org.flymine.model.testmodel.*;
 public abstract class QueryTestCase extends TestCase
 {
     protected Database db;
-    protected Map queries;
-    protected Map results;
-    private DescriptorRepository dr;
-
-    protected Map data = new HashMap();
-
+    protected DescriptorRepository dr;    
+    protected Map data = new LinkedHashMap();
+    protected Map queries = new HashMap();
+    protected Map results = new LinkedHashMap();
+ 
     /**
      * Constructor
      */
@@ -48,14 +47,15 @@ public abstract class QueryTestCase extends TestCase
     public void setUp() throws Exception {
         super.setUp();
 
-        Database db = DatabaseFactory.getDatabase("db.unittest");
-        ObjectStoreOjbImpl os = ObjectStoreOjbImpl.getInstance(db);
-        PersistenceBroker broker = os.getPersistenceBroker();
-        dr = broker.getDescriptorRepository();
-        queries = new HashMap();
-        results = new LinkedHashMap();
+        db = DatabaseFactory.getDatabase("db.unittest");
+        dr = ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker().getDescriptorRepository();
+        setUpData();
         setUpQueries();
         setUpResults();
+    }
+
+    public void tearDown() throws Exception {
+        tearDownData();
     }
 
     /**
@@ -99,7 +99,6 @@ public abstract class QueryTestCase extends TestCase
      */
     public void setUpData() throws Exception {
         data();
-        db = DatabaseFactory.getDatabase("db.unittest");
         PersistenceBrokerFlyMineImpl broker = (PersistenceBrokerFlyMineImpl) ObjectStoreOjbImpl.getInstance(db).getPersistenceBroker();
          try {
             broker.beginTransaction();
@@ -490,11 +489,10 @@ public abstract class QueryTestCase extends TestCase
     */
     public Query whereClassObject() throws Exception {
         QueryClass qc1 = new QueryClass(Company.class);
-        Company obj = new Company();
-        ClassDescriptor cld = dr.getDescriptorFor(Company.class);
+        Object obj = data.get("CompanyA");
+        ClassDescriptor cld = dr.getDescriptorFor(obj.getClass());
         FieldDescriptor fld = cld.getFieldDescriptorByName("id");
-        //Integer id = (Integer) fld.getPersistentField().get(data.get("CompanyA"));
-        Integer id = new Integer(2345);
+        Integer id = (Integer) fld.getPersistentField().get(obj);
         fld.getPersistentField().set(obj, id);
         ClassConstraint cc1 = new ClassConstraint(qc1, ClassConstraint.EQUALS, obj);
         Query q1 = new Query();
