@@ -91,7 +91,7 @@ public interface Constants
     public static final String TEMPLATE_PATHQUERY = "TEMPLATE_PATHQUERY";
     
     /**
-     * Session attriute used to store the original of the template being edited
+     * Session attribute used to store the original of the template being edited
      * in the query builder.
      */
     public static final String EDITING_TEMPLATE = "EDITING_TEMPLATE";
@@ -113,7 +113,7 @@ public interface Constants
     
     /**
      * Servlet attribute used to store username of superuser (this attribute
-     * will disappear when we implement a more fine-grained user privaleges
+     * will disappear when we implement a more fine-grained user privileges
      * system).
      */
     public static final String SUPERUSER_ACCOUNT = "SUPERUSER_ACCOUNT";
@@ -131,4 +131,9 @@ public interface Constants
      * after redirect).
      */
     public static final String ERRORS = "ERRORS";
+
+    /**
+     * The name of the property to look up to find the maximum size of an inline table.
+     */
+    public static final String INLINE_TABLE_SIZE = "inline.table.size";
 }
