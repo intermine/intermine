@@ -10,13 +10,18 @@ package org.flymine.dataconversion;
  *
  */
 
- /**
+import java.util.Map;
+import java.util.HashMap;
+ 
+/**
  * Abstract parent class of all DataConverters
  * @author Mark Woodbridge
  */
  public abstract class DataConverter
 {
     protected ItemWriter writer;
+    protected Map aliases = new HashMap();
+    protected int nextClsId = 0;
 
     /**
     * Constructor that should be called by children
@@ -31,4 +36,19 @@ package org.flymine.dataconversion;
     * @throws Exception if an error occurs during processing
     */
     public abstract void process() throws Exception;
+
+    /**
+     * Uniquely alias a className
+     * @param className the class name
+     * @return the alias
+     */
+    protected String alias(String className) {
+        String alias = (String) aliases.get(className);
+        if (alias != null) {
+            return alias;
+        }
+        String nextIndex = "" + (nextClsId++);
+        aliases.put(className, nextIndex);
+        return nextIndex;
+    }
 }
