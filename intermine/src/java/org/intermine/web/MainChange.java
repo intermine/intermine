@@ -196,7 +196,6 @@ public class MainChange extends DispatchAction
 
     /**
      * Convert a path and prefix to a path
-     * Note that we don't, in general, allow prefixes without dots in them
      * @param prefix the prefix (eg null or Department.company)
      * @param path the path (eg Company, Company.departments)
      * @return the new path
