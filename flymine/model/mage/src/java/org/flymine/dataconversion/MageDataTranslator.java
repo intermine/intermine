@@ -1517,7 +1517,8 @@ public class MageDataTranslator extends DataTranslator
     protected Map createMaer2AssayMap(Map assay2Maer) {
 
         for (Iterator i = assay2Maer.keySet().iterator(); i.hasNext(); ) {
-            String assay = (String) i.next(); if (assay2Maer.containsKey(assay)) {
+            String assay = (String) i.next();
+            if (assay2Maer.containsKey(assay)) {
                 List maers = (ArrayList) assay2Maer.get(assay);
                 if (maers != null) {
                     for (Iterator j = maers.iterator(); j.hasNext(); ) {
