@@ -70,6 +70,7 @@ public class CreateIndexesTask extends Task
     /**
      * Set the attributeIndexes flag.  Index the attributes that are not part of the
      * primary key if and only if the flag is set.
+     * @param attributeIndexes flag for attribute indexes
      */
     public void setAttributeIndexes(boolean attributeIndexes) {
         this.attributeIndexes = attributeIndexes;

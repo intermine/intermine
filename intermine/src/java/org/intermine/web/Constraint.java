@@ -40,6 +40,7 @@ public class Constraint
      * Make a new Constraint with a description and an identifier.
      * @param op the constraintOp for this constraint
      * @param value the value for this constraint
+     * @param editable set if this constraint should be editable in a template
      * @param description the description of this constraint
      * @param identifier a label for this Constraint used for refering to this it in a
      * template. null means that this Constraint has no identifier. 
