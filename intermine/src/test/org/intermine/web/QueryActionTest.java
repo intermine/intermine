@@ -15,12 +15,11 @@ import servletunit.struts.MockStrutsTestCase;
 import org.flymine.objectstore.query.Query;
 import org.flymine.metadata.Model;
 import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayClassDescriptor;
 
 public class QueryActionTest extends MockStrutsTestCase
 {
     protected ClassDescriptor cld;
-    
+
     public QueryActionTest(String testName) {
         super(testName);
     }
@@ -33,7 +32,7 @@ public class QueryActionTest extends MockStrutsTestCase
     public void testSubmitSuccessful() throws Exception {
         setRequestPathInfo("/query");
         addRequestParameter("action", "Submit");
-        getSession().setAttribute("cld", new DisplayClassDescriptor(cld));
+        getSession().setAttribute("cld", cld);
         actionPerform();
         assertNull(getSession().getAttribute("cld"));
         verifyForward("buildquery");
@@ -68,7 +67,7 @@ public class QueryActionTest extends MockStrutsTestCase
          QueryForm queryForm = new QueryForm();
          queryForm.setFieldValue("dateObjType", "not_a_date");
          setActionForm(queryForm);
-         getSession().setAttribute("cld", new DisplayClassDescriptor(cld));
+         getSession().setAttribute("cld", cld);
          actionPerform();
          verifyForward("error");
          //current behaviour is to create queryclass but not touch its constraints

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.flymine.util.StringUtil;
+import org.flymine.util.TypeUtil;
 import org.flymine.util.Util;
 
 import org.apache.log4j.Logger;
@@ -120,11 +121,20 @@ public class ClassDescriptor
 
     /**
      * Returns the fully qualified class name described by this ClassDescriptor.
-     * @return name of the described Class
+     * @return qualified name of the described Class
      */
     public String getName() {
         return name;
     }
+
+    /**
+     * Returns unqualified name of class described by this ClassDescriptor.
+     * @return unqualified name of the described Class
+     */
+    public String getUnqualifiedName() {
+        return TypeUtil.unqualifiedName(name);
+    }
+
 
     /**
      * Get a set of primary key FieldDescriptors for this Class and all its superclasses.
@@ -140,7 +150,7 @@ public class ClassDescriptor
         }
         return allPkFields;
     }
-    
+
     /**
      * Gets the FieldDescriptors for this class (but not subclasses)
      * @return set of FieldDescriptors
@@ -173,7 +183,7 @@ public class ClassDescriptor
             if (superclassDescriptor != null) {
                 return superclassDescriptor.getFieldDescriptorByName(name);
             } else {
-                throw new NullPointerException("ClassDescriptor '" + getName() 
+                throw new NullPointerException("ClassDescriptor '" + getName()
                                                + "' has no field named '" + name + "'");
             }
         }
@@ -459,7 +469,7 @@ public class ClassDescriptor
      * @see Object#hashCode
      */
     public int hashCode() {
-        return 3 * name.hashCode() 
+        return 3 * name.hashCode()
             + 5 * Util.hashCode(superclassName)
             + 7 * interfaceNames.hashCode()
             + 11 * (isInterface ? 1 : 0)

@@ -22,7 +22,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.flymine.metadata.ClassDescriptor;
-import org.flymine.metadata.presentation.DisplayClassDescriptor;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.query.presentation.QueryCreator;
 
@@ -55,21 +54,20 @@ public class QueryAction extends LookupDispatchAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        
+
         Query query = (Query) session.getAttribute("query");
         if (query == null) {
             query = new Query();
         }
 
-        ClassDescriptor cld = ((DisplayClassDescriptor) session.getAttribute("cld"))
-            .getClassDescriptor();
+        ClassDescriptor cld = (ClassDescriptor) session.getAttribute("cld");
         session.removeAttribute("cld");
-            
+
         QueryForm queryForm = (QueryForm) form;
         QueryCreator.addToQuery(query, cld.getName(), queryForm.getFields());
         queryForm.reset(mapping, request);
         session.setAttribute("query", query);
-        
+
         return mapping.findForward("buildquery");
     }
 

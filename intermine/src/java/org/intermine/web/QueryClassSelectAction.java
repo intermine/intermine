@@ -16,23 +16,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 import org.flymine.metadata.Model;
-import org.flymine.metadata.presentation.DisplayClassDescriptor;
+import org.flymine.metadata.ClassDescriptor;
 import org.flymine.metadata.presentation.DisplayModel;
 
 /**
- * Implementation of <strong>Action</strong> that runs a Query
+ * Implementation of <strong>Action</strong> that processes
+ * QueryClass selection form.
  *
- * @author Andrew Varley
+ * @author Richard Smith
+ * @author Mark Woodbridge
  */
 
-public class QueryClassSelectAction extends LookupDispatchAction
+public class QueryClassSelectAction extends Action
 {
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -50,7 +52,7 @@ public class QueryClassSelectAction extends LookupDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward select(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -68,24 +70,10 @@ public class QueryClassSelectAction extends LookupDispatchAction
             throw new Exception("ClassDescriptor (" + cldName + ") not found in model ("
                                 + model.getName() + ")");
         }
-        DisplayClassDescriptor cld =
-            new DisplayClassDescriptor(model.getClassDescriptorByName(cldName));
+        ClassDescriptor cld = model.getClassDescriptorByName(cldName);
         session.setAttribute("cld", cld);
 
         return (mapping.findForward("buildquery"));
-    }
-
-    /**
-     * Distributes the actions to the necessary methods, by providing a Map from action to
-     * the name of a method.
-     *
-     * @return a Map
-     */
-    protected Map getKeyMethodMap() {
-        Map map = new HashMap();
-        map.put("button.select", "select");
-        map.put("button.view", "view");
-        return map;
     }
 
 }
