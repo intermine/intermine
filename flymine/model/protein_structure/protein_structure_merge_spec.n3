@@ -33,23 +33,14 @@
 #   rdfs:subClassOf [a owl:Restriction;
 #                    owl:maxCardinality "1";
 #                    owl:onProperty :ProteinRegion__structuralFamily].
-#:ProteinRegion__sequenceFamily a owl:ObjectProperty;
-#   rdfs:domain :ProteinRegion;
-#   rdfs:range :SequenceFamily.
 #
 #:ProteinRegion__structuralFamily a owl:ObjectProperty;
 #   rdfs:domain :ProteinRegion;
 #   rdfs:range :StructuralFamily.
 #
-#:SequenceFamily a owl:Class.
+#:ProteinStructuralFamily a owl:Class.
 #
-#:SequenceFamily__name a owl:DatatypeProperty;
-#   rdfs:domain :SequenceFamily;
-#   rdfs:range xsd:string.
-#
-#:StructuralFamily a owl:Class.
-#
-#:StructuralFamily__name a owl:DatatypeProperty;
+#:ProteinStructuralFamily__name a owl:DatatypeProperty;
 #   rdfs:domain :StructuralFamily;
 #   rdfs:range xsd:string.
 
