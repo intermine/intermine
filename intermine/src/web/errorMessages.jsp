@@ -4,20 +4,21 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 
 <!-- errorMessages.jsp -->
-<div class="errors">
-  <logic:messagesPresent>
+<logic:messagesPresent>
+  <div class="errors">
     <html:messages id="error">
       <c:out value="${error}"/><br/>
     </html:messages>
-  </logic:messagesPresent>
-</div>  
+  </div>  
+  <br/>
+</logic:messagesPresent>
 
-<div class="messages">
-  <logic:messagesPresent message="true">
+<logic:messagesPresent message="true">
+  <div class="messages">
     <html:messages id="message" message="true">
       <c:out value="${message}"/><br/>
     </html:messages>
-    <br/>
-  </logic:messagesPresent>
-</div>
+  </div>
+  <br/>
+</logic:messagesPresent>
 <!-- /errorMessages.jsp -->
