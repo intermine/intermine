@@ -191,6 +191,7 @@
               <fmt:param value="${RESULTS_TABLE.endRow+1}"/>
               <fmt:param value="${RESULTS_TABLE.size}"/>
             </fmt:message>
+            <im:helplink key="results.help.estimate"/>
           </c:when>
           <c:otherwise>
             <fmt:message key="results.pageinfo.exact">
