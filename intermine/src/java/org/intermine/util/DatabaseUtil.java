@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.intermine.metadata.ClassDescriptor;
@@ -24,6 +25,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.sql.Database;
+import org.intermine.model.InterMineObject;
 
 import org.apache.log4j.Logger;
 
@@ -655,4 +657,67 @@ public class DatabaseUtil
             conn.close();
         }
     }
+
+    /**
+     * Create a new (temporary) table the holds the contents of the given Collection (bag).  The
+     * "Class c" parameter selects which objects from the bag are put in the new table.  eg. if the
+     * bag contains Integers and Strings and the parameter is Integer.class then the table will
+     * contain only the Integers from the bag.  A Class of InterMineObject is handled specially: the
+     * new table .
+     * The table will have one column ("value").
+     * @param db the Database to access
+     * @param con the Connection to use
+     * @param tableName the name to use for the new table
+     * @param bag the Collection to create a table for
+     * @param c the type of objects to put int he new table
+     * @throws SQLException if there is a database problem
+     */
+    public static void createBagTable(Database db, Connection con,
+                                      String tableName, Collection bag, Class c)
+        throws SQLException {
+
+        String typeString;
+
+        if (InterMineObject.class.isAssignableFrom(c)) {
+            typeString = db.getColumnTypeString(Integer.class);
+        } else {
+            typeString = db.getColumnTypeString(c);
+
+            if (typeString == null) {
+                throw new IllegalArgumentException("unknown Class passed to createBagTable(): "
+                                                   + c.getName());
+            }
+        }
+
+        String tableCreateSql = "CREATE TEMPORARY TABLE " + tableName + " (value "
+            + typeString + ")";
+
+        Statement s = con.createStatement();
+        s.execute(tableCreateSql);
+
+        Iterator bagIter = bag.iterator();
+
+        while (bagIter.hasNext()) {
+            Object o = bagIter.next();
+
+            if (c.isInstance(o)) {
+                String objectString = TypeUtil.objectToString(o);
+                if (c.equals(String.class)) {
+                    objectString = "'" + objectString + "'";
+                } else {
+                    if (o instanceof InterMineObject) {
+                        objectString = "" + ((InterMineObject) o).getId();
+                    }
+                }
+
+                String objectSql = "INSERT INTO " + tableName + " values(" + objectString + ")";
+                s.execute(objectSql);
+            }
+        }
+
+        String indexCreateSql = "CREATE INDEX " + tableName + "_index ON " + tableName + "(value)";
+
+        s.execute(indexCreateSql);
+    }
 }
+
