@@ -52,7 +52,7 @@ public class GFF3ConverterTest extends TestCase {
     String targetNameSpace = "http://www.flymine.org/model/genomic#";
 
     public void setUp() {
-        converter = new GFF3Converter(parser, writer, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace);
+        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace);
     }
 
     public void tearDown() throws Exception {

@@ -39,7 +39,8 @@ public class GFF3ConverterTask extends Task
     protected static final Logger LOG = Logger.getLogger(GFF3ConverterTask.class);
 
     protected FileSet fileSet;
-    protected String converter, target, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace;
+    protected String converter, targetAlias,
+        seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace;
     protected GFF3Parser parser;
 
      /**
@@ -60,11 +61,11 @@ public class GFF3ConverterTask extends Task
 
 
     /**
-     * Set the target
-     * @param target the target
+     * Set the target ObjectStore alias
+     * @param targetAlias the targetAlias
      */
-    public void setTarget(String target) {
-        this.target = target;
+    public void setTarget(String targetAlias) {
+        this.targetAlias = targetAlias;
     }
 
 
@@ -113,8 +114,8 @@ public class GFF3ConverterTask extends Task
         if (converter == null) {
             throw new BuildException("converter attribute not set");
         }
-        if (target == null) {
-            throw new BuildException("target attribute not set");
+        if (targetAlias == null) {
+            throw new BuildException("targetAlias attribute not set");
         }
         if (seqClsName == null) {
             throw new BuildException("seqClsName attribute not set");
@@ -133,11 +134,11 @@ public class GFF3ConverterTask extends Task
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         try {
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(target);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(targetAlias);
             writer = new ObjectStoreItemWriter(osw);
             parser = new GFF3Parser();
-            GFF3Converter gff3converter = new GFF3Converter(parser, writer, seqClsName, orgAbbrev,
-                          infoSourceTitle, targetNameSpace);
+            GFF3Converter gff3converter =
+                new GFF3Converter(writer, seqClsName, orgAbbrev, infoSourceTitle, targetNameSpace);
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
