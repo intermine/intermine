@@ -15,10 +15,9 @@
 <div class="messages">
   <logic:messagesPresent message="true">
     <html:messages id="message" message="true">
-      <c:out value="${message}"/><br>
+      <c:out value="${message}"/><br/>
     </html:messages>
+    <br/>
   </logic:messagesPresent>
 </div>
-
-<br/>
 <!-- /errorMessages.jsp -->
