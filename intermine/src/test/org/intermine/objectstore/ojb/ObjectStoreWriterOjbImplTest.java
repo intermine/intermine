@@ -2,11 +2,15 @@ package org.flymine.objectstore.ojb;
 
 import junit.framework.TestCase;
 
+import java.lang.reflect.Field;
+
 import org.flymine.objectstore.ObjectStoreQueriesTestCase;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.sql.DatabaseFactory;
 import org.flymine.model.testmodel.*;
+import org.flymine.util.RelationType;
+
 
 public class ObjectStoreWriterOjbImplTest extends ObjectStoreQueriesTestCase
 {
@@ -92,5 +96,47 @@ public class ObjectStoreWriterOjbImplTest extends ObjectStoreQueriesTestCase
         } catch (NullPointerException e) {
         }
     }
+
+    public void testDescribeRelationOneToOne() throws Exception {
+        Field f = Company.class.getDeclaredField("CEO");
+        assertEquals(RelationType.ONE_TO_ONE, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationOneToN() throws Exception {
+        Field f = Company.class.getDeclaredField("departments");
+        assertEquals(RelationType.ONE_TO_N, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationNToOne() throws Exception {
+        Field f = Department.class.getDeclaredField("company");
+        assertEquals(RelationType.N_TO_ONE, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationMToN() throws Exception {
+        Field f = Company.class.getDeclaredField("contractors");
+        assertEquals(RelationType.M_TO_N, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationNamedMToN() throws Exception {
+        Field f = Company.class.getDeclaredField("oldContracts");
+        assertEquals(RelationType.M_TO_N, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationNamedOneToN() throws Exception {
+        Field f = Department.class.getDeclaredField("rejectedEmployees");
+        assertEquals(RelationType.ONE_TO_N, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationNamedNToOne() throws Exception {
+        Field f = Employee.class.getDeclaredField("departmentThatRejectedMe");
+        assertEquals(RelationType.N_TO_ONE, writer.describeRelation(f));
+    }
+
+    public void testDescribeRelationNoRelation() throws Exception {
+        Field f = Department.class.getDeclaredField("name");
+        assertEquals(RelationType.NOT_RELATION, writer.describeRelation(f));
+    }
+
+
 
 }
