@@ -488,7 +488,7 @@
         <pathelement path="${build.java}"/>
       </classpath>
     </depend>
-    <copy todir="${build.resources.test}" file="${summarise.output.properties}"/>
+    <!--<copy todir="${build.resources.test}" file="${summarise.output.properties}"/>-->
   </target>
 
   <target name="compile-test" depends="prepare-test"
