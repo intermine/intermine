@@ -11,7 +11,7 @@
   <c:choose>
     <c:when test="${empty leafClds}">
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
-      <c:set var="maxLength" value="32"/>
+      <c:set var="maxLength" value="60"/>
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
           ${fn:substring(object, 0, maxLength)} ...
@@ -24,11 +24,9 @@
     <c:otherwise>
       <c:if test="${viewType == 'summary'}">
         <nobr>
-          <b>
             <c:forEach var="cld" items="${leafClds}">
               <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
             </c:forEach>
-          </b>
           [<html:link action="/objectDetails?id=${object.id}">
              <fmt:message key="results.details"/>
            </html:link>]
