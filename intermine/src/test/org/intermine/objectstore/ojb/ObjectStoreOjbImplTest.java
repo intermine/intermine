@@ -296,7 +296,85 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
     }
 
+
+    public void testLazyCollectionMtoN() throws Exception {
+        // query for company and check contractors
+        QueryClass c1 = new QueryClass(Company.class);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("CompanyA");
+        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        q1.setConstraint(sc1);
+        Results r  = os.execute(q1);
+        ResultsRow rr = (ResultsRow) r.get(0);
+        Company c = (Company) rr.get(0);
+        List contractors = c.getContractors();
+        assertTrue(contractors instanceof Results);
+        List expected1 = new ArrayList();
+        expected1.add(data.get("ContractorA"));
+        expected1.add(data.get("ContractorB"));
+        assertEquals(contractors, expected1);
+
+        List companies = ((Contractor) contractors.get(0)).getCompanys();
+        assertTrue(companies instanceof Results);
+        List expected2 = new ArrayList();
+        expected2.add(data.get("CompanyA"));
+        expected2.add(data.get("CompanyB"));
+        assertEquals(companies, expected2);
+    }
+
+
     public void testLazyReference() throws Exception {
+        QueryClass c1 = new QueryClass(Department.class);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("DepartmentA1");
+        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        q1.setConstraint(sc1);
+        Results r  = os.execute(q1);
+        ResultsRow rr = (ResultsRow) r.get(0);
+        Department d = (Department) rr.get(0);
+        Company c = d.getCompany();
+        assertTrue(c instanceof org.flymine.objectstore.proxy.LazyReference);
+        assertTrue(c.equals(data.get("CompanyA")));
+        assertTrue(data.get("CompanyA").equals(c));
+    }
+
+
+    public void testLazyCollectionRef() throws Exception {
+        QueryClass c1 = new QueryClass(Department.class);
+        Query q1 = new Query();
+        q1.addFrom(c1);
+        q1.addToSelect(c1);
+        QueryField f1 = new QueryField(c1, "name");
+        QueryValue v1 = new QueryValue("DepartmentA1");
+        SimpleConstraint sc1 = new SimpleConstraint(f1, SimpleConstraint.EQUALS, v1);
+        q1.setConstraint(sc1);
+        Results r  = os.execute(q1);
+        ResultsRow rr = (ResultsRow) r.get(0);
+        Department d = (Department) rr.get(0);
+        List e = d.getEmployees();
+        assertTrue(e instanceof Results);
+
+        List expected = new ArrayList();
+        expected.add(data.get("EmployeeA1"));
+        expected.add(data.get("EmployeeA2"));
+        expected.add(data.get("EmployeeA3"));
+
+        // test that we can navigate from member of lazy collection to one of its lazy references
+        assertEquals(expected, e);
+        Employee e1 = (Employee) e.get(0);
+        Address a = e1.getAddress();
+        assertTrue(a instanceof org.flymine.objectstore.proxy.LazyReference);
+        assertEquals(a, ((Employee) data.get("EmployeeA1")).getAddress());
+    }
+
+    public void testLazyReferenceRef() throws Exception {
+
         QueryClass c1 = new QueryClass(Department.class);
         Query q1 = new Query();
         q1.addFrom(c1);
@@ -317,4 +395,5 @@ public class ObjectStoreOjbImplTest extends QueryTestCase
         assertTrue(a instanceof LazyReference);
         assertEquals(a, ((Company) data.get("CompanyA")).getAddress());
     }
+
 }
