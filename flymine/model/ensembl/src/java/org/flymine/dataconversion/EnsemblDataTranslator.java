@@ -183,7 +183,6 @@ public class EnsemblDataTranslator extends DataTranslator
                                 "repeat_consensus");
                     promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
                     promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
-                    storeTgtItem = false;
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
