@@ -4,6 +4,8 @@
 @prefix owl:  <http://www.w3.org/2002/07/owl#>.
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
 
+#Gene
+
 :Gene a owl:Class;
     rdfs:subClassOf
       [ a owl:Restriction;
@@ -26,6 +28,8 @@
     rdfs:domain :Gene;
     rdfs:range :Synonym.
 
+#Synonym
+
 :Synonym a owl:Class;
     rdfs:subClassOf
       [ a owl:Restriction;
@@ -47,6 +51,8 @@
     rdfs:domain :Synonym;
     rdfs:range xsd:string.
 
+#Phenotype
+
 :Phenotype a owl:Class.
     rdfs:subClassOf
       [ a owl:Restriction;
@@ -64,6 +70,8 @@
     rdfs:domain :Phenotype;
     rdfs:range :Evidence.
 
+#RNAiExperiment
+
 :RNAiExperiment a owl:Class;
     rdfs:subClassOf
       [ a owl:Restriction;
@@ -74,11 +82,15 @@
     rdfs:domain :RNAiExperiment;
     rdfs:range :Publication.
 
+#Database
+
 :Database a owl:Class.
 
 :Database__url a owl:DatatypeProperty;
     rdfs:domain :Database;
     rdfs:range xsd:anyURI.
+
+#Organism
 
 :Organism a owl:Class.
 
@@ -93,6 +105,8 @@
 :Organism__taxonId a owl:DatatypeProperty;
     rdfs:domain :Organism;
     rdfs:range xsd:string.
+
+#Publication
 
 :Publication a owl:Class.
 
@@ -127,3 +141,11 @@
 :Publication__pubMedId a owl:DatatypeProperty;
     rdfs:domain :Publication;
     rdfs:range xsd:string.
+
+#Database
+
+:Database a owl:Class.
+
+:Database__url a owl:DatatypeProperty;
+    rdfs:domain :Database;
+    rdfs:range xsd:anyURI.
