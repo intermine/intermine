@@ -1,4 +1,8 @@
 <project name="flymine-cc" default="masterbuild"> 
+
+  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
+
   <target name="checkout" description="Update packages from CVS">
     <cvs cvsroot=":ext:cvs-internal.flymine.org:/cvs"
       package="flymine" dest="/shared/log/buildlog/.projects"/>
