@@ -157,7 +157,7 @@ public class ObjectStoreServer
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(int queryId) throws ObjectStoreException {
-        return os.estimate(lookupResults(queryId).getQuery());
+        return lookupResults(queryId).getInfo();
     }
 
     /**

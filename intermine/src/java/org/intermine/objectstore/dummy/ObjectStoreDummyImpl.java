@@ -209,7 +209,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @throws ObjectStoreException if an error occurs explaining the query
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
-        return new ResultsInfo(0, 0, 0);
+        return new ResultsInfo(0, 0, 1);
     }
 
     /**

@@ -61,6 +61,9 @@ public class Results extends AbstractList
     // If sequential gets above a PREFETCH_SEQUENTIAL_THRESHOLD, then we prefetch the batch after
     // the one we are currently using.
 
+    protected int lastGetAtGetInfoBatch = -1;
+    protected ResultsInfo info;
+
     protected static final Logger LOG = Logger.getLogger(Results.class);
 
     // A map of batch number against a List of ResultsRows
@@ -352,6 +355,20 @@ public class Results extends AbstractList
                     + query.hashCode() + "         size " + maxSize);
         }
         return maxSize;
+    }
+
+    /**
+     * Gets the best current estimate of the characteristics of the query.
+     *
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     * @return a ResultsInfo object
+     */
+    public ResultsInfo getInfo() throws ObjectStoreException {
+        if ((info == null) || ((lastGet % batchSize) != lastGetAtGetInfoBatch)) {
+            info = os.estimate(query);
+            lastGetAtGetInfoBatch = lastGet % batchSize;
+        }
+        return new ResultsInfo(info, minSize, maxSize);
     }
 
     /**
