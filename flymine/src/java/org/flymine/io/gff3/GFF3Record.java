@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import java.io.IOException;
@@ -40,8 +39,13 @@ public class GFF3Record
     /**
      * Flag to indicate that there is no score info.
      */
-    public static double NO_SCORE = Double.NEGATIVE_INFINITY;
+    private static final double NO_SCORE = Double.NEGATIVE_INFINITY;
 
+    /**
+     * Create a GFF3Record from a line of a GFF3 file
+     * @param line the String to parse
+     * @throws IOException if there is an error during parsing the line
+     */
     public GFF3Record(String line) throws IOException {
         StringTokenizer st = new StringTokenizer(line, "\t", false);
 
@@ -69,7 +73,7 @@ public class GFF3Record
 
         String scoreString = st.nextToken();
 
-        if(scoreString.equals("") || scoreString.equals(".") || scoreString.equals("0")) {
+        if (scoreString.equals("") || scoreString.equals(".") || scoreString.equals("0")) {
             score = NO_SCORE;
         } else {
             try {
@@ -91,23 +95,23 @@ public class GFF3Record
     private void parseAttribute(String attributeString, String line) throws IOException {
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
-        while(sTok.hasMoreTokens()) {
+        while (sTok.hasMoreTokens()) {
             String attVal = sTok.nextToken().trim();
             String attName;
             List valList = new ArrayList();
             int spaceIndx = attVal.indexOf("=");
-            if(spaceIndx == -1) {
+            if (spaceIndx == -1) {
                 attName = attVal;
             } else {
                 attName = attVal.substring(0, spaceIndx);
                 attributeString = attVal.substring(spaceIndx + 1).trim();
-                while(attributeString.length() > 0) {
-                    if(attributeString.startsWith("\"")) {
+                while (attributeString.length() > 0) {
+                    if (attributeString.startsWith("\"")) {
                         attributeString = attributeString.substring(1);
                         int quoteIndx = attributeString.indexOf("\"");
-                        if(quoteIndx > 0){
+                        if (quoteIndx > 0) {
                             valList.add(attributeString.substring(0, quoteIndx));
-                            attributeString = attributeString.substring(quoteIndx+1).trim();
+                            attributeString = attributeString.substring(quoteIndx + 1).trim();
                             if (attributeString.startsWith(",")) {
                                 attributeString = attributeString.substring(1).trim();
                             }
@@ -116,12 +120,12 @@ public class GFF3Record
                         }
                     } else {
                         int commaIndx = attributeString.indexOf(",");
-                        if(commaIndx == -1) {
+                        if (commaIndx == -1) {
                             valList.add(attributeString);
                             attributeString = "";
                         } else {
                             valList.add(attributeString.substring(0, commaIndx));
-                            attributeString = attributeString.substring(commaIndx+1).trim();
+                            attributeString = attributeString.substring(commaIndx + 1).trim();
                         }
                     }
                 }
@@ -130,79 +134,190 @@ public class GFF3Record
         }
     }
 
-
-    public String getSequenceID() {
+    /**
+     * Return the sequenceID field of this record.
+     * @return the sequenceID field of this record
+     */
+    public String getSequenceID () {
         return sequenceID;
     }
 
-    public String getSource() {
+    /**
+     * Return the source field of this record.
+     * @return the source field of this record
+     */
+    public String getSource () {
         return source;
     }
 
-    public String getType() {
+    /**
+     * Return the type field of this record.
+     * @return the type field of this record
+     */
+    public String getType () {
         return type;
     }
 
-    public int getStart() {
+    /**
+     * Return the start field of this record.
+     * @return the start field of this record
+     */
+    public int getStart () {
         return start;
     }
 
-    public int getEnd() {
+    /**
+     * Return the end field of this record.
+     * @return the end field of this record
+     */
+    public int getEnd () {
         return end;
     }
 
-    public double getScore() {
+    /**
+     * Return the score field of this record.
+     * @return the score field of this record
+     */
+    public double getScore () {
         return score;
     }
 
-    public String getStrand() {
+    /**
+     * Return the strand field of this record.
+     * @return the strand field of this record
+     */
+    public String getStrand () {
         return strand;
     }
 
-    public String getPhase() {
+    /**
+     * Return the phase field of this record.
+     * @return the phase field of this record
+     */
+    public String getPhase () {
         return phase;
     }
 
-    public String getId() {
-        return (String) getAttributes().get("ID");
+    /**
+     * Return the first value of the Id field from the attributes of this record.
+     * @return the Id from the attributes of this record or null of there isn't a value
+     */
+    public String getId () {
+        if (getAttributes().containsKey("ID")) {
+            return (String) ((List) getAttributes().get("ID")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Name field from the attributes of this record.
+     * @return the Name from the attributes of this record or null of there isn't a value
+     */
     public String getName () {
-        return (String) getAttributes().get("Name");
+        if (getAttributes().containsKey("Name")) {
+            return (String) ((List) getAttributes().get("Name")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Alias field from the attributes of this record.
+     * @return the Alias from the attributes of this record or null of there isn't a value
+     */
     public String getAlias () {
-        return (String) getAttributes().get("Alias");
+        if (getAttributes().containsKey("Alias")) {
+            return (String) ((List) getAttributes().get("Alias")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Parent field from the attributes of this record.
+     * @return the Parent from the attributes of this record or null of there isn't a value
+     */
     public String getParent () {
-        return (String) getAttributes().get("Parent");
+        if (getAttributes().containsKey("Parent")) {
+            return (String) ((List) getAttributes().get("Parent")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Target field from the attributes of this record.
+     * @return the Target from the attributes of this record or null of there isn't a value
+     */
     public String getTarget () {
-        return (String) getAttributes().get("Target");
+        if (getAttributes().containsKey("Target")) {
+            return (String) ((List) getAttributes().get("Target")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Gap field from the attributes of this record.
+     * @return the Gap from the attributes of this record or null of there isn't a value
+     */
     public String getGap () {
-        return (String) getAttributes().get("Gap");
+        if (getAttributes().containsKey("Gap")) {
+            return (String) ((List) getAttributes().get("Gap")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Note field from the attributes of this record.
+     * @return the Note from the attributes of this record or null of there isn't a value
+     */
     public String getNote () {
-        return (String) getAttributes().get("Note");
+        if (getAttributes().containsKey("Note")) {
+            return (String) ((List) getAttributes().get("Note")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the Dbxref field from the attributes of this record.
+     * @return the Dbxref from the attributes of this record or null of there isn't a value
+     */
     public String getDbxref () {
-        return (String) getAttributes().get("Dbxref");
+        if (getAttributes().containsKey("Dbxref")) {
+            return (String) ((List) getAttributes().get("Dbxref")).get(0);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Return the first value of the OntologyTerm field from the attributes of this record.
+     * @return the OntologyTerm from the attributes of this record or null of there isn't a value
+     */
     public String getOntologyTerm () {
-        return (String) getAttributes().get("Ontology_term");
+        if (getAttributes().containsKey("Ontology_term")) {
+            return (String) ((List) getAttributes().get("Ontology_term")).get(0);
+        } else {
+            return null;
+        }
     }
 
-    public Map getAttributes() {
+    /**
+     * Return the attributes of this record as a Map from attribute key to Lists of attribute
+     * values.
+     * @return the attributes of this record
+     */
+    public Map getAttributes () {
         return attributes;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "<GFF3Record: sequenceID: " + sequenceID + " source: " + source + " type: "
             + type + " start: " + start + " end: " + end + " score: " + score + " strand: "
