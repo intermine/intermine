@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -37,8 +37,38 @@ import org.intermine.web.InterMineBag;
  *
  * @author Andrew Varley
  */
-public class ChangeResultsSizeAction extends LookupDispatchAction
+public class ChangeResultsSizeAction extends Action
 {
+    /**
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
+        ActionForward forward = null;
+
+        ChangeResultsForm crsForm = (ChangeResultsForm) form;
+        String button = crsForm.getButton();        
+
+        if ("changePageSize".equals(button)) {
+            return changePageSize(mapping, form, request, response);
+        } else if ("saveNewBag".equals(button)) {
+            return saveNewBag(mapping, form, request, response);
+        } else if ("addToExistingBag".equals(button)) {
+            return addToExistingBag(mapping, form, request, response);
+        }
+
+        return null;
+    }
+
     /**
      * Change the page size of the PagedTable
      *
