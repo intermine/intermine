@@ -20,6 +20,7 @@ import org.flymine.objectstore.query.QueryExpression;
 import org.flymine.objectstore.query.QueryFunction;
 import org.flymine.objectstore.query.QueryClass;
 import org.flymine.util.TypeUtil;
+import org.flymine.testing.OneTimeTestCase;
 
 import org.flymine.model.testmodel.*;
 
@@ -28,20 +29,21 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
     //protected static final org.apache.log4j.Logger LOG
     //    = org.apache.log4j.Logger.getLogger(FlymineSqlSelectStatementTest.class);
 
-    protected DescriptorRepository dr;
+    protected static DescriptorRepository dr;
 
     public FlymineSqlSelectStatementTest(String arg1) {
         super(arg1);
     }
 
     public static Test suite() {
-        return SetupDataTestCase.buildSuite(FlymineSqlSelectStatementTest.class);
+        return OneTimeTestCase.buildSuite(FlymineSqlSelectStatementTest.class);
     }
 
-    public void setUp() throws Exception {
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+    public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
         PersistenceBroker pb = ((ObjectStoreOjbImpl) os).getPersistenceBroker();
         dr = ((PersistenceBrokerFlyMine) pb).getDescriptorRepository();
+        setUpResults();
     }
 
     public static void setUpResults() throws Exception {
@@ -77,6 +79,7 @@ public class FlymineSqlSelectStatementTest extends SetupDataTestCase
         results.put("SelectInterfaceAndSubClasses", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.businessAddressId AS a1_businessAddressId, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a1_.salary AS a1_salary, a1_.title AS a1_title FROM (SELECT 'org.flymine.model.testmodel.Contractor' AS CLASS, ID, NULL AS addressId, NULL AS age, businessAddressId, NULL AS companyId, NULL AS departmentId, NULL AS departmentThatRejectedMeId, NULL AS fullTime, name, personalAddressId, NULL AS salary, NULL AS title FROM Contractor UNION SELECT CLASS, ID, addressId, age, NULL AS businessAddressId, companyId, departmentId, departmentThatRejectedMeId, fullTime, name, NULL AS personalAddressId, salary, title FROM Employee) AS a1_ ORDER BY a1_.ID");
         results.put("SelectInterfaceAndSubClasses2", "SELECT DISTINCT a1_.CEOId AS a1_CEOId, a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.companyId AS a1_companyId, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM (SELECT CEOId, 'org.flymine.model.testmodel.Company' AS CLASS, ID, addressId, NULL AS companyId, NULL AS managerId, name, vatNumber FROM Company UNION SELECT NULL AS CEOId, 'org.flymine.model.testmodel.Department' AS CLASS, ID, NULL AS addressId, companyId, managerId, name, NULL AS vatNumber FROM Department) AS a1_ ORDER BY a1_.ID");
         results.put("SelectInterfaceAndSubClasses3", "SELECT DISTINCT a1_.CLASS AS a1_CLASS, a1_.ID AS a1_ID, a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.businessAddressId AS a1_businessAddressId, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.name AS a1_name, a1_.personalAddressId AS a1_personalAddressId, a1_.salary AS a1_salary, a1_.title AS a1_title FROM (SELECT 'org.flymine.model.testmodel.Contractor' AS CLASS, ID, NULL AS addressId, NULL AS age, businessAddressId, NULL AS companyId, NULL AS departmentId, NULL AS departmentThatRejectedMeId, NULL AS fullTime, name, personalAddressId, NULL AS salary, NULL AS title FROM Contractor UNION SELECT CLASS, ID, addressId, age, NULL AS businessAddressId, companyId, departmentId, departmentThatRejectedMeId, fullTime, name, NULL AS personalAddressId, salary, title FROM Employee WHERE CLASS = 'org.flymine.model.testmodel.CEO' OR CLASS = 'org.flymine.model.testmodel.Manager') AS a1_ ORDER BY a1_.ID");
+        results.put("OrderByAnomaly", "SELECT DISTINCT 5 AS a2_, a1_.name AS a3_ FROM Company AS a1_ ORDER BY a1_.name");
     }
 
     public void executeTest(String type) throws Exception {

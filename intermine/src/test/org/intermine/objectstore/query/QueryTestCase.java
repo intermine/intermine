@@ -1,6 +1,6 @@
 package org.flymine.objectstore.query;
 
-import junit.framework.TestCase;
+import junit.framework.*;
 
 import java.util.Set;
 import java.util.List;
@@ -9,14 +9,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.testing.OneTimeTestCase;
 
-public class QueryTestCase extends TestCase
+public class QueryTestCase extends OneTimeTestCase
 {
     public QueryTestCase(String arg1) {
         super(arg1);
     }
 
-   protected void assertEquals(Query q1, Query q2) {
+    protected void assertEquals(Query q1, Query q2) {
         assertEquals(null, q1, q2);
     }
 

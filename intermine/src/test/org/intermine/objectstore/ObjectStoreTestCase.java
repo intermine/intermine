@@ -31,7 +31,7 @@ import org.flymine.model.testmodel.*;
 
 public abstract class ObjectStoreTestCase extends SetupDataTestCase
 {
-    protected ObjectStoreAbstractImpl os;
+    protected static ObjectStoreAbstractImpl os;
 
     /**
      * Constructor
@@ -40,20 +40,10 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
         super(arg);
     }
 
-    /**
-     * Set up the test
-     *
-     * @throws Exception if an error occurs
-     */
-    public void setUp() throws Exception {
-        super.setUp();
+    public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
     }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-
+    
     /**
      * Set up all the results expected for a given subset of queries
      *
@@ -266,8 +256,4 @@ public abstract class ObjectStoreTestCase extends SetupDataTestCase
             fail("a null ExplainResult was returned");
         }
     }
-
-
-
-
 }

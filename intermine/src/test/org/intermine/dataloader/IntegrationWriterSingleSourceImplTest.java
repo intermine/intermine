@@ -1,6 +1,6 @@
 package org.flymine.dataloader;
 
-import junit.framework.TestCase;
+import junit.framework.*;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import org.flymine.objectstore.ObjectStoreQueriesTestCase;
+import org.flymine.testing.OneTimeTestCase;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreWriter;
 import org.flymine.objectstore.ObjectStore;
+import org.flymine.objectstore.SetupDataTestCase;
 import org.flymine.objectstore.ojb.ObjectStoreOjbImpl;
 import org.flymine.objectstore.ojb.ObjectStoreWriterOjbImpl;
 import org.flymine.sql.DatabaseFactory;
@@ -22,34 +23,38 @@ import org.flymine.util.RelationType;
 import org.flymine.util.TypeUtil;
 
 
-public class IntegrationWriterSingleSourceImplTest extends ObjectStoreQueriesTestCase
+public class IntegrationWriterSingleSourceImplTest extends SetupDataTestCase
 {
     public IntegrationWriterSingleSourceImplTest(String arg) {
         super(arg);
     }
 
-    protected IntegrationWriterSingleSourceImpl iw;
-    protected ArrayList toDelete;
+    public static Test suite() {
+        return OneTimeTestCase.buildSuite(IntegrationWriterSingleSourceImplTest.class);
+    }
+    
+    protected static IntegrationWriterSingleSourceImpl iw;
+    protected static ArrayList toDelete;
 
     public void setUp() throws Exception {
         super.setUp();
-
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        writer = new ObjectStoreWriterOjbImpl((ObjectStoreOjbImpl) os);
-        iw = new IntegrationWriterSingleSourceImpl("test", writer);
-        db = DatabaseFactory.getDatabase("db.unittest");
-        storeData();
         toDelete = new ArrayList();
     }
 
     public void tearDown() throws Exception {
-        removeDataFromStore();
+        super.tearDown();
 
         Iterator deleteIter = toDelete.iterator();
         while (deleteIter.hasNext()) {
             Object o = deleteIter.next();
             writer.delete(o);
         }
+    }
+
+    public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
+
+        iw = new IntegrationWriterSingleSourceImpl("test", writer);
     }
 
     // Not doing the Query tests here
@@ -83,6 +88,8 @@ public class IntegrationWriterSingleSourceImplTest extends ObjectStoreQueriesTes
         Address address = new Address();
         address.setAddress("Company Street, AVille");
         Address a2 = (Address) writer.getObjectByExample(address);
+
+        assertNotNull("address from db should not be null", a2);
 
         Company company = new Company();
         company.setAddress(a2);

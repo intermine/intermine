@@ -30,21 +30,30 @@ public class ObjectStoreOjbImplTest extends ObjectStoreTestCase
     }
 
     public static Test suite() {
-        return SetupDataTestCase.buildSuite(ObjectStoreOjbImplTest.class);
+        return buildSuite(ObjectStoreOjbImplTest.class);
     }
 
     public void setUp() throws Exception {
-        os = (ObjectStoreAbstractImpl) ObjectStoreFactory.getObjectStore("os.unittest");
+        super.setUp();
 
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
     }
 
     public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    public static void oneTimeSetUp() throws Exception {
+        ObjectStoreTestCase.oneTimeSetUp();
+
+        os = (ObjectStoreAbstractImpl) SetupDataTestCase.os;
+        setUpResults();
     }
 
     // select manager with name=EmployeeB1 (actually a CEO)
     public void testCEOWhenSearchingForManager() throws Exception {
+        //Thread.sleep(100000);
         QueryClass c1 = new QueryClass(Manager.class);
         Query q1 = new Query();
         q1.addFrom(c1);

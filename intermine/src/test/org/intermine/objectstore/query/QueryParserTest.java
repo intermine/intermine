@@ -2,24 +2,28 @@ package org.flymine.objectstore.query;
 
 import junit.framework.Test;
 
-import org.flymine.objectstore.SetupDataTestCase;
+import org.flymine.testing.OneTimeTestCase;
+import org.flymine.objectstore.ObjectStoreQueriesTestCase;
 
 /**
  * Test for testing the parser on the flymine query object.
  *
  * @author Matthew Wakeling
  */
-public class QueryParserTest extends SetupDataTestCase
+public class QueryParserTest extends ObjectStoreQueriesTestCase
 {
     public QueryParserTest(String arg) {
         super(arg);
     }
 
     public static Test suite() {
-        return SetupDataTestCase.buildSuite(QueryParserTest.class);
+        return OneTimeTestCase.buildSuite(QueryParserTest.class);
     }
+    
+    public static void oneTimeSetUp() throws Exception {
+        ObjectStoreQueriesTestCase.oneTimeSetUp();
 
-    public void setUp() {
+        setUpResults();
     }
 
     /**
@@ -56,6 +60,7 @@ public class QueryParserTest extends SetupDataTestCase
         results.put("SelectInterfaceAndSubClasses", "select a1_ from Employable as a1_");
         results.put("SelectInterfaceAndSubClasses2", "select a1_ from RandomInterface as a1_");
         results.put("SelectInterfaceAndSubClasses3", "select a1_ from ImportantPerson as a1_");
+        results.put("OrderByAnomaly", "select 5 as a2_, a1_.name as a3_ from Company as a1_");
     }
 
     public void executeTest(String type) throws Exception {

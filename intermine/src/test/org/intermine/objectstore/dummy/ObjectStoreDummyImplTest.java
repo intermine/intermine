@@ -1,6 +1,6 @@
 package org.flymine.objectstore.dummy;
 
-import junit.framework.TestCase;
+import junit.framework.*;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.ObjectStoreTestCase;
+import org.flymine.testing.OneTimeTestCase;
 
 public class ObjectStoreDummyImplTest extends ObjectStoreTestCase
 {
@@ -15,11 +16,16 @@ public class ObjectStoreDummyImplTest extends ObjectStoreTestCase
         super(arg);
     }
 
-    public void setUp() throws Exception {
+    public static Test suite() {
+        return buildSuite(ObjectStoreDummyImplTest.class);
+    }
+
+    public static void oneTimeSetUp() throws Exception {
+        ObjectStoreTestCase.oneTimeSetUp();
+
         os = new ObjectStoreDummyImpl();
         ((ObjectStoreDummyImpl) os).setExecuteTime(10);
         ((ObjectStoreDummyImpl) os).setMaxTime(20);
-        super.setUp();
     }
 
     // Override setUpResults(). There are no results tests to do for an ObjectStoreDummyImpl.

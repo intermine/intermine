@@ -1,7 +1,7 @@
 package org.flymine.objectstore.query;
 
 import junit.framework.*;
-
+import org.flymine.testing.OneTimeTestCase;
 import org.flymine.model.testmodel.*;
 
 public class QueryTestCaseTest extends QueryTestCase
@@ -10,6 +10,10 @@ public class QueryTestCaseTest extends QueryTestCase
         super(arg1);
     }
 
+    public static Test suite() {
+        return OneTimeTestCase.buildSuite(QueryTestCaseTest.class);
+    }
+    
     private boolean failed;
 
     public void testEmptyQueries() throws Exception {

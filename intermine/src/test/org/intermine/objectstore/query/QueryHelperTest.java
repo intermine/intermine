@@ -1,6 +1,6 @@
 package org.flymine.objectstore.query;
 
-import junit.framework.TestCase;
+import junit.framework.*;
 
 import java.util.Set;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.flymine.model.testmodel.*;
+import org.flymine.testing.OneTimeTestCase;
 
 public class QueryHelperTest extends QueryTestCase
 {
@@ -16,6 +17,10 @@ public class QueryHelperTest extends QueryTestCase
         super(arg1);
     }
 
+    public static Test suite() {
+        return OneTimeTestCase.buildSuite(QueryHelperTest.class);
+    }
+    
     public void testQueryForExampleSetEmptySet() {
         assertNull(QueryHelper.createQueryForExampleSet(new HashSet()));
     }

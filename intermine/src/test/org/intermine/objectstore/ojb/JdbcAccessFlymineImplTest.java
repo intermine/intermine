@@ -34,23 +34,25 @@ import org.flymine.objectstore.ObjectStore;
 import org.flymine.objectstore.ObjectStoreFactory;
 import org.flymine.sql.Database;
 import org.flymine.sql.query.ExplainResult;
+import org.flymine.testing.OneTimeTestCase;
 
 public class JdbcAccessFlymineImplTest extends SetupDataTestCase
 {
     private JdbcAccessFlymineImpl ja;
-    private Query q1, q2;
+    private Query q1;
     private PersistenceBrokerFlyMine pb;
-    private static ResultsHolder rh1, rh2, rh3;
 
     public JdbcAccessFlymineImplTest(String arg) {
         super(arg);
     }
 
-   public static Test suite() {
-        return SetupDataTestCase.buildSuite(JdbcAccessFlymineImplTest.class);
+    public static Test suite() {
+        return OneTimeTestCase.buildSuite(JdbcAccessFlymineImplTest.class);
     }
 
     public void setUp() throws Exception {
+        super.setUp();
+
         // simple query
         q1 = new Query();
         QueryClass company = new QueryClass(Company.class);
@@ -61,38 +63,37 @@ public class JdbcAccessFlymineImplTest extends SetupDataTestCase
         q1.setConstraint(sc1);
 
         // Get db and writer in order to store data
-        ObjectStoreOjbImpl os = (ObjectStoreOjbImpl) ObjectStoreFactory.getObjectStore("os.unittest");
         pb = (PersistenceBrokerFlyMine) ((ObjectStoreOjbImpl) os).getPersistenceBroker();
-        DescriptorRepository dr = pb.getDescriptorRepository();
 
         // clear the cache to ensure that objects are materialised later (in case broker reused)
         ((ObjectStoreWriterOjbImpl) writer).pb.clearCache();
 
         ja = (JdbcAccessFlymineImpl) pb.serviceJdbcAccess();
-
     }
+    
+    public static void oneTimeSetUp() throws Exception {
+        SetupDataTestCase.oneTimeSetUp();
 
-    public void tearDown() throws Exception {
+        setUpResults();
     }
-
 
     public static void setUpResults() throws Exception {
         // SubQuery
-        rh1 = new ResultsHolder(2);
+        ResultsHolder rh1 = new ResultsHolder(2);
         rh1.colNames = new String[] {"a2_", "a3_"};
         rh1.colTypes = new int[] {Types.VARCHAR, Types.INTEGER};
         rh1.rows = 2;
         results.put("SubQuery", rh1);
 
         // WhereClassClass
-        rh2 = new ResultsHolder(10);
+        ResultsHolder rh2 = new ResultsHolder(10);
         rh2.colNames = new String[] {"a1_ceoid", "a1_id", "a1_addressid", "a1_name", "a1_vatnumber", "a2_ceoid", "a2_id", "a2_addressid", "a2_name", "a2_vatnumber"};
         rh2.colTypes = new int[] {Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.INTEGER, Types.VARCHAR, Types.INTEGER};
         rh2.rows = 2;
         results.put("WhereClassClass", rh2);
 
         // WhereSimpleEquals
-        rh3 = new ResultsHolder(1);
+        ResultsHolder rh3 = new ResultsHolder(1);
         rh3.colNames = new String[] {"a2_"};
         rh3.colTypes = new int[] {Types.VARCHAR};
         rh3.rows = 1;
