@@ -67,7 +67,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         ItemReader srcItemReader = new ObjectStoreItemReader(os);
 
         // uncomment to generate a new source items file from some uniprot xml
-        //retrieveFromUniprotExample("test/UniprotSrc_tmp.xml", new File("generatedSrcItems.xml"));
+        //retrieveFromUniprotExample("test/UniprotSrc.xml", new File("generatedSrcItems.xml"));
 
         DataTranslator translator = new UniprotDataTranslator(srcItemReader, tgtNs);
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
@@ -82,6 +82,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         //    System.out.println(actualNotExpected);
         //}
 
+        // uncomment to write out a new target items file
         //FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
         //fw.write(FullRenderer.render(tgtIw.getItems()));
         //fw.close();
