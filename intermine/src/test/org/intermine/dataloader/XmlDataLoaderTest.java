@@ -53,7 +53,9 @@ public class XmlDataLoaderTest extends TestCase
             Object o = deleteIter.next();
             writer.delete(o);
         }
-        file.delete();
+        if (file != null) {
+            file.delete();
+        }
     }
 
 
@@ -90,6 +92,74 @@ public class XmlDataLoaderTest extends TestCase
         toDelete.add(a2);
         toDelete.add(c2);
     }
+
+    // marshal an object, set up as an InputSource and store to DB
+    public void testSubclassedObject() throws Exception {
+        Manager m1 = new Manager();
+        m1.setName("m1");
+        m1.setTitle("Pointy Haired Boss");
+        Address a1 = new Address();
+        a1.setAddress("a1");
+        m1.setAddress(a1);
+
+        List list = new ArrayList();
+        list.add(m1);
+        file = new File("temp.xml");
+        marshalList(list, file);
+
+        Reader reader = new FileReader(file);
+        InputSource source = new InputSource(reader);
+
+        XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
+        dl.processXml(source);
+
+        // check address was stored
+        Address a2 = (Address) os.getObjectByExample(a1);
+        assertNotNull("Expected address to be retieved from DB", a2);
+        assertTrue("address id should be set", (a2.getId().intValue() != 0));
+
+        // check company was stored
+        Manager m2 = (Manager) os.getObjectByExample(m1);
+        assertNotNull("Expected company to be retieved from DB", m2);
+        assertTrue("manager id should be set", (m2.getId().intValue() != 0));
+
+        toDelete.add(a2);
+        toDelete.add(m2);
+    }
+
+    public void testStoreFromFile() throws Exception {
+        XmlDataLoader dl = new XmlDataLoader(Model.getInstanceByName("testmodel"), iw);
+        InputStream testData = getClass().getClassLoader().getResourceAsStream("test/testmodel.xml");
+        dl.processXml(new InputSource(testData));
+
+        // Just test that a specific Company is there
+        Address a1 = new Address();
+        a1.setAddress("Company Street, BVille");
+        Company c1 = new Company();
+        c1.setName("CompanyB");
+        c1.setAddress(a1);
+        Company c2 = (Company) os.getObjectByExample(c1);
+
+        // Could only know the vatNumber if it got it from the database
+        assertNotNull(c2);
+        assertEquals(5678, c2.getVatNumber());
+
+        // Read in the file again in order to delete the objects in it
+        InputStream testData2 = getClass().getClassLoader().getResourceAsStream("test/testmodel.xml");
+        Unmarshaller unmarshaller = new Unmarshaller(map);
+        unmarshaller.setMapping(map);
+        List objects = (List) unmarshaller.unmarshal(new InputSource(testData2));
+
+        Iterator iter = objects.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            Object obj2 = os.getObjectByExample(obj);
+            toDelete.add(obj2);
+        }
+
+    }
+
+
 
     private void marshalList(List list, File file) throws Exception {
         Writer writer = new FileWriter(file);
