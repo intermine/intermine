@@ -75,6 +75,7 @@
     <include name="libreadline-java*.jar" />
     <include name="log4j*.jar" />
     <include name="postgresql*.jar" />
+    <include name="pg*.jar" />
     <include name="mysql*.jar" />
     <include name="torque*.jar" />
     <include name="velocity*.jar" />
