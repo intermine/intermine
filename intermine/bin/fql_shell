@@ -26,5 +26,5 @@ fi
 echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-java -cp $CP org.flymine.objectstore.query.Query $*
+java -cp $CP org.flymine.objectstore.query.fql.FqlShell $*
 
