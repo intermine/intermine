@@ -23,6 +23,7 @@
   <property name="build.model.dir.tmp.builddb" location="${build.model.dir.tmp}/builddb"/>
   <property name="build.model.dir.resources" location="${build.model.dir}/resources"/>
   <property name="model.lib" location="${model}/${model.name}/lib"/>
+  <property name="model.web.template.queries" location="${model}/${model.name}/resources/web/template-queries.xml"/>
   
   <!-- Summarise object store properties -->
   <property name="os.summary.properties.file" 
@@ -327,6 +328,7 @@
   </target>
 
   <target name="precompute-queries" depends="compile-java, summarise-objectstore">
+    <copy file="${model.web.template.queries}" toDir="${build.model.dir}"/>
     <taskdef name="precompute-queries" classname="org.intermine.task.PrecomputeTask">
       <classpath refid="class.path"/>
     </taskdef>
