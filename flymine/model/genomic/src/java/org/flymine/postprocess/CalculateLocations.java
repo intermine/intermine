@@ -474,7 +474,9 @@ public class CalculateLocations
                     if (newStrand != pl.getStrand().intValue()) {
                         throw new RuntimeException("BioEntity (" + bioEntity + ") has two "
                                                    + "Locations "
-                                                   + "with inconsistent strands");
+                                                   + "with inconsistent strands: "
+                                                   + newStrand + " != "
+                                                   + pl.getStrand().intValue());
                     }
                 }
             }
