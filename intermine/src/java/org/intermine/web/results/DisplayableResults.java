@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.flymine.FlyMineException;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsInfo;
@@ -28,7 +29,7 @@ public class DisplayableResults
 {
     protected List columns = new ArrayList();
     protected int start = 0;
-    protected int end = 9;
+    protected int pageSize = 10;
 
     protected Results results;
 
@@ -87,6 +88,24 @@ public class DisplayableResults
     }
 
     /**
+     * Get the page size of this table
+     *
+     * @return the page size
+     */
+    public int getPageSize() {
+        return this.pageSize;
+    }
+
+    /**
+     * Set the page size of this table
+     *
+     * @param pageSize the page size
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    /**
      * Get the end row of this table
      *
      * @return the end row
@@ -94,19 +113,11 @@ public class DisplayableResults
      */
     public int getEnd() throws ObjectStoreException {
         int size = getSize();
-        if (this.end >= size) {
-            this.end = size - 1;
+        int end = this.start + this.pageSize - 1;
+        if ((end + 1) > size) {
+            end = size - 1;
         }
-        return this.end;
-    }
-
-    /**
-     * Set the end row
-     *
-     * @param end the end row
-     */
-    public void setEnd(int end) {
-        this.end = end;
+        return end;
     }
 
     /**
@@ -126,6 +137,16 @@ public class DisplayableResults
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      */
     public int getSize() throws ObjectStoreException {
+        // Force the underlying results to check that the end is not
+        // within this page, or at the end of this page. If it is, the
+        // results object will now know the exact size.
+        try {
+            results.range(start, start + pageSize);
+        } catch (IndexOutOfBoundsException e) {
+        } catch (FlyMineException e) {
+            throw new RuntimeException(e);
+        }
+
         return results.getInfo().getRows();
     }
 
@@ -137,6 +158,33 @@ public class DisplayableResults
      */
     public boolean isSizeEstimate() throws ObjectStoreException {
         return !(results.getInfo().getStatus() == ResultsInfo.SIZE);
+    }
+
+    /**
+     * Gets whether or not there could be any previous rows
+     *
+     * @return true if the "previous" button should be shown
+     */
+    public boolean isPreviousButton() {
+        return (start > 0);
+    }
+
+    /**
+     * Gets whether or not there could be more rows
+     *
+     * @return true if the "next" button should be shown
+     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
+     */
+    public boolean isNextButton() throws ObjectStoreException {
+        int size = getSize();
+        if (isSizeEstimate()) {
+            // If we were on the end, size would not be an estimate
+            return true;
+        }
+        if (size == (getEnd() + 1)) {
+            return false;
+        }
+        return true;
     }
 
 }
