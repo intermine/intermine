@@ -61,7 +61,6 @@ public class DBRetrieverTask extends ConverterTask
             System.err .println("Processing data from DB " + db.getURL());
             new DBConverter(m, db, reader, writer).process();
             reader.close();
-            doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
@@ -71,6 +70,12 @@ public class DBRetrieverTask extends ConverterTask
             } catch (Exception e) {
                 throw new BuildException(e);
             }
+        }
+
+        try {
+            doSQL(osw.getObjectStore());
+        } catch (Exception e) {
+            throw new BuildException(e);
         }
     }
 }

@@ -122,7 +122,6 @@ public class FileConverterTask extends ConverterTask
                 converter.process(new BufferedReader(new FileReader(f)));
             }
             converter.close();
-            doSQL(osw.getObjectStore());
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
@@ -132,6 +131,12 @@ public class FileConverterTask extends ConverterTask
             } catch (Exception e) {
                 throw new BuildException(e);
             }
+        }
+
+        try {
+            doSQL(osw.getObjectStore());
+        } catch (Exception e) {
+            throw new BuildException(e);
         }
     }
 }
