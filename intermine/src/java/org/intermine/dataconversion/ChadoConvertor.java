@@ -30,6 +30,8 @@ import org.flymine.xml.full.Item;
 import org.flymine.xml.full.Field;
 import org.flymine.xml.full.ReferenceList;
 
+import org.apache.log4j.Logger;
+
 /**
  * Class to read a Chado database and produce a data representation
  * 
@@ -38,6 +40,7 @@ import org.flymine.xml.full.ReferenceList;
  */
 public class ChadoConvertor 
 {
+    protected static final Logger LOG = Logger.getLogger(ChadoConvertor.class);
     protected Connection c = null;
 
     /**
