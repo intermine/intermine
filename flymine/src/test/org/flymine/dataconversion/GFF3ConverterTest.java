@@ -54,11 +54,9 @@ public class GFF3ConverterTest extends TestCase {
     String seqClsName = "Chromosome";
     String orgAbbrev = "HS";
     String infoSourceTitle = "UCSC";
-    int itemid = 0;
-
 
     public void setUp() {
-        converter = new GFF3Converter(model, parser, writer, seqClsName, orgAbbrev, infoSourceTitle, itemid);
+        converter = new GFF3Converter(model, parser, writer, seqClsName, orgAbbrev, infoSourceTitle);
     }
 
     public void tearDown() throws Exception {
