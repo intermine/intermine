@@ -43,8 +43,10 @@ public class DisplayableResults
         // Add some blank column configurations
         Iterator columnIter = results.getColumnAliases().iterator();
         while (columnIter.hasNext()) {
-            columnIter.next();
-            columns.add(new Column());
+            String alias = (String) columnIter.next();
+            Column column = new Column();
+            column.setAlias(alias);
+            columns.add(column);
         }
     }
 
