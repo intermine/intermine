@@ -391,38 +391,49 @@ public class Results extends AbstractList
                 Iterator rowIter = rr.iterator();
                 while (rowIter.hasNext()) {
                     Object obj = (Object) rowIter.next();
-                    Class objClass = obj.getClass();
-
-                    Map fieldToGetter = TypeUtil.getFieldToGetter(objClass);
-                    Map fieldToSetter = TypeUtil.getFieldToSetter(objClass);
-                    Iterator fields = fieldToGetter.entrySet().iterator();
-                    while (fields.hasNext()) {
-                        Map.Entry entry = (Map.Entry) fields.next();
-                        Field field = (Field) entry.getKey();
-                        Method getter = (Method) entry.getValue();
-                        Object fieldVal = getter.invoke(obj, new Object[] {});
-
-                        if (fieldVal instanceof LazyCollection) {
-                            Query query = ((LazyCollection) fieldVal).getQuery();
-                            Object singletonResult = new SingletonResults(query, os);
-                            try {
-                                Method setter = (Method) fieldToSetter.get(field);
-                                setter.invoke(obj, new Object[] {new SingletonResults(query, os)});
-                            } catch (IllegalArgumentException e) {
-                                throw new IllegalArgumentException("Error setting field "
-                                        + field.getDeclaringClass().getName() + "."
-                                        + field.getName() + " ( a " + field.getType().getName()
-                                        + ") to object " + singletonResult + " (a "
-                                        + singletonResult.getClass().getName() + ")");
-                            }
-                        } else if (fieldVal instanceof LazyReference) {
-                            ((LazyReference) fieldVal).setObjectStore(os);
-                        }
-                    }
+                    promoteProxiesInObject(obj, os);
                 }
             }
         } catch (Exception e) {
             throw new FlyMineException(e);
+        }
+    }
+
+    /**
+     * Takes an Object, and promotes all the proxies in it.
+     *
+     * @param obj an Object to process
+     * @param os the ObjectStore to do the promotion with
+     * @throws Exception if something goes wrong
+     */
+    public static void promoteProxiesInObject(Object obj, ObjectStore os) throws Exception {
+        Class objClass = obj.getClass();
+
+        Map fieldToGetter = TypeUtil.getFieldToGetter(objClass);
+        Map fieldToSetter = TypeUtil.getFieldToSetter(objClass);
+        Iterator fields = fieldToGetter.entrySet().iterator();
+        while (fields.hasNext()) {
+            Map.Entry entry = (Map.Entry) fields.next();
+            Field field = (Field) entry.getKey();
+            Method getter = (Method) entry.getValue();
+            Object fieldVal = getter.invoke(obj, new Object[] {});
+
+            if (fieldVal instanceof LazyCollection) {
+                Query query = ((LazyCollection) fieldVal).getQuery();
+                Object singletonResult = new SingletonResults(query, os);
+                try {
+                    Method setter = (Method) fieldToSetter.get(field);
+                    setter.invoke(obj, new Object[] {new SingletonResults(query, os)});
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Error setting field "
+                            + field.getDeclaringClass().getName() + "."
+                            + field.getName() + " ( a " + field.getType().getName()
+                            + ") to object " + singletonResult + " (a "
+                            + singletonResult.getClass().getName() + ")");
+                }
+            } else if (fieldVal instanceof LazyReference) {
+                ((LazyReference) fieldVal).setObjectStore(os);
+            }
         }
     }
 

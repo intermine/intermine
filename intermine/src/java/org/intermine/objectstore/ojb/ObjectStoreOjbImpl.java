@@ -25,6 +25,8 @@ import org.flymine.sql.query.ExplainResult;
 import org.flymine.objectstore.ObjectStoreAbstractImpl;
 import org.flymine.objectstore.ObjectStoreException;
 import org.flymine.objectstore.query.Query;
+import org.flymine.objectstore.query.QueryHelper;
+import org.flymine.objectstore.query.Results;
 import org.flymine.objectstore.query.ResultsRow;
 import org.flymine.metadata.Model;
 
@@ -163,5 +165,33 @@ public class ObjectStoreOjbImpl extends ObjectStoreAbstractImpl
         pb.close();
         return count;
     }
+
+    /**
+     * @see ObjectStore#getObjectByExample
+     */
+    public Object getObjectByExample(Object obj) throws ObjectStoreException {
+        PersistenceBrokerFlyMine pb = pbf.createPersistenceBroker(db, model.getName());
+        try {
+            Query q = QueryHelper.createQueryForExampleObject(obj, model);
+            List results = pb.execute(q, 0, 2, false);
+            if (results.size() > 1) {
+                throw new IllegalArgumentException("More than one object in the database has "
+                                                   + "this primary key");
+            }
+            if (results.size() == 1) {
+                Object ret = ((Object []) results.get(0))[0];
+                try {
+                    Results.promoteProxiesInObject(ret, this);
+                } catch (Exception e) {
+                    throw new ObjectStoreException("Problem promoting proxies", e);
+                }
+                return ret;
+            }
+        } finally {
+            pb.close();
+        }
+        return null;
+    }
+
 }
 
