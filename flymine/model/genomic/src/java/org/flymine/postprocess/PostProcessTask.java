@@ -33,7 +33,7 @@ public class PostProcessTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
-    protected String type, alias, integrationWriter;
+    protected String type, alias, integrationWriter, ensemblDb;
 
     /**
      * Set the ObjectStoreWriter alias
@@ -51,6 +51,13 @@ public class PostProcessTask extends Task
         this.type = type;
     }
 
+    /**
+     * Set the name of ensembl db:
+     * @param ensemblDb the name of database
+     */
+    public void setEnsemblDb(String ensemblDb) {
+        this.ensemblDb = ensemblDb;
+    }
     /**
      * Set the alias of the integration writer, if necessary
      * @param integrationWriter the alias
@@ -84,6 +91,10 @@ public class PostProcessTask extends Task
                 LOG.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
                 LOG.info("Finsihed create-references");
+            } else if ("fetch-contig-sequences-human".equals(type)) {
+                StoreSequences ss = new StoreSequences(osw, ensemblDb);
+                LOG.info("Starting StoreSequences.storeContigSequences()");
+                ss.storeContigSequences();
             } else if ("transfer-sequences".equals(type)) {
                 TransferSequences ts = new TransferSequences(osw);
                 LOG.info("Starting TransferSequences.transferToChromosome()");
