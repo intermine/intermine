@@ -91,3 +91,10 @@ if [ "${FLYMINE_PRIVATE:+set}" = "set" ]; then
     alias scr='cd $FLYMINE_PRIVATE/scripts'
 fi
 
+# Aliases for working with the public CVS tree
+
+if [ "${FLYMINE:+set}" = "set" ]; then
+    alias fly='cd $FLYMINE/src/org/flymine'
+    alias flydoc='cd $FLYMINE/doc'
+fi
+
