@@ -11,7 +11,9 @@ package org.intermine.web;
  */
 
 import java.util.Map;
+import java.util.ArrayList;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +22,8 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a saved query
@@ -44,13 +48,17 @@ public class ModifyQueryChangeAction extends DispatchAction
                               HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
 
+        Map savedQueries = profile.getSavedQueries();
         if (savedQueries != null && savedQueries.containsKey(queryName)) {
             QueryInfo queryInfo = (QueryInfo) savedQueries.get(queryName);
-            session.setAttribute(Constants.QUERY, queryInfo.getQuery());
-            session.setAttribute(Constants.VIEW, queryInfo.getView());
+            session.setAttribute(Constants.QUERY,
+                                 SaveQueryHelper.clone(queryInfo.getQuery(), os.getModel()));
+            session.setAttribute(Constants.VIEW, new ArrayList(queryInfo.getView()));
         }
 
         session.removeAttribute("path");

@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- historyQueryView.jsp -->
-<c:if test="${!empty SAVED_QUERIES}">
+<c:if test="${!empty PROFILE.savedQueries}">
   <html:form action="/modifyQuery">
     <fmt:message key="query.savedqueries.header"/>
     <br/><br/>
@@ -19,7 +19,7 @@
           <fmt:message key="query.savedqueries.countcolumnheader"/>
         </th>
       </tr>
-      <c:forEach items="${SAVED_QUERIES}" var="savedQuery">
+      <c:forEach items="${PROFILE.savedQueries}" var="savedQuery">
         <tr>
           <td>
             <html:multibox property="selectedQueries">
@@ -42,9 +42,6 @@
     <br/>
     <html:submit property="delete">
       <fmt:message key="history.delete"/>
-    </html:submit>
-    <html:submit property="export">
-      <fmt:message key="history.export"/>
     </html:submit>
   </html:form>
 </c:if>

@@ -5,7 +5,7 @@
 
 <!-- history.jsp -->
 <c:choose>
-  <c:when test="${empty SAVED_BAGS && empty SAVED_QUERIES}">
+  <c:when test="${empty PROFILE.savedBags && empty PROFILE.savedQueries}">
     <fmt:message key="history.nohistory"/>
   </c:when>
   <c:otherwise>

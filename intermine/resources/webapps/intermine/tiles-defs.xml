@@ -17,6 +17,10 @@
     <put name="body" value=""/>
   </definition>
   <!--pages-->
+  <definition name="login.page" extends="layout.template">
+    <put name="body" value="login.jsp"/>
+    <put name="pageDescription" value="login.page.description"/>
+  </definition>
   <definition name="query.page" extends="layout.template">
     <put name="body" value="query.tile"/>
     <put name="pageDescription" value="query.page.description"/>

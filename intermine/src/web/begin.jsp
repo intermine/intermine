@@ -8,7 +8,7 @@
     <fmt:message key="index.classChooser"/>
   </html:link>
 </div>
-<c:if test="${!empty SAVED_BAGS || !empty SAVED_QUERIES}">
+<c:if test="${!empty PROFILE.savedBags || !empty PROFILE.savedQueries}">
   <div>
     <html:link action="/history">
       <fmt:message key="index.history"/>

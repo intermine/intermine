@@ -10,6 +10,9 @@
 
   <form-beans>
 
+    <form-bean name="loginForm"
+               type="org.intermine.web.LoginForm"/>
+
     <form-bean name="modifyQueryForm"
                type="org.intermine.web.ModifyQueryForm"/>
 
@@ -97,6 +100,9 @@
 
     <action path="/classDescription"
             forward="classDescription.page"/>
+
+    <action path="/login"
+            forward="login.page"/>
 
     <!-- Actions invoked using links -->
     <action path="/modifyQueryChange"
@@ -215,6 +221,15 @@
             parameter="action">
       <forward name="iqlQuery" path="iqlQuery.page"/>
       <forward name="results" path="results.page"/>
+    </action>
+
+    <action path="/loginAction"
+            type="org.intermine.web.LoginAction"
+            name="loginForm"
+            input="login"
+            parameter="action">
+      <forward name="login" path="login.page"/>
+      <forward name="history" path="history.page"/>
     </action>
 
     <!-- Controllers -->

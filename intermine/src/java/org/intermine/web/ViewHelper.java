@@ -13,9 +13,9 @@ package org.intermine.web;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -61,11 +61,11 @@ public abstract class ViewHelper
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         List view = (List) session.getAttribute(Constants.VIEW);
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         Query q = makeQuery(request);
         PagedResults pr = TableHelper.makeTable(os, q, view);
-        String queryName = SaveQueryHelper.findNewQueryName(savedQueries);
+        String queryName = SaveQueryHelper.findNewQueryName(profile.getSavedQueries());
         ResultsInfo resultsInfo = pr.getResultsInfo();
         SaveQueryAction.saveQuery(request, queryName, qNodes, view, resultsInfo);
         return pr;
@@ -79,12 +79,13 @@ public abstract class ViewHelper
     public static Query makeQuery(HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         List view = (List) session.getAttribute(Constants.VIEW);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
 
-        return MainHelper.makeQuery(qNodes, view, model, BagHelper.getSavedBags(session));
+        return MainHelper.makeQuery(qNodes, view, model, profile.getSavedBags());
     }
 }

@@ -21,10 +21,10 @@ import java.util.TreeSet;
 import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -57,22 +57,30 @@ public class MainController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Model model = (Model) os.getModel();
 
         //set up the path-based query
+        List view = (List) session.getAttribute(Constants.VIEW);
+        if (view == null) {
+            session.setAttribute(Constants.VIEW, new ArrayList());
+        }
         Map qNodes = (Map) session.getAttribute(Constants.QUERY);
         if (qNodes == null) {
             String className = (String) request.getAttribute("class");
             if (className == null) {
                 return mapping.findForward("begin");
+            } else {
+                qNodes = new TreeMap();
+                MainHelper.addNode(qNodes, TypeUtil.unqualifiedName(className), model);
+                session.setAttribute(Constants.QUERY, qNodes);
             }
-            qNodes = new TreeMap();
-            MainHelper.addNode(qNodes, TypeUtil.unqualifiedName(className), model);
-            session.setAttribute(Constants.QUERY, qNodes);
-        }
-        List view = (List) session.getAttribute(Constants.VIEW);
-        if (view == null) {
-            session.setAttribute(Constants.VIEW, new ArrayList());
+        } else if (qNodes.size() == 0) {
+            String path = (String) view.iterator().next();
+            if (path.indexOf(".") != -1) {
+                path = path.substring(0, path.indexOf("."));
+            }
+            MainHelper.addNode(qNodes, path, os.getModel());
         }
 
         //set up the metadata
@@ -94,7 +102,7 @@ public class MainController extends TilesAction
                 ClassDescriptor cld = MainHelper.getClassDescriptor(node.getType(), model);
                 request.setAttribute("subclasses", new TreeSet(getChildren(cld)));
             }
-            if (BagHelper.getSavedBags(session).size() > 0) {
+            if (profile.getSavedBags().size() > 0) {
                 request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
             }
         }

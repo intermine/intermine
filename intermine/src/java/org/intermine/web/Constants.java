@@ -44,14 +44,14 @@ public interface Constants
     public static final String OBJECTSTORE = "OBJECTSTORE";
 
     /**
-     * Session attribute used to store saved bags
+     * ServletContext attribute used to store the ProfileManager
      */
-    public static final String SAVED_BAGS = "SAVED_BAGS";
+    public static final String PROFILE_MANAGER = "PROFILE_MANAGER";
 
     /**
-     * Session attribute used to store saved queries
+     * Session attribute used to store the user's Profile
      */
-    public static final String SAVED_QUERIES = "SAVED_QUERIES";
+    public static final String PROFILE = "PROFILE";
 
     /**
      * Session attribute used to store the current query

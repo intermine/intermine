@@ -20,9 +20,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * Implementation of <strong>Action</strong> that cleans the session of most attributes (except, for
- * example, SAVED_BAGS and SAVED_QUERIES).
- *
+ * Implementation of <strong>Action</strong> that cleans the session
  * @author Kim Rutherford
  */
 public class BeginController extends Action

@@ -239,7 +239,7 @@
               </c:if>
             </c:otherwise>
           </c:choose>
-          <c:if test="${!empty SAVED_BAGS}">
+          <c:if test="${!empty PROFILE.savedBags}">
             <br/>
             <fmt:message key="query.bagConstraint"/>
             <html:select property="bagOp">
@@ -250,7 +250,7 @@
               </c:forEach>
             </html:select>
             <html:select property="bagValue">
-              <c:forEach items="${SAVED_BAGS}" var="bag">
+              <c:forEach items="${PROFILE.savedBags}" var="bag">
                 <html:option value="${bag.key}">
                   <c:out value="${bag.key}"/>
                 </html:option>

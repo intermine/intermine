@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html-el.tld" prefix="html" %>
 
 <!-- historyBagView.jsp -->
-<c:if test="${!empty SAVED_BAGS}">
+<c:if test="${!empty PROFILE.savedBags}">
   <html:form action="/modifyBag">
     <fmt:message key="query.savedbags.header"/>
     <br/><br/>
@@ -19,7 +19,7 @@
           <fmt:message key="query.savedbags.countcolumnheader"/>
         </th>
       </tr>
-      <c:forEach items="${SAVED_BAGS}" var="savedBag">
+      <c:forEach items="${PROFILE.savedBags}" var="savedBag">
         <tr>
           <td>
             <html:multibox property="selectedBags">
@@ -40,9 +40,6 @@
     <br/>
     <html:submit property="delete">
       <fmt:message key="history.delete"/>
-    </html:submit>
-    <html:submit property="export">
-      <fmt:message key="history.export"/>
     </html:submit>
     <html:submit property="union">
       <fmt:message key="history.union"/>

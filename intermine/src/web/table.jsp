@@ -7,7 +7,7 @@
 
 <!-- table.jsp -->
 <script>
-  <![CDATA[
+  <!--//<![CDATA[
     function selectColumnCheckboxes(column) {
       var columnCheckBox = 'selectedObjects_' + column;
       with(document.changeResultsForm) {
@@ -22,7 +22,7 @@
     function unselectColumnCheckbox(column) {
       document.getElementById('selectedObjects_' + column).checked = false;
     }
-    ]]>
+    //]]>-->
 </script>
 
 <c:choose>
@@ -196,9 +196,9 @@
       <%-- Save bag controls --%>
       <br/>
       <c:if test="${RESULTS_TABLE.size > 0}">
-        <c:if test="${!empty SAVED_BAGS}">
+        <c:if test="${!empty PROFILE.savedBags}">
           <html:select property="existingBagName">
-            <c:forEach items="${SAVED_BAGS}" var="entry">
+            <c:forEach items="${PROFILE.savedBags}" var="entry">
               <html:option value="${entry.key}"/>
             </c:forEach>
           </html:select>

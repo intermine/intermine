@@ -16,7 +16,7 @@
       <fmt:message key="menu.newquery"/>
     </html:link>
   </span>
-  <c:if test="${!empty SAVED_BAGS || !empty SAVED_QUERIES}">
+  <c:if test="${!empty PROFILE.savedBags || !empty PROFILE.savedQueries}">
     <span class="menu-item">
       <html:link action="/history.do">
         <fmt:message key="menu.history"/>
@@ -28,6 +28,13 @@
       <fmt:message key="menu.examples"/>
     </html:link>
   </span>
+  <c:if test="${empty PROFILE.username}">
+    <span class="menu-item">
+      <html:link action="/login.do">
+        Log in
+      </html:link>
+    </span>
+  </c:if>
   <span class="menu-item">
     <html:link action="/help.do">
       <fmt:message key="menu.help"/>

@@ -11,7 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.Map;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -34,8 +34,7 @@ import org.intermine.objectstore.ObjectStore;
 public class LoadQueryAction extends DispatchAction
 {
     /**
-     * Load a query ie. take a query from the savedQueries or exampleQueries and make it the
-     * current one.
+     * Load a query ie. take a query from the exampleQueries and make it the current one
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -57,20 +56,10 @@ public class LoadQueryAction extends DispatchAction
 
         if (exampleQueries != null && exampleQueries.containsKey(queryName)) {
             QueryInfo queryInfo = (QueryInfo) exampleQueries.get(queryName);
-            Map qNodes = queryInfo.getQuery();
-            List view = queryInfo.getView();
 
-            // query interface requires a (root) node, whereas xml doesn't. so add one.
-            if (qNodes.size() == 0) {
-                String path = (String) view.iterator().next();
-                if (path.indexOf(".") != -1) {
-                    path = path.substring(0, path.indexOf("."));
-                }
-                MainHelper.addNode(qNodes, path, os.getModel());
-            }
-
-            session.setAttribute(Constants.QUERY, qNodes);
-            session.setAttribute(Constants.VIEW, view);
+            session.setAttribute(Constants.QUERY,
+                                 SaveQueryHelper.clone(queryInfo.getQuery(), os.getModel()));
+            session.setAttribute(Constants.VIEW, new ArrayList(queryInfo.getView()));
             session.removeAttribute("path");
             session.removeAttribute("prefix");
 

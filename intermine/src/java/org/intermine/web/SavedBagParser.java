@@ -31,19 +31,28 @@ import org.intermine.util.TypeUtil;
  */
 public class SavedBagParser
 {
-    ObjectStore os;
-    Map savedBags = new LinkedHashMap();
+    protected ObjectStore os;
+    protected Map savedBags = new LinkedHashMap();
+
+    /**
+     * Construct a SavedBagParser
+     * @param os the ObjectStore used to reload objects by id
+     */
+    public SavedBagParser(ObjectStore os) {
+        this.os = os;
+    }
 
     /**
      * Parse saved queries from a Reader
      * @param reader the saved queries
-     * @param os ObjectStore used to deserialize objects
      * @return a Map from query name to QueryInfo for that query
-     * @throws Exception if an error occurs in reading or parsing
      */
-    public Map process(Reader reader, ObjectStore os) throws Exception {
-        this.os = os;
-        SAXParser.parse(new InputSource(reader), new BagHandler());
+    public Map process(Reader reader) {
+        try {
+            SAXParser.parse(new InputSource(reader), new BagHandler());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return savedBags;
     }
 

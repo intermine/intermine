@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,14 +21,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * Implementation of <strong>Action</strong> that modifies a saved query
- *
+ * Action to handle button presses on the main tile
  * @author Mark Woodbridge
  */
-public class ModifyQueryAction extends Action
+public class LoginAction extends Action
 {
-    /**
-     * Forward to the correct method based on the button pressed
+    /** 
+     * Method called when user has finished updating a constraint
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -41,35 +41,20 @@ public class ModifyQueryAction extends Action
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        if (request.getParameter("delete") != null) {
-            delete(mapping, form, request, response);
-        }
-
-        return mapping.findForward("history");
-    }
-
-    /**
-     * Delete some queries
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward delete(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-        throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ModifyQueryForm mqf = (ModifyQueryForm) form;
-        
-        for (int i = 0; i < mqf.getSelectedQueries().length; i++) {
-            profile.deleteQuery(mqf.getSelectedQueries()[i]);
+        ServletContext servletContext = session.getServletContext();
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        LoginForm lf = (LoginForm) form;
+
+        Profile profile;
+        if (pm.hasProfile(lf.getUsername())) {
+            profile = pm.getProfile(lf.getUsername(), lf.getPassword());
+        } else {
+            profile = pm.createProfile(lf.getUsername());
+            pm.saveProfile(profile);
+            pm.setPassword(lf.getUsername(), lf.getPassword());
         }
+        session.setAttribute(Constants.PROFILE, profile);
 
         return mapping.findForward("history");
     }

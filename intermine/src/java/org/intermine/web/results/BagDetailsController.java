@@ -21,10 +21,8 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
 
 import org.intermine.web.Constants;
+import org.intermine.web.Profile;
 import org.intermine.web.InterMineBag;
-import org.intermine.web.BagHelper;
-
-import java.util.Collection;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Assembles data for
@@ -32,7 +30,6 @@ import java.util.Collection;
  *
  * @author Kim Rutherford
  */
-
 public class BagDetailsController extends TilesAction
 {
     /**
@@ -54,11 +51,12 @@ public class BagDetailsController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        
         String bagName = request.getParameter("bagName");
-        Collection bag = (Collection) BagHelper.getSavedBags(session).get(bagName);
+        InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
         if (bag == null) {
-            // display an empty bag
             bag = new InterMineBag();
         }
 

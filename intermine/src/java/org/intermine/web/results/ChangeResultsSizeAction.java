@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -28,7 +28,7 @@ import org.apache.struts.action.ActionMessages;
 
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineBag;
-import org.intermine.web.BagHelper;
+import org.intermine.web.Profile;
 
 /**
  * Implementation of <strong>LookupDispatchAction</strong>. Changes the
@@ -105,6 +105,7 @@ public class ChangeResultsSizeAction extends Action
                                  HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         ChangeResultsForm crf = (ChangeResultsForm) form;
 
@@ -138,7 +139,11 @@ public class ChangeResultsSizeAction extends Action
         } else {
             bagName = crf.getExistingBagName();
         }
-        BagHelper.saveBag(bag, bagName, BagHelper.getSavedBags(session));
+        InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
+        if (existingBag != null) {
+            bag.addAll(existingBag);
+        }
+        profile.saveBag(bagName, bag);
     
         ActionMessages actionMessages = new ActionMessages();
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE,

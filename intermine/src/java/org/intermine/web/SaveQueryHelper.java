@@ -34,16 +34,11 @@ public class SaveQueryHelper
      * @return the new query name
      */
     public static String findNewQueryName(Map savedQueries) {
-        int i = 1;
-
-        while (true) {
+        for (int i = 1;; i++) {
             String testName = QUERY_NAME_PREFIX + i;
-
             if (savedQueries == null || savedQueries.get(testName) == null) {
                 return testName;
             }
-
-            i++;
         }
     }
 

@@ -10,14 +10,9 @@ package org.intermine.web;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.OutputStreamWriter;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Collection;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,19 +22,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
-
 /**
  * Implementation of <strong>Action</strong> to modify bags
  * @author Mark Woodbridge
  */
 public class ModifyBagAction extends Action
 {
-    protected static final String INDENT = "   ";
-
     /**
      * Forward to the correct method based on the button pressed
      * @param mapping The ActionMapping used to select this instance
@@ -61,8 +49,6 @@ public class ModifyBagAction extends Action
             intersect(mapping, form, request, response);
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request, response);
-        } else if (request.getParameter("export") != null) {
-            export(mapping, form, request, response);
         }
 
         return mapping.findForward("history");
@@ -84,15 +70,16 @@ public class ModifyBagAction extends Action
                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
 
+        Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        Set combined = new InterMineBag();
+        InterMineBag combined = new InterMineBag();
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
             combined.addAll((Collection) savedBags.get(selectedBags[i]));
         }
-        savedBags.put(BagHelper.findNewBagName(savedBags), combined);
+        profile.saveBag(BagHelper.findNewBagName(savedBags), combined);
 
         return mapping.findForward("history");
     }
@@ -113,15 +100,16 @@ public class ModifyBagAction extends Action
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
 
+        Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        Set combined = new InterMineBag((Collection) savedBags.get(selectedBags[0]));
+        InterMineBag combined = new InterMineBag((Collection) savedBags.get(selectedBags[0]));
         for (int i = 1; i < selectedBags.length; i++) {
             combined.retainAll((Collection) savedBags.get(selectedBags[i]));
         }
-        savedBags.put(BagHelper.findNewBagName(savedBags), combined);
+        profile.saveBag(BagHelper.findNewBagName(savedBags), combined);
 
         return mapping.findForward("history");
     }
@@ -143,67 +131,13 @@ public class ModifyBagAction extends Action
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         ModifyBagForm mbf = (ModifyBagForm) form;
-        
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
-            savedBags.remove(mbf.getSelectedBags()[i]);
+            profile.deleteBag(mbf.getSelectedBags()[i]);
         }
 
         return mapping.findForward("history");
-    }
-
-    /**
-     * Export the selected bags
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward export(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
-        Map savedBags = (Map) session.getAttribute(Constants.SAVED_BAGS);
-        String[] selectedBags = ((ModifyBagForm) form).getSelectedBags();
-        
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition", "Attachment; Filename=\"savedBags.xml\"");
-        
-         PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
-         out.println("<bag-list>");
-         for (int i = 0; i < selectedBags.length; i++) {
-            String bagName = (String) selectedBags[i];
-            InterMineBag bag = (InterMineBag) savedBags.get(bagName);
-            out.println(INDENT + "<bag name='" + bagName + "'>");
-            for (Iterator j = bag.iterator(); j.hasNext();) {
-                Object o = j.next();
-                String type, value;
-                if (o instanceof InterMineObject) {
-                    type = InterMineObject.class.getName();
-                    value = ((InterMineObject) o).getId().toString();
-                } else {
-                    type = o.getClass().getName();
-                    value = TypeUtil.objectToString(o);
-                }
-                out.println(INDENT + INDENT + "<element type='" + type + "' value='" + value
-                            + "'/>");
-            }
-            out.println(INDENT + "</bag>");
-         }
-         out.println("</bag-list>");
-         out.close();
-         
-         return null;
     }
 }

@@ -36,16 +36,19 @@ import org.intermine.metadata.Model;
  */
 public class SavedQueryParser
 {
-    Map savedQueries = new LinkedHashMap();
-    
+    protected Map savedQueries = new LinkedHashMap();
+
     /**
      * Parse saved queries from a Reader
      * @param reader the saved queries
      * @return a Map from query name to QueryInfo for that query
-     * @throws Exception if an error occurs in reading or parsing
      */
-    public Map process(Reader reader) throws Exception {
-        SAXParser.parse(new InputSource(reader), new QueryHandler());
+    public Map process(Reader reader) {
+        try {
+            SAXParser.parse(new InputSource(reader), new QueryHandler());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return savedQueries;
     }
 

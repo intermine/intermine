@@ -38,6 +38,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.web.config.WebConfig;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreFactory;
 
@@ -65,20 +66,20 @@ public class InitialiserPlugin implements PlugIn
         
         loadClassDescriptions(servletContext);
         loadWebProperties(servletContext);
-        readExampleQueries(servletContext);
+        loadExampleQueries(servletContext);
         loadWebConfig(servletContext);
 
         ObjectStore os = null;
         try {
             os = ObjectStoreFactory.getObjectStore();
-            servletContext.setAttribute(Constants.OBJECTSTORE, os); 
-
-            processWebConfig(servletContext);
         } catch (Exception e) {
             throw new ServletException("Unable to instantiate ObjectStore", e);
         }
+        servletContext.setAttribute(Constants.OBJECTSTORE, os); 
 
-        summarizeObjectStore(servletContext, os);   
+        processWebConfig(servletContext, os);
+        summarizeObjectStore(servletContext, os);
+        createProfileManager(servletContext, os);
     }
 
     /**
@@ -149,8 +150,8 @@ public class InitialiserPlugin implements PlugIn
             String className = (String) i.next();
             classes.put(className, TypeUtil.unqualifiedName(className));
             try {
-                classCounts.put(className, new Integer(1));
-                //classCounts.put(className, new Integer(oss.getClassCount(className)));
+                //classCounts.put(className, new Integer(1));
+                classCounts.put(className, new Integer(oss.getClassCount(className)));
             } catch (Exception e) {
                 throw new ServletException("Unable to get class count for " + className, e);
             }
@@ -162,7 +163,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
      */
-    private void readExampleQueries(ServletContext servletContext) throws ServletException {
+    private void loadExampleQueries(ServletContext servletContext) throws ServletException {
         InputStream exampleQueriesStream =
             servletContext.getResourceAsStream("/WEB-INF/example-queries.xml");
         if (exampleQueriesStream == null) {
@@ -182,44 +183,56 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Create the DISPLAYERS ServletContext attribute by looking at the model and the WebConfig.
      */
-    private void processWebConfig(ServletContext servletContext)
-        throws Exception {
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+    private void processWebConfig(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        try {
+            Model model = os.getModel();
+            WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        Map displayersMap = new HashMap();
+            Map displayersMap = new HashMap();
 
-        for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
-             modelIter.hasNext();) {
-            String className = (String) modelIter.next();
-            Set cds = model.getClassDescriptorsForClass(Class.forName(className));
-            List cdList = new ArrayList(cds);
-            Map wcTypeMap = (Map) wc.getTypes();
+            for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
+                 modelIter.hasNext();) {
+                String className = (String) modelIter.next();
+                Set cds = model.getClassDescriptorsForClass(Class.forName(className));
+                List cdList = new ArrayList(cds);
+                Map wcTypeMap = (Map) wc.getTypes();
 
-            Collections.reverse(cdList);
+                Collections.reverse(cdList);
             
-            for (Iterator cdIter = cdList.iterator(); cdIter.hasNext(); ) {
-                ClassDescriptor cd = (ClassDescriptor) cdIter.next();
+                for (Iterator cdIter = cdList.iterator(); cdIter.hasNext(); ) {
+                    ClassDescriptor cd = (ClassDescriptor) cdIter.next();
 
-                if (wcTypeMap.get(cd.getName()) != null) {
-                    displayersMap.put(className, wcTypeMap.get(cd.getName()));
-                }
+                    if (wcTypeMap.get(cd.getName()) != null) {
+                        displayersMap.put(className, wcTypeMap.get(cd.getName()));
+                    }
 
-                for (Iterator fdIter = cd.getFieldDescriptors().iterator(); fdIter.hasNext(); ) {
-                    FieldDescriptor fd = (FieldDescriptor) fdIter.next();
-                    String newKey = cd.getName() + " " + fd.getName();
+                    for (Iterator fdIter = cd.getFieldDescriptors().iterator(); fdIter.hasNext();) {
+                        FieldDescriptor fd = (FieldDescriptor) fdIter.next();
+                        String newKey = cd.getName() + " " + fd.getName();
 
-                    if (wcTypeMap.get(newKey) != null) {
-                        displayersMap.put(className + " " + fd.getName(), wcTypeMap.get(newKey));
+                        if (wcTypeMap.get(newKey) != null) {
+                            displayersMap.put(className + " " + fd.getName(),
+                                              wcTypeMap.get(newKey));
+                        }
                     }
                 }
             }
-        }
 
-        servletContext.setAttribute(Constants.DISPLAYERS, displayersMap);
+            servletContext.setAttribute(Constants.DISPLAYERS, displayersMap);
+        } catch (ClassNotFoundException e) {
+            throw new ServletException("Unable to process webconfig", e);
+        }
     }
 
+    private void createProfileManager(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        try {
+            servletContext.setAttribute(Constants.PROFILE_MANAGER, new ProfileManager(os));
+        } catch (ObjectStoreException e) {
+            throw new ServletException("Unable to create profile manager", e);
+        }
+    }
 
     /**
      * Destroy method called at Servlet destroy

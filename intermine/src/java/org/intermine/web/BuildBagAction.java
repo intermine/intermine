@@ -55,6 +55,7 @@ public class BuildBagAction extends LookupDispatchAction
                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
         InterMineBag bag = new InterMineBag();
@@ -91,8 +92,7 @@ public class BuildBagAction extends LookupDispatchAction
         }
 
         String newBagName = buildBagForm.getBagName();
-        Map savedBags = BagHelper.getSavedBags(session);
-        BagHelper.saveBag(bag, newBagName, savedBags);
+        profile.saveBag(newBagName, bag);
 
         ActionMessages actionMessages = new ActionMessages();
         actionMessages.add(ActionMessages.GLOBAL_MESSAGE,

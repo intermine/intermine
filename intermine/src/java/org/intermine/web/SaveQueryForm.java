@@ -53,7 +53,8 @@ public class SaveQueryForm extends ActionForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map savedQueries = profile.getSavedQueries();
 
         ActionErrors errors = null;
         if (queryName.equals("")) {

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletContext;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,14 +98,9 @@ public class SaveQueryAction extends Action
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
-        Map savedQueries = (Map) session.getAttribute(Constants.SAVED_QUERIES);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        if (savedQueries == null) {
-            savedQueries = new LinkedHashMap();
-            session.setAttribute(Constants.SAVED_QUERIES, savedQueries);
-        }
-        
-        savedQueries.put(queryName, new QueryInfo(qNodes, view, resultsInfo));
+        profile.saveQuery(queryName, new QueryInfo(qNodes, view, resultsInfo));
         
         session.setAttribute(Constants.QUERY, SaveQueryHelper.clone(qNodes, model));
         session.setAttribute(Constants.VIEW, new ArrayList(view));

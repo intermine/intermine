@@ -44,10 +44,11 @@ public class BuildBagController extends TilesAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        String newBagName = BagHelper.findNewBagName(BagHelper.getSavedBags(session));
+        String bagName = BagHelper.findNewBagName(profile.getSavedBags());
+        ((BuildBagForm) form).setBagName(bagName);
 
-        ((BuildBagForm) form).setBagName(newBagName);
         return null;
     }
 }
