@@ -78,6 +78,7 @@
   </c:forEach>
   <%-- only display the run query button if at least one queryclass is present --%>
   <c:if test="${queryClass != null}">
+    <br/><br/>
     <html:submit property="action"><fmt:message key="query.run"/></html:submit>
   </c:if>
 </html:form>
