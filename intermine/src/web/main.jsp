@@ -197,7 +197,7 @@
         <span class="type">
           <c:choose>
             <c:when test="${editingNode.collection}">
-              <fmt:message key="query.collectionMessage">
+              <fmt:message key="query.collection">
                 <fmt:param value="${editingNode.type}"/>
               </fmt:message>
             </c:when>
