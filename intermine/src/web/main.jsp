@@ -150,7 +150,7 @@
               </fmt:message>
               <html:link action="/mainChange?method=removeNode&path=${node.path}"
                          title="${removeNodeTitle}">
-                <fmt:message key="query.removeNode"/>
+                <img border="0" src="images/cross.png" alt="x"/>
               </html:link>
             </c:if>
             </div>
@@ -173,7 +173,7 @@
               <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
               <html:link action="/mainChange?method=removeConstraint&path=${node.path}&index=${status.index}"
                          title="${removeConstraintTitle}">
-                <fmt:message key="query.removeConstraint"/>
+                <img border="0" src="images/cross.png" alt="x"/>
               </html:link>
               </div>
             </c:forEach>
