@@ -179,7 +179,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         SqlGenerator.queryEvaluableToString(buffer, v2, null, null);
         SqlGenerator.queryEvaluableToString(buffer, v3, null, null);
         SqlGenerator.queryEvaluableToString(buffer, v4, null, null);
-        assertEquals("5'Hello''2003-02-26 16:08:40.000''true'", buffer.toString());
+        assertEquals("5'Hello'1046275720000'true'", buffer.toString());
     }
 
     public void testSelectQueryExpression() throws Exception {

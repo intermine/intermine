@@ -13,8 +13,6 @@ package org.intermine.util;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -174,10 +172,7 @@ public class DatabaseUtil
      * @throws IllegalArgumentException if the object is not representable
      */
     public static String objectToString(Object o) throws IllegalArgumentException {
-        if (o instanceof Date) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            return "'" + format.format((Date) o) + "'";
-        } else if (o instanceof Float) {
+        if (o instanceof Float) {
             return o.toString() + "::REAL";
         } else if (o instanceof Number) {
             return o.toString();
@@ -185,6 +180,8 @@ public class DatabaseUtil
             return "'" + StringUtil.duplicateQuotes((String) o) + "'";
         } else if (o instanceof Boolean) {
             return ((Boolean) o).booleanValue() ? "'true'" : "'false'";
+        } else if (o == null) {
+            return "NULL";
         } else {
             throw new IllegalArgumentException("Can't convert " + o + " into an SQL String");
         }

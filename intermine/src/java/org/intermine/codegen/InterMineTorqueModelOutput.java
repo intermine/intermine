@@ -225,7 +225,7 @@ public class InterMineTorqueModelOutput extends ModelOutput
         } else if (type.equals("double") || type.equals("java.lang.Double")) {
             return "DOUBLE";
         } else if (type.equals("java.util.Date")) {
-            return "DATE";
+            return "BIGINT";
         } else if (type.equals("java.math.BigDecimal")) {
             return "NUMERIC";
         }

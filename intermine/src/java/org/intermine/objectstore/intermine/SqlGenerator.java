@@ -12,6 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -568,6 +569,8 @@ public class SqlGenerator
                         + " without an ID set");
             }
             buffer.append(id.toString());
+        } else if (value instanceof Date) {
+            buffer.append(DatabaseUtil.objectToString(new Long(((Date) value).getTime())));
         } else {
             buffer.append(DatabaseUtil.objectToString(value));
         }

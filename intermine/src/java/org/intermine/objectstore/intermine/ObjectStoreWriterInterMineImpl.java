@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPreparedStatementImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
@@ -56,8 +59,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected ObjectStoreInterMineImpl os;
     protected int sequenceBase = 0;
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
-    protected Statement batch = null;
-    protected int batchChars = 0;
+    protected Batch batch;
     protected String createSituation;
     protected Map recentSequences;
 
@@ -94,6 +96,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         recentSequences = Collections.synchronizedMap(new CacheMap(getClass().getName()
                     + " with sequence = " + sequence + ", model = \"" + model.getName()
                     + "\" recentSequences cache"));
+        batch = new Batch(new BatchWriterPreparedStatementImpl());
     }
     
     /**
@@ -173,7 +176,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         if (conn != null) {
             LOG.error("Garbage collecting open ObjectStoreWriterInterMineImpl with sequence = "
                     + sequence + " createSituation: " + createSituation);
-            outputLog();
             close();
         }
     }
@@ -207,20 +209,36 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @see ObjectStoreWriter#store
      */
     public void store(InterMineObject o) throws ObjectStoreException {
-        // TODO:
-        // Important: If we are not in a transaction, we still want any store or delete operation
-        // to be atomic, even though it uses multiple statements.
-        Connection conn = null;
-        boolean wasInTransaction = isInTransaction();
+        Connection c = null;
+        try {
+            c = getConnection();
+            storeWithConnection(c, o);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Performs store with a given Connection.
+     *
+     * @param c the Connection
+     * @param o the object to store
+     * @throws ObjectStoreException sometimes
+     */
+    protected void storeWithConnection(Connection c,
+            InterMineObject o) throws ObjectStoreException {
+        boolean wasInTransaction = isInTransactionWithConnection(c);
         boolean doDeletes = true;
         if (!wasInTransaction) {
-            beginTransaction();
+            beginTransactionWithConnection(c);
         }
 
         try {
             // Make sure this object has an ID
             if (o.getId() == null) {
-                o.setId(getSerial());
+                o.setId(getSerialWithConnection(c));
                 doDeletes = false;
             } else {
                 doDeletes = !recentSequences.containsKey(o.getId());
@@ -237,7 +255,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     InterMineObject obj = (InterMineObject) TypeUtil.getFieldProxy(o,
                             fieldInfo.getName());
                     if ((obj != null) && (obj.getId() == null)) {
-                        obj.setId(getSerial());
+                        obj.setId(getSerialWithConnection(c));
                     }
                 } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
                     Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
@@ -246,7 +264,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         while (collIter.hasNext()) {
                             InterMineObject obj = (InterMineObject) collIter.next();
                             if (obj.getId() == null) {
-                                obj.setId(getSerial());
+                                obj.setId(getSerialWithConnection(c));
                             }
                         }
                     }
@@ -255,40 +273,26 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             String xml = LiteRenderer.render(o, model);
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
-            Statement s = null;
-            if (batch != null) {
-                s = batch;
-            } else {
-                conn = getConnection();
-                s = conn.createStatement();
-                if (wasInTransaction) {
-                    batch = s;
-                }
-            }
-            
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
                 if (doDeletes) {
-                    String toAdd = "DELETE FROM " + tableName + " WHERE id = " + o.getId();
-                    addBatch(s, toAdd);
+                    batch.deleteRow(c, tableName, "id", o.getId());
                 }
-                StringBuffer sql = new StringBuffer((int) (xml.length() * 1.01 + 1000))
-                    .append("INSERT INTO ")
-                    .append(tableName)
-                    .append(" (OBJECT");
+                int colCount = 1;
                 fieldIter = cld.getAllFieldDescriptors().iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                     if (!(field instanceof CollectionDescriptor)) {
-                        String fieldName = DatabaseUtil.getColumnName(field);
-                        sql.append(", ");
-                        sql.append(fieldName);
+                        colCount++;
                     }
                 }
-                sql.append(") VALUES (");
-                SqlGenerator.objectToString(sql, xml);
+                String colNames[] = new String[colCount];
+                Object values[] = new Object[colCount];
+                colNames[0] = "OBJECT";
+                values[0] = xml;
+                int colNo = 1;
                 fieldIter = cld.getAllFieldDescriptors().iterator();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
@@ -305,39 +309,37 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                     DatabaseUtil.getInwardIndirectionColumnName(collection);
                                 String outwardColumnName =
                                     DatabaseUtil.getOutwardIndirectionColumnName(collection);
-                                String leftHandSide = "INSERT INTO " + indirectTableName
-                                    + " (" + inwardColumnName + ", " + outwardColumnName
-                                    + ") VALUES (" + o.getId().toString() + ", ";
+                                boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
+                                String indirColNames[] = new String[2];
+                                indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
+                                indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
                                 Iterator collIter = coll.iterator();
                                 while (collIter.hasNext()) {
                                     InterMineObject inCollection = (InterMineObject)
                                         collIter.next();
-                                    StringBuffer indirectSql = new StringBuffer(leftHandSide);
-                                    indirectSql.append(inCollection.getId().toString())
-                                        .append(");");
-                                    addBatch(s, indirectSql.toString());
+                                    Object indirValues[] = new Object[2];
+                                    indirValues[0] = (swap ? o.getId() : inCollection.getId());
+                                    indirValues[1] = (swap ? inCollection.getId() : o.getId());
+                                    batch.addRow(c, indirectTableName, null, indirColNames,
+                                            indirValues);
                                 }
                             }
                         }
                     } else {
-                        sql.append(", ");
+                        colNames[colNo] = DatabaseUtil.getColumnName(field);
                         Object value = TypeUtil.getFieldProxy(o, field.getName());
-                        if (value == null) {
-                            sql.append("NULL");
-                        } else {
-                            SqlGenerator.objectToString(sql, value);
+                        if (value instanceof Date) {
+                            value = new Long(((Date) value).getTime());
+                        } else if (value instanceof InterMineObject) {
+                            value = ((InterMineObject) value).getId();
                         }
+                        values[colNo] = value;
+                        colNo++;
                     }
                 }
-                sql.append(");");
-
-                addBatch(s, sql.toString());
+                batch.addRow(c, tableName, o.getId(), colNames, values);
             }
 
-            if (batch == null) {
-                s.executeBatch();
-                logFlushBatch();
-            }
             try {
                 InterMineObject toCache = LiteParser.parse(xml, this);
                 cacheObjectById(toCache.getId(), toCache);
@@ -347,12 +349,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             throw new ObjectStoreException("Error while storing", e);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException("Illegal access to value while storing", e);
-        } finally {
-            releaseConnection(conn);
         }
 
         if (!wasInTransaction) {
-            commitTransaction();
+            commitTransactionWithConnection(c);
         }
     }
 
@@ -365,38 +365,65 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     public Integer getSerial() throws SQLException {
         Connection c = null;
         try {
-            if (sequenceOffset >= SEQUENCE_MULTIPLE) {
-                sequenceOffset = 0;
-                c = getConnection();
-                Statement s = c.createStatement();
-                ResultSet r = s.executeQuery("SELECT nextval('serial');");
-                //System//.out.println(getModel().getName()
-                //        + ": Executed SQL: SELECT nextval('serial');");
-                if (!r.next()) {
-                    throw new SQLException("No result while attempting to get a unique id");
-                }
-                long nextSequence = r.getLong(1);
-                sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
-            }
-            Integer retval = new Integer(sequenceBase + (sequenceOffset++));
-            recentSequences.put(retval, retval);
-            return retval;
+            c = getConnection();
+            return getSerialWithConnection(c);
         } finally {
             releaseConnection(c);
         }
     }
 
     /**
+     * Gets an ID number which is unique in the database, given a Connection.
+     *
+     * @param c the Connection
+     * @return an Integer
+     * @throws SQLException if a problem occurs
+     */
+    protected Integer getSerialWithConnection(Connection c) throws SQLException {
+        if (sequenceOffset >= SEQUENCE_MULTIPLE) {
+            sequenceOffset = 0;
+            Statement s = c.createStatement();
+            ResultSet r = s.executeQuery("SELECT nextval('serial');");
+            //System//.out.println(getModel().getName()
+            //        + ": Executed SQL: SELECT nextval('serial');");
+            if (!r.next()) {
+                throw new SQLException("No result while attempting to get a unique id");
+            }
+            long nextSequence = r.getLong(1);
+            sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
+        }
+        Integer retval = new Integer(sequenceBase + (sequenceOffset++));
+        recentSequences.put(retval, retval);
+        return retval;
+    }
+
+    /**
      * @see ObjectStoreWriter#delete
      */
     public void delete(InterMineObject o) throws ObjectStoreException {
-        // TODO:
-        // Important: If we are not in a transaction, we still want any store or delete operation
-        // to be atomic, even though it uses multiple statements.
-        Connection conn = null;
-        boolean wasInTransaction = isInTransaction();
+        Connection c = null;
+        try {
+            c = getConnection();
+            deleteWithConnection(c, o);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Performs a delete, with a connection.
+     *
+     * @param c the Connection
+     * @param o the object to delete
+     * @throws ObjectStoreException sometimes
+     */
+    protected void deleteWithConnection(Connection c,
+            InterMineObject o) throws ObjectStoreException {
+        boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
-            beginTransaction();
+            beginTransactionWithConnection(c);
         }
 
         try {
@@ -408,39 +435,19 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
 
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
-            Statement s = null;
-            if (batch != null) {
-                s = batch;
-            } else {
-                conn = getConnection();
-                s = conn.createStatement();
-                if (wasInTransaction) {
-                    batch = s;
-                }
-            }
- 
             Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
-                addBatch(s, "DELETE FROM " + tableName + " WHERE id = " + o.getId());
-            }
-
-            if (batch == null) {
-                s.executeBatch();
-                logFlushBatch();
-                //System//.out.println(getModel().getName()
-                //        + ": Executed SQL batch at end of delete()");
+                batch.deleteRow(c, tableName, "id", o.getId());
             }
             invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while deleting", e);
-        } finally {
-            releaseConnection(conn);
         }
 
         if (!wasInTransaction) {
-            commitTransaction();
+            commitTransactionWithConnection(c);
         }
     }
 
@@ -451,11 +458,26 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         Connection c = null;
         try {
             c = getConnection();
+            return isInTransactionWithConnection(c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Finds if we are in a transaction.
+     *
+     * @param c the Connection
+     * @return true or false
+     * @throws ObjectStoreException sometimes
+     */
+    protected boolean isInTransactionWithConnection(Connection c) throws ObjectStoreException {
+        try {
             return !c.getAutoCommit();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error finding transaction status", e);
-        } finally {
-            releaseConnection(c);
         }
     }
 
@@ -466,6 +488,22 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         Connection c = null;
         try {
             c = getConnection();
+            beginTransactionWithConnection(c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Begins a transaction.
+     *
+     * @param c the Connection
+     * @throws ObjectStoreException if we are already in a transaction
+     */
+    protected void beginTransactionWithConnection(Connection c) throws ObjectStoreException {
+        try {
             if (!c.getAutoCommit()) {
                 throw new ObjectStoreException("beginTransaction called, but already in"
                         + " transaction");
@@ -473,8 +511,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             c.setAutoCommit(false);
         } catch (SQLException e) {
             throw new ObjectStoreException("Error beginning transaction", e);
-        } finally {
-            releaseConnection(c);
         }
     }
 
@@ -482,10 +518,26 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @see ObjectStoreWriter#commitTransaction
      */
     public void commitTransaction() throws ObjectStoreException {
-        flushBatch();
         Connection c = null;
         try {
             c = getConnection();
+            commitTransactionWithConnection(c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Commits a transaction.
+     *
+     * @param c the Connection
+     * @throws ObjectStoreException if we are not in a transaction
+     */
+    protected void commitTransactionWithConnection(Connection c) throws ObjectStoreException {
+        try {
+            batch.flush(c);
             if (c.getAutoCommit()) {
                 throw new ObjectStoreException("commitTransaction called, but not in transaction");
             }
@@ -494,8 +546,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             os.flushObjectById();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error committing transaction", e);
-        } finally {
-            releaseConnection(c);
         }
     }
 
@@ -503,10 +553,26 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @see ObjectStoreWriter#abortTransaction
      */
     public void abortTransaction() throws ObjectStoreException {
-        flushBatch();
         Connection c = null;
         try {
             c = getConnection();
+            abortTransactionWithConnection(c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Aborts a transaction.
+     *
+     * @param c the Connection
+     * @throws ObjectStoreException if we are not in a transaction
+     */
+    public void abortTransactionWithConnection(Connection c) throws ObjectStoreException {
+        try {
+            batch.flush(c);
             if (c.getAutoCommit()) {
                 throw new ObjectStoreException("abortTransaction called, but not in transaction");
             }
@@ -515,8 +581,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             os.flushObjectById();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error aborting transaction", e);
-        } finally {
-            releaseConnection(c);
         }
     }
 
@@ -527,8 +591,16 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
-        flushBatch();
-        return super.execute(q, start, limit, optimise, explain, sequence);
+        Connection c = null;
+        try {
+            c = getConnection();
+            batch.flush(c);
+            return executeWithConnection(c, q, start, limit, optimise, explain, sequence);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
     }
     
     /**
@@ -537,8 +609,16 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * This method is overridden in order to flush batches properly before the read.
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
-        flushBatch();
-        return super.count(q, sequence);
+        Connection c = null;
+        try {
+            c = getConnection();
+            batch.flush(c);
+            return countWithConnection(c, q, sequence);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
     }
 
     /**
@@ -547,60 +627,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * This method is overridden in order to flush matches properly before the read.
      */
     protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        flushBatch();
-        return super.internalGetObjectById(id);
-    }
-
-    private void addBatch(Statement s, String toAdd) throws SQLException {
-        s.addBatch(toAdd);
-        logAddBatch();
-        batchChars += toAdd.length();
-        if (batchChars > MAX_BATCH_CHARS) {
-            s.executeBatch();
-            logFlushBatch();
-            s.clearBatch();
-            batchChars = 0;
-        }
-    }
-
-    private void flushBatch() throws ObjectStoreException {
-        if (batch != null) {
-            Connection conn = null;
-            try {
-                conn = getConnection();
-                batch.executeBatch();
-                logFlushBatch();
-                batch = null;
-            } catch (SQLException e) {
-                throw new ObjectStoreException("Error while flushing a batch", e);
-            } finally {
-                releaseConnection(conn);
-            }
-        }
-    }
-
-    private int logOps = 0;
-    private int logBatch = 0;
-    private boolean emptyBatch = true;
-
-    private synchronized void logAddBatch() {
-        logOps++;
-        emptyBatch = false;
-        if ((logOps % 500000) == 0) {
-            outputLog();
-        }
-    }
-
-    private synchronized void logFlushBatch() {
-        logBatch++;
-        emptyBatch = true;
-    }
-
-    private synchronized void outputLog() {
-        int batches = logBatch + (emptyBatch ? 0 : 1);
-        if (batches > 0) {
-            LOG.error(getModel().getName() + ": Performed " + logOps + " write statements in "
-                    + batches + " batches. Average batch size: " + (logOps / batches));
+        Connection c = null;
+        try {
+            c = getConnection();
+            batch.flush(c);
+            return internalGetObjectByIdWithConnection(c, id);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
         }
     }
 
@@ -611,7 +646,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         if (conn != null) {
             LOG.error("Shutting down open ObjectStoreWriterInterMineImpl with sequence = "
                     + sequence + ", createSituation = " + createSituation);
-            outputLog();
             close();
         }
     }

@@ -144,16 +144,40 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            return executeWithConnection(c, q, start, limit, optimise, explain, sequence);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Performs the actual execute, given a Connection.
+     *
+     * @param c the Connection
+     * @param q the Query
+     * @param start the start row number (inclusive, from zero)
+     * @param limit maximum number of rows to return
+     * @param optimise boolean
+     * @param explain boolean
+     * @param sequence int
+     * @return a List of ResultRow objects
+     * @throws ObjectStoreException sometimes
+     */
+    protected List executeWithConnection(Connection c, Query q, int start, int limit,
+            boolean optimise, boolean explain, int sequence) throws ObjectStoreException {
         checkStartLimit(start, limit);
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
         String sql = SqlGenerator.generate(q, start, limit, model, db);
-        Connection c = null;
         try {
             if (optimise && everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
-            c = getConnection();
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
                 //long time = (new Date()).getTime();
@@ -214,6 +238,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             return objResults;
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem running SQL statement \"" + sql + "\"", e);
+        }
+    }
+
+    /**
+     * @see ObjectStore#estimate
+     */
+    public ResultsInfo estimate(Query q) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            return estimateWithConnection(c, q);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
         } finally {
             releaseConnection(c);
         }
@@ -222,18 +259,18 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
     /**
      * Runs an EXPLAIN for the given query.
      *
+     * @param c the Connection
      * @param q the Query to explain
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ResultsInfo estimate(Query q) throws ObjectStoreException {
+    protected ResultsInfo estimateWithConnection(Connection c,
+            Query q) throws ObjectStoreException {
         String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
-        Connection c = null;
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
-            c = getConnection();
             //long time = (new Date()).getTime();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
             //long now = (new Date()).getTime();
@@ -245,8 +282,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
                     (int) explain.getEstimatedRows());
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem explaining SQL statement \"" + sql + "\"", e);
-        } finally {
-            releaseConnection(c);
         }
     }
 
@@ -254,16 +289,36 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      * @see ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            return countWithConnection(c, q, sequence);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Counts the results in a query, given a Connection.
+     *
+     * @param c the Connection
+     * @param q the Query
+     * @param sequence int
+     * @return an int
+     * @throws ObjectStoreException sometimes
+     */
+    protected int countWithConnection(Connection c, Query q,
+            int sequence) throws ObjectStoreException {
         checkSequence(sequence, q, "COUNT ");
 
         String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model, db);
-        Connection c = null;
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
-            c = getConnection();
             //long time = (new Date()).getTime();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
             //long now = (new Date()).getTime();
@@ -275,8 +330,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
             return sqlResults.getInt(1);
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem counting SQL statement \"" + sql + "\"", e);
-        } finally {
-            releaseConnection(c);
         }
     }
 
@@ -301,11 +354,30 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
      * implementation does not bother with the EXPLAIN call to the underlying SQL database.
      */
     protected InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
-        String sql = SqlGenerator.generateQueryForId(id);
-        String currentColumn = null;
         Connection c = null;
         try {
             c = getConnection();
+            return internalGetObjectByIdWithConnection(c, id);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Gets an object by id given a Connection.
+     *
+     * @param c the Connection
+     * @param id the id
+     * @return the object
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected InterMineObject internalGetObjectByIdWithConnection(Connection c,
+            Integer id) throws ObjectStoreException {
+        String sql = SqlGenerator.generateQueryForId(id);
+        String currentColumn = null;
+        try {
             //System//.out.println(getModel().getName() + ": Executing SQL: " + sql);
             //long time = (new Date()).getTime();
             ResultSet sqlResults = c.createStatement().executeQuery(sql);
@@ -339,8 +411,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Unknown class mentioned in database OBJECT field"
                     + " while converting results: " + currentColumn, e);
-        } finally {
-            releaseConnection(c);
         }
     }
 

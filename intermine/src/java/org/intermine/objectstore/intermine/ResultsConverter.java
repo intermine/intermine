@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,6 +85,9 @@ public class ResultsConverter
                         row.add(obj);
                     } else {
                         currentColumn = sqlResults.getObject(alias);
+                        if (Date.class.equals(node.getType())) {
+                            currentColumn = new Date(((Long) currentColumn).longValue());
+                        }
                         row.add(currentColumn);
                     }
                 }
