@@ -14,7 +14,7 @@ import org.flymine.metadata.*;
  */
 public class CastorModelOutput extends ModelOutput
 {
-    private Set seen = new HashSet();
+    protected Set seen = new HashSet();
     protected StringBuffer references, collections;
 
     /**
@@ -32,7 +32,7 @@ public class CastorModelOutput extends ModelOutput
         initFile(path);
         outputToFile(path, generate(model));
     }
-    
+
     /**
      * @see ModelOutput#generate(Model)
      */
@@ -71,7 +71,7 @@ public class CastorModelOutput extends ModelOutput
 
         references = new StringBuffer();
         collections = new StringBuffer();
-        
+
         sb.append(INDENT)
             .append("<class name=\"")
             .append(cld.getClassName())
@@ -112,7 +112,7 @@ public class CastorModelOutput extends ModelOutput
 
         return sb.toString();
     }
-    
+
     /**
      * @see ModelOutput#generate(AttributeDescriptor)
      */
@@ -179,7 +179,13 @@ public class CastorModelOutput extends ModelOutput
         return "";
     }
 
-    private String convertType(String type) {
+    /**
+     * Convert names of primitives/java objects to names compatible with
+     * Castor mapping file.  Returns unaltered string if no conversion needed.
+     * @param type the name to be converted
+     * @return Castor mapping file compatible string
+     */
+    protected String convertType(String type) {
         if (type.equals("int")) {
             return "integer";
         }
