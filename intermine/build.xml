@@ -902,6 +902,23 @@
       <fileset file="${build.resources}/log4j.properties"/>
     </jar>
 
+    <mkdir dir="${build.tmp}/jars"/>
+
+    <unzip dest="${build.tmp}/jars">
+      <fileset dir="${lib}">
+        <patternset refid="lib.common"/>
+        <patternset refid="lib.antlr"/>
+        <patternset refid="lib.uml"/>
+      </fileset>
+    </unzip>
+
+
+    <jar destfile="${dist}/intermine-all.jar" manifest="${build.tmp}/MANIFEST.MF">
+      <zipfileset src="${dist}/intermine.jar"/>
+      <fileset dir="${build.tmp}/jars"/>
+    </jar>
+  
+    <delete dir="${build.tmp}/jars"/>
   </target>
 
   <target name="jar-testmodel" depends="prepare-dist, build-testmodel"
