@@ -75,6 +75,7 @@ import org.apache.ojb.broker.accesslayer.sql.SqlStatement;
 import org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 /**
  * Code to generate and sql statement...
@@ -87,21 +88,26 @@ import org.apache.ojb.broker.metadata.FieldDescriptor;
 public class FlymineSqlSelectStatement implements SqlStatement
 {
     private Query query;
-    private ClassDescriptor[] clds;
+    private DescriptorRepository dr;
 
     /**
      * Constructor requires a FlyMine Query and associated array of ClassDescriptors.
      * Should be a ClassDescriptor for each class in FROM clause of query.
      *
      * @param query a flymine query
-     * @param clds ClassDescriptor[] for all classes in FROM clause of Query
+     * @param dr DescriptorRepository for the database
      */
-    public FlymineSqlSelectStatement(Query query, ClassDescriptor[] clds) {
+    public FlymineSqlSelectStatement(Query query, DescriptorRepository dr) {
         this.query = query;
-        this.clds = clds;
+        this.dr = dr;
     }
 
-    private String buildSelectComponent() {
+    /**
+     * Returns a String containing the entire SELECT list of the query.
+     *
+     * @return the SELECT list
+     */
+    protected String buildSelectComponent() {
         String retval = "";
         boolean needComma = false;
         List select = query.getSelect();
@@ -122,20 +128,20 @@ public class FlymineSqlSelectStatement implements SqlStatement
         return retval;
     }
 
-    private String queryClassToString(QueryClass node) {
+    /**
+     * Converts a QueryClass into the SELECT list fields required to represent it in the SQL query.
+     *
+     * @param node the QueryClass
+     * @return the String representation
+     */
+    protected String queryClassToString(QueryClass node) {
         String retval = "";
         boolean needComma = false;
         // It's a class - find its class descriptor, then iterate through its fields.
         // This QueryClass should be aliased as described by Query.getAliases().
         String alias = (String) query.getAliases().get(node);
         boolean done = false;
-        ClassDescriptor cld = null;
-        for (int i = 0; (i < clds.length) && (!done); i++) {
-            cld = clds[i];
-            if (cld.getClassOfObject().equals(node.getType())) {
-                done = true;
-            }
-        }
+        ClassDescriptor cld = dr.getDescriptorFor(node.getType());
         if (cld == null) {
             throw (new IllegalArgumentException("Couldn't find class descriptor for class "
                         + node.getType()));
@@ -154,7 +160,13 @@ public class FlymineSqlSelectStatement implements SqlStatement
         return retval;
     }
 
-    private String queryEvaluableToString(QueryEvaluable node) {
+    /**
+     * Converts a QueryEvaluable into a SELECT list field.
+     *
+     * @param node the QueryEvaluable
+     * @return the String representation
+     */
+    protected String queryEvaluableToString(QueryEvaluable node) {
         if (node instanceof QueryField) {
             // It's a field - find its FieldDescriptor by looking at its QueryClass, then its
             // ClassDescriptor.
@@ -182,10 +194,11 @@ public class FlymineSqlSelectStatement implements SqlStatement
             QueryExpression nodeE = (QueryExpression) node;
             if (nodeE.getOperation() == QueryExpression.SUBSTRING) {
                 QueryEvaluable arg1 = nodeE.getArg1();
-                int arg2 = ((Integer) ((QueryValue) nodeE.getArg2()).getValue()).intValue();
-                int arg3 = ((Integer) nodeE.getArg3().getValue()).intValue();
+                QueryEvaluable arg2 = nodeE.getArg2();
+                QueryEvaluable arg3 = nodeE.getArg3();
 
-                return "Substr(" + queryEvaluableToString(arg1) + ", " + arg2 + ", " + arg3 + ")";
+                return "Substr(" + queryEvaluableToString(arg1) + ", "
+                    + queryEvaluableToString(arg2) + ", " + queryEvaluableToString(arg3) + ")";
             } else {
                 QueryEvaluable arg1 = nodeE.getArg1();
                 QueryEvaluable arg2 = nodeE.getArg2();
@@ -247,7 +260,12 @@ public class FlymineSqlSelectStatement implements SqlStatement
         }
     }
 
-    private String buildFromComponent() {
+    /**
+     * Returns the FROM list for the SQL query.
+     *
+     * @return the SQL FROM list
+     */
+    protected String buildFromComponent() {
         String retval = "";
         boolean needComma = false;
         return "nothing";

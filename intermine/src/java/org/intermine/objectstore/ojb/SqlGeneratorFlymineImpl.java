@@ -56,10 +56,11 @@ package org.flymine.objectstore.ojb;
 
 
 
-import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.accesslayer.sql.SqlGeneratorDefaultImpl;
 import org.apache.ojb.broker.platforms.Platform;
+import org.flymine.objectstore.query.Query;
 
 /**
  * SqlGeneratorFlymineImpl
@@ -82,30 +83,20 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
     /**
      * generate a select-Statement according to query
      * @param query the Query
-     * @param cld ClassDescriptor
+     * @param dr DescriptorRepository for the database
      *
      * @return sql statement as String
      */
-    public String getPreparedSelectStatement(Query query, ClassDescriptor cld) {
-        // throw away ClassDescriptor!
-
+    public String getPreparedSelectStatement(Query query, DescriptorRepository dr) {
         // TODO: check for statement in cache...
 
         // get the flymine query.  Currently ignores StatementManager, should it be changed?
 
-        QueryPackage qPackage = (QueryPackage) query;
-        org.flymine.objectstore.query.Query flymineQuery = qPackage.getQuery();
-
-        ClassDescriptor[] clds = qPackage.getDescriptors();
-
-        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(flymineQuery, clds);
+        FlymineSqlSelectStatement sql = new FlymineSqlSelectStatement(query, dr);
         String result = sql.getStatement();
 
         return result;
     }
-
-
-
 
     // block execution of OJB queries (?)
     /**
@@ -116,7 +107,22 @@ public class SqlGeneratorFlymineImpl extends SqlGeneratorDefaultImpl
      * @return never
      * @throws UnsupportedOperationException all the time
      */
-    public String getSelectStatementDep(Query query, ClassDescriptor cld) {
+    public String getPreparedSelectStatement(org.apache.ojb.broker.query.Query query,
+            ClassDescriptor cld) {
+        throw (new UnsupportedOperationException("Method not "
+                    + "supported in SqlGeneratorFlymineImpl"));
+    }
+       
+    /**
+     * Refuses to create a Select statement for the OJB-specific statement type.
+     *
+     * @param query an OJB query object
+     * @param cld its associated ClassDescriptor
+     * @return never
+     * @throws UnsupportedOperationException all the time
+     */
+    public String getSelectStatementDep(org.apache.ojb.broker.query.Query query,
+            ClassDescriptor cld) {
         throw (new UnsupportedOperationException("Method not "
                     + "supported in SqlGeneratorFlymineImpl"));
     }

@@ -54,16 +54,18 @@ package org.flymine.objectstore.ojb;
  * <http://www.apache.org/>.
  */
 
-import org.apache.ojb.broker.metadata.ClassDescriptor;
-import org.apache.ojb.broker.accesslayer.JdbcAccessImpl;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.PersistenceBrokerException;
+import org.apache.ojb.broker.accesslayer.JdbcAccessImpl;
 import org.apache.ojb.broker.accesslayer.ResultSetAndStatement;
 import org.apache.ojb.broker.accesslayer.ConnectionManagerIF;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import org.flymine.objectstore.query.Query;
 
 /**
  * This Implementation of JdbcAccess overrides executeQuery to
@@ -89,13 +91,12 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
      * Performs a select statement on database, returns the jdbc Statement
      * and ResultSet
      *
-     * @param query should be a QueryPackage which implements OJB Query interface but
-     * actually contains a FlyMine query and a ClassDescriptor array
+     * @param query should be a Flymine Query
      *
      * @return the JDBC ResultSet and Statement
      * @throws PersistenceBrokerException if anything goes worong
      */
-    public ResultSetAndStatement executeQuery(QueryPackage query)
+    public ResultSetAndStatement executeQuery(Query query)
         throws PersistenceBrokerException {
         if (logger.isDebugEnabled()) {
             logger.safeDebug("executeQuery", query);
@@ -104,10 +105,11 @@ public class JdbcAccessFlymineImpl extends JdbcAccessImpl
         ResultSetAndStatement retval =
             new ResultSetAndStatement(broker.serviceConnectionManager().getSupportedPlatform());
 
-        ClassDescriptor dummy = null;
-
         try {
-            String sql = this.broker.serviceSqlGenerator().getPreparedSelectStatement(query, dummy);
+            SqlGeneratorFlymineImpl gen = (SqlGeneratorFlymineImpl)
+                this.broker.serviceSqlGenerator();
+            DescriptorRepository dr = this.broker.getDescriptorRepository();
+            String sql = gen.getPreparedSelectStatement(query, dr);
 
             // statementManager is used to serve statements and cache statements related to a
             // partcular class (wraps a ConnectionManager).  We only want something to get a

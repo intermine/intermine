@@ -32,7 +32,7 @@ public class QueryExpression implements QueryNode, QueryEvaluable
     private QueryEvaluable arg1;
     private int op;
     private QueryEvaluable arg2;
-    private QueryValue arg3;
+    private QueryEvaluable arg3;
     private Class type;
     
     /**
@@ -60,54 +60,43 @@ public class QueryExpression implements QueryNode, QueryEvaluable
     }
     
     /**
-     * Constructs a substring QueryExpression from a QueryField and start and length values
+     * Constructs a substring QueryExpression from a QueryEvaluable and start and length
+     * QueryEvaluables
      *
-     * @param arg A QueryField representing a String
+     * @param arg A QueryEvaluable representing a String
      * @param pos start index
      * @param len length in characters
      * @throws IllegalArgumentException if there is a mismatch between the argument type 
      * and the specified operation
      */    
-    public QueryExpression(QueryField arg, int pos, int len) 
-        throws IllegalArgumentException {
-        constructSubstring(arg, pos, len);
-    }
-    
-    /**
-     * Constructs a substring QueryExpression from a QueryExpression and start and length values
-     *
-     * @param arg A QueryExpression representing a String
-     * @param pos start index
-     * @param len length in characters
-     * @throws IllegalArgumentException if there is a mismatch between the argument type 
-     * and the specified operation
-     */    
-    public QueryExpression(QueryExpression arg, int pos, int len) 
-        throws IllegalArgumentException {
-        constructSubstring(arg, pos, len);
-    }
-    
-    /**
-     * @param arg A QueryEvaluable representing a String type
-     * @param pos start index
-     * @param len length in characters
-     * @throws
-     */ 
-    private void constructSubstring(QueryEvaluable arg, int pos, int len)
+    public QueryExpression(QueryEvaluable arg, QueryEvaluable pos, QueryEvaluable len) 
         throws IllegalArgumentException {
         if (!(arg.getType().equals(String.class))) {
             throw new IllegalArgumentException("Invalid argument type for specified operation");
         }
-        if (pos < 0 || len < 0) {
-            throw new IllegalArgumentException("Start position or length is less than zero");
+        if (!(Number.class.isAssignableFrom(pos.getType()))) {
+            throw new IllegalArgumentException("Invalid argument type pos for substring");
+        }
+        if (!(Number.class.isAssignableFrom(len.getType()))) {
+            throw new IllegalArgumentException("Invalid argument type len for substring");
+        }
+        if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) pos).getValue()).intValue()
+                    < 0)) {
+            throw (new IllegalArgumentException("Invalid pos argument less than zero for "
+                        + "substring"));
+        }
+        if ((pos instanceof QueryValue) && (((Integer) ((QueryValue) len).getValue()).intValue()
+                    < 0)) {
+            throw (new IllegalArgumentException("Invalid len argument less than zero for "
+                        + "substring"));
         }
         arg1 = arg;
         op = SUBSTRING;
-        arg2 = new QueryValue(new Integer(pos));
-        arg3 = new QueryValue(new Integer(len));
+        arg2 = pos;
+        arg3 = len;
         type = String.class;
     }
-
+    
     /**
        * @see QueryEvaluable
        */
@@ -147,7 +136,7 @@ public class QueryExpression implements QueryNode, QueryEvaluable
      *
      * @return argument 3
      */
-    public QueryValue getArg3() {
+    public QueryEvaluable getArg3() {
         return arg3;
     }
 }

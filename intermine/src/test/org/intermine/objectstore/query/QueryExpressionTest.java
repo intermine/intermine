@@ -38,7 +38,9 @@ public class QueryExpressionTest extends TestCase
     public void testNumberSubstring() {
         try {
             QueryField field = new QueryField(new QueryClass(Company.class), "vatNumber");
-            new QueryExpression(field, 0, 4);
+            QueryValue v1 = new QueryValue(new Integer(0));
+            QueryValue v2 = new QueryValue(new Integer(4));
+            new QueryExpression(field, v1, v2);
             fail("A IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         } catch (NoSuchFieldException e) {
@@ -48,7 +50,9 @@ public class QueryExpressionTest extends TestCase
     public void testSubstringIndex() {
         try {
             QueryField field = new QueryField(new QueryClass(Company.class), "name");
-            new QueryExpression(field, -1, 4);
+            QueryValue v1 = new QueryValue(new Integer(-1));
+            QueryValue v2 = new QueryValue(new Integer(4));
+            new QueryExpression(field, v1, v2);
             fail("An IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
         } catch (NoSuchFieldException e) {
