@@ -144,7 +144,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
     public List execute(Query q, int start, int limit, boolean optimise, int sequence)
         throws ObjectStoreException {
         checkStartLimit(start, limit);
-        checkSequence(sequence);
+        checkSequence(sequence, q.toString() + " START " + start + " LIMIT " + limit);
 
         String sql = SqlGenerator.generate(q, start, limit, model);
         Connection c = null;
@@ -205,7 +205,7 @@ public class ObjectStoreFlyMineImpl extends ObjectStoreAbstractImpl implements O
      * @see ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
-        checkSequence(sequence);
+        checkSequence(sequence, "COUNT(" + q.toString() + ")");
 
         String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, model);
         Connection c = null;

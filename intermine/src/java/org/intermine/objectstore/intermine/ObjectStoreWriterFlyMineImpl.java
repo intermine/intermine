@@ -174,6 +174,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
         // to be atomic, even though it uses multiple statements.
         Connection conn = null;
         boolean wasInTransaction = isInTransaction();
+        boolean doDeletes = true;
         if (!wasInTransaction) {
             beginTransaction();
         }
@@ -182,6 +183,7 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             // Make sure this object has an ID
             if (o.getId() == null) {
                 o.setId(getSerial());
+                doDeletes = false;
             }
 
             // Make sure all objects pointed to have IDs
@@ -226,10 +228,12 @@ public class ObjectStoreWriterFlyMineImpl extends ObjectStoreFlyMineImpl
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 String tableName = DatabaseUtil.getTableName(cld);
-                s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
-                logAddBatch();
-                //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
-                //        + tableName + " WHERE id = " + o.getId());
+                if (doDeletes) {
+                    s.addBatch("DELETE FROM " + tableName + " WHERE id = " + o.getId());
+                    logAddBatch();
+                    //System//.out.println(getModel().getName() + ": Batched SQL:  DELETE FROM "
+                    //        + tableName + " WHERE id = " + o.getId());
+                }
                 StringBuffer sql = new StringBuffer("INSERT INTO ")
                     .append(tableName)
                     .append(" (OBJECT");

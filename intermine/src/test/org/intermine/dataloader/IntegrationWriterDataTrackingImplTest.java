@@ -139,11 +139,11 @@ public class IntegrationWriterDataTrackingImplTest extends StoreDataTestCase
             QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, dataTracker, dataTracker.getSequence());
+            Set dataToRemove = new SingletonResults(q, dataTracker.getObjectStore(),
+                    dataTracker.getObjectStore().getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
-                System.out.println("Deleting " + toDelete);
                 dataTracker.delete(toDelete);
             }
             dataTracker.commitTransaction();

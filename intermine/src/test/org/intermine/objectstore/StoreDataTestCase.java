@@ -131,11 +131,11 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             QueryClass qc = new QueryClass(FlyMineBusinessObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, writer, writer.getSequence());
+            Set dataToRemove = new SingletonResults(q, writer.getObjectStore(),
+                    writer.getObjectStore().getSequence());
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 FlyMineBusinessObject toDelete = (FlyMineBusinessObject) iter.next();
-                System.out.println("Deleting " + toDelete);
                 writer.delete(toDelete);
             }
             writer.commitTransaction();

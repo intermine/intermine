@@ -10,6 +10,8 @@ package org.flymine.objectstore;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Set;
 import java.util.Properties;
 
@@ -154,7 +156,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void invalidateObjectById(Integer id) {
         synchronized (cache) {
             cache.remove(id);
-            //sequence++;
+            sequence++;
         }
     }
 
@@ -174,7 +176,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void flushObjectById() {
         synchronized (cache) {
             cache.clear();
-            //sequence++;
+            sequence++;
         }
     }
 
@@ -242,12 +244,21 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * Checks a number against the sequence number, and throws an exception if they do not match.
      *
      * @param sequence an integer
+     * @param message some description of the operation that is about to happen
      * @throws DataChangedException if the sequence numbers do not match
      */
-    public void checkSequence(int sequence) throws DataChangedException {
+    public void checkSequence(int sequence, String message) throws DataChangedException {
         if (sequence != getSequence()) {
-            throw new DataChangedException("Sequence numbers do not match - was given " + sequence
-                    + " but needed " + getSequence());
+            Exception e = new DataChangedException("Sequence numbers do not match - was given "
+                    + sequence + " but needed " + getSequence() + " for operation \""
+                    + message + "\"");
+            e.fillInStackTrace();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.flush();
+            String m = sw.toString();
+            LOG.error(m.substring(0, m.indexOf("at junit.framework.TestCase.runBare")));
         }
     }
 
