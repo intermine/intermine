@@ -641,20 +641,59 @@
     </ant>
   </target>
 
-  <!-- Retrieve Chado data -->
-  <target name="retrieve-chado" depends="convert-chado, build-db-chado-src-items">
-    <taskdef name="retrieve-chado" classname="org.intermine.dataconversion.DBRetrieverTask">
+
+  <target name="filter-chado" depends="prepare-build-model, compile-chado-java, compile-flymine-java">
+    <taskdef
+      name="filter-chado"
+      classname="org.flymine.dataconversion.FilterChadoTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-chado database="db.chado" model="chado" osName="osw.chado-src-items"/>
+    <filter-chado tgtDir="${build.tmp}">
+      <fileset dir="/flybase">
+        <!--include name="dmel-4-r4.0.gff"/-->
+        <include name="*.gff"/>
+      </fileset>
+    </filter-chado>
+  </target>
+
+  <!--load retrieve chado GFF3 data-->
+  <target name="retrieve-chado" depends="prepare-build-model, compile-genomic-model, compile-chado-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.chado-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <convert-file converter ="org.flymine.dataconversion.GFF3Converter"
+                    target="osw.chado-tgt-items"
+                    seqClsName = "Chromosome"
+                    orgAbbrev ="DM"
+                    infoSourceTitle = "FlyBase"
+                    model ="genomic">
+      <fileset dir="${build.tmp}">
+        <!--include name ="dmel-4-r4.0.gff"/-->       
+        <include name ="*.gff"/>       
+      </fileset>
+    </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
+      <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.chado-src-items-std"/>
+      <property name="os.alias" value="os.chado-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
+
 
   <!-- Translate Chado data -->
   <target name="translate-chado" depends="convert-chado, compile-chado-java, compile-genomic-java">
@@ -1278,7 +1317,7 @@
                   seqClsName = "Chromosome"
                   orgAbbrev ="DM"
                   infoSourceTitle = "FlyReg"
-                  targetNameSpace ="http://www.flymine.org/model/genomic#">
+                  model ="genomic">
       <fileset dir ="/shared/data/flyreg">
         <include name ="*.gff"/>
         <include name ="*.GFF"/>
@@ -1329,7 +1368,7 @@
                     seqClsName = "Chromosome"
                     orgAbbrev ="HS"
                     infoSourceTitle = "UCSC"
-                    targetNameSpace ="http://www.flymine.org/model/genomic#">
+                    model ="genomic">
       <fileset dir ="/shared/data/human">
         <!--include name ="firstEF/*.gff"/-->
         <include name ="tfbs/*.gff"/>
@@ -1454,6 +1493,13 @@
 
 
   <!-- BUILD PRODUCTION DATABASE -->
+
+  <target name="copy-genomic-config" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="copy-keydefs" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
 
   <!-- Build genomic model database to hold production data -->
   <target name="build-db-production" depends="compile-genomic-model">
@@ -1855,7 +1901,7 @@
     </ant>
   </target>
 
-  <target name="compile-genomic-java" depends="compile-genomic-model, compile-flymine-java">
+  <target name="compile-genomic-java" depends="compile-flymine-java, compile-genomic-model">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
