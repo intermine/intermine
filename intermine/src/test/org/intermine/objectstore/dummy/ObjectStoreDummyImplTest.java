@@ -7,11 +7,24 @@ import java.util.List;
 import org.flymine.model.testmodel.*;
 import org.flymine.objectstore.query.*;
 import org.flymine.objectstore.ObjectStoreException;
+import org.flymine.objectstore.ObjectStoreTestCase;
 
-public class ObjectStoreDummyImplTest extends TestCase
+public class ObjectStoreDummyImplTest extends ObjectStoreTestCase
 {
     public ObjectStoreDummyImplTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() throws Exception {
+        os = new ObjectStoreDummyImpl();
+        ((ObjectStoreDummyImpl) os).setExecuteTime(10);
+        ((ObjectStoreDummyImpl) os).setMaxTime(20);
+        super.setUp();
+    }
+
+    // Override setUpResults(). There are no results tests to do for an ObjectStoreDummyImpl.
+    public void setUpResults() throws Exception {
+        // DO NOT SET UP ANY RESULTS
     }
 
     public void testAddRowRetrieveSame() throws Exception {
@@ -111,7 +124,7 @@ public class ObjectStoreDummyImplTest extends TestCase
     }
 
 
-    public void testexecuteCalls() throws Exception {
+    public void testExecuteCalls() throws Exception {
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         Query q = new Query();
         os.setResultsSize(10);
