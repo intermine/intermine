@@ -398,8 +398,47 @@
     </insert-ace-data>
   </target>
 
+  <!-- build acedb system -->
+  <target name="build-stresstest" depends ="insert-data-acedb"
+          description="build the production FlyMine system with acedb model" >
+  </target>
+
+
+  <!-- Production build targets (currently uses ace model) -->
+  
+  <!-- generate production model -->
+  <target name="build-productionmodel" depends="compile-main">
+    <ant antfile="build-model.xml" target="build-model-from-zargo">
+      <property name="model.name" value="testmodel"/>
+      <property name="model.src" value="${model}/uml"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+    </ant>
+  </target> 
+
+
+  <target name="build-db-productionmodel" depends="build-productionmodel">
+    <ant antfile="build-model.xml" target="build-db">
+      <property name="model.name" value="testmodel"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.production"/>
+    </ant>
+  </target>
+  
+  <!-- insert the production data into the database -->
+   <target name="insert-data-productionmodel" depends="build-db-productionmodel">
+    <taskdef
+      name="insert-xml-data"
+      classname="org.flymine.task.InsertXmlDataTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+
+    <insert-xml-data integrationWriter="integration.production" file="${build.resources.testxml}/testmodel_data.xml">
+      <classpath refid="test.class.path"/>
+    </insert-xml-data>
+  </target>
+
   <!-- build production system -->
-  <target name="build-production" depends ="insert-data-acedb"
+  <target name="build-production" depends ="insert-data-productionmodel"
           description="build the production FlyMine system with acedb model" >
   </target>
 
