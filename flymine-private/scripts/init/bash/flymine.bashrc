@@ -99,3 +99,9 @@ if [ "${FLYMINE:+set}" = "set" ]; then
     alias flydoc='cd $FLYMINE/doc'
 fi
 
+# Options for using ANT with FlyMine
+if [ "${ANT_OPTS:+set}" = "set" ]; then
+    ANT_OPTS=$ANT_OPTS\ -XX:MaxPermSize=128m
+else
+    ANT_OPTS=-XX:MaxPermSize=128m
+fi
