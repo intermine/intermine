@@ -208,14 +208,15 @@
     </action>
     
     <!-- Actions invoked from begin.jsp browse form -->
-    <action path="/templateActionBrowse"
+    <action path="/browseAction"
             type="org.intermine.web.TemplateAction"
             name="templateForm"
             parameter="action"
-            input="template">
-      <forward name="template" path="begin.page"/>
+            input="begin">
+      <forward name="begin" path="begin.page"/>
       <forward name="query" path="query.page"/>
-      <forward name="results" path="/viewAction.do"/>
+      <forward name="results" path="results.page"/>
+      <forward name="failure" path="begin.page"/>
     </action>
     
     <action path="/feedbackAction"
