@@ -1,5 +1,5 @@
 <items>
-<item id="1" class="" implements="http://www.flymine.org/model/tutorial#Broke http://www.flymine.org/model/tutorial#Company">
+<item id="1" class="" implements="http://www.intermine.org/model/tutorial#Broke http://www.intermine.org/model/tutorial#Company">
 <attribute name="debt" value="876324"/>
 <attribute name="name" value="CompanyA"/>
 <attribute name="vatNumber" value="1234"/>
@@ -21,7 +21,7 @@
 <reference ref_id="16"/>
 </collection>
 </item>
-<item id="2" class="" implements="http://www.flymine.org/model/tutorial#Company">
+<item id="2" class="" implements="http://www.intermine.org/model/tutorial#Company">
 <attribute name="name" value="CompanyB"/>
 <attribute name="vatNumber" value="5678"/>
 <reference name="address" ref_id="19"/>
@@ -43,7 +43,7 @@
 <reference ref_id="15"/>
 </collection>
 </item>
-<item id="3" class="http://www.flymine.org/model/tutorial#Contractor" implements="http://www.flymine.org/model/tutorial#Broke">
+<item id="3" class="http://www.intermine.org/model/tutorial#Contractor" implements="http://www.intermine.org/model/tutorial#Broke">
 <attribute name="debt" value="7634"/>
 <attribute name="name" value="ContractorA"/>
 <attribute name="seniority" value="128764"/>
@@ -58,7 +58,7 @@
 <reference ref_id="2"/>
 </collection>
 </item>
-<item id="4" class="http://www.flymine.org/model/tutorial#Contractor" implements="http://www.flymine.org/model/tutorial#Employable http://www.flymine.org/model/tutorial#ImportantPerson">
+<item id="4" class="http://www.intermine.org/model/tutorial#Contractor" implements="http://www.intermine.org/model/tutorial#Employable http://www.intermine.org/model/tutorial#ImportantPerson">
 <attribute name="name" value="ContractorB"/>
 <attribute name="seniority" value="62341"/>
 <reference name="businessAddress" ref_id="17"/>
@@ -72,7 +72,7 @@
 <reference ref_id="2"/>
 </collection>
 </item>
-<item id="5" class="http://www.flymine.org/model/tutorial#Department" implements="http://www.flymine.org/model/tutorial#RandomInterface">
+<item id="5" class="http://www.intermine.org/model/tutorial#Department" implements="http://www.intermine.org/model/tutorial#RandomInterface">
 <attribute name="name" value="DepartmentA1"/>
 <reference name="company" ref_id="1"/>
 <reference name="manager" ref_id="8"/>
@@ -82,7 +82,7 @@
 <reference ref_id="10"/>
 </collection>
 </item>
-<item id="6" class="http://www.flymine.org/model/tutorial#Department" implements="http://www.flymine.org/model/tutorial#RandomInterface">
+<item id="6" class="http://www.intermine.org/model/tutorial#Department" implements="http://www.intermine.org/model/tutorial#RandomInterface">
 <attribute name="name" value="DepartmentB1"/>
 <reference name="company" ref_id="2"/>
 <reference name="manager" ref_id="11"/>
@@ -91,7 +91,7 @@
 <reference ref_id="12"/>
 </collection>
 </item>
-<item id="7" class="http://www.flymine.org/model/tutorial#Department" implements="http://www.flymine.org/model/tutorial#RandomInterface">
+<item id="7" class="http://www.intermine.org/model/tutorial#Department" implements="http://www.intermine.org/model/tutorial#RandomInterface">
 <attribute name="name" value="DepartmentB2"/>
 <reference name="company" ref_id="2"/>
 <reference name="manager" ref_id="13"/>
@@ -99,7 +99,7 @@
 <reference ref_id="13"/>
 </collection>
 </item>
-<item id="8" class="http://www.flymine.org/model/tutorial#Manager" implements="http://www.flymine.org/model/tutorial#ImportantPerson">
+<item id="8" class="http://www.intermine.org/model/tutorial#Manager" implements="http://www.intermine.org/model/tutorial#ImportantPerson">
 <attribute name="age" value="10"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeA1"/>
@@ -107,21 +107,21 @@
 <reference name="address" ref_id="24"/>
 <reference name="department" ref_id="5"/>
 </item>
-<item id="9" class="http://www.flymine.org/model/tutorial#Employee" implements="http://www.flymine.org/model/tutorial#Employable http://www.flymine.org/model/tutorial#HasAddress">
+<item id="9" class="http://www.intermine.org/model/tutorial#Employee" implements="http://www.intermine.org/model/tutorial#Employable http://www.intermine.org/model/tutorial#HasAddress">
 <attribute name="age" value="20"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeA2"/>
 <reference name="address" ref_id="24"/>
 <reference name="department" ref_id="5"/>
 </item>
-<item id="10" class="http://www.flymine.org/model/tutorial#Employee" implements="http://www.flymine.org/model/tutorial#Employable http://www.flymine.org/model/tutorial#HasAddress">
+<item id="10" class="http://www.intermine.org/model/tutorial#Employee" implements="http://www.intermine.org/model/tutorial#Employable http://www.intermine.org/model/tutorial#HasAddress">
 <attribute name="age" value="30"/>
 <attribute name="fullTime" value="false"/>
 <attribute name="name" value="EmployeeA3"/>
 <reference name="address" ref_id="24"/>
 <reference name="department" ref_id="5"/>
 </item>
-<item id="11" class="http://www.flymine.org/model/tutorial#CEO" implements="http://www.flymine.org/model/tutorial#Broke">
+<item id="11" class="http://www.intermine.org/model/tutorial#CEO" implements="http://www.intermine.org/model/tutorial#Broke">
 <attribute name="age" value="40"/>
 <attribute name="debt" value="340"/>
 <attribute name="fullTime" value="true"/>
@@ -132,14 +132,14 @@
 <reference name="company" ref_id="2"/>
 <reference name="department" ref_id="6"/>
 </item>
-<item id="12" class="http://www.flymine.org/model/tutorial#Employee" implements="http://www.flymine.org/model/tutorial#Employable http://www.flymine.org/model/tutorial#HasAddress">
+<item id="12" class="http://www.intermine.org/model/tutorial#Employee" implements="http://www.intermine.org/model/tutorial#Employable http://www.intermine.org/model/tutorial#HasAddress">
 <attribute name="age" value="50"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeB2"/>
 <reference name="address" ref_id="20"/>
 <reference name="department" ref_id="6"/>
 </item>
-<item id="13" class="http://www.flymine.org/model/tutorial#Manager" implements="http://www.flymine.org/model/tutorial#ImportantPerson">
+<item id="13" class="http://www.intermine.org/model/tutorial#Manager" implements="http://www.intermine.org/model/tutorial#ImportantPerson">
 <attribute name="age" value="60"/>
 <attribute name="fullTime" value="true"/>
 <attribute name="name" value="EmployeeB3"/>
@@ -147,37 +147,37 @@
 <reference name="address" ref_id="20"/>
 <reference name="department" ref_id="7"/>
 </item>
-<item id="14" class="http://www.flymine.org/model/tutorial#Secretary">
+<item id="14" class="http://www.intermine.org/model/tutorial#Secretary">
 <attribute name="name" value="Secretary1"/>
 </item>
-<item id="15" class="http://www.flymine.org/model/tutorial#Secretary">
+<item id="15" class="http://www.intermine.org/model/tutorial#Secretary">
 <attribute name="name" value="Secretary2"/>
 </item>
-<item id="16" class="http://www.flymine.org/model/tutorial#Secretary">
+<item id="16" class="http://www.intermine.org/model/tutorial#Secretary">
 <attribute name="name" value="Secretary3"/>
 </item>
-<item id="17" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="17" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Contractor Business Street, BVille"/>
 </item>
-<item id="18" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="18" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Contractor Personal Street, BVille"/>
 </item>
-<item id="19" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="19" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Company Street, BVille"/>
 </item>
-<item id="20" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="20" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Employee Street, BVille"/>
 </item>
-<item id="21" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="21" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Contractor Business Street, AVille"/>
 </item>
-<item id="22" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="22" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Contractor Personal Street, AVille"/>
 </item>
-<item id="23" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="23" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Company Street, AVille"/>
 </item>
-<item id="24" class="http://www.flymine.org/model/tutorial#Address" implements="http://www.flymine.org/model/tutorial#Thing">
+<item id="24" class="http://www.intermine.org/model/tutorial#Address" implements="http://www.intermine.org/model/tutorial#Thing">
 <attribute name="address" value="Employee Street, AVille"/>
 </item>
 </items>
